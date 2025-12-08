@@ -249,6 +249,10 @@ function showCategorySelection() {
     // if (elements.homeBtn) elements.homeBtn.classList.add('hidden'); // ボタン削除に伴い削除
     
     // カテゴリー選択画面ではナビゲーションを表示
+    const bottomNav = document.querySelector('.bottom-nav');
+    if (bottomNav) {
+        bottomNav.style.display = '';
+    }
     document.body.classList.remove('learning-mode');
     
     updateCategoryStars(); // 星の表示を更新
@@ -331,6 +335,10 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     elements.headerSubtitle.textContent = category;
     
     // 学習画面ではナビゲーションを非表示
+    const bottomNav = document.querySelector('.bottom-nav');
+    if (bottomNav) {
+        bottomNav.style.display = 'none';
+    }
     document.body.classList.add('learning-mode');
     // if (elements.homeBtn) elements.homeBtn.classList.remove('hidden'); // ボタン削除に伴い削除
 
