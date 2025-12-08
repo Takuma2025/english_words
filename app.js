@@ -248,6 +248,9 @@ function showCategorySelection() {
     elements.headerSubtitle.textContent = '大阪府公立高校対応';
     // if (elements.homeBtn) elements.homeBtn.classList.add('hidden'); // ボタン削除に伴い削除
     
+    // カテゴリー選択画面ではナビゲーションを表示
+    document.body.classList.remove('learning-mode');
+    
     updateCategoryStars(); // 星の表示を更新
 }
 
@@ -326,6 +329,9 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     elements.categorySelection.classList.add('hidden');
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
+    
+    // 学習画面ではナビゲーションを非表示
+    document.body.classList.add('learning-mode');
     // if (elements.homeBtn) elements.homeBtn.classList.remove('hidden'); // ボタン削除に伴い削除
 
     // 間違い復習モードの場合のみCSSクラスを付与

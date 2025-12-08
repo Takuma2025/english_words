@@ -216,6 +216,11 @@ body {
     height: 100%;
 }
 
+/* 学習画面が表示されているときはナビゲーションを非表示 */
+body.learning-mode .bottom-nav {
+    display: none !important;
+}
+
 .progress-header {
     margin-bottom: 16px;
 }
