@@ -256,8 +256,8 @@ body {
 
 .word-card {
     width: 100%;
-    aspect-ratio: 3/4;
-    max-height: 500px;
+    aspect-ratio: 3/3.2;
+    max-height: 400px;
     position: relative;
     perspective: 1200px;
     touch-action: pan-y;
