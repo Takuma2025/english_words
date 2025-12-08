@@ -228,8 +228,40 @@ function assignCategories() {
     });
 }
 
+// 画面固定のための設定
+function preventZoom() {
+    // ダブルタップズームを防止
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+
+    // ピンチズームを防止
+    document.addEventListener('gesturestart', function (e) {
+        e.preventDefault();
+    });
+    document.addEventListener('gesturechange', function (e) {
+        e.preventDefault();
+    });
+    document.addEventListener('gestureend', function (e) {
+        e.preventDefault();
+    });
+
+    // 画面の向きを固定（可能な場合）
+    if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('portrait').catch(() => {
+            // ロックに失敗しても続行
+        });
+    }
+}
+
 // 初期化
 function init() {
+    preventZoom();
     assignCategories();
     loadData();
     showCategorySelection();
@@ -532,12 +564,22 @@ function handleCardTap() {
     }
     isCardRevealed = false;
     elements.wordCard.classList.remove('flipped');
+    // カードが元に戻ったとき、ボタンを非表示
+    const actionHint = document.getElementById('cardHint');
+    if (actionHint) {
+        actionHint.style.display = 'none';
+    }
     // elements.cardHint.textContent = 'タップでカードをひっくり返す';
 }
 
 function revealCard() {
     isCardRevealed = true;
     elements.wordCard.classList.add('flipped');
+    // カードがひっくり返ったとき、ボタンを表示
+    const actionHint = document.getElementById('cardHint');
+    if (actionHint) {
+        actionHint.style.display = 'flex';
+    }
     // elements.cardHint.textContent = 'スワイプして正解/不正解を選んでください';
 }
 
@@ -645,7 +687,7 @@ function applyMarkers(word) {
 // 現在の単語を表示
 function displayCurrentWord() {
     if (currentIndex >= currentRangeEnd) {
-        showCompletion();
+        // 学習完了時は何も表示しない（完了画面を削除）
         return;
     }
 
@@ -654,6 +696,12 @@ function displayCurrentWord() {
     elements.wordCard.classList.remove('flipped');
     elements.wordCard.style.transform = '';
     elements.wordCard.style.opacity = '';
+    
+    // カードが元に戻ったとき、ボタンを非表示
+    const actionHint = document.getElementById('cardHint');
+    if (actionHint) {
+        actionHint.style.display = 'none';
+    }
 
     elements.wordNumber.textContent = `No.${currentIndex + 1}`;
     elements.englishWord.textContent = word.word;
@@ -686,6 +734,14 @@ function displayCurrentWord() {
     const posContainerBack = document.getElementById('posContainerBack');
     if (posContainerBack) {
         posContainerBack.innerHTML = elements.posContainer.innerHTML;
+    }
+    
+    // 用例を表示
+    const exampleEn = document.getElementById('exampleEn');
+    const exampleJp = document.getElementById('exampleJp');
+    if (exampleEn && exampleJp && word.example) {
+        exampleEn.textContent = word.example.english || '';
+        exampleJp.textContent = word.example.japanese || '';
     }
     
     // スタイルリセット

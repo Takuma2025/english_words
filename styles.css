@@ -30,7 +30,12 @@ body {
     color: #1f2937; /* ダークグレー */
     line-height: 1.5;
     height: 100vh;
+    height: 100dvh; /* 動的ビューポート高さ */
     overflow: hidden;
+    position: fixed;
+    width: 100%;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
 }
 
 .feedback-overlay {
@@ -66,9 +71,11 @@ body {
 .app-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100vh;
+    height: 100dvh; /* 動的ビューポート高さ */
     position: relative;
     z-index: 1;
+    overflow: hidden;
 }
 
 .app-header {
@@ -84,27 +91,6 @@ body {
     z-index: 10;
 }
 
-.home-btn {
-    position: absolute;
-    left: 16px;
-    background: none;
-    border: none;
-    color: #ffffff;
-    cursor: pointer;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.2s;
-}
-
-.home-btn:hover {
-    opacity: 0.8;
-}
-
-.home-btn:active {
-    opacity: 0.6;
-}
 
 .header-content {
     text-align: center;
@@ -276,6 +262,42 @@ body {
     padding: 20px 0;
 }
 
+.home-btn-card {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #0ea5e9;
+    border: none;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3),
+                0 2px 4px rgba(0, 0, 0, 0.1),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 20;
+    transform: translateY(0);
+}
+
+.home-btn-card:hover {
+    background: #0d9cd8;
+    box-shadow: 0 3px 6px rgba(14, 165, 233, 0.25),
+                0 1px 3px rgba(0, 0, 0, 0.1),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.home-btn-card:active {
+    transform: translateY(2px);
+    background: #0c8bc4;
+    box-shadow: 0 1px 2px rgba(14, 165, 233, 0.2),
+                0 0 1px rgba(0, 0, 0, 0.1),
+                inset 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
 .word-card {
     width: 100%;
     aspect-ratio: 3/3.2;
@@ -328,7 +350,9 @@ body {
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: auto;
+    position: relative;
 }
+
 
 .word-number {
     font-size: 18px;
@@ -457,6 +481,9 @@ body {
     border-radius: 12px;
     padding: 16px;
     text-align: left;
+    margin-top: 16px;
+    width: 100%;
+    max-width: 100%;
 }
 
 .example-en {
@@ -474,11 +501,16 @@ body {
 
 /* Hints */
 .action-hint {
-    display: flex;
+    display: none; /* デフォルトは非表示 */
     justify-content: space-between;
     gap: 8px;
     margin-top: 16px;
     padding: 0 16px;
+}
+
+/* カードがひっくり返ったときのみ表示 */
+.card-area-wrapper:has(.word-card.flipped) .action-hint {
+    display: flex;
 }
 
 .hint-btn {
