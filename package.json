@@ -1,0 +1,14 @@
+{
+  "name": "english-word-app",
+  "version": "1.0.0",
+  "description": "英単語学習アプリ",
+  "main": "extract-words.js",
+  "scripts": {
+    "extract": "node extract-words.js"
+  },
+  "dependencies": {
+    "pdf-parse": "^1.1.1"
+  }
+}
+
+

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英単語学習アプリ - 大阪府公立高校対応</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="feedbackOverlay" class="feedback-overlay"></div>
+    
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <h1>英単語マスター</h1>
+                <p class="subtitle" id="headerSubtitle">大阪府公立高校対応</p>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <!-- カテゴリー選択画面 -->
+            <div class="category-view" id="categorySelection">
+                <div class="section-title">学習コース</div>
+                <div class="category-list">
+                    <button class="category-card" data-category="超よく出る600">
+                        <div class="category-info">
+                            <div class="category-header">
+                                <div class="category-name">超よく出る600</div>
+                                <div class="category-stars" id="stars-超よく出る600">☆☆☆☆☆</div>
+                            </div>
+                            <div class="category-meta">必須の600語</div>
+                            <div class="category-progress">
+                                <div class="category-progress-bar">
+                                    <div class="category-progress-fill" id="progress-超よく出る600"></div>
+                                </div>
+                                <div class="category-progress-text" id="progress-text-超よく出る600">0/0</div>
+                            </div>
+                        </div>
+                        <div class="category-arrow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </button>
+                    <button class="category-card" data-category="よく出る300">
+                        <div class="category-info">
+                            <div class="category-header">
+                                <div class="category-name">よく出る300</div>
+                                <div class="category-stars" id="stars-よく出る300">☆☆☆☆☆</div>
+                            </div>
+                            <div class="category-meta">差をつける300語</div>
+                            <div class="category-progress">
+                                <div class="category-progress-bar">
+                                    <div class="category-progress-fill" id="progress-よく出る300"></div>
+                                </div>
+                                <div class="category-progress-text" id="progress-text-よく出る300">0/0</div>
+                            </div>
+                        </div>
+                        <div class="category-arrow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </button>
+                    <button class="category-card" data-category="差がつく200">
+                        <div class="category-info">
+                            <div class="category-header">
+                                <div class="category-name">差がつく200</div>
+                                <div class="category-stars" id="stars-差がつく200">☆☆☆☆☆</div>
+                            </div>
+                            <div class="category-meta">難関突破の200語</div>
+                            <div class="category-progress">
+                                <div class="category-progress-bar">
+                                    <div class="category-progress-fill" id="progress-差がつく200"></div>
+                                </div>
+                                <div class="category-progress-text" id="progress-text-差がつく200">0/0</div>
+                            </div>
+                        </div>
+                        <div class="category-arrow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 学習画面 -->
+            <div class="learning-view hidden" id="mainContent">
+                <!-- 進捗バー -->
+                <div class="progress-header" id="statsBar">
+                    <div class="progress-bar-container">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span id="progressText">0/0</span>
+                    </div>
+                </div>
+
+                <div class="card-area-wrapper">
+                    <div class="word-card" id="wordCard">
+                        <div class="card-inner" id="cardInner">
+                            <div class="card-face card-front">
+                                <div class="word-display">
+                                    <div class="card-top-info">
+                                        <div class="word-number" id="wordNumber">No.1</div>
+                                        <button class="star-btn" id="starBtn">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                        </button>
+                                    </div>
+                                    <div class="english-word" id="englishWord">Loading...</div>
+                                    <div class="pos-container" id="posContainer">
+                                        <div class="part-of-speech" id="partOfSpeech">品詞</div>
+                                    </div>
+                                    <div class="tap-hint">タップして意味を表示</div>
+                                </div>
+                            </div>
+                            <div class="card-face card-back">
+                                <div class="meaning-content">
+                                    <div class="meaning" id="meaning">意味</div>
+                                    <div class="pos-container" id="posContainerBack">
+                                        <!-- 裏面にも品詞を表示 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-hint" id="cardHint">
+                        <button class="hint-btn hint-left" id="correctBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                            覚えた
+                        </button>
+                        <button class="hint-btn hint-center" id="masteredBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+                            もうOK！
+                        </button>
+                        <button class="hint-btn hint-right" id="wrongBtn">
+                            覚えていない
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 単語一覧画面 -->
+            <div class="word-list-view hidden" id="wordListSection">
+                <h2>単語一覧</h2>
+                <div class="word-list" id="wordList"></div>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-item active" id="changeCategoryBtn">
+                <span>ホーム</span>
+            </button>
+            <button class="nav-item" id="showFavoritesBtn">
+                <span>復習チェック</span>
+            </button>
+            <button class="nav-item" id="shuffleBtn">
+                <span>シャッフル</span>
+            </button>
+            <button class="nav-item" id="resetBtn">
+                <span>リセット</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- カスタムモーダル -->
+    <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal-container">
+            <h3 class="modal-title" id="modalTitle">確認</h3>
+            <p class="modal-message" id="modalMessage">メッセージ</p>
+            <div class="modal-actions" id="modalActions"></div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
+
