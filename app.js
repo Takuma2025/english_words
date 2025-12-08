@@ -156,7 +156,8 @@ const elements = {
     headerSubtitle: document.getElementById('headerSubtitle'),
     correctBtn: document.getElementById('correctBtn'),
     wrongBtn: document.getElementById('wrongBtn'),
-    masteredBtn: document.getElementById('masteredBtn')
+    masteredBtn: document.getElementById('masteredBtn'),
+    homeBtn: document.getElementById('homeBtn')
 };
 
 // モーダル表示関数
@@ -242,7 +243,11 @@ function showCategorySelection() {
     selectedCategory = null;
     updateNavState('home');
     elements.headerSubtitle.textContent = '大阪府公立高校対応';
-    // if (elements.homeBtn) elements.homeBtn.classList.add('hidden'); // ボタン削除に伴い削除
+    
+    // カテゴリー選択画面ではホームボタンを非表示
+    if (elements.homeBtn) {
+        elements.homeBtn.classList.add('hidden');
+    }
     
     document.body.classList.remove('learning-mode');
     
@@ -326,7 +331,11 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     elements.headerSubtitle.textContent = category;
     
     document.body.classList.add('learning-mode');
-    // if (elements.homeBtn) elements.homeBtn.classList.remove('hidden'); // ボタン削除に伴い削除
+    
+    // 学習画面ではホームボタンを表示
+    if (elements.homeBtn) {
+        elements.homeBtn.classList.remove('hidden');
+    }
 
     // 間違い復習モードの場合のみCSSクラスを付与
     if (category === '間違い復習') {
@@ -375,6 +384,15 @@ function setupEventListeners() {
     elements.correctBtn.addEventListener('click', () => markAnswer(true));
     elements.wrongBtn.addEventListener('click', () => markAnswer(false));
     elements.masteredBtn.addEventListener('click', () => markMastered());
+    
+    // ホームボタン
+    if (elements.homeBtn) {
+        elements.homeBtn.addEventListener('click', async () => {
+            if (await showConfirm('学習を中断してホームに戻りますか？')) {
+                showCategorySelection();
+            }
+        });
+    }
 }
 
 // 前の単語に移動（履歴ベースではなく単純なインデックス操作）
