@@ -142,10 +142,6 @@ const elements = {
     meaning: document.getElementById('meaning'),
     // exampleEn: document.getElementById('exampleEn'), // 削除
     // exampleJp: document.getElementById('exampleJp'), // 削除
-    resetBtn: document.getElementById('resetBtn'),
-    shuffleBtn: document.getElementById('shuffleBtn'),
-    changeCategoryBtn: document.getElementById('changeCategoryBtn'),
-    showFavoritesBtn: document.getElementById('showFavoritesBtn'),
     // showWrongWordsBtn: document.getElementById('showWrongWordsBtn'), // 削除
     progressText: document.getElementById('progressText'),
     progressFill: document.getElementById('progressFill'),
@@ -248,11 +244,6 @@ function showCategorySelection() {
     elements.headerSubtitle.textContent = '大阪府公立高校対応';
     // if (elements.homeBtn) elements.homeBtn.classList.add('hidden'); // ボタン削除に伴い削除
     
-    // カテゴリー選択画面ではナビゲーションを表示
-    const bottomNav = document.querySelector('.bottom-nav');
-    if (bottomNav) {
-        bottomNav.style.display = '';
-    }
     document.body.classList.remove('learning-mode');
     
     updateCategoryStars(); // 星の表示を更新
@@ -334,11 +325,6 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
     
-    // 学習画面ではナビゲーションを非表示
-    const bottomNav = document.querySelector('.bottom-nav');
-    if (bottomNav) {
-        bottomNav.style.display = 'none';
-    }
     document.body.classList.add('learning-mode');
     // if (elements.homeBtn) elements.homeBtn.classList.remove('hidden'); // ボタン削除に伴い削除
 
@@ -383,10 +369,6 @@ function setupEventListeners() {
     // スワイプ検知
     setupSwipeDetection(elements.wordCard);
 
-    elements.resetBtn.addEventListener('click', resetApp);
-    elements.shuffleBtn.addEventListener('click', shuffleWords);
-    // changeCategoryBtnはupdateNavStateで制御
-    elements.showFavoritesBtn.addEventListener('click', showReviewWords);
     // elements.showWrongWordsBtn.addEventListener('click', showWrongWords); // 削除
     
     // 正解・不正解・完璧ボタン
@@ -435,20 +417,9 @@ function updateNavButtons() {
 // 前の単語に移動
 // function goToPreviousWord() { ... } // 削除（履歴を残す実装の場合は必要だが今回は削除）
 
-// ナビゲーションの状態更新
+// ナビゲーションの状態更新（ナビゲーションバー削除により不要）
 function updateNavState(state) {
-    // ボタンの活性/非活性を制御
-    if (state === 'home') {
-        elements.changeCategoryBtn.classList.add('active');
-        elements.changeCategoryBtn.onclick = null; // ホーム画面では何もしない
-    } else {
-        elements.changeCategoryBtn.classList.remove('active');
-        elements.changeCategoryBtn.onclick = async () => {
-            if (await showConfirm('学習を中断してホームに戻りますか？')) {
-                showCategorySelection();
-            }
-        };
-    }
+    // ナビゲーションバーを削除したため、この関数は空
 }
 
 // スワイプ検知の設定
