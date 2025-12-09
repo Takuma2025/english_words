@@ -66,13 +66,18 @@ function resetProgress(category) {
 
 // カテゴリーの星表示を更新
 function updateCategoryStars() {
-    const categories = ['超よく出る600', 'よく出る300', '差がつく200'];
+    const categories = ['超よく出る600', 'よく出る300', '差がつく200', '発信語彙1000語'];
     
     categories.forEach(category => {
         const element = document.getElementById(`stars-${category}`);
         if (!element) return;
         
-        const categoryWords = wordData.filter(word => word.category === category);
+        let categoryWords;
+        if (category === '発信語彙1000語') {
+            categoryWords = wordData.slice(0, Math.min(1000, wordData.length));
+        } else {
+            categoryWords = wordData.filter(word => word.category === category);
+        }
         const savedIndex = loadProgress(category);
         
         if (categoryWords.length === 0) {
@@ -350,7 +355,14 @@ function showCategorySelection() {
 // カテゴリーを選択してコース選択画面を表示
 function startCategory(category) {
     selectedCategory = category;
-    const categoryWords = wordData.filter(word => word.category === category);
+    
+    // 発信語彙1000語の場合は、最初の1000語を取得
+    let categoryWords;
+    if (category === '発信語彙1000語') {
+        categoryWords = wordData.slice(0, Math.min(1000, wordData.length));
+    } else {
+        categoryWords = wordData.filter(word => word.category === category);
+    }
 
     if (categoryWords.length === 0) {
         showAlert('エラー', '選択したカテゴリーに単語がありません。');
@@ -360,8 +372,62 @@ function startCategory(category) {
     // カテゴリー選択画面を非表示
     elements.categorySelection.classList.add('hidden');
     
-    // コース選択画面を表示
-    showCourseSelection(category, categoryWords);
+    // 発信語彙1000語の場合は直接日本語→英語モードで開始
+    if (category === '発信語彙1000語') {
+        initInputModeLearning(category, categoryWords);
+    } else {
+        // コース選択画面を表示
+        showCourseSelection(category, categoryWords);
+    }
+}
+
+// 日本語→英語モードで学習を初期化
+function initInputModeLearning(category, words) {
+    selectedCategory = category;
+    currentWords = words;
+    isInputModeActive = true;
+    
+    currentRangeStart = 0;
+    currentRangeEnd = words.length;
+    currentIndex = 0;
+    
+    answeredWords.clear();
+    correctCount = 0;
+    wrongCount = 0;
+
+    elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
+    elements.mainContent.classList.remove('hidden');
+    elements.headerSubtitle.textContent = category;
+    
+    // 設定ボタンを非表示
+    const settingsBtn = document.getElementById('settingsBtn');
+    if (settingsBtn) {
+        settingsBtn.classList.add('hidden');
+    }
+    
+    document.body.classList.add('learning-mode');
+    
+    // 学習画面ではホームボタンを表示
+    if (elements.homeBtn) {
+        elements.homeBtn.classList.remove('hidden');
+    }
+
+    // カードモードを非表示、入力モードを表示
+    const wordCard = document.getElementById('wordCard');
+    const inputMode = document.getElementById('inputMode');
+    const cardHint = document.getElementById('cardHint');
+    
+    if (wordCard) wordCard.classList.add('hidden');
+    if (inputMode) inputMode.classList.remove('hidden');
+    if (cardHint) cardHint.classList.add('hidden');
+    
+    displayInputMode();
+    updateStats();
+    updateNavState('learning');
 }
 
 // コース選択画面を表示（100刻み）
@@ -506,13 +572,6 @@ function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex
         });
         methodList.appendChild(checkedCard);
     }
-
-    // 日本語→英語コース（常に表示）
-    const jpToEnCard = createMethodCard('日本語→英語', '日本語を見て英語を入力する問題', () => {
-        closeModal();
-        initLearning('日本語→英語', courseWords, 0, courseWords.length, courseStart, true);
-    });
-    methodList.appendChild(jpToEnCard);
     
     elements.modalActions.appendChild(methodList);
     
@@ -554,11 +613,9 @@ function createMethodCard(title, description, onClick) {
 // 学習初期化処理（共通化）
 // rangeEnd: 学習範囲の終了index（exclusive）
 // rangeStartOverride: 進捗計算に用いる開始index（表示開始位置をずらすため）
-// isInputMode: 日本語→英語入力モードかどうか
-function initLearning(category, words, startIndex = 0, rangeEnd = undefined, rangeStartOverride = undefined, isInputMode = false) {
+function initLearning(category, words, startIndex = 0, rangeEnd = undefined, rangeStartOverride = undefined) {
     selectedCategory = category;
     currentWords = words;
-    isInputModeActive = isInputMode;
     
     const start = Math.max(0, startIndex || 0);
     const end = typeof rangeEnd === 'number' ? Math.min(rangeEnd, currentWords.length) : currentWords.length;
@@ -600,23 +657,7 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         elements.mainContent.classList.remove('mode-mistake');
     }
 
-    // 入力モードとカードモードの切り替え
-    const wordCard = document.getElementById('wordCard');
-    const inputMode = document.getElementById('inputMode');
-    const cardHint = document.getElementById('cardHint');
-    
-    if (isInputMode) {
-        wordCard.classList.add('hidden');
-        inputMode.classList.remove('hidden');
-        if (cardHint) cardHint.classList.add('hidden');
-        displayInputMode();
-    } else {
-        wordCard.classList.remove('hidden');
-        inputMode.classList.add('hidden');
-        if (cardHint) cardHint.classList.remove('hidden');
-        displayCurrentWord();
-    }
-    
+    displayCurrentWord();
     updateStats();
     updateNavState('learning');
 }
@@ -732,19 +773,27 @@ function setupEventListeners() {
     
     // 日本語→英語入力モードのイベントリスナー
     const submitBtn = document.getElementById('submitBtn');
+    const dontKnowBtn = document.getElementById('dontKnowBtn');
     const inputStarBtn = document.getElementById('inputStarBtn');
     
     if (submitBtn) {
-        // 送信ボタン
+        // 解答ボタン
         submitBtn.addEventListener('click', () => {
             submitAnswer();
         });
         
-        // Enterキーで送信（グローバルイベント）
+        // Enterキーで解答（グローバルイベント）
         document.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && isInputModeActive && !submitBtn.disabled && !inputAnswerSubmitted) {
                 submitAnswer();
             }
+        });
+    }
+    
+    if (dontKnowBtn) {
+        // わからないボタン
+        dontKnowBtn.addEventListener('click', () => {
+            markAnswerAsDontKnow();
         });
     }
     
@@ -755,6 +804,91 @@ function setupEventListeners() {
         });
     }
     
+}
+
+// 日本語→英語入力モードの表示
+function displayInputMode() {
+    if (currentIndex >= currentRangeEnd) {
+        showInputCompletionScreen();
+        return;
+    }
+
+    const word = currentWords[currentIndex];
+    inputAnswerSubmitted = false;
+    
+    const inputWordNumber = document.getElementById('inputWordNumber');
+    const inputMeaning = document.getElementById('inputMeaning');
+    const letterInputs = document.getElementById('letterInputs');
+    const submitBtn = document.getElementById('submitBtn');
+    const inputResult = document.getElementById('inputResult');
+    const resultMessage = document.getElementById('resultMessage');
+    const correctAnswer = document.getElementById('correctAnswer');
+    const inputStarBtn = document.getElementById('inputStarBtn');
+    
+    if (inputWordNumber) {
+        inputWordNumber.textContent = `No.${word.id}`;
+    }
+    if (inputMeaning) {
+        inputMeaning.textContent = word.meaning;
+    }
+    
+    // 文字数分の入力フィールドを生成
+    if (letterInputs) {
+        letterInputs.innerHTML = '';
+        const wordLength = word.word.length;
+        
+        for (let i = 0; i < wordLength; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'letter-input';
+            input.maxLength = 1;
+            input.dataset.index = i;
+            input.autocomplete = 'off';
+            input.spellcheck = false;
+            input.readOnly = true; // 物理キーボード入力を無効化
+            input.inputMode = 'none'; // 物理キーボードを表示しない
+            
+            letterInputs.appendChild(input);
+        }
+    }
+    
+    // 仮想キーボードを生成
+    createVirtualKeyboard();
+    
+    if (submitBtn) {
+        submitBtn.disabled = true;
+    }
+    const dontKnowBtn = document.getElementById('dontKnowBtn');
+    if (dontKnowBtn) {
+        dontKnowBtn.disabled = false;
+    }
+    if (inputResult) {
+        inputResult.classList.add('hidden');
+    }
+    
+    // チェックボタンの状態
+    if (inputStarBtn) {
+        if (reviewWords.has(word.id)) {
+            inputStarBtn.classList.add('active');
+        } else {
+            inputStarBtn.classList.remove('active');
+        }
+    }
+    
+    updateStats();
+}
+
+// 全ての文字が入力されたかチェック
+function checkAllLettersFilled() {
+    const letterInputs = document.getElementById('letterInputs');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (!letterInputs || !submitBtn) return;
+    
+    const inputs = letterInputs.querySelectorAll('.letter-input');
+    const allFilled = Array.from(inputs).every(input => input.value.trim() !== '');
+    
+    submitBtn.disabled = !allFilled;
 }
 
 // 日本語→英語入力モードの回答送信
@@ -783,6 +917,8 @@ function submitAnswer() {
     });
     
     if (submitBtn) submitBtn.disabled = true;
+    const dontKnowBtn = document.getElementById('dontKnowBtn');
+    if (dontKnowBtn) dontKnowBtn.disabled = true;
     
     // 正解/不正解の色分け表示
     inputs.forEach((input, index) => {
@@ -811,7 +947,7 @@ function submitAnswer() {
                 currentIndex++;
                 displayInputMode();
             } else {
-                showCompletionScreen();
+                showInputCompletionScreen();
             }
         }, 2000);
     } else {
@@ -827,24 +963,21 @@ function submitAnswer() {
                 currentIndex++;
                 displayInputMode();
             } else {
-                showCompletionScreen();
+                showInputCompletionScreen();
             }
         }, 3000);
     }
 }
 
-// 完了画面を表示
-function showCompletionScreen() {
+// 日本語→英語モードの完了画面を表示
+function showInputCompletionScreen() {
     const inputMode = document.getElementById('inputMode');
-    const wordCard = document.getElementById('wordCard');
     
-    if (isInputModeActive && inputMode) {
+    if (inputMode) {
         inputMode.classList.add('hidden');
-    } else if (wordCard) {
-        wordCard.classList.add('hidden');
     }
     
-    // 完了メッセージを表示（既存のロジックを使用）
+    // 完了メッセージを表示
     showAlert('通知', `学習完了！\n覚えた数: ${correctCount}\n覚えていない数: ${wrongCount}`);
     
     // ホームに戻る
@@ -1117,115 +1250,6 @@ function applyMarkers(word) {
     elements.englishWord.style.backgroundSize = image ? '100% 100%' : '';
     elements.englishWord.style.backgroundRepeat = image ? 'no-repeat' : '';
     elements.englishWord.style.backgroundPosition = image ? '0 0' : '';
-}
-
-// 日本語→英語入力モードの表示
-function displayInputMode() {
-    if (currentIndex >= currentRangeEnd) {
-        showCompletionScreen();
-        return;
-    }
-
-    const word = currentWords[currentIndex];
-    inputAnswerSubmitted = false;
-    
-    const inputWordNumber = document.getElementById('inputWordNumber');
-    const inputMeaning = document.getElementById('inputMeaning');
-    const inputPos = document.getElementById('inputPos');
-    const letterInputs = document.getElementById('letterInputs');
-    const submitBtn = document.getElementById('submitBtn');
-    const inputResult = document.getElementById('inputResult');
-    const resultMessage = document.getElementById('resultMessage');
-    const correctAnswer = document.getElementById('correctAnswer');
-    const inputStarBtn = document.getElementById('inputStarBtn');
-    
-    if (inputWordNumber) {
-        inputWordNumber.textContent = `No.${word.id}`;
-    }
-    if (inputMeaning) {
-        inputMeaning.textContent = word.meaning;
-    }
-    if (inputPos) {
-        inputPos.textContent = word.partOfSpeech;
-    }
-    
-    // 文字数分の入力フィールドを生成
-    if (letterInputs) {
-        letterInputs.innerHTML = '';
-        const wordLength = word.word.length;
-        
-        for (let i = 0; i < wordLength; i++) {
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'letter-input';
-            input.maxLength = 1;
-            input.dataset.index = i;
-            input.autocomplete = 'off';
-            input.spellcheck = false;
-            input.inputMode = 'text'; // 手書き入力対応
-            input.setAttribute('inputmode', 'text'); // モバイルでの手書き入力パネル表示
-            
-            // 入力時の処理
-            input.addEventListener('input', (e) => {
-                const value = e.target.value.toLowerCase();
-                e.target.value = value;
-                
-                // 次のフィールドにフォーカス
-                if (value && i < wordLength - 1) {
-                    const nextInput = letterInputs.querySelector(`input[data-index="${i + 1}"]`);
-                    if (nextInput) nextInput.focus();
-                }
-                
-                // 全ての文字が入力されたら送信ボタンを有効化
-                checkAllLettersFilled();
-            });
-            
-            // バックスペースで前のフィールドに戻る
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !e.target.value && i > 0) {
-                    const prevInput = letterInputs.querySelector(`input[data-index="${i - 1}"]`);
-                    if (prevInput) prevInput.focus();
-                }
-            });
-            
-            letterInputs.appendChild(input);
-        }
-        
-        // 最初の入力フィールドにフォーカス
-        const firstInput = letterInputs.querySelector('input[data-index="0"]');
-        if (firstInput) firstInput.focus();
-    }
-    
-    if (submitBtn) {
-        submitBtn.disabled = true;
-    }
-    if (inputResult) {
-        inputResult.classList.add('hidden');
-    }
-    
-    // チェックボタンの状態
-    if (inputStarBtn) {
-        if (reviewWords.has(word.id)) {
-            inputStarBtn.classList.add('active');
-        } else {
-            inputStarBtn.classList.remove('active');
-        }
-    }
-    
-    updateStats();
-}
-
-// 全ての文字が入力されたかチェック
-function checkAllLettersFilled() {
-    const letterInputs = document.getElementById('letterInputs');
-    const submitBtn = document.getElementById('submitBtn');
-    
-    if (!letterInputs || !submitBtn) return;
-    
-    const inputs = letterInputs.querySelectorAll('.letter-input');
-    const allFilled = Array.from(inputs).every(input => input.value.trim() !== '');
-    
-    submitBtn.disabled = !allFilled;
 }
 
 // 現在の単語を表示

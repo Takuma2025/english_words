@@ -381,7 +381,7 @@ body {
     padding: 60px 16px 20px 16px; /* 上に余白を追加 */
 }
 
-/* 日本語→英語入力モード */
+/* 日本語→英語入力モード（発信語彙1000語専用） */
 .input-mode {
     flex: 1;
     display: flex;
@@ -406,7 +406,7 @@ body {
 }
 
 .input-meaning {
-    font-size: clamp(24px, 6vw, 36px);
+    font-size: clamp(18px, 4.5vw, 24px);
     font-weight: 400;
     color: #1f2937;
     margin-bottom: 12px;
@@ -415,7 +415,7 @@ body {
 
 .input-pos {
     font-size: 14px;
-    color: #6b7280;
+    color: #0055ca;
     font-weight: 600;
 }
 
@@ -426,55 +426,113 @@ body {
     margin-bottom: 24px;
 }
 
+.virtual-keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 16px 0;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 12px;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.keyboard-key {
+    min-width: 32px;
+    height: 36px;
+    padding: 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.1s;
+    box-shadow: 0 2px 0 #d1d5db, inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.keyboard-key:hover {
+    background: #f3f4f6;
+}
+
+.keyboard-key:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 #d1d5db, inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.keyboard-key-backspace {
+    min-width: 60px;
+    font-size: 18px;
+}
+
+.input-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
 .letter-inputs {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 0px;
     flex-wrap: wrap;
 }
 
 .letter-input {
-    width: 48px;
-    height: 64px;
-    font-size: 32px;
+    width: 22px;
+    height: 40px;
+    font-size: 20px;
     font-weight: 700;
     text-align: center;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    background-color: #ffffff;
+    border: none;
+    border-bottom: 2px solid #e5e7eb;
+    border-radius: 0;
+    background-color: transparent;
     transition: all 0.2s;
     box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    /* 手書き入力対応 */
-    inputmode: text;
-    -webkit-user-select: text;
-    user-select: text;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+    letter-spacing: -0.5px;
+    padding: 0 2px;
 }
 
 .letter-input:focus {
     outline: none;
-    border-color: #0055ca;
-    box-shadow: 0 0 0 3px rgba(0, 85, 202, 0.1);
+    border-bottom-color: #0055ca;
+    border-bottom-width: 3px;
 }
 
 .letter-input:disabled {
-    background-color: #f3f4f6;
+    background-color: transparent;
     cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .letter-input.correct {
-    background-color: #d1fae5;
-    border-color: #10b981;
+    background-color: transparent;
+    border-bottom-color: #10b981;
     color: #10b981;
 }
 
 .letter-input.wrong {
-    background-color: #fee2e2;
-    border-color: #ef4444;
+    background-color: transparent;
+    border-bottom-color: #ef4444;
     color: #ef4444;
 }
 
 .submit-btn {
+    flex: 1;
     padding: 14px 24px;
     background: #0055ca;
     color: #ffffff;
@@ -497,6 +555,35 @@ body {
 }
 
 .submit-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.dont-know-btn {
+    flex: 1;
+    padding: 14px 24px;
+    background: #6b7280;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 0 #4b5563, inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.dont-know-btn:hover:not(:disabled) {
+    background: #4b5563;
+}
+
+.dont-know-btn:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #4b5563, inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.dont-know-btn:disabled {
     background: #9ca3af;
     cursor: not-allowed;
     box-shadow: none;
@@ -528,6 +615,7 @@ body {
     color: #6b7280;
     font-weight: 600;
 }
+
 
 .home-btn-card {
     position: absolute;
