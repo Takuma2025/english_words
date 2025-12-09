@@ -16,17 +16,20 @@ let currentRangeEnd = 0;   // 現在の学習範囲（終了index、exclusive）
 function loadData() {
     const savedReviewWords = localStorage.getItem('reviewWords');
     if (savedReviewWords) {
-        reviewWords = new Set(JSON.parse(savedReviewWords));
+        const parsed = JSON.parse(savedReviewWords);
+        reviewWords = new Set(parsed.map(id => typeof id === 'string' ? parseInt(id, 10) : id));
     }
     
     const savedCorrectWords = localStorage.getItem('correctWords');
     if (savedCorrectWords) {
-        correctWords = new Set(JSON.parse(savedCorrectWords));
+        const parsed = JSON.parse(savedCorrectWords);
+        correctWords = new Set(parsed.map(id => typeof id === 'string' ? parseInt(id, 10) : id));
     }
     
     const savedWrongWords = localStorage.getItem('wrongWords');
     if (savedWrongWords) {
-        wrongWords = new Set(JSON.parse(savedWrongWords));
+        const parsed = JSON.parse(savedWrongWords);
+        wrongWords = new Set(parsed.map(id => typeof id === 'string' ? parseInt(id, 10) : id));
     }
 }
 
@@ -75,16 +78,31 @@ function updateCategoryStars() {
             return;
         }
         
-        // 進捗率を計算（currentIndex / total）
-        // ただし、currentIndex=0 で未開始の場合は0%
-        // currentIndex >= length で完了の場合は100%
+        // 進捗率を計算（正解数、間違い数）
+        let correctCountInCategory = 0;
+        let wrongCountInCategory = 0;
         
-        const cappedIndex = Math.min(savedIndex, categoryWords.length);
-        const progressPercent = categoryWords.length === 0
-            ? 0
-            : Math.round((cappedIndex / categoryWords.length) * 100);
+        categoryWords.forEach(word => {
+            const isCorrect = correctWords.has(word.id);
+            const isWrong = wrongWords.has(word.id);
+            
+            // 優先順位変更: 間違い(赤) > 正解(青)
+            // 間違いリストにあるものは、正解済みであっても「赤」で表示（要注意単語として）
+            // 間違いリストになく、正解リストにあるものは「青」
+            if (isWrong) {
+                wrongCountInCategory++;
+            } else if (isCorrect) {
+                correctCountInCategory++;
+            }
+        });
         
-        // 星の数を計算（0-5）
+        const total = categoryWords.length;
+        const correctPercent = total === 0 ? 0 : (correctCountInCategory / total) * 100;
+        const wrongPercent = total === 0 ? 0 : (wrongCountInCategory / total) * 100;
+        
+        // 星の数を計算（進捗率ベース：正解数で判定するのが妥当か、学習済み数で判定するか。ここでは学習済み（正解+間違い）で判定）
+        const completedCount = correctCountInCategory + wrongCountInCategory;
+        const progressPercent = total === 0 ? 0 : (completedCount / total) * 100;
         const starsCount = Math.floor(progressPercent / 20);
         
         let stars = '';
@@ -97,14 +115,29 @@ function updateCategoryStars() {
         }
         element.textContent = stars;
 
-        // 進捗バーとテキストを更新（覚えた単語/全単語）
-        const bar = document.getElementById(`progress-${category}`);
+        // 進捗バーとテキストを更新
+        const correctBar = document.getElementById(`progress-correct-${category}`);
+        const wrongBar = document.getElementById(`progress-wrong-${category}`);
         const text = document.getElementById(`progress-text-${category}`);
-        if (bar) {
-            bar.style.width = `${progressPercent}%`;
+        
+        // デバッグ用（後で削除）
+        if (category === '超よく出る600') {
+            console.log(`Category: ${category}`);
+            console.log(`Correct: ${correctCountInCategory}, Wrong: ${wrongCountInCategory}, Total: ${total}`);
+            console.log(`CorrectPercent: ${correctPercent}%, WrongPercent: ${wrongPercent}%`);
+            console.log(`CorrectWords Set:`, Array.from(correctWords).slice(0, 10));
+            console.log(`WrongWords Set:`, Array.from(wrongWords).slice(0, 10));
+        }
+        
+        if (correctBar) {
+            correctBar.style.width = `${correctPercent}%`;
+        }
+        if (wrongBar) {
+            wrongBar.style.width = `${wrongPercent}%`;
         }
         if (text) {
-            text.textContent = `${cappedIndex} / ${categoryWords.length}`;
+            // 要望により「完璧になった英単語（青）」の数を表示
+            text.textContent = `${correctCountInCategory} / ${total}`;
         }
     });
 }
@@ -117,11 +150,19 @@ function saveReviewWords() {
 // 正解済みを保存
 function saveCorrectWords() {
     localStorage.setItem('correctWords', JSON.stringify([...correctWords]));
+    // ホーム画面にいる場合は進捗を更新
+    if (!elements.mainContent.classList.contains('hidden')) {
+        // 学習画面にいる場合は更新しない（ホームに戻ったときに更新される）
+    }
 }
 
 // 間違えた単語を保存
 function saveWrongWords() {
     localStorage.setItem('wrongWords', JSON.stringify([...wrongWords]));
+    // ホーム画面にいる場合は進捗を更新
+    if (!elements.mainContent.classList.contains('hidden')) {
+        // 学習画面にいる場合は更新しない（ホームに戻ったときに更新される）
+    }
 }
 
 
@@ -280,6 +321,8 @@ function showCategorySelection() {
     
     document.body.classList.remove('learning-mode');
     
+    // 最新のデータを読み込んでから進捗を更新
+    loadData();
     updateCategoryStars(); // 星の表示を更新
 }
 
@@ -420,6 +463,22 @@ function setupEventListeners() {
             if (await showConfirm('学習を中断してホームに戻りますか？')) {
                 showCategorySelection();
             }
+        });
+    }
+    
+    // 矢印ナビゲーション
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goToPreviousWord();
+        });
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goToNextWord();
         });
     }
 }
@@ -742,7 +801,17 @@ function displayCurrentWord() {
     // elements.cardHint.textContent = 'タップでカードをひっくり返す'; // ヒントはCSSで固定表示に変更したためJS制御不要
     updateStarButton();
     updateStats();
-    // updateNavButtons();
+    updateNavButtons(); // ボタン状態更新
+}
+
+// ナビゲーションボタンの状態更新
+function updateNavButtons() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    if (!prevBtn || !nextBtn) return;
+    
+    prevBtn.disabled = currentIndex <= 0;
+    nextBtn.disabled = currentIndex >= currentRangeEnd - 1;
 }
 
 // 完璧としてマーク（上スワイプ）

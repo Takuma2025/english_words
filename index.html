@@ -38,7 +38,8 @@
                             <div class="category-meta">必須の600語</div>
                             <div class="category-progress">
                                 <div class="category-progress-bar">
-                                    <div class="category-progress-fill" id="progress-超よく出る600"></div>
+                                    <div class="category-progress-correct" id="progress-correct-超よく出る600" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" id="progress-wrong-超よく出る600" style="width: 0%"></div>
                                 </div>
                                 <div class="category-progress-text" id="progress-text-超よく出る600">0/0</div>
                             </div>
@@ -56,7 +57,8 @@
                             <div class="category-meta">差をつける300語</div>
                             <div class="category-progress">
                                 <div class="category-progress-bar">
-                                    <div class="category-progress-fill" id="progress-よく出る300"></div>
+                                    <div class="category-progress-correct" id="progress-correct-よく出る300" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" id="progress-wrong-よく出る300" style="width: 0%"></div>
                                 </div>
                                 <div class="category-progress-text" id="progress-text-よく出る300">0/0</div>
                             </div>
@@ -74,7 +76,8 @@
                             <div class="category-meta">難関突破の200語</div>
                             <div class="category-progress">
                                 <div class="category-progress-bar">
-                                    <div class="category-progress-fill" id="progress-差がつく200"></div>
+                                    <div class="category-progress-correct" id="progress-correct-差がつく200" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" id="progress-wrong-差がつく200" style="width: 0%"></div>
                                 </div>
                                 <div class="category-progress-text" id="progress-text-差がつく200">0/0</div>
                             </div>
@@ -101,6 +104,13 @@
                 <div class="card-area-wrapper">
                     <button class="home-btn-card hidden" id="homeBtn">
                         ホームに戻る
+                    </button>
+                    <!-- 左右の矢印ボタン（カードエリアに配置） -->
+                    <button class="nav-arrow-btn prev-arrow" id="prevBtn" aria-label="前の単語">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button class="nav-arrow-btn next-arrow" id="nextBtn" aria-label="次の単語">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
                     <div class="word-card" id="wordCard">
                         <div class="card-inner" id="cardInner">

@@ -29,8 +29,10 @@ body {
     background-color: #f5f5f5; /* 薄いグレー */
     color: #1f2937; /* ダークグレー */
     line-height: 1.5;
-    min-height: 100vh;
-    min-height: 100dvh; /* 動的ビューポート高さ */
+    height: 100vh;
+    height: 100dvh; /* 動的ビューポート高さ */
+    width: 100%;
+    overflow: hidden; /* 全体のスクロールを禁止 */
     margin: 0;
     padding: 0;
     touch-action: pan-y;
@@ -40,11 +42,7 @@ body {
 /* PWAとして表示されている場合のみ固定 */
 @media (display-mode: standalone) {
     body {
-        height: 100vh;
-        height: 100dvh;
-        overflow: hidden;
         position: fixed;
-        width: 100%;
     }
 }
 
@@ -81,24 +79,17 @@ body {
 .app-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    min-height: 100dvh; /* 動的ビューポート高さ */
+    height: 100%;
+    width: 100%;
     position: relative;
     z-index: 1;
-    padding-top: var(--header-height);
+    overflow: hidden;
 }
 
-/* PWAとして表示されている場合のみ固定 */
+/* PWA設定の重複を削除 */
 @media (display-mode: standalone) {
     .app-container {
-        height: 100vh;
-        height: 100dvh;
-        overflow: hidden;
-    }
-    
-    .app-main {
-        height: calc(100vh - var(--header-height));
-        height: calc(100dvh - var(--header-height));
+        height: 100%;
     }
 }
 
@@ -110,12 +101,10 @@ body {
     align-items: center;
     justify-content: center;
     padding: 0 16px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: relative; /* 固定配置をやめる */
     z-index: 10;
-    flex-shrink: 0;
+    flex-shrink: 0; /* 縮小しない */
+    width: 100%;
 }
 
 
@@ -144,8 +133,7 @@ body {
     margin: 0 auto;
     width: 100%;
     box-sizing: border-box;
-    height: calc(100vh - var(--header-height));
-    height: calc(100dvh - var(--header-height));
+    /* 高さはflexで自動調整されるため指定不要 */
 }
 
 /* Category View */
@@ -230,18 +218,36 @@ body {
 }
 
 .category-progress-bar {
-    height: 6px;
+    height: 12px;
     background: #e5e7eb;
     border-radius: 999px;
     overflow: hidden;
+    display: flex; /* フレックスボックスにしてバーを並べる */
+    flex-direction: row;
+    width: 100%;
 }
 
 .category-progress-fill {
     height: 100%;
     width: 0%;
     background: #0055ca;
-    border-radius: 999px;
     transition: width 0.25s ease;
+}
+
+.category-progress-correct {
+    height: 100%;
+    min-width: 0;
+    background: #3b82f6; /* 青 (#60a5faより濃いめ) */
+    transition: width 0.25s ease;
+    flex-shrink: 0;
+}
+
+.category-progress-wrong {
+    height: 100%;
+    min-width: 0;
+    background: #ef4444; /* 赤 (#f87171より濃いめ) */
+    transition: width 0.25s ease;
+    flex-shrink: 0;
 }
 
 .category-progress-text {
@@ -335,6 +341,55 @@ body {
     box-shadow: 0 1px 2px rgba(14, 165, 233, 0.2),
                 0 0 1px rgba(0, 0, 0, 0.1),
                 inset 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* 矢印ナビゲーション */
+.nav-arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #e2e8f0;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    z-index: 10;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+    /* カードと被らないように配置 */
+}
+
+.nav-arrow-btn:active {
+    background: #f1f5f9;
+    transform: translateY(-50%) scale(0.95);
+}
+
+.nav-arrow-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.prev-arrow {
+    left: 8px;
+}
+
+.next-arrow {
+    right: 8px;
+}
+
+@media (min-width: 600px) {
+    .prev-arrow {
+        left: -20px;
+    }
+    .next-arrow {
+        right: -20px;
+    }
 }
 
 .word-card {
