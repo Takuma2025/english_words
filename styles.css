@@ -1025,11 +1025,15 @@ body {
     background: #ffffff;
     width: 90%;
     max-width: 400px;
+    max-height: 85vh;
     border-radius: 12px;
     padding: 24px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
     transform: scale(0.95);
     transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .modal-overlay.active .modal-container {
@@ -1042,6 +1046,7 @@ body {
     margin-bottom: 8px;
     text-align: center;
     color: #1f2937;
+    flex-shrink: 0;
 }
 
 .modal-message {
@@ -1050,12 +1055,17 @@ body {
     margin-bottom: 24px;
     text-align: center;
     line-height: 1.5;
+    flex-shrink: 0;
 }
 
 .modal-actions {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    -webkit-overflow-scrolling: touch;
 }
 
 .method-selection-list {
