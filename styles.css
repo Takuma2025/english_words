@@ -49,7 +49,8 @@ body::before {
     right: 0;
     height: env(safe-area-inset-top);
     background-color: #0055ca;
-    z-index: 1000;
+    z-index: 999;
+    pointer-events: none;
 }
 
 /* PWAとして表示されている場合のみ固定 */
@@ -97,6 +98,9 @@ body::before {
     position: relative;
     z-index: 1;
     overflow: hidden;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    box-sizing: border-box;
 }
 
 /* PWA設定の重複を削除 */
@@ -114,14 +118,11 @@ body::before {
     align-items: center;
     justify-content: center;
     padding: 0 16px;
-    padding-top: env(safe-area-inset-top);
     position: relative; /* 固定配置をやめる */
     z-index: 10;
     flex-shrink: 0; /* 縮小しない */
     width: 100%;
-    min-height: calc(var(--header-height) + env(safe-area-inset-top));
     box-sizing: border-box;
-    margin-top: calc(-1 * env(safe-area-inset-top));
 }
 
 
@@ -146,7 +147,6 @@ body::before {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 16px;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom));
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
