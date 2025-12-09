@@ -40,18 +40,7 @@ body {
     position: relative;
 }
 
-/* ノッチ部分を青で埋める疑似要素 */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: env(safe-area-inset-top);
-    background-color: #0055ca;
-    z-index: 999;
-    pointer-events: none;
-}
+/* ノッチ部分は削除（app-headerで対応） */
 
 /* PWAとして表示されている場合のみ固定 */
 @media (display-mode: standalone) {
@@ -108,18 +97,18 @@ body::before {
 }
 
 .app-header {
-    height: var(--header-height);
+    min-height: calc(var(--header-height) + env(safe-area-inset-top));
     background: #0055ca;
     border-bottom: 1px solid #0044a0;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: env(safe-area-inset-top) 16px 0 16px;
-    position: relative; /* 固定配置をやめる */
-    z-index: 1001; /* body::beforeより前面に */
-    flex-shrink: 0; /* 縮小しない */
+    position: relative;
+    z-index: 1001;
+    flex-shrink: 0;
     width: 100%;
-    box-sizing: content-box; /* paddingを高さに含めない */
+    box-sizing: border-box;
 }
 
 
