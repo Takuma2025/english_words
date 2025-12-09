@@ -11,6 +11,8 @@ let wrongWords = new Set();
 let isCardRevealed = false;
 let currentRangeStart = 0; // 現在の学習範囲（開始index）
 let currentRangeEnd = 0;   // 現在の学習範囲（終了index、exclusive）
+let isInputModeActive = false; // 日本語→英語入力モードかどうか
+let inputAnswerSubmitted = false; // 入力回答が送信済みかどうか
 
 // localStorageから復習チェック、間違い、進捗を読み込む
 function loadData() {
@@ -494,6 +496,23 @@ function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex
         });
         methodList.appendChild(wrongCard);
     }
+
+    // チェックした問題のみ（チェックがある場合のみ）
+    const checkedWordsInCourse = courseWords.filter(word => reviewWords.has(word.id));
+    if (checkedWordsInCourse.length > 0) {
+        const checkedCard = createMethodCard(`チェックした問題のみ (${checkedWordsInCourse.length}問)`, 'チェックをつけた単語だけを復習します', () => {
+            closeModal();
+            initLearning('チェックした問題', checkedWordsInCourse, 0, checkedWordsInCourse.length, 0);
+        });
+        methodList.appendChild(checkedCard);
+    }
+
+    // 日本語→英語コース（常に表示）
+    const jpToEnCard = createMethodCard('日本語→英語', '日本語を見て英語を入力する問題', () => {
+        closeModal();
+        initLearning('日本語→英語', courseWords, 0, courseWords.length, courseStart, true);
+    });
+    methodList.appendChild(jpToEnCard);
     
     elements.modalActions.appendChild(methodList);
     
@@ -535,9 +554,11 @@ function createMethodCard(title, description, onClick) {
 // 学習初期化処理（共通化）
 // rangeEnd: 学習範囲の終了index（exclusive）
 // rangeStartOverride: 進捗計算に用いる開始index（表示開始位置をずらすため）
-function initLearning(category, words, startIndex = 0, rangeEnd = undefined, rangeStartOverride = undefined) {
+// isInputMode: 日本語→英語入力モードかどうか
+function initLearning(category, words, startIndex = 0, rangeEnd = undefined, rangeStartOverride = undefined, isInputMode = false) {
     selectedCategory = category;
     currentWords = words;
+    isInputModeActive = isInputMode;
     
     const start = Math.max(0, startIndex || 0);
     const end = typeof rangeEnd === 'number' ? Math.min(rangeEnd, currentWords.length) : currentWords.length;
@@ -579,7 +600,23 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         elements.mainContent.classList.remove('mode-mistake');
     }
 
-    displayCurrentWord();
+    // 入力モードとカードモードの切り替え
+    const wordCard = document.getElementById('wordCard');
+    const inputMode = document.getElementById('inputMode');
+    const cardHint = document.getElementById('cardHint');
+    
+    if (isInputMode) {
+        wordCard.classList.add('hidden');
+        inputMode.classList.remove('hidden');
+        if (cardHint) cardHint.classList.add('hidden');
+        displayInputMode();
+    } else {
+        wordCard.classList.remove('hidden');
+        inputMode.classList.add('hidden');
+        if (cardHint) cardHint.classList.remove('hidden');
+        displayCurrentWord();
+    }
+    
     updateStats();
     updateNavState('learning');
 }
@@ -693,6 +730,127 @@ function setupEventListeners() {
         });
     }
     
+    // 日本語→英語入力モードのイベントリスナー
+    const submitBtn = document.getElementById('submitBtn');
+    const inputStarBtn = document.getElementById('inputStarBtn');
+    
+    if (submitBtn) {
+        // 送信ボタン
+        submitBtn.addEventListener('click', () => {
+            submitAnswer();
+        });
+        
+        // Enterキーで送信（グローバルイベント）
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && isInputModeActive && !submitBtn.disabled && !inputAnswerSubmitted) {
+                submitAnswer();
+            }
+        });
+    }
+    
+    if (inputStarBtn) {
+        inputStarBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleReview();
+        });
+    }
+    
+}
+
+// 日本語→英語入力モードの回答送信
+function submitAnswer() {
+    if (inputAnswerSubmitted || currentIndex >= currentRangeEnd) return;
+    
+    const word = currentWords[currentIndex];
+    const letterInputs = document.getElementById('letterInputs');
+    const submitBtn = document.getElementById('submitBtn');
+    const inputResult = document.getElementById('inputResult');
+    const resultMessage = document.getElementById('resultMessage');
+    const correctAnswer = document.getElementById('correctAnswer');
+    
+    if (!letterInputs || !inputResult || !resultMessage || !correctAnswer) return;
+    
+    // 入力された文字を結合
+    const inputs = letterInputs.querySelectorAll('.letter-input');
+    const userAnswer = Array.from(inputs).map(input => input.value.trim()).join('').toLowerCase();
+    const correctWord = word.word.toLowerCase();
+    
+    inputAnswerSubmitted = true;
+    
+    // 入力フィールドを無効化
+    inputs.forEach(input => {
+        input.disabled = true;
+    });
+    
+    if (submitBtn) submitBtn.disabled = true;
+    
+    // 正解/不正解の色分け表示
+    inputs.forEach((input, index) => {
+        const userChar = input.value.trim().toLowerCase();
+        const correctChar = word.word[index].toLowerCase();
+        
+        if (userChar === correctChar) {
+            input.classList.add('correct');
+        } else {
+            input.classList.add('wrong');
+        }
+    });
+    
+    inputResult.classList.remove('hidden');
+    
+    if (userAnswer === correctWord) {
+        // 正解
+        resultMessage.textContent = '正解！';
+        resultMessage.className = 'result-message correct';
+        correctAnswer.textContent = '';
+        markAnswer(true);
+        
+        // 2秒後に次の問題へ
+        setTimeout(() => {
+            if (currentIndex < currentRangeEnd - 1) {
+                currentIndex++;
+                displayInputMode();
+            } else {
+                showCompletionScreen();
+            }
+        }, 2000);
+    } else {
+        // 不正解
+        resultMessage.textContent = '不正解';
+        resultMessage.className = 'result-message wrong';
+        correctAnswer.textContent = `正解: ${word.word}`;
+        markAnswer(false);
+        
+        // 3秒後に次の問題へ
+        setTimeout(() => {
+            if (currentIndex < currentRangeEnd - 1) {
+                currentIndex++;
+                displayInputMode();
+            } else {
+                showCompletionScreen();
+            }
+        }, 3000);
+    }
+}
+
+// 完了画面を表示
+function showCompletionScreen() {
+    const inputMode = document.getElementById('inputMode');
+    const wordCard = document.getElementById('wordCard');
+    
+    if (isInputModeActive && inputMode) {
+        inputMode.classList.add('hidden');
+    } else if (wordCard) {
+        wordCard.classList.add('hidden');
+    }
+    
+    // 完了メッセージを表示（既存のロジックを使用）
+    showAlert('通知', `学習完了！\n覚えた数: ${correctCount}\n覚えていない数: ${wrongCount}`);
+    
+    // ホームに戻る
+    setTimeout(() => {
+        showCategorySelection();
+    }, 2000);
 }
 
 // 前の単語に移動（履歴ベースではなく単純なインデックス操作）
@@ -959,6 +1117,115 @@ function applyMarkers(word) {
     elements.englishWord.style.backgroundSize = image ? '100% 100%' : '';
     elements.englishWord.style.backgroundRepeat = image ? 'no-repeat' : '';
     elements.englishWord.style.backgroundPosition = image ? '0 0' : '';
+}
+
+// 日本語→英語入力モードの表示
+function displayInputMode() {
+    if (currentIndex >= currentRangeEnd) {
+        showCompletionScreen();
+        return;
+    }
+
+    const word = currentWords[currentIndex];
+    inputAnswerSubmitted = false;
+    
+    const inputWordNumber = document.getElementById('inputWordNumber');
+    const inputMeaning = document.getElementById('inputMeaning');
+    const inputPos = document.getElementById('inputPos');
+    const letterInputs = document.getElementById('letterInputs');
+    const submitBtn = document.getElementById('submitBtn');
+    const inputResult = document.getElementById('inputResult');
+    const resultMessage = document.getElementById('resultMessage');
+    const correctAnswer = document.getElementById('correctAnswer');
+    const inputStarBtn = document.getElementById('inputStarBtn');
+    
+    if (inputWordNumber) {
+        inputWordNumber.textContent = `No.${word.id}`;
+    }
+    if (inputMeaning) {
+        inputMeaning.textContent = word.meaning;
+    }
+    if (inputPos) {
+        inputPos.textContent = word.partOfSpeech;
+    }
+    
+    // 文字数分の入力フィールドを生成
+    if (letterInputs) {
+        letterInputs.innerHTML = '';
+        const wordLength = word.word.length;
+        
+        for (let i = 0; i < wordLength; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'letter-input';
+            input.maxLength = 1;
+            input.dataset.index = i;
+            input.autocomplete = 'off';
+            input.spellcheck = false;
+            input.inputMode = 'text'; // 手書き入力対応
+            input.setAttribute('inputmode', 'text'); // モバイルでの手書き入力パネル表示
+            
+            // 入力時の処理
+            input.addEventListener('input', (e) => {
+                const value = e.target.value.toLowerCase();
+                e.target.value = value;
+                
+                // 次のフィールドにフォーカス
+                if (value && i < wordLength - 1) {
+                    const nextInput = letterInputs.querySelector(`input[data-index="${i + 1}"]`);
+                    if (nextInput) nextInput.focus();
+                }
+                
+                // 全ての文字が入力されたら送信ボタンを有効化
+                checkAllLettersFilled();
+            });
+            
+            // バックスペースで前のフィールドに戻る
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && i > 0) {
+                    const prevInput = letterInputs.querySelector(`input[data-index="${i - 1}"]`);
+                    if (prevInput) prevInput.focus();
+                }
+            });
+            
+            letterInputs.appendChild(input);
+        }
+        
+        // 最初の入力フィールドにフォーカス
+        const firstInput = letterInputs.querySelector('input[data-index="0"]');
+        if (firstInput) firstInput.focus();
+    }
+    
+    if (submitBtn) {
+        submitBtn.disabled = true;
+    }
+    if (inputResult) {
+        inputResult.classList.add('hidden');
+    }
+    
+    // チェックボタンの状態
+    if (inputStarBtn) {
+        if (reviewWords.has(word.id)) {
+            inputStarBtn.classList.add('active');
+        } else {
+            inputStarBtn.classList.remove('active');
+        }
+    }
+    
+    updateStats();
+}
+
+// 全ての文字が入力されたかチェック
+function checkAllLettersFilled() {
+    const letterInputs = document.getElementById('letterInputs');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (!letterInputs || !submitBtn) return;
+    
+    const inputs = letterInputs.querySelectorAll('.letter-input');
+    const allFilled = Array.from(inputs).every(input => input.value.trim() !== '');
+    
+    submitBtn.disabled = !allFilled;
 }
 
 // 現在の単語を表示

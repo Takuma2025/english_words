@@ -134,6 +134,7 @@
                     <button class="nav-arrow-btn next-arrow" id="nextBtn" aria-label="次の単語">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
+                    <!-- 通常のカード学習モード -->
                     <div class="word-card" id="wordCard">
                         <div class="card-inner" id="cardInner">
                             <div class="card-face card-front">
@@ -158,6 +159,32 @@
                                         <!-- 裏面にも品詞を表示 -->
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 日本語→英語入力モード -->
+                    <div class="input-mode hidden" id="inputMode">
+                        <div class="input-mode-content">
+                            <div class="card-top-info">
+                                <div class="word-number" id="inputWordNumber">No.1</div>
+                                <button class="star-btn" id="inputStarBtn">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                                </button>
+                            </div>
+                            <div class="input-question">
+                                <div class="input-meaning" id="inputMeaning">意味</div>
+                                <div class="input-pos" id="inputPos">品詞</div>
+                            </div>
+                            <div class="input-container">
+                                <div class="letter-inputs" id="letterInputs">
+                                    <!-- 動的に生成 -->
+                                </div>
+                                <button class="submit-btn" id="submitBtn">送信</button>
+                            </div>
+                            <div class="input-result hidden" id="inputResult">
+                                <div class="result-message" id="resultMessage"></div>
+                                <div class="correct-answer" id="correctAnswer"></div>
                             </div>
                         </div>
                     </div>
