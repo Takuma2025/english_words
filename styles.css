@@ -85,6 +85,7 @@ body {
     min-height: 100dvh; /* 動的ビューポート高さ */
     position: relative;
     z-index: 1;
+    padding-top: var(--header-height);
 }
 
 /* PWAとして表示されている場合のみ固定 */
@@ -93,6 +94,11 @@ body {
         height: 100vh;
         height: 100dvh;
         overflow: hidden;
+    }
+    
+    .app-main {
+        height: calc(100vh - var(--header-height));
+        height: calc(100dvh - var(--header-height));
     }
 }
 
@@ -104,9 +110,12 @@ body {
     align-items: center;
     justify-content: center;
     padding: 0 16px;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 10;
+    flex-shrink: 0;
 }
 
 
@@ -135,6 +144,8 @@ body {
     margin: 0 auto;
     width: 100%;
     box-sizing: border-box;
+    height: calc(100vh - var(--header-height));
+    height: calc(100dvh - var(--header-height));
 }
 
 /* Category View */
