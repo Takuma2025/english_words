@@ -140,9 +140,6 @@ const elements = {
     // categoryBadge: document.getElementById('categoryBadge'), // 削除
     starBtn: document.getElementById('starBtn'),
     meaning: document.getElementById('meaning'),
-    // exampleEn: document.getElementById('exampleEn'), // 削除
-    // exampleJp: document.getElementById('exampleJp'), // 削除
-    // showWrongWordsBtn: document.getElementById('showWrongWordsBtn'), // 削除
     progressText: document.getElementById('progressText'),
     progressFill: document.getElementById('progressFill'),
     // remaining: document.getElementById('remaining'), // 削除
@@ -734,14 +731,6 @@ function displayCurrentWord() {
     const posContainerBack = document.getElementById('posContainerBack');
     if (posContainerBack) {
         posContainerBack.innerHTML = elements.posContainer.innerHTML;
-    }
-    
-    // 用例を表示
-    const exampleEn = document.getElementById('exampleEn');
-    const exampleJp = document.getElementById('exampleJp');
-    if (exampleEn && exampleJp && word.example) {
-        exampleEn.textContent = word.example.english || '';
-        exampleJp.textContent = word.example.japanese || '';
     }
     
     // スタイルリセット
