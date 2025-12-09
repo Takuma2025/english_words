@@ -426,54 +426,6 @@ body {
     margin-bottom: 24px;
 }
 
-.virtual-keyboard {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin: 16px 0;
-    padding: 12px;
-    background: #f9fafb;
-    border-radius: 12px;
-}
-
-.keyboard-row {
-    display: flex;
-    justify-content: center;
-    gap: 4px;
-    flex-wrap: wrap;
-}
-
-.keyboard-key {
-    min-width: 32px;
-    height: 36px;
-    padding: 0 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #1f2937;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.1s;
-    box-shadow: 0 2px 0 #d1d5db, inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-.keyboard-key:hover {
-    background: #f3f4f6;
-}
-
-.keyboard-key:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 0 #d1d5db, inset 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.keyboard-key-backspace {
-    min-width: 60px;
-    font-size: 18px;
-}
-
 .input-actions {
     display: flex;
     gap: 12px;
@@ -1154,6 +1106,10 @@ body {
     flex: 1;
     min-height: 0;
     -webkit-overflow-scrolling: touch;
+    padding-right: 4px;
+    padding-bottom: 12px;
+    margin-right: -4px;
+    margin-bottom: -12px;
 }
 
 .method-selection-list {
@@ -1161,6 +1117,7 @@ body {
     flex-direction: column;
     gap: 12px;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .method-card {
@@ -1220,6 +1177,7 @@ body {
     cursor: pointer;
     position: relative;
     transition: all 0.1s;
+    box-sizing: border-box;
     box-shadow: 
         0 4px 0 rgba(0, 0, 0, 0.2),
         0 2px 4px rgba(0, 0, 0, 0.1),

@@ -845,15 +845,39 @@ function displayInputMode() {
             input.dataset.index = i;
             input.autocomplete = 'off';
             input.spellcheck = false;
-            input.readOnly = true; // 物理キーボード入力を無効化
-            input.inputMode = 'none'; // 物理キーボードを表示しない
+            input.inputMode = 'text';
+            input.setAttribute('inputmode', 'text');
+            
+            // 入力時の処理
+            input.addEventListener('input', (e) => {
+                const value = e.target.value.toLowerCase();
+                e.target.value = value;
+                
+                // 次のフィールドにフォーカス
+                if (value && i < wordLength - 1) {
+                    const nextInput = letterInputs.querySelector(`input[data-index="${i + 1}"]`);
+                    if (nextInput) nextInput.focus();
+                }
+                
+                // 全ての文字が入力されたら送信ボタンを有効化
+                checkAllLettersFilled();
+            });
+            
+            // バックスペースで前のフィールドに戻る
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && i > 0) {
+                    const prevInput = letterInputs.querySelector(`input[data-index="${i - 1}"]`);
+                    if (prevInput) prevInput.focus();
+                }
+            });
             
             letterInputs.appendChild(input);
         }
+        
+        // 最初の入力フィールドにフォーカス
+        const firstInput = letterInputs.querySelector('input[data-index="0"]');
+        if (firstInput) firstInput.focus();
     }
-    
-    // 仮想キーボードを生成
-    createVirtualKeyboard();
     
     if (submitBtn) {
         submitBtn.disabled = true;
