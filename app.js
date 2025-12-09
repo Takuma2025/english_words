@@ -332,6 +332,12 @@ function showCategorySelection() {
         elements.homeBtn.classList.add('hidden');
     }
     
+    // 設定ボタンを表示
+    const settingsBtn = document.getElementById('settingsBtn');
+    if (settingsBtn) {
+        settingsBtn.classList.remove('hidden');
+    }
+    
     document.body.classList.remove('learning-mode');
     
     // 最新のデータを読み込んでから進捗を更新
@@ -415,6 +421,12 @@ function showCourseSelection(category, categoryWords) {
     
     courseSelection.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
+    
+    // 設定ボタンを表示
+    const settingsBtn = document.getElementById('settingsBtn');
+    if (settingsBtn) {
+        settingsBtn.classList.remove('hidden');
+    }
 }
 
 // コースカードを作成
@@ -467,7 +479,7 @@ function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex
     // 前回の続きから（保存済みインデックスがこのコース範囲内にある場合のみ）
     if (hasProgress && savedIndex >= courseStart && savedIndex < courseEnd) {
         const relativeIndex = savedIndex - courseStart;
-        const continueCard = createMethodCard(`前回の続きから (No.${savedIndex + 1})`, '前回の続きから学習を再開します', () => {
+        const continueCard = createMethodCard('前回の続きから', '前回の続きから学習を再開します', () => {
             closeModal();
             initLearning(category, courseWords, relativeIndex, courseWords.length, savedIndex);
         });
@@ -546,6 +558,12 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     }
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
+    
+    // 設定ボタンを非表示
+    const settingsBtn = document.getElementById('settingsBtn');
+    if (settingsBtn) {
+        settingsBtn.classList.add('hidden');
+    }
     
     document.body.classList.add('learning-mode');
     
@@ -646,6 +664,32 @@ function setupEventListeners() {
             }
             elements.categorySelection.classList.remove('hidden');
             elements.headerSubtitle.textContent = '大阪府公立高校対応';
+        });
+    }
+    
+    // 設定メニューボタン
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsMenu = document.getElementById('settingsMenu');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    
+    if (settingsBtn && settingsMenu) {
+        settingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            settingsMenu.classList.toggle('hidden');
+        });
+        
+        // メニュー外をクリックで閉じる
+        document.addEventListener('click', (e) => {
+            if (settingsMenu && !settingsMenu.contains(e.target) && !settingsBtn.contains(e.target)) {
+                settingsMenu.classList.add('hidden');
+            }
+        });
+    }
+    
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener('click', () => {
+            settingsMenu.classList.add('hidden');
+            clearLearningHistory();
         });
     }
     
@@ -841,10 +885,8 @@ function updateStarButton() {
     const word = currentWords[currentIndex];
     if (reviewWords.has(word.id)) {
         elements.starBtn.classList.add('active');
-        elements.starBtn.querySelector('svg').setAttribute('fill', '#fbbf24');
     } else {
         elements.starBtn.classList.remove('active');
-        elements.starBtn.querySelector('svg').setAttribute('fill', 'none');
     }
 }
 
@@ -1133,11 +1175,15 @@ function showCompletion() {
 // 統計を更新
 function updateStats() {
     const total = currentRangeEnd - currentRangeStart;
-    const answered = Math.min(answeredWords.size, total);
-    const progressPercent = total > 0 ? (answered / total) * 100 : 0;
+    // 現在見ている英単語の位置（1から始まる）
+    const currentPosition = currentIndex + 1;
+    // 進捗率は現在位置を基準に計算
+    const progressPercent = total > 0 ? Math.min((currentPosition / total) * 100, 100) : 0;
     
-    elements.progressText.textContent = `${answered} / ${total}`;
-    elements.progressFill.style.width = `${progressPercent}%`;
+    elements.progressText.textContent = `${currentPosition} / ${total}`;
+    if (elements.progressFill) {
+        elements.progressFill.style.width = `${progressPercent}%`;
+    }
 }
 
 // リセット
@@ -1152,6 +1198,32 @@ function resetApp() {
             } else {
                 showCategorySelection();
             }
+        }
+    });
+}
+
+// 学習履歴を消す
+function clearLearningHistory() {
+    showConfirm('全ての学習履歴を消去しますか？\n（正解・間違い・復習チェック・進捗が全て消えます）').then(result => {
+        if (result) {
+            // 全ての学習履歴をクリア
+            correctWords.clear();
+            wrongWords.clear();
+            reviewWords.clear();
+            
+            // localStorageからも削除
+            localStorage.removeItem('correctWords');
+            localStorage.removeItem('wrongWords');
+            localStorage.removeItem('reviewWords');
+            localStorage.removeItem('learningProgress');
+            
+            // 画面を更新
+            if (elements.categorySelection && !elements.categorySelection.classList.contains('hidden')) {
+                loadData();
+                updateCategoryStars();
+            }
+            
+            showAlert('通知', '学習履歴を消去しました。');
         }
     });
 }

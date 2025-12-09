@@ -566,7 +566,6 @@ body {
 
 .star-btn.active {
     color: var(--warning);
-    fill: var(--warning);
 }
 
 .english-word {
@@ -748,6 +747,107 @@ body {
 
 .nav-item:active {
     transform: scale(0.95);
+}
+
+/* Settings Button */
+.settings-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    background: #6b7280;
+    border: none;
+    border-radius: 50%;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
+    transition: all 0.3s;
+    z-index: 1000;
+    padding: 0;
+}
+
+.settings-btn.hidden {
+    display: none;
+}
+
+.settings-btn:hover {
+    background: #4b5563;
+    box-shadow: 0 6px 16px rgba(107, 114, 128, 0.5);
+    transform: scale(1.05);
+}
+
+.settings-btn:active {
+    transform: scale(0.95);
+    background: #374151;
+}
+
+.settings-menu {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 220px;
+    z-index: 1001;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+}
+
+.settings-menu:not(.hidden) {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.settings-menu-header {
+    padding: 14px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.settings-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 18px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.settings-menu-item:hover {
+    background-color: #f3f4f6;
+}
+
+.settings-menu-item:active {
+    background-color: #e5e7eb;
+}
+
+.settings-menu-item svg {
+    color: #6b7280;
+    flex-shrink: 0;
+}
+
+.settings-menu-item span {
+    flex: 1;
 }
 
 /* Modal */
