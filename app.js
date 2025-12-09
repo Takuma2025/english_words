@@ -215,6 +215,15 @@ function showModal(title, message, actions) {
         elements.modalActions.appendChild(btn);
     });
     
+    // 背景クリックで閉じるイベント
+    const handleOverlayClick = (e) => {
+        if (e.target === elements.modalOverlay) {
+            closeModal();
+            elements.modalOverlay.removeEventListener('click', handleOverlayClick);
+        }
+    };
+    elements.modalOverlay.addEventListener('click', handleOverlayClick);
+    
     elements.modalOverlay.classList.remove('hidden');
     // アニメーション用
     setTimeout(() => {
@@ -341,29 +350,21 @@ function startCategory(category) {
     const savedIndex = loadProgress(category);
     const hasProgress = savedIndex > 0 && savedIndex < categoryWords.length;
 
-    const CHUNK = 100;
     const actions = [];
 
-    // 続きから（保存済みインデックスを含むブロックで再開）
-    if (hasProgress) {
-        const chunkStart = Math.floor(savedIndex / CHUNK) * CHUNK;
-        const chunkEnd = Math.min(chunkStart + CHUNK, categoryWords.length);
-        actions.push({
-            text: `続きから (No.${savedIndex + 1})`,
-            type: 'confirm',
-            onClick: () => initLearning(category, categoryWords, savedIndex, chunkEnd, savedIndex)
-        });
-    }
+    // はじめから（常に表示）
+    actions.push({
+        text: 'はじめから',
+        type: 'confirm',
+        onClick: () => initLearning(category, categoryWords, 0, categoryWords.length, 0)
+    });
 
-    // 100語ごとのメニュー
-    const chunkCount = Math.ceil(categoryWords.length / CHUNK);
-    for (let i = 0; i < chunkCount; i++) {
-        const start = i * CHUNK;
-        const end = Math.min((i + 1) * CHUNK, categoryWords.length);
+    // 続きから（保存済みインデックスがある場合のみ）
+    if (hasProgress) {
         actions.push({
-            text: `No.${start + 1} - No.${end}`,
+            text: `つづきから (No.${savedIndex + 1})`,
             type: 'confirm',
-            onClick: () => initLearning(category, categoryWords, start, end, start)
+            onClick: () => initLearning(category, categoryWords, savedIndex, categoryWords.length, savedIndex)
         });
     }
 
@@ -376,7 +377,7 @@ function startCategory(category) {
         });
     }
 
-    showModal(`${category}`, '学習する範囲を選んでください', actions);
+    showModal(`${category}`, '学習方法を選んでください', actions);
 }
 
 // 学習初期化処理（共通化）
@@ -481,6 +482,15 @@ function setupEventListeners() {
             goToNextWord();
         });
     }
+    
+    // シャッフルボタン
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    if (shuffleBtn) {
+        shuffleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            shuffleWords();
+        });
+    }
 }
 
 // 前の単語に移動（履歴ベースではなく単純なインデックス操作）
@@ -554,6 +564,10 @@ function setupSwipeDetection(card) {
 
     const handleMove = (e) => {
         if (!isDragging) return;
+        
+        // 表面ならスワイプ無効
+        if (!card.classList.contains('flipped')) return;
+        
         const point = getPoint(e);
         const dx = point.x - startX;
         const dy = point.y - startY;
@@ -563,12 +577,12 @@ function setupSwipeDetection(card) {
 
         // 横スワイプまたは上スワイプ
         if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) {
-            // 横移動
+            // 裏面：正解/不正解（回転あり）
             card.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
             const opacityDrop = Math.min(Math.abs(dx) / 180, 0.18);
             card.style.opacity = `${1 - opacityDrop}`;
         } else if (isMistakeMode && dy < -6 && Math.abs(dy) > Math.abs(dx)) {
-            // 上移動（完璧）- 間違い復習モードのみ
+            // 上移動（完璧）- 裏面のみ
             card.style.transform = `translateY(${dy}px) scale(${1 + dy/1000})`;
             const opacityDrop = Math.min(Math.abs(dy) / 180, 0.18);
             card.style.opacity = `${1 - opacityDrop}`;
@@ -577,11 +591,15 @@ function setupSwipeDetection(card) {
 
     const handleEnd = (e) => {
         if (!isDragging) return;
+        isDragging = false;
+        card.classList.remove('dragging');
+        
+        // 表面なら処理しない
+        if (!card.classList.contains('flipped')) return;
+
         const point = getPoint(e);
         const dx = point.x - startX;
         const dy = point.y - startY;
-        isDragging = false;
-        card.classList.remove('dragging');
 
         const threshold = 80;
         const isHorizontal = Math.abs(dx) > Math.abs(dy);
@@ -591,6 +609,7 @@ function setupSwipeDetection(card) {
         card.style.transition = '';
 
         if (isHorizontal && Math.abs(dx) > threshold) {
+            // 裏面：判定
             if (dx < 0) {
                 markAnswer(true);
             } else {
@@ -600,6 +619,8 @@ function setupSwipeDetection(card) {
             // 上スワイプ（完璧）
             markMastered();
         } else {
+            // 元に戻る
+            card.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
             card.style.transform = '';
             card.style.opacity = '';
         }
@@ -759,7 +780,8 @@ function displayCurrentWord() {
         actionHint.style.display = 'none';
     }
 
-    elements.wordNumber.textContent = `No.${currentIndex + 1}`;
+    // 単語番号は元のIDを使用（シャッフル後も元の番号を表示）
+    elements.wordNumber.textContent = `No.${word.id}`;
     elements.englishWord.textContent = word.word;
     applyMarkers(word);
     
