@@ -37,6 +37,19 @@ body {
     padding: 0;
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
+    position: relative;
+}
+
+/* ノッチ部分を青で埋める疑似要素 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);
+    background-color: #0055ca;
+    z-index: 1000;
 }
 
 /* PWAとして表示されている場合のみ固定 */
@@ -101,10 +114,14 @@ body {
     align-items: center;
     justify-content: center;
     padding: 0 16px;
+    padding-top: env(safe-area-inset-top);
     position: relative; /* 固定配置をやめる */
     z-index: 10;
     flex-shrink: 0; /* 縮小しない */
     width: 100%;
+    min-height: calc(var(--header-height) + env(safe-area-inset-top));
+    box-sizing: border-box;
+    margin-top: calc(-1 * env(safe-area-inset-top));
 }
 
 
@@ -114,7 +131,7 @@ body {
 }
 
 .app-header h1 {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 700;
     color: #ffffff;
 }
@@ -129,6 +146,7 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
@@ -142,11 +160,39 @@ body {
     box-sizing: border-box;
 }
 
-.section-title {
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 16px;
     font-size: 14px;
     font-weight: 600;
-    color: #6b7280;
-    margin-bottom: 12px;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 0 #d1d5db, inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.back-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 #d1d5db, inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn:hover {
+    background: #e5e7eb;
+    color: #334155;
+}
+
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 16px;
     padding-left: 4px;
 }
 
@@ -362,28 +408,31 @@ body {
     padding: 10px 16px;
     border-radius: 12px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.1s;
     white-space: nowrap;
-    box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3),
-                0 2px 4px rgba(0, 0, 0, 0.1),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 
+        0 4px 0 #0284c7,
+        0 2px 4px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
     z-index: 20;
     transform: translateY(0);
 }
 
 .home-btn-card:hover {
     background: #0d9cd8;
-    box-shadow: 0 3px 6px rgba(14, 165, 233, 0.25),
-                0 1px 3px rgba(0, 0, 0, 0.1),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.12);
+    box-shadow: 
+        0 4px 0 #0277b8,
+        0 2px 4px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .home-btn-card:active {
     transform: translateY(2px);
     background: #0c8bc4;
-    box-shadow: 0 1px 2px rgba(14, 165, 233, 0.2),
-                0 0 1px rgba(0, 0, 0, 0.1),
-                inset 0 2px 4px rgba(0, 0, 0, 0.15);
+    box-shadow: 
+        0 2px 0 #0277b8,
+        0 1px 2px rgba(0, 0, 0, 0.1),
+        inset 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 /* 矢印ナビゲーション */
@@ -741,9 +790,9 @@ body {
 
 .modal-container {
     background: #ffffff;
-    width: 85%;
-    max-width: 320px;
-    border-radius: 0;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 12px;
     padding: 24px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
     transform: scale(0.95);
@@ -774,6 +823,60 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.method-selection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.method-card {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.method-card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    border-color: #0055ca;
+}
+
+.method-card:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.method-card-info {
+    flex: 1;
+}
+
+.method-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.method-card-description {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.method-card-arrow {
+    color: #9ca3af;
+    flex-shrink: 0;
 }
 
 .modal-btn {

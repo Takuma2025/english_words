@@ -242,8 +242,8 @@ function closeModal() {
 function showConfirm(message) {
     return new Promise((resolve) => {
         showModal('確認', message, [
-            { text: 'キャンセル', type: 'cancel', onClick: () => resolve(false) },
-            { text: 'OK', type: 'confirm', onClick: () => resolve(true) }
+            { text: 'OK', type: 'confirm', onClick: () => resolve(true) },
+            { text: 'キャンセル', type: 'cancel', onClick: () => resolve(false) }
         ]);
     });
 }
@@ -319,6 +319,10 @@ function init() {
 function showCategorySelection() {
     elements.categorySelection.classList.remove('hidden');
     elements.mainContent.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
     selectedCategory = null;
     updateNavState('home');
     elements.headerSubtitle.textContent = '大阪府公立高校対応';
@@ -335,7 +339,7 @@ function showCategorySelection() {
     updateCategoryStars(); // 星の表示を更新
 }
 
-// カテゴリーを選択して学習開始
+// カテゴリーを選択してコース選択画面を表示
 function startCategory(category) {
     selectedCategory = category;
     const categoryWords = wordData.filter(word => word.category === category);
@@ -345,39 +349,175 @@ function startCategory(category) {
         return;
     }
 
-    // カテゴリーに属する間違い単語を抽出
-    const wrongWordsInCategory = categoryWords.filter(word => wrongWords.has(word.id));
-    const savedIndex = loadProgress(category);
-    const hasProgress = savedIndex > 0 && savedIndex < categoryWords.length;
+    // カテゴリー選択画面を非表示
+    elements.categorySelection.classList.add('hidden');
+    
+    // コース選択画面を表示
+    showCourseSelection(category, categoryWords);
+}
 
-    const actions = [];
+// コース選択画面を表示（100刻み）
+function showCourseSelection(category, categoryWords) {
+    const courseSelection = document.getElementById('courseSelection');
+    const courseList = document.getElementById('courseList');
+    const courseTitle = document.getElementById('courseSelectionTitle');
+    
+    courseTitle.textContent = `${category} - コースを選んでください`;
+    courseList.innerHTML = '';
+    
+    const CHUNK = 100;
+    const chunkCount = Math.ceil(categoryWords.length / CHUNK);
+    
+    for (let i = 0; i < chunkCount; i++) {
+        const start = i * CHUNK;
+        const end = Math.min((i + 1) * CHUNK, categoryWords.length);
+        const courseWords = categoryWords.slice(start, end);
+        
+        // 進捗を計算
+        let correctCountInCourse = 0;
+        let wrongCountInCourse = 0;
+        
+        courseWords.forEach(word => {
+            const isCorrect = correctWords.has(word.id);
+            const isWrong = wrongWords.has(word.id);
+            
+            // 優先順位変更: 間違い(赤) > 正解(青)
+            if (isWrong) {
+                wrongCountInCourse++;
+            } else if (isCorrect) {
+                correctCountInCourse++;
+            }
+        });
+        
+        const total = courseWords.length;
+        const correctPercent = total === 0 ? 0 : (correctCountInCourse / total) * 100;
+        const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
+        const completedCount = correctCountInCourse + wrongCountInCourse;
+        
+        const courseCard = createCourseCard(
+            `No.${start + 1} - No.${end}`,
+            `${start + 1}語目から${end}語目まで`,
+            correctPercent,
+            wrongPercent,
+            completedCount,
+            total,
+            () => {
+                // コースを選択したら、そのコースの単語範囲で学習方法選択モーダルを表示
+                const wrongWordsInCourse = courseWords.filter(word => wrongWords.has(word.id));
+                const savedIndex = loadProgress(category);
+                const hasProgress = savedIndex > start && savedIndex < end;
+                
+                showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, start, end);
+            }
+        );
+        courseList.appendChild(courseCard);
+    }
+    
+    courseSelection.classList.remove('hidden');
+    elements.headerSubtitle.textContent = category;
+}
 
+// コースカードを作成
+function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, onClick) {
+    const card = document.createElement('button');
+    card.className = 'category-card';
+    card.onclick = onClick;
+    
+    const cardId = `course-${title.replace(/\s+/g, '-')}`;
+    
+    card.innerHTML = `
+        <div class="category-info">
+            <div class="category-header">
+                <div class="category-name">${title}</div>
+            </div>
+            <div class="category-meta">${description}</div>
+            <div class="category-progress">
+                <div class="category-progress-bar">
+                    <div class="category-progress-correct" style="width: ${correctPercent}%"></div>
+                    <div class="category-progress-wrong" style="width: ${wrongPercent}%"></div>
+                </div>
+                <div class="category-progress-text">${completedCount} / ${total}</div>
+            </div>
+        </div>
+        <div class="category-arrow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+    `;
+    
+    return card;
+}
+
+// 学習方法選択モーダルを表示
+function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, courseStart, courseEnd) {
+    elements.modalTitle.textContent = category;
+    elements.modalMessage.textContent = '学習方法を選んでください';
+    elements.modalActions.innerHTML = '';
+    
+    // カード形式のコンテナを作成
+    const methodList = document.createElement('div');
+    methodList.className = 'method-selection-list';
+    
     // はじめから（常に表示）
-    actions.push({
-        text: 'はじめから',
-        type: 'confirm',
-        onClick: () => initLearning(category, categoryWords, 0, categoryWords.length, 0)
+    const startCard = createMethodCard('はじめから', '最初から学習を開始します', () => {
+        closeModal();
+        initLearning(category, courseWords, 0, courseWords.length, courseStart);
     });
+    methodList.appendChild(startCard);
 
-    // 続きから（保存済みインデックスがある場合のみ）
-    if (hasProgress) {
-        actions.push({
-            text: `つづきから (No.${savedIndex + 1})`,
-            type: 'confirm',
-            onClick: () => initLearning(category, categoryWords, savedIndex, categoryWords.length, savedIndex)
+    // 前回の続きから（保存済みインデックスがこのコース範囲内にある場合のみ）
+    if (hasProgress && savedIndex >= courseStart && savedIndex < courseEnd) {
+        const relativeIndex = savedIndex - courseStart;
+        const continueCard = createMethodCard(`前回の続きから (No.${savedIndex + 1})`, '前回の続きから学習を再開します', () => {
+            closeModal();
+            initLearning(category, courseWords, relativeIndex, courseWords.length, savedIndex);
         });
+        methodList.appendChild(continueCard);
     }
 
-    // 間違い復習オプション
-    if (wrongWordsInCategory.length > 0) {
-        actions.push({
-            text: `間違えた問題のみ (${wrongWordsInCategory.length}問)`,
-            type: 'cancel',
-            onClick: () => initLearning('間違い復習', wrongWordsInCategory, 0, wrongWordsInCategory.length, 0)
+    // 間違えた問題（間違いがある場合のみ）
+    if (wrongWordsInCourse.length > 0) {
+        const wrongCard = createMethodCard(`間違えた問題 (${wrongWordsInCourse.length}問)`, '間違えた単語だけを復習します', () => {
+            closeModal();
+            initLearning('間違い復習', wrongWordsInCourse, 0, wrongWordsInCourse.length, 0);
         });
+        methodList.appendChild(wrongCard);
     }
+    
+    elements.modalActions.appendChild(methodList);
+    
+    // 背景クリックで閉じるイベント
+    const handleOverlayClick = (e) => {
+        if (e.target === elements.modalOverlay) {
+            closeModal();
+            elements.modalOverlay.removeEventListener('click', handleOverlayClick);
+        }
+    };
+    elements.modalOverlay.addEventListener('click', handleOverlayClick);
+    
+    elements.modalOverlay.classList.remove('hidden');
+    // アニメーション用
+    setTimeout(() => {
+        elements.modalOverlay.classList.add('active');
+    }, 10);
+}
 
-    showModal(`${category}`, '学習方法を選んでください', actions);
+// 学習方法カードを作成
+function createMethodCard(title, description, onClick) {
+    const card = document.createElement('button');
+    card.className = 'method-card';
+    card.onclick = onClick;
+    
+    card.innerHTML = `
+        <div class="method-card-info">
+            <div class="method-card-title">${title}</div>
+            <div class="method-card-description">${description}</div>
+        </div>
+        <div class="method-card-arrow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+    `;
+    
+    return card;
 }
 
 // 学習初期化処理（共通化）
@@ -400,6 +540,10 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     wrongCount = 0;
 
     elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
     
@@ -491,6 +635,20 @@ function setupEventListeners() {
             shuffleWords();
         });
     }
+    
+    // コース選択画面から戻るボタン
+    const backToCategoryBtn = document.getElementById('backToCategoryBtn');
+    if (backToCategoryBtn) {
+        backToCategoryBtn.addEventListener('click', () => {
+            const courseSelection = document.getElementById('courseSelection');
+            if (courseSelection) {
+                courseSelection.classList.add('hidden');
+            }
+            elements.categorySelection.classList.remove('hidden');
+            elements.headerSubtitle.textContent = '大阪府公立高校対応';
+        });
+    }
+    
 }
 
 // 前の単語に移動（履歴ベースではなく単純なインデックス操作）
