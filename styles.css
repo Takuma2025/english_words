@@ -671,6 +671,10 @@ body {
     touch-action: pan-y;
 }
 
+.word-card.flipped {
+    touch-action: none;
+}
+
 .card-inner {
     position: relative;
     width: 100%;

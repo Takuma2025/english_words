@@ -693,10 +693,21 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     const wordCard = document.getElementById('wordCard');
     const inputMode = document.getElementById('inputMode');
     const cardHint = document.getElementById('cardHint');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
     
     if (inputMode) inputMode.classList.add('hidden');
     if (wordCard) wordCard.classList.remove('hidden');
     if (cardHint) cardHint.classList.remove('hidden');
+    
+    // 基本語彙500のときだけ前へ・次へボタンを非表示、それ以外は表示
+    if (category === '基本語彙500') {
+        if (prevBtn) prevBtn.classList.add('hidden');
+        if (nextBtn) nextBtn.classList.add('hidden');
+    } else {
+        if (prevBtn) prevBtn.classList.remove('hidden');
+        if (nextBtn) nextBtn.classList.remove('hidden');
+    }
 
     displayCurrentWord();
     updateStats();
@@ -1205,6 +1216,7 @@ function setupSwipeDetection(card) {
     let startX = 0;
     let startY = 0;
     let isDragging = false;
+    let animationFrameId = null;
 
     const getPoint = (e) => {
         if (e.touches && e.touches[0]) {
@@ -1217,11 +1229,45 @@ function setupSwipeDetection(card) {
     };
 
     const handleStart = (e) => {
+        // 表面ならスワイプ無効
+        if (!card.classList.contains('flipped')) return;
+        
         const point = getPoint(e);
         startX = point.x;
         startY = point.y;
         isDragging = true;
         card.classList.add('dragging');
+        
+        // ブラウザのデフォルト動作を防ぐ
+        e.preventDefault();
+        
+        // 既存のアニメーションフレームをキャンセル
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+        }
+        
+        // トランジションを無効化して即座に反応させる
+        card.style.transition = 'none';
+    };
+
+    const updateCardPosition = (dx, dy, isMistakeMode) => {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+        }
+        
+        animationFrameId = requestAnimationFrame(() => {
+            // 横スワイプ
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 3) {
+                card.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
+                const opacityDrop = Math.min(Math.abs(dx) / 180, 0.18);
+                card.style.opacity = `${1 - opacityDrop}`;
+            } else if (isMistakeMode && dy < -3 && Math.abs(dy) > Math.abs(dx)) {
+                // 上移動（完璧）- 裏面のみ
+                card.style.transform = `translateY(${dy}px) scale(${1 + dy/1000})`;
+                const opacityDrop = Math.min(Math.abs(dy) / 180, 0.18);
+                card.style.opacity = `${1 - opacityDrop}`;
+            }
+        });
     };
 
     const handleMove = (e) => {
@@ -1230,6 +1276,9 @@ function setupSwipeDetection(card) {
         // 表面ならスワイプ無効
         if (!card.classList.contains('flipped')) return;
         
+        // ブラウザのデフォルト動作を防ぐ
+        e.preventDefault();
+        
         const point = getPoint(e);
         const dx = point.x - startX;
         const dy = point.y - startY;
@@ -1237,38 +1286,40 @@ function setupSwipeDetection(card) {
         // 間違い復習モードのみ上スワイプ有効
         const isMistakeMode = selectedCategory === '間違い復習';
 
-        // 横スワイプまたは上スワイプ
-        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) {
-            // 裏面：正解/不正解（回転あり）
-            card.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
-            const opacityDrop = Math.min(Math.abs(dx) / 180, 0.18);
-            card.style.opacity = `${1 - opacityDrop}`;
-        } else if (isMistakeMode && dy < -6 && Math.abs(dy) > Math.abs(dx)) {
-            // 上移動（完璧）- 裏面のみ
-            card.style.transform = `translateY(${dy}px) scale(${1 + dy/1000})`;
-            const opacityDrop = Math.min(Math.abs(dy) / 180, 0.18);
-            card.style.opacity = `${1 - opacityDrop}`;
-        }
+        updateCardPosition(dx, dy, isMistakeMode);
     };
 
     const handleEnd = (e) => {
         if (!isDragging) return;
+        
+        // アニメーションフレームをキャンセル
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+        
         isDragging = false;
         card.classList.remove('dragging');
         
         // 表面なら処理しない
-        if (!card.classList.contains('flipped')) return;
+        if (!card.classList.contains('flipped')) {
+            card.style.transition = '';
+            card.style.transform = '';
+            card.style.opacity = '';
+            return;
+        }
 
         const point = getPoint(e);
         const dx = point.x - startX;
         const dy = point.y - startY;
 
-        const threshold = 80;
+        const threshold = 60; // 閾値を下げてより敏感に
         const isHorizontal = Math.abs(dx) > Math.abs(dy);
         const isVertical = Math.abs(dy) > Math.abs(dx);
         const isMistakeMode = selectedCategory === '間違い復習';
 
-        card.style.transition = '';
+        // トランジションを有効化
+        card.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
 
         if (isHorizontal && Math.abs(dx) > threshold) {
             // 裏面：判定
@@ -1282,17 +1333,17 @@ function setupSwipeDetection(card) {
             markMastered();
         } else {
             // 元に戻る
-            card.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
             card.style.transform = '';
             card.style.opacity = '';
         }
     };
 
     // pointerイベントでタッチ/マウス両方をサポート
-    card.addEventListener('pointerdown', handleStart);
-    card.addEventListener('pointermove', handleMove);
+    card.addEventListener('pointerdown', handleStart, { passive: false });
+    card.addEventListener('pointermove', handleMove, { passive: false });
     card.addEventListener('pointerup', handleEnd);
     card.addEventListener('pointerleave', handleEnd);
+    card.addEventListener('pointercancel', handleEnd);
 }
 
 // カードをタップして答え表示
