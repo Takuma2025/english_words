@@ -86,19 +86,19 @@
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </div>
                     </button>
-                    <button class="category-card" data-category="発信語彙1000語">
+                    <button class="category-card" data-category="基本語彙500">
                         <div class="category-info">
                             <div class="category-header">
-                                <div class="category-name">発信語彙1000語</div>
-                                <div class="category-stars" id="stars-発信語彙1000語">☆☆☆☆☆</div>
+                                <div class="category-name">基本語彙500</div>
+                                <div class="category-stars" id="stars-基本語彙500">☆☆☆☆☆</div>
                             </div>
                             <div class="category-meta">日本語→英語で学習</div>
                             <div class="category-progress">
                                 <div class="category-progress-bar">
-                                    <div class="category-progress-correct" id="progress-correct-発信語彙1000語" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" id="progress-wrong-発信語彙1000語" style="width: 0%"></div>
+                                    <div class="category-progress-correct" id="progress-correct-基本語彙500" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" id="progress-wrong-基本語彙500" style="width: 0%"></div>
                                 </div>
-                                <div class="category-progress-text" id="progress-text-発信語彙1000語">0/0</div>
+                                <div class="category-progress-text" id="progress-text-基本語彙500">0/0</div>
                             </div>
                         </div>
                         <div class="category-arrow">
@@ -182,7 +182,7 @@
                         </div>
                     </div>
                     
-                    <!-- 日本語→英語入力モード（発信語彙1000語専用） -->
+                    <!-- 日本語→英語入力モード（基本語彙500専用） -->
                     <div class="input-mode hidden" id="inputMode">
                         <div class="input-mode-content">
                             <div class="card-top-info">
@@ -198,14 +198,17 @@
                                 <div class="letter-inputs" id="letterInputs">
                                     <!-- 動的に生成 -->
                                 </div>
+                                <div class="input-result hidden" id="inputResult">
+                                    <div class="result-message" id="resultMessage"></div>
+                                    <div class="correct-answer-container">
+                                        <span class="correct-label">正解: </span>
+                                        <span class="correct-word" id="correctAnswer"></span>
+                                    </div>
+                                </div>
                                 <div class="input-actions">
                                     <button class="submit-btn" id="submitBtn">解答</button>
                                     <button class="dont-know-btn" id="dontKnowBtn">わからない</button>
                                 </div>
-                            </div>
-                            <div class="input-result hidden" id="inputResult">
-                                <div class="result-message" id="resultMessage"></div>
-                                <div class="correct-answer" id="correctAnswer"></div>
                             </div>
                         </div>
                     </div>

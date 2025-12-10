@@ -14,6 +14,33 @@ let currentRangeEnd = 0;   // 現在の学習範囲（終了index、exclusive）
 let isInputModeActive = false; // 日本語→英語入力モードかどうか
 let inputAnswerSubmitted = false; // 入力回答が送信済みかどうか
 
+// カテゴリごとの正解・間違い単語を読み込む
+function loadCategoryWords(category) {
+    const savedCorrectWords = localStorage.getItem(`correctWords-${category}`);
+    const savedWrongWords = localStorage.getItem(`wrongWords-${category}`);
+    
+    const correctSet = new Set();
+    const wrongSet = new Set();
+    
+    if (savedCorrectWords) {
+        const parsed = JSON.parse(savedCorrectWords);
+        parsed.forEach(id => correctSet.add(typeof id === 'string' ? parseInt(id, 10) : id));
+    }
+    
+    if (savedWrongWords) {
+        const parsed = JSON.parse(savedWrongWords);
+        parsed.forEach(id => wrongSet.add(typeof id === 'string' ? parseInt(id, 10) : id));
+    }
+    
+    return { correctSet, wrongSet };
+}
+
+// カテゴリごとの正解・間違い単語を保存
+function saveCategoryWords(category, correctSet, wrongSet) {
+    localStorage.setItem(`correctWords-${category}`, JSON.stringify([...correctSet]));
+    localStorage.setItem(`wrongWords-${category}`, JSON.stringify([...wrongSet]));
+}
+
 // localStorageから復習チェック、間違い、進捗を読み込む
 function loadData() {
     const savedReviewWords = localStorage.getItem('reviewWords');
@@ -22,6 +49,7 @@ function loadData() {
         reviewWords = new Set(parsed.map(id => typeof id === 'string' ? parseInt(id, 10) : id));
     }
     
+    // グローバルなcorrectWordsとwrongWordsは後方互換性のため残す（既存のカテゴリ用）
     const savedCorrectWords = localStorage.getItem('correctWords');
     if (savedCorrectWords) {
         const parsed = JSON.parse(savedCorrectWords);
@@ -66,15 +94,15 @@ function resetProgress(category) {
 
 // カテゴリーの星表示を更新
 function updateCategoryStars() {
-    const categories = ['超よく出る600', 'よく出る300', '差がつく200', '発信語彙1000語'];
+    const categories = ['超よく出る600', 'よく出る300', '差がつく200', '基本語彙500'];
     
     categories.forEach(category => {
         const element = document.getElementById(`stars-${category}`);
         if (!element) return;
         
         let categoryWords;
-        if (category === '発信語彙1000語') {
-            categoryWords = wordData.slice(0, Math.min(1000, wordData.length));
+        if (category === '基本語彙500') {
+            categoryWords = wordData.slice(0, Math.min(500, wordData.length));
         } else {
             categoryWords = wordData.filter(word => word.category === category);
         }
@@ -89,9 +117,13 @@ function updateCategoryStars() {
         let correctCountInCategory = 0;
         let wrongCountInCategory = 0;
         
+        // カテゴリごとの進捗を取得
+        const { correctSet, wrongSet } = loadCategoryWords(category);
+        
         categoryWords.forEach(word => {
-            const isCorrect = correctWords.has(word.id);
-            const isWrong = wrongWords.has(word.id);
+            // カテゴリごとの進捗を優先的に使用
+            const isCorrect = correctSet.has(word.id);
+            const isWrong = wrongSet.has(word.id);
             
             // 優先順位変更: 間違い(赤) > 正解(青)
             // 間違いリストにあるものは、正解済みであっても「赤」で表示（要注意単語として）
@@ -126,15 +158,6 @@ function updateCategoryStars() {
         const correctBar = document.getElementById(`progress-correct-${category}`);
         const wrongBar = document.getElementById(`progress-wrong-${category}`);
         const text = document.getElementById(`progress-text-${category}`);
-        
-        // デバッグ用（後で削除）
-        if (category === '超よく出る600') {
-            console.log(`Category: ${category}`);
-            console.log(`Correct: ${correctCountInCategory}, Wrong: ${wrongCountInCategory}, Total: ${total}`);
-            console.log(`CorrectPercent: ${correctPercent}%, WrongPercent: ${wrongPercent}%`);
-            console.log(`CorrectWords Set:`, Array.from(correctWords).slice(0, 10));
-            console.log(`WrongWords Set:`, Array.from(wrongWords).slice(0, 10));
-        }
         
         if (correctBar) {
             correctBar.style.width = `${correctPercent}%`;
@@ -356,10 +379,10 @@ function showCategorySelection() {
 function startCategory(category) {
     selectedCategory = category;
     
-    // 発信語彙1000語の場合は、最初の1000語を取得
+    // 基本語彙500の場合は、最初の500語を取得
     let categoryWords;
-    if (category === '発信語彙1000語') {
-        categoryWords = wordData.slice(0, Math.min(1000, wordData.length));
+    if (category === '基本語彙500') {
+        categoryWords = wordData.slice(0, Math.min(500, wordData.length));
     } else {
         categoryWords = wordData.filter(word => word.category === category);
     }
@@ -372,8 +395,8 @@ function startCategory(category) {
     // カテゴリー選択画面を非表示
     elements.categorySelection.classList.add('hidden');
     
-    // 発信語彙1000語の場合は直接日本語→英語モードで開始
-    if (category === '発信語彙1000語') {
+    // 基本語彙500の場合は直接日本語→英語モードで開始
+    if (category === '基本語彙500') {
         initInputModeLearning(category, categoryWords);
     } else {
         // コース選択画面を表示
@@ -410,7 +433,7 @@ function initInputModeLearning(category, words) {
     }
     
     document.body.classList.add('learning-mode');
-    
+
     // 学習画面ではホームボタンを表示
     if (elements.homeBtn) {
         elements.homeBtn.classList.remove('hidden');
@@ -420,10 +443,16 @@ function initInputModeLearning(category, words) {
     const wordCard = document.getElementById('wordCard');
     const inputMode = document.getElementById('inputMode');
     const cardHint = document.getElementById('cardHint');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
     
     if (wordCard) wordCard.classList.add('hidden');
     if (inputMode) inputMode.classList.remove('hidden');
     if (cardHint) cardHint.classList.add('hidden');
+    
+    // 左右移動ボタンを非表示
+    if (prevBtn) prevBtn.classList.add('hidden');
+    if (nextBtn) nextBtn.classList.add('hidden');
     
     displayInputMode();
     updateStats();
@@ -447,13 +476,14 @@ function showCourseSelection(category, categoryWords) {
         const end = Math.min((i + 1) * CHUNK, categoryWords.length);
         const courseWords = categoryWords.slice(start, end);
         
-        // 進捗を計算
+        // 進捗を計算（カテゴリごと）
         let correctCountInCourse = 0;
         let wrongCountInCourse = 0;
+        const { correctSet, wrongSet } = loadCategoryWords(category);
         
         courseWords.forEach(word => {
-            const isCorrect = correctWords.has(word.id);
-            const isWrong = wrongWords.has(word.id);
+            const isCorrect = correctSet.has(word.id);
+            const isWrong = wrongSet.has(word.id);
             
             // 優先順位変更: 間違い(赤) > 正解(青)
             if (isWrong) {
@@ -477,7 +507,8 @@ function showCourseSelection(category, categoryWords) {
             total,
             () => {
                 // コースを選択したら、そのコースの単語範囲で学習方法選択モーダルを表示
-                const wrongWordsInCourse = courseWords.filter(word => wrongWords.has(word.id));
+                const { wrongSet } = loadCategoryWords(category);
+                const wrongWordsInCourse = courseWords.filter(word => wrongSet.has(word.id));
                 const savedIndex = loadProgress(category);
                 const hasProgress = savedIndex > start && savedIndex < end;
                 
@@ -525,7 +556,7 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
     `;
     
     return card;
-}
+    }
 
 // 学習方法選択モーダルを表示
 function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, courseStart, courseEnd) {
@@ -616,6 +647,7 @@ function createMethodCard(title, description, onClick) {
 function initLearning(category, words, startIndex = 0, rangeEnd = undefined, rangeStartOverride = undefined) {
     selectedCategory = category;
     currentWords = words;
+    isInputModeActive = false; // 通常のカードモードにリセット
     
     const start = Math.max(0, startIndex || 0);
     const end = typeof rangeEnd === 'number' ? Math.min(rangeEnd, currentWords.length) : currentWords.length;
@@ -656,6 +688,15 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     } else {
         elements.mainContent.classList.remove('mode-mistake');
     }
+
+    // 入力モードを非表示、カードモードを表示
+    const wordCard = document.getElementById('wordCard');
+    const inputMode = document.getElementById('inputMode');
+    const cardHint = document.getElementById('cardHint');
+    
+    if (inputMode) inputMode.classList.add('hidden');
+    if (wordCard) wordCard.classList.remove('hidden');
+    if (cardHint) cardHint.classList.remove('hidden');
 
     displayCurrentWord();
     updateStats();
@@ -858,9 +899,6 @@ function displayInputMode() {
                     const nextInput = letterInputs.querySelector(`input[data-index="${i + 1}"]`);
                     if (nextInput) nextInput.focus();
                 }
-                
-                // 全ての文字が入力されたら送信ボタンを有効化
-                checkAllLettersFilled();
             });
             
             // バックスペースで前のフィールドに戻る
@@ -880,7 +918,7 @@ function displayInputMode() {
     }
     
     if (submitBtn) {
-        submitBtn.disabled = true;
+        submitBtn.disabled = false;
     }
     const dontKnowBtn = document.getElementById('dontKnowBtn');
     if (dontKnowBtn) {
@@ -902,17 +940,81 @@ function displayInputMode() {
     updateStats();
 }
 
-// 全ての文字が入力されたかチェック
-function checkAllLettersFilled() {
+// 前の単語に移動（履歴ベースではなく単純なインデックス操作）
+function goToPreviousWord() {
+    if (currentIndex > 0) {
+        // 現在のカードの状態をリセット
+        isCardRevealed = false;
+        elements.wordCard.classList.remove('flipped');
+        
+        currentIndex--;
+        if (isInputModeActive) {
+            displayInputMode();
+        } else {
+            displayCurrentWord();
+        }
+        // 前に戻った場合、進捗保存はしない（進んだときのみ保存するのが一般的）
+    }
+}
+
+// 次の入力フィールドを追加
+function addNextInputField() {
     const letterInputs = document.getElementById('letterInputs');
-    const submitBtn = document.getElementById('submitBtn');
-    
-    if (!letterInputs || !submitBtn) return;
+    if (!letterInputs) return;
     
     const inputs = letterInputs.querySelectorAll('.letter-input');
-    const allFilled = Array.from(inputs).every(input => input.value.trim() !== '');
+    const currentIndex = inputs.length;
     
-    submitBtn.disabled = !allFilled;
+    // 最後のフィールドに入力があるか確認
+    const lastInput = inputs[inputs.length - 1];
+    if (!lastInput || !lastInput.value) return;
+    
+    // 次のフィールドが既に存在するかチェック
+    const existingNext = letterInputs.querySelector(`input[data-index="${currentIndex}"]`);
+    if (existingNext) {
+        existingNext.focus();
+        return;
+    }
+    
+    // 新しい入力フィールドを作成
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'letter-input';
+    input.maxLength = 1;
+    input.dataset.index = currentIndex;
+    input.autocomplete = 'off';
+    input.spellcheck = false;
+    input.inputMode = 'text';
+    input.setAttribute('inputmode', 'text');
+    
+    // 入力時の処理
+    input.addEventListener('input', (e) => {
+        const value = e.target.value.toLowerCase();
+        e.target.value = value;
+        
+        // 入力があれば次のフィールドを追加
+        if (value) {
+            addNextInputField();
+        }
+    });
+    
+    // バックスペースで前のフィールドに戻る
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value) {
+            const currentIdx = parseInt(e.target.dataset.index);
+            if (currentIdx > 0) {
+                const prevInput = letterInputs.querySelector(`input[data-index="${currentIdx - 1}"]`);
+                if (prevInput) {
+                    prevInput.focus();
+                    // 現在のフィールドを削除
+                    e.target.remove();
+                }
+            }
+        }
+    });
+    
+    letterInputs.appendChild(input);
+    input.focus();
 }
 
 // 日本語→英語入力モードの回答送信
@@ -944,10 +1046,13 @@ function submitAnswer() {
     const dontKnowBtn = document.getElementById('dontKnowBtn');
     if (dontKnowBtn) dontKnowBtn.disabled = true;
     
-    // 正解/不正解の色分け表示
+    // 1文字ごとに正解・不正解を表示（入力されているもののみ）
     inputs.forEach((input, index) => {
         const userChar = input.value.trim().toLowerCase();
-        const correctChar = word.word[index].toLowerCase();
+        const correctChar = word.word[index] ? word.word[index].toLowerCase() : '';
+        
+        // 入力されていないフィールドは判定しない
+        if (!userChar) return;
         
         if (userChar === correctChar) {
             input.classList.add('correct');
@@ -956,40 +1061,80 @@ function submitAnswer() {
         }
     });
     
+    // 正解/不正解の判定
+    const isCorrect = userAnswer === correctWord;
+    
+    // 正解の単語を常に表示
+    correctAnswer.textContent = word.word;
     inputResult.classList.remove('hidden');
     
-    if (userAnswer === correctWord) {
-        // 正解
-        resultMessage.textContent = '正解！';
-        resultMessage.className = 'result-message correct';
-        correctAnswer.textContent = '';
-        markAnswer(true);
-        
-        // 2秒後に次の問題へ
-        setTimeout(() => {
+    // 画面全体のフィードバック表示（テキストなし、色のみ）
+    markAnswer(isCorrect);
+    
+    // 次へボタンを表示（自動で進まない）
+    showNextButton();
+}
+
+// わからないボタンを押した場合の処理
+function markAnswerAsDontKnow() {
+    if (inputAnswerSubmitted || currentIndex >= currentRangeEnd) return;
+    
+    const word = currentWords[currentIndex];
+    const letterInputs = document.getElementById('letterInputs');
+    const submitBtn = document.getElementById('submitBtn');
+    const inputResult = document.getElementById('inputResult');
+    const correctAnswer = document.getElementById('correctAnswer');
+    
+    inputAnswerSubmitted = true;
+    
+    // 入力フィールドを無効化
+    const inputs = letterInputs.querySelectorAll('.letter-input');
+    inputs.forEach(input => {
+        input.disabled = true;
+    });
+    
+    if (submitBtn) submitBtn.disabled = true;
+    const dontKnowBtn = document.getElementById('dontKnowBtn');
+    if (dontKnowBtn) dontKnowBtn.disabled = true;
+    
+    // 正解を表示
+    correctAnswer.textContent = word.word;
+    inputResult.classList.remove('hidden');
+    
+    // 間違い扱いにする
+    markAnswer(false);
+    
+    // 次へボタンを表示（自動で進まない）
+    showNextButton();
+}
+
+// 次へボタンを表示
+function showNextButton() {
+    const submitBtn = document.getElementById('submitBtn');
+    const dontKnowBtn = document.getElementById('dontKnowBtn');
+    
+    if (submitBtn) {
+        submitBtn.textContent = '次へ';
+        submitBtn.disabled = false;
+        submitBtn.onclick = (e) => {
+            e.stopPropagation();
             if (currentIndex < currentRangeEnd - 1) {
                 currentIndex++;
+                // ボタンを元に戻す
+                submitBtn.textContent = '解答';
+                submitBtn.onclick = null; // イベントリスナーはsetupEventListenersで設定済み
+                if (dontKnowBtn) {
+                    dontKnowBtn.style.display = '';
+                }
                 displayInputMode();
             } else {
                 showInputCompletionScreen();
             }
-        }, 2000);
-    } else {
-        // 不正解
-        resultMessage.textContent = '不正解';
-        resultMessage.className = 'result-message wrong';
-        correctAnswer.textContent = `正解: ${word.word}`;
-        markAnswer(false);
-        
-        // 3秒後に次の問題へ
-        setTimeout(() => {
-            if (currentIndex < currentRangeEnd - 1) {
-                currentIndex++;
-                displayInputMode();
-            } else {
-                showInputCompletionScreen();
-            }
-        }, 3000);
+        };
+    }
+    
+    if (dontKnowBtn) {
+        dontKnowBtn.style.display = 'none';
     }
 }
 
@@ -1253,19 +1398,28 @@ function applyMarkers(word) {
         `linear-gradient(180deg, transparent ${start * 100}%, ${color} ${start * 100}%, ${color} ${end * 100}%, transparent ${end * 100}%)`;
 
     const layers = [];
+    
+    // カテゴリごとの進捗を取得（カテゴリがある場合）
+    let categoryCorrectSet = correctWords;
+    let categoryWrongSet = wrongWords;
+    if (selectedCategory) {
+        const categoryWords = loadCategoryWords(selectedCategory);
+        categoryCorrectSet = categoryWords.correctSet;
+        categoryWrongSet = categoryWords.wrongSet;
+    }
 
     if (reviewWords.has(word.id)) {
         // 黄は蛍光マーカー風（上段、少し広め・明るめ）
         layers.push(band('rgba(253, 253, 112, 0.55)', 0.34, 0.54));
         // 下段は赤優先、なければ青（黄との間に僅かな空白）
-        if (wrongWords.has(word.id)) {
+        if (categoryWrongSet.has(word.id)) {
             layers.push(band('rgba(239, 68, 68, 0.28)', 0.60, 0.82));
-        } else if (correctWords.has(word.id)) {
+        } else if (categoryCorrectSet.has(word.id)) {
             layers.push(band('rgba(59, 130, 246, 0.30)', 0.60, 0.82));
         }
-    } else if (wrongWords.has(word.id)) {
+    } else if (categoryWrongSet.has(word.id)) {
         layers.push(band('rgba(239, 68, 68, 0.30)', 0.60, 0.82));
-    } else if (correctWords.has(word.id)) {
+    } else if (categoryCorrectSet.has(word.id)) {
         layers.push(band('rgba(59, 130, 246, 0.32)', 0.60, 0.82));
     }
 
@@ -1361,6 +1515,15 @@ function markMastered() {
     // 正解としてカウント
     correctCount++;
     correctWords.add(word.id);
+    
+    // カテゴリごとの進捗を更新
+    if (selectedCategory) {
+        const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+        correctSet.add(word.id);
+        wrongSet.delete(word.id);
+        saveCategoryWords(selectedCategory, correctSet, wrongSet);
+    }
+    
     saveCorrectWords();
     
     // 完璧なので間違いリストから削除
@@ -1406,16 +1569,31 @@ function markAnswer(isCorrect) {
     if (isCorrect) {
         correctCount++;
         correctWords.add(word.id);
+        
+        // カテゴリごとの進捗を更新
+        if (selectedCategory) {
+            const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+            correctSet.add(word.id);
+            // 正解した場合は間違いリストから削除
+            wrongSet.delete(word.id);
+            saveCategoryWords(selectedCategory, correctSet, wrongSet);
+        }
+        
         saveCorrectWords();
-        // 正解しても間違いリストからは削除しない（要望により変更）
-        // if (wrongWords.has(word.id)) {
-        //     wrongWords.delete(word.id);
-        //     saveWrongWords();
-        // }
     } else {
         wrongCount++;
         // 間違えた場合は間違いリストに追加
         wrongWords.add(word.id);
+        
+        // カテゴリごとの進捗を更新
+        if (selectedCategory) {
+            const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+            wrongSet.add(word.id);
+            // 間違えた場合は正解リストから削除
+            correctSet.delete(word.id);
+            saveCategoryWords(selectedCategory, correctSet, wrongSet);
+        }
+        
         saveWrongWords();
     }
 
@@ -1497,7 +1675,7 @@ function updateStats() {
     
     elements.progressText.textContent = `${currentPosition} / ${total}`;
     if (elements.progressFill) {
-        elements.progressFill.style.width = `${progressPercent}%`;
+    elements.progressFill.style.width = `${progressPercent}%`;
     }
 }
 
