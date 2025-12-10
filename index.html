@@ -122,16 +122,6 @@
 
             <!-- 学習画面 -->
             <div class="learning-view hidden" id="mainContent">
-                <!-- 進捗バー -->
-                <div class="progress-header" id="statsBar">
-                    <div class="progress-bar-container">
-                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                    </div>
-                    <div class="progress-stats">
-                        <span id="progressText">0/0</span>
-                    </div>
-                </div>
-
                 <div class="card-area-wrapper">
                     <button class="home-btn-card hidden" id="homeBtn">
                         ホームに戻る
@@ -153,13 +143,28 @@
                     <button class="nav-arrow-btn next-arrow" id="nextBtn" aria-label="次の単語">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
+                    
+                    <!-- 進捗バーとNo.をカードの上に配置 -->
+                    <div class="card-top-section">
+                        <!-- 進捗バー -->
+                        <div class="progress-header" id="statsBar">
+                            <div class="progress-bar-container">
+                                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                            </div>
+                            <div class="progress-stats">
+                                <span id="progressText">0/0</span>
+                            </div>
+                        </div>
+                        <!-- No. -->
+                        <div class="word-number" id="wordNumber">No.1</div>
+                    </div>
+                    
                     <!-- 通常のカード学習モード -->
                     <div class="word-card" id="wordCard">
                         <div class="card-inner" id="cardInner">
                             <div class="card-face card-front">
                                 <div class="word-display">
                                     <div class="card-top-info">
-                                        <div class="word-number" id="wordNumber">No.1</div>
                                         <button class="star-btn" id="starBtn">
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                                         </button>
@@ -186,7 +191,6 @@
                     <div class="input-mode hidden" id="inputMode">
                         <div class="input-mode-content">
                             <div class="card-top-info">
-                                <div class="word-number" id="inputWordNumber">No.1</div>
                                 <button class="star-btn" id="inputStarBtn">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                                 </button>
@@ -205,10 +209,52 @@
                                         <span class="correct-word" id="correctAnswer"></span>
                                     </div>
                                 </div>
-                                <div class="input-actions">
-                                    <button class="submit-btn" id="submitBtn">解答</button>
-                                    <button class="dont-know-btn" id="dontKnowBtn">わからない</button>
-                                </div>
+                            </div>
+                        </div>
+                        <!-- 仮想キーボード -->
+                        <div class="virtual-keyboard" id="virtualKeyboard">
+                            <div class="keyboard-row">
+                                <button class="keyboard-key" data-key="q">q</button>
+                                <button class="keyboard-key" data-key="w">w</button>
+                                <button class="keyboard-key" data-key="e">e</button>
+                                <button class="keyboard-key" data-key="r">r</button>
+                                <button class="keyboard-key" data-key="t">t</button>
+                                <button class="keyboard-key" data-key="y">y</button>
+                                <button class="keyboard-key" data-key="u">u</button>
+                                <button class="keyboard-key" data-key="i">i</button>
+                                <button class="keyboard-key" data-key="o">o</button>
+                                <button class="keyboard-key" data-key="p">p</button>
+                            </div>
+                            <div class="keyboard-row">
+                                <button class="keyboard-key" data-key="a">a</button>
+                                <button class="keyboard-key" data-key="s">s</button>
+                                <button class="keyboard-key" data-key="d">d</button>
+                                <button class="keyboard-key" data-key="f">f</button>
+                                <button class="keyboard-key" data-key="g">g</button>
+                                <button class="keyboard-key" data-key="h">h</button>
+                                <button class="keyboard-key" data-key="j">j</button>
+                                <button class="keyboard-key" data-key="k">k</button>
+                                <button class="keyboard-key" data-key="l">l</button>
+                            </div>
+                            <div class="keyboard-row">
+                                <button class="keyboard-key" data-key="z">z</button>
+                                <button class="keyboard-key" data-key="x">x</button>
+                                <button class="keyboard-key" data-key="c">c</button>
+                                <button class="keyboard-key" data-key="v">v</button>
+                                <button class="keyboard-key" data-key="b">b</button>
+                                <button class="keyboard-key" data-key="n">n</button>
+                                <button class="keyboard-key" data-key="m">m</button>
+                                <button class="keyboard-key keyboard-key-special" id="keyboardBackspace">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="keyboard-actions">
+                                <button class="keyboard-action-btn" id="keyboardPass">パス</button>
+                                <button class="keyboard-action-btn keyboard-action-btn-primary" id="keyboardDecide">解答</button>
                             </div>
                         </div>
                     </div>

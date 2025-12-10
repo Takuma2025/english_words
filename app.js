@@ -634,7 +634,7 @@ function createMethodCard(title, description, onClick) {
             <div class="method-card-description">${description}</div>
         </div>
         <div class="method-card-arrow">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </div>
     `;
     
@@ -824,30 +824,15 @@ function setupEventListeners() {
     }
     
     // 日本語→英語入力モードのイベントリスナー
-    const submitBtn = document.getElementById('submitBtn');
-    const dontKnowBtn = document.getElementById('dontKnowBtn');
     const inputStarBtn = document.getElementById('inputStarBtn');
     
-    if (submitBtn) {
-        // 解答ボタン
-        submitBtn.addEventListener('click', () => {
+    // Enterキーで解答（グローバルイベント）
+    document.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && isInputModeActive && !inputAnswerSubmitted) {
             submitAnswer();
-        });
-        
-        // Enterキーで解答（グローバルイベント）
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && isInputModeActive && !submitBtn.disabled && !inputAnswerSubmitted) {
-                submitAnswer();
-            }
-        });
-    }
+        }
+    });
     
-    if (dontKnowBtn) {
-        // わからないボタン
-        dontKnowBtn.addEventListener('click', () => {
-            markAnswerAsDontKnow();
-        });
-    }
     
     if (inputStarBtn) {
         inputStarBtn.addEventListener('click', (e) => {
@@ -856,6 +841,126 @@ function setupEventListeners() {
         });
     }
     
+    // 仮想キーボードのイベントリスナー
+    setupVirtualKeyboard();
+    
+}
+
+// 仮想キーボードの設定
+function setupVirtualKeyboard() {
+    const keyboard = document.getElementById('virtualKeyboard');
+    if (!keyboard) return;
+    
+    // キーボードキーのクリックイベント
+    keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        key.addEventListener('click', (e) => {
+            e.preventDefault();
+            const letter = key.dataset.key;
+            insertLetter(letter);
+        });
+    });
+    
+    // バックスペースキー
+    const backspaceKey = document.getElementById('keyboardBackspace');
+    if (backspaceKey) {
+        backspaceKey.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleBackspace();
+        });
+    }
+    
+    // 解答ボタン（決定ボタン）
+    const decideBtn = document.getElementById('keyboardDecide');
+    if (decideBtn) {
+        decideBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (isInputModeActive) {
+                if (!inputAnswerSubmitted) {
+                    submitAnswer();
+                } else {
+                    // 回答済みの場合は次へ進む
+                    if (currentIndex < currentRangeEnd - 1) {
+                        currentIndex++;
+                        inputAnswerSubmitted = false;
+                        decideBtn.textContent = '解答';
+                        const passBtn = document.getElementById('keyboardPass');
+                        if (passBtn) passBtn.style.display = '';
+                        displayInputMode();
+                    } else {
+                        showInputCompletionScreen();
+                    }
+                }
+            }
+        });
+    }
+    
+    // パスボタン
+    const passBtn = document.getElementById('keyboardPass');
+    if (passBtn) {
+        passBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!inputAnswerSubmitted && isInputModeActive) {
+                markAnswerAsDontKnow();
+            }
+        });
+    }
+}
+
+// 文字を入力フィールドに挿入
+function insertLetter(letter) {
+    if (inputAnswerSubmitted || !isInputModeActive) return;
+    
+    const letterInputs = document.getElementById('letterInputs');
+    if (!letterInputs) return;
+    
+    const inputs = letterInputs.querySelectorAll('.letter-input:not([disabled])');
+    const activeInput = Array.from(inputs).find(input => !input.value || document.activeElement === input);
+    
+    if (activeInput) {
+        activeInput.value = letter.toLowerCase();
+        activeInput.dispatchEvent(new Event('input', { bubbles: true }));
+        
+        // 次のフィールドにフォーカス
+        const nextInput = letterInputs.querySelector(`input[data-index="${parseInt(activeInput.dataset.index) + 1}"]`);
+        if (nextInput && !nextInput.disabled) {
+            nextInput.focus();
+        }
+    }
+}
+
+// バックスペース処理
+function handleBackspace() {
+    if (inputAnswerSubmitted || !isInputModeActive) return;
+    
+    const letterInputs = document.getElementById('letterInputs');
+    if (!letterInputs) return;
+    
+    const inputs = letterInputs.querySelectorAll('.letter-input:not([disabled])');
+    const activeInput = document.activeElement;
+    
+    if (activeInput && activeInput.classList.contains('letter-input')) {
+        if (activeInput.value) {
+            activeInput.value = '';
+        } else {
+            // 前のフィールドに移動
+            const currentIndex = parseInt(activeInput.dataset.index);
+            if (currentIndex > 0) {
+                const prevInput = letterInputs.querySelector(`input[data-index="${currentIndex - 1}"]`);
+                if (prevInput && !prevInput.disabled) {
+                    prevInput.focus();
+                    prevInput.value = '';
+                }
+            }
+        }
+    } else {
+        // フォーカスがない場合は最後の入力済みフィールドをクリア
+        const filledInputs = Array.from(inputs).filter(input => input.value);
+        if (filledInputs.length > 0) {
+            const lastInput = filledInputs[filledInputs.length - 1];
+            lastInput.value = '';
+            lastInput.focus();
+        }
+    }
 }
 
 // 日本語→英語入力モードの表示
@@ -868,7 +973,6 @@ function displayInputMode() {
     const word = currentWords[currentIndex];
     inputAnswerSubmitted = false;
     
-    const inputWordNumber = document.getElementById('inputWordNumber');
     const inputMeaning = document.getElementById('inputMeaning');
     const letterInputs = document.getElementById('letterInputs');
     const submitBtn = document.getElementById('submitBtn');
@@ -877,9 +981,6 @@ function displayInputMode() {
     const correctAnswer = document.getElementById('correctAnswer');
     const inputStarBtn = document.getElementById('inputStarBtn');
     
-    if (inputWordNumber) {
-        inputWordNumber.textContent = `No.${word.id}`;
-    }
     if (inputMeaning) {
         inputMeaning.textContent = word.meaning;
     }
@@ -928,13 +1029,7 @@ function displayInputMode() {
         if (firstInput) firstInput.focus();
     }
     
-    if (submitBtn) {
-        submitBtn.disabled = false;
-    }
-    const dontKnowBtn = document.getElementById('dontKnowBtn');
-    if (dontKnowBtn) {
-        dontKnowBtn.disabled = false;
-    }
+    // 仮想キーボードのボタンは常に有効
     if (inputResult) {
         inputResult.classList.add('hidden');
     }
@@ -1034,7 +1129,6 @@ function submitAnswer() {
     
     const word = currentWords[currentIndex];
     const letterInputs = document.getElementById('letterInputs');
-    const submitBtn = document.getElementById('submitBtn');
     const inputResult = document.getElementById('inputResult');
     const resultMessage = document.getElementById('resultMessage');
     const correctAnswer = document.getElementById('correctAnswer');
@@ -1053,17 +1147,18 @@ function submitAnswer() {
         input.disabled = true;
     });
     
-    if (submitBtn) submitBtn.disabled = true;
-    const dontKnowBtn = document.getElementById('dontKnowBtn');
-    if (dontKnowBtn) dontKnowBtn.disabled = true;
+    // 仮想キーボードのボタンは無効化しない（回答後も次へ進めるため）
     
-    // 1文字ごとに正解・不正解を表示（入力されているもののみ）
+    // 1文字ごとに正解・不正解を表示（入力されていない部分も赤く表示）
     inputs.forEach((input, index) => {
         const userChar = input.value.trim().toLowerCase();
         const correctChar = word.word[index] ? word.word[index].toLowerCase() : '';
         
-        // 入力されていないフィールドは判定しない
-        if (!userChar) return;
+        // 入力されていないフィールドは赤く表示
+        if (!userChar) {
+            input.classList.add('wrong');
+            return;
+        }
         
         if (userChar === correctChar) {
             input.classList.add('correct');
@@ -1092,7 +1187,6 @@ function markAnswerAsDontKnow() {
     
     const word = currentWords[currentIndex];
     const letterInputs = document.getElementById('letterInputs');
-    const submitBtn = document.getElementById('submitBtn');
     const inputResult = document.getElementById('inputResult');
     const correctAnswer = document.getElementById('correctAnswer');
     
@@ -1104,9 +1198,7 @@ function markAnswerAsDontKnow() {
         input.disabled = true;
     });
     
-    if (submitBtn) submitBtn.disabled = true;
-    const dontKnowBtn = document.getElementById('dontKnowBtn');
-    if (dontKnowBtn) dontKnowBtn.disabled = true;
+    // 仮想キーボードのボタンは無効化しない
     
     // 正解を表示
     correctAnswer.textContent = word.word;
@@ -1121,31 +1213,15 @@ function markAnswerAsDontKnow() {
 
 // 次へボタンを表示
 function showNextButton() {
-    const submitBtn = document.getElementById('submitBtn');
-    const dontKnowBtn = document.getElementById('dontKnowBtn');
+    const decideBtn = document.getElementById('keyboardDecide');
+    const passBtn = document.getElementById('keyboardPass');
     
-    if (submitBtn) {
-        submitBtn.textContent = '次へ';
-        submitBtn.disabled = false;
-        submitBtn.onclick = (e) => {
-            e.stopPropagation();
-            if (currentIndex < currentRangeEnd - 1) {
-                currentIndex++;
-                // ボタンを元に戻す
-                submitBtn.textContent = '解答';
-                submitBtn.onclick = null; // イベントリスナーはsetupEventListenersで設定済み
-                if (dontKnowBtn) {
-                    dontKnowBtn.style.display = '';
-                }
-                displayInputMode();
-            } else {
-                showInputCompletionScreen();
-            }
-        };
+    if (decideBtn) {
+        decideBtn.textContent = '次へ';
     }
     
-    if (dontKnowBtn) {
-        dontKnowBtn.style.display = 'none';
+    if (passBtn) {
+        passBtn.style.display = 'none';
     }
 }
 
@@ -1258,15 +1334,15 @@ function setupSwipeDetection(card) {
         animationFrameId = requestAnimationFrame(() => {
             // 横スワイプ
             if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 3) {
-                card.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
-                const opacityDrop = Math.min(Math.abs(dx) / 180, 0.18);
-                card.style.opacity = `${1 - opacityDrop}`;
+            card.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
+            const opacityDrop = Math.min(Math.abs(dx) / 180, 0.18);
+            card.style.opacity = `${1 - opacityDrop}`;
             } else if (isMistakeMode && dy < -3 && Math.abs(dy) > Math.abs(dx)) {
                 // 上移動（完璧）- 裏面のみ
-                card.style.transform = `translateY(${dy}px) scale(${1 + dy/1000})`;
-                const opacityDrop = Math.min(Math.abs(dy) / 180, 0.18);
-                card.style.opacity = `${1 - opacityDrop}`;
-            }
+            card.style.transform = `translateY(${dy}px) scale(${1 + dy/1000})`;
+            const opacityDrop = Math.min(Math.abs(dy) / 180, 0.18);
+            card.style.opacity = `${1 - opacityDrop}`;
+        }
         });
     };
 
@@ -1300,7 +1376,7 @@ function setupSwipeDetection(card) {
         
         isDragging = false;
         card.classList.remove('dragging');
-        
+
         // 表面なら処理しない
         if (!card.classList.contains('flipped')) {
             card.style.transition = '';
@@ -1484,7 +1560,8 @@ function applyMarkers(word) {
 // 現在の単語を表示
 function displayCurrentWord() {
     if (currentIndex >= currentRangeEnd) {
-        // 学習完了時は何も表示しない（完了画面を削除）
+        // 学習完了時は完了画面を表示
+        showCompletion();
         return;
     }
 
@@ -1558,7 +1635,7 @@ function updateNavButtons() {
 
 // 完璧としてマーク（上スワイプ）
 function markMastered() {
-    if (currentIndex >= currentWords.length) return;
+    if (currentIndex >= currentRangeEnd) return;
 
     const word = currentWords[currentIndex];
     answeredWords.add(word.id);
@@ -1606,13 +1683,18 @@ function markMastered() {
         if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習') {
             saveProgress(selectedCategory, currentIndex);
         }
+        // 最後の単語の場合は完了画面を表示
+        if (currentIndex >= currentRangeEnd) {
+            showCompletion();
+        } else {
         displayCurrentWord();
+        }
     }, 180);
 }
 
 // スワイプまたはボタンで正解/不正解をマーク
 function markAnswer(isCorrect) {
-    if (currentIndex >= currentWords.length) return;
+    if (currentIndex >= currentRangeEnd) return;
 
     const word = currentWords[currentIndex];
     answeredWords.add(word.id);
@@ -1672,7 +1754,12 @@ function markAnswer(isCorrect) {
         if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習') {
             saveProgress(selectedCategory, currentIndex);
         }
+        // 最後の単語の場合は完了画面を表示
+        if (currentIndex >= currentRangeEnd) {
+            showCompletion();
+        } else {
         displayCurrentWord();
+        }
     }, 180);
 }
 
@@ -1760,6 +1847,23 @@ function clearLearningHistory() {
             localStorage.removeItem('wrongWords');
             localStorage.removeItem('reviewWords');
             localStorage.removeItem('learningProgress');
+            
+            // カテゴリーごとの進捗も削除
+            const categories = ['超よく出る600', 'よく出る300', '差がつく200', '基本語彙500'];
+            categories.forEach(category => {
+                localStorage.removeItem(`correctWords-${category}`);
+                localStorage.removeItem(`wrongWords-${category}`);
+            });
+            
+            // すべてのlocalStorageキーを確認して、カテゴリー関連のものを削除
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('correctWords-') || key.startsWith('wrongWords-'))) {
+                    keysToRemove.push(key);
+                }
+            }
+            keysToRemove.forEach(key => localStorage.removeItem(key));
             
             // 画面を更新
             if (elements.categorySelection && !elements.categorySelection.classList.contains('hidden')) {
