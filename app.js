@@ -1309,8 +1309,10 @@ function submitAnswer() {
     // 正解/不正解の判定（大文字小文字を区別）
     const isCorrect = userAnswer === correctWord;
     
-    // 正解の単語を常に表示
+    // 正解の単語を表示（常に緑色で表示）
     correctAnswer.textContent = word.word;
+    correctAnswer.classList.add('correct');
+    correctAnswer.classList.remove('wrong');
     inputResult.classList.remove('hidden');
     
     // 画面全体のフィードバック表示（テキストなし、色のみ）
@@ -1339,8 +1341,10 @@ function markAnswerAsDontKnow() {
     
     // 仮想キーボードのボタンは無効化しない
     
-    // 正解を表示
+    // 正解を表示（緑色で表示）
     correctAnswer.textContent = word.word;
+    correctAnswer.classList.add('correct');
+    correctAnswer.classList.remove('wrong');
     inputResult.classList.remove('hidden');
     
     // 間違い扱いにする

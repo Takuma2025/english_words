@@ -663,12 +663,12 @@ body {
     will-change: transform;
 }
 
-/* スマホ向け：キーボードを大きく */
+/* スマホ向け：キーボードを大きく、文字も大きく */
 @media (max-width: 600px) {
     .keyboard-key {
-        width: 32px;
-        height: 44px;
-        font-size: 18px;
+        width: 36px;
+        height: 48px;
+        font-size: 20px;
         border-radius: 6px;
     }
 }
@@ -698,8 +698,8 @@ body {
 /* スマホ向け：特殊キーも大きく */
 @media (max-width: 600px) {
     .keyboard-key-special {
-        width: 60px;
-        height: 44px;
+        width: 64px;
+        height: 48px;
         border-radius: 6px;
     }
 }
@@ -764,15 +764,15 @@ body {
 /* スマホ向け：スペースキーとShiftキーも大きく */
 @media (max-width: 600px) {
     .keyboard-key-shift {
-        width: 50px;
-        height: 44px;
+        width: 54px;
+        height: 48px;
         border-radius: 6px;
     }
     
     .keyboard-key-space {
-        width: 32px;
-        height: 44px;
-        font-size: 18px;
+        width: 36px;
+        height: 48px;
+        font-size: 20px;
     }
 }
 
@@ -806,16 +806,16 @@ body {
     will-change: transform;
 }
 
-/* スマホ向け：アクションボタンも大きく、端っこまで使えるように */
+/* スマホ向け：アクションボタンを小さく、端っこまで使えるように */
 @media (max-width: 600px) {
     .keyboard-action-btn {
-        height: 56px;
-        font-size: 17px;
-        border-radius: 12px;
+        height: 44px;
+        font-size: 15px;
+        border-radius: 10px;
     }
     
     .keyboard-actions {
-        gap: 10px;
+        gap: 8px;
         padding: 0 2px; /* 最小限のパディングで端っこまで使えるように */
     }
 }
@@ -872,6 +872,14 @@ body {
     font-size: 24px;
     color: #1f2937;
     font-weight: 700;
+}
+
+.correct-word.correct {
+    color: #10b981; /* 緑色で正解を表示 */
+}
+
+.correct-word.wrong {
+    color: #1f2937; /* 間違いの場合は通常色 */
 }
 
 
