@@ -1953,9 +1953,10 @@ function showInstallOverlay() {
     if (isIOS) {
         // iOS用の説明
         message.textContent = 'このアプリをホーム画面に追加すると、より快適に学習できます。';
+        const shareImgPath = new URL('share.png', window.location.href).href;
         instructions.innerHTML = `
             <ol>
-                <li>画面下部の共有ボタン <img src="share.png" alt="共有" style="width: 16px; height: 16px; vertical-align: middle; display: inline-block; margin: 0 2px;"> をタップ</li>
+                <li>画面下部の共有ボタン <img src="${shareImgPath}" alt="共有" style="width: 20px; height: 20px; vertical-align: middle; display: inline-block; margin: 0 4px;"> をタップ</li>
                 <li>「ホーム画面に追加」を選択</li>
                 <li>「追加」をタップ</li>
             </ol>
