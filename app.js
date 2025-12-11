@@ -343,6 +343,9 @@ function init() {
     loadData();
     showCategorySelection();
     setupEventListeners();
+    
+    // ホーム画面に追加されていない場合のみオーバレイを表示
+    checkAndShowInstallPrompt();
 }
 
 // カテゴリー選択画面を表示
@@ -1920,6 +1923,91 @@ function shuffleWords() {
     updateStats();
 
     showAlert('通知', '単語をシャッフルしました。');
+}
+
+// ホーム画面追加オーバレイを表示（インストールされていない場合のみ毎回表示）
+function checkAndShowInstallPrompt() {
+    // PWAとして既にインストールされているかチェック
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        return; // インストール済みの場合は表示しない
+    }
+    
+    // 少し遅延して表示（ページ読み込み後）
+    setTimeout(() => {
+        showInstallOverlay();
+    }, 1000);
+}
+
+function showInstallOverlay() {
+    const overlay = document.getElementById('installOverlay');
+    const message = document.getElementById('installMessage');
+    const instructions = document.getElementById('installInstructions');
+    const closeBtn = document.getElementById('installCloseBtn');
+    
+    if (!overlay || !message || !instructions || !closeBtn) return;
+    
+    // iOSかAndroidかを判定
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    
+    if (isIOS) {
+        // iOS用の説明
+        message.textContent = 'このアプリをホーム画面に追加すると、より快適に学習できます。';
+        instructions.innerHTML = `
+            <ol>
+                <li>画面下部の共有ボタン <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;"><rect x="8" y="6" width="8" height="12" rx="1"></rect><path d="M4 10c0-1.1.9-2 2-2h2v8H6c-1.1 0-2-.9-2-2v-6zM14 10c0-1.1.9-2 2-2h2v8h-2c-1.1 0-2-.9-2-2v-6z"></path></svg> をタップ</li>
+                <li>「ホーム画面に追加」を選択</li>
+                <li>「追加」をタップ</li>
+            </ol>
+        `;
+    } else if (isAndroid) {
+        // Android用の説明
+        message.textContent = 'このアプリをホーム画面に追加すると、より快適に学習できます。';
+        instructions.innerHTML = `
+            <ol>
+                <li>ブラウザのメニュー <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg> を開く</li>
+                <li>「ホーム画面に追加」または「アプリをインストール」を選択</li>
+                <li>確認画面で「追加」をタップ</li>
+            </ol>
+        `;
+    } else {
+        // その他のデバイス
+        message.textContent = 'このアプリをホーム画面に追加すると、より快適に学習できます。';
+        instructions.innerHTML = `
+            <ol>
+                <li>ブラウザのメニューから「ホーム画面に追加」を選択</li>
+                <li>確認画面で「追加」をクリック</li>
+            </ol>
+        `;
+    }
+    
+    // 閉じるボタンのイベント
+    closeBtn.onclick = () => {
+        closeInstallOverlay();
+    };
+    
+    // オーバレイの背景クリックで閉じる
+    overlay.onclick = (e) => {
+        if (e.target === overlay) {
+            closeInstallOverlay();
+        }
+    };
+    
+    // 表示
+    overlay.classList.remove('hidden');
+    setTimeout(() => {
+        overlay.classList.add('active');
+    }, 10);
+}
+
+function closeInstallOverlay() {
+    const overlay = document.getElementById('installOverlay');
+    if (!overlay) return;
+    
+    overlay.classList.remove('active');
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+    }, 300);
 }
 
 // アプリケーションの起動

@@ -313,6 +313,23 @@
         </div>
     </div>
 
+    <!-- ホーム画面追加オーバレイ -->
+    <div id="installOverlay" class="install-overlay hidden">
+        <div class="install-container">
+            <div class="install-warning-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <h3 class="install-title">ホーム画面に追加してください</h3>
+            <p class="install-message" id="installMessage">このアプリをホーム画面に追加すると、より快適に学習できます。</p>
+            <div class="install-instructions" id="installInstructions"></div>
+            <button class="install-close-btn" id="installCloseBtn">閉じる</button>
+        </div>
+    </div>
+
     <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
