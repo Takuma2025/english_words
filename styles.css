@@ -420,7 +420,7 @@ body {
     padding: 20px 24px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 480px;
+    max-width: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -570,7 +570,7 @@ body {
 .virtual-keyboard {
     background: transparent;
     border-top: none;
-    padding: 14px 8px;
+    padding: 14px 4px;
     margin: 0;
     border-radius: 20px 20px 0 0;
     width: 100%;
@@ -583,6 +583,8 @@ body {
     justify-content: center;
     gap: 4px;
     margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .keyboard-row:last-of-type {
@@ -590,12 +592,12 @@ body {
 }
 
 .keyboard-key {
-    min-width: 32px;
-    height: 44px;
+    min-width: 28px;
+    height: 40px;
     background: #ffffff;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 6px;
+    font-size: 14px;
     font-weight: 600;
     color: #1f2937;
     cursor: pointer;
@@ -605,7 +607,7 @@ body {
     align-items: center;
     justify-content: center;
     flex: 1;
-    max-width: 44px;
+    max-width: 36px;
 }
 
 .keyboard-key:active {
@@ -614,10 +616,10 @@ body {
 }
 
 .keyboard-key-special {
-    max-width: 64px;
+    max-width: 56px;
     background: #ffffff;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
 }
 
@@ -628,8 +630,10 @@ body {
 
 .keyboard-actions {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     padding: 0 4px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .keyboard-action-btn {
