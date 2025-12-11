@@ -504,8 +504,50 @@ body {
     flex-shrink: 0;
 }
 
+/* タイムアタックモード時は要素間隔を詰める */
+.card-area-wrapper:has(.word-timer-bar:not(.hidden)) .card-top-section {
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.card-area-wrapper:has(.word-timer-bar:not(.hidden)) .word-card {
+    margin-top: 24px; /* タイムバーのスペースを確保 */
+}
+
 .card-area-wrapper:has(.input-mode:not(.hidden)) .card-top-section {
     margin-bottom: 4px;
+}
+
+/* タイマー表示 */
+.timer-display {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+    margin-top: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.timer-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.timer-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2937;
+    font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
+    letter-spacing: 0.05em;
+    line-height: 1;
 }
 
 .progress-header {
@@ -534,6 +576,10 @@ body {
     width: 100%;
     margin-top: 4px;
     padding: 0 2px;
+}
+
+.progress-step-buttons.hidden {
+    display: none;
 }
 
 .progress-step-btn {
@@ -649,18 +695,106 @@ body {
 }
 
 .progress-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+    width: 100%;
+}
+
+.progress-stats-content {
     display: inline-flex;
     justify-content: center;
     align-items: center;
     font-size: 11px;
     font-weight: 600;
     color: #6b7280;
-    margin-top: 2px;
     background: rgba(0, 0, 0, 0.05);
-    padding: 2px 6px;
+    padding: 4px 10px;
     border-radius: 8px;
-    width: fit-content;
-    align-self: center;
+    gap: 6px;
+}
+
+.progress-stats-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.7;
+}
+
+.progress-stats-scores {
+    display: none; /* デフォルトは非表示（タイムアタックモード時のみ表示） */
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+.score-correct,
+.score-wrong,
+.score-accuracy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    min-width: 80px;
+}
+
+.score-correct {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.score-wrong {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.score-accuracy {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.score-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.score-correct .score-label {
+    color: #3b82f6;
+}
+
+.score-wrong .score-label {
+    color: #ef4444;
+}
+
+.score-accuracy .score-label {
+    color: #10b981;
+}
+
+#correctCountDisplay,
+#wrongCountDisplay,
+#accuracyDisplay {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+#correctCountDisplay {
+    color: #3b82f6;
+}
+
+#wrongCountDisplay {
+    color: #ef4444;
+}
+
+#accuracyDisplay {
+    color: #10b981;
 }
 
 #progressRangeText {
@@ -1563,6 +1697,28 @@ body {
     margin-top: 8px;
 }
 
+/* 単語あたりのタイマーバー */
+.word-timer-bar {
+    position: absolute;
+    top: -22px;
+    left: 0;
+    right: 0;
+    height: 16px;
+    background: #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 20;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.word-timer-bar-fill {
+    height: 100%;
+    width: 100%;
+    background: #3b82f6;
+    transition: width 0.1s linear, background-color 0.2s ease;
+    border-radius: 8px;
+}
+
 .word-card.flipped {
     touch-action: none;
 }
@@ -2236,6 +2392,89 @@ body {
 }
 
 .hidden { display: none !important; }
+
+/* カウントダウンオーバーレイ */
+.countdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.countdown-overlay:not(.hidden) {
+    opacity: 1;
+}
+
+.countdown-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.countdown-number {
+    font-size: 120px;
+    font-weight: 700;
+    color: #ffffff;
+    font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
+    line-height: 1;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    user-select: none;
+}
+
+.countdown-number.pulse {
+    animation: countdownPulse 0.5s ease-out;
+}
+
+.countdown-number.go {
+    animation: countdownGo 0.5s ease-out;
+    color: #10b981;
+}
+
+.countdown-label {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.9;
+}
+
+@keyframes countdownPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes countdownGo {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.4);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
 
 /* ホーム画面追加オーバレイ */
 .install-overlay {

@@ -17,6 +17,12 @@ let isShiftActive = false; // Shiftキーがアクティブかどうか（大文
 let questionStatus = []; // 各問題の回答状況を追跡（'correct', 'wrong', null）
 let progressBarStartIndex = 0; // 進捗バーの表示開始インデックス（20問ずつ表示）
 const PROGRESS_BAR_DISPLAY_COUNT = 20; // 進捗バーに表示する問題数
+let isTimeAttackMode = false; // タイムアタックモードかどうか
+let timerInterval = null; // タイマーのインターバル
+let totalTimeRemaining = 0; // 残り時間（秒）
+let wordStartTime = 0; // 現在の単語の開始時間
+let wordTimerInterval = null; // 単語あたりのタイマーのインターバル
+const TIME_PER_WORD = 2; // 1単語あたりの時間（秒）
 
 // 学習日を記録する関数（日付と学習量を記録）
 function recordStudyDate() {
@@ -386,6 +392,14 @@ function init() {
 
 // カテゴリー選択画面を表示
 function showCategorySelection() {
+    // タイマーを停止
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    stopWordTimer();
+    isTimeAttackMode = false;
+    
     elements.categorySelection.classList.remove('hidden');
     elements.mainContent.classList.add('hidden');
     const courseSelection = document.getElementById('courseSelection');
@@ -404,6 +418,12 @@ function showCategorySelection() {
     // ハンバーガーメニューボタンは常に表示（変更不要）
     
     document.body.classList.remove('learning-mode');
+    
+    // 進捗ステップボタンを表示
+    const progressStepButtons = document.querySelector('.progress-step-buttons');
+    if (progressStepButtons) {
+        progressStepButtons.classList.remove('hidden');
+    }
     
     // 最新のデータを読み込んでから進捗を更新
     loadData();
@@ -427,6 +447,16 @@ function startCategory(category) {
             showAlert('エラー', '小学生で習った単語データが見つかりません。');
             return;
         }
+    } else if (category === 'C問題対策タイムアタック') {
+        // タイムアタックモード：Group1 超頻出600の単語を使用
+        categoryWords = wordData.filter(word => word.category === 'Group1 超頻出600');
+        if (categoryWords.length === 0) {
+            showAlert('エラー', 'タイムアタック用の単語データが見つかりません。');
+            return;
+        }
+        // タイムアタックモードで直接開始
+        initTimeAttackLearning(category, categoryWords);
+        return;
     } else {
         categoryWords = wordData.filter(word => word.category === category);
     }
@@ -755,6 +785,245 @@ function createMethodCard(title, description, onClick) {
     return card;
 }
 
+// タイムアタックモードで学習を初期化
+function initTimeAttackLearning(category, words) {
+    selectedCategory = category;
+    currentWords = words;
+    isInputModeActive = false;
+    isTimeAttackMode = true;
+    
+    currentRangeStart = 0;
+    currentRangeEnd = words.length;
+    currentIndex = 0;
+    
+    answeredWords.clear();
+    correctCount = 0;
+    wrongCount = 0;
+    questionStatus = new Array(words.length).fill(null);
+    progressBarStartIndex = 0;
+    
+    // 合計時間を計算（1単語2秒 × 単語数）
+    totalTimeRemaining = words.length * TIME_PER_WORD;
+    wordStartTime = Date.now();
+    
+    elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
+    elements.mainContent.classList.remove('hidden');
+    elements.headerSubtitle.textContent = category;
+    
+    document.body.classList.add('learning-mode');
+    
+    if (elements.homeBtn) {
+        elements.homeBtn.classList.remove('hidden');
+    }
+    
+    // 進捗ステップボタンを非表示（タイムアタックモード）
+    const progressStepButtons = document.querySelector('.progress-step-buttons');
+    if (progressStepButtons) {
+        progressStepButtons.classList.add('hidden');
+    }
+    
+    // 入力モードを非表示、カードモードを表示（カウントダウン中は非表示）
+    const wordCard = document.getElementById('wordCard');
+    const inputMode = document.getElementById('inputMode');
+    const cardHint = document.getElementById('cardHint');
+    const statsBar = document.getElementById('statsBar');
+    
+    if (inputMode) inputMode.classList.add('hidden');
+    if (wordCard) wordCard.classList.add('hidden'); // カウントダウン中は非表示
+    if (cardHint) cardHint.classList.add('hidden'); // カウントダウン中は非表示
+    if (statsBar) statsBar.classList.add('hidden'); // カウントダウン中は非表示
+    
+    // 進捗バーのセグメントを生成
+    if (words.length > 0) {
+        createProgressSegments(words.length);
+    }
+    
+    // カウントダウン中はdisplayCurrentWord()を呼ばない
+    // displayCurrentWord();
+    // updateStats();
+    updateNavState('learning');
+    
+    // 正解・不正解の表示を表示（カウントダウン中は非表示）
+    const progressStatsScores = document.querySelector('.progress-stats-scores');
+    if (progressStatsScores) {
+        progressStatsScores.style.display = 'none'; // カウントダウン中は非表示
+    }
+    
+    // カウントダウンを開始
+    startCountdown();
+}
+
+// カウントダウンを開始
+function startCountdown() {
+    const countdownOverlay = document.getElementById('countdownOverlay');
+    const countdownNumber = document.getElementById('countdownNumber');
+    
+    if (!countdownOverlay || !countdownNumber) return;
+    
+    // カウントダウンオーバーレイを表示
+    countdownOverlay.classList.remove('hidden');
+    
+    let count = 3;
+    countdownNumber.textContent = count;
+    countdownNumber.classList.add('pulse');
+    
+    const countdownInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+            countdownNumber.textContent = count;
+            countdownNumber.classList.remove('pulse');
+            // アニメーションをリセット
+            void countdownNumber.offsetWidth;
+            countdownNumber.classList.add('pulse');
+        } else {
+            countdownNumber.textContent = 'GO!';
+            countdownNumber.classList.remove('pulse');
+            countdownNumber.classList.add('go');
+            
+            // カウントダウン終了後、学習を開始
+            setTimeout(() => {
+                countdownOverlay.classList.add('hidden');
+                countdownNumber.classList.remove('go');
+                
+                // 学習画面の要素を表示
+                const wordCard = document.getElementById('wordCard');
+                const cardHint = document.getElementById('cardHint');
+                const statsBar = document.getElementById('statsBar');
+                const progressStatsScores = document.querySelector('.progress-stats-scores');
+                
+                if (wordCard) wordCard.classList.remove('hidden');
+                if (cardHint) cardHint.classList.remove('hidden');
+                if (statsBar) statsBar.classList.remove('hidden');
+                if (progressStatsScores) {
+                    progressStatsScores.style.display = 'flex';
+                }
+                
+                // 最初の単語を表示
+                displayCurrentWord();
+                updateStats();
+                
+                // タイマーを開始
+                startTimer();
+                
+                // 単語あたりのタイマーバーを開始
+                startWordTimer();
+            }, 500);
+            
+            clearInterval(countdownInterval);
+        }
+    }, 1000);
+}
+
+// 単語あたりのタイマーバーを開始
+function startWordTimer() {
+    if (!isTimeAttackMode) return;
+    
+    // 既存のインターバルをクリア
+    if (wordTimerInterval) {
+        clearInterval(wordTimerInterval);
+    }
+    
+    const wordTimerBar = document.getElementById('wordTimerBar');
+    const wordTimerBarFill = document.getElementById('wordTimerBarFill');
+    
+    if (!wordTimerBar || !wordTimerBarFill) return;
+    
+    // バーを表示
+    wordTimerBar.classList.remove('hidden');
+    
+    // バーをリセット
+    wordTimerBarFill.style.width = '100%';
+    wordTimerBarFill.style.backgroundColor = '#3b82f6';
+    
+    wordStartTime = Date.now();
+    let elapsed = 0;
+    
+    // 100msごとに更新（滑らかなアニメーション）
+    wordTimerInterval = setInterval(() => {
+        elapsed = (Date.now() - wordStartTime) / 1000;
+        const remaining = Math.max(0, TIME_PER_WORD - elapsed);
+        const percentage = (remaining / TIME_PER_WORD) * 100;
+        
+        wordTimerBarFill.style.width = `${percentage}%`;
+        
+        // 残り時間に応じて色を変更
+        if (remaining <= 0.5) {
+            wordTimerBarFill.style.backgroundColor = '#ef4444'; // 赤
+        } else if (remaining <= 1.0) {
+            wordTimerBarFill.style.backgroundColor = '#f59e0b'; // オレンジ
+        } else {
+            wordTimerBarFill.style.backgroundColor = '#3b82f6'; // 青
+        }
+        
+        // 時間切れの処理
+        if (remaining <= 0) {
+            clearInterval(wordTimerInterval);
+            wordTimerInterval = null;
+            // 時間切れの場合は自動的に間違いとして扱う（カードがめくられている状態でも）
+            if (currentIndex < currentRangeEnd) {
+                markAnswer(false);
+            }
+        }
+    }, 100);
+}
+
+// 単語あたりのタイマーバーを停止
+function stopWordTimer() {
+    if (wordTimerInterval) {
+        clearInterval(wordTimerInterval);
+        wordTimerInterval = null;
+    }
+    
+    const wordTimerBar = document.getElementById('wordTimerBar');
+    if (wordTimerBar) {
+        wordTimerBar.classList.add('hidden');
+    }
+}
+
+// タイマーを開始
+function startTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    
+    updateTimerDisplay();
+    
+    timerInterval = setInterval(() => {
+        totalTimeRemaining--;
+        updateTimerDisplay();
+        
+        // 時間切れの処理
+        if (totalTimeRemaining <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            handleTimeUp();
+        }
+    }, 1000);
+}
+
+// タイマー表示を更新（内部処理のみ、表示はしない）
+function updateTimerDisplay() {
+    // タイマー表示要素は削除されたため、内部処理のみ実行
+    // 時間切れチェックなどはここで行う
+}
+
+// 時間切れの処理
+function handleTimeUp() {
+    stopWordTimer();
+    const completed = currentIndex;
+    const total = currentWords.length;
+    
+    showAlert('時間切れ', `時間切れです！\n${completed}/${total}問を解きました。\n正解数: ${correctCount}\n間違い数: ${wrongCount}`);
+    
+    setTimeout(() => {
+        showCategorySelection();
+    }, 2000);
+}
+
 // 学習初期化処理（共通化）
 // rangeEnd: 学習範囲の終了index（exclusive）
 // rangeStartOverride: 進捗計算に用いる開始index（表示開始位置をずらすため）
@@ -810,6 +1079,26 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     // 学習画面ではホームボタンを表示
     if (elements.homeBtn) {
         elements.homeBtn.classList.remove('hidden');
+    }
+    
+    // 進捗ステップボタンを表示（タイムアタックモード以外）
+    const progressStepButtons = document.querySelector('.progress-step-buttons');
+    if (progressStepButtons) {
+        progressStepButtons.classList.remove('hidden');
+    }
+    
+    // タイマーを停止（タイムアタックモード以外）
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    stopWordTimer();
+    isTimeAttackMode = false;
+    
+    // 正解・不正解の表示を非表示
+    const progressStatsScores = document.querySelector('.progress-stats-scores');
+    if (progressStatsScores) {
+        progressStatsScores.style.display = 'none';
     }
 
     // 間違い復習モードの場合のみCSSクラスを付与
@@ -1874,6 +2163,15 @@ function handleCardTap() {
 }
 
 function revealCard() {
+    // タイムアタックモードで時間切れの場合は次へ進む
+    if (isTimeAttackMode) {
+        const elapsed = (Date.now() - wordStartTime) / 1000;
+        if (elapsed >= TIME_PER_WORD) {
+            markAnswer(false);
+            return;
+        }
+    }
+    
     isCardRevealed = true;
     elements.wordCard.classList.add('flipped');
     // カードがひっくり返ったとき、ボタンを表示
@@ -2154,6 +2452,13 @@ function displayCurrentWord() {
     updateStarButton();
     updateStats();
     updateNavButtons(); // ボタン状態更新
+    
+    // タイムアタックモードの場合、単語開始時間をリセット
+    if (isTimeAttackMode) {
+        stopWordTimer();
+        startWordTimer();
+        updateTimerDisplay();
+    }
 }
 
 // ナビゲーションボタンの状態更新
@@ -2218,15 +2523,43 @@ function markMastered() {
         elements.wordCard.style.transform = '';
         elements.wordCard.style.opacity = '';
         currentIndex++;
+        
+        // タイムアタックモードの場合、使用時間を減算
+        if (isTimeAttackMode) {
+            stopWordTimer();
+            const elapsed = (Date.now() - wordStartTime) / 1000;
+            totalTimeRemaining = Math.max(0, totalTimeRemaining - elapsed);
+            if (totalTimeRemaining <= 0) {
+                handleTimeUp();
+                return;
+            }
+        }
+        
         // 進捗を保存
-        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習') {
+        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== 'C問題対策タイムアタック') {
             saveProgress(selectedCategory, currentIndex);
         }
         // 最後の単語の場合は完了画面を表示
         if (currentIndex >= currentRangeEnd) {
-            showCompletion();
+            if (isTimeAttackMode) {
+                // タイムアタックモードの完了処理
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                stopWordTimer();
+                const remainingTime = totalTimeRemaining;
+                const minutes = Math.floor(remainingTime / 60);
+                const seconds = Math.floor(remainingTime % 60);
+                showAlert('クリア！', `全問解ききりました！\n残り時間: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}\n正解数: ${correctCount}\n間違い数: ${wrongCount}`);
+                setTimeout(() => {
+                    showCategorySelection();
+                }, 2000);
+            } else {
+                showCompletion();
+            }
         } else {
-        displayCurrentWord();
+            displayCurrentWord();
         }
     }, 180);
 }
@@ -2306,8 +2639,19 @@ function markAnswer(isCorrect) {
         elements.wordCard.style.transform = '';
         elements.wordCard.style.opacity = '';
         currentIndex++;
+        
+        // タイムアタックモードの場合、使用時間を減算
+        if (isTimeAttackMode) {
+            const elapsed = (Date.now() - wordStartTime) / 1000;
+            totalTimeRemaining = Math.max(0, totalTimeRemaining - elapsed);
+            if (totalTimeRemaining <= 0) {
+                handleTimeUp();
+                return;
+            }
+        }
+        
         // 進捗を保存
-        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習') {
+        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== 'C問題対策タイムアタック') {
             saveProgress(selectedCategory, currentIndex);
         }
         
@@ -2317,9 +2661,24 @@ function markAnswer(isCorrect) {
         
         // 最後の単語の場合は完了画面を表示
         if (currentIndex >= currentRangeEnd) {
-            showCompletion();
+            if (isTimeAttackMode) {
+                // タイムアタックモードの完了処理
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                const remainingTime = totalTimeRemaining;
+                const minutes = Math.floor(remainingTime / 60);
+                const seconds = Math.floor(remainingTime % 60);
+                showAlert('クリア！', `全問解ききりました！\n残り時間: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}\n正解数: ${correctCount}\n間違い数: ${wrongCount}`);
+                setTimeout(() => {
+                    showCategorySelection();
+                }, 2000);
+            } else {
+                showCompletion();
+            }
         } else {
-        displayCurrentWord();
+            displayCurrentWord();
         }
     }, 180);
 }
@@ -2604,6 +2963,45 @@ function updateStats() {
     // 共通の進捗テキストを更新
     if (elements.progressText) {
         elements.progressText.textContent = `${currentPosition} / ${total}`;
+    }
+    
+    // 正解数・不正解数・正解率を更新（タイムアタックモード時のみ表示）
+    const correctCountDisplay = document.getElementById('correctCountDisplay');
+    const wrongCountDisplay = document.getElementById('wrongCountDisplay');
+    const accuracyDisplay = document.getElementById('accuracyDisplay');
+    const progressStatsScores = document.querySelector('.progress-stats-scores');
+    
+    if (isTimeAttackMode) {
+        // タイムアタックモード時は表示
+        if (progressStatsScores) {
+            progressStatsScores.style.display = 'flex';
+        }
+        if (correctCountDisplay) {
+            correctCountDisplay.textContent = correctCount;
+        }
+        if (wrongCountDisplay) {
+            wrongCountDisplay.textContent = wrongCount;
+        }
+        // 正解率を計算して表示
+        if (accuracyDisplay) {
+            const totalAnswered = correctCount + wrongCount;
+            if (totalAnswered > 0) {
+                const accuracy = Math.round((correctCount / totalAnswered) * 100);
+                accuracyDisplay.textContent = `${accuracy}%`;
+            } else {
+                accuracyDisplay.textContent = '0%';
+            }
+        }
+    } else {
+        // タイムアタックモード以外は非表示
+        if (progressStatsScores) {
+            progressStatsScores.style.display = 'none';
+        }
+    }
+    
+    // タイムアタックモードの場合、タイマー表示を更新（内部処理のみ、表示はしない）
+    if (isTimeAttackMode) {
+        updateTimerDisplay();
     }
     
     // 進捗バーのセグメントを生成（初回のみ）
