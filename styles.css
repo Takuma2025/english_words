@@ -628,7 +628,7 @@ body {
 /* スマホ向け：キーボード行をギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-row {
-        gap: 1px; /* 最小限の間隔 */
+        gap: 3px; /* キー同士の間隔を少し広げる */
         margin-bottom: 10px;
         padding: 0; /* パディングを削除 */
         width: 100%;
@@ -672,7 +672,7 @@ body {
 /* スマホ向け：キーボードを大きく、文字も大きく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-key {
-        width: calc((100% - 10px) / 11); /* 11個のキーが収まるように計算（gap分を考慮） */
+        width: calc((100% - 30px) / 11); /* 11個のキーが収まるように計算（gap分を考慮、gap: 3px × 10個 = 30px） */
         max-width: none;
         min-width: 0;
         height: 48px;
@@ -707,7 +707,7 @@ body {
 /* スマホ向け：特殊キーも大きく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-key-special {
-        width: calc((100% - 10px) / 11); /* 他のキーと同じサイズ計算 */
+        width: calc((100% - 30px) / 11); /* 他のキーと同じサイズ計算（gap: 3px × 10個 = 30px） */
         max-width: none;
         min-width: 0;
         height: 48px;
@@ -776,7 +776,7 @@ body {
 /* スマホ向け：スペースキーとShiftキーも大きく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-key-shift {
-        width: calc((100% - 10px) / 11); /* 他のキーと同じサイズ計算 */
+        width: calc((100% - 30px) / 11); /* 他のキーと同じサイズ計算（gap: 3px × 10個 = 30px） */
         max-width: none;
         min-width: 0;
         height: 48px;
@@ -785,7 +785,7 @@ body {
     }
     
     .keyboard-key-space {
-        width: calc((100% - 10px) / 11); /* 他のキーと同じサイズ計算 */
+        width: calc((100% - 30px) / 11); /* 他のキーと同じサイズ計算（gap: 3px × 10個 = 30px） */
         max-width: none;
         min-width: 0;
         height: 48px;
@@ -1182,7 +1182,7 @@ body {
     gap: 8px;
     padding: 0 16px;
     position: absolute;
-    bottom: 140px; /* カードからもう少し離す */
+    bottom: 160px; /* カードからさらに離す */
     left: 0;
     right: 0;
     width: 100%;
