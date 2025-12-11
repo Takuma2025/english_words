@@ -403,11 +403,7 @@ function showCategorySelection() {
         elements.homeBtn.classList.add('hidden');
     }
     
-    // 設定ボタンを表示
-    const settingsBtn = document.getElementById('settingsBtn');
-    if (settingsBtn) {
-        settingsBtn.classList.remove('hidden');
-    }
+    // ハンバーガーメニューボタンは常に表示（変更不要）
     
     document.body.classList.remove('learning-mode');
     
@@ -480,12 +476,6 @@ function initInputModeLearning(category, words) {
     }
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
-    
-    // 設定ボタンを非表示
-    const settingsBtn = document.getElementById('settingsBtn');
-    if (settingsBtn) {
-        settingsBtn.classList.add('hidden');
-    }
     
     document.body.classList.add('learning-mode');
 
@@ -576,11 +566,7 @@ function showCourseSelection(category, categoryWords) {
     courseSelection.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
     
-    // 設定ボタンを表示
-    const settingsBtn = document.getElementById('settingsBtn');
-    if (settingsBtn) {
-        settingsBtn.classList.remove('hidden');
-    }
+    // ハンバーガーメニューボタンは常に表示（変更不要）
 }
 
 // コースカードを作成
@@ -788,12 +774,6 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
     
-    // 設定ボタンを非表示
-    const settingsBtn = document.getElementById('settingsBtn');
-    if (settingsBtn) {
-        settingsBtn.classList.add('hidden');
-    }
-    
     document.body.classList.add('learning-mode');
     
     // 学習画面ではホームボタンを表示
@@ -894,14 +874,6 @@ function setupEventListeners() {
         });
     }
     
-    // シャッフルボタン
-    const shuffleBtn = document.getElementById('shuffleBtn');
-    if (shuffleBtn) {
-        shuffleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            shuffleWords();
-        });
-    }
     
     // コース選択画面から戻るボタン
     const backToCategoryBtn = document.getElementById('backToCategoryBtn');
@@ -916,28 +888,100 @@ function setupEventListeners() {
         });
     }
     
-    // 設定メニューボタン
-    const settingsBtn = document.getElementById('settingsBtn');
-    const settingsMenu = document.getElementById('settingsMenu');
+    // ハンバーガーメニューボタンとサイドバー
+    const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
     
-    if (settingsBtn && settingsMenu) {
-        settingsBtn.addEventListener('click', (e) => {
+    // サイドバーを開く
+    function openSidebar() {
+        if (sidebar && sidebarOverlay) {
+            sidebar.classList.add('sidebar-open');
+            sidebarOverlay.classList.add('sidebar-open');
+            document.body.style.overflow = 'hidden'; // スクロールを無効化
+        }
+    }
+    
+    // サイドバーを閉じる
+    function closeSidebar() {
+        if (sidebar && sidebarOverlay) {
+            sidebar.classList.remove('sidebar-open');
+            sidebarOverlay.classList.remove('sidebar-open');
+            document.body.style.overflow = ''; // スクロールを有効化
+        }
+    }
+    
+    if (hamburgerMenuBtn) {
+        hamburgerMenuBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            settingsMenu.classList.toggle('hidden');
+            openSidebar();
         });
-        
-        // メニュー外をクリックで閉じる
-        document.addEventListener('click', (e) => {
-            if (settingsMenu && !settingsMenu.contains(e.target) && !settingsBtn.contains(e.target)) {
-                settingsMenu.classList.add('hidden');
+    }
+    
+    if (sidebarCloseBtn) {
+        sidebarCloseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeSidebar();
+        });
+    }
+    
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', () => {
+            closeSidebar();
+        });
+    }
+    
+    // 学習方法ボタン
+    const learningMethodBtn = document.getElementById('learningMethodBtn');
+    if (learningMethodBtn) {
+        learningMethodBtn.addEventListener('click', () => {
+            closeSidebar();
+            
+            // 現在のカテゴリーに応じて学習方法選択モーダルを表示
+            if (selectedCategory) {
+                // カテゴリーが選択されている場合
+                let categoryWords;
+                if (selectedCategory === '基本語彙500') {
+                    categoryWords = wordData.slice(0, Math.min(500, wordData.length));
+                } else if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+                    if (typeof elementaryWordData !== 'undefined') {
+                        categoryWords = elementaryWordData;
+                    } else {
+                        showAlert('エラー', '小学生で習った単語データが見つかりません。');
+                        return;
+                    }
+                } else {
+                    categoryWords = wordData.filter(word => word.category === selectedCategory);
+                }
+                
+                if (categoryWords.length === 0) {
+                    showAlert('エラー', '選択したカテゴリーに単語がありません。');
+                    return;
+                }
+                
+                // 基本語彙500と小学生で習った単語の場合は入力モード用のモーダルを表示
+                if (selectedCategory === '基本語彙500' || selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+                    const { wrongSet } = loadCategoryWords(selectedCategory);
+                    const wrongWordsInCategory = categoryWords.filter(word => wrongSet.has(word.id));
+                    const savedIndex = loadProgress(selectedCategory);
+                    const hasProgress = savedIndex > 0;
+                    showInputModeMethodSelectionModal(selectedCategory, categoryWords, hasProgress, savedIndex, wrongWordsInCategory);
+                } else {
+                    // 通常のカードモードの場合、コース選択画面を表示
+                    showCourseSelection(selectedCategory, categoryWords);
+                }
+            } else {
+                // カテゴリーが選択されていない場合はカテゴリー選択画面に戻る
+                showCategorySelection();
             }
         });
     }
     
     if (clearHistoryBtn) {
         clearHistoryBtn.addEventListener('click', () => {
-            settingsMenu.classList.add('hidden');
+            closeSidebar();
             clearLearningHistory();
         });
     }
@@ -1856,16 +1900,16 @@ function applyMarkers(word) {
     if (reviewWords.has(word.id)) {
         // 黄は蛍光マーカー風（上段、少し広め・明るめ）
         layers.push(band('rgba(253, 253, 112, 0.55)', 0.34, 0.54));
-        // 下段は赤優先、なければ青（黄との間に僅かな空白）
+        // 下段は赤優先、なければ緑（黄との間に僅かな空白）
         if (categoryWrongSet.has(word.id)) {
             layers.push(band('rgba(239, 68, 68, 0.28)', 0.60, 0.82));
         } else if (categoryCorrectSet.has(word.id)) {
-            layers.push(band('rgba(59, 130, 246, 0.30)', 0.60, 0.82));
+            layers.push(band('rgba(16, 185, 129, 0.32)', 0.60, 0.82));
         }
     } else if (categoryWrongSet.has(word.id)) {
         layers.push(band('rgba(239, 68, 68, 0.30)', 0.60, 0.82));
     } else if (categoryCorrectSet.has(word.id)) {
-        layers.push(band('rgba(59, 130, 246, 0.32)', 0.60, 0.82));
+        layers.push(band('rgba(16, 185, 129, 0.35)', 0.60, 0.82));
     }
 
     const image = layers.join(',');
@@ -2292,27 +2336,6 @@ function clearLearningHistory() {
 }
 
 // シャッフル
-function shuffleWords() {
-    for (let i = currentWords.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [currentWords[i], currentWords[j]] = [currentWords[j], currentWords[i]];
-    }
-
-    currentIndex = 0;
-    answeredWords.clear();
-    correctCount = 0;
-    wrongCount = 0;
-    
-    // 進捗をリセット
-    if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習') {
-        resetProgress(selectedCategory);
-    }
-    
-    displayCurrentWord();
-    updateStats();
-
-    showAlert('通知', '単語をシャッフルしました。');
-}
 
 // ホーム画面追加オーバレイを表示（インストールされていない場合のみ毎回表示）
 function checkAndShowInstallPrompt() {
