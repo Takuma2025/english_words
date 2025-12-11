@@ -1447,26 +1447,13 @@ function goToPreviousWord() {
         
         currentIndex--;
         
-        // 進捗バーの自動移動チェック（現在の問題が表示範囲外になったら移動）
-        const total = currentRangeEnd - currentRangeStart;
-        const currentQuestionIndex = currentIndex - currentRangeStart;
-        
-        if (currentQuestionIndex < progressBarStartIndex && progressBarStartIndex > 0) {
-            // 前の範囲に自動移動
-            progressBarStartIndex = Math.max(0, progressBarStartIndex - PROGRESS_BAR_DISPLAY_COUNT);
-            createProgressSegments(total);
-            updateProgressSegments();
-            animateProgressBarText();
-        } else {
-            updateProgressSegments();
-        }
-        
         if (isInputModeActive) {
             displayInputMode();
         } else {
             displayCurrentWord();
         }
         updateStats(); // 進捗バーを更新
+        updateProgressSegments();
         updateNavButtons(); // ボタン状態を更新
         // 前に戻った場合、進捗保存はしない（進んだときのみ保存するのが一般的）
     }
@@ -1679,26 +1666,13 @@ function goToPreviousWord() {
         
         currentIndex--;
         
-        // 進捗バーの自動移動チェック（現在の問題が表示範囲外になったら移動）
-        const total = currentRangeEnd - currentRangeStart;
-        const currentQuestionIndex = currentIndex - currentRangeStart;
-        
-        if (currentQuestionIndex < progressBarStartIndex && progressBarStartIndex > 0) {
-            // 前の範囲に自動移動
-            progressBarStartIndex = Math.max(0, progressBarStartIndex - PROGRESS_BAR_DISPLAY_COUNT);
-            createProgressSegments(total);
-            updateProgressSegments();
-            animateProgressBarText();
-        } else {
-            updateProgressSegments();
-        }
-        
         if (isInputModeActive) {
             displayInputMode();
         } else {
             displayCurrentWord();
         }
         updateStats(); // 進捗バーを更新
+        updateProgressSegments();
         updateNavButtons(); // ボタン状態を更新
         // 前に戻った場合、進捗保存はしない（進んだときのみ保存するのが一般的）
     }
@@ -1716,21 +1690,7 @@ function goToNextWord() {
 
         currentIndex++;
         
-        // 進捗バーの自動移動チェック（現在の問題が表示範囲外になったら移動）
-        const total = currentRangeEnd - currentRangeStart;
-        const currentQuestionIndex = currentIndex - currentRangeStart;
-        const currentDisplayEnd = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT;
-        
-        if (currentQuestionIndex >= currentDisplayEnd && progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT < total) {
-            // 次の範囲に自動移動
-            progressBarStartIndex = Math.min(total - PROGRESS_BAR_DISPLAY_COUNT, 
-                progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT);
-            createProgressSegments(total);
-            updateProgressSegments();
-            animateProgressBarText();
-        } else {
-            updateProgressSegments();
-        }
+        updateProgressSegments();
         
         if (isInputModeActive) {
             displayInputMode();
@@ -2351,27 +2311,9 @@ function markAnswer(isCorrect) {
             saveProgress(selectedCategory, currentIndex);
         }
         
-        // 進捗バーの自動移動チェック（20問ずつ）
-        const total = currentRangeEnd - currentRangeStart;
-        const currentQuestionIndex = currentIndex - currentRangeStart;
-        const currentDisplayEnd = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT;
-        
-        // 現在の問題が表示範囲の最後（20番目）を超えたら、次の範囲に自動移動
-        // currentQuestionIndexは0ベース（0-19が最初の20問）
-        // currentDisplayEndは20（0+20）
-        // 20番目を解いた後、currentIndexは21、currentQuestionIndexは20になる
-        if (currentQuestionIndex >= currentDisplayEnd && progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT < total) {
-            // 次の範囲に自動移動
-            progressBarStartIndex = Math.min(total - PROGRESS_BAR_DISPLAY_COUNT, 
-                progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT);
-            createProgressSegments(total);
-            updateProgressSegments();
-            updateNavButtons();
-            animateProgressBarText();
-        } else {
-            updateProgressSegments();
-            updateNavButtons();
-        }
+        // 進捗バーを更新
+        updateProgressSegments();
+        updateNavButtons();
         
         // 最後の単語の場合は完了画面を表示
         if (currentIndex >= currentRangeEnd) {
