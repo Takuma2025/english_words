@@ -14,6 +14,9 @@ let currentRangeEnd = 0;   // 現在の学習範囲（終了index、exclusive）
 let isInputModeActive = false; // 日本語→英語入力モードかどうか
 let inputAnswerSubmitted = false; // 入力回答が送信済みかどうか
 let isShiftActive = false; // Shiftキーがアクティブかどうか（大文字入力モード）
+let questionStatus = []; // 各問題の回答状況を追跡（'correct', 'wrong', null）
+let progressBarStartIndex = 0; // 進捗バーの表示開始インデックス（25問ずつ表示）
+const PROGRESS_BAR_DISPLAY_COUNT = 25; // 進捗バーに表示する問題数
 
 // 学習日を記録する関数（日付と学習量を記録）
 function recordStudyDate() {
@@ -463,6 +466,19 @@ function initInputModeLearning(category, words) {
     answeredWords.clear();
     correctCount = 0;
     wrongCount = 0;
+    questionStatus = new Array(words.length).fill(null); // 各問題の回答状況を初期化
+    
+    // 前回の回答状況を読み込んで進捗バーに反映
+    if (category && category !== '間違い復習' && category !== '復習チェック' && category !== 'チェックした問題') {
+        const { correctSet, wrongSet } = loadCategoryWords(category);
+        words.forEach((word, index) => {
+            if (wrongSet.has(word.id)) {
+                questionStatus[index] = 'wrong';
+            } else if (correctSet.has(word.id)) {
+                questionStatus[index] = 'correct';
+            }
+        });
+    }
 
     elements.categorySelection.classList.add('hidden');
     const courseSelection = document.getElementById('courseSelection');
@@ -495,6 +511,11 @@ function initInputModeLearning(category, words) {
     if (nextBtn) nextBtn.classList.add('hidden');
     
     displayInputMode();
+    // 進捗バーのセグメントを強制的に生成
+    const total = currentRangeEnd - currentRangeStart;
+    if (total > 0) {
+        createProgressSegments(total);
+    }
     updateStats();
     updateNavState('learning');
 }
@@ -760,6 +781,28 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     answeredWords.clear();
     correctCount = 0;
     wrongCount = 0;
+    const total = end - start;
+    questionStatus = new Array(total).fill(null); // 各問題の回答状況を初期化
+    progressBarStartIndex = 0; // 進捗バーの表示開始インデックスをリセット
+    
+    // 前回の回答状況を読み込んで進捗バーに反映
+    if (category && category !== '間違い復習' && category !== '復習チェック' && category !== 'チェックした問題') {
+        const { correctSet, wrongSet } = loadCategoryWords(category);
+        words.forEach((word, wordIndex) => {
+            // 全体のインデックスを計算（rangeStartからの相対位置）
+            const globalIndex = rangeStart + wordIndex;
+            // questionStatusのインデックス（startからの相対位置）
+            const statusIndex = wordIndex;
+            
+            if (statusIndex >= 0 && statusIndex < questionStatus.length) {
+                if (wrongSet.has(word.id)) {
+                    questionStatus[statusIndex] = 'wrong';
+                } else if (correctSet.has(word.id)) {
+                    questionStatus[statusIndex] = 'correct';
+                }
+            }
+        });
+    }
 
     elements.categorySelection.classList.add('hidden');
     const courseSelection = document.getElementById('courseSelection');
@@ -803,6 +846,11 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         if (nextBtn) nextBtn.classList.remove('hidden');
     }
 
+    // 進捗バーのセグメントを強制的に生成
+    if (total > 0) {
+        createProgressSegments(total);
+    }
+    
     displayCurrentWord();
     updateStats();
     updateNavState('learning');
@@ -851,6 +899,16 @@ function setupEventListeners() {
                 showCategorySelection();
             }
         });
+    }
+    
+    // 進捗バーの矢印ボタン
+    const progressNavLeft = document.getElementById('progressNavLeft');
+    const progressNavRight = document.getElementById('progressNavRight');
+    if (progressNavLeft) {
+        progressNavLeft.addEventListener('click', scrollProgressBarLeft);
+    }
+    if (progressNavRight) {
+        progressNavRight.addEventListener('click', scrollProgressBarRight);
     }
     
     // 矢印ナビゲーション
@@ -1278,9 +1336,13 @@ function displayInputMode(skipAnimationReset = false) {
     const word = currentWords[currentIndex];
     inputAnswerSubmitted = false;
     
-    // No.を更新
+    // No.を更新（カードモードと入力モードの両方）
     if (elements.wordNumber) {
         elements.wordNumber.textContent = `No.${word.id}`;
+    }
+    const inputWordNumber = document.getElementById('inputWordNumber');
+    if (inputWordNumber) {
+        inputWordNumber.textContent = `No.${word.id}`;
     }
     
     const inputMeaning = document.getElementById('inputMeaning');
@@ -1400,6 +1462,7 @@ function goToPreviousWord() {
         } else {
             displayCurrentWord();
         }
+        updateStats(); // 進捗バーを更新
         // 前に戻った場合、進捗保存はしない（進んだときのみ保存するのが一般的）
     }
 }
@@ -1511,6 +1574,12 @@ function submitAnswer() {
     // 正解/不正解の判定（大文字小文字を区別）
     const isCorrect = userAnswer === correctWord;
     
+    // 現在の問題の回答状況を記録
+    const questionIndex = currentIndex - currentRangeStart;
+    if (questionIndex >= 0 && questionIndex < questionStatus.length) {
+        questionStatus[questionIndex] = isCorrect ? 'correct' : 'wrong';
+    }
+    
     // 正解の単語を表示（常に緑色で表示）
     correctAnswer.textContent = word.word;
     correctAnswer.classList.add('correct');
@@ -1542,6 +1611,12 @@ function markAnswerAsDontKnow() {
     });
     
     // 仮想キーボードのボタンは無効化しない
+    
+    // 現在の問題の回答状況を記録（間違い扱い）
+    const questionIndex = currentIndex - currentRangeStart;
+    if (questionIndex >= 0 && questionIndex < questionStatus.length) {
+        questionStatus[questionIndex] = 'wrong';
+    }
     
     // 正解を表示（緑色で表示）
     correctAnswer.textContent = word.word;
@@ -1596,6 +1671,7 @@ function goToPreviousWord() {
         
         currentIndex--;
         displayCurrentWord();
+        updateStats(); // 進捗バーを更新
         // 前に戻った場合、進捗保存はしない（進んだときのみ保存するのが一般的）
     }
 }
@@ -1609,6 +1685,7 @@ function goToNextWord() {
 
         currentIndex++;
         displayCurrentWord();
+        updateStats(); // 進捗バーを更新
         // ここで進捗保存するかは要件次第だが、回答していないので保存しない方が無難
         // もし「見た」だけで進捗とするなら保存する。今回は保存しない。
     }
@@ -2083,6 +2160,12 @@ function markMastered() {
     const word = currentWords[currentIndex];
     answeredWords.add(word.id);
     
+    // 現在の問題の回答状況を記録（正解）
+    const questionIndex = currentIndex - currentRangeStart;
+    if (questionIndex >= 0 && questionIndex < questionStatus.length) {
+        questionStatus[questionIndex] = 'correct';
+    }
+    
     // 正解としてカウント
     correctCount++;
     correctWords.add(word.id);
@@ -2145,6 +2228,12 @@ function markAnswer(isCorrect) {
     // 学習日を記録（最初の回答時のみ）
     if (answeredWords.size === 1) {
         recordStudyDate();
+    }
+
+    // 現在の問題の回答状況を記録
+    const questionIndex = currentIndex - currentRangeStart;
+    if (questionIndex >= 0 && questionIndex < questionStatus.length) {
+        questionStatus[questionIndex] = isCorrect ? 'correct' : 'wrong';
     }
 
     if (isCorrect) {
@@ -2257,17 +2346,169 @@ function showCompletion() {
     });
 }
 
+// 進捗バーのセグメントを生成（25問ずつ表示）
+function createProgressSegments(total) {
+    // 共通のコンテナを使用
+    const container = document.getElementById('progressBarContainer');
+    
+    if (!container) return;
+    
+    // 表示範囲を計算
+    const displayStart = progressBarStartIndex;
+    const displayEnd = Math.min(displayStart + PROGRESS_BAR_DISPLAY_COUNT, total);
+    
+    container.innerHTML = '';
+    for (let i = displayStart; i < displayEnd; i++) {
+        const segment = document.createElement('div');
+        segment.className = 'progress-segment';
+        segment.dataset.index = i;
+        segment.addEventListener('click', () => {
+            const targetIndex = parseInt(segment.dataset.index);
+            const absoluteIndex = currentRangeStart + targetIndex;
+            if (absoluteIndex >= currentRangeStart && absoluteIndex < currentRangeEnd) {
+                currentIndex = absoluteIndex;
+                isCardRevealed = false;
+                inputAnswerSubmitted = false;
+                if (elements.wordCard) {
+                    elements.wordCard.classList.remove('flipped');
+                }
+                // 入力モードかカードモードかで適切な関数を呼ぶ
+                if (isInputModeActive) {
+                    displayInputMode();
+                } else {
+                    displayCurrentWord();
+                }
+                updateStats();
+                updateNavButtons();
+            }
+        });
+        container.appendChild(segment);
+    }
+    
+    // セグメントの色を設定
+    const currentQuestionIndex = currentIndex - currentRangeStart;
+    const segments = container.querySelectorAll('.progress-segment');
+    segments.forEach((segment) => {
+        const segmentIndex = parseInt(segment.dataset.index);
+        segment.classList.remove('correct', 'wrong', 'current');
+        
+        // 現在の問題をハイライト
+        if (segmentIndex === currentQuestionIndex) {
+            segment.classList.add('current');
+        }
+        
+        // 回答状況に応じて色を設定
+        if (questionStatus[segmentIndex] === 'correct') {
+            segment.classList.add('correct');
+        } else if (questionStatus[segmentIndex] === 'wrong') {
+            segment.classList.add('wrong');
+        }
+    });
+    
+    // 矢印ボタンの状態を更新
+    updateProgressNavButtons(total);
+}
+
+// 進捗バーのセグメントを更新
+function updateProgressSegments() {
+    const total = currentRangeEnd - currentRangeStart;
+    const currentQuestionIndex = currentIndex - currentRangeStart;
+    
+    // 現在の問題が表示範囲外の場合、表示範囲を調整
+    if (currentQuestionIndex < progressBarStartIndex || 
+        currentQuestionIndex >= progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT) {
+        // 現在の問題を含む25個のブロックを計算
+        // 例: 0-24は0、25-49は25、50-74は50
+        // 26個目（インデックス25）に移動したら、次の25個（26-50）を表示
+        progressBarStartIndex = Math.floor(currentQuestionIndex / PROGRESS_BAR_DISPLAY_COUNT) * PROGRESS_BAR_DISPLAY_COUNT;
+        progressBarStartIndex = Math.max(0, Math.min(progressBarStartIndex, total - PROGRESS_BAR_DISPLAY_COUNT));
+        // セグメントを再生成
+        createProgressSegments(total);
+    }
+    
+    // 共通のコンテナを使用
+    const container = document.getElementById('progressBarContainer');
+    
+    if (!container) return;
+    
+    const segments = container.querySelectorAll('.progress-segment');
+    
+    segments.forEach((segment) => {
+        const segmentIndex = parseInt(segment.dataset.index);
+        segment.classList.remove('correct', 'wrong', 'current');
+        
+        // 現在の問題をハイライト
+        if (segmentIndex === currentQuestionIndex) {
+            segment.classList.add('current');
+        }
+        
+        // 回答状況に応じて色を設定
+        if (questionStatus[segmentIndex] === 'correct') {
+            segment.classList.add('correct');
+        } else if (questionStatus[segmentIndex] === 'wrong') {
+            segment.classList.add('wrong');
+        }
+    });
+}
+
+// 進捗バーの矢印ボタンの状態を更新
+function updateProgressNavButtons(total) {
+    const leftBtn = document.getElementById('progressNavLeft');
+    const rightBtn = document.getElementById('progressNavRight');
+    
+    if (leftBtn) {
+        leftBtn.disabled = progressBarStartIndex <= 0;
+    }
+    
+    if (rightBtn) {
+        rightBtn.disabled = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT >= total;
+    }
+}
+
+// 進捗バーを左にスクロール
+function scrollProgressBarLeft() {
+    const total = currentRangeEnd - currentRangeStart;
+    if (progressBarStartIndex > 0) {
+        // 25個ずつ前の範囲に移動
+        progressBarStartIndex = Math.max(0, progressBarStartIndex - PROGRESS_BAR_DISPLAY_COUNT);
+        createProgressSegments(total);
+    }
+}
+
+// 進捗バーを右にスクロール
+function scrollProgressBarRight() {
+    const total = currentRangeEnd - currentRangeStart;
+    if (progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT < total) {
+        // 25個ずつ次の範囲に移動
+        progressBarStartIndex = Math.min(total - PROGRESS_BAR_DISPLAY_COUNT, 
+            progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT);
+        createProgressSegments(total);
+    }
+}
+
 // 統計を更新
 function updateStats() {
     const total = currentRangeEnd - currentRangeStart;
     // 現在見ている英単語の位置（1から始まる）
     const currentPosition = currentIndex + 1;
-    // 進捗率は現在位置を基準に計算
-    const progressPercent = total > 0 ? Math.min((currentPosition / total) * 100, 100) : 0;
     
-    elements.progressText.textContent = `${currentPosition} / ${total}`;
-    if (elements.progressFill) {
-    elements.progressFill.style.width = `${progressPercent}%`;
+    // 共通の進捗テキストを更新
+    if (elements.progressText) {
+        elements.progressText.textContent = `${currentPosition} / ${total}`;
+    }
+    
+    // 進捗バーのセグメントを生成（初回のみ）
+    const container = document.getElementById('progressBarContainer');
+    
+    // totalが0より大きい場合、セグメントを生成
+    if (total > 0 && container) {
+        // セグメント数が合わない場合は生成
+        if (container.children.length !== total) {
+            createProgressSegments(total);
+        }
+        
+        // セグメントの色を更新
+        updateProgressSegments();
     }
 }
 

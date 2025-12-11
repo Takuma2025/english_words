@@ -200,9 +200,15 @@
                     <div class="card-top-section">
                         <!-- 進捗バー -->
                         <div class="progress-header" id="statsBar">
-                            <div class="progress-bar-container">
-                                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                            <button class="progress-nav-btn progress-nav-left" id="progressNavLeft" aria-label="左へスクロール">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            </button>
+                            <div class="progress-bar-container" id="progressBarContainer">
+                                <!-- セグメントは動的に生成 -->
                             </div>
+                            <button class="progress-nav-btn progress-nav-right" id="progressNavRight" aria-label="右へスクロール">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </button>
                             <div class="progress-stats">
                                 <span id="progressText">0/0</span>
                             </div>
