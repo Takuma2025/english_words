@@ -173,6 +173,143 @@ body {
     box-sizing: border-box;
 }
 
+/* 学習ヒートマップ */
+.study-heatmap-container {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.study-heatmap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.study-heatmap-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.study-heatmap-legend {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+}
+
+.legend-label {
+    color: #6b7280;
+    font-size: 10px;
+}
+
+.legend-colors {
+    display: flex;
+    gap: 2px;
+}
+
+.legend-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+.study-heatmap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 4px;
+}
+
+.heatmap-months {
+    display: grid;
+    grid-template-columns: repeat(53, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+    margin-left: 24px;
+}
+
+.heatmap-month-label {
+    font-size: 10px;
+    color: #6b7280;
+    text-align: left;
+    padding-left: 2px;
+}
+
+.heatmap-grid {
+    display: flex;
+    gap: 2px;
+}
+
+.heatmap-weekdays {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-right: 4px;
+}
+
+.heatmap-weekday-label {
+    width: 20px;
+    height: 11px;
+    font-size: 10px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 4px;
+}
+
+.heatmap-cells {
+    display: grid;
+    grid-template-columns: repeat(53, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.heatmap-cell {
+    width: 11px;
+    height: 11px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.heatmap-cell:hover {
+    opacity: 0.8;
+}
+
+@media (max-width: 480px) {
+    .study-heatmap-container {
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .study-heatmap-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .heatmap-cell {
+        width: 9px;
+        height: 9px;
+    }
+    
+    .heatmap-weekday-label {
+        width: 16px;
+        height: 9px;
+        font-size: 9px;
+    }
+    
+    .heatmap-month-label {
+        font-size: 9px;
+    }
+}
+
 .back-btn {
     display: flex;
     align-items: center;
@@ -729,9 +866,11 @@ body {
         max-width: none;
         min-width: 0;
         height: 48px;
-        font-size: 18px;
+        font-size: 16px;
         border-radius: 6px;
         flex: 1; /* 均等に配置 */
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     
     /* qとpのキーも他のキーと同じ形に */
@@ -1560,8 +1699,7 @@ body {
     flex: 1;
     min-height: 0;
     -webkit-overflow-scrolling: touch;
-    padding-right: 4px;
-    padding-bottom: 12px;
+    padding: 4px 4px 12px 0;
     margin-right: -4px;
     margin-bottom: -12px;
 }
@@ -1593,7 +1731,7 @@ body {
 .method-card:hover {
     border-color: #0055ca;
     box-shadow: 0 4px 12px rgba(0, 85, 202, 0.15);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
 .method-card:active {

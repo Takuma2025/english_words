@@ -15,6 +15,29 @@ let isInputModeActive = false; // 日本語→英語入力モードかどうか
 let inputAnswerSubmitted = false; // 入力回答が送信済みかどうか
 let isShiftActive = false; // Shiftキーがアクティブかどうか（大文字入力モード）
 
+// 学習日を記録する関数（日付と学習量を記録）
+function recordStudyDate() {
+    const today = new Date();
+    const dateStr = today.toISOString().split('T')[0]; // YYYY-MM-DD形式
+    
+    const savedData = localStorage.getItem('studyDates');
+    let studyData = savedData ? JSON.parse(savedData) : {};
+    
+    // 今日の学習量を1増やす
+    if (!studyData[dateStr]) {
+        studyData[dateStr] = 0;
+    }
+    studyData[dateStr]++;
+    
+    localStorage.setItem('studyDates', JSON.stringify(studyData));
+}
+
+// 学習日データを読み込む関数
+function loadStudyDates() {
+    const savedData = localStorage.getItem('studyDates');
+    return savedData ? JSON.parse(savedData) : {};
+}
+
 // カテゴリごとの正解・間違い単語を読み込む
 function loadCategoryWords(category) {
     const savedCorrectWords = localStorage.getItem(`correctWords-${category}`);
@@ -2079,6 +2102,11 @@ function markAnswer(isCorrect) {
 
     const word = currentWords[currentIndex];
     answeredWords.add(word.id);
+    
+    // 学習日を記録（最初の回答時のみ）
+    if (answeredWords.size === 1) {
+        recordStudyDate();
+    }
 
     if (isCorrect) {
         correctCount++;
