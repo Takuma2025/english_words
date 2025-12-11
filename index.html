@@ -61,6 +61,13 @@
                 </div>
                 <div class="sidebar-section">
                     <div class="sidebar-section-title">設定</div>
+                    <button class="sidebar-menu-item" id="homeFromSidebarBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        <span>ホームに戻る</span>
+                    </button>
                     <button class="sidebar-menu-item" id="clearHistoryBtn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="3 6 5 6 21 6"></polyline>
@@ -186,7 +193,7 @@
             <div class="learning-view hidden" id="mainContent">
                 <div class="card-area-wrapper">
                     <button class="home-btn-card hidden" id="homeBtn">
-                        ホームに戻る
+                        中断する
                     </button>
                     <!-- 左右の矢印ボタン（カードエリアに配置） -->
                     <button class="nav-arrow-btn prev-arrow" id="prevBtn" aria-label="前の単語">
@@ -200,27 +207,30 @@
                     <div class="card-top-section">
                         <!-- 進捗バー -->
                         <div class="progress-header" id="statsBar">
-                            <button class="progress-nav-btn progress-nav-left" id="progressNavLeft" aria-label="左へスクロール">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                            </button>
-                            <div class="progress-bar-container" id="progressBarContainer">
-                                <!-- セグメントは動的に生成 -->
+                            <div class="progress-range-display" id="progressRangeText">1-20</div>
+                            <div class="progress-bar-wrapper">
+                                <button class="progress-nav-btn progress-nav-left" id="progressNavLeft" aria-label="左へスクロール">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                </button>
+                                <div class="progress-bar-container" id="progressBarContainer">
+                                    <!-- セグメントは動的に生成 -->
+                                </div>
+                                <button class="progress-nav-btn progress-nav-right" id="progressNavRight" aria-label="右へスクロール">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </button>
                             </div>
-                            <button class="progress-nav-btn progress-nav-right" id="progressNavRight" aria-label="右へスクロール">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </button>
                             <div class="progress-stats">
                                 <span id="progressText">0/0</span>
                             </div>
                         </div>
-                        <!-- No. -->
-                        <div class="word-number" id="wordNumber">No.1</div>
                     </div>
                     
                     <!-- 通常のカード学習モード -->
                     <div class="word-card" id="wordCard">
                         <div class="card-inner" id="cardInner">
                             <div class="card-face card-front">
+                                <!-- No. -->
+                                <div class="word-number" id="wordNumber">No.1</div>
                                 <div class="word-display">
                                     <div class="card-top-info">
                                         <button class="star-btn" id="starBtn">
@@ -254,6 +264,8 @@
                     <!-- 日本語→英語入力モード（基本語彙500専用） -->
                     <div class="input-mode hidden" id="inputMode">
                         <div class="input-mode-content">
+                            <!-- No. -->
+                            <div class="word-number" id="inputWordNumber">No.1</div>
                             <div class="card-top-info">
                                 <button class="star-btn" id="inputStarBtn">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
