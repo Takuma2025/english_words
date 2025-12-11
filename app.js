@@ -550,6 +550,7 @@ function showCourseSelection(category, categoryWords) {
             wrongPercent,
             completedCount,
             total,
+            category,
             () => {
                 // コースを選択したら、そのコースの単語範囲で学習方法選択モーダルを表示
                 const { wrongSet } = loadCategoryWords(category);
@@ -570,10 +571,15 @@ function showCourseSelection(category, categoryWords) {
 }
 
 // コースカードを作成
-function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, onClick) {
+function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, category, onClick) {
     const card = document.createElement('button');
     card.className = 'category-card';
     card.onclick = onClick;
+    
+    // カテゴリーに応じたdata属性を設定
+    if (category) {
+        card.setAttribute('data-category', category);
+    }
     
     const cardId = `course-${title.replace(/\s+/g, '-')}`;
     

@@ -387,12 +387,66 @@ body {
     border: none;
     border-radius: 0;
     padding: 16px;
+    padding-left: 20px;
     width: 100%;
     box-sizing: border-box;
     text-align: left;
     cursor: pointer;
     transition: transform 0.1s, box-shadow 0.1s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    position: relative;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #0055ca;
+}
+
+/* カテゴリーごとの色設定 */
+.category-card[data-category="小学生で習った単語とカテゴリー別に覚える単語"]::before {
+    background: #ea580c; /* オレンジ */
+}
+
+.category-card[data-category="Group1 超頻出600"]::before {
+    background: #0055ca; /* 青 */
+}
+
+.category-card[data-category="Group2 頻出200"]::before {
+    background: #10b981; /* 緑 */
+}
+
+.category-card[data-category="Group3 ハイレベル100"]::before {
+    background: #9333ea; /* 紫 */
+}
+
+.category-card[data-category="基本語彙500"]::before {
+    background: #e91e63; /* ピンク */
+}
+
+/* コースカード用の色クラス */
+.category-card.course-color-1::before {
+    background: #ea580c; /* オレンジ */
+}
+
+.category-card.course-color-2::before {
+    background: #0055ca; /* 青 */
+}
+
+.category-card.course-color-3::before {
+    background: #10b981; /* 緑 */
+}
+
+.category-card.course-color-4::before {
+    background: #9333ea; /* 紫 */
+}
+
+.category-card.course-color-5::before {
+    background: #e91e63; /* ピンク */
 }
 
 .category-card:hover {
