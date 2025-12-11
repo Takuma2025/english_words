@@ -583,11 +583,11 @@ body {
     display: flex;
     justify-content: center;
     gap: 2px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    padding: 0 4px;
+    padding: 0 2px;
 }
 
 .keyboard-row:last-of-type {
@@ -595,17 +595,17 @@ body {
 }
 
 .keyboard-key {
-    width: 36px;
-    height: 40px;
+    width: 30px;
+    height: 36px;
     background: #ffffff;
     border: none;
-    border-radius: 6px;
-    font-size: 14px;
+    border-radius: 5px;
+    font-size: 13px;
     font-weight: 600;
     color: #1f2937;
     cursor: pointer;
     transition: transform 0.05s, box-shadow 0.05s;
-    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -619,17 +619,17 @@ body {
 }
 
 .keyboard-key:active {
-    transform: translateY(2px);
+    transform: translateY(1px);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .keyboard-key-special {
-    width: 56px;
-    height: 40px;
+    width: 48px;
+    height: 36px;
     background: #ffffff;
     border: none;
-    border-radius: 6px;
-    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
     flex-shrink: 0;
     box-sizing: border-box;
     touch-action: manipulation;
@@ -641,7 +641,7 @@ body {
 }
 
 .keyboard-key-special:active {
-    transform: translateY(2px);
+    transform: translateY(1px);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
 }
 
@@ -656,16 +656,16 @@ body {
 
 .keyboard-action-btn {
     flex: 1;
-    height: 52px;
+    height: 48px;
     border: none;
-    border-radius: 12px;
-    font-size: 16px;
+    border-radius: 10px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: transform 0.05s, box-shadow 0.05s;
     background: #ffffff;
     color: #1f2937;
-    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
     position: relative;
     top: 0;
     touch-action: manipulation;
@@ -676,18 +676,18 @@ body {
 }
 
 .keyboard-action-btn:active {
-    transform: translateY(3px);
+    transform: translateY(2px);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .keyboard-action-btn-primary {
     background: #0055ca;
     color: #ffffff;
-    box-shadow: 0 4px 0 rgba(0, 68, 160, 0.6);
+    box-shadow: 0 3px 0 rgba(0, 68, 160, 0.6);
 }
 
 .keyboard-action-btn-primary:active {
-    transform: translateY(3px);
+    transform: translateY(2px);
     box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
 }
 
