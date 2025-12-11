@@ -416,7 +416,15 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     position: relative;
-    padding: 60px 16px 100px 16px; /* 上に余白、下にボタン用の余白を追加 */
+    padding: 60px 16px 20px 16px; /* 上に余白、下のパディングを小さく */
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* 入力モードの場合は下のパディングを調整 */
+.card-area-wrapper:has(.input-mode:not(.hidden)) {
+    padding-bottom: 0;
+    overflow-y: hidden;
 }
 
 /* 日本語→英語入力モード（基本語彙500専用） */
@@ -424,10 +432,18 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     padding: 20px 16px 0 16px;
-    overflow-y: hidden;
+    overflow-y: auto;
     min-height: 0;
+    max-height: 100%;
+    box-sizing: border-box;
+}
+
+/* 入力モード内の仮想キーボードを下部に固定 */
+.input-mode .virtual-keyboard {
+    flex-shrink: 0;
+    margin-top: 0;
+    padding-top: 0;
 }
 
 /* スマホ向け：キーボードを端っこまで使えるように */
@@ -444,7 +460,7 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 100%;
-    margin: 0 auto 24px auto; /* 下にマージンを追加 */
+    margin: 0 auto 12px auto; /* キーボードとの適切な間隔 */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -455,6 +471,7 @@ body {
     transition: transform 0.3s ease, opacity 0.3s ease;
     transform: translateX(0);
     opacity: 1;
+    flex-shrink: 0;
 }
 
 /* カードスライドアニメーション */
@@ -1165,15 +1182,16 @@ body {
 /* インライン表示の品詞（左横に表示） */
 .pos-inline {
     font-size: clamp(14px, 3vw, 18px);
-    font-weight: 700;
+    font-weight: 400;
     color: #ffffff;
     padding: 3px 8px;
     border-radius: 4px;
     display: inline-block;
     margin-right: 6px;
-    vertical-align: middle;
-    line-height: 1.2;
+    vertical-align: baseline;
+    line-height: 1.5;
     flex-shrink: 0;
+    align-self: center;
 }
 
 .part-of-speech.verb { background-color: rgba(59, 130, 246, 0.7); } /* 青 (薄め) */
@@ -1240,11 +1258,12 @@ body {
     gap: 8px;
     padding: 0 16px;
     position: absolute;
-    bottom: 200px; /* カードからさらに離す */
+    bottom: 60px; /* かなり下に配置 */
     left: 0;
     right: 0;
     width: 100%;
     box-sizing: border-box;
+    z-index: 10;
 }
 
 /* カードがひっくり返ったときのみ表示 */
