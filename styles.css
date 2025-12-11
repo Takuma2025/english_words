@@ -430,6 +430,13 @@ body {
     min-height: 0;
 }
 
+/* スマホ向け：キーボードを端っこまで使えるように */
+@media (max-width: 600px) {
+    .input-mode {
+        padding: 20px 0 0 0; /* 左右のパディングを削除 */
+    }
+}
+
 .input-mode-content {
     background: #ffffff;
     border-radius: 16px;
@@ -595,6 +602,15 @@ body {
     overflow-x: hidden;
 }
 
+/* スマホ向け：キーボードを端っこまで使えるように */
+@media (max-width: 600px) {
+    .virtual-keyboard {
+        padding: 18px 0;
+        margin: 0;
+        width: 100%;
+    }
+}
+
 .keyboard-row {
     display: flex;
     justify-content: center;
@@ -604,6 +620,19 @@ body {
     max-width: 100%;
     box-sizing: border-box;
     padding: 0 2px;
+}
+
+/* スマホ向け：キーボード行の間隔を広げる、端っこまで使えるように */
+@media (max-width: 600px) {
+    .keyboard-row {
+        gap: 4px;
+        margin-bottom: 10px;
+        padding: 0 2px; /* 最小限のパディング */
+    }
+    
+    .keyboard-row:last-of-type {
+        margin-bottom: 14px;
+    }
 }
 
 .keyboard-row:last-of-type {
@@ -634,6 +663,16 @@ body {
     will-change: transform;
 }
 
+/* スマホ向け：キーボードを大きく */
+@media (max-width: 600px) {
+    .keyboard-key {
+        width: 32px;
+        height: 44px;
+        font-size: 18px;
+        border-radius: 6px;
+    }
+}
+
 .keyboard-key:active {
     transform: translateY(1px);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
@@ -656,9 +695,85 @@ body {
     transition: transform 0.05s, box-shadow 0.05s;
 }
 
+/* スマホ向け：特殊キーも大きく */
+@media (max-width: 600px) {
+    .keyboard-key-special {
+        width: 60px;
+        height: 44px;
+        border-radius: 6px;
+    }
+}
+
 .keyboard-key-special:active {
     transform: translateY(1px);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Shiftキー */
+.keyboard-key-shift {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.keyboard-key-shift.active {
+    background: #0055ca;
+    color: #ffffff;
+    box-shadow: 0 2px 0 #0044a0, inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.keyboard-key-shift:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.keyboard-key-shift.active:active {
+    box-shadow: 0 1px 0 #0044a0, inset 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* スペースキー */
+.keyboard-key-space {
+    width: 26px;
+    height: 36px;
+    background: #ffffff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    cursor: pointer;
+    transition: transform 0.05s, box-shadow 0.05s;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+    padding: 0;
+}
+
+.keyboard-key-space:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* スマホ向け：スペースキーとShiftキーも大きく */
+@media (max-width: 600px) {
+    .keyboard-key-shift {
+        width: 50px;
+        height: 44px;
+        border-radius: 6px;
+    }
+    
+    .keyboard-key-space {
+        width: 32px;
+        height: 44px;
+        font-size: 18px;
+    }
 }
 
 .keyboard-actions {
@@ -689,6 +804,20 @@ body {
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
     will-change: transform;
+}
+
+/* スマホ向け：アクションボタンも大きく、端っこまで使えるように */
+@media (max-width: 600px) {
+    .keyboard-action-btn {
+        height: 56px;
+        font-size: 17px;
+        border-radius: 12px;
+    }
+    
+    .keyboard-actions {
+        gap: 10px;
+        padding: 0 2px; /* 最小限のパディングで端っこまで使えるように */
+    }
 }
 
 .keyboard-action-btn:active {

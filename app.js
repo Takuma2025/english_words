@@ -13,6 +13,7 @@ let currentRangeStart = 0; // 現在の学習範囲（開始index）
 let currentRangeEnd = 0;   // 現在の学習範囲（終了index、exclusive）
 let isInputModeActive = false; // 日本語→英語入力モードかどうか
 let inputAnswerSubmitted = false; // 入力回答が送信済みかどうか
+let isShiftActive = false; // Shiftキーがアクティブかどうか（大文字入力モード）
 
 // カテゴリごとの正解・間違い単語を読み込む
 function loadCategoryWords(category) {
@@ -881,19 +882,43 @@ function setupVirtualKeyboard() {
     keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
         const letter = key.dataset.key;
         
-        // タッチイベント（モバイル優先）
-        key.addEventListener('touchstart', (e) => {
+        // スペースキーの特別処理
+        if (letter === ' ') {
+            const handleSpace = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                insertLetter(' ');
+            };
+            
+            key.addEventListener('touchstart', handleSpace, { passive: false });
+            key.addEventListener('click', handleSpace);
+        } else {
+            // 通常の文字キー
+            key.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                insertLetter(letter);
+            }, { passive: false });
+            
+            key.addEventListener('click', (e) => {
+                e.preventDefault();
+                insertLetter(letter);
+            });
+        }
+    });
+    
+    // Shiftキー
+    const shiftKey = document.getElementById('keyboardShift');
+    if (shiftKey) {
+        const handleShift = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            insertLetter(letter);
-        }, { passive: false });
+            toggleShift();
+        };
         
-        // クリックイベント（デスクトップ用）
-        key.addEventListener('click', (e) => {
-            e.preventDefault();
-            insertLetter(letter);
-        });
-    });
+        shiftKey.addEventListener('touchstart', handleShift, { passive: false });
+        shiftKey.addEventListener('click', handleShift);
+    }
     
     // バックスペースキー
     const backspaceKey = document.getElementById('keyboardBackspace');
@@ -964,8 +989,30 @@ function insertLetter(letter) {
     const activeInput = Array.from(inputs).find(input => !input.value || document.activeElement === input);
     
     if (activeInput) {
-        activeInput.value = letter.toLowerCase();
-        activeInput.dispatchEvent(new Event('input', { bubbles: true }));
+        // スペースの場合はそのまま、それ以外はShiftキーの状態に応じて大文字小文字を変換
+        let letterToInsert;
+        const wasShiftActive = isShiftActive; // 入力前のShift状態を保存
+        
+        if (letter === ' ') {
+            letterToInsert = ' '; // スペースはそのまま
+        } else {
+            // Shiftキーがアクティブの場合は大文字、そうでなければ小文字
+            // letterはdata-keyから取得した小文字なので、toUpperCase()で大文字に変換
+            if (wasShiftActive) {
+                letterToInsert = String(letter).toUpperCase();
+                // 1文字入力したら自動的に小文字モードに戻る
+                toggleShift();
+            } else {
+                letterToInsert = String(letter).toLowerCase();
+            }
+        }
+        
+        // 直接値を設定（inputイベントで小文字に変換されるのを防ぐ）
+        activeInput.value = letterToInsert;
+        
+        // inputイベントを発火して次のフィールドにフォーカスを移動
+        const inputEvent = new Event('input', { bubbles: true });
+        activeInput.dispatchEvent(inputEvent);
         
         // 次のフィールドにフォーカス
         const nextInput = letterInputs.querySelector(`input[data-index="${parseInt(activeInput.dataset.index) + 1}"]`);
@@ -973,6 +1020,39 @@ function insertLetter(letter) {
             nextInput.focus();
         }
     }
+}
+
+// Shiftキーのトグルとキーボード表示の更新
+function toggleShift() {
+    isShiftActive = !isShiftActive;
+    const shiftKey = document.getElementById('keyboardShift');
+    if (shiftKey) {
+        if (isShiftActive) {
+            shiftKey.classList.add('active');
+            shiftKey.dataset.shift = 'true';
+        } else {
+            shiftKey.classList.remove('active');
+            shiftKey.dataset.shift = 'false';
+        }
+    }
+    updateKeyboardDisplay();
+}
+
+// キーボードの表示を更新（大文字/小文字）
+function updateKeyboardDisplay() {
+    const keyboard = document.getElementById('virtualKeyboard');
+    if (!keyboard) return;
+    
+    keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        const letter = key.dataset.key;
+        if (letter && letter !== ' ') { // スペースキーは除外
+            if (isShiftActive) {
+                key.textContent = letter.toUpperCase();
+            } else {
+                key.textContent = letter.toLowerCase();
+            }
+        }
+    });
 }
 
 // バックスペース処理
@@ -1054,9 +1134,10 @@ function displayInputMode() {
             input.setAttribute('inputmode', 'none');
             input.setAttribute('readonly', 'readonly');
             
-            // 入力時の処理
+            // 入力時の処理（大文字小文字を保持）
             input.addEventListener('input', (e) => {
-                const value = e.target.value.toLowerCase();
+                const value = e.target.value;
+                // 大文字小文字を保持したまま設定（小文字に変換しない）
                 e.target.value = value;
                 
                 // 次のフィールドにフォーカス
@@ -1091,6 +1172,15 @@ function displayInputMode() {
             inputStarBtn.classList.remove('active');
         }
     }
+    
+    // Shiftキーの状態をリセット
+    isShiftActive = false;
+    const shiftKey = document.getElementById('keyboardShift');
+    if (shiftKey) {
+        shiftKey.classList.remove('active');
+        shiftKey.dataset.shift = 'false';
+    }
+    updateKeyboardDisplay(); // キーボード表示を更新
     
     updateStats();
 }
@@ -1184,10 +1274,10 @@ function submitAnswer() {
     
     if (!letterInputs || !inputResult || !resultMessage || !correctAnswer) return;
     
-    // 入力された文字を結合
+    // 入力された文字を結合（大文字小文字を区別）
     const inputs = letterInputs.querySelectorAll('.letter-input');
-    const userAnswer = Array.from(inputs).map(input => input.value.trim()).join('').toLowerCase();
-    const correctWord = word.word.toLowerCase();
+    const userAnswer = Array.from(inputs).map(input => input.value.trim()).join('');
+    const correctWord = word.word;
     
     inputAnswerSubmitted = true;
     
@@ -1198,10 +1288,10 @@ function submitAnswer() {
     
     // 仮想キーボードのボタンは無効化しない（回答後も次へ進めるため）
     
-    // 1文字ごとに正解・不正解を表示（入力されていない部分も赤く表示）
+    // 1文字ごとに正解・不正解を表示（入力されていない部分も赤く表示、大文字小文字を区別）
     inputs.forEach((input, index) => {
-        const userChar = input.value.trim().toLowerCase();
-        const correctChar = word.word[index] ? word.word[index].toLowerCase() : '';
+        const userChar = input.value.trim();
+        const correctChar = word.word[index] || '';
         
         // 入力されていないフィールドは赤く表示
         if (!userChar) {
@@ -1216,7 +1306,7 @@ function submitAnswer() {
         }
     });
     
-    // 正解/不正解の判定
+    // 正解/不正解の判定（大文字小文字を区別）
     const isCorrect = userAnswer === correctWord;
     
     // 正解の単語を常に表示
