@@ -2480,47 +2480,88 @@ function setupProgressBarSwipe() {
     
     let touchStartX = 0;
     let touchEndX = 0;
+    let isSwiping = false;
     const minSwipeDistance = 50; // 最小スワイプ距離（ピクセル）
     
     progressBarContainer.addEventListener('touchstart', (e) => {
         touchStartX = e.touches[0].clientX;
+        isSwiping = true;
+        progressBarContainer.classList.add('swiping');
+    }, { passive: true });
+    
+    progressBarContainer.addEventListener('touchmove', (e) => {
+        if (!isSwiping) return;
+        const currentX = e.touches[0].clientX;
+        const deltaX = currentX - touchStartX;
+        // スワイプ中の視覚的フィードバック（最大20pxまで移動）
+        const maxOffset = 20;
+        const offset = Math.max(-maxOffset, Math.min(maxOffset, deltaX * 0.3));
+        progressBarContainer.style.transform = `translateX(${offset}px)`;
     }, { passive: true });
     
     progressBarContainer.addEventListener('touchend', (e) => {
+        if (!isSwiping) return;
         touchEndX = e.changedTouches[0].clientX;
+        progressBarContainer.style.transform = '';
+        progressBarContainer.classList.remove('swiping');
+        isSwiping = false;
         handleSwipe();
+    }, { passive: true });
+    
+    progressBarContainer.addEventListener('touchcancel', () => {
+        progressBarContainer.style.transform = '';
+        progressBarContainer.classList.remove('swiping');
+        isSwiping = false;
     }, { passive: true });
     
     // マウスドラッグでも対応（デスクトップ用）
     let isDragging = false;
     progressBarContainer.addEventListener('mousedown', (e) => {
         isDragging = true;
+        isSwiping = true;
         touchStartX = e.clientX;
+        progressBarContainer.classList.add('swiping');
         e.preventDefault();
+    });
+    
+    progressBarContainer.addEventListener('mousemove', (e) => {
+        if (!isDragging || !isSwiping) return;
+        const currentX = e.clientX;
+        const deltaX = currentX - touchStartX;
+        // スワイプ中の視覚的フィードバック（最大20pxまで移動）
+        const maxOffset = 20;
+        const offset = Math.max(-maxOffset, Math.min(maxOffset, deltaX * 0.3));
+        progressBarContainer.style.transform = `translateX(${offset}px)`;
     });
     
     progressBarContainer.addEventListener('mouseup', (e) => {
         if (isDragging) {
             touchEndX = e.clientX;
-            handleSwipe();
+            progressBarContainer.style.transform = '';
+            progressBarContainer.classList.remove('swiping');
+            isSwiping = false;
             isDragging = false;
+            handleSwipe();
         }
     });
     
     progressBarContainer.addEventListener('mouseleave', () => {
+        progressBarContainer.style.transform = '';
+        progressBarContainer.classList.remove('swiping');
+        isSwiping = false;
         isDragging = false;
     });
     
     function handleSwipe() {
         const swipeDistance = touchStartX - touchEndX;
         
-        // 左にスワイプ（右へ移動）
+        // 左から右にスワイプ（左へ移動：前の20個）
         if (swipeDistance < -minSwipeDistance) {
-            scrollProgressBarRight();
-        }
-        // 右にスワイプ（左へ移動）
-        else if (swipeDistance > minSwipeDistance) {
             scrollProgressBarLeft();
+        }
+        // 右から左にスワイプ（右へ移動：次の20個）
+        else if (swipeDistance > minSwipeDistance) {
+            scrollProgressBarRight();
         }
     }
 }
