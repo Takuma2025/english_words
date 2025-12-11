@@ -2498,7 +2498,7 @@ function updateProgressRangeText(total) {
     const displayStart = progressBarStartIndex + 1; // 1から始まる番号
     const displayEnd = Math.min(progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT, total);
     
-    rangeText.textContent = `${displayStart}-${displayEnd}`;
+    rangeText.textContent = `No.${displayStart}-${displayEnd}`;
 }
 
 // 進捗バーを左にスクロール
