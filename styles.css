@@ -480,6 +480,56 @@ body {
     text-align: right;
 }
 
+/* C問題対策タイムアタックコースの進捗バーを非表示 */
+.category-card[data-category="C問題対策タイムアタック"] .category-progress {
+    display: none;
+}
+
+/* C問題対策タイムアタックコース時の非表示要素 */
+.card-area-wrapper:has(.word-timer-bar:not(.hidden)) .progress-range-display {
+    display: none;
+}
+
+.card-area-wrapper:has(.word-timer-bar:not(.hidden)) .progress-swipe-hint {
+    display: none;
+}
+
+.card-area-wrapper:has(.word-timer-bar:not(.hidden)) .word-number {
+    display: none;
+}
+
+.card-area-wrapper:has(.word-timer-bar:not(.hidden)) .star-btn {
+    display: none;
+}
+
+/* C問題対策タイムアタックコースのカテゴリーカードを赤本の色に */
+.category-card[data-category="C問題対策タイムアタック"] {
+    background: #DC143C; /* 赤本の色 */
+    color: #ffffff;
+}
+
+.category-card[data-category="C問題対策タイムアタック"] .category-name {
+    color: #ffffff;
+}
+
+.category-card[data-category="C問題対策タイムアタック"] .category-meta {
+    color: #ffffff;
+    opacity: 0.95;
+}
+
+.category-card[data-category="C問題対策タイムアタック"] .category-arrow {
+    color: #ffffff;
+}
+
+.category-card[data-category="C問題対策タイムアタック"]:hover {
+    background: #C41E3A; /* ホバー時は少し濃い赤 */
+    box-shadow: 0 4px 6px rgba(220, 20, 60, 0.3), 0 2px 4px rgba(220, 20, 60, 0.2);
+}
+
+.category-card[data-category="C問題対策タイムアタック"]:active {
+    background: #B0171F; /* アクティブ時はさらに濃い赤 */
+}
+
 .category-arrow {
     color: #9ca3af;
 }
@@ -508,10 +558,33 @@ body {
 .card-area-wrapper:has(.word-timer-bar:not(.hidden)) .card-top-section {
     gap: 8px;
     margin-bottom: 4px;
+    margin-top: -8px; /* さらに上に移動 */
+    padding-top: 0;
 }
 
 .card-area-wrapper:has(.word-timer-bar:not(.hidden)) .word-card {
     margin-top: 24px; /* タイムバーのスペースを確保 */
+}
+
+/* タイムアタックモード時の進捗バー上の余白を0に */
+.card-area-wrapper:has(.word-timer-bar:not(.hidden)) .progress-header {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.card-area-wrapper:has(.word-timer-bar:not(.hidden)) .progress-bar-wrapper {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.card-area-wrapper:has(.word-timer-bar:not(.hidden)) .progress-range-display {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.card-area-wrapper:has(.word-timer-bar:not(.hidden)) .progress-swipe-hint {
+    margin-top: 0;
+    padding-top: 0;
 }
 
 .card-area-wrapper:has(.input-mode:not(.hidden)) .card-top-section {
@@ -2400,14 +2473,14 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
+    background: transparent;
     z-index: 3000;
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
     transition: opacity 0.2s ease;
+    pointer-events: none;
 }
 
 .countdown-overlay:not(.hidden) {
@@ -2418,16 +2491,22 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
 }
 
 .countdown-number {
-    font-size: 120px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #DC143C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
     font-weight: 700;
     color: #ffffff;
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
     line-height: 1;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     user-select: none;
 }
 
@@ -2437,30 +2516,26 @@ body {
 
 .countdown-number.go {
     animation: countdownGo 0.5s ease-out;
-    color: #10b981;
+    background: #DC143C;
 }
 
 .countdown-label {
-    font-size: 24px;
+    font-size: 14px;
     font-weight: 600;
-    color: #ffffff;
+    color: #1f2937;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    opacity: 0.9;
+    letter-spacing: 1px;
 }
 
 @keyframes countdownPulse {
     0% {
         transform: scale(1);
-        opacity: 1;
     }
     50% {
-        transform: scale(1.3);
-        opacity: 0.8;
+        transform: scale(1.1);
     }
     100% {
         transform: scale(1);
-        opacity: 1;
     }
 }
 
@@ -2469,7 +2544,7 @@ body {
         transform: scale(1);
     }
     50% {
-        transform: scale(1.4);
+        transform: scale(1.2);
     }
     100% {
         transform: scale(1);

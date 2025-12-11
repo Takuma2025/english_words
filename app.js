@@ -906,6 +906,22 @@ function startCountdown() {
                 displayCurrentWord();
                 updateStats();
                 
+                // タイムアタックモードのボタンテキストを変更
+                if (isTimeAttackMode) {
+                    const correctBtn = document.getElementById('correctBtn');
+                    const wrongBtn = document.getElementById('wrongBtn');
+                    const masteredBtn = document.getElementById('masteredBtn');
+                    if (correctBtn) {
+                        correctBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>正解';
+                    }
+                    if (wrongBtn) {
+                        wrongBtn.innerHTML = '不正解<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+                    }
+                    if (masteredBtn) {
+                        masteredBtn.style.display = 'none'; // 「もうOK！」ボタンを非表示
+                    }
+                }
+                
                 // タイマーを開始
                 startTimer();
                 
@@ -965,7 +981,7 @@ function startWordTimer() {
             wordTimerInterval = null;
             // 時間切れの場合は自動的に間違いとして扱う（カードがめくられている状態でも）
             if (currentIndex < currentRangeEnd) {
-                markAnswer(false);
+                markAnswer(false, true); // 第2引数で時間切れを指定
             }
         }
     }, 100);
@@ -2167,7 +2183,7 @@ function revealCard() {
     if (isTimeAttackMode) {
         const elapsed = (Date.now() - wordStartTime) / 1000;
         if (elapsed >= TIME_PER_WORD) {
-            markAnswer(false);
+            markAnswer(false, true); // 第2引数で時間切れを指定
             return;
         }
     }
@@ -2458,6 +2474,26 @@ function displayCurrentWord() {
         stopWordTimer();
         startWordTimer();
         updateTimerDisplay();
+        
+        // タイムアタックモードのボタンテキストを確認
+        const correctBtn = document.getElementById('correctBtn');
+        const wrongBtn = document.getElementById('wrongBtn');
+        const masteredBtn = document.getElementById('masteredBtn');
+        if (correctBtn && !correctBtn.textContent.includes('正解')) {
+            correctBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>正解';
+        }
+        if (wrongBtn && !wrongBtn.textContent.includes('不正解')) {
+            wrongBtn.innerHTML = '不正解<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+        }
+        if (masteredBtn) {
+            masteredBtn.style.display = 'none'; // 「もうOK！」ボタンを非表示
+        }
+    } else {
+        // 通常モードの場合はボタンを元に戻す
+        const masteredBtn = document.getElementById('masteredBtn');
+        if (masteredBtn) {
+            masteredBtn.style.display = ''; // 「もうOK！」ボタンを表示
+        }
     }
 }
 
@@ -2565,7 +2601,7 @@ function markMastered() {
 }
 
 // スワイプまたはボタンで正解/不正解をマーク
-function markAnswer(isCorrect) {
+function markAnswer(isCorrect, isTimeout = false) {
     if (currentIndex >= currentRangeEnd) return;
 
     const word = currentWords[currentIndex];
@@ -2980,6 +3016,7 @@ function updateStats() {
             correctCountDisplay.textContent = correctCount;
         }
         if (wrongCountDisplay) {
+            // 不正解・時間切れの表示
             wrongCountDisplay.textContent = wrongCount;
         }
         // 正解率を計算して表示
