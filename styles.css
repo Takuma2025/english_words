@@ -521,7 +521,7 @@ body {
 .progress-range-display {
     position: absolute;
     top: -16px;
-    left: 40px; /* 左矢印ボタンの幅（32px）+ gap（8px）の位置 */
+    left: 0;
     font-size: 11px;
     font-weight: 500;
     color: #6b7280;
@@ -556,6 +556,14 @@ body {
 .progress-bar-container {
     flex: 1;
     min-width: 0;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+}
+
+.progress-bar-container:active {
+    cursor: grabbing;
 }
 
 .progress-stats {
@@ -591,6 +599,14 @@ body {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+}
+
+.progress-bar-container:active {
+    cursor: grabbing;
 }
 
 .progress-bar-container::-webkit-scrollbar {
@@ -738,7 +754,12 @@ body {
         font-size: clamp(24px, 6vw, 36px);
     }
     .letter-input {
-        height: 36px;
+        height: 32px;
+        font-size: 22px;
+        width: 20px;
+        min-width: 20px;
+        padding: 0 4px;
+        overflow: visible;
     }
 }
 
@@ -797,7 +818,12 @@ body {
         font-size: clamp(20px, 5vw, 32px);
     }
     .letter-input {
-        height: 32px;
+        height: 28px;
+        font-size: 20px;
+        width: 18px;
+        min-width: 18px;
+        padding: 0 4px;
+        overflow: visible;
     }
 }
 
@@ -878,6 +904,7 @@ body {
     flex: 1;
     min-height: 160px; /* 答えが表示されても入力欄が動かないように余白を確保 */
     padding-bottom: 48px; /* 答え表示分の下余白を確保 */
+    overflow: visible;
 }
 
 .input-actions {
@@ -892,12 +919,14 @@ body {
     gap: 2px;
     flex-wrap: wrap;
     flex-shrink: 0;
+    overflow: visible;
 }
 
 .letter-input {
     width: 22px;
-    height: 40px;
-    font-size: 28px;
+    min-width: 22px;
+    height: 36px;
+    font-size: 24px;
     font-weight: 700;
     text-align: center;
     border: none;
@@ -910,8 +939,9 @@ body {
     -webkit-user-select: text;
     user-select: text;
     letter-spacing: 0px;
-    padding: 0 1px;
+    padding: 0 4px;
     margin: 0;
+    overflow: visible;
 }
 
 .letter-input:focus {
@@ -1112,10 +1142,12 @@ body {
         gap: 2px;
     }
     .letter-input {
-        width: 26px;
-        font-size: 32px;
-        padding: 0 2px;
+        width: 24px;
+        min-width: 24px;
+        font-size: 28px;
+        padding: 0 5px;
         margin: 0;
+        overflow: visible;
     }
 }
 
@@ -1507,6 +1539,10 @@ body {
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
     letter-spacing: 0.1em;
     z-index: 10;
+}
+
+.word-card.flipped .word-number {
+    transform: rotateY(180deg);
 }
 
 .badges {

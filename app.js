@@ -902,14 +902,8 @@ function setupEventListeners() {
     }
     
     // 進捗バーの矢印ボタン
-    const progressNavLeft = document.getElementById('progressNavLeft');
-    const progressNavRight = document.getElementById('progressNavRight');
-    if (progressNavLeft) {
-        progressNavLeft.addEventListener('click', scrollProgressBarLeft);
-    }
-    if (progressNavRight) {
-        progressNavRight.addEventListener('click', scrollProgressBarRight);
-    }
+    // 進捗バーのスワイプ機能を設定
+    setupProgressBarSwipe();
     
     // 矢印ナビゲーション
     const prevBtn = document.getElementById('prevBtn');
@@ -2473,21 +2467,62 @@ function updateProgressSegments() {
     updateProgressRangeText(total);
 }
 
-// 進捗バーの矢印ボタンの状態を更新
+// 進捗バーの表示範囲テキストを更新（ボタン削除に伴い関数名を変更）
 function updateProgressNavButtons(total) {
-    const leftBtn = document.getElementById('progressNavLeft');
-    const rightBtn = document.getElementById('progressNavRight');
-    
-    if (leftBtn) {
-        leftBtn.disabled = progressBarStartIndex <= 0;
-    }
-    
-    if (rightBtn) {
-        rightBtn.disabled = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT >= total;
-    }
-    
     // 表示範囲のテキストを更新
     updateProgressRangeText(total);
+}
+
+// 進捗バーのスワイプ機能を設定
+function setupProgressBarSwipe() {
+    const progressBarContainer = document.getElementById('progressBarContainer');
+    if (!progressBarContainer) return;
+    
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const minSwipeDistance = 50; // 最小スワイプ距離（ピクセル）
+    
+    progressBarContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    
+    progressBarContainer.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].clientX;
+        handleSwipe();
+    }, { passive: true });
+    
+    // マウスドラッグでも対応（デスクトップ用）
+    let isDragging = false;
+    progressBarContainer.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        touchStartX = e.clientX;
+        e.preventDefault();
+    });
+    
+    progressBarContainer.addEventListener('mouseup', (e) => {
+        if (isDragging) {
+            touchEndX = e.clientX;
+            handleSwipe();
+            isDragging = false;
+        }
+    });
+    
+    progressBarContainer.addEventListener('mouseleave', () => {
+        isDragging = false;
+    });
+    
+    function handleSwipe() {
+        const swipeDistance = touchStartX - touchEndX;
+        
+        // 左にスワイプ（右へ移動）
+        if (swipeDistance < -minSwipeDistance) {
+            scrollProgressBarRight();
+        }
+        // 右にスワイプ（左へ移動）
+        else if (swipeDistance > minSwipeDistance) {
+            scrollProgressBarLeft();
+        }
+    }
 }
 
 // 進捗バーの表示範囲テキストを更新
