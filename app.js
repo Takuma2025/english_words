@@ -127,7 +127,15 @@ function resetProgress(category) {
 
 // カテゴリーの進捗表示を更新
 function updateCategoryStars() {
-    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'Group1 超頻出600', 'Group2 頻出200', 'Group3 ハイレベル100', '基本語彙500'];
+    // コース名からデータカテゴリー名へのマッピング
+    const categoryMapping = {
+        'LEVEL1 超よくでる400': 'Group1 超頻出600',
+        'LEVEL2 よくでる300': 'Group2 頻出200',
+        'LEVEL3 差がつく200': 'Group3 ハイレベル100',
+        'LEVEL4 ハイレベル200': 'Group3 ハイレベル100'
+    };
+    
+    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500'];
     
     categories.forEach(category => {
         let categoryWords;
@@ -141,7 +149,9 @@ function updateCategoryStars() {
                 categoryWords = [];
             }
         } else {
-            categoryWords = wordData.filter(word => word.category === category);
+            // マッピングがある場合はそれを使用、なければそのまま使用
+            const dataCategory = categoryMapping[category] || category;
+            categoryWords = wordData.filter(word => word.category === dataCategory);
         }
         
         if (categoryWords.length === 0) {
@@ -408,7 +418,7 @@ function showCategorySelection() {
     }
     selectedCategory = null;
     updateNavState('home');
-    elements.headerSubtitle.textContent = '大阪府公立高校対応';
+    elements.headerSubtitle.textContent = '大阪府公立高校入試特化英単語';
     
     // カテゴリー選択画面ではホームボタンを非表示
     if (elements.homeBtn) {
@@ -434,6 +444,14 @@ function showCategorySelection() {
 function startCategory(category) {
     selectedCategory = category;
     
+    // コース名からデータカテゴリー名へのマッピング
+    const categoryMapping = {
+        'LEVEL1 超よくでる400': 'Group1 超頻出600',
+        'LEVEL2 よくでる300': 'Group2 頻出200',
+        'LEVEL3 差がつく200': 'Group3 ハイレベル100',
+        'LEVEL4 ハイレベル200': 'Group3 ハイレベル100' // LEVEL4もGroup3のデータを使用（要確認）
+    };
+    
     // 基本語彙500の場合は、最初の500語を取得
     // 小学生で習った単語とカテゴリー別に覚える単語の場合は、elementaryWordDataを使用
     let categoryWords;
@@ -447,7 +465,7 @@ function startCategory(category) {
             showAlert('エラー', '小学生で習った単語データが見つかりません。');
             return;
         }
-    } else if (category === 'C問題対策タイムアタック') {
+    } else if (category === 'C問題対策英単語タイムアタック') {
         // タイムアタックモード：Group1 超頻出600の単語を使用
         categoryWords = wordData.filter(word => word.category === 'Group1 超頻出600');
         if (categoryWords.length === 0) {
@@ -458,7 +476,9 @@ function startCategory(category) {
         initTimeAttackLearning(category, categoryWords);
         return;
     } else {
-        categoryWords = wordData.filter(word => word.category === category);
+        // マッピングがある場合はそれを使用、なければそのまま使用
+        const dataCategory = categoryMapping[category] || category;
+        categoryWords = wordData.filter(word => word.category === dataCategory);
     }
 
     if (categoryWords.length === 0) {
@@ -604,6 +624,16 @@ function showCourseSelection(category, categoryWords) {
     
     courseSelection.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
+    
+    // 「超よくでる」の場合のみ画像を表示
+    const courseSelectionImage = document.getElementById('courseSelectionImage');
+    if (courseSelectionImage) {
+        if (category === 'LEVEL1 超よくでる400') {
+            courseSelectionImage.style.display = 'block';
+        } else {
+            courseSelectionImage.style.display = 'none';
+        }
+    }
     
     // ハンバーガーメニューボタンは常に表示（変更不要）
 }
@@ -1217,7 +1247,7 @@ function setupEventListeners() {
                 courseSelection.classList.add('hidden');
             }
             elements.categorySelection.classList.remove('hidden');
-            elements.headerSubtitle.textContent = '大阪府公立高校対応';
+            elements.headerSubtitle.textContent = '大阪府公立高校入試特化型英単語';
         });
     }
     
@@ -2572,7 +2602,7 @@ function markMastered() {
         }
         
         // 進捗を保存
-        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== 'C問題対策タイムアタック') {
+        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== 'C問題対策英単語タイムアタック') {
             saveProgress(selectedCategory, currentIndex);
         }
         // 最後の単語の場合は完了画面を表示
@@ -2687,7 +2717,7 @@ function markAnswer(isCorrect, isTimeout = false) {
         }
         
         // 進捗を保存
-        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== 'C問題対策タイムアタック') {
+        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== 'C問題対策英単語タイムアタック') {
             saveProgress(selectedCategory, currentIndex);
         }
         
@@ -3089,7 +3119,7 @@ function clearLearningHistory() {
             localStorage.removeItem('learningProgress');
             
             // カテゴリーごとの進捗も削除
-            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'Group1 超頻出600', 'Group2 頻出200', 'Group3 ハイレベル100', '基本語彙500'];
+            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500'];
             categories.forEach(category => {
                 localStorage.removeItem(`correctWords-${category}`);
                 localStorage.removeItem(`wrongWords-${category}`);

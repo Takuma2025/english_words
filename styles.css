@@ -157,11 +157,17 @@ body {
     font-size: 22px;
     font-weight: 700;
     color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
 }
 
 .subtitle {
     font-size: 11px;
     color: #ffffff;
+    display: block;
+    font-weight: 400;
 }
 
 .app-main {
@@ -380,6 +386,20 @@ body {
     box-sizing: border-box;
 }
 
+.course-selection-image {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 10;
+}
+
+.course-image {
+    max-width: 120px;
+    width: auto;
+    height: auto;
+    border-radius: 4px;
+}
+
 .category-card {
     display: flex;
     align-items: center;
@@ -423,10 +443,21 @@ body {
     margin-bottom: 0;
 }
 
+.level-badge {
+    display: inline-block;
+    background-color: #3182ce;
+    color: #ffffff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    margin-right: 2px;
+}
+
 .category-stars {
-    font-size: 14px;
+    font-size: 16px;
     color: #fbbf24;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    margin-left: 4px;
 }
 
 .category-meta {
@@ -480,12 +511,12 @@ body {
     text-align: right;
 }
 
-/* C問題対策タイムアタックコースの進捗バーを非表示 */
-.category-card[data-category="C問題対策タイムアタック"] .category-progress {
+/* C問題対策英単語タイムアタックコースの進捗バーを非表示 */
+.category-card[data-category="C問題対策英単語タイムアタック"] .category-progress {
     display: none;
 }
 
-/* C問題対策タイムアタックコース時の非表示要素 */
+/* C問題対策英単語タイムアタックコース時の非表示要素 */
 .card-area-wrapper:has(.word-timer-bar:not(.hidden)) .progress-range-display {
     display: none;
 }
@@ -502,31 +533,31 @@ body {
     display: none;
 }
 
-/* C問題対策タイムアタックコースのカテゴリーカードを赤本の色に */
-.category-card[data-category="C問題対策タイムアタック"] {
+/* C問題対策英単語タイムアタックコースのカテゴリーカードを赤本の色に */
+.category-card[data-category="C問題対策英単語タイムアタック"] {
     background: #DC143C; /* 赤本の色 */
     color: #ffffff;
 }
 
-.category-card[data-category="C問題対策タイムアタック"] .category-name {
+.category-card[data-category="C問題対策英単語タイムアタック"] .category-name {
     color: #ffffff;
 }
 
-.category-card[data-category="C問題対策タイムアタック"] .category-meta {
+.category-card[data-category="C問題対策英単語タイムアタック"] .category-meta {
     color: #ffffff;
     opacity: 0.95;
 }
 
-.category-card[data-category="C問題対策タイムアタック"] .category-arrow {
+.category-card[data-category="C問題対策英単語タイムアタック"] .category-arrow {
     color: #ffffff;
 }
 
-.category-card[data-category="C問題対策タイムアタック"]:hover {
+.category-card[data-category="C問題対策英単語タイムアタック"]:hover {
     background: #C41E3A; /* ホバー時は少し濃い赤 */
     box-shadow: 0 4px 6px rgba(220, 20, 60, 0.3), 0 2px 4px rgba(220, 20, 60, 0.2);
 }
 
-.category-card[data-category="C問題対策タイムアタック"]:active {
+.category-card[data-category="C問題対策英単語タイムアタック"]:active {
     background: #B0171F; /* アクティブ時はさらに濃い赤 */
 }
 
