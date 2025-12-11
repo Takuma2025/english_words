@@ -1121,13 +1121,13 @@ function setupVirtualKeyboard() {
                 } else {
                     // 回答済みの場合は次へ進む
                     if (currentIndex < currentRangeEnd - 1) {
-                        // カードを横にスライドアウト
+                        // カードをフリップアウト
                         const inputModeContent = document.querySelector('.input-mode-content');
                         if (inputModeContent) {
-                            // 現在のカードを左にスライドアウト
-                            inputModeContent.classList.add('slide-out');
+                            // 現在のカードを回転させて裏返す
+                            inputModeContent.classList.add('flip-out');
                             
-                            // アニメーション後に次へ進む
+                            // アニメーションの途中（180度回転した時点）でコンテンツを更新
                             setTimeout(() => {
                                 currentIndex++;
                                 inputAnswerSubmitted = false;
@@ -1135,17 +1135,17 @@ function setupVirtualKeyboard() {
                                 const passBtn = document.getElementById('keyboardPass');
                                 if (passBtn) passBtn.style.display = '';
                                 
-                                // まず新しいカードを右側に配置（slide-outを削除してslide-inを追加）
-                                inputModeContent.classList.remove('slide-out', 'active');
-                                inputModeContent.classList.add('slide-in');
-                                
                                 // コンテンツを更新（アニメーションリセットをスキップ）
                                 displayInputMode(true);
                                 
-                                // ブラウザにレンダリングを強制して右側の位置を確定
+                                // flip-outを削除してflip-inを追加（180度から0度に回転）
+                                inputModeContent.classList.remove('flip-out', 'active');
+                                inputModeContent.classList.add('flip-in');
+                                
+                                // ブラウザにレンダリングを強制
                                 void inputModeContent.offsetHeight;
                                 
-                                // 次のフレームで右から左にスライドイン
+                                // 次のフレームで0度に回転（表に戻る）
                                 requestAnimationFrame(() => {
                                     requestAnimationFrame(() => {
                                         inputModeContent.classList.add('active');
@@ -1154,9 +1154,9 @@ function setupVirtualKeyboard() {
                                 
                                 // アニメーション完了後にクラスをクリア
                                 setTimeout(() => {
-                                    inputModeContent.classList.remove('slide-in', 'active');
-                                }, 300);
-                            }, 300);
+                                    inputModeContent.classList.remove('flip-in', 'active');
+                                }, 400);
+                            }, 200); // 180度回転した時点（アニメーションの半分）
                         } else {
                             // フォールバック：アニメーションなしで進む
                             currentIndex++;
@@ -1315,7 +1315,7 @@ function displayInputMode(skipAnimationReset = false) {
     if (!skipAnimationReset) {
         const inputModeContent = document.querySelector('.input-mode-content');
         if (inputModeContent) {
-            inputModeContent.classList.remove('slide-out', 'slide-in', 'active');
+            inputModeContent.classList.remove('flip-out', 'flip-in', 'active');
         }
     }
 
@@ -2579,7 +2579,6 @@ function scrollProgressBarLeft() {
         createProgressSegments(total);
         updateProgressSegments(); // セグメントの色を更新
         updateNavButtons(); // ボタン状態を更新
-        animateProgressBarText();
     }
 }
 
@@ -2593,35 +2592,7 @@ function scrollProgressBarRight() {
         createProgressSegments(total);
         updateProgressSegments(); // セグメントの色を更新
         updateNavButtons(); // ボタン状態を更新
-        animateProgressBarText();
     }
-}
-
-// 進捗バーを右にスクロール（20個ずつ）
-function scrollProgressBarRight() {
-    const total = currentRangeEnd - currentRangeStart;
-    if (progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT < total) {
-        // 20個ずつ次の範囲に移動
-        progressBarStartIndex = Math.min(total - PROGRESS_BAR_DISPLAY_COUNT, 
-            progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT);
-        createProgressSegments(total);
-        updateProgressSegments(); // セグメントの色を更新
-        updateNavButtons(); // ボタン状態を更新
-        animateProgressBarText();
-    }
-}
-
-// 進捗バーのテキストアニメーション
-function animateProgressBarText() {
-    const progressBarWrapper = document.querySelector('.progress-bar-wrapper');
-    if (!progressBarWrapper) return;
-    
-    // アニメーション用のクラスを追加
-    progressBarWrapper.classList.add('progress-bar-transitioning');
-    
-    setTimeout(() => {
-        progressBarWrapper.classList.remove('progress-bar-transitioning');
-    }, 400);
 }
 
 // 統計を更新

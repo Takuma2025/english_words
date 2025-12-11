@@ -497,7 +497,9 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-top: 0;
     margin-bottom: 8px;
+    padding-top: 0;
     width: 100%;
     flex-shrink: 0;
 }
@@ -511,7 +513,9 @@ body {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0;
+    margin-top: 0;
+    padding-top: 0;
 }
 
 .progress-bar-wrapper {
@@ -520,6 +524,8 @@ body {
     gap: 6px;
     width: 100%;
     position: relative;
+    margin-top: 0;
+    padding-top: 0;
 }
 
 .progress-step-buttons {
@@ -580,7 +586,7 @@ body {
 
 .progress-range-display {
     position: absolute;
-    top: -16px;
+    top: 0;
     left: 0;
     font-size: 11px;
     font-weight: 500;
@@ -632,7 +638,7 @@ body {
 
 .progress-swipe-hint {
     position: absolute;
-    top: -16px;
+    top: 0;
     right: 0;
     font-size: 10px;
     color: #9ca3af;
@@ -663,21 +669,6 @@ body {
     transition: all 0.3s ease-out;
 }
 
-.progress-bar-wrapper.progress-bar-transitioning .progress-range-display {
-    color: #3b82f6;
-    font-weight: 700;
-    font-size: 13px;
-    animation: progressBarTextPulse 0.4s ease-out;
-}
-
-@keyframes progressBarTextPulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.15);
-    }
-}
 
 .progress-bar-container {
     height: 16px;
@@ -685,6 +676,7 @@ body {
     border-radius: 0;
     overflow-x: auto;
     overflow-y: hidden;
+    margin-top: 14px;
     margin-bottom: 8px;
     display: flex;
     gap: 2px;
@@ -747,7 +739,8 @@ body {
 }
 
 .progress-segment.current {
-    border: 3px solid #1e40af;
+    background: #1e3a8a;
+    border: 3px solid transparent;
     box-sizing: border-box;
 }
 
@@ -774,7 +767,7 @@ body {
 
 /* 入力モードの場合は下のパディングを調整 */
 .card-area-wrapper:has(.input-mode:not(.hidden)) {
-    padding-top: 40px;
+    padding-top: 0;
     padding-bottom: 0;
     overflow-y: hidden;
 }
@@ -789,6 +782,8 @@ body {
     min-height: 0;
     max-height: 100%;
     box-sizing: border-box;
+    perspective: 1200px;
+    transform-style: preserve-3d;
 }
 
 /* 入力モード内の仮想キーボードを下部に固定 */
@@ -941,26 +936,24 @@ body {
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    transform: translateX(0);
-    opacity: 1;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: rotateY(0deg);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
     flex-shrink: 0;
 }
 
-/* カードスライドアニメーション */
-.input-mode-content.slide-out {
-    transform: translateX(-100%) !important; /* 左に消える */
-    opacity: 0;
+/* カードフリップアニメーション */
+.input-mode-content.flip-out {
+    transform: rotateY(-180deg) !important;
 }
 
-.input-mode-content.slide-in {
-    transform: translateX(100%) !important; /* 右から開始 */
-    opacity: 0;
+.input-mode-content.flip-in {
+    transform: rotateY(180deg) !important;
 }
 
-.input-mode-content.slide-in.active {
-    transform: translateX(0) !important; /* 中央に来る */
-    opacity: 1;
+.input-mode-content.flip-in.active {
+    transform: rotateY(0deg) !important;
 }
 
 .input-mode-content .card-top-info {
