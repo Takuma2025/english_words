@@ -125,9 +125,8 @@ body {
 .hamburger-menu-btn {
     position: absolute;
     left: 16px;
-    top: 50%;
+    top: calc(env(safe-area-inset-top) + var(--header-height) / 2);
     transform: translateY(-50%);
-    margin-top: calc(env(safe-area-inset-top) / 2);
     background: transparent;
     border: none;
     color: #ffffff;
@@ -340,14 +339,14 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #f3f4f6;
+    background: #e5e7eb;
     border: none;
     border-radius: 8px;
     padding: 8px 12px;
     margin-bottom: 16px;
     font-size: 14px;
     font-weight: 600;
-    color: #475569;
+    color: #1f2937;
     cursor: pointer;
     transition: all 0.2s;
     box-shadow: 0 2px 0 #d1d5db, inset 0 1px 0 rgba(255, 255, 255, 0.5);
@@ -359,8 +358,8 @@ body {
 }
 
 .back-btn:hover {
-    background: #e5e7eb;
-    color: #334155;
+    background: #d1d5db;
+    color: #111827;
 }
 
 
