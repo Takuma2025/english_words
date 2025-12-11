@@ -1955,7 +1955,7 @@ function showInstallOverlay() {
         message.textContent = 'このアプリをホーム画面に追加すると、より快適に学習できます。';
         instructions.innerHTML = `
             <ol>
-                <li>画面下部の共有ボタン <img src="share.png" alt="共有" style="width: 16px; height: 16px; vertical-align: middle; display: inline;"> をタップ</li>
+                <li>画面下部の共有ボタン <img src="share.png" alt="共有" style="width: 16px; height: 16px; vertical-align: middle; display: inline-block; margin: 0 2px;"> をタップ</li>
                 <li>「ホーム画面に追加」を選択</li>
                 <li>「追加」をタップ</li>
             </ol>
