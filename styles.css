@@ -602,10 +602,10 @@ body {
     overflow-x: hidden;
 }
 
-/* スマホ向け：キーボードを端っこまで使えるように、はみ出さないように */
+/* スマホ向け：キーボードをギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .virtual-keyboard {
-        padding: 18px 2px; /* 左右に最小限のパディング */
+        padding: 18px 0; /* 左右のパディングを削除 */
         margin: 0;
         width: 100%;
         max-width: 100%;
@@ -625,12 +625,12 @@ body {
     padding: 0 2px;
 }
 
-/* スマホ向け：キーボード行の間隔を広げる、端っこまで使えるように、はみ出さないように */
+/* スマホ向け：キーボード行をギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-row {
-        gap: 2px;
+        gap: 1px; /* 最小限の間隔 */
         margin-bottom: 10px;
-        padding: 0 2px; /* 最小限のパディング */
+        padding: 0; /* パディングを削除 */
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
@@ -669,15 +669,16 @@ body {
     will-change: transform;
 }
 
-/* スマホ向け：キーボードを大きく、文字も大きく、はみ出さないように */
+/* スマホ向け：キーボードを大きく、文字も大きく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-key {
-        width: calc((100% - 20px) / 11); /* 11個のキーが収まるように計算 */
-        max-width: 36px;
-        min-width: 28px;
+        width: calc((100% - 10px) / 11); /* 11個のキーが収まるように計算（gap分を考慮） */
+        max-width: none;
+        min-width: 0;
         height: 48px;
         font-size: 18px;
         border-radius: 6px;
+        flex: 1; /* 均等に配置 */
     }
 }
 
@@ -703,14 +704,15 @@ body {
     transition: transform 0.05s, box-shadow 0.05s;
 }
 
-/* スマホ向け：特殊キーも大きく、はみ出さないように */
+/* スマホ向け：特殊キーも大きく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-key-special {
-        width: calc((100% - 20px) / 11); /* 他のキーと同じサイズ計算 */
-        max-width: 64px;
-        min-width: 40px;
+        width: calc((100% - 10px) / 11); /* 他のキーと同じサイズ計算 */
+        max-width: none;
+        min-width: 0;
         height: 48px;
         border-radius: 6px;
+        flex: 1; /* 均等に配置 */
     }
 }
 
@@ -771,22 +773,24 @@ body {
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
 }
 
-/* スマホ向け：スペースキーとShiftキーも大きく、はみ出さないように */
+/* スマホ向け：スペースキーとShiftキーも大きく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-key-shift {
-        width: calc((100% - 20px) / 11); /* 他のキーと同じサイズ計算 */
-        max-width: 54px;
-        min-width: 40px;
+        width: calc((100% - 10px) / 11); /* 他のキーと同じサイズ計算 */
+        max-width: none;
+        min-width: 0;
         height: 48px;
         border-radius: 6px;
+        flex: 1; /* 均等に配置 */
     }
     
     .keyboard-key-space {
-        width: calc((100% - 20px) / 11); /* 他のキーと同じサイズ計算 */
-        max-width: 36px;
-        min-width: 28px;
+        width: calc((100% - 10px) / 11); /* 他のキーと同じサイズ計算 */
+        max-width: none;
+        min-width: 0;
         height: 48px;
         font-size: 18px;
+        flex: 1; /* 均等に配置 */
     }
 }
 
@@ -820,7 +824,7 @@ body {
     will-change: transform;
 }
 
-/* スマホ向け：アクションボタンを小さく、端っこまで使えるように */
+/* スマホ向け：アクションボタンを小さく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-action-btn {
         height: 44px;
@@ -829,8 +833,8 @@ body {
     }
     
     .keyboard-actions {
-        gap: 8px;
-        padding: 0 2px; /* 最小限のパディングで端っこまで使えるように */
+        gap: 2px; /* 最小限の間隔 */
+        padding: 0; /* パディングを削除 */
     }
 }
 
@@ -1178,7 +1182,7 @@ body {
     gap: 8px;
     padding: 0 16px;
     position: absolute;
-    bottom: 120px;
+    bottom: 140px; /* カードからもう少し離す */
     left: 0;
     right: 0;
     width: 100%;
