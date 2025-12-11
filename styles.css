@@ -517,9 +517,61 @@ body {
 .progress-bar-wrapper {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     width: 100%;
     position: relative;
+}
+
+.progress-step-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 4px;
+    padding: 0 2px;
+}
+
+.progress-step-btn {
+    flex-shrink: 0;
+    height: 28px;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #1f2937;
+    transition: background-color 0.2s ease;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.progress-step-btn.progress-step-left {
+    margin-right: auto;
+}
+
+.progress-step-btn.progress-step-right {
+    margin-left: auto;
+}
+
+.progress-step-btn svg {
+    flex-shrink: 0;
+}
+
+.progress-step-btn:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.progress-step-btn:active:not(:disabled) {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.progress-step-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 .progress-range-display {
@@ -604,6 +656,23 @@ body {
 #progressRangeText {
     color: #6b7280; /* グレー */
     font-weight: 500;
+    transition: all 0.3s ease-out;
+}
+
+.progress-bar-wrapper.progress-bar-transitioning .progress-range-display {
+    color: #3b82f6;
+    font-weight: 700;
+    font-size: 13px;
+    animation: progressBarTextPulse 0.4s ease-out;
+}
+
+@keyframes progressBarTextPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
 }
 
 .progress-bar-container {

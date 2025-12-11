@@ -198,14 +198,6 @@
             <!-- 学習画面 -->
             <div class="learning-view hidden" id="mainContent">
                 <div class="card-area-wrapper">
-                    <!-- 左右の矢印ボタン（カードエリアに配置） -->
-                    <button class="nav-arrow-btn prev-arrow" id="prevBtn" aria-label="前の単語">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                    </button>
-                    <button class="nav-arrow-btn next-arrow" id="nextBtn" aria-label="次の単語">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </button>
-                    
                     <!-- 進捗バーとNo.をカードの上に配置 -->
                     <div class="card-top-section">
                         <!-- 進捗バー -->
@@ -216,6 +208,16 @@
                                     <!-- セグメントは動的に生成 -->
                                 </div>
                                 <div class="progress-swipe-hint" id="progressSwipeHint">← → スワイプで移動</div>
+                            </div>
+                            <div class="progress-step-buttons">
+                                <button class="progress-step-btn progress-step-left" id="progressStepLeft" aria-label="前の単語へ">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                    <span>前の単語へ</span>
+                                </button>
+                                <button class="progress-step-btn progress-step-right" id="progressStepRight" aria-label="次の単語へ">
+                                    <span>次の単語へ</span>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </button>
                             </div>
                             <div class="progress-stats">
                                 <span id="progressText">0/0</span>

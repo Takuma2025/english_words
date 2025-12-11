@@ -499,16 +499,9 @@ function initInputModeLearning(category, words) {
     const wordCard = document.getElementById('wordCard');
     const inputMode = document.getElementById('inputMode');
     const cardHint = document.getElementById('cardHint');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    
     if (wordCard) wordCard.classList.add('hidden');
     if (inputMode) inputMode.classList.remove('hidden');
     if (cardHint) cardHint.classList.add('hidden');
-    
-    // 左右移動ボタンを表示
-    if (prevBtn) prevBtn.classList.remove('hidden');
-    if (nextBtn) nextBtn.classList.remove('hidden');
     
     displayInputMode();
     // 進捗バーのセグメントを強制的に生成
@@ -830,21 +823,9 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     const wordCard = document.getElementById('wordCard');
     const inputMode = document.getElementById('inputMode');
     const cardHint = document.getElementById('cardHint');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    
     if (inputMode) inputMode.classList.add('hidden');
     if (wordCard) wordCard.classList.remove('hidden');
     if (cardHint) cardHint.classList.remove('hidden');
-    
-    // 基本語彙500と小学生で習った単語のときだけ前へ・次へボタンを非表示、それ以外は表示
-    if (category === '基本語彙500' || category === '小学生で習った単語とカテゴリー別に覚える単語') {
-        if (prevBtn) prevBtn.classList.add('hidden');
-        if (nextBtn) nextBtn.classList.add('hidden');
-    } else {
-        if (prevBtn) prevBtn.classList.remove('hidden');
-        if (nextBtn) nextBtn.classList.remove('hidden');
-    }
 
     // 進捗バーのセグメントを強制的に生成
     if (total > 0) {
@@ -905,17 +886,17 @@ function setupEventListeners() {
     // 進捗バーのスワイプ機能を設定
     setupProgressBarSwipe();
     
-    // 矢印ナビゲーション
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    if (prevBtn) {
-        prevBtn.addEventListener('click', (e) => {
+    // 進捗バーの1つずつ移動ボタン
+    const progressStepLeft = document.getElementById('progressStepLeft');
+    const progressStepRight = document.getElementById('progressStepRight');
+    if (progressStepLeft) {
+        progressStepLeft.addEventListener('click', (e) => {
             e.stopPropagation();
             goToPreviousWord();
         });
     }
-    if (nextBtn) {
-        nextBtn.addEventListener('click', (e) => {
+    if (progressStepRight) {
+        progressStepRight.addEventListener('click', (e) => {
             e.stopPropagation();
             goToNextWord();
         });
@@ -1465,6 +1446,21 @@ function goToPreviousWord() {
         }
         
         currentIndex--;
+        
+        // 進捗バーの自動移動チェック（現在の問題が表示範囲外になったら移動）
+        const total = currentRangeEnd - currentRangeStart;
+        const currentQuestionIndex = currentIndex - currentRangeStart;
+        
+        if (currentQuestionIndex < progressBarStartIndex && progressBarStartIndex > 0) {
+            // 前の範囲に自動移動
+            progressBarStartIndex = Math.max(0, progressBarStartIndex - PROGRESS_BAR_DISPLAY_COUNT);
+            createProgressSegments(total);
+            updateProgressSegments();
+            animateProgressBarText();
+        } else {
+            updateProgressSegments();
+        }
+        
         if (isInputModeActive) {
             displayInputMode();
         } else {
@@ -1682,6 +1678,21 @@ function goToPreviousWord() {
         }
         
         currentIndex--;
+        
+        // 進捗バーの自動移動チェック（現在の問題が表示範囲外になったら移動）
+        const total = currentRangeEnd - currentRangeStart;
+        const currentQuestionIndex = currentIndex - currentRangeStart;
+        
+        if (currentQuestionIndex < progressBarStartIndex && progressBarStartIndex > 0) {
+            // 前の範囲に自動移動
+            progressBarStartIndex = Math.max(0, progressBarStartIndex - PROGRESS_BAR_DISPLAY_COUNT);
+            createProgressSegments(total);
+            updateProgressSegments();
+            animateProgressBarText();
+        } else {
+            updateProgressSegments();
+        }
+        
         if (isInputModeActive) {
             displayInputMode();
         } else {
@@ -1704,6 +1715,23 @@ function goToNextWord() {
         }
 
         currentIndex++;
+        
+        // 進捗バーの自動移動チェック（現在の問題が表示範囲外になったら移動）
+        const total = currentRangeEnd - currentRangeStart;
+        const currentQuestionIndex = currentIndex - currentRangeStart;
+        const currentDisplayEnd = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT;
+        
+        if (currentQuestionIndex >= currentDisplayEnd && progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT < total) {
+            // 次の範囲に自動移動
+            progressBarStartIndex = Math.min(total - PROGRESS_BAR_DISPLAY_COUNT, 
+                progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT);
+            createProgressSegments(total);
+            updateProgressSegments();
+            animateProgressBarText();
+        } else {
+            updateProgressSegments();
+        }
+        
         if (isInputModeActive) {
             displayInputMode();
         } else {
@@ -2170,12 +2198,12 @@ function displayCurrentWord() {
 
 // ナビゲーションボタンの状態更新
 function updateNavButtons() {
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    if (!prevBtn || !nextBtn) return;
+    const progressStepLeft = document.getElementById('progressStepLeft');
+    const progressStepRight = document.getElementById('progressStepRight');
+    if (!progressStepLeft || !progressStepRight) return;
     
-    prevBtn.disabled = currentIndex <= 0;
-    nextBtn.disabled = currentIndex >= currentRangeEnd - 1;
+    progressStepLeft.disabled = currentIndex <= currentRangeStart;
+    progressStepRight.disabled = currentIndex >= currentRangeEnd - 1;
 }
 
 // 完璧としてマーク（上スワイプ）
@@ -2338,8 +2366,11 @@ function markAnswer(isCorrect) {
                 progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT);
             createProgressSegments(total);
             updateProgressSegments();
+            updateNavButtons();
+            animateProgressBarText();
         } else {
             updateProgressSegments();
+            updateNavButtons();
         }
         
         // 最後の単語の場合は完了画面を表示
@@ -2605,6 +2636,8 @@ function scrollProgressBarLeft() {
         progressBarStartIndex = Math.max(0, progressBarStartIndex - PROGRESS_BAR_DISPLAY_COUNT);
         createProgressSegments(total);
         updateProgressSegments(); // セグメントの色を更新
+        updateNavButtons(); // ボタン状態を更新
+        animateProgressBarText();
     }
 }
 
@@ -2617,7 +2650,36 @@ function scrollProgressBarRight() {
             progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT);
         createProgressSegments(total);
         updateProgressSegments(); // セグメントの色を更新
+        updateNavButtons(); // ボタン状態を更新
+        animateProgressBarText();
     }
+}
+
+// 進捗バーを右にスクロール（20個ずつ）
+function scrollProgressBarRight() {
+    const total = currentRangeEnd - currentRangeStart;
+    if (progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT < total) {
+        // 20個ずつ次の範囲に移動
+        progressBarStartIndex = Math.min(total - PROGRESS_BAR_DISPLAY_COUNT, 
+            progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT);
+        createProgressSegments(total);
+        updateProgressSegments(); // セグメントの色を更新
+        updateNavButtons(); // ボタン状態を更新
+        animateProgressBarText();
+    }
+}
+
+// 進捗バーのテキストアニメーション
+function animateProgressBarText() {
+    const progressBarWrapper = document.querySelector('.progress-bar-wrapper');
+    if (!progressBarWrapper) return;
+    
+    // アニメーション用のクラスを追加
+    progressBarWrapper.classList.add('progress-bar-transitioning');
+    
+    setTimeout(() => {
+        progressBarWrapper.classList.remove('progress-bar-transitioning');
+    }, 400);
 }
 
 // 統計を更新
