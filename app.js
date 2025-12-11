@@ -998,8 +998,9 @@ function displayInputMode() {
             input.dataset.index = i;
             input.autocomplete = 'off';
             input.spellcheck = false;
-            input.inputMode = 'text';
-            input.setAttribute('inputmode', 'text');
+            input.inputMode = 'none';
+            input.setAttribute('inputmode', 'none');
+            input.setAttribute('readonly', 'readonly');
             
             // 入力時の処理
             input.addEventListener('input', (e) => {
@@ -1023,10 +1024,6 @@ function displayInputMode() {
             
             letterInputs.appendChild(input);
         }
-        
-        // 最初の入力フィールドにフォーカス
-        const firstInput = letterInputs.querySelector('input[data-index="0"]');
-        if (firstInput) firstInput.focus();
     }
     
     // 仮想キーボードのボタンは常に有効

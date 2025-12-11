@@ -310,6 +310,8 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
+    min-height: 0;
 }
 
 .card-top-section {
@@ -396,9 +398,9 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     position: relative;
-    padding: 60px 16px 20px 16px; /* 上に余白を追加 */
+    padding: 60px 16px 100px 16px; /* 上に余白、下にボタン用の余白を追加 */
 }
 
 /* 日本語→英語入力モード（基本語彙500専用） */
@@ -406,8 +408,10 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     padding: 20px 16px 0 16px;
+    overflow-y: hidden;
+    min-height: 0;
 }
 
 .input-mode-content {
@@ -415,22 +419,24 @@ body {
     border-radius: 16px;
     padding: 20px 24px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
+    width: 90%;
+    max-width: 480px;
     margin: 0 auto;
-    width: 100%;
-    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    position: relative;
+    height: 280px;
+    overflow: hidden;
 }
 
 .input-question {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .input-meaning {
-    font-size: clamp(18px, 4.5vw, 24px);
+    font-size: clamp(18px, 4.5vw, 22px);
     font-weight: 400;
     color: #1f2937;
     margin-bottom: 12px;
@@ -441,7 +447,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+    min-height: 100px;
 }
 
 .input-actions {
@@ -469,7 +476,7 @@ body {
     background-color: transparent;
     transition: all 0.2s;
     box-sizing: border-box;
-    font-family: "Georgia", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-user-select: text;
     user-select: text;
     letter-spacing: -0.5px;
@@ -560,9 +567,9 @@ body {
 
 /* 仮想キーボード */
 .virtual-keyboard {
-    background: #f5f3f0;
-    border-top: 1px solid #e5e7eb;
-    padding: 12px 8px;
+    background: transparent;
+    border-top: none;
+    padding: 14px 10px;
     margin: 0 -16px;
     border-radius: 20px 20px 0 0;
 }
@@ -570,8 +577,8 @@ body {
 .keyboard-row {
     display: flex;
     justify-content: center;
-    gap: 4px;
-    margin-bottom: 8px;
+    gap: 6px;
+    margin-bottom: 10px;
 }
 
 .keyboard-row:last-of-type {
@@ -579,12 +586,12 @@ body {
 }
 
 .keyboard-key {
-    min-width: 32px;
-    height: 40px;
+    min-width: 36px;
+    height: 48px;
     background: #ffffff;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     color: #1f2937;
     cursor: pointer;
@@ -594,7 +601,7 @@ body {
     align-items: center;
     justify-content: center;
     flex: 1;
-    max-width: 40px;
+    max-width: 48px;
 }
 
 .keyboard-key:active {
@@ -603,7 +610,7 @@ body {
 }
 
 .keyboard-key-special {
-    max-width: 60px;
+    max-width: 72px;
     background: #ffffff;
     border: none;
     border-radius: 8px;
@@ -617,7 +624,7 @@ body {
 
 .keyboard-actions {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     padding: 0 4px;
 }
 
@@ -643,28 +650,28 @@ body {
 }
 
 .keyboard-action-btn-primary {
-    background: #f97316;
+    background: #0055ca;
     color: #ffffff;
-    box-shadow: 0 4px 0 rgba(234, 88, 12, 0.6);
+    box-shadow: 0 4px 0 rgba(0, 68, 160, 0.6);
 }
 
 .keyboard-action-btn-primary:active {
     transform: translateY(3px);
-    box-shadow: 0 1px 0 rgba(234, 88, 12, 0.6);
+    box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
 }
 
 .input-result {
     text-align: center;
-    padding: 12px 16px;
+    padding: 8px 12px;
     border-radius: 12px;
     margin-top: 0px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .result-message {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .result-message.correct {
@@ -676,17 +683,17 @@ body {
 }
 
 .correct-answer-container {
-    margin-top: 12px;
+    margin-top: 6px;
 }
 
 .correct-label {
-    font-size: 16px;
+    font-size: 14px;
     color: #6b7280;
     font-weight: 600;
 }
 
 .correct-word {
-    font-size: 32px;
+    font-size: 24px;
     color: #1f2937;
     font-weight: 700;
 }
@@ -788,6 +795,7 @@ body {
     position: relative;
     perspective: 1200px;
     touch-action: pan-y;
+    margin-top: 20px;
 }
 
 .word-card.flipped {
@@ -846,7 +854,6 @@ body {
     color: #64748b;
     padding: 8px 0;
     text-align: center;
-    border-bottom: 2px solid #e5e7eb;
     width: 100%;
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
     letter-spacing: 0.1em;
@@ -971,8 +978,13 @@ body {
     display: none; /* デフォルトは非表示 */
     justify-content: space-between;
     gap: 8px;
-    margin-top: 16px;
     padding: 0 16px;
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* カードがひっくり返ったときのみ表示 */
