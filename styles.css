@@ -1142,7 +1142,7 @@ body {
 
 .english-word-wrapper {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
     gap: 8px;
     margin-top: auto;
@@ -1182,16 +1182,31 @@ body {
 /* インライン表示の品詞（左横に表示） */
 .pos-inline {
     font-size: clamp(14px, 3vw, 18px);
-    font-weight: 400;
+    font-weight: 700;
     color: #ffffff;
-    padding: 3px 8px;
+    padding: 3px 6px 2px 6px;
     border-radius: 4px;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-right: 6px;
-    vertical-align: baseline;
-    line-height: 1.5;
+    line-height: 1;
     flex-shrink: 0;
+    height: fit-content;
+}
+
+/* 英語単語のときの品詞位置調整 */
+.english-word-wrapper .pos-inline {
+    align-self: baseline;
+    margin-top: 0;
+    transform: translateY(-0.18em);
+}
+
+/* 意味のときの品詞位置調整 */
+.meaning-wrapper .pos-inline {
     align-self: center;
+    margin-top: 0;
+    transform: translateY(0.03em);
 }
 
 .part-of-speech.verb { background-color: rgba(59, 130, 246, 0.7); } /* 青 (薄め) */
