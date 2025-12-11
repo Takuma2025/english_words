@@ -180,6 +180,24 @@
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </div>
                     </button>
+                    <button class="category-card" data-category="C問題対策タイムアタック">
+                        <div class="category-info">
+                            <div class="category-header">
+                                <div class="category-name">C問題対策タイムアタック</div>
+                            </div>
+                            <div class="category-meta">1単語2秒以内で解ききれるか</div>
+                            <div class="category-progress">
+                                <div class="category-progress-bar">
+                                    <div class="category-progress-correct" id="progress-correct-C問題対策タイムアタック" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" id="progress-wrong-C問題対策タイムアタック" style="width: 0%"></div>
+                                </div>
+                                <div class="category-progress-text" id="progress-text-C問題対策タイムアタック">0/0</div>
+                            </div>
+                        </div>
+                        <div class="category-arrow">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </button>
                 </div>
             </div>
 
@@ -197,6 +215,13 @@
 
             <!-- 学習画面 -->
             <div class="learning-view hidden" id="mainContent">
+                <!-- カウントダウンオーバーレイ（タイムアタックモード時のみ） -->
+                <div class="countdown-overlay hidden" id="countdownOverlay">
+                    <div class="countdown-content">
+                        <div class="countdown-number" id="countdownNumber">3</div>
+                        <div class="countdown-label">スタート</div>
+                    </div>
+                </div>
                 <div class="card-area-wrapper">
                     <!-- 進捗バーとNo.をカードの上に配置 -->
                     <div class="card-top-section">
@@ -220,13 +245,34 @@
                                 </button>
                             </div>
                             <div class="progress-stats">
-                                <span id="progressText">0/0</span>
+                                <div class="progress-stats-content">
+                                    <span class="progress-stats-label">進捗</span>
+                                    <span id="progressText">0/0</span>
+                                </div>
+                                <div class="progress-stats-scores">
+                                    <span class="score-correct">
+                                        <span class="score-label">正解</span>
+                                        <span id="correctCountDisplay">0</span>
+                                    </span>
+                                    <span class="score-wrong">
+                                        <span class="score-label">不正解</span>
+                                        <span id="wrongCountDisplay">0</span>
+                                    </span>
+                                    <span class="score-accuracy">
+                                        <span class="score-label">正解率</span>
+                                        <span id="accuracyDisplay">0%</span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- 通常のカード学習モード -->
                     <div class="word-card" id="wordCard">
+                        <!-- 単語あたりの時間プログレスバー（タイムアタックモード時のみ） -->
+                        <div class="word-timer-bar hidden" id="wordTimerBar">
+                            <div class="word-timer-bar-fill" id="wordTimerBarFill"></div>
+                        </div>
                         <div class="card-inner" id="cardInner">
                             <div class="card-face card-front">
                                 <!-- No. -->
