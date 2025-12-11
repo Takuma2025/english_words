@@ -444,7 +444,7 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 100%;
-    margin: 0 auto;
+    margin: 0 auto 24px auto; /* 下にマージンを追加 */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -452,6 +452,25 @@ body {
     height: 280px;
     overflow: hidden;
     box-sizing: border-box;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* カードスライドアニメーション */
+.input-mode-content.slide-out {
+    transform: translateX(-100%) !important; /* 左に消える */
+    opacity: 0;
+}
+
+.input-mode-content.slide-in {
+    transform: translateX(100%) !important; /* 右から開始 */
+    opacity: 0;
+}
+
+.input-mode-content.slide-in.active {
+    transform: translateX(0) !important; /* 中央に来る */
+    opacity: 1;
 }
 
 .input-question {
@@ -459,12 +478,21 @@ body {
     margin-bottom: 16px;
 }
 
+.input-meaning-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
 .input-meaning {
     font-size: clamp(18px, 4.5vw, 22px);
     font-weight: 400;
     color: #1f2937;
-    margin-bottom: 12px;
     line-height: 1.5;
+    display: inline-block;
 }
 
 .input-container {
@@ -1095,17 +1123,24 @@ body {
     color: var(--warning);
 }
 
+.english-word-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: auto;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
 .english-word {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-size: clamp(32px, 8vw, 48px);
     font-weight: 700;
     text-align: center;
     display: inline-block;          /* テキスト幅に合わせる */
-    align-self: center;             /* 中央に配置 */
     padding: 0 6px;                 /* 少し余白で読みやすく */
     color: #0f172a;
-    margin-top: auto;
-    margin-bottom: 8px;
     line-height: 1.2;
     word-break: break-word;
     letter-spacing: 0.3px;
@@ -1125,6 +1160,20 @@ body {
     border-radius: 999px;
     display: inline-block;
     margin: 0 4px 8px 4px; /* 間隔調整 */
+}
+
+/* インライン表示の品詞（左横に表示） */
+.pos-inline {
+    font-size: clamp(14px, 3vw, 18px);
+    font-weight: 700;
+    color: #ffffff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+    line-height: 1.2;
+    flex-shrink: 0;
 }
 
 .part-of-speech.verb { background-color: rgba(59, 130, 246, 0.7); } /* 青 (薄め) */
@@ -1164,6 +1213,14 @@ body {
     text-align: center;
 }
 
+.meaning-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
 .meaning {
     font-size: clamp(20px, 5vw, 28px);
     font-weight: 400;
@@ -1171,6 +1228,7 @@ body {
     line-height: 1.5;
     word-break: break-word;
     padding: 0 8px;
+    display: inline-block;
 }
 
 
@@ -1182,7 +1240,7 @@ body {
     gap: 8px;
     padding: 0 16px;
     position: absolute;
-    bottom: 160px; /* カードからさらに離す */
+    bottom: 200px; /* カードからさらに離す */
     left: 0;
     right: 0;
     width: 100%;

@@ -188,18 +188,24 @@
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                                         </button>
                                     </div>
-                                    <div class="english-word" id="englishWord">Loading...</div>
+                                    <div class="english-word-wrapper">
+                                        <span class="pos-inline part-of-speech" id="posInlineFront"></span>
+                                        <div class="english-word" id="englishWord">Loading...</div>
+                                    </div>
                                     <div class="pos-container" id="posContainer">
-                                        <div class="part-of-speech" id="partOfSpeech">品詞</div>
+                                        <!-- 品詞はインライン表示に変更 -->
                                     </div>
                                     <div class="tap-hint">タップして意味を表示</div>
                                 </div>
                             </div>
                             <div class="card-face card-back">
                                 <div class="meaning-content">
-                                    <div class="meaning" id="meaning">意味</div>
+                                    <div class="meaning-wrapper">
+                                        <span class="pos-inline part-of-speech" id="posInlineBack"></span>
+                                        <div class="meaning" id="meaning">意味</div>
+                                    </div>
                                     <div class="pos-container" id="posContainerBack">
-                                        <!-- 裏面にも品詞を表示 -->
+                                        <!-- 品詞はインライン表示に変更 -->
                                     </div>
                                 </div>
                             </div>
@@ -215,7 +221,10 @@
                                 </button>
                             </div>
                             <div class="input-question">
-                                <div class="input-meaning" id="inputMeaning">意味</div>
+                                <div class="input-meaning-wrapper">
+                                    <span class="pos-inline part-of-speech" id="inputPosInline"></span>
+                                    <div class="input-meaning" id="inputMeaning">意味</div>
+                                </div>
                             </div>
                             <div class="input-container">
                                 <div class="letter-inputs" id="letterInputs">

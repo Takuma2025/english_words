@@ -946,12 +946,51 @@ function setupVirtualKeyboard() {
                 } else {
                     // 回答済みの場合は次へ進む
                     if (currentIndex < currentRangeEnd - 1) {
-                        currentIndex++;
-                        inputAnswerSubmitted = false;
-                        decideBtn.textContent = '解答';
-                        const passBtn = document.getElementById('keyboardPass');
-                        if (passBtn) passBtn.style.display = '';
-                        displayInputMode();
+                        // カードを横にスライドアウト
+                        const inputModeContent = document.querySelector('.input-mode-content');
+                        if (inputModeContent) {
+                            // 現在のカードを左にスライドアウト
+                            inputModeContent.classList.add('slide-out');
+                            
+                            // アニメーション後に次へ進む
+                            setTimeout(() => {
+                                currentIndex++;
+                                inputAnswerSubmitted = false;
+                                decideBtn.textContent = '解答';
+                                const passBtn = document.getElementById('keyboardPass');
+                                if (passBtn) passBtn.style.display = '';
+                                
+                                // まず新しいカードを右側に配置（slide-outを削除してslide-inを追加）
+                                inputModeContent.classList.remove('slide-out', 'active');
+                                inputModeContent.classList.add('slide-in');
+                                
+                                // コンテンツを更新（アニメーションリセットをスキップ）
+                                displayInputMode(true);
+                                
+                                // ブラウザにレンダリングを強制して右側の位置を確定
+                                void inputModeContent.offsetHeight;
+                                
+                                // 次のフレームで右から左にスライドイン
+                                requestAnimationFrame(() => {
+                                    requestAnimationFrame(() => {
+                                        inputModeContent.classList.add('active');
+                                    });
+                                });
+                                
+                                // アニメーション完了後にクラスをクリア
+                                setTimeout(() => {
+                                    inputModeContent.classList.remove('slide-in', 'active');
+                                }, 300);
+                            }, 300);
+                        } else {
+                            // フォールバック：アニメーションなしで進む
+                            currentIndex++;
+                            inputAnswerSubmitted = false;
+                            decideBtn.textContent = '解答';
+                            const passBtn = document.getElementById('keyboardPass');
+                            if (passBtn) passBtn.style.display = '';
+                            displayInputMode();
+                        }
                     } else {
                         showInputCompletionScreen();
                     }
@@ -1091,10 +1130,18 @@ function handleBackspace() {
 }
 
 // 日本語→英語入力モードの表示
-function displayInputMode() {
+function displayInputMode(skipAnimationReset = false) {
     if (currentIndex >= currentRangeEnd) {
         showInputCompletionScreen();
         return;
+    }
+
+    // アニメーションクラスをリセット（スキップフラグがfalseの場合のみ）
+    if (!skipAnimationReset) {
+        const inputModeContent = document.querySelector('.input-mode-content');
+        if (inputModeContent) {
+            inputModeContent.classList.remove('slide-out', 'slide-in', 'active');
+        }
     }
 
     const word = currentWords[currentIndex];
@@ -1114,6 +1161,27 @@ function displayInputMode() {
     const inputStarBtn = document.getElementById('inputStarBtn');
     
     if (inputMeaning) {
+        // 品詞を一文字に変換
+        const posShort = getPartOfSpeechShort(word.partOfSpeech || '');
+        const posClass = getPartOfSpeechClass(word.partOfSpeech || '');
+        
+        // 意味の前に品詞を表示
+        const meaningWrapper = inputMeaning.parentElement;
+        let posElement = document.getElementById('inputPosInline');
+        if (!posElement) {
+            posElement = document.createElement('span');
+            posElement.id = 'inputPosInline';
+            posElement.className = `pos-inline part-of-speech ${posClass}`;
+            meaningWrapper.insertBefore(posElement, inputMeaning);
+        }
+        if (posShort) {
+            posElement.textContent = posShort;
+            posElement.className = `pos-inline part-of-speech ${posClass}`;
+            posElement.style.display = '';
+        } else {
+            posElement.style.display = 'none';
+        }
+        
         inputMeaning.textContent = word.meaning;
     }
     
@@ -1700,6 +1768,64 @@ function applyMarkers(word) {
     elements.englishWord.style.backgroundPosition = image ? '0 0' : '';
 }
 
+// 品詞を一文字に変換する関数
+function getPartOfSpeechShort(pos) {
+    if (!pos) return '';
+    
+    const posMap = {
+        '動詞': '動',
+        '名詞': '名',
+        '形容詞': '形',
+        '副詞': '副',
+        '前置詞': '前',
+        '接続詞': '接',
+        '冠詞': '冠',
+        '代名詞': '代',
+        '助動詞': '助',
+        '間投詞': '間',
+        '形容詞・副詞': '形',
+        '動詞・名詞': '動',
+        '名詞・動詞': '名',
+        '形容詞・名詞': '形',
+        '副詞・形容詞': '副'
+    };
+    
+    // 複数の品詞が「・」で区切られている場合は最初のものを使用
+    const firstPos = pos.split('・')[0].trim();
+    
+    // マッピングに存在する場合は変換、存在しない場合は最初の文字を取得
+    if (posMap[firstPos]) {
+        return posMap[firstPos];
+    }
+    
+    // マッピングにない場合は、品詞名に含まれる文字から推測
+    if (firstPos.includes('動')) return '動';
+    if (firstPos.includes('名')) return '名';
+    if (firstPos.includes('形')) return '形';
+    if (firstPos.includes('副')) return '副';
+    if (firstPos.includes('前')) return '前';
+    if (firstPos.includes('接')) return '接';
+    if (firstPos.includes('冠')) return '冠';
+    if (firstPos.includes('代')) return '代';
+    if (firstPos.includes('助')) return '助';
+    
+    // それでも見つからない場合は最初の文字を返す
+    return firstPos.charAt(0);
+}
+
+// 品詞のクラスを取得する関数
+function getPartOfSpeechClass(pos) {
+    if (!pos) return 'other';
+    
+    const firstPos = pos.split('・')[0].trim();
+    
+    if (firstPos.includes('動詞') || firstPos.includes('動')) return 'verb';
+    if (firstPos.includes('名詞') || firstPos.includes('名')) return 'noun';
+    if (firstPos.includes('形容詞') || firstPos.includes('形')) return 'adjective';
+    if (firstPos.includes('副詞') || firstPos.includes('副')) return 'adverb';
+    return 'other';
+}
+
 // 現在の単語を表示
 function displayCurrentWord() {
     if (currentIndex >= currentRangeEnd) {
@@ -1722,36 +1848,51 @@ function displayCurrentWord() {
 
     // 単語番号は元のIDを使用（シャッフル後も元の番号を表示）
     elements.wordNumber.textContent = `No.${word.id}`;
+    
+    // 品詞を一文字に変換
+    const posShort = getPartOfSpeechShort(word.partOfSpeech || '');
+    const posClass = getPartOfSpeechClass(word.partOfSpeech || '');
+    
+    // 英単語と品詞を一緒に表示（品詞を左横に）
+    const englishWordWrapper = elements.englishWord.parentElement;
+    let posElementFront = document.getElementById('posInlineFront');
+    if (posShort) {
+        if (!posElementFront) {
+            posElementFront = document.createElement('span');
+            posElementFront.id = 'posInlineFront';
+            posElementFront.className = `pos-inline part-of-speech ${posClass}`;
+            englishWordWrapper.insertBefore(posElementFront, elements.englishWord);
+        }
+        posElementFront.textContent = posShort;
+        posElementFront.className = `pos-inline part-of-speech ${posClass}`;
+        posElementFront.style.display = '';
+    } else {
+        if (posElementFront) {
+            posElementFront.style.display = 'none';
+        }
+    }
+    
     elements.englishWord.textContent = word.word;
     applyMarkers(word);
     
-    // 品詞の分割と色分け表示
-    const posList = (word.partOfSpeech || '').split('・');
-    elements.posContainer.innerHTML = ''; // クリア
+    // 裏面の意味と品詞を一緒に表示（品詞を左横に）
+    const meaningWrapper = elements.meaning.parentElement;
+    let posElementBack = document.getElementById('posInlineBack');
     
-    posList.forEach(pos => {
-        const span = document.createElement('div');
-        span.className = 'part-of-speech';
-        span.textContent = pos;
-        
-        if (pos.includes('動詞')) {
-            span.classList.add('verb');
-        } else if (pos.includes('名詞')) {
-            span.classList.add('noun');
-        } else if (pos.includes('形容詞')) {
-            span.classList.add('adjective');
-        } else if (pos.includes('副詞')) {
-            span.classList.add('adverb');
-        } else {
-            span.classList.add('other');
+    if (posShort) {
+        if (!posElementBack) {
+            posElementBack = document.createElement('span');
+            posElementBack.id = 'posInlineBack';
+            posElementBack.className = `pos-inline part-of-speech ${posClass}`;
+            meaningWrapper.insertBefore(posElementBack, elements.meaning);
         }
-        elements.posContainer.appendChild(span);
-    });
-
-    // 裏面にも品詞を表示
-    const posContainerBack = document.getElementById('posContainerBack');
-    if (posContainerBack) {
-        posContainerBack.innerHTML = elements.posContainer.innerHTML;
+        posElementBack.textContent = posShort;
+        posElementBack.className = `pos-inline part-of-speech ${posClass}`;
+        posElementBack.style.display = '';
+    } else {
+        if (posElementBack) {
+            posElementBack.style.display = 'none';
+        }
     }
     
     // スタイルリセット
