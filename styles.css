@@ -318,7 +318,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     width: 100%;
 }
 
@@ -419,7 +419,7 @@ body {
     border-radius: 16px;
     padding: 20px 24px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 90%;
+    width: 100%;
     max-width: 480px;
     margin: 0 auto;
     display: flex;
@@ -428,6 +428,7 @@ body {
     position: relative;
     height: 280px;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .input-question {
@@ -569,15 +570,18 @@ body {
 .virtual-keyboard {
     background: transparent;
     border-top: none;
-    padding: 14px 10px;
-    margin: 0 -16px;
+    padding: 14px 8px;
+    margin: 0;
     border-radius: 20px 20px 0 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .keyboard-row {
     display: flex;
     justify-content: center;
-    gap: 6px;
+    gap: 4px;
     margin-bottom: 10px;
 }
 
@@ -586,12 +590,12 @@ body {
 }
 
 .keyboard-key {
-    min-width: 36px;
-    height: 48px;
+    min-width: 32px;
+    height: 44px;
     background: #ffffff;
     border: none;
     border-radius: 8px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     color: #1f2937;
     cursor: pointer;
@@ -601,7 +605,7 @@ body {
     align-items: center;
     justify-content: center;
     flex: 1;
-    max-width: 48px;
+    max-width: 44px;
 }
 
 .keyboard-key:active {
@@ -610,7 +614,7 @@ body {
 }
 
 .keyboard-key-special {
-    max-width: 72px;
+    max-width: 64px;
     background: #ffffff;
     border: none;
     border-radius: 8px;
@@ -795,7 +799,7 @@ body {
     position: relative;
     perspective: 1200px;
     touch-action: pan-y;
-    margin-top: 20px;
+    margin-top: 8px;
 }
 
 .word-card.flipped {
@@ -852,7 +856,7 @@ body {
     font-size: 18px;
     font-weight: 700;
     color: #64748b;
-    padding: 8px 0;
+    padding: 4px 0;
     text-align: center;
     width: 100%;
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
@@ -980,7 +984,7 @@ body {
     gap: 8px;
     padding: 0 16px;
     position: absolute;
-    bottom: 20px;
+    bottom: 120px;
     left: 0;
     right: 0;
     width: 100%;
