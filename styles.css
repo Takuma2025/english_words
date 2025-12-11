@@ -36,7 +36,7 @@ html {
 
 body {
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f5f5f5; /* 薄いグレー */
+    background-color: #ffffff; /* 白背景で余白を目立たせない */
     color: #1f2937; /* ダークグレー */
     line-height: 1.5;
     height: 100vh;
@@ -143,12 +143,28 @@ body {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 16px;
+    padding: 16px 0; /* 左右のパディングを削除 */
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
     box-sizing: border-box;
     /* 高さはflexで自動調整されるため指定不要 */
+}
+
+/* スマホ向け：フルスクリーン表示 */
+@media (max-width: 600px) {
+    .app-main {
+        padding: 16px 0; /* 左右のパディングなし */
+        max-width: 100%; /* 最大幅を100%に */
+    }
+    
+    .category-view {
+        padding: 0 16px; /* カテゴリービュー内でパディングを設定 */
+    }
+    
+    .category-list {
+        padding: 0; /* カテゴリーリストのパディングを削除 */
+    }
 }
 
 /* Category View */
