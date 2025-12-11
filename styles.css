@@ -688,7 +688,6 @@ body {
         padding: 12px 0 0 0; /* 左右のパディングを削除 */
     }
     .input-mode-content {
-        min-height: 200px;
         padding: 10px 14px;
         margin-bottom: 8px;
     }
@@ -726,17 +725,17 @@ body {
     }
     .input-result {
         bottom: 6px;
-        padding: 4px 8px;
+        padding: 0;
     }
     .result-message {
         font-size: 18px;
-        margin-bottom: 1px;
+        margin-bottom: 0;
     }
     .correct-answer-container {
-        margin-top: 1px;
+        margin-top: 0;
     }
     .correct-word {
-        font-size: clamp(28px, 7vw, 40px);
+        font-size: clamp(24px, 6vw, 36px);
     }
     .letter-input {
         height: 36px;
@@ -748,7 +747,6 @@ body {
         padding: 8px 0 0 0;
     }
     .input-mode-content {
-        min-height: 180px;
         padding: 8px 10px;
         margin-bottom: 6px;
     }
@@ -786,17 +784,17 @@ body {
     }
     .input-result {
         bottom: 4px;
-        padding: 3px 6px;
+        padding: 0;
     }
     .result-message {
         font-size: 16px;
-        margin-bottom: 1px;
+        margin-bottom: 0;
     }
     .correct-answer-container {
-        margin-top: 1px;
+        margin-top: 0;
     }
     .correct-word {
-        font-size: clamp(24px, 6vw, 36px);
+        font-size: clamp(20px, 5vw, 32px);
     }
     .letter-input {
         height: 32px;
@@ -815,7 +813,6 @@ body {
     flex-direction: column;
     justify-content: center;
     position: relative;
-    min-height: 260px;
     overflow: hidden;
     box-sizing: border-box;
     transition: transform 0.3s ease, opacity 0.3s ease;
@@ -854,6 +851,10 @@ body {
     gap: 6px;
     flex-wrap: wrap;
     margin-bottom: 0;
+}
+
+.input-meaning-wrapper .pos-inline {
+    margin-top: 4px;
 }
 
 .input-meaning {
@@ -1296,7 +1297,7 @@ body {
     left: 0;
     right: 0;
     text-align: center;
-    padding: 4px 8px;
+    padding: 0;
     border-radius: 12px;
     flex-shrink: 0;
 }
@@ -1304,7 +1305,7 @@ body {
 .result-message {
     font-size: 20px;
     font-weight: 700;
-    margin-bottom: 2px;
+    margin-bottom: 0;
 }
 
 .result-message.correct {
@@ -1316,7 +1317,7 @@ body {
 }
 
 .correct-answer-container {
-    margin-top: 2px;
+    margin-top: 0;
 }
 
 .correct-label {
@@ -1326,11 +1327,13 @@ body {
 }
 
 .correct-word {
-    font-size: clamp(32px, 8vw, 48px);
+    font-size: clamp(28px, 7vw, 42px);
     color: #3b82f6;
     font-weight: 700;
     font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     line-height: 1.2;
+    margin: 0;
+    padding: 0;
 }
 
 .correct-word.correct {
@@ -1609,7 +1612,7 @@ body {
 /* 意味のときの品詞位置調整 */
 .meaning-wrapper .pos-inline {
     align-self: flex-end;
-    margin-top: 0;
+    margin-top: 4px;
 }
 
 .part-of-speech.verb { background-color: transparent; border-color: #1f2937; color: #1f2937; } /* 黒ボーダー */
