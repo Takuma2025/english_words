@@ -866,7 +866,7 @@ body {
         max-width: none;
         min-width: 0;
         height: 48px;
-        font-size: 20px;
+        font-size: 24px;
         border-radius: 6px;
         flex: 1; /* 均等に配置 */
         overflow: hidden;
@@ -880,6 +880,12 @@ body {
         height: 48px;
         border-radius: 6px;
         flex: 1;
+    }
+    
+    /* 入力欄をスマホ向けに大きく */
+    .letter-input {
+        width: 30px;
+        padding: 0 4px;
     }
 }
 
@@ -990,7 +996,7 @@ body {
         max-width: none;
         min-width: 0;
         height: 48px;
-        font-size: 18px;
+        font-size: 22px;
         flex: 1; /* 均等に配置 */
     }
 }
