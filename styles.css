@@ -602,12 +602,15 @@ body {
     overflow-x: hidden;
 }
 
-/* スマホ向け：キーボードを端っこまで使えるように */
+/* スマホ向け：キーボードを端っこまで使えるように、はみ出さないように */
 @media (max-width: 600px) {
     .virtual-keyboard {
-        padding: 18px 0;
+        padding: 18px 2px; /* 左右に最小限のパディング */
         margin: 0;
         width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 }
 
@@ -622,12 +625,15 @@ body {
     padding: 0 2px;
 }
 
-/* スマホ向け：キーボード行の間隔を広げる、端っこまで使えるように */
+/* スマホ向け：キーボード行の間隔を広げる、端っこまで使えるように、はみ出さないように */
 @media (max-width: 600px) {
     .keyboard-row {
-        gap: 4px;
+        gap: 2px;
         margin-bottom: 10px;
         padding: 0 2px; /* 最小限のパディング */
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
     
     .keyboard-row:last-of-type {
@@ -663,12 +669,14 @@ body {
     will-change: transform;
 }
 
-/* スマホ向け：キーボードを大きく、文字も大きく */
+/* スマホ向け：キーボードを大きく、文字も大きく、はみ出さないように */
 @media (max-width: 600px) {
     .keyboard-key {
-        width: 36px;
+        width: calc((100% - 20px) / 11); /* 11個のキーが収まるように計算 */
+        max-width: 36px;
+        min-width: 28px;
         height: 48px;
-        font-size: 20px;
+        font-size: 18px;
         border-radius: 6px;
     }
 }
@@ -695,10 +703,12 @@ body {
     transition: transform 0.05s, box-shadow 0.05s;
 }
 
-/* スマホ向け：特殊キーも大きく */
+/* スマホ向け：特殊キーも大きく、はみ出さないように */
 @media (max-width: 600px) {
     .keyboard-key-special {
-        width: 64px;
+        width: calc((100% - 20px) / 11); /* 他のキーと同じサイズ計算 */
+        max-width: 64px;
+        min-width: 40px;
         height: 48px;
         border-radius: 6px;
     }
@@ -761,18 +771,22 @@ body {
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
 }
 
-/* スマホ向け：スペースキーとShiftキーも大きく */
+/* スマホ向け：スペースキーとShiftキーも大きく、はみ出さないように */
 @media (max-width: 600px) {
     .keyboard-key-shift {
-        width: 54px;
+        width: calc((100% - 20px) / 11); /* 他のキーと同じサイズ計算 */
+        max-width: 54px;
+        min-width: 40px;
         height: 48px;
         border-radius: 6px;
     }
     
     .keyboard-key-space {
-        width: 36px;
+        width: calc((100% - 20px) / 11); /* 他のキーと同じサイズ計算 */
+        max-width: 36px;
+        min-width: 28px;
         height: 48px;
-        font-size: 20px;
+        font-size: 18px;
     }
 }
 
