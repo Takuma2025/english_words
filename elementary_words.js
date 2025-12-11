@@ -1,0 +1,704 @@
+// 小学生で習った単語とカテゴリー別に覚える単語データ
+const elementaryWordData = [
+  {
+    "id": 1001,
+    "word": "red",
+    "meaning": "赤",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1002,
+    "word": "blue",
+    "meaning": "青",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1003,
+    "word": "yellow",
+    "meaning": "黄色",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1004,
+    "word": "green",
+    "meaning": "緑",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1005,
+    "word": "orange",
+    "meaning": "オレンジ色",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1006,
+    "word": "purple",
+    "meaning": "紫",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1007,
+    "word": "pink",
+    "meaning": "ピンク",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1008,
+    "word": "black",
+    "meaning": "黒",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1009,
+    "word": "white",
+    "meaning": "白",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1010,
+    "word": "brown",
+    "meaning": "茶色",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1011,
+    "word": "cat",
+    "meaning": "猫",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1012,
+    "word": "dog",
+    "meaning": "犬",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1013,
+    "word": "bird",
+    "meaning": "鳥",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1014,
+    "word": "fish",
+    "meaning": "魚",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1015,
+    "word": "rabbit",
+    "meaning": "うさぎ",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1016,
+    "word": "elephant",
+    "meaning": "象",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1017,
+    "word": "lion",
+    "meaning": "ライオン",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1018,
+    "word": "tiger",
+    "meaning": "トラ",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1019,
+    "word": "bear",
+    "meaning": "熊",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1020,
+    "word": "monkey",
+    "meaning": "サル",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1021,
+    "word": "apple",
+    "meaning": "りんご",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1022,
+    "word": "banana",
+    "meaning": "バナナ",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1023,
+    "word": "orange",
+    "meaning": "オレンジ",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1024,
+    "word": "grape",
+    "meaning": "ぶどう",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1025,
+    "word": "strawberry",
+    "meaning": "いちご",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1026,
+    "word": "rice",
+    "meaning": "ご飯、米",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1027,
+    "word": "bread",
+    "meaning": "パン",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1028,
+    "word": "milk",
+    "meaning": "牛乳",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1029,
+    "word": "water",
+    "meaning": "水",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1030,
+    "word": "egg",
+    "meaning": "卵",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1031,
+    "word": "head",
+    "meaning": "頭",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1032,
+    "word": "eye",
+    "meaning": "目",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1033,
+    "word": "nose",
+    "meaning": "鼻",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1034,
+    "word": "mouth",
+    "meaning": "口",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1035,
+    "word": "ear",
+    "meaning": "耳",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1036,
+    "word": "hand",
+    "meaning": "手",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1037,
+    "word": "foot",
+    "meaning": "足",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1038,
+    "word": "leg",
+    "meaning": "脚",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1039,
+    "word": "arm",
+    "meaning": "腕",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1040,
+    "word": "finger",
+    "meaning": "指",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1041,
+    "word": "father",
+    "meaning": "お父さん",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1042,
+    "word": "mother",
+    "meaning": "お母さん",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1043,
+    "word": "brother",
+    "meaning": "兄弟",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1044,
+    "word": "sister",
+    "meaning": "姉妹",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1045,
+    "word": "grandfather",
+    "meaning": "おじいさん",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1046,
+    "word": "grandmother",
+    "meaning": "おばあさん",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1047,
+    "word": "school",
+    "meaning": "学校",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1048,
+    "word": "teacher",
+    "meaning": "先生",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1049,
+    "word": "student",
+    "meaning": "生徒",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1050,
+    "word": "book",
+    "meaning": "本",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1051,
+    "word": "pen",
+    "meaning": "ペン",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1052,
+    "word": "pencil",
+    "meaning": "鉛筆",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1053,
+    "word": "desk",
+    "meaning": "机",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1054,
+    "word": "chair",
+    "meaning": "椅子",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1055,
+    "word": "one",
+    "meaning": "1",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1056,
+    "word": "two",
+    "meaning": "2",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1057,
+    "word": "three",
+    "meaning": "3",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1058,
+    "word": "four",
+    "meaning": "4",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1059,
+    "word": "five",
+    "meaning": "5",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1060,
+    "word": "six",
+    "meaning": "6",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1061,
+    "word": "seven",
+    "meaning": "7",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1062,
+    "word": "eight",
+    "meaning": "8",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1063,
+    "word": "nine",
+    "meaning": "9",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1064,
+    "word": "ten",
+    "meaning": "10",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1065,
+    "word": "sunny",
+    "meaning": "晴れた",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1066,
+    "word": "rainy",
+    "meaning": "雨の",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1067,
+    "word": "cloudy",
+    "meaning": "曇りの",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1068,
+    "word": "windy",
+    "meaning": "風の強い",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1069,
+    "word": "snowy",
+    "meaning": "雪の",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1070,
+    "word": "run",
+    "meaning": "走る",
+    "partOfSpeech": "動詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1071,
+    "word": "walk",
+    "meaning": "歩く",
+    "partOfSpeech": "動詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1072,
+    "word": "jump",
+    "meaning": "跳ぶ",
+    "partOfSpeech": "動詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1073,
+    "word": "swim",
+    "meaning": "泳ぐ",
+    "partOfSpeech": "動詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1074,
+    "word": "eat",
+    "meaning": "食べる",
+    "partOfSpeech": "動詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1075,
+    "word": "drink",
+    "meaning": "飲む",
+    "partOfSpeech": "動詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1076,
+    "word": "sleep",
+    "meaning": "眠る",
+    "partOfSpeech": "動詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1077,
+    "word": "play",
+    "meaning": "遊ぶ、演奏する",
+    "partOfSpeech": "動詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1078,
+    "word": "sing",
+    "meaning": "歌う",
+    "partOfSpeech": "動詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1079,
+    "word": "dance",
+    "meaning": "踊る",
+    "partOfSpeech": "動詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1080,
+    "word": "happy",
+    "meaning": "幸せな",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1081,
+    "word": "sad",
+    "meaning": "悲しい",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1082,
+    "word": "big",
+    "meaning": "大きい",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1083,
+    "word": "small",
+    "meaning": "小さい",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1084,
+    "word": "good",
+    "meaning": "良い",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1085,
+    "word": "bad",
+    "meaning": "悪い",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1086,
+    "word": "hot",
+    "meaning": "熱い",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1087,
+    "word": "cold",
+    "meaning": "冷たい",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1088,
+    "word": "new",
+    "meaning": "新しい",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1089,
+    "word": "old",
+    "meaning": "古い",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1090,
+    "word": "hello",
+    "meaning": "こんにちは",
+    "partOfSpeech": "間投詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1091,
+    "word": "goodbye",
+    "meaning": "さようなら",
+    "partOfSpeech": "間投詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1092,
+    "word": "thank you",
+    "meaning": "ありがとう",
+    "partOfSpeech": "間投詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1093,
+    "word": "please",
+    "meaning": "お願いします",
+    "partOfSpeech": "副詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1094,
+    "word": "sorry",
+    "meaning": "ごめんなさい",
+    "partOfSpeech": "形容詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1095,
+    "word": "yes",
+    "meaning": "はい",
+    "partOfSpeech": "副詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1096,
+    "word": "no",
+    "meaning": "いいえ",
+    "partOfSpeech": "副詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1097,
+    "word": "house",
+    "meaning": "家",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1098,
+    "word": "room",
+    "meaning": "部屋",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1099,
+    "word": "bed",
+    "meaning": "ベッド",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 1100,
+    "word": "table",
+    "meaning": "テーブル",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  }
+];
+

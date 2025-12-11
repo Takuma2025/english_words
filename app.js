@@ -94,7 +94,7 @@ function resetProgress(category) {
 
 // カテゴリーの星表示を更新
 function updateCategoryStars() {
-    const categories = ['超よく出る600', 'よく出る300', '差がつく200', '基本語彙500'];
+    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'Group1 超頻出600', 'Group2 頻出200', 'Group3 ハイレベル100', '基本語彙500'];
     
     categories.forEach(category => {
         const element = document.getElementById(`stars-${category}`);
@@ -103,6 +103,13 @@ function updateCategoryStars() {
         let categoryWords;
         if (category === '基本語彙500') {
             categoryWords = wordData.slice(0, Math.min(500, wordData.length));
+        } else if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
+            // elementaryWordDataが定義されているか確認
+            if (typeof elementaryWordData !== 'undefined') {
+                categoryWords = elementaryWordData;
+            } else {
+                categoryWords = [];
+            }
         } else {
             categoryWords = wordData.filter(word => word.category === category);
         }
@@ -294,12 +301,19 @@ function assignCategories() {
     wordData.forEach((word, index) => {
         if (!word.category) {
             // インデックスに基づいてカテゴリーを割り当て
+            // 最初の部分は「小学生で習った単語とカテゴリー別に覚える単語」として扱う
+            // その後、Group1 超頻出600、Group2 頻出200、Group3 ハイレベル100に分割
+            // 注意: 実際のデータ構造に応じて調整が必要
             if (index < 600) {
-                word.category = '超よく出る600';
+                word.category = 'Group1 超頻出600';
+            } else if (index < 800) {
+                word.category = 'Group2 頻出200';
             } else if (index < 900) {
-                word.category = 'よく出る300';
+                word.category = 'Group3 ハイレベル100';
             } else {
-                word.category = '差がつく200';
+                // 900以降は「小学生で習った単語とカテゴリー別に覚える単語」として扱う
+                // または、データ構造に応じて調整
+                word.category = '小学生で習った単語とカテゴリー別に覚える単語';
             }
         }
     });
@@ -383,9 +397,18 @@ function startCategory(category) {
     selectedCategory = category;
     
     // 基本語彙500の場合は、最初の500語を取得
+    // 小学生で習った単語とカテゴリー別に覚える単語の場合は、elementaryWordDataを使用
     let categoryWords;
     if (category === '基本語彙500') {
         categoryWords = wordData.slice(0, Math.min(500, wordData.length));
+    } else if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
+        // elementaryWordDataが定義されているか確認
+        if (typeof elementaryWordData !== 'undefined') {
+            categoryWords = elementaryWordData;
+        } else {
+            showAlert('エラー', '小学生で習った単語データが見つかりません。');
+            return;
+        }
     } else {
         categoryWords = wordData.filter(word => word.category === category);
     }
@@ -398,8 +421,8 @@ function startCategory(category) {
     // カテゴリー選択画面を非表示
     elements.categorySelection.classList.add('hidden');
     
-    // 基本語彙500の場合は直接日本語→英語モードで開始
-    if (category === '基本語彙500') {
+    // 基本語彙500と小学生で習った単語の場合は直接日本語→英語モードで開始
+    if (category === '基本語彙500' || category === '小学生で習った単語とカテゴリー別に覚える単語') {
         initInputModeLearning(category, categoryWords);
     } else {
         // コース選択画面を表示
@@ -703,8 +726,8 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     if (wordCard) wordCard.classList.remove('hidden');
     if (cardHint) cardHint.classList.remove('hidden');
     
-    // 基本語彙500のときだけ前へ・次へボタンを非表示、それ以外は表示
-    if (category === '基本語彙500') {
+    // 基本語彙500と小学生で習った単語のときだけ前へ・次へボタンを非表示、それ以外は表示
+    if (category === '基本語彙500' || category === '小学生で習った単語とカテゴリー別に覚える単語') {
         if (prevBtn) prevBtn.classList.add('hidden');
         if (nextBtn) nextBtn.classList.add('hidden');
     } else {
@@ -1875,7 +1898,7 @@ function clearLearningHistory() {
             localStorage.removeItem('learningProgress');
             
             // カテゴリーごとの進捗も削除
-            const categories = ['超よく出る600', 'よく出る300', '差がつく200', '基本語彙500'];
+            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'Group1 超頻出600', 'Group2 頻出200', 'Group3 ハイレベル100', '基本語彙500'];
             categories.forEach(category => {
                 localStorage.removeItem(`correctWords-${category}`);
                 localStorage.removeItem(`wrongWords-${category}`);
