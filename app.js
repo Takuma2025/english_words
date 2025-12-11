@@ -2322,6 +2322,25 @@ function markAnswer(isCorrect) {
         if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習') {
             saveProgress(selectedCategory, currentIndex);
         }
+        
+        // 進捗バーの自動移動チェック（20問ずつ）
+        const total = currentRangeEnd - currentRangeStart;
+        const currentQuestionIndex = currentIndex - currentRangeStart;
+        const currentDisplayEnd = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT;
+        
+        // 現在の問題が表示範囲の最後（20番目）に達したら、次の範囲に自動移動
+        if (currentQuestionIndex >= currentDisplayEnd && currentQuestionIndex < total) {
+            // 次の範囲に自動移動
+            progressBarStartIndex = Math.min(total - PROGRESS_BAR_DISPLAY_COUNT, 
+                progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT);
+            createProgressSegments(total);
+            updateProgressSegments();
+            // 進捗バーのアニメーション
+            animateProgressBarTransition();
+        } else {
+            updateProgressSegments();
+        }
+        
         // 最後の単語の場合は完了画面を表示
         if (currentIndex >= currentRangeEnd) {
             showCompletion();
@@ -2585,6 +2604,8 @@ function scrollProgressBarLeft() {
         progressBarStartIndex = Math.max(0, progressBarStartIndex - PROGRESS_BAR_DISPLAY_COUNT);
         createProgressSegments(total);
         updateProgressSegments(); // セグメントの色を更新
+        // 進捗バーのアニメーション
+        animateProgressBarTransition();
     }
 }
 
@@ -2597,7 +2618,31 @@ function scrollProgressBarRight() {
             progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT);
         createProgressSegments(total);
         updateProgressSegments(); // セグメントの色を更新
+        // 進捗バーのアニメーション
+        animateProgressBarTransition();
     }
+}
+
+// 進捗バーの移動アニメーション
+function animateProgressBarTransition() {
+    const progressBarContainer = document.getElementById('progressBarContainer');
+    const progressBarWrapper = progressBarContainer?.parentElement;
+    if (!progressBarContainer || !progressBarWrapper) return;
+    
+    // アニメーション用のクラスを追加
+    progressBarWrapper.classList.add('progress-bar-transitioning');
+    
+    // 少し光る効果
+    progressBarContainer.style.transition = 'all 0.4s ease-out';
+    progressBarContainer.style.transform = 'scale(1.02)';
+    progressBarContainer.style.opacity = '0.9';
+    
+    setTimeout(() => {
+        progressBarContainer.style.transition = '';
+        progressBarContainer.style.transform = '';
+        progressBarContainer.style.opacity = '';
+        progressBarWrapper.classList.remove('progress-bar-transitioning');
+    }, 400);
 }
 
 // 統計を更新
