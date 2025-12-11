@@ -570,10 +570,11 @@ body {
 .virtual-keyboard {
     background: transparent;
     border-top: none;
-    padding: 14px 4px;
+    padding: 14px 0;
     margin: 0;
     border-radius: 20px 20px 0 0;
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
 }
@@ -581,10 +582,12 @@ body {
 .keyboard-row {
     display: flex;
     justify-content: center;
-    gap: 4px;
+    gap: 2px;
     margin-bottom: 10px;
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
+    padding: 0 4px;
 }
 
 .keyboard-row:last-of-type {
@@ -592,7 +595,7 @@ body {
 }
 
 .keyboard-key {
-    min-width: 28px;
+    width: 36px;
     height: 40px;
     background: #ffffff;
     border: none;
@@ -601,13 +604,18 @@ body {
     font-weight: 600;
     color: #1f2937;
     cursor: pointer;
-    transition: all 0.1s;
+    transition: transform 0.05s, box-shadow 0.05s;
     box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 1;
-    max-width: 36px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
 }
 
 .keyboard-key:active {
@@ -616,11 +624,20 @@ body {
 }
 
 .keyboard-key-special {
-    max-width: 56px;
+    width: 56px;
+    height: 40px;
     background: #ffffff;
     border: none;
     border-radius: 6px;
     box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+    box-sizing: border-box;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+    transition: transform 0.05s, box-shadow 0.05s;
 }
 
 .keyboard-key-special:active {
@@ -631,8 +648,9 @@ body {
 .keyboard-actions {
     display: flex;
     gap: 8px;
-    padding: 0 4px;
+    padding: 0 2px;
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
 }
 
@@ -644,12 +662,17 @@ body {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.1s;
+    transition: transform 0.05s, box-shadow 0.05s;
     background: #ffffff;
     color: #1f2937;
     box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
     position: relative;
     top: 0;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
 }
 
 .keyboard-action-btn:active {

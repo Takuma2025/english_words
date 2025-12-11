@@ -851,11 +851,20 @@ function setupVirtualKeyboard() {
     const keyboard = document.getElementById('virtualKeyboard');
     if (!keyboard) return;
     
-    // キーボードキーのクリックイベント
+    // キーボードキーのタッチ/クリックイベント（タッチ優先で即座に反応）
     keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        const letter = key.dataset.key;
+        
+        // タッチイベント（モバイル優先）
+        key.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            insertLetter(letter);
+        }, { passive: false });
+        
+        // クリックイベント（デスクトップ用）
         key.addEventListener('click', (e) => {
             e.preventDefault();
-            const letter = key.dataset.key;
             insertLetter(letter);
         });
     });
@@ -863,6 +872,12 @@ function setupVirtualKeyboard() {
     // バックスペースキー
     const backspaceKey = document.getElementById('keyboardBackspace');
     if (backspaceKey) {
+        backspaceKey.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleBackspace();
+        }, { passive: false });
+        
         backspaceKey.addEventListener('click', (e) => {
             e.preventDefault();
             handleBackspace();
@@ -872,7 +887,7 @@ function setupVirtualKeyboard() {
     // 解答ボタン（決定ボタン）
     const decideBtn = document.getElementById('keyboardDecide');
     if (decideBtn) {
-        decideBtn.addEventListener('click', (e) => {
+        const handleDecide = (e) => {
             e.preventDefault();
             if (isInputModeActive) {
                 if (!inputAnswerSubmitted) {
@@ -891,18 +906,24 @@ function setupVirtualKeyboard() {
                     }
                 }
             }
-        });
+        };
+        
+        decideBtn.addEventListener('touchstart', handleDecide, { passive: false });
+        decideBtn.addEventListener('click', handleDecide);
     }
     
     // パスボタン
     const passBtn = document.getElementById('keyboardPass');
     if (passBtn) {
-        passBtn.addEventListener('click', (e) => {
+        const handlePass = (e) => {
             e.preventDefault();
             if (!inputAnswerSubmitted && isInputModeActive) {
                 markAnswerAsDontKnow();
             }
-        });
+        };
+        
+        passBtn.addEventListener('touchstart', handlePass, { passive: false });
+        passBtn.addEventListener('click', handlePass);
     }
 }
 
@@ -972,6 +993,11 @@ function displayInputMode() {
 
     const word = currentWords[currentIndex];
     inputAnswerSubmitted = false;
+    
+    // No.を更新
+    if (elements.wordNumber) {
+        elements.wordNumber.textContent = `No.${word.id}`;
+    }
     
     const inputMeaning = document.getElementById('inputMeaning');
     const letterInputs = document.getElementById('letterInputs');
