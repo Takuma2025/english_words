@@ -116,14 +116,11 @@ function resetProgress(category) {
     updateCategoryStars();
 }
 
-// カテゴリーの星表示を更新
+// カテゴリーの進捗表示を更新
 function updateCategoryStars() {
     const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'Group1 超頻出600', 'Group2 頻出200', 'Group3 ハイレベル100', '基本語彙500'];
     
     categories.forEach(category => {
-        const element = document.getElementById(`stars-${category}`);
-        if (!element) return;
-        
         let categoryWords;
         if (category === '基本語彙500') {
             categoryWords = wordData.slice(0, Math.min(500, wordData.length));
@@ -137,10 +134,22 @@ function updateCategoryStars() {
         } else {
             categoryWords = wordData.filter(word => word.category === category);
         }
-        const savedIndex = loadProgress(category);
         
         if (categoryWords.length === 0) {
-            element.textContent = '☆☆☆☆☆';
+            // 進捗バーとテキストを0に設定
+            const correctBar = document.getElementById(`progress-correct-${category}`);
+            const wrongBar = document.getElementById(`progress-wrong-${category}`);
+            const text = document.getElementById(`progress-text-${category}`);
+            
+            if (correctBar) {
+                correctBar.style.width = '0%';
+            }
+            if (wrongBar) {
+                wrongBar.style.width = '0%';
+            }
+            if (text) {
+                text.textContent = '0 / 0';
+            }
             return;
         }
         
@@ -169,21 +178,7 @@ function updateCategoryStars() {
         const total = categoryWords.length;
         const correctPercent = total === 0 ? 0 : (correctCountInCategory / total) * 100;
         const wrongPercent = total === 0 ? 0 : (wrongCountInCategory / total) * 100;
-        
-        // 星の数を計算（進捗率ベース：正解数で判定するのが妥当か、学習済み数で判定するか。ここでは学習済み（正解+間違い）で判定）
         const completedCount = correctCountInCategory + wrongCountInCategory;
-        const progressPercent = total === 0 ? 0 : (completedCount / total) * 100;
-        const starsCount = Math.floor(progressPercent / 20);
-        
-        let stars = '';
-        for (let i = 0; i < 5; i++) {
-            if (i < starsCount) {
-                stars += '★';
-            } else {
-                stars += '☆';
-            }
-        }
-        element.textContent = stars;
 
         // 進捗バーとテキストを更新
         const correctBar = document.getElementById(`progress-correct-${category}`);
@@ -197,8 +192,8 @@ function updateCategoryStars() {
             wrongBar.style.width = `${wrongPercent}%`;
         }
         if (text) {
-            // 要望により「完璧になった英単語（青）」の数を表示
-            text.textContent = `${correctCountInCategory} / ${total}`;
+            // 学習済み数（正解+間違い）/ 総数を表示
+            text.textContent = `${completedCount} / ${total}`;
         }
     });
 }
@@ -550,7 +545,6 @@ function showCourseSelection(category, categoryWords) {
             wrongPercent,
             completedCount,
             total,
-            category,
             () => {
                 // コースを選択したら、そのコースの単語範囲で学習方法選択モーダルを表示
                 const { wrongSet } = loadCategoryWords(category);
@@ -571,15 +565,10 @@ function showCourseSelection(category, categoryWords) {
 }
 
 // コースカードを作成
-function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, category, onClick) {
+function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, onClick) {
     const card = document.createElement('button');
     card.className = 'category-card';
     card.onclick = onClick;
-    
-    // カテゴリーに応じたdata属性を設定
-    if (category) {
-        card.setAttribute('data-category', category);
-    }
     
     const cardId = `course-${title.replace(/\s+/g, '-')}`;
     
