@@ -536,7 +536,7 @@ body {
 .letter-input {
     width: 22px;
     height: 40px;
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 700;
     text-align: center;
     border: none;
@@ -714,6 +714,14 @@ body {
     will-change: transform;
 }
 
+/* qとpのキーを他のキーと同じ形に */
+.keyboard-key[data-key="q"],
+.keyboard-key[data-key="p"] {
+    width: 26px;
+    height: 36px;
+    border-radius: 5px;
+}
+
 /* スマホ向け：キーボードを大きく、文字も大きく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-key {
@@ -724,6 +732,15 @@ body {
         font-size: 18px;
         border-radius: 6px;
         flex: 1; /* 均等に配置 */
+    }
+    
+    /* qとpのキーも他のキーと同じ形に */
+    .keyboard-key[data-key="q"],
+    .keyboard-key[data-key="p"] {
+        width: calc((100% - 30px) / 11);
+        height: 48px;
+        border-radius: 6px;
+        flex: 1;
     }
 }
 

@@ -422,9 +422,14 @@ function startCategory(category) {
     // カテゴリー選択画面を非表示
     elements.categorySelection.classList.add('hidden');
     
-    // 基本語彙500と小学生で習った単語の場合は直接日本語→英語モードで開始
+    // 基本語彙500と小学生で習った単語の場合は学習方法選択モーダルを表示
     if (category === '基本語彙500' || category === '小学生で習った単語とカテゴリー別に覚える単語') {
-        initInputModeLearning(category, categoryWords);
+        const { wrongSet } = loadCategoryWords(category);
+        const wrongWordsInCategory = categoryWords.filter(word => wrongSet.has(word.id));
+        const savedIndex = loadProgress(category);
+        const hasProgress = savedIndex > 0;
+        
+        showInputModeMethodSelectionModal(category, categoryWords, hasProgress, savedIndex, wrongWordsInCategory);
     } else {
         // コース選択画面を表示
         showCourseSelection(category, categoryWords);
@@ -584,6 +589,70 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
     
     return card;
     }
+
+// 入力モード用の学習方法選択モーダルを表示
+function showInputModeMethodSelectionModal(category, categoryWords, hasProgress, savedIndex, wrongWordsInCategory) {
+    elements.modalTitle.textContent = category;
+    elements.modalMessage.textContent = '学習方法を選んでください';
+    elements.modalActions.innerHTML = '';
+    
+    // カード形式のコンテナを作成
+    const methodList = document.createElement('div');
+    methodList.className = 'method-selection-list';
+    
+    // はじめから（常に表示）
+    const startCard = createMethodCard('はじめから', '最初から学習を開始します', () => {
+        closeModal();
+        initInputModeLearning(category, categoryWords);
+    });
+    methodList.appendChild(startCard);
+
+    // 前回の続きから（保存済みインデックスがある場合のみ）
+    if (hasProgress && savedIndex > 0 && savedIndex < categoryWords.length) {
+        const continueCard = createMethodCard('前回の続きから', '前回の続きから学習を再開します', () => {
+            closeModal();
+            const remainingWords = categoryWords.slice(savedIndex);
+            initInputModeLearning(category, remainingWords);
+        });
+        methodList.appendChild(continueCard);
+    }
+
+    // 間違えた問題（間違いがある場合のみ）
+    if (wrongWordsInCategory.length > 0) {
+        const wrongCard = createMethodCard(`間違えた問題 (${wrongWordsInCategory.length}問)`, '間違えた単語だけを復習します', () => {
+            closeModal();
+            initInputModeLearning('間違い復習', wrongWordsInCategory);
+        });
+        methodList.appendChild(wrongCard);
+    }
+
+    // チェックした問題のみ（チェックがある場合のみ）
+    const checkedWordsInCategory = categoryWords.filter(word => reviewWords.has(word.id));
+    if (checkedWordsInCategory.length > 0) {
+        const checkedCard = createMethodCard(`チェックした問題のみ (${checkedWordsInCategory.length}問)`, 'チェックをつけた単語だけを復習します', () => {
+            closeModal();
+            initInputModeLearning('チェックした問題', checkedWordsInCategory);
+        });
+        methodList.appendChild(checkedCard);
+    }
+    
+    elements.modalActions.appendChild(methodList);
+    
+    // 背景クリックで閉じるイベント
+    const handleOverlayClick = (e) => {
+        if (e.target === elements.modalOverlay) {
+            closeModal();
+            elements.modalOverlay.removeEventListener('click', handleOverlayClick);
+        }
+    };
+    elements.modalOverlay.addEventListener('click', handleOverlayClick);
+    
+    elements.modalOverlay.classList.remove('hidden');
+    // アニメーション用
+    setTimeout(() => {
+        elements.modalOverlay.classList.add('active');
+    }, 10);
+}
 
 // 学習方法選択モーダルを表示
 function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, courseStart, courseEnd) {
@@ -1241,6 +1310,9 @@ function displayInputMode(skipAnimationReset = false) {
         }
     }
     
+    // マーカーを適用
+    applyMarkers(word);
+    
     // Shiftキーの状態をリセット
     isShiftActive = false;
     const shiftKey = document.getElementById('keyboardShift');
@@ -1674,6 +1746,18 @@ function toggleReview() {
     saveReviewWords();
     updateStarButton();
     applyMarkers(word);
+    
+    // 入力モードの場合もチェックボタンの状態を更新
+    if (isInputModeActive) {
+        const inputStarBtn = document.getElementById('inputStarBtn');
+        if (inputStarBtn) {
+            if (reviewWords.has(word.id)) {
+                inputStarBtn.classList.add('active');
+            } else {
+                inputStarBtn.classList.remove('active');
+            }
+        }
+    }
 }
 
 // ★ボタンの状態を更新（復習チェック用）
@@ -1729,7 +1813,7 @@ function showWrongWords() {
 
 // マーカーを適用（重ね塗りなし。黄は上段、赤/青は下段で2本見える）
 function applyMarkers(word) {
-    if (!word || !elements.englishWord) return;
+    if (!word) return;
 
     // start/endは0-1で位置指定。黄は上段、赤/青は下段。間に小さな空白を設ける。
     const band = (color, start = 0.6, end = 0.82) =>
@@ -1762,10 +1846,23 @@ function applyMarkers(word) {
     }
 
     const image = layers.join(',');
-    elements.englishWord.style.backgroundImage = image;
-    elements.englishWord.style.backgroundSize = image ? '100% 100%' : '';
-    elements.englishWord.style.backgroundRepeat = image ? 'no-repeat' : '';
-    elements.englishWord.style.backgroundPosition = image ? '0 0' : '';
+    
+    // カードモードの場合
+    if (elements.englishWord) {
+        elements.englishWord.style.backgroundImage = image;
+        elements.englishWord.style.backgroundSize = image ? '100% 100%' : '';
+        elements.englishWord.style.backgroundRepeat = image ? 'no-repeat' : '';
+        elements.englishWord.style.backgroundPosition = image ? '0 0' : '';
+    }
+    
+    // 入力モードの場合
+    const inputMeaning = document.getElementById('inputMeaning');
+    if (inputMeaning) {
+        inputMeaning.style.backgroundImage = image;
+        inputMeaning.style.backgroundSize = image ? '100% 100%' : '';
+        inputMeaning.style.backgroundRepeat = image ? 'no-repeat' : '';
+        inputMeaning.style.backgroundPosition = image ? '0 0' : '';
+    }
 }
 
 // 品詞を一文字に変換する関数
@@ -2022,6 +2119,12 @@ function markAnswer(isCorrect) {
     setTimeout(() => {
         elements.feedbackOverlay.classList.remove('active');
     }, 400);
+
+    // 入力モードの場合はカードアニメーションをスキップ
+    if (isInputModeActive) {
+        // 入力モードでは自動で進まない（ユーザーが次へボタンを押すまで待つ）
+        return;
+    }
 
     // 軽いスワイプアニメーション
     const direction = isCorrect ? -120 : 120;
