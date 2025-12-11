@@ -723,7 +723,7 @@ body {
 
 .input-question {
     text-align: center;
-    margin-top: 80px;
+    margin-top: 32px;
     margin-bottom: 8px;
     flex-shrink: 0;
 }
@@ -1426,7 +1426,7 @@ body {
 
 .english-word {
     font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
-    font-size: clamp(32px, 8vw, 48px);
+    font-size: clamp(36px, 9vw, 56px);
     font-weight: 700;
     text-align: center;
     display: inline-block;          /* テキスト幅に合わせる */
