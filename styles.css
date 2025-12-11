@@ -685,18 +685,99 @@ body {
 /* スマホ向け：キーボードを端っこまで使えるように */
 @media (max-width: 600px) {
     .input-mode {
-        padding: 20px 0 0 0; /* 左右のパディングを削除 */
+        padding: 12px 0 0 0; /* 左右のパディングを削除 */
     }
     .input-mode-content {
-        min-height: 240px;
-        padding: 16px 20px;
+        min-height: 200px;
+        padding: 12px 16px;
+        margin-bottom: 8px;
+    }
+    .input-question {
+        margin-top: 16px;
+        margin-bottom: 4px;
+    }
+    .input-meaning {
+        font-size: clamp(20px, 5vw, 28px);
+    }
+    .input-container {
+        min-height: 140px;
+        padding-bottom: 48px;
+        gap: 4px;
+    }
+    .word-number {
+        top: 8px;
+        left: 8px;
+        font-size: 12px;
+        padding: 3px 6px;
+    }
+    .card-top-section {
+        gap: 8px;
+        margin-bottom: 6px;
+    }
+    .progress-bar-container {
+        height: 14px;
+    }
+    .input-result {
+        bottom: 8px;
+        padding: 6px 10px;
+    }
+    .result-message {
+        font-size: 18px;
+    }
+    .correct-word {
+        font-size: clamp(28px, 7vw, 40px);
+    }
+    .letter-input {
+        height: 36px;
     }
 }
 
 @media (max-width: 420px) {
+    .input-mode {
+        padding: 8px 0 0 0;
+    }
     .input-mode-content {
-        min-height: 220px;
-        padding: 14px 16px;
+        min-height: 180px;
+        padding: 10px 12px;
+        margin-bottom: 6px;
+    }
+    .input-question {
+        margin-top: 12px;
+        margin-bottom: 2px;
+    }
+    .input-meaning {
+        font-size: clamp(18px, 4.5vw, 24px);
+    }
+    .input-container {
+        min-height: 120px;
+        padding-bottom: 40px;
+        gap: 2px;
+    }
+    .word-number {
+        top: 6px;
+        left: 6px;
+        font-size: 11px;
+        padding: 2px 5px;
+    }
+    .card-top-section {
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+    .progress-bar-container {
+        height: 12px;
+    }
+    .input-result {
+        bottom: 6px;
+        padding: 5px 8px;
+    }
+    .result-message {
+        font-size: 16px;
+    }
+    .correct-word {
+        font-size: clamp(24px, 6vw, 36px);
+    }
+    .letter-input {
+        height: 32px;
     }
 }
 
@@ -790,9 +871,9 @@ body {
 }
 
 .letter-input {
-    width: 26px;
+    width: 22px;
     height: 40px;
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
     text-align: center;
     border: none;
@@ -805,7 +886,8 @@ body {
     -webkit-user-select: text;
     user-select: text;
     letter-spacing: 0px;
-    padding: 0 3px;
+    padding: 0 1px;
+    margin: 0 -1px;
 }
 
 .letter-input:focus {
@@ -822,8 +904,8 @@ body {
 
 .letter-input.correct {
     background-color: transparent;
-    border-bottom-color: #10b981;
-    color: #10b981;
+    border-bottom-color: #3b82f6;
+    color: #3b82f6;
 }
 
 .letter-input.wrong {
@@ -1003,8 +1085,10 @@ body {
     
     /* 入力欄をスマホ向けに大きく */
     .letter-input {
-        width: 30px;
-        padding: 0 4px;
+        width: 26px;
+        font-size: 32px;
+        padding: 0 2px;
+        margin: 0 -1px;
     }
 }
 
