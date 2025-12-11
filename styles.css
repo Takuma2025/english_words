@@ -699,11 +699,12 @@ body {
     .input-meaning-wrapper {
         margin-bottom: 0;
         gap: 4px;
+        align-items: flex-end;
     }
     .input-meaning {
         font-size: clamp(20px, 5vw, 28px);
         line-height: 1.2;
-        font-family: "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+        font-family: "Noto Serif JP", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     }
     .input-container {
         min-height: 120px;
@@ -758,11 +759,12 @@ body {
     .input-meaning-wrapper {
         margin-bottom: 0;
         gap: 3px;
+        align-items: flex-end;
     }
     .input-meaning {
         font-size: clamp(18px, 4.5vw, 24px);
         line-height: 1.2;
-        font-family: "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+        font-family: "Noto Serif JP", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     }
     .input-container {
         min-height: 100px;
@@ -847,7 +849,7 @@ body {
 
 .input-meaning-wrapper {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     gap: 6px;
     flex-wrap: wrap;
@@ -856,11 +858,11 @@ body {
 
 .input-meaning {
     font-size: clamp(24px, 6vw, 32px);
-    font-weight: 400;
+    font-weight: 700;
     color: #1f2937;
     line-height: 1.3;
     display: inline-block;
-    font-family: "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
 }
 
 .input-container {
@@ -1606,9 +1608,8 @@ body {
 
 /* 意味のときの品詞位置調整 */
 .meaning-wrapper .pos-inline {
-    align-self: center;
+    align-self: flex-end;
     margin-top: 0;
-    top: 0.03em;
 }
 
 .part-of-speech.verb { background-color: transparent; border-color: #1f2937; color: #1f2937; } /* 黒ボーダー */
@@ -1650,7 +1651,7 @@ body {
 
 .meaning-wrapper {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
@@ -1658,13 +1659,13 @@ body {
 
 .meaning {
     font-size: clamp(20px, 5vw, 28px);
-    font-weight: 400;
+    font-weight: 700;
     color: #0f172a;
     line-height: 1.5;
     word-break: break-word;
     padding: 0 8px;
     display: inline-block;
-    font-family: "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
 }
 
 
