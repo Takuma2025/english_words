@@ -47,6 +47,73 @@ function loadStudyDates() {
     return savedData ? JSON.parse(savedData) : {};
 }
 
+// ヒートマップを更新する関数
+function updateHeatmap() {
+    const heatmapGrid = document.getElementById('heatmapGrid');
+    if (!heatmapGrid) {
+        console.warn('heatmapGrid element not found');
+        return;
+    }
+    
+    const studyData = loadStudyDates();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // 直近1か月（30日）のデータを取得
+    const days = [];
+    for (let i = 29; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        const count = studyData[dateStr] || 0;
+        days.push({ date, dateStr, count });
+    }
+    
+    // 最大学習量を取得（色の濃さを決定するため）
+    const maxCount = Math.max(...days.map(d => d.count), 1);
+    
+    // 学習量をレベル（0-5）に変換
+    function getLevel(count) {
+        if (count === 0) return 0;
+        if (maxCount === 1) return 1;
+        const ratio = count / maxCount;
+        if (ratio >= 0.8) return 5;
+        if (ratio >= 0.6) return 4;
+        if (ratio >= 0.4) return 3;
+        if (ratio >= 0.2) return 2;
+        return 1;
+    }
+    
+    // グリッドをクリア
+    heatmapGrid.innerHTML = '';
+    
+    // グリッドのスタイルを確実に7列に設定
+    heatmapGrid.style.display = 'grid';
+    heatmapGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+    heatmapGrid.style.gap = '3px';
+    heatmapGrid.style.padding = '0';
+    
+    // 各日を表示
+    days.forEach(({ date, dateStr, count }) => {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'heatmap-day';
+        const level = getLevel(count);
+        dayElement.setAttribute('data-level', level);
+        dayElement.setAttribute('data-date', dateStr);
+        dayElement.setAttribute('data-count', count);
+        
+        // ツールチップ（ホバー時に表示）
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
+        dayElement.title = `${month}/${day} (${weekday}) ${count > 0 ? `: ${count}回学習` : ': 学習なし'}`;
+        
+        heatmapGrid.appendChild(dayElement);
+    });
+    
+    console.log(`Heatmap updated: ${days.length} days displayed in 10 columns`);
+}
+
 // カテゴリごとの正解・間違い単語を読み込む
 function loadCategoryWords(category) {
     const savedCorrectWords = localStorage.getItem(`correctWords-${category}`);
@@ -567,6 +634,11 @@ function init() {
     showCategorySelection();
     setupEventListeners();
     
+    // ヒートマップを初期表示
+    setTimeout(() => {
+        updateHeatmap();
+    }, 100);
+    
     // ホーム画面に追加されていない場合のみオーバレイを表示
     checkAndShowInstallPrompt();
 }
@@ -609,6 +681,11 @@ function showCategorySelection() {
     // 最新のデータを読み込んでから進捗を更新
     loadData();
     updateCategoryStars(); // 星の表示を更新
+    
+    // ヒートマップを更新（少し遅延させてDOMが確実に読み込まれた後に実行）
+    setTimeout(() => {
+        updateHeatmap();
+    }, 50);
 }
 
 // カテゴリーを選択してコース選択画面を表示

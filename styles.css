@@ -205,6 +205,176 @@ body {
 }
 
 /* 学習ヒートマップ */
+.heatmap-container {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.heatmap-header {
+    margin-bottom: 12px;
+}
+
+.heatmap-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.heatmap-weekdays {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    gap: 3px !important;
+    margin-bottom: 4px;
+    width: 100%;
+    padding: 0;
+}
+
+.heatmap-weekday {
+    text-align: center;
+    font-size: 10px;
+    color: #6b7280;
+    font-weight: 600;
+    padding: 2px 0;
+}
+
+.heatmap-grid {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    gap: 3px !important;
+    margin-bottom: 12px;
+    min-height: 100px;
+    width: 100%;
+    padding: 0;
+}
+
+.heatmap-day {
+    aspect-ratio: 1 !important;
+    width: 100% !important;
+    min-width: 12px !important;
+    min-height: 12px !important;
+    max-width: 20px !important;
+    border-radius: 2px;
+    background: #e5e7eb;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    position: relative;
+    display: block !important;
+    flex-shrink: 0;
+    margin: 0 auto;
+}
+
+.heatmap-day:hover {
+    transform: scale(1.1);
+    z-index: 1;
+}
+
+.heatmap-day[data-level="0"] {
+    background: #e5e7eb;
+}
+
+.heatmap-day[data-level="1"] {
+    background: #bfdbfe;
+}
+
+.heatmap-day[data-level="2"] {
+    background: #93c5fd;
+}
+
+.heatmap-day[data-level="3"] {
+    background: #60a5fa;
+}
+
+.heatmap-day[data-level="4"] {
+    background: #3b82f6;
+}
+
+.heatmap-day[data-level="5"] {
+    background: #2563eb;
+}
+
+.heatmap-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.heatmap-legend-label {
+    color: #6b7280;
+    font-size: 11px;
+}
+
+.heatmap-legend-colors {
+    display: flex;
+    gap: 3px;
+}
+
+.heatmap-legend-item {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+.heatmap-legend-item[data-level="0"] {
+    background: #e5e7eb;
+}
+
+.heatmap-legend-item[data-level="1"] {
+    background: #bfdbfe;
+}
+
+.heatmap-legend-item[data-level="2"] {
+    background: #93c5fd;
+}
+
+.heatmap-legend-item[data-level="3"] {
+    background: #60a5fa;
+}
+
+.heatmap-legend-item[data-level="4"] {
+    background: #3b82f6;
+}
+
+@media (max-width: 600px) {
+    .heatmap-container {
+        margin: 12px;
+        padding: 12px;
+    }
+    
+    .heatmap-weekdays {
+        gap: 2px;
+        margin-bottom: 4px;
+        padding: 0;
+    }
+    
+    .heatmap-weekday {
+        font-size: 9px;
+    }
+    
+    .heatmap-grid {
+        gap: 2px;
+        min-height: 80px;
+        padding: 0;
+    }
+    
+    .heatmap-day {
+        min-width: 14px;
+        min-height: 14px;
+        max-width: 20px;
+    }
+    
+    .heatmap-title {
+        font-size: 14px;
+    }
+}
+
+/* 学習ヒートマップ */
 .study-heatmap-container {
     background: #ffffff;
     border-radius: 12px;
@@ -272,17 +442,6 @@ body {
     padding-left: 2px;
 }
 
-.heatmap-grid {
-    display: flex;
-    gap: 2px;
-}
-
-.heatmap-weekdays {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-right: 4px;
-}
 
 .heatmap-weekday-label {
     width: 20px;
