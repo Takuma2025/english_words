@@ -204,8 +204,8 @@ body {
     box-sizing: border-box;
 }
 
-/* 学習ヒートマップ */
-.heatmap-container {
+/* 学習グラフ（縦棒グラフ） */
+.chart-container {
     background: #ffffff;
     border-radius: 12px;
     padding: 16px;
@@ -214,15 +214,86 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.heatmap-header {
+.chart-header {
     margin-bottom: 12px;
 }
 
-.heatmap-title {
+.chart-title {
     font-size: 16px;
     font-weight: 600;
     color: #1f2937;
     margin: 0;
+}
+
+.chart-content {
+    width: 100%;
+}
+
+.bar-chart {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 200px;
+    gap: 8px;
+    padding: 0 8px;
+}
+
+.bar-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    position: relative;
+}
+
+.bar-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+    min-height: 18px;
+}
+
+.bar-wrapper {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    min-height: 0;
+}
+
+.bar {
+    width: 100%;
+    max-width: 24px;
+    background: #3b82f6;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s ease;
+    min-height: 4px;
+}
+
+.bar-item-today .bar {
+    background: #2563eb;
+}
+
+.bar-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.bar-date {
+    font-size: 10px;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+
+.bar-item-today .bar-label,
+.bar-item-today .bar-date {
+    color: #2563eb;
+    font-weight: 700;
 }
 
 .heatmap-weekdays {
@@ -260,17 +331,11 @@ body {
     max-width: 20px !important;
     border-radius: 2px;
     background: #e5e7eb;
-    cursor: pointer;
-    transition: transform 0.1s ease;
+    cursor: default;
     position: relative;
     display: block !important;
     flex-shrink: 0;
     margin: 0 auto;
-}
-
-.heatmap-day:hover {
-    transform: scale(1.1);
-    z-index: 1;
 }
 
 .heatmap-day[data-level="0"] {
@@ -295,6 +360,26 @@ body {
 
 .heatmap-day[data-level="5"] {
     background: #2563eb;
+}
+
+/* 今日のマスを強調表示 */
+.heatmap-day-today {
+    border: 3px solid #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.5), 0 0 8px rgba(239, 68, 68, 0.3) !important;
+    position: relative;
+    z-index: 10;
+}
+
+.heatmap-day-today::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 1px solid #ffffff;
+    border-radius: 2px;
+    pointer-events: none;
 }
 
 .heatmap-legend {

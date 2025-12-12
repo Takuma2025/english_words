@@ -47,71 +47,107 @@ function loadStudyDates() {
     return savedData ? JSON.parse(savedData) : {};
 }
 
-// ヒートマップを更新する関数
-function updateHeatmap() {
-    const heatmapGrid = document.getElementById('heatmapGrid');
-    if (!heatmapGrid) {
-        console.warn('heatmapGrid element not found');
+// すべてのカテゴリーの正解単語数を集計する関数
+function getAllCorrectWordsCount() {
+    const categories = [
+        '小学生で習った単語とカテゴリー別に覚える単語',
+        'LEVEL1 超よくでる400',
+        'LEVEL2 よくでる300',
+        'LEVEL3 差がつく200',
+        'LEVEL4 ハイレベル200',
+        '基本語彙500',
+        'B問題対策 例文暗記60【和文英訳対策】',
+        'C問題対策英単語タイムアタック',
+        'C問題対策 写経ドリル【英作文対策】',
+        'C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+    ];
+    
+    const allCorrectWords = new Set();
+    
+    categories.forEach(category => {
+        const { correctSet } = loadCategoryWords(category);
+        correctSet.forEach(wordId => {
+            allCorrectWords.add(wordId);
+        });
+    });
+    
+    return allCorrectWords.size;
+}
+
+// 指定日の覚えた単語数を取得する関数
+function getCorrectWordsCountForDate(targetDate) {
+    // 日付ごとの覚えた単語数を記録するキー
+    const dateKey = `correctWordsCount-${targetDate}`;
+    const savedCount = localStorage.getItem(dateKey);
+    
+    if (savedCount !== null) {
+        return parseInt(savedCount, 10);
+    }
+    
+    // 保存されていない場合は0を返す（その日は学習していない）
+    return 0;
+}
+
+// 日付ごとの覚えた単語数を保存する関数
+function saveCorrectWordsCountForDate(dateStr, count) {
+    const dateKey = `correctWordsCount-${dateStr}`;
+    localStorage.setItem(dateKey, count.toString());
+}
+
+// 縦棒グラフを更新する関数
+function updateBarChart() {
+    const barChart = document.getElementById('barChart');
+    if (!barChart) {
+        console.warn('barChart element not found');
         return;
     }
     
-    const studyData = loadStudyDates();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
     
-    // 直近1か月（30日）のデータを取得
+    // 直近1週間（7日間）のデータを取得（日曜日から土曜日）
     const days = [];
-    for (let i = 29; i >= 0; i--) {
+    for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(date.getDate() - i);
         const dateStr = date.toISOString().split('T')[0];
-        const count = studyData[dateStr] || 0;
+        const count = getCorrectWordsCountForDate(dateStr);
         days.push({ date, dateStr, count });
     }
     
-    // 最大学習量を取得（色の濃さを決定するため）
+    // 最大学習量を取得（グラフの高さを決定するため）
     const maxCount = Math.max(...days.map(d => d.count), 1);
     
-    // 学習量をレベル（0-5）に変換
-    function getLevel(count) {
-        if (count === 0) return 0;
-        if (maxCount === 1) return 1;
-        const ratio = count / maxCount;
-        if (ratio >= 0.8) return 5;
-        if (ratio >= 0.6) return 4;
-        if (ratio >= 0.4) return 3;
-        if (ratio >= 0.2) return 2;
-        return 1;
-    }
-    
-    // グリッドをクリア
-    heatmapGrid.innerHTML = '';
-    
-    // グリッドのスタイルを確実に7列に設定
-    heatmapGrid.style.display = 'grid';
-    heatmapGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
-    heatmapGrid.style.gap = '3px';
-    heatmapGrid.style.padding = '0';
+    // グラフをクリア
+    barChart.innerHTML = '';
     
     // 各日を表示
     days.forEach(({ date, dateStr, count }) => {
-        const dayElement = document.createElement('div');
-        dayElement.className = 'heatmap-day';
-        const level = getLevel(count);
-        dayElement.setAttribute('data-level', level);
-        dayElement.setAttribute('data-date', dateStr);
-        dayElement.setAttribute('data-count', count);
-        
-        // ツールチップ（ホバー時に表示）
+        const isToday = dateStr === todayStr;
+        const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
         const month = date.getMonth() + 1;
         const day = date.getDate();
-        const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
-        dayElement.title = `${month}/${day} (${weekday}) ${count > 0 ? `: ${count}回学習` : ': 学習なし'}`;
         
-        heatmapGrid.appendChild(dayElement);
+        // バーの高さを計算（最大値に対する割合）
+        const heightPercent = maxCount > 0 ? (count / maxCount) * 100 : 0;
+        
+        const barItem = document.createElement('div');
+        barItem.className = `bar-item${isToday ? ' bar-item-today' : ''}`;
+        
+        barItem.innerHTML = `
+            <div class="bar-value" style="${count === 0 ? 'display: none;' : ''}">${count}</div>
+            <div class="bar-wrapper">
+                <div class="bar" style="height: ${heightPercent}%"></div>
+            </div>
+            <div class="bar-label">${weekday}</div>
+            <div class="bar-date">${month}/${day}</div>
+        `;
+        
+        barChart.appendChild(barItem);
     });
     
-    console.log(`Heatmap updated: ${days.length} days displayed in 10 columns`);
+    console.log(`Bar chart updated: ${days.length} days displayed`);
 }
 
 // カテゴリごとの正解・間違い単語を読み込む
@@ -634,9 +670,9 @@ function init() {
     showCategorySelection();
     setupEventListeners();
     
-    // ヒートマップを初期表示
+    // 縦棒グラフを初期表示
     setTimeout(() => {
-        updateHeatmap();
+        updateBarChart();
     }, 100);
     
     // ホーム画面に追加されていない場合のみオーバレイを表示
@@ -682,9 +718,16 @@ function showCategorySelection() {
     loadData();
     updateCategoryStars(); // 星の表示を更新
     
-    // ヒートマップを更新（少し遅延させてDOMが確実に読み込まれた後に実行）
+    // 今日の覚えた単語数を記録（ホームに戻る時）
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+    const currentCount = getAllCorrectWordsCount();
+    saveCorrectWordsCountForDate(todayStr, currentCount);
+    
+    // 縦棒グラフを更新（少し遅延させてDOMが確実に読み込まれた後に実行）
     setTimeout(() => {
-        updateHeatmap();
+        updateBarChart();
     }, 50);
 }
 
@@ -2946,6 +2989,7 @@ function markAnswer(isCorrect, isTimeout = false) {
         }
         
         saveCorrectWords();
+        
     } else {
         wrongCount++;
         // 間違えた場合は間違いリストに追加
