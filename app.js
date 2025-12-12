@@ -485,6 +485,14 @@ function startCategory(category) {
         // タイムアタックモードで直接開始
         initTimeAttackLearning(category, categoryWords);
         return;
+    } else if (category === 'C問題対策 写経ドリル【英作文対策】') {
+        // C問題対策 写経ドリル：専用データが必要（現在は空）
+        showAlert('準備中', 'C問題対策 写経ドリル【英作文対策】のデータを準備中です。');
+        return;
+    } else if (category === 'C問題対策 英文法100本ノック【整序英作文(記号選択)対策】') {
+        // C問題対策 英文法100本ノック：専用データが必要（現在は空）
+        showAlert('準備中', 'C問題対策 英文法100本ノック【整序英作文(記号選択)対策】のデータを準備中です。');
+        return;
     } else {
         // マッピングがある場合はそれを使用、なければそのまま使用
         const dataCategory = categoryMapping[category] || category;

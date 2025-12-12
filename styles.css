@@ -529,6 +529,16 @@ body {
     display: none;
 }
 
+/* C問題対策 写経ドリル【英作文対策】コースの進捗バーを非表示 */
+.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .category-progress {
+    display: none;
+}
+
+/* C問題対策 英文法100本ノック【整序英作文(記号選択)対策】コースの進捗バーを非表示 */
+.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-progress {
+    display: none;
+}
+
 /* B問題対策 例文暗記60【和文英訳対策】コースの進捗バーを非表示 */
 .category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"] .category-progress {
     display: none;
@@ -577,6 +587,66 @@ body {
 }
 
 .category-card[data-category="C問題対策英単語タイムアタック"] .category-meta {
+    color: #ffffff;
+    opacity: 0.95;
+}
+
+/* C問題対策 写経ドリル【英作文対策】コースのカテゴリーカードを赤本の色に */
+.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] {
+    background: #DC2626; /* 赤みの強い赤 */
+    color: #ffffff;
+}
+
+.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .category-name {
+    color: #ffffff;
+}
+
+.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .c-problem-label {
+    background: #1a1a1a;
+    color: #ffffff;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .time-attack-text {
+    font-family: "HGP明朝E", "HGPMinchoE", serif;
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .category-meta {
+    color: #ffffff;
+    opacity: 0.95;
+}
+
+/* C問題対策 英文法100本ノック【整序英作文(記号選択)対策】コースのカテゴリーカードを赤本の色に */
+.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] {
+    background: #DC2626; /* 赤みの強い赤 */
+    color: #ffffff;
+}
+
+.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-name {
+    color: #ffffff;
+}
+
+.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .c-problem-label {
+    background: #1a1a1a;
+    color: #ffffff;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .time-attack-text {
+    font-family: "HGP明朝E", "HGPMinchoE", serif;
+    font-style: italic;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-meta {
     color: #ffffff;
     opacity: 0.95;
 }
@@ -806,8 +876,7 @@ body {
 }
 
 .progress-step-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
+    display: none;
 }
 
 .progress-range-display {
