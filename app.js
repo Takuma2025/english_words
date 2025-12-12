@@ -283,6 +283,82 @@ const elements = {
 
 // TTS機能：英単語を読み上げる
 let currentSpeech = null;
+let voicesLoaded = false;
+
+// 利用可能な音声を取得（ネイティブ発音を優先）
+function getNativeVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    
+    // 優先順位：en-US（米国） > en-GB（英国） > その他の英語音声
+    const preferredVoices = [
+        // Google音声（Chrome/Edge）
+        'Google US English',
+        'Microsoft Zira - English (United States)',
+        'Microsoft Mark - English (United States)',
+        // macOS音声（Safari）
+        'Samantha',
+        'Alex',
+        'Victoria',
+        // その他の高品質音声
+        'en-US',
+        'en-GB'
+    ];
+    
+    // 優先順位に従って音声を検索
+    for (const preferred of preferredVoices) {
+        const voice = voices.find(v => 
+            v.name.includes(preferred) || 
+            v.lang.startsWith('en-US') || 
+            v.lang.startsWith('en-GB')
+        );
+        if (voice) {
+            return voice;
+        }
+    }
+    
+    // 英語音声を探す（優先順位なし）
+    const englishVoice = voices.find(v => 
+        v.lang.startsWith('en-') && 
+        (v.localService === false || v.name.includes('Google') || v.name.includes('Microsoft'))
+    );
+    
+    if (englishVoice) {
+        return englishVoice;
+    }
+    
+    // デフォルトの英語音声
+    return voices.find(v => v.lang.startsWith('en-')) || null;
+}
+
+// 音声リストの読み込みを待つ
+function ensureVoicesLoaded(callback) {
+    if (voicesLoaded) {
+        callback();
+        return;
+    }
+    
+    // 音声リストが既に読み込まれている場合
+    if (window.speechSynthesis.getVoices().length > 0) {
+        voicesLoaded = true;
+        callback();
+        return;
+    }
+    
+    // 音声リストの読み込みを待つ
+    window.speechSynthesis.onvoiceschanged = () => {
+        voicesLoaded = true;
+        callback();
+    };
+    
+    // タイムアウト（500ms待っても読み込まれない場合はデフォルトで続行）
+    setTimeout(() => {
+        if (!voicesLoaded) {
+            voicesLoaded = true;
+            callback();
+        }
+    }, 500);
+}
+
 function speakWord(word, buttonElement) {
     // 既存の音声を停止
     if (currentSpeech) {
@@ -296,43 +372,56 @@ function speakWord(word, buttonElement) {
         return;
     }
 
-    // 音声合成の設定
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = 'en-US';
-    utterance.rate = 0.9; // 少しゆっくりめ
-    utterance.pitch = 1.0;
-    utterance.volume = 1.0;
-
-    // ボタンに再生中のスタイルを追加
-    if (buttonElement) {
-        buttonElement.classList.add('playing');
-    }
-
-    // 音声再生開始
-    utterance.onstart = () => {
-        currentSpeech = utterance;
-    };
-
-    // 音声再生終了
-    utterance.onend = () => {
-        currentSpeech = null;
-        if (buttonElement) {
-            buttonElement.classList.remove('playing');
+    // 音声リストの読み込みを待つ
+    ensureVoicesLoaded(() => {
+        // ネイティブ音声を取得
+        const voice = getNativeVoice();
+        
+        // 音声合成の設定
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = voice ? voice.lang : 'en-US';
+        
+        // より自然な発音のためのパラメータ調整
+        utterance.rate = 0.95; // 少しゆっくりめ（自然な速度）
+        utterance.pitch = 1.0; // 標準ピッチ
+        utterance.volume = 1.0; // 最大音量
+        
+        // ネイティブ音声を設定
+        if (voice) {
+            utterance.voice = voice;
         }
-    };
 
-    // エラー処理
-    utterance.onerror = (event) => {
-        console.error('Speech synthesis error:', event);
-        currentSpeech = null;
+        // ボタンに再生中のスタイルを追加
         if (buttonElement) {
-            buttonElement.classList.remove('playing');
+            buttonElement.classList.add('playing');
         }
-        // エラー時はアラートを表示しない（ユーザー体験を損なわないため）
-    };
 
-    // 音声を再生
-    window.speechSynthesis.speak(utterance);
+        // 音声再生開始
+        utterance.onstart = () => {
+            currentSpeech = utterance;
+        };
+
+        // 音声再生終了
+        utterance.onend = () => {
+            currentSpeech = null;
+            if (buttonElement) {
+                buttonElement.classList.remove('playing');
+            }
+        };
+
+        // エラー処理
+        utterance.onerror = (event) => {
+            console.error('Speech synthesis error:', event);
+            currentSpeech = null;
+            if (buttonElement) {
+                buttonElement.classList.remove('playing');
+            }
+            // エラー時はアラートを表示しない（ユーザー体験を損なわないため）
+        };
+
+        // 音声を再生
+        window.speechSynthesis.speak(utterance);
+    });
 }
 
 // モーダル表示関数
