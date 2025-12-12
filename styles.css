@@ -634,13 +634,47 @@ body {
     font-size: 18px;
     font-weight: 700;
     color: #ffffff;
-    background: #4b5563;
+    background: #6b7280;
     padding: 12px 16px;
     margin-top: 24px;
     margin-bottom: 8px;
     border-radius: 16px 16px 0 0;
     display: inline-block;
     width: fit-content;
+}
+
+.course-tabs {
+    display: flex;
+    gap: 8px;
+    margin: 0 0 8px 0;
+}
+
+.course-tab {
+    flex: 1;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 12px 12px 0 0;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.course-tab:hover {
+    background: #d1d5db;
+}
+
+.course-tab.active {
+    background: #6b7280;
+    color: #ffffff;
+}
+
+.course-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .course-selection-image {
@@ -816,7 +850,7 @@ body {
 }
 
 .category-card[data-category="C問題対策英単語タイムアタック"] .c-problem-label {
-    background: #1a1a1a;
+    background: #374151;
     color: #ffffff;
     display: inline-block;
     padding: 4px 8px;
@@ -824,10 +858,8 @@ body {
 }
 
 .category-card[data-category="C問題対策英単語タイムアタック"] .time-attack-text {
-    font-family: "HGP明朝E", "HGPMinchoE", serif;
-    font-style: italic;
-    font-size: 24px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 700;
 }
 
 .category-card[data-category="C問題対策英単語タイムアタック"] .category-meta {
@@ -846,7 +878,7 @@ body {
 }
 
 .category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .c-problem-label {
-    background: #1a1a1a;
+    background: #374151;
     color: #ffffff;
     display: inline-block;
     padding: 4px 8px;
@@ -854,10 +886,8 @@ body {
 }
 
 .category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .time-attack-text {
-    font-family: "HGP明朝E", "HGPMinchoE", serif;
-    font-style: italic;
-    font-size: 24px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 700;
 }
 
 .category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .category-meta {
@@ -876,7 +906,7 @@ body {
 }
 
 .category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .c-problem-label {
-    background: #1a1a1a;
+    background: #374151;
     color: #ffffff;
     display: inline-block;
     padding: 4px 8px;
@@ -884,28 +914,13 @@ body {
 }
 
 .category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .time-attack-text {
-    font-family: "HGP明朝E", "HGPMinchoE", serif;
-    font-style: italic;
-    font-size: 24px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 700;
 }
 
 .category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-meta {
     color: #ffffff;
     opacity: 0.95;
-}
-
-.category-card[data-category="C問題対策英単語タイムアタック"] .category-arrow {
-    color: #ffffff;
-}
-
-.category-card[data-category="C問題対策英単語タイムアタック"]:hover {
-    background: #B91C1C; /* ホバー時は少し濃い赤 */
-    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.3), 0 2px 4px rgba(220, 38, 38, 0.2);
-}
-
-.category-card[data-category="C問題対策英単語タイムアタック"]:active {
-    background: #991B1B; /* アクティブ時はさらに濃い赤 */
 }
 
 /* B問題対策 例文暗記60【和文英訳対策】コースのカテゴリーカードを赤本の色に */
@@ -919,7 +934,7 @@ body {
 }
 
 .category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"] .b-problem-label {
-    background: #1a1a1a;
+    background: #374151;
     color: #ffffff;
     display: inline-block;
     padding: 4px 8px;
@@ -927,10 +942,8 @@ body {
 }
 
 .category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"] .sentence-memorization-text {
-    font-family: "HGP明朝E", "HGPMinchoE", serif;
-    font-style: italic;
-    font-size: 24px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 700;
 }
 
 .category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"] .category-meta {
@@ -942,14 +955,10 @@ body {
     color: #ffffff;
 }
 
-.category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"]:hover {
-    background: #B91C1C; /* ホバー時は少し濃い赤 */
-    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.3), 0 2px 4px rgba(220, 38, 38, 0.2);
+.category-card[data-category^="C問題対策"] .category-arrow {
+    color: #ffffff;
 }
 
-.category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"]:active {
-    background: #991B1B; /* アクティブ時はさらに濃い赤 */
-}
 
 .category-arrow {
     color: #9ca3af;
@@ -2206,43 +2215,6 @@ body {
 }
 
 /* 音声オン/オフボタン */
-.audio-toggle-btn {
-    position: absolute;
-    right: 80px;
-    top: calc(env(safe-area-inset-top) + var(--header-height) / 2);
-    transform: translateY(-50%);
-    background: #ffffff;
-    border: none;
-    color: #3b82f6;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    z-index: 1002;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.audio-toggle-btn:hover {
-    background: #f8fafc;
-    color: #2563eb;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-}
-
-.audio-toggle-btn:active {
-    background: #f1f5f9;
-    color: #1d4ed8;
-    transform: translateY(-50%) scale(0.95);
-}
-
-.audio-toggle-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
 /* 矢印ナビゲーション */
 .nav-arrow-btn {
     position: absolute;

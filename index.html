@@ -34,12 +34,6 @@
                     <span class="subtitle" id="headerSubtitle">大阪府公立高校入試特化型英単語</span>
                 </h1>
             </div>
-            <button class="audio-toggle-btn hidden" id="audioToggleBtn" aria-label="音声オン/オフ">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="audioToggleIcon">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                </svg>
-            </button>
             <button class="home-btn-header hidden" id="homeBtn" aria-label="中断">
                 中断
             </button>
@@ -107,189 +101,195 @@
                         </div>
                     </div>
                 </div>
+                <div class="course-tabs" id="courseTabs">
+                    <button class="course-tab active" data-target="courseMasterSection">英単語マスターコース</button>
+                    <button class="course-tab" data-target="courseScoreSection">得点力アップコース</button>
+                </div>
                 <div class="category-list">
-                    <div class="course-section-title">英単語マスターコース</div>
-                    <button class="category-card" data-category="小学生で習った単語とカテゴリー別に覚える単語">
-                        <div class="category-info">
-                            <div class="category-header">
-                                <div class="category-name">小学生で習った単語とカテゴリー別に覚える単語</div>
-                            </div>
-                            <div class="category-meta">基礎からカテゴリー別に学習</div>
-                            <div class="category-progress">
-                                <div class="category-progress-bar">
-                                    <div class="category-progress-correct" id="progress-correct-小学生で習った単語とカテゴリー別に覚える単語" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" id="progress-wrong-小学生で習った単語とカテゴリー別に覚える単語" style="width: 0%"></div>
+                    <div class="course-section" id="courseMasterSection">
+                        <button class="category-card" data-category="小学生で習った単語とカテゴリー別に覚える単語">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name">小学生で習った単語とカテゴリー別に覚える単語</div>
                                 </div>
-                                <div class="category-progress-text" id="progress-text-小学生で習った単語とカテゴリー別に覚える単語">0/0</div>
-                            </div>
-                        </div>
-                        <div class="category-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </button>
-                    <button class="category-card" data-category="LEVEL1 超よくでる400">
-                        <div class="category-info">
-                            <div class="category-header">
-                                <div class="category-name"><span class="level-badge">LEVEL1</span> 超よくでる400 <span class="category-stars">★★★★★</span></div>
-                            </div>
-                            <div class="category-meta">B問題40点突破必須レベル</div>
-                            <div class="category-progress">
-                                <div class="category-progress-bar">
-                                    <div class="category-progress-correct" id="progress-correct-LEVEL1 超よくでる400" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" id="progress-wrong-LEVEL1 超よくでる400" style="width: 0%"></div>
+                                <div class="category-meta">基礎からカテゴリー別に学習</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-小学生で習った単語とカテゴリー別に覚える単語" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-小学生で習った単語とカテゴリー別に覚える単語" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-小学生で習った単語とカテゴリー別に覚える単語">0/0</div>
                                 </div>
-                                <div class="category-progress-text" id="progress-text-LEVEL1 超よくでる400">0/0</div>
                             </div>
-                        </div>
-                        <div class="category-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </button>
-                    <button class="category-card" data-category="LEVEL2 よくでる300">
-                        <div class="category-info">
-                            <div class="category-header">
-                                <div class="category-name"><span class="level-badge">LEVEL2</span> よくでる300 <span class="category-stars">★★★★</span></div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
-                            <div class="category-meta">B問題60点突破必須レベル</div>
-                            <div class="category-progress">
-                                <div class="category-progress-bar">
-                                    <div class="category-progress-correct" id="progress-correct-LEVEL2 よくでる300" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" id="progress-wrong-LEVEL2 よくでる300" style="width: 0%"></div>
+                        </button>
+                        <button class="category-card" data-category="LEVEL1 超よくでる400">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="level-badge">LEVEL1</span> 超よくでる400 <span class="category-stars">★★★★★</span></div>
                                 </div>
-                                <div class="category-progress-text" id="progress-text-LEVEL2 よくでる300">0/0</div>
-                            </div>
-                        </div>
-                        <div class="category-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </button>
-                    <button class="category-card" data-category="LEVEL3 差がつく200">
-                        <div class="category-info">
-                            <div class="category-header">
-                                <div class="category-name"><span class="level-badge">LEVEL3</span> 差がつく200 <span class="category-stars">★★★</span></div>
-                            </div>
-                            <div class="category-meta">C問題40点突破必須レベル</div>
-                            <div class="category-progress">
-                                <div class="category-progress-bar">
-                                    <div class="category-progress-correct" id="progress-correct-LEVEL3 差がつく200" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" id="progress-wrong-LEVEL3 差がつく200" style="width: 0%"></div>
+                                <div class="category-meta">B問題40点突破必須レベル</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-LEVEL1 超よくでる400" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-LEVEL1 超よくでる400" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-LEVEL1 超よくでる400">0/0</div>
                                 </div>
-                                <div class="category-progress-text" id="progress-text-LEVEL3 差がつく200">0/0</div>
                             </div>
-                        </div>
-                        <div class="category-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </button>
-                    <button class="category-card" data-category="LEVEL4 ハイレベル200">
-                        <div class="category-info">
-                            <div class="category-header">
-                                <div class="category-name"><span class="level-badge">LEVEL4</span> ハイレベル200 <span class="category-stars">★★</span></div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
-                            <div class="category-meta">C問題50点突破必須レベル</div>
-                            <div class="category-progress">
-                                <div class="category-progress-bar">
-                                    <div class="category-progress-correct" id="progress-correct-LEVEL4 ハイレベル200" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" id="progress-wrong-LEVEL4 ハイレベル200" style="width: 0%"></div>
+                        </button>
+                        <button class="category-card" data-category="LEVEL2 よくでる300">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="level-badge">LEVEL2</span> よくでる300 <span class="category-stars">★★★★</span></div>
                                 </div>
-                                <div class="category-progress-text" id="progress-text-LEVEL4 ハイレベル200">0/0</div>
-                            </div>
-                        </div>
-                        <div class="category-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </button>
-                    <button class="category-card" data-category="基本語彙500">
-                        <div class="category-info">
-                            <div class="category-header">
-                                <div class="category-name">基本語彙500</div>
-                            </div>
-                            <div class="category-meta">日本語→英語で学習</div>
-                            <div class="category-progress">
-                                <div class="category-progress-bar">
-                                    <div class="category-progress-correct" id="progress-correct-基本語彙500" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" id="progress-wrong-基本語彙500" style="width: 0%"></div>
+                                <div class="category-meta">B問題60点突破必須レベル</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-LEVEL2 よくでる300" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-LEVEL2 よくでる300" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-LEVEL2 よくでる300">0/0</div>
                                 </div>
-                                <div class="category-progress-text" id="progress-text-基本語彙500">0/0</div>
                             </div>
-                        </div>
-                        <div class="category-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </button>
-                    <div class="course-section-title">得点力アップコース</div>
-                    <button class="category-card" data-category="B問題対策 例文暗記60【和文英訳対策】">
-                        <div class="category-info">
-                            <div class="category-header">
-                                <div class="category-name"><span class="b-problem-label">B問題対策</span> <span class="sentence-memorization-text">例文暗記60【和文英訳対策】</span></div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
-                            <div class="category-meta">B問題に毎年出題されるが、正答率が低く差がつきやすい和文英訳問題の対策です。</div>
-                            <div class="category-progress">
-                                <div class="category-progress-bar">
-                                    <div class="category-progress-correct" id="progress-correct-B問題対策 例文暗記60【和文英訳対策】" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" id="progress-wrong-B問題対策 例文暗記60【和文英訳対策】" style="width: 0%"></div>
+                        </button>
+                        <button class="category-card" data-category="LEVEL3 差がつく200">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="level-badge">LEVEL3</span> 差がつく200 <span class="category-stars">★★★</span></div>
                                 </div>
-                                <div class="category-progress-text" id="progress-text-B問題対策 例文暗記60【和文英訳対策】">0/0</div>
-                            </div>
-                        </div>
-                        <div class="category-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </button>
-                    <button class="category-card" data-category="C問題対策英単語タイムアタック">
-                        <div class="category-info">
-                            <div class="category-header">
-                                <div class="category-name"><span class="c-problem-label">C問題対策</span> <span class="time-attack-text">英単語タイムアタック【長文速読対策】</span></div>
-                            </div>
-                            <div class="category-meta">大問2～大問5の長文をスピーディーに読めるようにするための特訓です。</div>
-                            <div class="category-progress">
-                                <div class="category-progress-bar">
-                                    <div class="category-progress-correct" id="progress-correct-C問題対策英単語タイムアタック" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" id="progress-wrong-C問題対策英単語タイムアタック" style="width: 0%"></div>
+                                <div class="category-meta">C問題40点突破必須レベル</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-LEVEL3 差がつく200" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-LEVEL3 差がつく200" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-LEVEL3 差がつく200">0/0</div>
                                 </div>
-                                <div class="category-progress-text" id="progress-text-C問題対策英単語タイムアタック">0/0</div>
                             </div>
-                        </div>
-                        <div class="category-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </button>
-                    <button class="category-card" data-category="C問題対策 写経ドリル【英作文対策】">
-                        <div class="category-info">
-                            <div class="category-header">
-                                <div class="category-name"><span class="c-problem-label">C問題対策</span> <span class="time-attack-text">写経ドリル【英作文対策】</span></div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
-                            <div class="category-meta">模範解答を書き写して暗記することで、英作文で使える表現や作文の型を身につけます。</div>
-                            <div class="category-progress">
-                                <div class="category-progress-bar">
-                                    <div class="category-progress-correct" id="progress-correct-C問題対策 写経ドリル【英作文対策】" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" id="progress-wrong-C問題対策 写経ドリル【英作文対策】" style="width: 0%"></div>
+                        </button>
+                        <button class="category-card" data-category="LEVEL4 ハイレベル200">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="level-badge">LEVEL4</span> ハイレベル200 <span class="category-stars">★★</span></div>
                                 </div>
-                                <div class="category-progress-text" id="progress-text-C問題対策 写経ドリル【英作文対策】">0/0</div>
-                            </div>
-                        </div>
-                        <div class="category-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </button>
-                    <button class="category-card" data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】">
-                        <div class="category-info">
-                            <div class="category-header">
-                                <div class="category-name"><span class="c-problem-label">C問題対策</span> <span class="time-attack-text">英文法100本ノック【整序英作文(記号選択)対策】</span></div>
-                            </div>
-                            <div class="category-meta">毎年大問1で出題される整序英作文の予想問題を100問解きます。</div>
-                            <div class="category-progress">
-                                <div class="category-progress-bar">
-                                    <div class="category-progress-correct" id="progress-correct-C問題対策 英文法100本ノック【整序英作文(記号選択)対策】" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" id="progress-wrong-C問題対策 英文法100本ノック【整序英作文(記号選択)対策】" style="width: 0%"></div>
+                                <div class="category-meta">C問題50点突破必須レベル</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-LEVEL4 ハイレベル200" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-LEVEL4 ハイレベル200" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-LEVEL4 ハイレベル200">0/0</div>
                                 </div>
-                                <div class="category-progress-text" id="progress-text-C問題対策 英文法100本ノック【整序英作文(記号選択)対策】">0/0</div>
                             </div>
-                        </div>
-                        <div class="category-arrow">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </button>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
+                        <button class="category-card" data-category="基本語彙500">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name">基本語彙500</div>
+                                </div>
+                                <div class="category-meta">日本語→英語で学習</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-基本語彙500" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-基本語彙500" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-基本語彙500">0/0</div>
+                                </div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="course-section hidden" id="courseScoreSection">
+                        <button class="category-card" data-category="B問題対策 例文暗記60【和文英訳対策】">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="b-problem-label">B問題対策</span> <span class="sentence-memorization-text">例文暗記60【和文英訳対策】</span></div>
+                                </div>
+                                <div class="category-meta">B問題に毎年出題されるが、正答率が低く差がつきやすい和文英訳問題の対策です。</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-B問題対策 例文暗記60【和文英訳対策】" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-B問題対策 例文暗記60【和文英訳対策】" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-B問題対策 例文暗記60【和文英訳対策】">0/0</div>
+                                </div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
+                        <button class="category-card" data-category="C問題対策英単語タイムアタック">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="c-problem-label">C問題対策</span> <span class="time-attack-text">英単語タイムアタック【長文速読対策】</span></div>
+                                </div>
+                                <div class="category-meta">大問2～大問5の長文をスピーディーに読めるようにするための特訓です。</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-C問題対策英単語タイムアタック" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-C問題対策英単語タイムアタック" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-C問題対策英単語タイムアタック">0/0</div>
+                                </div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
+                        <button class="category-card" data-category="C問題対策 写経ドリル【英作文対策】">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="c-problem-label">C問題対策</span> <span class="time-attack-text">写経ドリル【英作文対策】</span></div>
+                                </div>
+                                <div class="category-meta">模範解答を書き写して暗記することで、英作文で使える表現や作文の型を身につけます。</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-C問題対策 写経ドリル【英作文対策】" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-C問題対策 写経ドリル【英作文対策】" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-C問題対策 写経ドリル【英作文対策】">0/0</div>
+                                </div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
+                        <button class="category-card" data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="c-problem-label">C問題対策</span> <span class="time-attack-text">英文法100本ノック【整序英作文(記号選択)対策】</span></div>
+                                </div>
+                                <div class="category-meta">毎年大問1で出題される整序英作文の予想問題を100問解きます。</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-C問題対策 英文法100本ノック【整序英作文(記号選択)対策】" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-C問題対策 英文法100本ノック【整序英作文(記号選択)対策】" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-C問題対策 英文法100本ノック【整序英作文(記号選択)対策】">0/0</div>
+                                </div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
 
