@@ -285,49 +285,69 @@ const elements = {
 let currentSpeech = null;
 let voicesLoaded = false;
 
-// 利用可能な音声を取得（ネイティブ発音を優先）
+// 利用可能な音声を取得（女性のUS音声を優先）
 function getNativeVoice() {
     const voices = window.speechSynthesis.getVoices();
     
-    // 優先順位：en-US（米国） > en-GB（英国） > その他の英語音声
-    const preferredVoices = [
-        // Google音声（Chrome/Edge）
+    // 女性のUS音声を優先的に検索
+    const femaleUSVoices = [
+        // Google音声（Chrome/Edge）- 女性音声
+        'Google US English Female',
         'Google US English',
+        // Microsoft音声（Windows）- 女性音声
         'Microsoft Zira - English (United States)',
-        'Microsoft Mark - English (United States)',
-        // macOS音声（Safari）
+        'Microsoft Zira',
+        // macOS音声（Safari）- 女性音声
         'Samantha',
-        'Alex',
         'Victoria',
-        // その他の高品質音声
-        'en-US',
-        'en-GB'
+        'Karen',
+        'Moira',
+        // その他の女性US音声
+        'en-US-Female',
+        'en-US-Wavenet-F',
+        'en-US-Neural2-F'
     ];
     
-    // 優先順位に従って音声を検索
-    for (const preferred of preferredVoices) {
+    // 女性のUS音声を優先的に検索
+    for (const preferred of femaleUSVoices) {
         const voice = voices.find(v => 
-            v.name.includes(preferred) || 
-            v.lang.startsWith('en-US') || 
-            v.lang.startsWith('en-GB')
+            (v.name.includes(preferred) || v.name.toLowerCase().includes(preferred.toLowerCase())) &&
+            v.lang.startsWith('en-US')
         );
         if (voice) {
             return voice;
         }
     }
     
-    // 英語音声を探す（優先順位なし）
-    const englishVoice = voices.find(v => 
-        v.lang.startsWith('en-') && 
-        (v.localService === false || v.name.includes('Google') || v.name.includes('Microsoft'))
+    // 女性のUS音声を検索（名前指定なし、性別で判定）
+    const femaleVoice = voices.find(v => 
+        v.lang.startsWith('en-US') &&
+        (v.name.toLowerCase().includes('female') || 
+         v.name.toLowerCase().includes('zira') ||
+         v.name.toLowerCase().includes('samantha') ||
+         v.name.toLowerCase().includes('victoria') ||
+         v.name.toLowerCase().includes('karen') ||
+         v.name.toLowerCase().includes('moira') ||
+         v.name.toLowerCase().includes('google') ||
+         (v.gender && v.gender.toLowerCase() === 'female'))
     );
     
-    if (englishVoice) {
-        return englishVoice;
+    if (femaleVoice) {
+        return femaleVoice;
     }
     
-    // デフォルトの英語音声
-    return voices.find(v => v.lang.startsWith('en-')) || null;
+    // 女性音声が見つからない場合、US音声を探す
+    const usVoice = voices.find(v => 
+        v.lang.startsWith('en-US') &&
+        (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Zira'))
+    );
+    
+    if (usVoice) {
+        return usVoice;
+    }
+    
+    // デフォルトのUS音声
+    return voices.find(v => v.lang.startsWith('en-US')) || null;
 }
 
 // 音声リストの読み込みを待つ
