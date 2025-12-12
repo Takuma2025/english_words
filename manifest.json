@@ -7,6 +7,24 @@
   "background_color": "#f5f5f5",
   "theme_color": "#0055ca",
   "orientation": "portrait",
-  "scope": "."
+  "scope": ".",
+  "icons": [
+    {
+      "src": "app.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "app.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "app.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
 }
 
