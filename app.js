@@ -381,7 +381,9 @@ const elements = {
     correctBtn: document.getElementById('correctBtn'),
     wrongBtn: document.getElementById('wrongBtn'),
     masteredBtn: document.getElementById('masteredBtn'),
-    homeBtn: document.getElementById('homeBtn')
+    homeBtn: document.getElementById('homeBtn'),
+    audioToggleBtn: document.getElementById('audioToggleBtn'),
+    audioToggleIcon: document.getElementById('audioToggleIcon')
 };
 
 // TTS機能：英単語を読み上げる
@@ -699,9 +701,12 @@ function showCategorySelection() {
     updateNavState('home');
     elements.headerSubtitle.textContent = '大阪府公立高校入試特化英単語';
     
-    // カテゴリー選択画面ではホームボタンを非表示
+    // カテゴリー選択画面ではホームボタンと音声トグルボタンを非表示
     if (elements.homeBtn) {
         elements.homeBtn.classList.add('hidden');
+    }
+    if (elements.audioToggleBtn) {
+        elements.audioToggleBtn.classList.add('hidden');
     }
     
     // ハンバーガーメニューボタンは常に表示（変更不要）
@@ -843,9 +848,12 @@ function initInputModeLearning(category, words) {
     
     document.body.classList.add('learning-mode');
 
-    // 学習画面ではホームボタンを表示
+    // 学習画面ではホームボタンと音声トグルボタンを表示
     if (elements.homeBtn) {
         elements.homeBtn.classList.remove('hidden');
+    }
+    if (elements.audioToggleBtn) {
+        elements.audioToggleBtn.classList.remove('hidden');
     }
 
     // カードモードを非表示、入力モードを表示
@@ -1425,9 +1433,12 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     
     document.body.classList.add('learning-mode');
     
-    // 学習画面ではホームボタンを表示
+    // 学習画面ではホームボタンと音声トグルボタンを表示
     if (elements.homeBtn) {
         elements.homeBtn.classList.remove('hidden');
+    }
+    if (elements.audioToggleBtn) {
+        elements.audioToggleBtn.classList.remove('hidden');
     }
     
     // 進捗ステップボタンを表示（タイムアタックモード以外）
@@ -1521,6 +1532,7 @@ function setupEventListeners() {
         });
         elements.inputAudioBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
     }
+
 
     // カードのタップで答えを表示
     elements.wordCard.addEventListener('click', handleCardTap);
