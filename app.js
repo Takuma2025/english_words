@@ -135,7 +135,7 @@ function updateCategoryStars() {
         'LEVEL4 ハイレベル200': 'Group3 ハイレベル100'
     };
     
-    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500'];
+    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500', 'B問題対策 例文暗記60【和文英訳対策】', 'C問題対策英単語タイムアタック'];
     
     categories.forEach(category => {
         let categoryWords;
@@ -148,6 +148,12 @@ function updateCategoryStars() {
             } else {
                 categoryWords = [];
             }
+        } else if (category === 'C問題対策英単語タイムアタック') {
+            // タイムアタックモード：Group1 超頻出600の単語を使用
+            categoryWords = wordData.filter(word => word.category === 'Group1 超頻出600');
+        } else if (category === 'B問題対策 例文暗記60【和文英訳対策】') {
+            // B問題対策：専用データが必要（現在は空）
+            categoryWords = [];
         } else {
             // マッピングがある場合はそれを使用、なければそのまま使用
             const dataCategory = categoryMapping[category] || category;
@@ -465,6 +471,10 @@ function startCategory(category) {
             showAlert('エラー', '小学生で習った単語データが見つかりません。');
             return;
         }
+    } else if (category === 'B問題対策 例文暗記60【和文英訳対策】') {
+        // B問題対策：専用データが必要（現在は空）
+        showAlert('準備中', 'B問題対策 例文暗記60【和文英訳対策】のデータを準備中です。');
+        return;
     } else if (category === 'C問題対策英単語タイムアタック') {
         // タイムアタックモード：Group1 超頻出600の単語を使用
         categoryWords = wordData.filter(word => word.category === 'Group1 超頻出600');
