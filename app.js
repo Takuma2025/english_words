@@ -56,10 +56,10 @@ function getAllCorrectWordsCount() {
         'LEVEL3 差がつく200',
         'LEVEL4 ハイレベル200',
         '基本語彙500',
-        'B問題対策 例文暗記60【和文英訳対策】',
-        'C問題対策英単語タイムアタック',
-        'C問題対策 写経ドリル【英作文対策】',
-        'C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+        '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
+        '大阪C問題対策英単語タイムアタック',
+        '大阪C問題対策 英作写経ドリル',
+        '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
     ];
     
     const allCorrectWords = new Set();
@@ -238,7 +238,7 @@ function updateCategoryStars() {
         'LEVEL4 ハイレベル200': 'Group3 ハイレベル100'
     };
     
-    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500', 'B問題対策 例文暗記60【和文英訳対策】', 'C問題対策英単語タイムアタック'];
+    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '大阪C問題対策英単語タイムアタック'];
     
     categories.forEach(category => {
         let categoryWords;
@@ -251,11 +251,11 @@ function updateCategoryStars() {
             } else {
                 categoryWords = [];
             }
-        } else if (category === 'C問題対策英単語タイムアタック') {
+        } else if (category === '大阪C問題対策英単語タイムアタック') {
             // タイムアタックモード：Group1 超頻出600の単語を使用
             categoryWords = wordData.filter(word => word.category === 'Group1 超頻出600');
-        } else if (category === 'B問題対策 例文暗記60【和文英訳対策】') {
-            // B問題対策：専用データが必要（現在は空）
+        } else if (category === '大阪B問題対策 厳選例文暗記60【和文英訳対策】') {
+            // 大阪B問題対策：専用データが必要（現在は空）
             categoryWords = [];
         } else {
             // マッピングがある場合はそれを使用、なければそのまま使用
@@ -756,11 +756,11 @@ function startCategory(category) {
             showAlert('エラー', '小学生で習った単語データが見つかりません。');
             return;
         }
-    } else if (category === 'B問題対策 例文暗記60【和文英訳対策】') {
-        // B問題対策：専用データが必要（現在は空）
-        showAlert('準備中', 'B問題対策 例文暗記60【和文英訳対策】のデータを準備中です。');
+    } else if (category === '大阪B問題対策 厳選例文暗記60【和文英訳対策】') {
+        // 大阪B問題対策：専用データが必要（現在は空）
+        showAlert('準備中', '大阪B問題対策 厳選例文暗記60【和文英訳対策】のデータを準備中です。');
         return;
-    } else if (category === 'C問題対策英単語タイムアタック') {
+    } else if (category === '大阪C問題対策英単語タイムアタック') {
         // タイムアタックモード：Group1 超頻出600の単語を使用
         categoryWords = wordData.filter(word => word.category === 'Group1 超頻出600');
         if (categoryWords.length === 0) {
@@ -770,13 +770,13 @@ function startCategory(category) {
         // タイムアタックモードで直接開始
         initTimeAttackLearning(category, categoryWords);
         return;
-    } else if (category === 'C問題対策 写経ドリル【英作文対策】') {
-        // C問題対策 写経ドリル：専用データが必要（現在は空）
-        showAlert('準備中', 'C問題対策 写経ドリル【英作文対策】のデータを準備中です。');
+    } else if (category === '大阪C問題対策 英作写経ドリル') {
+        // 大阪C問題対策 英作写経ドリル：専用データが必要（現在は空）
+        showAlert('準備中', '大阪C問題対策 英作写経ドリルのデータを準備中です。');
         return;
-    } else if (category === 'C問題対策 英文法100本ノック【整序英作文(記号選択)対策】') {
-        // C問題対策 英文法100本ノック：専用データが必要（現在は空）
-        showAlert('準備中', 'C問題対策 英文法100本ノック【整序英作文(記号選択)対策】のデータを準備中です。');
+    } else if (category === '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】') {
+        // 大阪C問題対策 英文法100本ノック：専用データが必要（現在は空）
+        showAlert('準備中', '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】のデータを準備中です。');
         return;
     } else {
         // マッピングがある場合はそれを使用、なければそのまま使用
@@ -792,8 +792,8 @@ function startCategory(category) {
     // カテゴリー選択画面を非表示
     elements.categorySelection.classList.add('hidden');
     
-    // 基本語彙500と小学生で習った単語の場合は学習方法選択モーダルを表示
-    if (category === '基本語彙500' || category === '小学生で習った単語とカテゴリー別に覚える単語') {
+    // 基本語彙500の場合は学習方法選択モーダルを表示
+    if (category === '基本語彙500') {
         const { wrongSet } = loadCategoryWords(category);
         const wrongWordsInCategory = categoryWords.filter(word => wrongSet.has(word.id));
         const savedIndex = loadProgress(category);
@@ -875,54 +875,121 @@ function showCourseSelection(category, categoryWords) {
     courseTitle.textContent = `${category} - コースを選んでください`;
     courseList.innerHTML = '';
     
-    const CHUNK = 100;
-    const chunkCount = Math.ceil(categoryWords.length / CHUNK);
-    
-    for (let i = 0; i < chunkCount; i++) {
-        const start = i * CHUNK;
-        const end = Math.min((i + 1) * CHUNK, categoryWords.length);
-        const courseWords = categoryWords.slice(start, end);
+    // 小学生で習った単語とカテゴリー別に覚える単語の場合は、固定の5つのコースを表示
+    if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
+        const courses = [
+            '小学生で習った単語',
+            '接続詞',
+            '助動詞',
+            '前置詞',
+            '疑問詞'
+        ];
         
-        // 進捗を計算（カテゴリごと）
-        let correctCountInCourse = 0;
-        let wrongCountInCourse = 0;
-        const { correctSet, wrongSet } = loadCategoryWords(category);
-        
-        courseWords.forEach(word => {
-            const isCorrect = correctSet.has(word.id);
-            const isWrong = wrongSet.has(word.id);
+        courses.forEach(courseName => {
+            // 各コースに対応する単語をフィルタリング
+            let courseWords;
+            if (courseName === '小学生で習った単語') {
+                // 小学生で習った単語: categoryが「小学生で習った単語とカテゴリー別に覚える単語」のもの
+                courseWords = categoryWords.filter(word => 
+                    word.category === '小学生で習った単語とカテゴリー別に覚える単語'
+                );
+            } else {
+                // 接続詞、助動詞、前置詞、疑問詞: categoryがコース名と一致するもの
+                courseWords = categoryWords.filter(word => word.category === courseName);
+            }
             
-            // 優先順位変更: 間違い(赤) > 正解(青)
-            if (isWrong) {
-                wrongCountInCourse++;
-            } else if (isCorrect) {
-                correctCountInCourse++;
-            }
-        });
-        
-        const total = courseWords.length;
-        const correctPercent = total === 0 ? 0 : (correctCountInCourse / total) * 100;
-        const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
-        const completedCount = correctCountInCourse + wrongCountInCourse;
-        
-        const courseCard = createCourseCard(
-            `No.${start + 1} - No.${end}`,
-            `${start + 1}語目から${end}語目まで`,
-            correctPercent,
-            wrongPercent,
-            completedCount,
-            total,
-            () => {
-                // コースを選択したら、そのコースの単語範囲で学習方法選択モーダルを表示
-                const { wrongSet } = loadCategoryWords(category);
-                const wrongWordsInCourse = courseWords.filter(word => wrongSet.has(word.id));
-                const savedIndex = loadProgress(category);
-                const hasProgress = savedIndex > start && savedIndex < end;
+            // 進捗を計算（カテゴリごと）
+            let correctCountInCourse = 0;
+            let wrongCountInCourse = 0;
+            const { correctSet, wrongSet } = loadCategoryWords(category);
+            
+            courseWords.forEach(word => {
+                const isCorrect = correctSet.has(word.id);
+                const isWrong = wrongSet.has(word.id);
                 
-                showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, start, end);
-            }
-        );
-        courseList.appendChild(courseCard);
+                // 優先順位変更: 間違い(赤) > 正解(青)
+                if (isWrong) {
+                    wrongCountInCourse++;
+                } else if (isCorrect) {
+                    correctCountInCourse++;
+                }
+            });
+            
+            const total = courseWords.length;
+            const correctPercent = total === 0 ? 0 : (correctCountInCourse / total) * 100;
+            const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
+            const completedCount = correctCountInCourse + wrongCountInCourse;
+            
+            const courseCard = createCourseCard(
+                courseName,
+                `${total}語`,
+                correctPercent,
+                wrongPercent,
+                completedCount,
+                total,
+                () => {
+                    // コースを選択したら、そのコースの単語で学習方法選択モーダルを表示
+                    const { wrongSet } = loadCategoryWords(category);
+                    const wrongWordsInCourse = courseWords.filter(word => wrongSet.has(word.id));
+                    const savedIndex = loadProgress(category);
+                    const hasProgress = savedIndex > 0;
+                    
+                    showInputModeMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse);
+                }
+            );
+            courseList.appendChild(courseCard);
+        });
+    } else {
+        // その他のカテゴリーは100刻みで表示
+        const CHUNK = 100;
+        const chunkCount = Math.ceil(categoryWords.length / CHUNK);
+        
+        for (let i = 0; i < chunkCount; i++) {
+            const start = i * CHUNK;
+            const end = Math.min((i + 1) * CHUNK, categoryWords.length);
+            const courseWords = categoryWords.slice(start, end);
+            
+            // 進捗を計算（カテゴリごと）
+            let correctCountInCourse = 0;
+            let wrongCountInCourse = 0;
+            const { correctSet, wrongSet } = loadCategoryWords(category);
+            
+            courseWords.forEach(word => {
+                const isCorrect = correctSet.has(word.id);
+                const isWrong = wrongSet.has(word.id);
+                
+                // 優先順位変更: 間違い(赤) > 正解(青)
+                if (isWrong) {
+                    wrongCountInCourse++;
+                } else if (isCorrect) {
+                    correctCountInCourse++;
+                }
+            });
+            
+            const total = courseWords.length;
+            const correctPercent = total === 0 ? 0 : (correctCountInCourse / total) * 100;
+            const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
+            const completedCount = correctCountInCourse + wrongCountInCourse;
+            
+            const courseCard = createCourseCard(
+                `No.${start + 1} - No.${end}`,
+                `${start + 1}語目から${end}語目まで`,
+                correctPercent,
+                wrongPercent,
+                completedCount,
+                total,
+                () => {
+                    // コースを選択したら、そのコースの単語範囲で学習方法選択モーダルを表示
+                    const { wrongSet } = loadCategoryWords(category);
+                    const wrongWordsInCourse = courseWords.filter(word => wrongSet.has(word.id));
+                    const savedIndex = loadProgress(category);
+                    const hasProgress = savedIndex > start && savedIndex < end;
+                    
+                    showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, start, end);
+                }
+            );
+            courseList.appendChild(courseCard);
+        }
     }
     
     courseSelection.classList.remove('hidden');
@@ -2950,7 +3017,7 @@ function markMastered() {
         }
         
         // 進捗を保存
-        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== 'C問題対策英単語タイムアタック') {
+        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== '大阪C問題対策英単語タイムアタック') {
             saveProgress(selectedCategory, currentIndex);
         }
         // 最後の単語の場合は完了画面を表示
@@ -3066,7 +3133,7 @@ function markAnswer(isCorrect, isTimeout = false) {
         }
         
         // 進捗を保存
-        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== 'C問題対策英単語タイムアタック') {
+        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== '大阪C問題対策英単語タイムアタック') {
             saveProgress(selectedCategory, currentIndex);
         }
         

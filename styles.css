@@ -802,27 +802,27 @@ body {
     text-align: right;
 }
 
-/* C問題対策英単語タイムアタックコースの進捗バーを非表示 */
-.category-card[data-category="C問題対策英単語タイムアタック"] .category-progress {
+/* 大阪C問題対策英単語タイムアタックコースの進捗バーを非表示 */
+.category-card[data-category="大阪C問題対策英単語タイムアタック"] .category-progress {
     display: none;
 }
 
-/* C問題対策 写経ドリル【英作文対策】コースの進捗バーを非表示 */
-.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .category-progress {
+/* 大阪C問題対策 英作写経ドリルコースの進捗バーを非表示 */
+.category-card[data-category="大阪C問題対策 英作写経ドリル"] .category-progress {
     display: none;
 }
 
-/* C問題対策 英文法100本ノック【整序英作文(記号選択)対策】コースの進捗バーを非表示 */
-.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-progress {
+/* 大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】コースの進捗バーを非表示 */
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-progress {
     display: none;
 }
 
-/* B問題対策 例文暗記60【和文英訳対策】コースの進捗バーを非表示 */
-.category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"] .category-progress {
+/* 大阪B問題対策 例文暗記60【和文英訳対策】コースの進捗バーを非表示 */
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .category-progress {
     display: none;
 }
 
-/* C問題対策英単語タイムアタックコース時の非表示要素 */
+/* 大阪C問題対策英単語タイムアタックコース時の非表示要素 */
 .card-area-wrapper:has(.word-timer-bar:not(.hidden)) .progress-range-display {
     display: none;
 }
@@ -839,17 +839,17 @@ body {
     display: none;
 }
 
-/* C問題対策英単語タイムアタックコースのカテゴリーカードを赤本の色に */
-.category-card[data-category="C問題対策英単語タイムアタック"] {
+/* 大阪C問題対策英単語タイムアタックコースのカテゴリーカードを赤本の色に */
+.category-card[data-category="大阪C問題対策英単語タイムアタック"] {
     background: #DC2626; /* 赤みの強い赤 */
     color: #ffffff;
 }
 
-.category-card[data-category="C問題対策英単語タイムアタック"] .category-name {
+.category-card[data-category="大阪C問題対策英単語タイムアタック"] .category-name {
     color: #ffffff;
 }
 
-.category-card[data-category="C問題対策英単語タイムアタック"] .c-problem-label {
+.category-card[data-category="大阪C問題対策英単語タイムアタック"] .c-problem-label {
     background: #374151;
     color: #ffffff;
     display: inline-block;
@@ -857,27 +857,31 @@ body {
     border-radius: 4px;
 }
 
-.category-card[data-category="C問題対策英単語タイムアタック"] .time-attack-text {
+.category-card[data-category="大阪C問題対策英単語タイムアタック"] .time-attack-text {
     font-size: 20px;
     font-weight: 700;
 }
 
-.category-card[data-category="C問題対策英単語タイムアタック"] .category-meta {
+.category-card[data-category="大阪C問題対策英単語タイムアタック"] .small-text {
+    font-size: 14px;
+}
+
+.category-card[data-category="大阪C問題対策英単語タイムアタック"] .category-meta {
     color: #ffffff;
     opacity: 0.95;
 }
 
-/* C問題対策 写経ドリル【英作文対策】コースのカテゴリーカードを赤本の色に */
-.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] {
+/* 大阪C問題対策 英作写経ドリルコースのカテゴリーカードを赤本の色に */
+.category-card[data-category="大阪C問題対策 英作写経ドリル"] {
     background: #DC2626; /* 赤みの強い赤 */
     color: #ffffff;
 }
 
-.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .category-name {
+.category-card[data-category="大阪C問題対策 英作写経ドリル"] .category-name {
     color: #ffffff;
 }
 
-.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .c-problem-label {
+.category-card[data-category="大阪C問題対策 英作写経ドリル"] .c-problem-label {
     background: #374151;
     color: #ffffff;
     display: inline-block;
@@ -885,27 +889,27 @@ body {
     border-radius: 4px;
 }
 
-.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .time-attack-text {
+.category-card[data-category="大阪C問題対策 英作写経ドリル"] .time-attack-text {
     font-size: 20px;
     font-weight: 700;
 }
 
-.category-card[data-category="C問題対策 写経ドリル【英作文対策】"] .category-meta {
+.category-card[data-category="大阪C問題対策 英作写経ドリル"] .category-meta {
     color: #ffffff;
     opacity: 0.95;
 }
 
-/* C問題対策 英文法100本ノック【整序英作文(記号選択)対策】コースのカテゴリーカードを赤本の色に */
-.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] {
+/* 大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】コースのカテゴリーカードを赤本の色に */
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] {
     background: #DC2626; /* 赤みの強い赤 */
     color: #ffffff;
 }
 
-.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-name {
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-name {
     color: #ffffff;
 }
 
-.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .c-problem-label {
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .c-problem-label {
     background: #374151;
     color: #ffffff;
     display: inline-block;
@@ -913,27 +917,31 @@ body {
     border-radius: 4px;
 }
 
-.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .time-attack-text {
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .time-attack-text {
     font-size: 20px;
     font-weight: 700;
 }
 
-.category-card[data-category="C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-meta {
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .small-text {
+    font-size: 14px;
+}
+
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-meta {
     color: #ffffff;
     opacity: 0.95;
 }
 
-/* B問題対策 例文暗記60【和文英訳対策】コースのカテゴリーカードを赤本の色に */
-.category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"] {
+/* 大阪B問題対策 厳選例文暗記60【和文英訳対策】コースのカテゴリーカードを赤本の色に */
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] {
     background: #DC2626; /* 赤みの強い赤 */
     color: #ffffff;
 }
 
-.category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"] .category-name {
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .category-name {
     color: #ffffff;
 }
 
-.category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"] .b-problem-label {
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .b-problem-label {
     background: #374151;
     color: #ffffff;
     display: inline-block;
@@ -941,21 +949,25 @@ body {
     border-radius: 4px;
 }
 
-.category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"] .sentence-memorization-text {
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .sentence-memorization-text {
     font-size: 20px;
     font-weight: 700;
 }
 
-.category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"] .category-meta {
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .small-text {
+    font-size: 14px;
+}
+
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .category-meta {
     color: #ffffff;
     opacity: 0.95;
 }
 
-.category-card[data-category="B問題対策 例文暗記60【和文英訳対策】"] .category-arrow {
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .category-arrow {
     color: #ffffff;
 }
 
-.category-card[data-category^="C問題対策"] .category-arrow {
+.category-card[data-category^="大阪C問題対策"] .category-arrow {
     color: #ffffff;
 }
 

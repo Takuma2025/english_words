@@ -699,6 +699,423 @@ const elementaryWordData = [
     "meaning": "テーブル",
     "partOfSpeech": "名詞",
     "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  // 助動詞
+  {
+    "id": 2001,
+    "word": "can",
+    "meaning": "〜できる",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞"
+  },
+  {
+    "id": 2002,
+    "word": "could",
+    "meaning": "〜できた、〜できるかもしれない",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞"
+  },
+  {
+    "id": 2003,
+    "word": "may",
+    "meaning": "〜してもよい、〜かもしれない",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞"
+  },
+  {
+    "id": 2004,
+    "word": "might",
+    "meaning": "〜かもしれない",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞"
+  },
+  {
+    "id": 2005,
+    "word": "must",
+    "meaning": "〜しなければならない、〜に違いない",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞"
+  },
+  {
+    "id": 2006,
+    "word": "should",
+    "meaning": "〜すべきだ、〜するはずだ",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞"
+  },
+  {
+    "id": 2007,
+    "word": "will",
+    "meaning": "〜するだろう、〜するつもりだ",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞"
+  },
+  {
+    "id": 2008,
+    "word": "would",
+    "meaning": "〜するだろう、〜するつもりだった",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞"
+  },
+  {
+    "id": 2009,
+    "word": "shall",
+    "meaning": "〜しましょう、〜するつもりだ",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞"
+  },
+  {
+    "id": 2010,
+    "word": "ought to",
+    "meaning": "〜すべきだ",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞"
+  },
+  // 接続詞
+  {
+    "id": 3001,
+    "word": "and",
+    "meaning": "そして、〜と",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3002,
+    "word": "but",
+    "meaning": "しかし、でも",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3003,
+    "word": "or",
+    "meaning": "または、それとも",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3004,
+    "word": "so",
+    "meaning": "だから、それで",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3005,
+    "word": "because",
+    "meaning": "なぜなら〜だから",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3006,
+    "word": "if",
+    "meaning": "もし〜なら",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3007,
+    "word": "when",
+    "meaning": "〜のとき",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3008,
+    "word": "while",
+    "meaning": "〜の間に、〜する一方で",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3009,
+    "word": "though",
+    "meaning": "〜だけれども",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3010,
+    "word": "although",
+    "meaning": "〜だけれども",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3011,
+    "word": "since",
+    "meaning": "〜以来、〜なので",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3012,
+    "word": "until",
+    "meaning": "〜まで",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3013,
+    "word": "before",
+    "meaning": "〜の前に",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3014,
+    "word": "after",
+    "meaning": "〜の後に",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  {
+    "id": 3015,
+    "word": "that",
+    "meaning": "〜ということ、〜というもの",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞"
+  },
+  // 前置詞
+  {
+    "id": 4001,
+    "word": "in",
+    "meaning": "〜の中に、〜で",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4002,
+    "word": "on",
+    "meaning": "〜の上に、〜について",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4003,
+    "word": "at",
+    "meaning": "〜に、〜で",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4004,
+    "word": "by",
+    "meaning": "〜によって、〜までに",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4005,
+    "word": "for",
+    "meaning": "〜のために、〜の間",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4006,
+    "word": "with",
+    "meaning": "〜と一緒に、〜を持って",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4007,
+    "word": "from",
+    "meaning": "〜から",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4008,
+    "word": "to",
+    "meaning": "〜へ、〜まで",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4009,
+    "word": "of",
+    "meaning": "〜の",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4010,
+    "word": "about",
+    "meaning": "〜について、〜の周りに",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4011,
+    "word": "into",
+    "meaning": "〜の中へ",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4012,
+    "word": "onto",
+    "meaning": "〜の上へ",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4013,
+    "word": "over",
+    "meaning": "〜の上に、〜を越えて",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4014,
+    "word": "under",
+    "meaning": "〜の下に",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4015,
+    "word": "between",
+    "meaning": "〜の間に",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4016,
+    "word": "among",
+    "meaning": "〜の間に（3つ以上）",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4017,
+    "word": "through",
+    "meaning": "〜を通って",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4018,
+    "word": "during",
+    "meaning": "〜の間に",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4019,
+    "word": "before",
+    "meaning": "〜の前に",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4020,
+    "word": "after",
+    "meaning": "〜の後に",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4021,
+    "word": "since",
+    "meaning": "〜以来",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4022,
+    "word": "until",
+    "meaning": "〜まで",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4023,
+    "word": "against",
+    "meaning": "〜に反対して、〜に対して",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4024,
+    "word": "without",
+    "meaning": "〜なしで",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  {
+    "id": 4025,
+    "word": "within",
+    "meaning": "〜の内側に、〜以内に",
+    "partOfSpeech": "前置詞",
+    "category": "前置詞"
+  },
+  // 疑問詞
+  {
+    "id": 5001,
+    "word": "what",
+    "meaning": "何",
+    "partOfSpeech": "疑問詞",
+    "category": "疑問詞"
+  },
+  {
+    "id": 5002,
+    "word": "who",
+    "meaning": "誰",
+    "partOfSpeech": "疑問詞",
+    "category": "疑問詞"
+  },
+  {
+    "id": 5003,
+    "word": "which",
+    "meaning": "どちら、どれ",
+    "partOfSpeech": "疑問詞",
+    "category": "疑問詞"
+  },
+  {
+    "id": 5004,
+    "word": "when",
+    "meaning": "いつ",
+    "partOfSpeech": "疑問詞",
+    "category": "疑問詞"
+  },
+  {
+    "id": 5005,
+    "word": "where",
+    "meaning": "どこ",
+    "partOfSpeech": "疑問詞",
+    "category": "疑問詞"
+  },
+  {
+    "id": 5006,
+    "word": "why",
+    "meaning": "なぜ",
+    "partOfSpeech": "疑問詞",
+    "category": "疑問詞"
+  },
+  {
+    "id": 5007,
+    "word": "how",
+    "meaning": "どのように、どれくらい",
+    "partOfSpeech": "疑問詞",
+    "category": "疑問詞"
+  },
+  {
+    "id": 5008,
+    "word": "whose",
+    "meaning": "誰の",
+    "partOfSpeech": "疑問詞",
+    "category": "疑問詞"
+  },
+  {
+    "id": 5009,
+    "word": "whom",
+    "meaning": "誰を（目的格）",
+    "partOfSpeech": "疑問詞",
+    "category": "疑問詞"
   }
 ];
 
