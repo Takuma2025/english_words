@@ -261,6 +261,8 @@ const elements = {
     // frequency: document.getElementById('frequency'), // 削除
     // categoryBadge: document.getElementById('categoryBadge'), // 削除
     starBtn: document.getElementById('starBtn'),
+    audioBtn: document.getElementById('audioBtn'),
+    inputAudioBtn: document.getElementById('inputAudioBtn'),
     meaning: document.getElementById('meaning'),
     progressText: document.getElementById('progressText'),
     progressFill: document.getElementById('progressFill'),
@@ -278,6 +280,60 @@ const elements = {
     masteredBtn: document.getElementById('masteredBtn'),
     homeBtn: document.getElementById('homeBtn')
 };
+
+// TTS機能：英単語を読み上げる
+let currentSpeech = null;
+function speakWord(word, buttonElement) {
+    // 既存の音声を停止
+    if (currentSpeech) {
+        window.speechSynthesis.cancel();
+        currentSpeech = null;
+    }
+
+    // Web Speech APIが利用可能か確認
+    if (!('speechSynthesis' in window)) {
+        showAlert('エラー', 'お使いのブラウザでは音声機能が利用できません。');
+        return;
+    }
+
+    // 音声合成の設定
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9; // 少しゆっくりめ
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+
+    // ボタンに再生中のスタイルを追加
+    if (buttonElement) {
+        buttonElement.classList.add('playing');
+    }
+
+    // 音声再生開始
+    utterance.onstart = () => {
+        currentSpeech = utterance;
+    };
+
+    // 音声再生終了
+    utterance.onend = () => {
+        currentSpeech = null;
+        if (buttonElement) {
+            buttonElement.classList.remove('playing');
+        }
+    };
+
+    // エラー処理
+    utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event);
+        currentSpeech = null;
+        if (buttonElement) {
+            buttonElement.classList.remove('playing');
+        }
+        // エラー時はアラートを表示しない（ユーザー体験を損なわないため）
+    };
+
+    // 音声を再生
+    window.speechSynthesis.speak(utterance);
+}
 
 // モーダル表示関数
 function showModal(title, message, actions) {
@@ -1212,6 +1268,30 @@ function setupEventListeners() {
         toggleReview();
     });
     elements.starBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+    // 音声ボタン（カードモード）
+    if (elements.audioBtn) {
+        elements.audioBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const word = currentWords && currentWords[currentIndex] ? currentWords[currentIndex].word : '';
+            if (word) {
+                speakWord(word, elements.audioBtn);
+            }
+        });
+        elements.audioBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+    }
+
+    // 音声ボタン（入力モード）
+    if (elements.inputAudioBtn) {
+        elements.inputAudioBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const word = currentWords && currentWords[currentIndex] ? currentWords[currentIndex].word : '';
+            if (word) {
+                speakWord(word, elements.inputAudioBtn);
+            }
+        });
+        elements.inputAudioBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+    }
 
     // カードのタップで答えを表示
     elements.wordCard.addEventListener('click', handleCardTap);

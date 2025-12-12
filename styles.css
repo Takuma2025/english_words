@@ -1830,6 +1830,11 @@ body {
 
 .correct-answer-container {
     margin-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .correct-label {
@@ -1854,6 +1859,75 @@ body {
 
 .correct-word.wrong {
     color: #3b82f6; /* 青色で表示 */
+}
+
+/* 音声ボタンのスタイル */
+.audio-btn {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #3b82f6;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.audio-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: scale(1.05);
+}
+
+.audio-btn:active {
+    background: rgba(59, 130, 246, 0.3);
+    transform: scale(0.95);
+}
+
+.audio-btn.playing {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: #3b82f6;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* カードモードの音声ボタン位置調整 */
+.english-word-wrapper .audio-btn {
+    align-self: baseline;
+    margin-top: 0;
+}
+
+/* 入力モードの音声ボタン */
+.correct-answer-container .audio-btn {
+    margin-top: 0;
+}
+
+@media (max-width: 600px) {
+    .audio-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .audio-btn svg {
+        width: 20px;
+        height: 20px;
+    }
 }
 
 
@@ -2079,6 +2153,7 @@ body {
     margin-top: auto;
     margin-bottom: 8px;
     flex-wrap: wrap;
+    position: relative;
 }
 
 .english-word {
