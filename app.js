@@ -988,13 +988,17 @@ function showCourseSelection(category, categoryWords) {
     const courseList = document.getElementById('courseList');
     const courseTitle = document.getElementById('courseSelectionTitle');
     
-    courseTitle.textContent = `${category} - コースを選んでください`;
+    // カテゴリー名を表示用に調整
+    let displayCategory = category;
+    if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
+        displayCategory = 'カテゴリー別に覚える単語';
+    }
+    courseTitle.textContent = `${displayCategory} - コースを選んでください`;
     courseList.innerHTML = '';
     
-    // 小学生で習った単語とカテゴリー別に覚える単語の場合は、固定の5つのコースを表示
+    // 小学生で習った単語とカテゴリー別に覚える単語の場合は、固定の4つのコースを表示
     if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
         const courses = [
-            '小学生で習った単語',
             '接続詞',
             '助動詞',
             '前置詞',
@@ -1004,15 +1008,8 @@ function showCourseSelection(category, categoryWords) {
         courses.forEach(courseName => {
             // 各コースに対応する単語をフィルタリング
             let courseWords;
-            if (courseName === '小学生で習った単語') {
-                // 小学生で習った単語: categoryが「小学生で習った単語とカテゴリー別に覚える単語」のもの
-                courseWords = categoryWords.filter(word => 
-                    word.category === '小学生で習った単語とカテゴリー別に覚える単語'
-                );
-            } else {
-                // 接続詞、助動詞、前置詞、疑問詞: categoryがコース名と一致するもの
-                courseWords = categoryWords.filter(word => word.category === courseName);
-            }
+            // 接続詞、助動詞、前置詞、疑問詞: categoryがコース名と一致するもの
+            courseWords = categoryWords.filter(word => word.category === courseName);
             
             // 進捗を計算（カテゴリごと）
             let correctCountInCourse = 0;
