@@ -1733,6 +1733,7 @@ body {
     .input-meaning-wrapper .pos-inline {
         margin-top: 0;
         align-self: flex-end;
+        margin-bottom: 2px;
     }
     .input-meaning {
         font-size: clamp(16px, 4vw, 22px);
@@ -1801,6 +1802,7 @@ body {
     .input-meaning-wrapper .pos-inline {
         margin-top: 0;
         align-self: flex-end;
+        margin-bottom: 2px;
     }
     .input-meaning {
         font-size: clamp(14px, 3.5vw, 20px);
@@ -1904,8 +1906,9 @@ body {
 }
 
 .input-meaning-wrapper .pos-inline {
-    margin-top: 8px;
+    margin-top: 0;
     align-self: flex-end;
+    margin-bottom: 2px;
 }
 
 .input-meaning {
