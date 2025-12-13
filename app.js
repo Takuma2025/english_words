@@ -340,7 +340,7 @@ function updateCategoryStars() {
         'LEVEL4 ハイレベル200': 'Group3 ハイレベル100'
     };
     
-    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '大阪C問題対策英単語タイムアタック', 'PartC リストニングディクテーション'];
+    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '大阪C問題対策英単語タイムアタック', 'PartCディクテーション'];
     
     categories.forEach(category => {
         let categoryWords;
@@ -895,9 +895,9 @@ function startCategory(category) {
         // 大阪C問題対策 英文法100本ノック：専用データが必要（現在は空）
         showAlert('準備中', '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】のデータを準備中です。');
         return;
-    } else if (category === 'PartC リストニングディクテーション') {
-        // PartC リストニングディクテーション：専用データが必要（現在は空）
-        showAlert('準備中', 'PartC リストニングディクテーションのデータを準備中です。');
+    } else if (category === 'PartCディクテーション') {
+        // PartCディクテーション：専用データが必要（現在は空）
+        showAlert('準備中', 'PartCディクテーションのデータを準備中です。');
         return;
     } else {
         // マッピングがある場合はそれを使用、なければそのまま使用
@@ -3590,38 +3590,10 @@ function updateStats() {
         elements.progressText.textContent = `${currentPosition} / ${total}`;
     }
     
-    // 正解数・不正解数・正解率を更新（タイムアタックモード時は非表示）
-    const correctCountDisplay = document.getElementById('correctCountDisplay');
-    const wrongCountDisplay = document.getElementById('wrongCountDisplay');
-    const accuracyDisplay = document.getElementById('accuracyDisplay');
+    // 正解数・不正解数・正解率の表示は常に非表示
     const progressStatsScores = document.querySelector('.progress-stats-scores');
-    
-    if (isTimeAttackMode) {
-        // タイムアタックモード時は非表示
-        if (progressStatsScores) {
-            progressStatsScores.style.display = 'none';
-        }
-    } else {
-        // タイムアタックモード以外は表示
-        if (progressStatsScores) {
-            progressStatsScores.style.display = 'flex';
-        }
-        if (correctCountDisplay) {
-            correctCountDisplay.textContent = correctCount;
-        }
-        if (wrongCountDisplay) {
-            wrongCountDisplay.textContent = wrongCount;
-        }
-        // 正解率を計算して表示
-        if (accuracyDisplay) {
-            const totalAnswered = correctCount + wrongCount;
-            if (totalAnswered > 0) {
-                const accuracy = Math.round((correctCount / totalAnswered) * 100);
-                accuracyDisplay.textContent = `${accuracy}%`;
-            } else {
-                accuracyDisplay.textContent = '0%';
-            }
-        }
+    if (progressStatsScores) {
+        progressStatsScores.style.display = 'none';
     }
     
     // タイムアタックモードの場合、タイマー表示を更新（内部処理のみ、表示はしない）

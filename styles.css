@@ -1091,21 +1091,21 @@ body {
     opacity: 0.95;
 }
 
-.category-card[data-category="PartC リストニングディクテーション"] .category-progress {
+.category-card[data-category="PartCディクテーション"] .category-progress {
     display: none;
 }
 
-/* PartC リストニングディクテーションのカテゴリーカードを赤本の色に */
-.category-card[data-category="PartC リストニングディクテーション"] {
+/* PartCディクテーションのカテゴリーカードを赤本の色に */
+.category-card[data-category="PartCディクテーション"] {
     background: #DC2626;
     color: #ffffff;
 }
 
-.category-card[data-category="PartC リストニングディクテーション"] .category-name {
+.category-card[data-category="PartCディクテーション"] .category-name {
     color: #ffffff;
 }
 
-.category-card[data-category="PartC リストニングディクテーション"] .c-problem-label {
+.category-card[data-category="PartCディクテーション"] .c-problem-label {
     background: #000000;
     color: #ffffff;
     display: inline-block;
@@ -1116,7 +1116,7 @@ body {
     font-size: 16px;
 }
 
-.category-card[data-category="PartC リストニングディクテーション"] .time-attack-text {
+.category-card[data-category="PartCディクテーション"] .time-attack-text {
     font-size: 22px;
     font-weight: 700;
     background: #ffffff;
@@ -1132,12 +1132,12 @@ body {
     z-index: 2;
 }
 
-.category-card[data-category="PartC リストニングディクテーション"] .category-meta {
+.category-card[data-category="PartCディクテーション"] .category-meta {
     color: #ffffff;
     opacity: 0.95;
 }
 
-.category-card[data-category="PartC リストニングディクテーション"] .category-arrow {
+.category-card[data-category="PartCディクテーション"] .category-arrow {
     color: #ffffff;
 }
 
