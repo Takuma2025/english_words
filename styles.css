@@ -1728,12 +1728,14 @@ body {
     .input-meaning-wrapper {
         margin-bottom: 0;
         gap: 4px;
-        align-items: flex-end;
+        align-items: baseline;
     }
     .input-meaning-wrapper .pos-inline {
         margin-top: 0;
-        align-self: flex-end;
-        margin-bottom: 2px;
+        align-self: baseline;
+        margin-bottom: 0;
+        vertical-align: baseline;
+        font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
     .input-meaning {
         font-size: clamp(16px, 4vw, 22px);
@@ -1797,12 +1799,14 @@ body {
     .input-meaning-wrapper {
         margin-bottom: 0;
         gap: 3px;
-        align-items: flex-end;
+        align-items: baseline;
     }
     .input-meaning-wrapper .pos-inline {
         margin-top: 0;
-        align-self: flex-end;
-        margin-bottom: 2px;
+        align-self: baseline;
+        margin-bottom: 0;
+        vertical-align: baseline;
+        font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
     .input-meaning {
         font-size: clamp(14px, 3.5vw, 20px);
@@ -1898,7 +1902,7 @@ body {
 
 .input-meaning-wrapper {
     display: flex;
-    align-items: flex-end;
+    align-items: baseline;
     justify-content: center;
     gap: 6px;
     flex-wrap: wrap;
@@ -1907,8 +1911,10 @@ body {
 
 .input-meaning-wrapper .pos-inline {
     margin-top: 0;
-    align-self: flex-end;
-    margin-bottom: 2px;
+    align-self: baseline;
+    margin-bottom: 0;
+    vertical-align: baseline;
+    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 .input-meaning {
