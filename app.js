@@ -340,7 +340,7 @@ function updateCategoryStars() {
         'LEVEL4 ハイレベル200': 'Group3 ハイレベル100'
     };
     
-    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '大阪C問題対策英単語タイムアタック'];
+    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '大阪C問題対策英単語タイムアタック', 'PartC リストニングディクテーション'];
     
     categories.forEach(category => {
         let categoryWords;
@@ -804,6 +804,7 @@ function showCategorySelection() {
     }
     stopWordTimer();
     isTimeAttackMode = false;
+    document.body.classList.remove('time-attack-mode');
     
     elements.categorySelection.classList.remove('hidden');
     elements.mainContent.classList.add('hidden');
@@ -893,6 +894,10 @@ function startCategory(category) {
     } else if (category === '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】') {
         // 大阪C問題対策 英文法100本ノック：専用データが必要（現在は空）
         showAlert('準備中', '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】のデータを準備中です。');
+        return;
+    } else if (category === 'PartC リストニングディクテーション') {
+        // PartC リストニングディクテーション：専用データが必要（現在は空）
+        showAlert('準備中', 'PartC リストニングディクテーションのデータを準備中です。');
         return;
     } else {
         // マッピングがある場合はそれを使用、なければそのまま使用
@@ -1328,6 +1333,7 @@ function initTimeAttackLearning(category, words) {
     elements.headerSubtitle.textContent = category;
     
     document.body.classList.add('learning-mode');
+    document.body.classList.add('time-attack-mode');
     
     if (elements.homeBtn) {
         elements.homeBtn.classList.remove('hidden');
@@ -1360,10 +1366,10 @@ function initTimeAttackLearning(category, words) {
     // updateStats();
     updateNavState('learning');
     
-    // 正解・不正解の表示を表示（カウントダウン中は非表示）
+    // 正解・不正解の表示を非表示（タイムアタックモード時は常に非表示）
     const progressStatsScores = document.querySelector('.progress-stats-scores');
     if (progressStatsScores) {
-        progressStatsScores.style.display = 'none'; // カウントダウン中は非表示
+        progressStatsScores.style.display = 'none'; // タイムアタックモード時は常に非表示
     }
     
     // カウントダウンを開始
@@ -1623,6 +1629,7 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     }
     stopWordTimer();
     isTimeAttackMode = false;
+    document.body.classList.remove('time-attack-mode');
     
     // 正解・不正解の表示を非表示
     const progressStatsScores = document.querySelector('.progress-stats-scores');
@@ -3583,14 +3590,19 @@ function updateStats() {
         elements.progressText.textContent = `${currentPosition} / ${total}`;
     }
     
-    // 正解数・不正解数・正解率を更新（タイムアタックモード時のみ表示）
+    // 正解数・不正解数・正解率を更新（タイムアタックモード時は非表示）
     const correctCountDisplay = document.getElementById('correctCountDisplay');
     const wrongCountDisplay = document.getElementById('wrongCountDisplay');
     const accuracyDisplay = document.getElementById('accuracyDisplay');
     const progressStatsScores = document.querySelector('.progress-stats-scores');
     
     if (isTimeAttackMode) {
-        // タイムアタックモード時は表示
+        // タイムアタックモード時は非表示
+        if (progressStatsScores) {
+            progressStatsScores.style.display = 'none';
+        }
+    } else {
+        // タイムアタックモード以外は表示
         if (progressStatsScores) {
             progressStatsScores.style.display = 'flex';
         }
@@ -3598,7 +3610,6 @@ function updateStats() {
             correctCountDisplay.textContent = correctCount;
         }
         if (wrongCountDisplay) {
-            // 不正解・時間切れの表示
             wrongCountDisplay.textContent = wrongCount;
         }
         // 正解率を計算して表示
@@ -3610,11 +3621,6 @@ function updateStats() {
             } else {
                 accuracyDisplay.textContent = '0%';
             }
-        }
-    } else {
-        // タイムアタックモード以外は非表示
-        if (progressStatsScores) {
-            progressStatsScores.style.display = 'none';
         }
     }
     
