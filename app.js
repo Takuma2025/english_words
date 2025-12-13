@@ -23,6 +23,7 @@ let totalTimeRemaining = 0; // 残り時間（秒）
 let wordStartTime = 0; // 現在の単語の開始時間
 let wordTimerInterval = null; // 単語あたりのタイマーのインターバル
 const TIME_PER_WORD = 2; // 1単語あたりの時間（秒）
+let chartPeriod = 'week'; // グラフの表示期間: 'week', 'month', 'year'
 
 // 学習日を記録する関数（日付と学習量を記録）
 function recordStudyDate() {
@@ -94,9 +95,74 @@ function saveCorrectWordsCountForDate(dateStr, count) {
     localStorage.setItem(dateKey, count.toString());
 }
 
+// 指定期間のデータを取得する関数
+function getChartData(period) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+    const data = [];
+    
+    if (period === 'week') {
+        // 直近1週間（7日間）のデータを取得
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toISOString().split('T')[0];
+            const count = getCorrectWordsCountForDate(dateStr);
+            data.push({ date, dateStr, count, label: '', dateLabel: '' });
+        }
+    } else if (period === 'month') {
+        // 直近1か月（31日間）のデータを取得
+        for (let i = 30; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toISOString().split('T')[0];
+            const count = getCorrectWordsCountForDate(dateStr);
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
+            data.push({ 
+                date, 
+                dateStr, 
+                count, 
+                label: weekday, 
+                dateLabel: `${month}/${day}` 
+            });
+        }
+    } else if (period === 'year') {
+        // 直近1年（12か月）のデータを取得（月ごとに集計）
+        for (let i = 11; i >= 0; i--) {
+            const date = new Date(today);
+            date.setMonth(date.getMonth() - i);
+            date.setDate(1); // 月初めに設定
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            
+            // その月の全データを集計
+            let monthCount = 0;
+            const lastDay = new Date(year, month, 0).getDate();
+            for (let day = 1; day <= lastDay; day++) {
+                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                monthCount += getCorrectWordsCountForDate(dateStr);
+            }
+            
+            data.push({ 
+                date, 
+                dateStr: `${year}-${String(month).padStart(2, '0')}`, 
+                count: monthCount, 
+                label: `${month}月`, 
+                dateLabel: `${year}/${month}` 
+            });
+        }
+    }
+    
+    return { data, todayStr };
+}
+
 // 縦棒グラフを更新する関数
 function updateBarChart() {
     const barChart = document.getElementById('barChart');
+    const chartTitle = document.getElementById('chartTitle');
     if (!barChart) {
         console.warn('barChart element not found');
         return;
@@ -104,50 +170,73 @@ function updateBarChart() {
     
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const todayStr = today.toISOString().split('T')[0];
     
-    // 直近1週間（7日間）のデータを取得（日曜日から土曜日）
-    const days = [];
-    for (let i = 6; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
-        const dateStr = date.toISOString().split('T')[0];
-        const count = getCorrectWordsCountForDate(dateStr);
-        days.push({ date, dateStr, count });
+    // タイトルを更新
+    const periodLabels = {
+        'week': '学習記録（直近1週間）',
+        'month': '学習記録（直近1か月）',
+        'year': '学習記録（直近1年）'
+    };
+    if (chartTitle) {
+        chartTitle.textContent = periodLabels[chartPeriod] || periodLabels['week'];
     }
     
+    // 期間に応じたデータを取得
+    const { data, todayStr } = getChartData(chartPeriod);
+    
     // 最大学習量を取得（グラフの高さを決定するため）
-    const maxCount = Math.max(...days.map(d => d.count), 1);
+    const maxCount = Math.max(...data.map(d => d.count), 1);
     
     // グラフをクリア
     barChart.innerHTML = '';
     
-    // 各日を表示
-    days.forEach(({ date, dateStr, count }) => {
-        const isToday = dateStr === todayStr;
-        const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
+    // 期間属性を設定（CSSでスタイルを調整するため）
+    barChart.setAttribute('data-period', chartPeriod);
+    
+    // 各データを表示
+    data.forEach(({ date, dateStr, count, label, dateLabel }) => {
+        const isToday = chartPeriod === 'week' && dateStr === todayStr;
+        const isCurrentMonth = chartPeriod === 'year' && 
+            date.getFullYear() === today.getFullYear() && 
+            date.getMonth() === today.getMonth();
+        const isCurrentDay = chartPeriod === 'month' && dateStr === todayStr;
+        
+        // ラベルを決定
+        let displayLabel = label;
+        let displayDateLabel = dateLabel;
+        
+        if (chartPeriod === 'week') {
+            const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            displayLabel = weekday;
+            displayDateLabel = `${month}/${day}`;
+        } else if (chartPeriod === 'month') {
+            // 月表示では、すべての日付を表示
+            const dayOfMonth = date.getDate();
+            displayLabel = '';
+            displayDateLabel = `${dayOfMonth}`;
+        }
         
         // バーの高さを計算（最大値に対する割合）
         const heightPercent = maxCount > 0 ? (count / maxCount) * 100 : 0;
         
         const barItem = document.createElement('div');
-        barItem.className = `bar-item${isToday ? ' bar-item-today' : ''}`;
+        barItem.className = `bar-item${isToday || isCurrentMonth || isCurrentDay ? ' bar-item-today' : ''}`;
         
         barItem.innerHTML = `
             <div class="bar-value" style="${count === 0 ? 'display: none;' : ''}">${count}</div>
             <div class="bar-wrapper">
                 <div class="bar" style="height: ${heightPercent}%"></div>
             </div>
-            <div class="bar-label">${weekday}</div>
-            <div class="bar-date">${month}/${day}</div>
+            ${displayLabel ? `<div class="bar-label">${displayLabel}</div>` : ''}
+            ${displayDateLabel ? `<div class="bar-date">${displayDateLabel}</div>` : ''}
         `;
         
         barChart.appendChild(barItem);
     });
     
-    console.log(`Bar chart updated: ${days.length} days displayed`);
+    console.log(`Bar chart updated: ${data.length} items displayed for period: ${chartPeriod}`);
 }
 
 // カテゴリごとの正解・間違い単語を読み込む
@@ -1572,6 +1661,22 @@ function setupEventListeners() {
         });
     }
     
+    // グラフ期間選択タブ切り替え
+    const chartPeriodTabs = document.querySelectorAll('.chart-period-tab');
+    if (chartPeriodTabs.length) {
+        chartPeriodTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                chartPeriodTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const period = tab.getAttribute('data-period');
+                if (period && ['week', 'month', 'year'].includes(period)) {
+                    chartPeriod = period;
+                    updateBarChart();
+                }
+            });
+        });
+    }
+    
     // 間違い復習ボタン（カテゴリー選択画面） - 削除
     // const wrongWordsBtn = document.getElementById('wrongWordsCategoryBtn');
     // if (wrongWordsBtn) {
@@ -2939,6 +3044,11 @@ function displayCurrentWord() {
         if (masteredBtn) {
             masteredBtn.style.display = ''; // 「もうOK！」ボタンを表示
         }
+    }
+    
+    // 英語→日本語モードの場合のみ自動で音声を再生
+    if (!isInputModeActive) {
+        speakWord(word.word, null);
     }
 }
 

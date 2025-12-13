@@ -94,10 +94,15 @@
         <main class="app-main">
             <!-- カテゴリー選択画面 -->
             <div class="category-view" id="categorySelection">
-                <!-- 学習グラフ（直近1週間） -->
+                <!-- 学習グラフ -->
                 <div class="chart-container">
                     <div class="chart-header">
-                        <h3 class="chart-title">学習記録（直近1週間）</h3>
+                        <h3 class="chart-title" id="chartTitle">学習記録（直近1週間）</h3>
+                        <div class="chart-period-tabs">
+                            <button class="chart-period-tab active" data-period="week">1週間</button>
+                            <button class="chart-period-tab" data-period="month">1か月</button>
+                            <button class="chart-period-tab" data-period="year">1年</button>
+                        </div>
                     </div>
                     <div class="chart-content">
                         <div class="bar-chart" id="barChart">
