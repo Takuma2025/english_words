@@ -725,6 +725,23 @@ body {
     align-items: center;
     gap: 8px;
     margin-bottom: 2px;
+    position: relative;
+}
+
+.lock-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    padding: 4px;
 }
 
 .category-name {
@@ -850,16 +867,30 @@ body {
 }
 
 .category-card[data-category="大阪C問題対策英単語タイムアタック"] .c-problem-label {
-    background: #374151;
+    background: #000000;
     color: #ffffff;
     display: inline-block;
-    padding: 4px 8px;
+    padding: 3px 6px;
     border-radius: 4px;
+    position: relative;
+    z-index: 3;
+    font-size: 16px;
 }
 
 .category-card[data-category="大阪C問題対策英単語タイムアタック"] .time-attack-text {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
+    background: #ffffff;
+    color: #000000;
+    display: block;
+    padding: 4px 8px;
+    border-radius: 0;
+    margin-top: -4px;
+    margin-left: -8px;
+    margin-right: -8px;
+    width: calc(100% + 16px);
+    position: relative;
+    z-index: 2;
 }
 
 .category-card[data-category="大阪C問題対策英単語タイムアタック"] .small-text {
@@ -882,16 +913,30 @@ body {
 }
 
 .category-card[data-category="大阪C問題対策 英作写経ドリル"] .c-problem-label {
-    background: #374151;
+    background: #000000;
     color: #ffffff;
     display: inline-block;
-    padding: 4px 8px;
+    padding: 3px 6px;
     border-radius: 4px;
+    position: relative;
+    z-index: 3;
+    font-size: 16px;
 }
 
 .category-card[data-category="大阪C問題対策 英作写経ドリル"] .time-attack-text {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
+    background: #ffffff;
+    color: #000000;
+    display: block;
+    padding: 4px 8px;
+    border-radius: 0;
+    margin-top: -4px;
+    margin-left: -8px;
+    margin-right: -8px;
+    width: calc(100% + 16px);
+    position: relative;
+    z-index: 2;
 }
 
 .category-card[data-category="大阪C問題対策 英作写経ドリル"] .category-meta {
@@ -910,16 +955,30 @@ body {
 }
 
 .category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .c-problem-label {
-    background: #374151;
+    background: #000000;
     color: #ffffff;
     display: inline-block;
-    padding: 4px 8px;
+    padding: 3px 6px;
     border-radius: 4px;
+    position: relative;
+    z-index: 3;
+    font-size: 16px;
 }
 
 .category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .time-attack-text {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
+    background: #ffffff;
+    color: #000000;
+    display: block;
+    padding: 4px 8px;
+    border-radius: 0;
+    margin-top: -4px;
+    margin-left: -8px;
+    margin-right: -8px;
+    width: calc(100% + 16px);
+    position: relative;
+    z-index: 2;
 }
 
 .category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .small-text {
@@ -942,16 +1001,30 @@ body {
 }
 
 .category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .b-problem-label {
-    background: #374151;
+    background: #000000;
     color: #ffffff;
     display: inline-block;
-    padding: 4px 8px;
+    padding: 3px 6px;
     border-radius: 4px;
+    position: relative;
+    z-index: 3;
+    font-size: 16px;
 }
 
 .category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .sentence-memorization-text {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
+    background: #ffffff;
+    color: #000000;
+    display: block;
+    padding: 4px 8px;
+    border-radius: 0;
+    margin-top: -4px;
+    margin-left: -8px;
+    margin-right: -8px;
+    width: calc(100% + 16px);
+    position: relative;
+    z-index: 2;
 }
 
 .category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .small-text {
@@ -969,6 +1042,15 @@ body {
 
 .category-card[data-category^="大阪C問題対策"] .category-arrow {
     color: #ffffff;
+}
+
+/* 鍵アイコンのスタイル（得点力アップコース） */
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .lock-icon,
+.category-card[data-category="大阪C問題対策英単語タイムアタック"] .lock-icon,
+.category-card[data-category="大阪C問題対策 英作写経ドリル"] .lock-icon,
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .lock-icon {
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.4);
 }
 
 
