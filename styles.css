@@ -1777,10 +1777,10 @@ body {
     .letter-input {
         height: 32px;
         font-size: 22px;
-        width: 20px;
-        min-width: 20px;
-        padding: 0 4px;
-        overflow: visible;
+        width: 22px;
+        min-width: 22px;
+        padding: 0 2px;
+        overflow: hidden;
     }
 }
 
@@ -1848,10 +1848,10 @@ body {
     .letter-input {
         height: 28px;
         font-size: 20px;
-        width: 18px;
-        min-width: 18px;
-        padding: 0 4px;
-        overflow: visible;
+        width: 20px;
+        min-width: 20px;
+        padding: 0 2px;
+        overflow: hidden;
     }
 }
 
@@ -1957,8 +1957,8 @@ body {
 }
 
 .letter-input {
-    width: 22px;
-    min-width: 22px;
+    width: 24px;
+    min-width: 24px;
     height: 36px;
     font-size: 24px;
     font-weight: 700;
@@ -1973,9 +1973,9 @@ body {
     -webkit-user-select: text;
     user-select: text;
     letter-spacing: 0px;
-    padding: 0 4px;
+    padding: 0 2px;
     margin: 0;
-    overflow: visible;
+    overflow: hidden;
 }
 
 .letter-input:focus {
@@ -2181,12 +2181,12 @@ body {
         gap: 2px;
     }
     .letter-input {
-        width: 24px;
-        min-width: 24px;
+        width: 26px;
+        min-width: 26px;
         font-size: 28px;
-        padding: 0 5px;
+        padding: 0 2px;
         margin: 0;
-        overflow: visible;
+        overflow: hidden;
     }
 }
 
