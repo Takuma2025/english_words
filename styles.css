@@ -2774,8 +2774,11 @@ body {
 
 /* 意味のときの品詞位置調整 */
 .meaning-wrapper .pos-inline {
-    align-self: flex-end;
-    margin-top: 4px;
+    align-self: baseline;
+    margin-top: -2px;
+    margin-bottom: 0;
+    vertical-align: baseline;
+    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 .part-of-speech.verb { background-color: transparent; border-color: #1f2937; color: #1f2937; } /* 黒ボーダー */
@@ -2817,7 +2820,7 @@ body {
 
 .meaning-wrapper {
     display: flex;
-    align-items: flex-end;
+    align-items: baseline;
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
