@@ -151,7 +151,8 @@ function getChartData(period) {
                 dateStr: `${year}-${String(month).padStart(2, '0')}`, 
                 count: monthCount, 
                 label: `${month}月`, 
-                dateLabel: `${year}/${month}` 
+                dateLabel: `${month}`,
+                year: year
             });
         }
     }
@@ -194,7 +195,7 @@ function updateBarChart() {
     barChart.setAttribute('data-period', chartPeriod);
     
     // 各データを表示
-    data.forEach(({ date, dateStr, count, label, dateLabel }) => {
+    data.forEach(({ date, dateStr, count, label, dateLabel, year }, index) => {
         const isToday = chartPeriod === 'week' && dateStr === todayStr;
         const isCurrentMonth = chartPeriod === 'year' && 
             date.getFullYear() === today.getFullYear() && 
@@ -204,6 +205,7 @@ function updateBarChart() {
         // ラベルを決定
         let displayLabel = label;
         let displayDateLabel = dateLabel;
+        let displayYear = '';
         
         if (chartPeriod === 'week') {
             const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
@@ -212,10 +214,20 @@ function updateBarChart() {
             displayLabel = weekday;
             displayDateLabel = `${month}/${day}`;
         } else if (chartPeriod === 'month') {
-            // 月表示では、すべての日付を表示
+            // 月表示では、すべての日付を表示（曜日も表示）
             const dayOfMonth = date.getDate();
-            displayLabel = '';
+            const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
+            displayLabel = weekday;
             displayDateLabel = `${dayOfMonth}`;
+        } else if (chartPeriod === 'year') {
+            // 1年表示では、月を表示
+            const month = date.getMonth() + 1;
+            displayLabel = '';
+            displayDateLabel = `${month}月`;
+            // 1月のときだけ年号を表示
+            if (month === 1 && year) {
+                displayYear = year;
+            }
         }
         
         // バーの高さを計算（最大値に対する割合）
@@ -227,10 +239,11 @@ function updateBarChart() {
         barItem.innerHTML = `
             <div class="bar-value" style="${count === 0 ? 'display: none;' : ''}">${count}</div>
             <div class="bar-wrapper">
-                <div class="bar" style="height: ${heightPercent}%"></div>
+                <div class="bar" style="height: ${heightPercent}%; ${count === 0 ? 'display: none;' : ''}"></div>
             </div>
             ${displayLabel ? `<div class="bar-label">${displayLabel}</div>` : ''}
             ${displayDateLabel ? `<div class="bar-date">${displayDateLabel}</div>` : ''}
+            <div class="bar-year">${displayYear || ''}</div>
         `;
         
         barChart.appendChild(barItem);
@@ -3046,9 +3059,11 @@ function displayCurrentWord() {
         }
     }
     
-    // 英語→日本語モードの場合のみ自動で音声を再生
+    // 英語→日本語モードの場合のみ自動で音声を再生（0.3秒遅延）
     if (!isInputModeActive) {
-        speakWord(word.word, null);
+        setTimeout(() => {
+            speakWord(word.word, null);
+        }, 300);
     }
 }
 

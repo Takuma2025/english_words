@@ -229,7 +229,7 @@ body {
     color: #ffffff;
     margin: 0;
     padding: 8px 12px;
-    background: #0055ca;
+    background: #3182ce;
     border: none;
     border-radius: 8px;
     display: inline-block;
@@ -345,6 +345,18 @@ body {
     align-items: flex-end;
     justify-content: center;
     min-height: 0;
+    position: relative;
+}
+
+.bar-wrapper::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e5e7eb;
+    z-index: 1;
 }
 
 .bar {
@@ -383,6 +395,54 @@ body {
 .bar-item-today .bar-date {
     color: #2563eb;
     font-weight: 700;
+}
+
+.bar-year {
+    font-size: 9px;
+    color: #9ca3af;
+    margin-top: 2px;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+/* 1年表示のスタイル調整 */
+.bar-chart[data-period="year"] .bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bar-chart[data-period="year"] .bar-date {
+    white-space: nowrap;
+    line-height: 1.2;
+    min-height: 14px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 0;
+}
+
+.bar-chart[data-period="year"] .bar-year {
+    font-size: 8px;
+    margin-top: 1px;
+    min-height: 10px;
+    height: 10px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* スマホ向け：1年表示の調整 */
+@media (max-width: 600px) {
+    .bar-chart[data-period="year"] .bar-year {
+        font-size: 7px;
+    }
+    
+    .bar-chart[data-period="year"] .bar-date {
+        min-height: 12px;
+        font-size: 9px;
+    }
 }
 
 /* 1か月表示ではラベルと日付を小さく */
