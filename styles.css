@@ -4262,81 +4262,102 @@ body {
 
 /* 入試情報表のスタイル */
 .exam-info-table-container {
-    margin: 16px 0;
+    margin: 24px 0;
     overflow-x: auto;
 }
 
 .exam-info-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: clamp(10px, 2vw, 12px);
+    font-size: clamp(13px, 3vw, 15px);
     background: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 3px solid #6b7280;
+    border-radius: 8px;
 }
 
 .exam-info-table th {
     background: #0055ca;
     color: #ffffff;
-    padding: 6px 4px;
+    padding: 14px 12px;
     text-align: center;
     font-weight: 700;
     border: 1px solid #003380;
     vertical-align: middle;
-    font-size: clamp(10px, 2vw, 12px);
+    font-size: clamp(14px, 3.2vw, 16px);
+}
+
+.exam-info-table th:first-child {
+    border-left: none;
+}
+
+.exam-info-table th:last-child {
+    border-right: none;
 }
 
 .exam-info-table td {
-    padding: 6px 4px;
+    padding: 14px 12px;
     border: 1px solid #e5e7eb;
     vertical-align: top;
-    font-size: clamp(9px, 1.8vw, 11px);
+    font-size: clamp(13px, 3vw, 15px);
+}
+
+.exam-info-table td:first-child {
+    border-left: none;
+}
+
+.exam-info-table td:last-child {
+    border-right: none;
+}
+
+.exam-info-table thead tr:first-child th {
+    border-top: none;
+}
+
+.exam-info-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .exam-info-table tbody tr:nth-child(even) {
     background: #f9fafb;
 }
 
-.exam-info-table tbody tr:hover {
-    background: #f3f4f6;
-}
-
 .exam-info-table .feature-cell {
     text-align: left;
-    line-height: 1.4;
-    min-width: 120px;
+    line-height: 1.7;
+    min-width: 250px;
 }
 
 .exam-info-table .feature-cell strong {
     color: #0055ca;
     font-weight: 700;
-    font-size: clamp(9px, 1.9vw, 11px);
+    font-size: clamp(13px, 3.1vw, 15px);
 }
 
 .exam-info-table .feature-cell small {
     color: #6b7280;
-    font-size: 0.85em;
+    font-size: 0.9em;
 }
 
 .exam-info-table .time-score-cell {
     text-align: center;
     vertical-align: middle;
     font-weight: 600;
-    min-width: 50px;
-    font-size: clamp(9px, 1.8vw, 11px);
+    min-width: 100px;
+    font-size: clamp(14px, 3.2vw, 16px);
 }
 
 .exam-info-table .time-score-cell small {
     display: block;
-    font-size: 0.8em;
+    font-size: 0.85em;
     color: #6b7280;
     font-weight: 400;
-    margin-top: 2px;
-    line-height: 1.3;
+    margin-top: 4px;
+    line-height: 1.4;
 }
 
 .exam-info-notes {
-    margin-top: 12px;
-    padding: 10px 12px;
+    margin-top: 20px;
+    padding: 16px 20px;
     background: #f0f9ff;
     border-left: 4px solid #0055ca;
     border-radius: 4px;
@@ -4344,13 +4365,13 @@ body {
 
 .exam-info-notes ul {
     margin: 0;
-    padding-left: 18px;
+    padding-left: 24px;
 }
 
 .exam-info-notes li {
-    margin-bottom: 6px;
-    line-height: 1.5;
-    font-size: clamp(10px, 2vw, 12px);
+    margin-bottom: 10px;
+    line-height: 1.7;
+    font-size: clamp(13px, 3vw, 15px);
     color: #374151;
 }
 
@@ -4361,47 +4382,47 @@ body {
 /* スマホ向けの表の調整 */
 @media (max-width: 600px) {
     .exam-info-table-container {
-        margin: 12px 0;
+        margin: 16px 0;
     }
     
     .exam-info-table {
-        font-size: 9px;
+        font-size: 11px;
     }
     
     .exam-info-table th {
-        padding: 5px 3px;
-        font-size: 9px;
+        padding: 10px 8px;
+        font-size: 11px;
     }
     
     .exam-info-table td {
-        padding: 5px 3px;
-        font-size: 8px;
+        padding: 10px 8px;
+        font-size: 10px;
     }
     
     .exam-info-table .feature-cell {
-        min-width: 100px;
-        line-height: 1.3;
+        min-width: 180px;
+        line-height: 1.5;
     }
     
     .exam-info-table .feature-cell strong {
-        font-size: 8px;
+        font-size: 10px;
     }
     
     .exam-info-table .time-score-cell {
-        min-width: 45px;
-        font-size: 8px;
+        min-width: 70px;
+        font-size: 10px;
     }
     
     .exam-info-table .time-score-cell small {
-        font-size: 7px;
+        font-size: 9px;
     }
     
     .exam-info-notes {
-        padding: 8px 10px;
+        padding: 12px 16px;
     }
     
     .exam-info-notes li {
-        font-size: 9px;
-        margin-bottom: 4px;
+        font-size: 11px;
+        margin-bottom: 8px;
     }
 }
