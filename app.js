@@ -35,6 +35,15 @@ let reorderData = []; // 整序英作文データ
 let currentReorderIndex = 0; // 現在の整序英作文のインデックス
 let reorderAnswerSubmitted = false; // 回答が送信済みかどうか
 let reorderSelectedWords = []; // 選択された単語の配列
+let reorderTouchData = { // タッチドラッグ用のデータ
+    draggingElement: null,
+    startX: 0,
+    startY: 0,
+    currentX: 0,
+    currentY: 0,
+    fromBlankIndex: null,
+    word: null
+};
 
 // 学習日を記録する関数（日付と学習量を記録）
 function recordStudyDate() {
@@ -4696,6 +4705,12 @@ function displayCurrentReorderQuestion() {
             blankBox.addEventListener('dragover', handleReorderBlankDragOver);
             blankBox.addEventListener('dragleave', handleReorderBlankDragLeave);
             blankBox.addEventListener('drop', handleReorderBlankDrop);
+            // タッチイベントも追加
+            blankBox.addEventListener('touchmove', (e) => {
+                if (reorderTouchData.draggingElement) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
             answerAreaEl.appendChild(blankBox);
         }
     }
@@ -4714,6 +4729,10 @@ function displayCurrentReorderQuestion() {
             wordBox.dataset.originalIndex = index;
             wordBox.addEventListener('dragstart', handleReorderDragStart);
             wordBox.addEventListener('dragend', handleReorderDragEnd);
+            // タッチイベントを追加
+            wordBox.addEventListener('touchstart', handleReorderTouchStart, { passive: false });
+            wordBox.addEventListener('touchmove', handleReorderTouchMove, { passive: false });
+            wordBox.addEventListener('touchend', handleReorderTouchEnd, { passive: false });
             wordsAreaEl.appendChild(wordBox);
         });
         
@@ -4721,6 +4740,12 @@ function displayCurrentReorderQuestion() {
         wordsAreaEl.addEventListener('dragover', handleReorderWordsAreaDragOver);
         wordsAreaEl.addEventListener('dragleave', handleReorderWordsAreaDragLeave);
         wordsAreaEl.addEventListener('drop', handleReorderWordsAreaDrop);
+        // タッチイベントも追加
+        wordsAreaEl.addEventListener('touchmove', (e) => {
+            if (reorderTouchData.draggingElement) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     }
     
     // 結果表示を非表示
@@ -4835,6 +4860,282 @@ function handleReorderBlankDragLeave(e) {
     e.currentTarget.classList.remove('drag-over');
 }
 
+// タッチ開始（単語ボックス）
+function handleReorderTouchStart(e) {
+    if (!isReorderModeActive) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const element = e.currentTarget;
+    
+    reorderTouchData.draggingElement = element;
+    reorderTouchData.startX = touch.clientX;
+    reorderTouchData.startY = touch.clientY;
+    reorderTouchData.currentX = touch.clientX;
+    reorderTouchData.currentY = touch.clientY;
+    reorderTouchData.word = element.dataset.word;
+    reorderTouchData.fromBlankIndex = element.dataset.blankIndex || null;
+    
+    element.classList.add('dragging');
+    element.style.opacity = '0.5';
+    element.style.position = 'fixed';
+    element.style.zIndex = '10000';
+    element.style.pointerEvents = 'none';
+    
+    // 元の位置を記録
+    const rect = element.getBoundingClientRect();
+    element.dataset.originalX = rect.left;
+    element.dataset.originalY = rect.top;
+    element.style.left = rect.left + 'px';
+    element.style.top = rect.top + 'px';
+}
+
+// タッチ開始（空欄内の単語）
+function handleReorderAnswerTouchStart(e) {
+    if (!isReorderModeActive) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const element = e.currentTarget;
+    
+    reorderTouchData.draggingElement = element;
+    reorderTouchData.startX = touch.clientX;
+    reorderTouchData.startY = touch.clientY;
+    reorderTouchData.currentX = touch.clientX;
+    reorderTouchData.currentY = touch.clientY;
+    reorderTouchData.word = element.dataset.word;
+    reorderTouchData.fromBlankIndex = element.dataset.blankIndex;
+    
+    element.classList.add('dragging');
+    element.style.opacity = '0.5';
+    element.style.position = 'fixed';
+    element.style.zIndex = '10000';
+    element.style.pointerEvents = 'none';
+    
+    // 元の位置を記録
+    const rect = element.getBoundingClientRect();
+    element.dataset.originalX = rect.left;
+    element.dataset.originalY = rect.top;
+    element.style.left = rect.left + 'px';
+    element.style.top = rect.top + 'px';
+}
+
+// タッチ移動
+function handleReorderTouchMove(e) {
+    if (!reorderTouchData.draggingElement) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    
+    reorderTouchData.currentX = touch.clientX;
+    reorderTouchData.currentY = touch.clientY;
+    
+    const element = reorderTouchData.draggingElement;
+    const deltaX = touch.clientX - reorderTouchData.startX;
+    const deltaY = touch.clientY - reorderTouchData.startY;
+    
+    element.style.left = (parseFloat(element.dataset.originalX) + deltaX) + 'px';
+    element.style.top = (parseFloat(element.dataset.originalY) + deltaY) + 'px';
+    
+    // ドロップ先を検出
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (elementBelow) {
+        // 空欄を検出
+        const blankBox = elementBelow.closest('.reorder-blank-box');
+        if (blankBox) {
+            blankBox.classList.add('drag-over');
+            // 他の空欄からdrag-overを削除
+            document.querySelectorAll('.reorder-blank-box').forEach(box => {
+                if (box !== blankBox) {
+                    box.classList.remove('drag-over');
+                }
+            });
+        } else {
+            // 単語エリアを検出
+            const wordsArea = elementBelow.closest('.reorder-words-area');
+            if (wordsArea) {
+                wordsArea.classList.add('drag-over');
+            } else {
+                document.querySelectorAll('.reorder-blank-box, .reorder-words-area').forEach(el => {
+                    el.classList.remove('drag-over');
+                });
+            }
+        }
+    }
+}
+
+// タッチ終了
+function handleReorderTouchEnd(e) {
+    if (!reorderTouchData.draggingElement) return;
+    e.preventDefault();
+    
+    const element = reorderTouchData.draggingElement;
+    const touch = e.changedTouches[0];
+    
+    // ドロップ先を検出
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    // すべてのdrag-overを削除
+    document.querySelectorAll('.reorder-blank-box, .reorder-words-area').forEach(el => {
+        el.classList.remove('drag-over');
+    });
+    
+    let dropped = false;
+    
+    if (elementBelow) {
+        // 空欄にドロップ
+        const blankBox = elementBelow.closest('.reorder-blank-box');
+        if (blankBox) {
+            handleReorderBlankTouchDrop(blankBox, reorderTouchData.word, reorderTouchData.fromBlankIndex);
+            dropped = true;
+        } else {
+            // 単語エリアにドロップ
+            const wordsArea = elementBelow.closest('.reorder-words-area');
+            if (wordsArea && reorderTouchData.fromBlankIndex !== null) {
+                handleReorderWordsAreaTouchDrop(wordsArea, reorderTouchData.word, reorderTouchData.fromBlankIndex);
+                dropped = true;
+            }
+        }
+    }
+    
+    // ドロップされなかった場合は元の位置に戻す
+    if (!dropped) {
+        element.style.left = '';
+        element.style.top = '';
+    }
+    
+    // リセット
+    element.classList.remove('dragging');
+    element.style.opacity = '';
+    element.style.position = '';
+    element.style.zIndex = '';
+    element.style.pointerEvents = '';
+    element.style.left = '';
+    element.style.top = '';
+    delete element.dataset.originalX;
+    delete element.dataset.originalY;
+    
+    reorderTouchData.draggingElement = null;
+    reorderTouchData.startX = 0;
+    reorderTouchData.startY = 0;
+    reorderTouchData.currentX = 0;
+    reorderTouchData.currentY = 0;
+    reorderTouchData.fromBlankIndex = null;
+    reorderTouchData.word = null;
+}
+
+// タッチドロップ（空欄）
+function handleReorderBlankTouchDrop(blankBox, word, fromBlankIndex) {
+    if (!word) return;
+    
+    // 既に単語が入っている場合は、その単語を元の場所に戻す
+    const existingBox = blankBox.querySelector('.reorder-answer-box');
+    if (existingBox) {
+        const existingWord = existingBox.dataset.word;
+        existingBox.remove();
+        // 元の単語ボックスを表示
+        const wordBoxes = document.querySelectorAll('.reorder-word-box');
+        wordBoxes.forEach(box => {
+            if (box.dataset.word === existingWord && box.classList.contains('used')) {
+                box.classList.remove('used');
+                box.style.display = '';
+            }
+        });
+        // 空欄のサイズをリセット
+        adjustBlankBoxSize(blankBox);
+    }
+    
+    // 他の空欄から移動してきた場合は、元の空欄から削除
+    if (fromBlankIndex !== null && fromBlankIndex !== '') {
+        const fromBlankBox = document.querySelector(`.reorder-blank-box[data-blank-index="${fromBlankIndex}"]`);
+        if (fromBlankBox) {
+            const movingBox = fromBlankBox.querySelector('.reorder-answer-box');
+            if (movingBox && movingBox.dataset.word === word) {
+                movingBox.remove();
+                adjustBlankBoxSize(fromBlankBox);
+            }
+        }
+    } else {
+        // 下の単語エリアからドラッグしてきた場合
+        const wordBoxes = document.querySelectorAll('.reorder-word-box');
+        wordBoxes.forEach(box => {
+            if (box.dataset.word === word && !box.classList.contains('used')) {
+                box.classList.add('used');
+                box.style.display = 'none';
+            }
+        });
+    }
+    
+    // 空欄に単語を追加
+    const answerBox = document.createElement('div');
+    answerBox.className = 'reorder-answer-box';
+    answerBox.textContent = word;
+    answerBox.dataset.word = word;
+    answerBox.dataset.blankIndex = blankBox.dataset.blankIndex;
+    answerBox.draggable = true;
+    
+    // ドラッグイベントを設定
+    answerBox.addEventListener('dragstart', handleReorderAnswerDragStart);
+    answerBox.addEventListener('dragend', handleReorderAnswerDragEnd);
+    // タッチイベントを追加
+    answerBox.addEventListener('touchstart', handleReorderAnswerTouchStart, { passive: false });
+    answerBox.addEventListener('touchmove', handleReorderTouchMove, { passive: false });
+    answerBox.addEventListener('touchend', handleReorderTouchEnd, { passive: false });
+    
+    // クリックで削除して元の場所に戻す
+    const handleAnswerBoxClick = (e) => {
+        // ドラッグ中でない場合のみ削除
+        if (e.target.dataset.isDragging === 'true' || reorderTouchData.draggingElement) {
+            return;
+        }
+        e.stopPropagation();
+        const wordToRemove = answerBox.dataset.word;
+        answerBox.remove();
+        const wordBoxes = document.querySelectorAll('.reorder-word-box');
+        wordBoxes.forEach(box => {
+            if (box.dataset.word === wordToRemove && box.classList.contains('used')) {
+                box.classList.remove('used');
+                box.style.display = '';
+            }
+        });
+        updateReorderSelectedWords();
+        // 空欄のサイズをリセット
+        adjustBlankBoxSize(blankBox);
+    };
+    
+    answerBox.addEventListener('click', handleAnswerBoxClick);
+    
+    blankBox.appendChild(answerBox);
+    // 単語の長さに応じて空欄のサイズを調整
+    adjustBlankBoxSize(blankBox, answerBox);
+    
+    // 選択された単語を更新
+    updateReorderSelectedWords();
+}
+
+// タッチドロップ（単語エリア）
+function handleReorderWordsAreaTouchDrop(wordsArea, word, fromBlankIndex) {
+    if (!word || fromBlankIndex === null || fromBlankIndex === '') return;
+    
+    // 元の空欄から削除
+    const fromBlankBox = document.querySelector(`.reorder-blank-box[data-blank-index="${fromBlankIndex}"]`);
+    if (fromBlankBox) {
+        const answerBox = fromBlankBox.querySelector('.reorder-answer-box');
+        if (answerBox && answerBox.dataset.word === word) {
+            answerBox.remove();
+            adjustBlankBoxSize(fromBlankBox);
+        }
+    }
+    
+    // 単語ボックスを表示
+    const wordBoxes = document.querySelectorAll('.reorder-word-box');
+    wordBoxes.forEach(box => {
+        if (box.dataset.word === word && box.classList.contains('used')) {
+            box.classList.remove('used');
+            box.style.display = '';
+        }
+    });
+    
+    updateReorderSelectedWords();
+}
+
 // ドロップ（空欄）
 function handleReorderBlankDrop(e) {
     e.preventDefault();
@@ -4894,11 +5195,15 @@ function handleReorderBlankDrop(e) {
     // ドラッグイベントを設定
     answerBox.addEventListener('dragstart', handleReorderAnswerDragStart);
     answerBox.addEventListener('dragend', handleReorderAnswerDragEnd);
+    // タッチイベントを追加
+    answerBox.addEventListener('touchstart', handleReorderAnswerTouchStart, { passive: false });
+    answerBox.addEventListener('touchmove', handleReorderTouchMove, { passive: false });
+    answerBox.addEventListener('touchend', handleReorderTouchEnd, { passive: false });
     
     // クリックで削除して元の場所に戻す
     const handleAnswerBoxClick = (e) => {
         // ドラッグ中でない場合のみ削除
-        if (e.target.dataset.isDragging === 'true') {
+        if (e.target.dataset.isDragging === 'true' || reorderTouchData.draggingElement) {
             return;
         }
         e.stopPropagation();
@@ -4917,7 +5222,6 @@ function handleReorderBlankDrop(e) {
     };
     
     answerBox.addEventListener('click', handleAnswerBoxClick);
-    answerBox.addEventListener('touchstart', handleAnswerBoxClick, { passive: false });
     
     blankBox.appendChild(answerBox);
     // 単語の長さに応じて空欄のサイズを調整

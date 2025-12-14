@@ -3762,7 +3762,7 @@ body {
 }
 
 .reorder-japanese {
-    font-size: clamp(14px, 3.5vw, 18px);
+    font-size: clamp(18px, 4.5vw, 24px);
     font-weight: 700;
     color: #1f2937;
     line-height: 1.6;
@@ -3895,7 +3895,7 @@ body {
 
 @media (max-width: 480px) {
     .reorder-japanese {
-        font-size: clamp(12px, 3vw, 16px);
+        font-size: clamp(16px, 4vw, 20px);
     }
     
     .reorder-blank-box {
