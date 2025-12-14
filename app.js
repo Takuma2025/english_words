@@ -1059,25 +1059,36 @@ function startCategory(category) {
 }
 
 // 日本語→英語モードで学習を初期化
-function initInputModeLearning(category, words) {
+function initInputModeLearning(category, words, startIndex = 0) {
     selectedCategory = category;
     currentWords = words;
     isInputModeActive = true;
     isSentenceModeActive = false; // 例文モードを無効化
     
+    // 全体の範囲を表示できるように、currentRangeStartは常に0
     currentRangeStart = 0;
     currentRangeEnd = words.length;
-    currentIndex = 0;
+    // currentIndexだけを続きの位置に設定（前の単語に戻れるように）
+    currentIndex = Math.min(startIndex, words.length - 1);
     
     answeredWords.clear();
     correctCount = 0;
     wrongCount = 0;
-    questionStatus = new Array(words.length).fill(null); // 各問題の回答状況を初期化
+    const total = words.length;
+    questionStatus = new Array(total).fill(null); // 各問題の回答状況を初期化
+    
+    // 進捗バーの表示開始位置を現在のインデックスが表示される範囲に設定
+    const relativeIndex = currentIndex - currentRangeStart;
+    // 現在のインデックスが表示される範囲の開始位置を計算（0から始まる相対位置）
+    progressBarStartIndex = Math.max(0, Math.floor(relativeIndex / PROGRESS_BAR_DISPLAY_COUNT) * PROGRESS_BAR_DISPLAY_COUNT);
+    // ただし、totalを超えないようにする
+    progressBarStartIndex = Math.min(progressBarStartIndex, Math.max(0, total - PROGRESS_BAR_DISPLAY_COUNT));
     
     // 前回の回答状況を読み込んで進捗バーに反映
     if (category && category !== '間違い復習' && category !== '復習チェック' && category !== 'チェックした問題') {
         const { correctSet, wrongSet } = loadCategoryWords(category);
         words.forEach((word, index) => {
+            // 全体のインデックスで正解・不正解を確認
             if (wrongSet.has(word.id)) {
                 questionStatus[index] = 'wrong';
             } else if (correctSet.has(word.id)) {
@@ -1122,9 +1133,9 @@ function initInputModeLearning(category, words) {
     
     displayInputMode();
     // 進捗バーのセグメントを強制的に生成
-    const total = currentRangeEnd - currentRangeStart;
     if (total > 0) {
         createProgressSegments(total);
+        updateProgressSegments(); // セグメントの色を更新
     }
     updateStats();
     updateNavState('learning');
@@ -1314,8 +1325,8 @@ function showInputModeMethodSelectionModal(category, categoryWords, hasProgress,
         // 前回の続きから学習するボタン
         const continueCard = createMethodCard('前回の続きから', '前回の続きから学習を再開します', () => {
             closeModal();
-            const remainingWords = categoryWords.slice(savedIndex);
-            initInputModeLearning(category, remainingWords);
+            // 全体の単語を渡し、currentIndexだけを続きの位置に設定（前の単語に戻れるように）
+            initInputModeLearning(category, categoryWords, savedIndex);
         }, 'continue');
         methodList.appendChild(continueCard);
     } else {
@@ -1378,7 +1389,8 @@ function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex
         const relativeIndex = savedIndex - courseStart;
         const continueCard = createMethodCard('前回の続きから', '前回の続きから学習を再開します', () => {
             closeModal();
-            initLearning(category, courseWords, relativeIndex, courseWords.length, savedIndex);
+            // 全体の単語を渡し、currentIndexだけを続きの位置に設定（前の単語に戻れるように）
+            initLearning(category, courseWords, relativeIndex, courseWords.length, courseStart);
         }, 'continue');
         methodList.appendChild(continueCard);
     } else {
@@ -1726,18 +1738,26 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     
     const start = Math.max(0, startIndex || 0);
     const end = typeof rangeEnd === 'number' ? Math.min(rangeEnd, currentWords.length) : currentWords.length;
-    const rangeStart = typeof rangeStartOverride === 'number' ? rangeStartOverride : start;
+    const rangeStart = typeof rangeStartOverride === 'number' ? rangeStartOverride : 0;
 
-    currentRangeStart = rangeStart;
+    // 全体の範囲を表示できるように、currentRangeStartは常に0（前の単語に戻れるように）
+    currentRangeStart = 0;
     currentRangeEnd = end;
-    currentIndex = start;
+    // currentIndexだけを続きの位置に設定
+    currentIndex = rangeStart + start;
     
     answeredWords.clear();
     correctCount = 0;
     wrongCount = 0;
     const total = end - start;
     questionStatus = new Array(total).fill(null); // 各問題の回答状況を初期化
-    progressBarStartIndex = 0; // 進捗バーの表示開始インデックスをリセット
+    
+    // 進捗バーの表示開始位置を現在のインデックスが表示される範囲に設定
+    const relativeIndex = currentIndex - currentRangeStart;
+    // 現在のインデックスが表示される範囲の開始位置を計算（0から始まる相対位置）
+    progressBarStartIndex = Math.max(0, Math.floor(relativeIndex / PROGRESS_BAR_DISPLAY_COUNT) * PROGRESS_BAR_DISPLAY_COUNT);
+    // ただし、totalを超えないようにする
+    progressBarStartIndex = Math.min(progressBarStartIndex, Math.max(0, total - PROGRESS_BAR_DISPLAY_COUNT));
     
     // 前回の回答状況を読み込んで進捗バーに反映
     if (category && category !== '間違い復習' && category !== '復習チェック' && category !== 'チェックした問題') {
@@ -1824,6 +1844,7 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     // 進捗バーのセグメントを強制的に生成
     if (total > 0) {
         createProgressSegments(total);
+        updateProgressSegments(); // セグメントの色を更新
     }
     
     displayCurrentWord();
