@@ -3754,7 +3754,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 20px 16px 0 16px;
+    padding: 20px 0 0 0;
     overflow-y: auto;
     min-height: 0;
     max-height: 100%;
@@ -3767,6 +3767,7 @@ body {
     color: #1f2937;
     line-height: 1.6;
     margin-bottom: 24px;
+    padding: 0 16px;
     text-align: left;
     font-family: "Noto Serif JP", "Shippori Mincho", "しっぽり明朝", "Hina Mincho", "ひな明朝", "Zen Old Mincho", "Sawarabi Mincho", "さわらび明朝", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     letter-spacing: 0.05em;
@@ -3777,6 +3778,7 @@ body {
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 24px;
+    padding: 0 16px;
     align-items: center;
     justify-content: flex-start;
 }
@@ -3833,6 +3835,12 @@ body {
     opacity: 0.5;
 }
 
+.reorder-answer-box.touch-dragging {
+    opacity: 0.9;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+}
+
 .reorder-words-area {
     display: flex;
     flex-wrap: wrap;
@@ -3872,6 +3880,12 @@ body {
     cursor: grabbing;
 }
 
+.reorder-word-box.touch-dragging {
+    opacity: 0.9;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+}
+
 .reorder-word-box.used {
     display: none;
 }
@@ -3889,8 +3903,13 @@ body {
     font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     font-weight: 600;
     margin-bottom: 16px;
-    padding: 0;
+    padding: 0 16px;
     color: #3b82f6;
+}
+
+.reorder-mode .keyboard-actions {
+    padding: 0 2px;
+    margin: 0;
 }
 
 @media (max-width: 480px) {

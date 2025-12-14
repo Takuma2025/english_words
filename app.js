@@ -36,13 +36,13 @@ let currentReorderIndex = 0; // 現在の整序英作文のインデックス
 let reorderAnswerSubmitted = false; // 回答が送信済みかどうか
 let reorderSelectedWords = []; // 選択された単語の配列
 let reorderTouchData = { // タッチドラッグ用のデータ
-    draggingElement: null,
-    startX: 0,
-    startY: 0,
-    currentX: 0,
-    currentY: 0,
+    sourceElement: null, // 元の要素
+    dragClone: null, // ドラッグ中のクローン要素
+    offsetX: 0, // タッチ位置のオフセット（要素内の位置）
+    offsetY: 0,
     fromBlankIndex: null,
-    word: null
+    word: null,
+    isDragging: false
 };
 
 // 学習日を記録する関数（日付と学習量を記録）
@@ -4646,7 +4646,9 @@ function initReorderModeLearning(category) {
         courseSelection.classList.add('hidden');
     }
     elements.mainContent.classList.remove('hidden');
-    elements.headerSubtitle.textContent = category;
+    // サブタイトルから【整序英作文(記号選択)対策】を削除
+    const displayTitle = category.replace('【整序英作文(記号選択)対策】', '').trim();
+    elements.headerSubtitle.textContent = displayTitle;
     
     document.body.classList.add('learning-mode');
 
@@ -4860,102 +4862,79 @@ function handleReorderBlankDragLeave(e) {
     e.currentTarget.classList.remove('drag-over');
 }
 
-// タッチ開始（単語ボックス）
+// タッチ開始（単語ボックスと空欄内の単語）
 function handleReorderTouchStart(e) {
-    if (!isReorderModeActive) return;
+    if (!isReorderModeActive || reorderTouchData.isDragging) return;
     e.preventDefault();
+    
     const touch = e.touches[0];
     const element = e.currentTarget;
     
-    reorderTouchData.draggingElement = element;
-    reorderTouchData.startX = touch.clientX;
-    reorderTouchData.startY = touch.clientY;
-    reorderTouchData.currentX = touch.clientX;
-    reorderTouchData.currentY = touch.clientY;
+    reorderTouchData.sourceElement = element;
     reorderTouchData.word = element.dataset.word;
     reorderTouchData.fromBlankIndex = element.dataset.blankIndex || null;
+    reorderTouchData.isDragging = true;
     
-    element.classList.add('dragging');
-    element.style.opacity = '0.5';
-    element.style.position = 'fixed';
-    element.style.zIndex = '10000';
-    element.style.pointerEvents = 'none';
-    
-    // 元の位置を記録
+    // 元の要素の位置とサイズを取得
     const rect = element.getBoundingClientRect();
-    element.dataset.originalX = rect.left;
-    element.dataset.originalY = rect.top;
-    element.style.left = rect.left + 'px';
-    element.style.top = rect.top + 'px';
+    
+    // クローンを作成
+    const clone = element.cloneNode(true);
+    clone.className = element.className + ' touch-dragging';
+    clone.style.position = 'fixed';
+    clone.style.zIndex = '10000';
+    clone.style.pointerEvents = 'none';
+    clone.style.opacity = '0.9';
+    clone.style.width = rect.width + 'px';
+    clone.style.height = rect.height + 'px';
+    clone.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.3)';
+    // 指の中心に配置
+    clone.style.left = (touch.clientX - rect.width / 2) + 'px';
+    clone.style.top = (touch.clientY - rect.height / 2) + 'px';
+    
+    document.body.appendChild(clone);
+    reorderTouchData.dragClone = clone;
+    
+    // 元の要素を半透明に
+    element.style.opacity = '0.3';
 }
 
 // タッチ開始（空欄内の単語）
 function handleReorderAnswerTouchStart(e) {
-    if (!isReorderModeActive) return;
-    e.preventDefault();
-    const touch = e.touches[0];
-    const element = e.currentTarget;
-    
-    reorderTouchData.draggingElement = element;
-    reorderTouchData.startX = touch.clientX;
-    reorderTouchData.startY = touch.clientY;
-    reorderTouchData.currentX = touch.clientX;
-    reorderTouchData.currentY = touch.clientY;
-    reorderTouchData.word = element.dataset.word;
-    reorderTouchData.fromBlankIndex = element.dataset.blankIndex;
-    
-    element.classList.add('dragging');
-    element.style.opacity = '0.5';
-    element.style.position = 'fixed';
-    element.style.zIndex = '10000';
-    element.style.pointerEvents = 'none';
-    
-    // 元の位置を記録
-    const rect = element.getBoundingClientRect();
-    element.dataset.originalX = rect.left;
-    element.dataset.originalY = rect.top;
-    element.style.left = rect.left + 'px';
-    element.style.top = rect.top + 'px';
+    handleReorderTouchStart(e);
 }
 
 // タッチ移動
 function handleReorderTouchMove(e) {
-    if (!reorderTouchData.draggingElement) return;
+    if (!reorderTouchData.isDragging || !reorderTouchData.dragClone) return;
     e.preventDefault();
+    
     const touch = e.touches[0];
+    const clone = reorderTouchData.dragClone;
+    const rect = clone.getBoundingClientRect();
     
-    reorderTouchData.currentX = touch.clientX;
-    reorderTouchData.currentY = touch.clientY;
+    // 指の中心に配置
+    clone.style.left = (touch.clientX - rect.width / 2) + 'px';
+    clone.style.top = (touch.clientY - rect.height / 2) + 'px';
     
-    const element = reorderTouchData.draggingElement;
-    const deltaX = touch.clientX - reorderTouchData.startX;
-    const deltaY = touch.clientY - reorderTouchData.startY;
-    
-    element.style.left = (parseFloat(element.dataset.originalX) + deltaX) + 'px';
-    element.style.top = (parseFloat(element.dataset.originalY) + deltaY) + 'px';
-    
-    // ドロップ先を検出
+    // ドロップ先を検出（クローンの下の要素を取得）
     const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    // すべてのdrag-overを削除
+    document.querySelectorAll('.reorder-blank-box, .reorder-words-area').forEach(el => {
+        el.classList.remove('drag-over');
+    });
+    
     if (elementBelow) {
         // 空欄を検出
         const blankBox = elementBelow.closest('.reorder-blank-box');
         if (blankBox) {
             blankBox.classList.add('drag-over');
-            // 他の空欄からdrag-overを削除
-            document.querySelectorAll('.reorder-blank-box').forEach(box => {
-                if (box !== blankBox) {
-                    box.classList.remove('drag-over');
-                }
-            });
         } else {
             // 単語エリアを検出
             const wordsArea = elementBelow.closest('.reorder-words-area');
-            if (wordsArea) {
+            if (wordsArea && reorderTouchData.fromBlankIndex !== null) {
                 wordsArea.classList.add('drag-over');
-            } else {
-                document.querySelectorAll('.reorder-blank-box, .reorder-words-area').forEach(el => {
-                    el.classList.remove('drag-over');
-                });
             }
         }
     }
@@ -4963,10 +4942,9 @@ function handleReorderTouchMove(e) {
 
 // タッチ終了
 function handleReorderTouchEnd(e) {
-    if (!reorderTouchData.draggingElement) return;
+    if (!reorderTouchData.isDragging) return;
     e.preventDefault();
     
-    const element = reorderTouchData.draggingElement;
     const touch = e.changedTouches[0];
     
     // ドロップ先を検出
@@ -4995,28 +4973,21 @@ function handleReorderTouchEnd(e) {
         }
     }
     
-    // ドロップされなかった場合は元の位置に戻す
-    if (!dropped) {
-        element.style.left = '';
-        element.style.top = '';
+    // クリーンアップ
+    if (reorderTouchData.dragClone) {
+        reorderTouchData.dragClone.remove();
+        reorderTouchData.dragClone = null;
+    }
+    
+    if (reorderTouchData.sourceElement) {
+        reorderTouchData.sourceElement.style.opacity = '';
+        reorderTouchData.sourceElement = null;
     }
     
     // リセット
-    element.classList.remove('dragging');
-    element.style.opacity = '';
-    element.style.position = '';
-    element.style.zIndex = '';
-    element.style.pointerEvents = '';
-    element.style.left = '';
-    element.style.top = '';
-    delete element.dataset.originalX;
-    delete element.dataset.originalY;
-    
-    reorderTouchData.draggingElement = null;
-    reorderTouchData.startX = 0;
-    reorderTouchData.startY = 0;
-    reorderTouchData.currentX = 0;
-    reorderTouchData.currentY = 0;
+    reorderTouchData.isDragging = false;
+    reorderTouchData.offsetX = 0;
+    reorderTouchData.offsetY = 0;
     reorderTouchData.fromBlankIndex = null;
     reorderTouchData.word = null;
 }
