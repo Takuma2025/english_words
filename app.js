@@ -1610,15 +1610,23 @@ function startWordTimer() {
     
     const wordTimerBar = document.getElementById('wordTimerBar');
     const wordTimerBarFill = document.getElementById('wordTimerBarFill');
+    const wordTimerCountdown = document.getElementById('wordTimerCountdown');
     
-    if (!wordTimerBar || !wordTimerBarFill) return;
+    if (!wordTimerBar || !wordTimerBarFill || !wordTimerCountdown) return;
     
     // バーを表示
     wordTimerBar.classList.remove('hidden');
     
     // バーをリセット
-    wordTimerBarFill.style.width = '100%';
+    const countdownWidth = 44; // 数字表示の最小幅（「2.0秒」）
+    const gap = 8; // gap
+    const padding = 8; // 右のパディング
+    const maxBarWidth = wordTimerBar.offsetWidth - countdownWidth - gap - padding;
+    wordTimerBarFill.style.width = `${maxBarWidth}px`;
     wordTimerBarFill.style.backgroundColor = '#3b82f6';
+    
+    // カウントダウンをリセット
+    wordTimerCountdown.textContent = '2.0秒';
     
     wordStartTime = Date.now();
     let elapsed = 0;
@@ -1629,13 +1637,22 @@ function startWordTimer() {
         const remaining = Math.max(0, TIME_PER_WORD - elapsed);
         const percentage = (remaining / TIME_PER_WORD) * 100;
         
-        wordTimerBarFill.style.width = `${percentage}%`;
+        // バーの幅を更新（数字表示とgapを除いた幅に対するパーセンテージ）
+        const countdownWidth = 44; // 「2.0秒」の幅
+        const gap = 8;
+        const padding = 8;
+        const maxBarWidth = wordTimerBar.offsetWidth - countdownWidth - gap - padding;
+        wordTimerBarFill.style.width = `${(percentage / 100) * maxBarWidth}px`;
+        
+        // カウントダウン表示を更新（2.0から0.0まで）
+        const displayTime = Math.max(0, remaining);
+        wordTimerCountdown.textContent = displayTime.toFixed(1) + '秒';
         
         // 残り時間に応じて色を変更
         if (remaining <= 0.5) {
             wordTimerBarFill.style.backgroundColor = '#ef4444'; // 赤
         } else if (remaining <= 1.0) {
-            wordTimerBarFill.style.backgroundColor = '#f59e0b'; // オレンジ
+            wordTimerBarFill.style.backgroundColor = '#facc15'; // 黄色
         } else {
             wordTimerBarFill.style.backgroundColor = '#3b82f6'; // 青
         }
@@ -1644,6 +1661,7 @@ function startWordTimer() {
         if (remaining <= 0) {
             clearInterval(wordTimerInterval);
             wordTimerInterval = null;
+            wordTimerCountdown.textContent = '0.0秒';
             // 時間切れの場合は自動的に間違いとして扱う（カードがめくられている状態でも）
             if (currentIndex < currentRangeEnd) {
                 markAnswer(false, true); // 第2引数で時間切れを指定
@@ -1831,6 +1849,14 @@ function setupEventListeners() {
     });
     
     // コースタブ切り替え
+    // 大阪府公立入試について知るボタン
+    const examInfoBtn = document.getElementById('examInfoBtn');
+    if (examInfoBtn) {
+        examInfoBtn.addEventListener('click', () => {
+            window.location.href = 'exam-info.html';
+        });
+    }
+    
     const courseTabs = document.querySelectorAll('.course-tab');
     const courseSections = document.querySelectorAll('.course-section');
     if (courseTabs.length && courseSections.length) {
@@ -3056,6 +3082,25 @@ function showWrongWords() {
 // マーカーを適用（重ね塗りなし。黄は上段、赤/青は下段で2本見える）
 function applyMarkers(word) {
     if (!word) return;
+    
+    // タイムアタックモードのときはマーカーを表示しない
+    if (isTimeAttackMode) {
+        // マーカーをクリア
+        if (elements.englishWord) {
+            elements.englishWord.style.backgroundImage = '';
+            elements.englishWord.style.backgroundSize = '';
+            elements.englishWord.style.backgroundRepeat = '';
+            elements.englishWord.style.backgroundPosition = '';
+        }
+        const inputMeaning = document.getElementById('inputMeaning');
+        if (inputMeaning) {
+            inputMeaning.style.backgroundImage = '';
+            inputMeaning.style.backgroundSize = '';
+            inputMeaning.style.backgroundRepeat = '';
+            inputMeaning.style.backgroundPosition = '';
+        }
+        return;
+    }
 
     // start/endは0-1で位置指定。黄は上段、赤/青は下段。間に小さな空白を設ける。
     const band = (color, start = 0.6, end = 0.82) =>
@@ -3644,12 +3689,12 @@ function createProgressSegments(total) {
         const segmentIndex = parseInt(segment.dataset.index);
         segment.classList.remove('correct', 'wrong', 'current');
         
-        // 現在の問題をハイライト
-        if (segmentIndex === currentQuestionIndex) {
+        // 現在の問題をハイライト（タイムアタックモードのときは表示しない）
+        if (!isTimeAttackMode && segmentIndex === currentQuestionIndex) {
             segment.classList.add('current');
         }
         
-        // 回答状況に応じて色を設定
+        // 回答状況に応じて色を設定（タイムアタックモードでも色をつける）
         if (questionStatus[segmentIndex] === 'correct') {
             segment.classList.add('correct');
         } else if (questionStatus[segmentIndex] === 'wrong') {
@@ -3686,12 +3731,12 @@ function updateProgressSegments() {
         const segmentIndex = parseInt(segment.dataset.index);
         segment.classList.remove('correct', 'wrong', 'current');
         
-        // 現在の問題をハイライト
-        if (segmentIndex === currentQuestionIndex) {
+        // 現在の問題をハイライト（タイムアタックモードのときは表示しない）
+        if (!isTimeAttackMode && segmentIndex === currentQuestionIndex) {
             segment.classList.add('current');
         }
         
-        // 回答状況に応じて色を設定
+        // 回答状況に応じて色を設定（タイムアタックモードでも色をつける）
         if (questionStatus[segmentIndex] === 'correct') {
             segment.classList.add('correct');
         } else if (questionStatus[segmentIndex] === 'wrong') {

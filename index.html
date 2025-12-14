@@ -115,6 +115,14 @@
                         </div>
                     </div>
                 </div>
+                <button class="exam-info-btn" id="examInfoBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>大阪府公立入試について知る</span>
+                </button>
                 <div class="course-tabs" id="courseTabs">
                     <button class="course-tab active" data-target="courseMasterSection">英単語マスターコース</button>
                     <button class="course-tab" data-target="courseScoreSection">得点力アップコース</button>
@@ -398,6 +406,7 @@
                     <div class="word-card" id="wordCard">
                         <!-- 単語あたりの時間プログレスバー（タイムアタックモード時のみ） -->
                         <div class="word-timer-bar hidden" id="wordTimerBar">
+                            <span class="word-timer-countdown" id="wordTimerCountdown">2.0秒</span>
                             <div class="word-timer-bar-fill" id="wordTimerBarFill"></div>
                         </div>
                         <div class="card-inner" id="cardInner">
