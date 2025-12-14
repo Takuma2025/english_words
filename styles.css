@@ -835,7 +835,7 @@ body {
 .exam-info-btn {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start; /* 左詰め */
     gap: 8px;
     width: 100%;
     padding: 12px 16px;
@@ -878,7 +878,9 @@ body {
     object-fit: contain;
     pointer-events: none;
     z-index: 1;
-    filter: drop-shadow(0 -3px 6px rgba(0, 0, 0, 0.25)); /* 上側に影（下側の影は画像の下がボタンの下端に合っているので見えない） */
+    border: 2px solid #9ca3af; /* グレーボーダー */
+    border-bottom: none; /* 下のボーダーはなし */
+    border-radius: 8px 8px 0 0; /* 上の角だけ丸く */
 }
 
 .course-tabs {
