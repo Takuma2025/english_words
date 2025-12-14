@@ -1338,9 +1338,9 @@ function showInputModeMethodSelectionModal(category, categoryWords, hasProgress,
         methodList.appendChild(startCard);
     }
 
-    // 間違えた問題のみ学習するボタン（間違いがある場合のみ）
+    // まだ覚えていない問題のみ学習するボタン（間違いがある場合のみ）
     if (wrongWordsInCategory.length > 0) {
-        const wrongCard = createMethodCard('間違えた問題のみ', `間違えた単語${wrongWordsInCategory.length}問だけを復習します`, () => {
+        const wrongCard = createMethodCard('まだ覚えていない問題のみ', `まだ覚えていない単語${wrongWordsInCategory.length}問だけを復習します`, () => {
             closeModal();
             initInputModeLearning('間違い復習', wrongWordsInCategory);
         }, 'wrong');
@@ -1402,9 +1402,9 @@ function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex
         methodList.appendChild(startCard);
     }
 
-    // 間違えた問題のみ学習するボタン（間違いがある場合のみ）
+    // まだ覚えていない単語のみ学習するボタン（間違いがある場合のみ）
     if (wrongWordsInCourse.length > 0) {
-        const wrongCard = createMethodCard('間違えた問題のみ', `間違えた単語${wrongWordsInCourse.length}問だけを復習します`, () => {
+        const wrongCard = createMethodCard('まだ覚えていない単語のみ', `まだ覚えていない単語${wrongWordsInCourse.length}問だけを復習します`, () => {
             closeModal();
             initLearning('間違い復習', wrongWordsInCourse, 0, wrongWordsInCourse.length, 0);
         }, 'wrong');
@@ -2005,7 +2005,9 @@ function setupEventListeners() {
     // 正解・不正解・完璧ボタン
     elements.correctBtn.addEventListener('click', () => markAnswer(true));
     elements.wrongBtn.addEventListener('click', () => markAnswer(false));
-    elements.masteredBtn.addEventListener('click', () => markMastered());
+    if (elements.masteredBtn) {
+        elements.masteredBtn.addEventListener('click', () => markMastered());
+    }
     
     // ホームボタン
     if (elements.homeBtn) {

@@ -839,6 +839,10 @@ body {
     width: fit-content;
 }
 
+.course-section-title:first-child {
+    margin-top: 0;
+}
+
 .exam-info-btn {
     display: flex;
     align-items: center;
@@ -1770,19 +1774,19 @@ body {
 
 .progress-segment.current {
     background: rgba(0, 0, 0, 0.1);
-    border: 3px solid #1e3a8a;
+    border: 2px solid #1e3a8a;
     box-sizing: border-box;
 }
 
 .progress-segment.current.correct {
     background: #3b82f6;
-    border: 3px solid #1e3a8a;
+    border: 2px solid #1e3a8a;
     box-sizing: border-box;
 }
 
 .progress-segment.current.wrong {
     background: #ef4444;
-    border: 3px solid #1e3a8a;
+    border: 2px solid #1e3a8a;
     box-sizing: border-box;
 }
 
@@ -4278,12 +4282,24 @@ body {
     margin: 20px 0;
 }
 
+.exam-info-image-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.exam-info-image-label {
+    font-size: clamp(14px, 3vw, 16px);
+    font-weight: 700;
+    color: #1f2937;
+    text-align: left;
+}
+
 .exam-info-image {
     width: 100%;
     max-width: 100%;
     height: auto;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .exam-tabs {
