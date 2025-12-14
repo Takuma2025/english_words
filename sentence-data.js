@@ -11,7 +11,7 @@ const sentenceMemorizationData = [
             { index: 3, word: 'other' },
             { index: 4, word: 'river' }
         ],
-        hint: 'ヒント：\n1. l_____ (6文字)\n2. t___ (4文字)\n3. a__ (3文字)\n4. o____ (5文字)\n5. r____ (5文字)'
+        hint: '「ほかのどの～よりも...」は、〈 比較級 than any other 単数形の名詞 〉でしたね。'
     },
     // 最上級の文
     {

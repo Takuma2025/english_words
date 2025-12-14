@@ -4107,8 +4107,13 @@ function setupSentenceKeyboard() {
     const keyboard = document.getElementById('sentenceKeyboard');
     if (!keyboard) return;
     
+    // 既存のイベントリスナーを削除するために、キーボードをクローンして置き換える
+    const keyboardClone = keyboard.cloneNode(true);
+    keyboard.parentNode.replaceChild(keyboardClone, keyboard);
+    const newKeyboard = document.getElementById('sentenceKeyboard');
+    
     // キーボードキーのイベント
-    keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+    newKeyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
         const letter = key.dataset.key;
         
         if (letter === ' ') {
@@ -4120,15 +4125,13 @@ function setupSentenceKeyboard() {
             key.addEventListener('touchstart', handleSpace, { passive: false });
             key.addEventListener('click', handleSpace);
         } else {
-            key.addEventListener('touchstart', (e) => {
+            const handleLetter = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 insertSentenceLetter(letter);
-            }, { passive: false });
-            key.addEventListener('click', (e) => {
-                e.preventDefault();
-                insertSentenceLetter(letter);
-            });
+            };
+            key.addEventListener('touchstart', handleLetter, { passive: false });
+            key.addEventListener('click', handleLetter);
         }
     });
     
