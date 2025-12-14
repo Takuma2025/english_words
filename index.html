@@ -604,6 +604,31 @@
                         </div>
                     </div>
                     
+                    <!-- 整序英作文モード -->
+                    <div class="reorder-mode hidden" id="reorderMode">
+                        <!-- 日本語表示 -->
+                        <div class="reorder-japanese" id="reorderJapanese">教室では静かにしてください。</div>
+                        
+                        <!-- 解答エリア（空欄） -->
+                        <div class="reorder-answer-area" id="reorderAnswerArea">
+                            <!-- ドラッグされた単語がここに配置される -->
+                        </div>
+                        
+                        <!-- 単語選択エリア（並び替え用の単語） -->
+                        <div class="reorder-words-area" id="reorderWordsArea">
+                            <!-- 動的に生成 -->
+                        </div>
+                        
+                        <!-- 解答結果表示 -->
+                        <div class="reorder-correct-answer hidden" id="reorderCorrectAnswer"></div>
+                        
+                        <!-- 解答ボタン -->
+                        <div class="keyboard-actions">
+                            <button class="keyboard-action-btn" id="reorderResetBtn">パス</button>
+                            <button class="keyboard-action-btn keyboard-action-btn-primary" id="reorderSubmitBtn">解答</button>
+                        </div>
+                    </div>
+                    
                     <div class="action-hint" id="cardHint">
                         <button class="hint-btn hint-left" id="correctBtn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
@@ -659,6 +684,7 @@
     <script src="data.js"></script>
     <script src="elementary_words.js"></script>
     <script src="sentence-data.js"></script>
+    <script src="reorder-questions.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

@@ -96,9 +96,9 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 0;
+    z-index: 9999;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.3s ease;
     background-color: transparent;
 }
 
@@ -107,11 +107,11 @@ body {
 }
 
 .feedback-overlay.correct {
-    background-color: rgba(59, 130, 246, 0.25); /* 薄い青 */
+    background-color: rgba(59, 130, 246, 0.4); /* 青 */
 }
 
 .feedback-overlay.wrong {
-    background-color: rgba(239, 68, 68, 0.25); /* 薄い赤 */
+    background-color: rgba(239, 68, 68, 0.4); /* 赤 */
 }
 
 .feedback-overlay.mastered {
@@ -3746,5 +3746,179 @@ body {
         height: 36px;
         padding: 3px 6px;
         margin: 4px 2px;
+    }
+}
+
+/* 整序英作文モード */
+.reorder-mode {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px 0 16px;
+    overflow-y: auto;
+    min-height: 0;
+    max-height: 100%;
+    box-sizing: border-box;
+}
+
+.reorder-japanese {
+    font-size: clamp(14px, 3.5vw, 18px);
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    text-align: left;
+    font-family: "Noto Serif JP", "Shippori Mincho", "しっぽり明朝", "Hina Mincho", "ひな明朝", "Zen Old Mincho", "Sawarabi Mincho", "さわらび明朝", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    letter-spacing: 0.05em;
+}
+
+.reorder-answer-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.reorder-blank-box {
+    position: relative;
+    width: auto;
+    min-width: 60px;
+    min-height: 28px;
+    padding: 3px 8px;
+    background: #ffffff;
+    border: 0.5px solid #000000;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.reorder-blank-box.drag-over {
+    background: #fffc42;
+    border-color: #3b82f6;
+    border-width: 1px;
+}
+
+.reorder-answer-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 8px;
+    background: #ffffff;
+    color: #1f2937;
+    border: 0.5px solid #000000;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    z-index: 2;
+    white-space: nowrap;
+    pointer-events: auto;
+}
+
+.reorder-answer-box:hover {
+    background: #f3f4f6;
+}
+
+.reorder-answer-box.dragging {
+    opacity: 0.5;
+}
+
+.reorder-words-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px;
+    transition: all 0.2s;
+}
+
+.reorder-words-area.drag-over {
+    background: rgba(255, 252, 66, 0.2);
+}
+
+.reorder-word-box {
+    display: inline-flex;
+    align-items: center;
+    height: auto;
+    padding: 6px 12px;
+    background: #ffffff;
+    color: #1f2937;
+    border: 0.5px solid #000000;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    cursor: grab;
+    transition: all 0.2s;
+    user-select: none;
+    line-height: 1.2;
+}
+
+.reorder-word-box:hover:not(.used) {
+    background: #f3f4f6;
+}
+
+.reorder-word-box.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.reorder-word-box.used {
+    display: none;
+}
+
+.reorder-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+
+.reorder-correct-answer {
+    font-size: 20px;
+    text-align: left;
+    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding: 0;
+    color: #3b82f6;
+}
+
+@media (max-width: 480px) {
+    .reorder-japanese {
+        font-size: clamp(12px, 3vw, 16px);
+    }
+    
+    .reorder-blank-box {
+        min-width: 50px;
+        min-height: 26px;
+        padding: 2px 6px;
+    }
+    
+    .reorder-answer-box {
+        padding: 2px 6px;
+        font-size: 15px;
+    }
+    
+    .reorder-word-box {
+        font-size: 15px;
+        padding: 5px 10px;
+    }
+    
+    .reorder-correct-answer {
+        font-size: 18px;
+    }
+    
+    .reorder-words-area {
+        padding: 12px;
     }
 }
