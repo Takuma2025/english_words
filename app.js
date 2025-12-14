@@ -3956,6 +3956,23 @@ function initSentenceModeLearning(category) {
     updateStats();
     updateNavState('learning');
     setupSentenceKeyboard();
+    
+    // ボタンの状態をリセット
+    resetSentenceButtons();
+}
+
+// 例文モードのボタンをリセット
+function resetSentenceButtons() {
+    const decideBtn = document.getElementById('sentenceKeyboardDecide');
+    const passBtn = document.getElementById('sentenceKeyboardPass');
+    
+    if (decideBtn) {
+        decideBtn.textContent = '解答';
+    }
+    
+    if (passBtn) {
+        passBtn.style.display = '';
+    }
 }
 
 // 現在の例文を表示
@@ -3968,7 +3985,20 @@ function displayCurrentSentence() {
     const sentence = sentenceData[currentSentenceIndex];
     sentenceAnswerSubmitted = false;
     currentSelectedBlankIndex = -1; // 選択状態をリセット
-    currentSelectedBlankIndex = -1; // 選択状態をリセット
+    
+    // ヒントを非表示にリセット
+    const hintContent = document.getElementById('sentenceHintContent');
+    const hintBtn = document.getElementById('sentenceHintBtn');
+    if (hintContent) {
+        hintContent.classList.add('hidden');
+    }
+    // 矢印を▶にリセット
+    if (hintBtn) {
+        const arrowElement = hintBtn.querySelector('.hint-arrow');
+        if (arrowElement) {
+            arrowElement.textContent = '▶';
+        }
+    }
     
     // 日本語訳を表示
     const japaneseEl = document.getElementById('sentenceJapanese');
@@ -4055,6 +4085,9 @@ function displayCurrentSentence() {
     if (typeof updateProgressSegments === 'function') {
         updateProgressSegments();
     }
+    
+    // ボタンの状態をリセット
+    resetSentenceButtons();
 }
 
 // 例文モード用のキーボード設定
@@ -4133,6 +4166,18 @@ function setupSentenceKeyboard() {
         };
         decideBtn.addEventListener('touchstart', handleDecide, { passive: false });
         decideBtn.addEventListener('click', handleDecide);
+    }
+    
+    // ヒントボタン
+    const hintBtn = document.getElementById('sentenceHintBtn');
+    if (hintBtn) {
+        const handleHint = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSentenceHint();
+        };
+        hintBtn.addEventListener('touchstart', handleHint, { passive: false });
+        hintBtn.addEventListener('click', handleHint);
     }
 }
 
@@ -4262,11 +4307,20 @@ function handleSentencePass() {
     if (typeof updateProgressSegments === 'function') {
         updateProgressSegments();
     }
+    
+    // 「次へ」ボタンを表示
+    showSentenceNextButton();
 }
 
 // 例文モードで解答
 function handleSentenceDecide() {
-    if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
+    if (!isSentenceModeActive) return;
+    
+    // 既に解答済みの場合は次へ進む
+    if (sentenceAnswerSubmitted) {
+        goToNextSentence();
+        return;
+    }
     
     const sentence = sentenceData[currentSentenceIndex];
     let isCorrect = true;
@@ -4295,6 +4349,79 @@ function handleSentenceDecide() {
     updateStats();
     if (typeof updateProgressSegments === 'function') {
         updateProgressSegments();
+    }
+    
+    // 「次へ」ボタンを表示
+    showSentenceNextButton();
+}
+
+// 例文モードで次の問題に進む
+function goToNextSentence() {
+    if (currentSentenceIndex < sentenceData.length - 1) {
+        currentSentenceIndex++;
+        currentIndex = currentSentenceIndex;
+        displayCurrentSentence();
+    } else {
+        // 最後の問題の場合は完了画面を表示
+        showCompletion();
+    }
+}
+
+// 例文モードで「次へ」ボタンを表示
+function showSentenceNextButton() {
+    const decideBtn = document.getElementById('sentenceKeyboardDecide');
+    const passBtn = document.getElementById('sentenceKeyboardPass');
+    
+    if (decideBtn) {
+        decideBtn.textContent = '次へ';
+    }
+    
+    if (passBtn) {
+        passBtn.style.display = 'none';
+    }
+}
+
+// 例文モードでヒントを表示/非表示
+function toggleSentenceHint() {
+    const hintContent = document.getElementById('sentenceHintContent');
+    const hintBtn = document.getElementById('sentenceHintBtn');
+    if (!hintContent || !hintBtn) return;
+    
+    const arrowElement = hintBtn.querySelector('.hint-arrow');
+    
+    if (hintContent.classList.contains('hidden')) {
+        // ヒントを表示
+        const sentence = sentenceData[currentSentenceIndex];
+        if (!sentence) return;
+        
+        // データからヒントを取得
+        if (sentence.hint) {
+            hintContent.textContent = sentence.hint;
+        } else {
+            // ヒントがデータにない場合は動的に生成（フォールバック）
+            let hintText = 'ヒント：\n';
+            sentence.blanks.forEach((blank, index) => {
+                if (blank.word && blank.word.length > 0) {
+                    const firstLetter = blank.word[0];
+                    const remainingLength = blank.word.length - 1;
+                    hintText += `${index + 1}. ${firstLetter}${'_'.repeat(remainingLength)} (${blank.word.length}文字)\n`;
+                }
+            });
+            hintContent.textContent = hintText.trim();
+        }
+        
+        hintContent.classList.remove('hidden');
+        // 矢印を▼に変更
+        if (arrowElement) {
+            arrowElement.textContent = '▼';
+        }
+    } else {
+        // ヒントを非表示
+        hintContent.classList.add('hidden');
+        // 矢印を▶に変更
+        if (arrowElement) {
+            arrowElement.textContent = '▶';
+        }
     }
 }
 

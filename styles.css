@@ -3671,6 +3671,48 @@ body {
     background: #ffffff;
 }
 
+/* ヒントセクション */
+.sentence-hint-section {
+    padding: 0 16px;
+    margin-bottom: 24px;
+}
+
+.sentence-hint-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background-color: #4b5563;
+    border: none;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sentence-hint-btn:hover {
+    background-color: #374151;
+}
+
+.sentence-hint-btn:active {
+    background-color: #1f2937;
+}
+
+.sentence-hint-content {
+    margin-top: 12px;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #374151;
+}
+
+.sentence-hint-content.hidden {
+    display: none;
+}
+
 /* 例文モード用の仮想キーボード */
 .sentence-mode .virtual-keyboard {
     margin-top: auto;
@@ -3704,6 +3746,6 @@ body {
         min-height: 36px;
         height: 36px;
         padding: 3px 6px;
-        margin: 0 2px;
+        margin: 4px 2px;
     }
 }
