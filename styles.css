@@ -1794,7 +1794,7 @@ body {
         font-family: "UD Digi Kyokasho", "UDデジタル教科書体", "Yu Kyokasho", "游教科書体", "Kokoro", "こころ", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     }
     .input-meaning {
-        font-size: clamp(16px, 4vw, 22px);
+        font-size: clamp(20px, 5vw, 26px);
         line-height: 1.2;
         font-weight: 700;
         font-family: "UD Digi Kyokasho", "UDデジタル教科書体", "Yu Kyokasho", "游教科書体", "Kokoro", "こころ", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
@@ -1867,7 +1867,7 @@ body {
         font-family: "UD Digi Kyokasho", "UDデジタル教科書体", "Yu Kyokasho", "游教科書体", "Kokoro", "こころ", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     }
     .input-meaning {
-        font-size: clamp(14px, 3.5vw, 20px);
+        font-size: clamp(18px, 4.5vw, 24px);
         line-height: 1.2;
         font-weight: 700;
         font-family: "UD Digi Kyokasho", "UDデジタル教科書体", "Yu Kyokasho", "游教科書体", "Kokoro", "こころ", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
@@ -1978,7 +1978,7 @@ body {
 }
 
 .input-meaning {
-    font-size: clamp(18px, 4.5vw, 24px);
+    font-size: clamp(22px, 5.5vw, 28px);
     font-weight: 700;
     color: #1f2937;
     line-height: 1.4;
@@ -2404,6 +2404,10 @@ body {
     .keyboard-actions {
         gap: 2px; /* 最小限の間隔 */
         padding: 0; /* パディングを削除 */
+    }
+    
+    .reorder-mode .keyboard-actions {
+        gap: 12px;
     }
 }
 
@@ -3790,7 +3794,7 @@ body {
     min-height: 28px;
     padding: 3px 8px;
     background: #ffffff;
-    border: 0.5px solid #000000;
+    border: 1px solid #000000;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -3800,7 +3804,7 @@ body {
 .reorder-blank-box.drag-over {
     background: #fffc42;
     border-color: #3b82f6;
-    border-width: 1px;
+    border-width: 2px;
 }
 
 .reorder-answer-box {
@@ -3815,7 +3819,7 @@ body {
     padding: 3px 8px;
     background: #ffffff;
     color: #1f2937;
-    border: 0.5px solid #000000;
+    border: 1px solid #000000;
     font-size: 17px;
     font-weight: 600;
     font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
@@ -3861,7 +3865,7 @@ body {
     padding: 6px 12px;
     background: #ffffff;
     color: #1f2937;
-    border: 0.5px solid #000000;
+    border: 1px solid #000000;
     font-size: 17px;
     font-weight: 600;
     font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
@@ -3910,6 +3914,7 @@ body {
 .reorder-mode .keyboard-actions {
     padding: 0 2px;
     margin: 0;
+    gap: 12px;
 }
 
 @media (max-width: 480px) {

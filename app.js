@@ -42,7 +42,10 @@ let reorderTouchData = { // タッチドラッグ用のデータ
     offsetY: 0,
     fromBlankIndex: null,
     word: null,
-    isDragging: false
+    isDragging: false,
+    cloneWidth: 0, // クローンの幅（パフォーマンス最適化用）
+    cloneHeight: 0, // クローンの高さ（パフォーマンス最適化用）
+    rafId: null // requestAnimationFrameのID
 };
 
 // 学習日を記録する関数（日付と学習量を記録）
@@ -4878,6 +4881,10 @@ function handleReorderTouchStart(e) {
     // 元の要素の位置とサイズを取得
     const rect = element.getBoundingClientRect();
     
+    // クローンのサイズを保存（パフォーマンス最適化）
+    reorderTouchData.cloneWidth = rect.width;
+    reorderTouchData.cloneHeight = rect.height;
+    
     // クローンを作成
     const clone = element.cloneNode(true);
     clone.className = element.className + ' touch-dragging';
@@ -4888,9 +4895,10 @@ function handleReorderTouchStart(e) {
     clone.style.width = rect.width + 'px';
     clone.style.height = rect.height + 'px';
     clone.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.3)';
-    // 指の中心に配置
-    clone.style.left = (touch.clientX - rect.width / 2) + 'px';
-    clone.style.top = (touch.clientY - rect.height / 2) + 'px';
+    clone.style.left = '0';
+    clone.style.top = '0';
+    clone.style.transform = 'translate(' + (touch.clientX - rect.width / 2) + 'px, ' + (touch.clientY - rect.height / 2) + 'px)';
+    clone.style.willChange = 'transform'; // パフォーマンス最適化
     
     document.body.appendChild(clone);
     reorderTouchData.dragClone = clone;
@@ -4911,33 +4919,47 @@ function handleReorderTouchMove(e) {
     
     const touch = e.touches[0];
     const clone = reorderTouchData.dragClone;
-    const rect = clone.getBoundingClientRect();
     
-    // 指の中心に配置
-    clone.style.left = (touch.clientX - rect.width / 2) + 'px';
-    clone.style.top = (touch.clientY - rect.height / 2) + 'px';
+    // キャンセル済みのrequestAnimationFrameがあればキャンセル
+    if (reorderTouchData.rafId !== null) {
+        cancelAnimationFrame(reorderTouchData.rafId);
+    }
     
-    // ドロップ先を検出（クローンの下の要素を取得）
-    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-    
-    // すべてのdrag-overを削除
-    document.querySelectorAll('.reorder-blank-box, .reorder-words-area').forEach(el => {
-        el.classList.remove('drag-over');
-    });
-    
-    if (elementBelow) {
-        // 空欄を検出
-        const blankBox = elementBelow.closest('.reorder-blank-box');
-        if (blankBox) {
-            blankBox.classList.add('drag-over');
-        } else {
-            // 単語エリアを検出
-            const wordsArea = elementBelow.closest('.reorder-words-area');
-            if (wordsArea && reorderTouchData.fromBlankIndex !== null) {
-                wordsArea.classList.add('drag-over');
+    // requestAnimationFrameを使ってスムーズに更新
+    reorderTouchData.rafId = requestAnimationFrame(() => {
+        // 指の中心に配置（transformを使用してパフォーマンス向上）
+        const x = touch.clientX - reorderTouchData.cloneWidth / 2;
+        const y = touch.clientY - reorderTouchData.cloneHeight / 2;
+        clone.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+        
+        // ドロップ先を検出（クローンの下の要素を取得）
+        // クローンを一時的に非表示にして、下の要素を正確に取得
+        const originalDisplay = clone.style.display;
+        clone.style.display = 'none';
+        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        clone.style.display = originalDisplay;
+        
+        // すべてのdrag-overを削除
+        document.querySelectorAll('.reorder-blank-box, .reorder-words-area').forEach(el => {
+            el.classList.remove('drag-over');
+        });
+        
+        if (elementBelow) {
+            // 空欄を検出
+            const blankBox = elementBelow.closest('.reorder-blank-box');
+            if (blankBox) {
+                blankBox.classList.add('drag-over');
+            } else {
+                // 単語エリアを検出
+                const wordsArea = elementBelow.closest('.reorder-words-area');
+                if (wordsArea && reorderTouchData.fromBlankIndex !== null) {
+                    wordsArea.classList.add('drag-over');
+                }
             }
         }
-    }
+        
+        reorderTouchData.rafId = null;
+    });
 }
 
 // タッチ終了
@@ -4945,30 +4967,41 @@ function handleReorderTouchEnd(e) {
     if (!reorderTouchData.isDragging) return;
     e.preventDefault();
     
+    // 進行中のrequestAnimationFrameをキャンセル
+    if (reorderTouchData.rafId !== null) {
+        cancelAnimationFrame(reorderTouchData.rafId);
+        reorderTouchData.rafId = null;
+    }
+    
     const touch = e.changedTouches[0];
     
-    // ドロップ先を検出
-    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-    
-    // すべてのdrag-overを削除
-    document.querySelectorAll('.reorder-blank-box, .reorder-words-area').forEach(el => {
-        el.classList.remove('drag-over');
-    });
-    
-    let dropped = false;
-    
-    if (elementBelow) {
-        // 空欄にドロップ
-        const blankBox = elementBelow.closest('.reorder-blank-box');
-        if (blankBox) {
-            handleReorderBlankTouchDrop(blankBox, reorderTouchData.word, reorderTouchData.fromBlankIndex);
-            dropped = true;
-        } else {
-            // 単語エリアにドロップ
-            const wordsArea = elementBelow.closest('.reorder-words-area');
-            if (wordsArea && reorderTouchData.fromBlankIndex !== null) {
-                handleReorderWordsAreaTouchDrop(wordsArea, reorderTouchData.word, reorderTouchData.fromBlankIndex);
+    // クローンを一時的に非表示にして、下の要素を正確に取得
+    if (reorderTouchData.dragClone) {
+        const originalDisplay = reorderTouchData.dragClone.style.display;
+        reorderTouchData.dragClone.style.display = 'none';
+        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        reorderTouchData.dragClone.style.display = originalDisplay;
+        
+        // すべてのdrag-overを削除
+        document.querySelectorAll('.reorder-blank-box, .reorder-words-area').forEach(el => {
+            el.classList.remove('drag-over');
+        });
+        
+        let dropped = false;
+        
+        if (elementBelow) {
+            // 空欄にドロップ
+            const blankBox = elementBelow.closest('.reorder-blank-box');
+            if (blankBox) {
+                handleReorderBlankTouchDrop(blankBox, reorderTouchData.word, reorderTouchData.fromBlankIndex);
                 dropped = true;
+            } else {
+                // 単語エリアにドロップ
+                const wordsArea = elementBelow.closest('.reorder-words-area');
+                if (wordsArea && reorderTouchData.fromBlankIndex !== null) {
+                    handleReorderWordsAreaTouchDrop(wordsArea, reorderTouchData.word, reorderTouchData.fromBlankIndex);
+                    dropped = true;
+                }
             }
         }
     }
@@ -4990,6 +5023,9 @@ function handleReorderTouchEnd(e) {
     reorderTouchData.offsetY = 0;
     reorderTouchData.fromBlankIndex = null;
     reorderTouchData.word = null;
+    reorderTouchData.cloneWidth = 0;
+    reorderTouchData.cloneHeight = 0;
+    reorderTouchData.rafId = null;
 }
 
 // タッチドロップ（空欄）
