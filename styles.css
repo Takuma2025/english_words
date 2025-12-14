@@ -1315,6 +1315,7 @@ body {
     padding-top: 0;
     width: 100%;
     flex-shrink: 0;
+    align-self: flex-start; /* 上揃え */
 }
 
 /* タイムアタックモード時は要素間隔を詰める */
@@ -1733,8 +1734,9 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    align-items: stretch;
     position: relative;
-    padding: 60px 16px 20px 16px; /* 上に余白、下のパディングを小さく */
+    padding: 0 16px 20px 16px; /* 上のパディングを削除（進捗バーを上揃え） */
     overflow-y: auto;
     min-height: 0;
 }
@@ -1758,13 +1760,15 @@ body {
     box-sizing: border-box;
     perspective: 1200px;
     transform-style: preserve-3d;
+    justify-content: flex-start; /* 上揃え */
 }
 
 /* 入力モード内の仮想キーボードを下部に固定 */
 .input-mode .virtual-keyboard {
     flex-shrink: 0;
-    margin-top: 0;
+    margin-top: auto; /* 下揃え */
     padding-top: 0;
+    margin-bottom: 0;
 }
 
 /* スマホ向け：キーボードを端っこまで使えるように */
@@ -2408,6 +2412,7 @@ body {
     
     .reorder-mode .keyboard-actions {
         gap: 12px;
+        margin-top: auto; /* 下揃え */
     }
 }
 
@@ -3763,6 +3768,7 @@ body {
     min-height: 0;
     max-height: 100%;
     box-sizing: border-box;
+    justify-content: flex-start; /* 上揃え */
 }
 
 .reorder-japanese {
@@ -3914,6 +3920,7 @@ body {
 .reorder-mode .keyboard-actions {
     padding: 0 2px;
     margin: 0;
+    margin-top: auto; /* 下揃え */
     gap: 12px;
 }
 
