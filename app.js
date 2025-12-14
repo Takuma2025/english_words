@@ -1309,41 +1309,40 @@ function showInputModeMethodSelectionModal(category, categoryWords, hasProgress,
     const methodList = document.createElement('div');
     methodList.className = 'method-selection-list';
     
-    // はじめから（常に表示）
-    const startCard = createMethodCard('はじめから', '最初から学習を開始します', () => {
-        closeModal();
-        initInputModeLearning(category, categoryWords);
-    });
-    methodList.appendChild(startCard);
-
-    // 前回の続きから（保存済みインデックスがある場合のみ）
+    // 学習するボタンまたは前回の続きから学習するボタン（前回のデータがある場合は前回の続きからのみ表示）
     if (hasProgress && savedIndex > 0 && savedIndex < categoryWords.length) {
+        // 前回の続きから学習するボタン
         const continueCard = createMethodCard('前回の続きから', '前回の続きから学習を再開します', () => {
             closeModal();
             const remainingWords = categoryWords.slice(savedIndex);
             initInputModeLearning(category, remainingWords);
-        });
+        }, 'continue');
         methodList.appendChild(continueCard);
+    } else {
+        // 学習するボタン
+        const startCard = createMethodCard('学習する', '最初から学習を開始します', () => {
+            closeModal();
+            initInputModeLearning(category, categoryWords);
+        }, 'start');
+        methodList.appendChild(startCard);
     }
 
-    // 間違えた問題（間違いがある場合のみ）
+    // 間違えた問題のみ学習するボタン（間違いがある場合のみ）
     if (wrongWordsInCategory.length > 0) {
-        const wrongCard = createMethodCard(`間違えた問題 (${wrongWordsInCategory.length}問)`, '間違えた単語だけを復習します', () => {
+        const wrongCard = createMethodCard('間違えた問題のみ', `間違えた単語${wrongWordsInCategory.length}問だけを復習します`, () => {
             closeModal();
             initInputModeLearning('間違い復習', wrongWordsInCategory);
-        });
+        }, 'wrong');
         methodList.appendChild(wrongCard);
     }
 
-    // チェックした問題のみ（チェックがある場合のみ）
-    const checkedWordsInCategory = categoryWords.filter(word => reviewWords.has(word.id));
-    if (checkedWordsInCategory.length > 0) {
-        const checkedCard = createMethodCard(`チェックした問題のみ (${checkedWordsInCategory.length}問)`, 'チェックをつけた単語だけを復習します', () => {
-            closeModal();
-            initInputModeLearning('チェックした問題', checkedWordsInCategory);
-        });
-        methodList.appendChild(checkedCard);
-    }
+    // シャッフルして学習するボタン（常に表示）
+    const shuffleCard = createMethodCard('シャッフル', '単語の順序をランダムにして学習します', () => {
+        closeModal();
+        const shuffledWords = [...categoryWords].sort(() => Math.random() - 0.5);
+        initInputModeLearning(category, shuffledWords);
+    }, 'shuffle');
+    methodList.appendChild(shuffleCard);
     
     elements.modalActions.appendChild(methodList);
     
@@ -1373,41 +1372,40 @@ function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex
     const methodList = document.createElement('div');
     methodList.className = 'method-selection-list';
     
-    // はじめから（常に表示）
-    const startCard = createMethodCard('はじめから', '最初から学習を開始します', () => {
-        closeModal();
-        initLearning(category, courseWords, 0, courseWords.length, courseStart);
-    });
-    methodList.appendChild(startCard);
-
-    // 前回の続きから（保存済みインデックスがこのコース範囲内にある場合のみ）
+    // 学習するボタンまたは前回の続きから学習するボタン（前回のデータがある場合は前回の続きからのみ表示）
     if (hasProgress && savedIndex >= courseStart && savedIndex < courseEnd) {
+        // 前回の続きから学習するボタン
         const relativeIndex = savedIndex - courseStart;
         const continueCard = createMethodCard('前回の続きから', '前回の続きから学習を再開します', () => {
             closeModal();
             initLearning(category, courseWords, relativeIndex, courseWords.length, savedIndex);
-        });
+        }, 'continue');
         methodList.appendChild(continueCard);
+    } else {
+        // 学習するボタン
+        const startCard = createMethodCard('学習する', '最初から学習を開始します', () => {
+            closeModal();
+            initLearning(category, courseWords, 0, courseWords.length, courseStart);
+        }, 'start');
+        methodList.appendChild(startCard);
     }
 
-    // 間違えた問題（間違いがある場合のみ）
+    // 間違えた問題のみ学習するボタン（間違いがある場合のみ）
     if (wrongWordsInCourse.length > 0) {
-        const wrongCard = createMethodCard(`間違えた問題 (${wrongWordsInCourse.length}問)`, '間違えた単語だけを復習します', () => {
+        const wrongCard = createMethodCard('間違えた問題のみ', `間違えた単語${wrongWordsInCourse.length}問だけを復習します`, () => {
             closeModal();
             initLearning('間違い復習', wrongWordsInCourse, 0, wrongWordsInCourse.length, 0);
-        });
+        }, 'wrong');
         methodList.appendChild(wrongCard);
     }
 
-    // チェックした問題のみ（チェックがある場合のみ）
-    const checkedWordsInCourse = courseWords.filter(word => reviewWords.has(word.id));
-    if (checkedWordsInCourse.length > 0) {
-        const checkedCard = createMethodCard(`チェックした問題のみ (${checkedWordsInCourse.length}問)`, 'チェックをつけた単語だけを復習します', () => {
-            closeModal();
-            initLearning('チェックした問題', checkedWordsInCourse, 0, checkedWordsInCourse.length, 0);
-        });
-        methodList.appendChild(checkedCard);
-    }
+    // シャッフルして学習するボタン（常に表示）
+    const shuffleCard = createMethodCard('シャッフル', '単語の順序をランダムにして学習します', () => {
+        closeModal();
+        const shuffledWords = [...courseWords].sort(() => Math.random() - 0.5);
+        initLearning(category, shuffledWords, 0, shuffledWords.length, courseStart);
+    }, 'shuffle');
+    methodList.appendChild(shuffleCard);
     
     elements.modalActions.appendChild(methodList);
     
@@ -1427,23 +1425,14 @@ function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex
     }, 10);
 }
 
-// 学習方法カードを作成
-function createMethodCard(title, description, onClick) {
-    const card = document.createElement('button');
-    card.className = 'method-card';
-    card.onclick = onClick;
+// 学習方法ボタンを作成
+function createMethodCard(title, description, onClick, buttonType = 'default') {
+    const button = document.createElement('button');
+    button.className = `method-selection-btn method-selection-btn-${buttonType}`;
+    button.onclick = onClick;
+    button.textContent = title;
     
-    card.innerHTML = `
-        <div class="method-card-info">
-            <div class="method-card-title">${title}</div>
-            <div class="method-card-description">${description}</div>
-        </div>
-        <div class="method-card-arrow">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-    `;
-    
-    return card;
+    return button;
 }
 
 // タイムアタックモードで学習を初期化

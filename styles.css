@@ -780,24 +780,31 @@ body {
     gap: 6px;
     background: #0055ca;
     border: none;
-    border-radius: 8px;
-    padding: 8px 12px;
+    border-radius: 10px;
+    padding: 10px 16px;
     margin-bottom: 16px;
     font-size: 14px;
     font-weight: 600;
     color: #ffffff;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 85, 202, 0.3);
+    transition: transform 0.05s, box-shadow 0.05s;
+    box-shadow: 0 3px 0 rgba(0, 68, 160, 0.6);
+    position: relative;
+    top: 0;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
 }
 
 .back-btn:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 2px rgba(0, 85, 202, 0.3);
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
 }
 
 .back-btn:hover {
-    background: #0044a0;
+    background: #0055ca;
     color: #ffffff;
 }
 
@@ -3313,6 +3320,87 @@ body {
     gap: 12px;
     width: 100%;
     box-sizing: border-box;
+}
+
+/* 学習方法選択ボタン（カチッと押すタイプ） */
+.method-selection-btn {
+    width: 100%;
+    height: 56px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.05s, box-shadow 0.05s;
+    color: #ffffff;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+    position: relative;
+    top: 0;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+    margin-bottom: 12px;
+}
+
+.method-selection-btn:last-child {
+    margin-bottom: 0;
+}
+
+.method-selection-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* 学習するボタン（青） */
+.method-selection-btn-start {
+    background: #0055ca;
+    box-shadow: 0 4px 0 rgba(0, 68, 160, 0.6);
+}
+
+.method-selection-btn-start:active {
+    box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
+}
+
+/* 前回の続きから学習するボタン（緑） */
+.method-selection-btn-continue {
+    background: #10b981;
+    box-shadow: 0 4px 0 rgba(5, 150, 105, 0.6);
+}
+
+.method-selection-btn-continue:active {
+    box-shadow: 0 1px 0 rgba(5, 150, 105, 0.6);
+}
+
+/* 間違えた問題のみ学習するボタン（オレンジ） */
+.method-selection-btn-wrong {
+    background: #f59e0b;
+    box-shadow: 0 4px 0 rgba(217, 119, 6, 0.6);
+}
+
+.method-selection-btn-wrong:active {
+    box-shadow: 0 1px 0 rgba(217, 119, 6, 0.6);
+}
+
+/* シャッフルして学習するボタン（紫） */
+.method-selection-btn-shuffle {
+    background: #8b5cf6;
+    box-shadow: 0 4px 0 rgba(124, 58, 237, 0.6);
+}
+
+.method-selection-btn-shuffle:active {
+    box-shadow: 0 1px 0 rgba(124, 58, 237, 0.6);
+}
+
+/* スマホ向け */
+@media (max-width: 600px) {
+    .method-selection-btn {
+        height: 52px;
+        font-size: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
 }
 
 .method-card {
