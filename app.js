@@ -24,6 +24,12 @@ let wordStartTime = 0; // 現在の単語の開始時間
 let wordTimerInterval = null; // 単語あたりのタイマーのインターバル
 const TIME_PER_WORD = 2; // 1単語あたりの時間（秒）
 let chartPeriod = 'week'; // グラフの表示期間: 'week', 'month', 'year'
+let isSentenceModeActive = false; // 厳選例文暗記モードかどうか
+let sentenceData = []; // 例文データ
+let currentSentenceIndex = 0; // 現在の例文のインデックス
+let sentenceBlanks = []; // 空所のデータ [{index: 0, word: 'longer', userInput: ''}, ...]
+let sentenceAnswerSubmitted = false; // 回答が送信済みかどうか
+let currentSelectedBlankIndex = -1; // 現在選択中の空所のインデックス
 
 // 学習日を記録する関数（日付と学習量を記録）
 function recordStudyDate() {
@@ -357,8 +363,59 @@ function updateCategoryStars() {
             // タイムアタックモード：Group1 超頻出600の単語を使用
             categoryWords = wordData.filter(word => word.category === 'Group1 超頻出600');
         } else if (category === '大阪B問題対策 厳選例文暗記60【和文英訳対策】') {
-            // 大阪B問題対策：専用データが必要（現在は空）
-            categoryWords = [];
+            // 大阪B問題対策：例文データを使用（単語データとは別管理）
+            // 例文データはsentenceMemorizationDataとして定義されている
+            // 進捗計算は例文データで行う
+            if (typeof sentenceMemorizationData !== 'undefined') {
+                // 例文データの進捗を計算
+                const { correctSet, wrongSet } = loadCategoryWords(category);
+                let correctCountInCategory = 0;
+                let wrongCountInCategory = 0;
+                
+                sentenceMemorizationData.forEach(sentence => {
+                    if (wrongSet.has(sentence.id)) {
+                        wrongCountInCategory++;
+                    } else if (correctSet.has(sentence.id)) {
+                        correctCountInCategory++;
+                    }
+                });
+                
+                const total = sentenceMemorizationData.length;
+                const correctPercent = total === 0 ? 0 : (correctCountInCategory / total) * 100;
+                const wrongPercent = total === 0 ? 0 : (wrongCountInCategory / total) * 100;
+                const completedCount = correctCountInCategory + wrongCountInCategory;
+                
+                // 進捗バーとテキストを更新
+                const correctBar = document.getElementById(`progress-correct-${category}`);
+                const wrongBar = document.getElementById(`progress-wrong-${category}`);
+                const text = document.getElementById(`progress-text-${category}`);
+                
+                if (correctBar) {
+                    correctBar.style.width = `${correctPercent}%`;
+                }
+                if (wrongBar) {
+                    wrongBar.style.width = `${wrongPercent}%`;
+                }
+                if (text) {
+                    text.textContent = `${completedCount} / ${total}`;
+                }
+            } else {
+                // データが未定義の場合は0に設定
+                const correctBar = document.getElementById(`progress-correct-${category}`);
+                const wrongBar = document.getElementById(`progress-wrong-${category}`);
+                const text = document.getElementById(`progress-text-${category}`);
+                
+                if (correctBar) {
+                    correctBar.style.width = '0%';
+                }
+                if (wrongBar) {
+                    wrongBar.style.width = '0%';
+                }
+                if (text) {
+                    text.textContent = '0 / 0';
+                }
+            }
+            return; // 例文データの処理が完了したので、以降の単語データ処理をスキップ
         } else {
             // マッピングがある場合はそれを使用、なければそのまま使用
             const dataCategory = categoryMapping[category] || category;
@@ -766,23 +823,34 @@ function preventZoom() {
 
 // 初期化
 function init() {
-    preventZoom();
-    assignCategories();
-    loadData();
-    setupEventListeners();
-    
-    // スプラッシュ画面を表示
-    const splashScreen = document.getElementById('splashScreen');
-    if (splashScreen) {
-        // スプラッシュ画面を1.5秒表示してから非表示にする
-        setTimeout(() => {
-            splashScreen.classList.add('hidden');
+    try {
+        preventZoom();
+        assignCategories();
+        loadData();
+        setupEventListeners();
+        
+        // スプラッシュ画面を表示
+        const splashScreen = document.getElementById('splashScreen');
+        if (splashScreen) {
+            // スプラッシュ画面を1.5秒表示してから非表示にする
             setTimeout(() => {
-                splashScreen.style.display = 'none';
-                showCategorySelection();
-            }, 500);
-        }, 1500);
-    } else {
+                splashScreen.classList.add('hidden');
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                    showCategorySelection();
+                }, 500);
+            }, 1500);
+        } else {
+            // スプラッシュ画面が見つからない場合は即座にカテゴリー選択画面を表示
+            showCategorySelection();
+        }
+    } catch (error) {
+        console.error('Initialization error:', error);
+        // エラーが発生した場合でもスプラッシュ画面を非表示にしてカテゴリー選択画面を表示
+        const splashScreen = document.getElementById('splashScreen');
+        if (splashScreen) {
+            splashScreen.style.display = 'none';
+        }
         showCategorySelection();
     }
     
@@ -806,8 +874,15 @@ function showCategorySelection() {
     isTimeAttackMode = false;
     document.body.classList.remove('time-attack-mode');
     
+    if (!elements.categorySelection) {
+        console.error('categorySelection element not found');
+        return;
+    }
+    
     elements.categorySelection.classList.remove('hidden');
-    elements.mainContent.classList.add('hidden');
+    if (elements.mainContent) {
+        elements.mainContent.classList.add('hidden');
+    }
     const courseSelection = document.getElementById('courseSelection');
     if (courseSelection) {
         courseSelection.classList.add('hidden');
@@ -874,8 +949,8 @@ function startCategory(category) {
             return;
         }
     } else if (category === '大阪B問題対策 厳選例文暗記60【和文英訳対策】') {
-        // 大阪B問題対策：専用データが必要（現在は空）
-        showAlert('準備中', '大阪B問題対策 厳選例文暗記60【和文英訳対策】のデータを準備中です。');
+        // 大阪B問題対策：厳選例文暗記モードで開始
+        initSentenceModeLearning(category);
         return;
     } else if (category === '大阪C問題対策英単語タイムアタック') {
         // タイムアタックモード：Group1 超頻出600の単語を使用
@@ -932,6 +1007,7 @@ function initInputModeLearning(category, words) {
     selectedCategory = category;
     currentWords = words;
     isInputModeActive = true;
+    isSentenceModeActive = false; // 例文モードを無効化
     
     currentRangeStart = 0;
     currentRangeEnd = words.length;
@@ -969,13 +1045,19 @@ function initInputModeLearning(category, words) {
         elements.homeBtn.classList.remove('hidden');
     }
 
-    // カードモードを非表示、入力モードを表示
+    // カードモード、例文モードを非表示、入力モードを表示
     const wordCard = document.getElementById('wordCard');
     const inputMode = document.getElementById('inputMode');
+    const sentenceMode = document.getElementById('sentenceMode');
     const cardHint = document.getElementById('cardHint');
+    const progressStepButtons = document.querySelector('.progress-step-buttons');
     if (wordCard) wordCard.classList.add('hidden');
     if (inputMode) inputMode.classList.remove('hidden');
+    if (sentenceMode) sentenceMode.classList.add('hidden');
     if (cardHint) cardHint.classList.add('hidden');
+    // 入力モードのときは進捗バーの「前の単語へ・次の単語へ」ボタンを表示
+    if (progressStepButtons) progressStepButtons.classList.remove('hidden');
+    updateNavButtons(); // ボタンのテキストと状態を更新
     
     displayInputMode();
     // 進捗バーのセグメントを強制的に生成
@@ -1616,12 +1698,6 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         elements.homeBtn.classList.remove('hidden');
     }
     
-    // 進捗ステップボタンを表示（タイムアタックモード以外）
-    const progressStepButtons = document.querySelector('.progress-step-buttons');
-    if (progressStepButtons) {
-        progressStepButtons.classList.remove('hidden');
-    }
-    
     // タイマーを停止（タイムアタックモード以外）
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -1644,13 +1720,25 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         elements.mainContent.classList.remove('mode-mistake');
     }
 
-    // 入力モードを非表示、カードモードを表示
+    // 入力モード、例文モードを非表示、カードモードを表示
     const wordCard = document.getElementById('wordCard');
     const inputMode = document.getElementById('inputMode');
+    const sentenceMode = document.getElementById('sentenceMode');
     const cardHint = document.getElementById('cardHint');
+    const progressStepButtons = document.querySelector('.progress-step-buttons');
+    const sentenceNavigation = document.getElementById('sentenceNavigation');
+    // 進捗ステップボタンを表示（タイムアタックモード以外）
+    if (progressStepButtons) {
+        progressStepButtons.classList.remove('hidden');
+    }
     if (inputMode) inputMode.classList.add('hidden');
+    if (sentenceMode) sentenceMode.classList.add('hidden');
     if (wordCard) wordCard.classList.remove('hidden');
     if (cardHint) cardHint.classList.remove('hidden');
+    // カードモードのときは進捗バーの「前の単語へ・次の単語へ」ボタンを表示
+    if (progressStepButtons) progressStepButtons.classList.remove('hidden');
+    // 例文モード用のナビゲーションボタンを非表示
+    if (sentenceNavigation) sentenceNavigation.classList.add('hidden');
 
     // 進捗バーのセグメントを強制的に生成
     if (total > 0) {
@@ -1778,13 +1866,33 @@ function setupEventListeners() {
     if (progressStepLeft) {
         progressStepLeft.addEventListener('click', (e) => {
             e.stopPropagation();
-            goToPreviousWord();
+            if (isSentenceModeActive) {
+                // 例文モードのとき
+                if (currentSentenceIndex > 0) {
+                    currentSentenceIndex--;
+                    currentIndex = currentSentenceIndex;
+                    displayCurrentSentence();
+                }
+            } else {
+                // 通常モードのとき
+                goToPreviousWord();
+            }
         });
     }
     if (progressStepRight) {
         progressStepRight.addEventListener('click', (e) => {
             e.stopPropagation();
-            goToNextWord();
+            if (isSentenceModeActive) {
+                // 例文モードのとき
+                if (currentSentenceIndex < sentenceData.length - 1) {
+                    currentSentenceIndex++;
+                    currentIndex = currentSentenceIndex;
+                    displayCurrentSentence();
+                }
+            } else {
+                // 通常モードのとき
+                goToNextWord();
+            }
         });
     }
     
@@ -3091,8 +3199,25 @@ function updateNavButtons() {
     const progressStepRight = document.getElementById('progressStepRight');
     if (!progressStepLeft || !progressStepRight) return;
     
-    progressStepLeft.disabled = currentIndex <= currentRangeStart;
-    progressStepRight.disabled = currentIndex >= currentRangeEnd - 1;
+    if (isSentenceModeActive) {
+        // 例文モードのとき
+        progressStepLeft.disabled = currentSentenceIndex === 0;
+        progressStepRight.disabled = currentSentenceIndex >= sentenceData.length - 1;
+        // テキストを更新
+        const leftSpan = progressStepLeft.querySelector('span');
+        const rightSpan = progressStepRight.querySelector('span');
+        if (leftSpan) leftSpan.textContent = '前の問題へ';
+        if (rightSpan) rightSpan.textContent = '次の問題へ';
+    } else {
+        // 通常モードのとき
+        progressStepLeft.disabled = currentIndex <= currentRangeStart;
+        progressStepRight.disabled = currentIndex >= currentRangeEnd - 1;
+        // テキストを更新
+        const leftSpan = progressStepLeft.querySelector('span');
+        const rightSpan = progressStepRight.querySelector('span');
+        if (leftSpan) leftSpan.textContent = '前の単語へ';
+        if (rightSpan) rightSpan.textContent = '次の単語へ';
+    }
 }
 
 // 完璧としてマーク（上スワイプ）
@@ -3764,5 +3889,437 @@ function closeInstallOverlay() {
     }, 300);
 }
 
+// 厳選例文暗記モードで学習を初期化
+function initSentenceModeLearning(category) {
+    selectedCategory = category;
+    sentenceData = sentenceMemorizationData;
+    isSentenceModeActive = true;
+    isInputModeActive = false; // 入力モードを無効化
+    currentSentenceIndex = 0;
+    sentenceAnswerSubmitted = false;
+    
+    currentRangeStart = 0;
+    currentRangeEnd = sentenceData.length;
+    currentIndex = 0;
+    
+    answeredWords.clear();
+    correctCount = 0;
+    wrongCount = 0;
+    questionStatus = new Array(sentenceData.length).fill(null);
+    
+    // 前回の回答状況を読み込んで進捗バーに反映
+    if (category) {
+        const { correctSet, wrongSet } = loadCategoryWords(category);
+        sentenceData.forEach((sentence, index) => {
+            if (wrongSet.has(sentence.id)) {
+                questionStatus[index] = 'wrong';
+            } else if (correctSet.has(sentence.id)) {
+                questionStatus[index] = 'correct';
+            }
+        });
+    }
+
+    elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
+    elements.mainContent.classList.remove('hidden');
+    elements.headerSubtitle.textContent = category;
+    
+    document.body.classList.add('learning-mode');
+
+    if (elements.homeBtn) {
+        elements.homeBtn.classList.remove('hidden');
+    }
+
+    // カードモードと入力モードを非表示、例文モードを表示
+    const wordCard = document.getElementById('wordCard');
+    const inputMode = document.getElementById('inputMode');
+    const sentenceMode = document.getElementById('sentenceMode');
+    const cardHint = document.getElementById('cardHint');
+    const progressStepButtons = document.querySelector('.progress-step-buttons');
+    if (wordCard) wordCard.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (sentenceMode) sentenceMode.classList.remove('hidden');
+    if (cardHint) cardHint.classList.add('hidden');
+    // 例文モードのときは進捗バーのボタンを表示（テキストは「前の問題へ・次の問題へ」に変更）
+    if (progressStepButtons) progressStepButtons.classList.remove('hidden');
+    updateNavButtons(); // ボタンのテキストと状態を更新
+    
+    displayCurrentSentence();
+    // 進捗バーのセグメントを生成
+    const total = currentRangeEnd - currentRangeStart;
+    if (total > 0) {
+        createProgressSegments(total);
+    }
+    updateStats();
+    updateNavState('learning');
+    setupSentenceKeyboard();
+}
+
+// 現在の例文を表示
+function displayCurrentSentence() {
+    if (currentSentenceIndex >= sentenceData.length) {
+        showCompletion();
+        return;
+    }
+
+    const sentence = sentenceData[currentSentenceIndex];
+    sentenceAnswerSubmitted = false;
+    currentSelectedBlankIndex = -1; // 選択状態をリセット
+    currentSelectedBlankIndex = -1; // 選択状態をリセット
+    
+    // 日本語訳を表示
+    const japaneseEl = document.getElementById('sentenceJapanese');
+    if (japaneseEl) {
+        japaneseEl.textContent = sentence.japanese;
+    }
+    
+    // 英文を構築（空所を含む）
+    const englishEl = document.getElementById('sentenceEnglish');
+    if (englishEl) {
+        englishEl.innerHTML = '';
+        sentenceBlanks = [];
+        
+        // 英文を単語に分割し、空所の位置を特定
+        const words = sentence.english.split(' ');
+        
+        words.forEach((word, idx) => {
+            // 句読点を除去した単語で比較
+            const wordWithoutPunct = word.replace(/[.,!?]/g, '');
+            // 空所かどうかを判定（blanks配列に含まれているか）
+            const blankInfo = sentence.blanks.find(b => b.word.toLowerCase() === wordWithoutPunct.toLowerCase());
+            
+            if (blankInfo) {
+                // 空所を作成
+                const blankSpan = document.createElement('span');
+                blankSpan.className = 'sentence-blank';
+                blankSpan.dataset.blankIndex = blankInfo.index;
+                blankSpan.textContent = ' '.repeat(blankInfo.word.length); // 空欄をスペースで埋める
+                blankSpan.dataset.correctWord = blankInfo.word;
+                
+                // 単語の長さに応じて幅を計算（1文字あたり約14px + パディング24px + 余裕8px）
+                const charWidth = 14; // フォントサイズとフォントファミリーに基づく概算
+                const padding = 24; // 左右のパディング（12px × 2）
+                const extraSpace = 8; // 余裕
+                const calculatedWidth = Math.max(60, (blankInfo.word.length * charWidth) + padding + extraSpace);
+                blankSpan.style.width = `${calculatedWidth}px`;
+                
+                englishEl.appendChild(blankSpan);
+                
+                sentenceBlanks.push({
+                    index: blankInfo.index,
+                    word: blankInfo.word,
+                    userInput: '',
+                    element: blankSpan
+                });
+            } else {
+                // 通常の単語
+                const partSpan = document.createElement('span');
+                partSpan.className = 'sentence-part';
+                partSpan.textContent = word + (idx < words.length - 1 ? ' ' : '');
+                englishEl.appendChild(partSpan);
+            }
+        });
+        
+        // 空所をindex順にソート
+        sentenceBlanks.sort((a, b) => a.index - b.index);
+        
+        // 空所にタップイベントを追加し、幅を再計算
+        sentenceBlanks.forEach(blank => {
+            // モバイル対応の幅計算
+            const isMobile = window.innerWidth <= 600;
+            const charWidth = isMobile ? 12 : 14; // モバイルでは文字幅が小さい
+            const padding = isMobile ? 12 : 24; // モバイルではパディングが小さい（左右各6px or 12px）
+            const extraSpace = isMobile ? 4 : 8;
+            const calculatedWidth = Math.max(isMobile ? 50 : 60, (blank.word.length * charWidth) + padding + extraSpace);
+            blank.element.style.width = `${calculatedWidth}px`;
+            
+            blank.element.addEventListener('click', () => {
+                if (sentenceAnswerSubmitted) return;
+                selectSentenceBlank(blank.index);
+            });
+        });
+        
+        // 最初の空所を選択
+        if (sentenceBlanks.length > 0) {
+            selectSentenceBlank(sentenceBlanks[0].index);
+        }
+    }
+    
+    // ナビゲーションボタンの状態を更新（進捗バーのボタンを使用）
+    updateNavButtons();
+    
+    // 進捗バーの更新
+    if (typeof updateProgressSegments === 'function') {
+        updateProgressSegments();
+    }
+}
+
+// 例文モード用のキーボード設定
+function setupSentenceKeyboard() {
+    const keyboard = document.getElementById('sentenceKeyboard');
+    if (!keyboard) return;
+    
+    // キーボードキーのイベント
+    keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        const letter = key.dataset.key;
+        
+        if (letter === ' ') {
+            const handleSpace = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                insertSentenceLetter(' ');
+            };
+            key.addEventListener('touchstart', handleSpace, { passive: false });
+            key.addEventListener('click', handleSpace);
+        } else {
+            key.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                insertSentenceLetter(letter);
+            }, { passive: false });
+            key.addEventListener('click', (e) => {
+                e.preventDefault();
+                insertSentenceLetter(letter);
+            });
+        }
+    });
+    
+    // Shiftキー
+    const shiftKey = document.getElementById('sentenceKeyboardShift');
+    if (shiftKey) {
+        const handleShift = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSentenceShift();
+        };
+        shiftKey.addEventListener('touchstart', handleShift, { passive: false });
+        shiftKey.addEventListener('click', handleShift);
+    }
+    
+    // バックスペースキー
+    const backspaceKey = document.getElementById('sentenceKeyboardBackspace');
+    if (backspaceKey) {
+        const handleBackspace = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            removeSentenceLetter();
+        };
+        backspaceKey.addEventListener('touchstart', handleBackspace, { passive: false });
+        backspaceKey.addEventListener('click', handleBackspace);
+    }
+    
+    // パスボタン
+    const passBtn = document.getElementById('sentenceKeyboardPass');
+    if (passBtn) {
+        const handlePass = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSentencePass();
+        };
+        passBtn.addEventListener('touchstart', handlePass, { passive: false });
+        passBtn.addEventListener('click', handlePass);
+    }
+    
+    // 解答ボタン
+    const decideBtn = document.getElementById('sentenceKeyboardDecide');
+    if (decideBtn) {
+        const handleDecide = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSentenceDecide();
+        };
+        decideBtn.addEventListener('touchstart', handleDecide, { passive: false });
+        decideBtn.addEventListener('click', handleDecide);
+    }
+}
+
+// 空所を選択する
+function selectSentenceBlank(blankIndex) {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
+    
+    // すべての空所の選択状態を解除
+    sentenceBlanks.forEach(blank => {
+        blank.element.classList.remove('selected');
+    });
+    
+    // 指定された空所を選択
+    const blank = sentenceBlanks.find(b => b.index === blankIndex);
+    if (blank) {
+        blank.element.classList.add('selected');
+        currentSelectedBlankIndex = blankIndex;
+    }
+}
+
+// 例文モードで文字を入力
+function insertSentenceLetter(letter) {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
+    
+    // 選択中の空所を取得
+    let currentBlank = sentenceBlanks.find(b => b.index === currentSelectedBlankIndex);
+    
+    // 選択中の空所がない、または入力が完了している場合は次の空所を探す
+    if (!currentBlank || currentBlank.userInput.length >= currentBlank.word.length) {
+        currentBlank = sentenceBlanks.find(b => !b.userInput || b.userInput.length < b.word.length);
+        if (currentBlank) {
+            selectSentenceBlank(currentBlank.index);
+        } else {
+            // すべての空所が埋まっている場合は最初の空所に戻る
+            if (sentenceBlanks.length > 0) {
+                currentBlank = sentenceBlanks[0];
+                selectSentenceBlank(currentBlank.index);
+            }
+        }
+    }
+    
+    if (currentBlank && currentBlank.userInput.length < currentBlank.word.length) {
+        let letterToInsert;
+        if (letter === ' ') {
+            letterToInsert = ' ';
+        } else {
+            if (isShiftActive) {
+                letterToInsert = String(letter).toUpperCase();
+                toggleSentenceShift();
+            } else {
+                letterToInsert = String(letter).toLowerCase();
+            }
+        }
+        
+        currentBlank.userInput += letterToInsert;
+        
+        // 空所の表示を更新（入力済みの文字 + 残りのスペース）
+        const remainingLength = currentBlank.word.length - currentBlank.userInput.length;
+        currentBlank.element.textContent = currentBlank.userInput + (remainingLength > 0 ? ' '.repeat(remainingLength) : '');
+        
+        // 入力が完了したら次の空所を選択
+        if (currentBlank.userInput.length >= currentBlank.word.length) {
+            const nextBlank = sentenceBlanks.find(b => b.index > currentBlank.index && (!b.userInput || b.userInput.length < b.word.length));
+            if (nextBlank) {
+                selectSentenceBlank(nextBlank.index);
+            }
+        }
+    }
+}
+
+// 例文モードで文字を削除
+function removeSentenceLetter() {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
+    
+    // 選択中の空所から文字を削除
+    let currentBlank = sentenceBlanks.find(b => b.index === currentSelectedBlankIndex);
+    
+    // 選択中の空所がない、または空の場合は最後に入力した空所を探す
+    if (!currentBlank || currentBlank.userInput.length === 0) {
+        for (let i = sentenceBlanks.length - 1; i >= 0; i--) {
+            const blank = sentenceBlanks[i];
+            if (blank.userInput.length > 0) {
+                currentBlank = blank;
+                selectSentenceBlank(blank.index);
+                break;
+            }
+        }
+    }
+    
+    if (currentBlank && currentBlank.userInput.length > 0) {
+        currentBlank.userInput = currentBlank.userInput.slice(0, -1);
+        const remainingLength = currentBlank.word.length - currentBlank.userInput.length;
+        currentBlank.element.textContent = currentBlank.userInput + (remainingLength > 0 ? ' '.repeat(remainingLength) : '');
+    }
+}
+
+// 例文モードでShiftキーをトグル
+function toggleSentenceShift() {
+    isShiftActive = !isShiftActive;
+    const shiftKey = document.getElementById('sentenceKeyboardShift');
+    if (shiftKey) {
+        if (isShiftActive) {
+            shiftKey.classList.add('active');
+        } else {
+            shiftKey.classList.remove('active');
+        }
+    }
+}
+
+// 例文モードでパス
+function handleSentencePass() {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
+    
+    const sentence = sentenceData[currentSentenceIndex];
+    wrongCount++;
+    questionStatus[currentSentenceIndex] = 'wrong';
+    
+    // 正解を表示
+    sentenceBlanks.forEach(blank => {
+        blank.element.textContent = blank.word;
+        blank.element.classList.add('wrong');
+    });
+    
+    sentenceAnswerSubmitted = true;
+    saveSentenceProgress(sentence.id, false);
+    updateStats();
+    if (typeof updateProgressSegments === 'function') {
+        updateProgressSegments();
+    }
+}
+
+// 例文モードで解答
+function handleSentenceDecide() {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
+    
+    const sentence = sentenceData[currentSentenceIndex];
+    let isCorrect = true;
+    
+    // すべての空所が正しいかチェック
+    sentenceBlanks.forEach(blank => {
+        if (blank.userInput.toLowerCase().trim() !== blank.word.toLowerCase()) {
+            isCorrect = false;
+            blank.element.classList.add('wrong');
+        } else {
+            blank.element.classList.add('correct');
+        }
+        blank.element.textContent = blank.word;
+    });
+    
+    if (isCorrect) {
+        correctCount++;
+        questionStatus[currentSentenceIndex] = 'correct';
+    } else {
+        wrongCount++;
+        questionStatus[currentSentenceIndex] = 'wrong';
+    }
+    
+    sentenceAnswerSubmitted = true;
+    saveSentenceProgress(sentence.id, isCorrect);
+    updateStats();
+    if (typeof updateProgressSegments === 'function') {
+        updateProgressSegments();
+    }
+}
+
+// 例文の進捗を保存
+function saveSentenceProgress(sentenceId, isCorrect) {
+    if (!selectedCategory) return;
+    
+    const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+    
+    if (isCorrect) {
+        correctSet.add(sentenceId);
+        wrongSet.delete(sentenceId);
+    } else {
+        wrongSet.add(sentenceId);
+        correctSet.delete(sentenceId);
+    }
+    
+    saveCategoryWords(selectedCategory, correctSet, wrongSet);
+}
+
 // アプリケーションの起動
-init();
+// DOMが読み込まれてから初期化
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    // DOMが既に読み込まれている場合は即座に実行
+    init();
+}
