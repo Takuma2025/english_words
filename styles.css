@@ -4223,6 +4223,54 @@ body {
     font-weight: 600;
 }
 
+.exam-info-overview {
+    margin-bottom: 32px;
+}
+
+.exam-info-overview-title {
+    font-size: clamp(20px, 4vw, 24px);
+    font-weight: 700;
+    color: #0055ca;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0055ca;
+}
+
+.exam-info-overview-content {
+    font-size: clamp(13px, 3vw, 15px);
+    line-height: 1.8;
+    color: #374151;
+}
+
+.exam-info-overview-content p {
+    margin-bottom: 12px;
+}
+
+.exam-info-overview-content p:last-child {
+    margin-bottom: 0;
+}
+
+.exam-info-overview-content ul {
+    margin: 12px 0;
+    padding-left: 24px;
+}
+
+.exam-info-overview-content li {
+    margin-bottom: 8px;
+    line-height: 1.8;
+}
+
+.exam-info-overview-content li:last-child {
+    margin-bottom: 0;
+}
+
+.exam-info-overview-content mark {
+    background: linear-gradient(transparent 60%, #fef08a 60%);
+    padding: 0 2px;
+    font-weight: 600;
+    color: inherit;
+}
+
 .exam-tabs {
     display: flex;
     gap: 8px;
@@ -4324,7 +4372,8 @@ body {
 .exam-info-table .feature-cell {
     text-align: left;
     line-height: 1.7;
-    min-width: 250px;
+    min-width: 180px;
+    max-width: 300px;
 }
 
 .exam-info-table .feature-cell strong {
@@ -4400,7 +4449,8 @@ body {
     }
     
     .exam-info-table .feature-cell {
-        min-width: 180px;
+        min-width: 120px;
+        max-width: 200px;
         line-height: 1.5;
     }
     
