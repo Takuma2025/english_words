@@ -844,24 +844,21 @@ body {
     color: #ffffff;
     border: none;
     border-radius: 12px;
-    font-size: 15px;
+    font-size: 13px; /* 15pxから13pxに縮小 */
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 85, 202, 0.3);
     position: relative;
     overflow: visible;
 }
 
 .exam-info-btn:hover {
     background: #0044a0;
-    box-shadow: 0 4px 8px rgba(0, 85, 202, 0.4);
     transform: translateY(-1px);
 }
 
 .exam-info-btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 85, 202, 0.3);
 }
 
 .exam-info-btn svg {
@@ -871,7 +868,7 @@ body {
 .exam-info-btn-image {
     position: absolute;
     right: 16px;
-    bottom: 0; /* 下はボタンの下に合わせる */
+    bottom: -1px; /* ボタンから1px下にはみ出す */
     height: auto;
     max-height: 133.33%; /* ボタンの高さ + はみ出し分（上の3分の1） */
     width: auto;
@@ -880,7 +877,7 @@ body {
     z-index: 1;
     border: 2px solid #9ca3af; /* グレーボーダー */
     border-bottom: none; /* 下のボーダーはなし */
-    border-radius: 8px 8px 0 0; /* 上の角だけ丸く */
+    border-radius: 4px 4px 0 0; /* 上の角だけ丸く（ラディアスを小さく） */
 }
 
 .course-tabs {
