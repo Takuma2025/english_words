@@ -126,7 +126,7 @@
                 </button>
                 <div class="course-tabs" id="courseTabs">
                     <button class="course-tab active" data-target="courseMasterSection">英単語マスターコース</button>
-                    <button class="course-tab" data-target="courseScoreSection">得点力アップコース</button>
+                    <button class="course-tab" data-target="courseScoreSection">入試得点力アップコース</button>
                 </div>
                 <div class="category-list">
                     <div class="course-section" id="courseMasterSection">
@@ -330,6 +330,106 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 大阪府公立入試について -->
+            <div class="category-view hidden" id="examInfoView">
+                <button class="back-btn" id="backToCategoryFromExamInfoBtn" aria-label="戻る">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    戻る
+                </button>
+                <div class="exam-info-container">
+                    <div class="exam-info-header">
+                        <h2 class="exam-info-title">大阪府公立高校入試 英語について</h2>
+                        <p class="exam-info-subtitle">入試問題の特色と出題傾向</p>
+                    </div>
+                    
+                    <div class="exam-info-intro">
+                        <p>大阪府公立入試の英語はＡ問題・Ｂ問題・Ｃ問題があります。</p>
+                    </div>
+                    
+                    <div class="exam-tabs">
+                        <button class="exam-tab active" data-tab="a-problem">Ａ問題</button>
+                        <button class="exam-tab" data-tab="b-problem">Ｂ問題</button>
+                        <button class="exam-tab" data-tab="c-problem">Ｃ問題</button>
+                    </div>
+                    
+                    <div class="exam-tab-content active" id="a-problem">
+                        <div class="exam-info-section">
+                            <h3 class="exam-info-section-title">Ａ問題について</h3>
+                            <div class="exam-info-content">
+                                <p>Ａ問題は、基本的な英語力を問う問題です。</p>
+                                
+                                <p><strong>Ａ問題の特徴</strong></p>
+                                <p>基本的な語彙力と文法知識を問う問題が出題されます。基本的な英単語の意味を正確に覚えることが重要です。</p>
+                                
+                                <div class="highlight-box">
+                                    <div class="highlight-box-title">Ａ問題の対策ポイント</div>
+                                    <ul>
+                                        <li>基本的な英単語の意味を正確に覚えることが重要</li>
+                                        <li>基本的な文法知識を身につけることが必要</li>
+                                        <li>頻出単語を確実に覚えることが得点アップの鍵</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="exam-tab-content" id="b-problem">
+                        <div class="exam-info-section">
+                            <h3 class="exam-info-section-title">Ｂ問題について</h3>
+                            <div class="exam-info-content">
+                                <p>Ｂ問題は、より実践的な英語力を問う問題です。</p>
+                                
+                                <p><strong>Ｂ問題の特徴</strong></p>
+                                <p>整序英作文や和文英訳など、より実践的な問題が出題されます。特に整序英作文は毎年必ず出題される問題形式です。与えられた語句を並び替えて、正しい英文を作る問題です。基本的な文法知識と語順の理解が求められます。</p>
+                                
+                                <div class="highlight-box">
+                                    <div class="highlight-box-title">Ｂ問題の対策ポイント</div>
+                                    <ul>
+                                        <li>整序英作文では、基本的な文法パターンを覚えることが有効</li>
+                                        <li>和文英訳では、基本的な表現を暗記することが効果的</li>
+                                        <li>基本的な語順の理解が重要</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="exam-tab-content" id="c-problem">
+                        <div class="exam-info-section">
+                            <h3 class="exam-info-section-title">Ｃ問題について</h3>
+                            <div class="exam-info-content">
+                                <p>Ｃ問題は、長文読解を中心とした応用的な問題です。</p>
+                                
+                                <p><strong>Ｃ問題の特徴</strong></p>
+                                <p>長文読解問題が中心となります。大問2から大問5まで、計4つの長文読解問題が出題されます。内容理解、語句の意味、文脈に合う表現の選択など、総合的な読解力が試されます。特に長文を素早く正確に読む力が重要です。</p>
+                                
+                                <div class="highlight-box">
+                                    <div class="highlight-box-title">大問構成（Ｃ問題）</div>
+                                    <ul>
+                                        <li><strong>大問2：</strong>長文読解（A）</li>
+                                        <li><strong>大問3：</strong>長文読解（B）</li>
+                                        <li><strong>大問4：</strong>長文読解（C）</li>
+                                        <li><strong>大問5：</strong>長文読解（D）</li>
+                                    </ul>
+                                </div>
+                                
+                                <p><strong>Ｃ問題の対策</strong></p>
+                                <p>長文を素早く読むためには、単語を瞬時に理解できることが重要です。タイムアタック形式の練習で、単語の即答力を鍛えることが効果的です。また、頻出単語が毎年繰り返し出題されるため、「超よくでる400語」「よくでる300語」などの頻出単語を確実に覚えることが得点アップの鍵となります。</p>
+                                
+                                <div class="highlight-box">
+                                    <div class="highlight-box-title">Ｃ問題の対策ポイント</div>
+                                    <ul>
+                                        <li>長文を素早く読むためには、単語の即答力が必要</li>
+                                        <li>頻出単語を確実に覚えることが重要</li>
+                                        <li>タイムアタック形式の練習で速読力を鍛える</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

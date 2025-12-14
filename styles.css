@@ -839,7 +839,7 @@ body {
     gap: 8px;
     width: 100%;
     padding: 12px 16px;
-    margin: 0 0 12px 0;
+    margin: 16px 0 20px 0; /* 上下のマージンを増やす */
     background: #0055ca;
     color: #ffffff;
     border: none;
@@ -2461,6 +2461,8 @@ body {
     .reorder-mode .keyboard-actions {
         gap: 12px;
         margin-top: auto; /* 下揃え */
+        padding: 0 16px; /* 左右にパディングを追加して画面からはみ出さないように */
+        margin-bottom: 16px; /* 下にマージンを追加 */
     }
 }
 
@@ -3835,7 +3837,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 20px 0 0 0;
+    padding: 20px 0 80px 0; /* 下にパディングを追加してボタンがはみ出さないように */
     overflow-y: auto;
     min-height: 0;
     max-height: 100%;
@@ -3863,6 +3865,16 @@ body {
     padding: 0 16px;
     align-items: center;
     justify-content: flex-start;
+}
+
+.reorder-punctuation {
+    font-size: 17px;
+    font-weight: 600;
+    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    color: #1f2937;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 4px;
 }
 
 .reorder-blank-box {
@@ -3990,9 +4002,10 @@ body {
 }
 
 .reorder-mode .keyboard-actions {
-    padding: 0 2px;
+    padding: 0 16px; /* 左右にパディングを追加 */
     margin: 0;
     margin-top: auto; /* 下揃え */
+    margin-bottom: 16px; /* 下にマージンを追加 */
     gap: 12px;
 }
 
@@ -4024,4 +4037,125 @@ body {
     .reorder-words-area {
         padding: 12px;
     }
+    
+    .reorder-mode .keyboard-actions {
+        padding: 0 16px; /* 左右にパディングを追加 */
+        margin-bottom: 16px; /* 下にマージンを追加 */
+    }
+}
+
+/* 大阪府公立入試について */
+.exam-info-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 16px;
+}
+
+.exam-info-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.exam-info-title {
+    font-size: clamp(24px, 5vw, 32px);
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.exam-info-subtitle {
+    font-size: clamp(14px, 3vw, 18px);
+    color: #6b7280;
+}
+
+.exam-info-section {
+    margin-bottom: 32px;
+}
+
+.exam-info-section-title {
+    font-size: clamp(20px, 4vw, 24px);
+    font-weight: 700;
+    color: #0055ca;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0055ca;
+}
+
+.exam-info-content {
+    font-size: clamp(14px, 3vw, 16px);
+    line-height: 1.8;
+    color: #374151;
+}
+
+.exam-info-content p {
+    margin-bottom: 16px;
+}
+
+.exam-info-content ul {
+    margin-left: 20px;
+    margin-bottom: 16px;
+}
+
+.exam-info-content li {
+    margin-bottom: 8px;
+}
+
+.highlight-box {
+    background: #f0f9ff;
+    border-left: 4px solid #0055ca;
+    padding: 16px;
+    margin: 16px 0;
+    border-radius: 8px;
+}
+
+.highlight-box-title {
+    font-weight: 700;
+    color: #0055ca;
+    margin-bottom: 8px;
+}
+
+.exam-info-intro {
+    font-size: clamp(14px, 3vw, 16px);
+    line-height: 1.8;
+    color: #374151;
+    margin-bottom: 24px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.exam-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.exam-tab {
+    flex: 1;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 12px 12px 0 0;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.exam-tab:hover {
+    background: #d1d5db;
+}
+
+.exam-tab.active {
+    background: #0055ca;
+    color: #ffffff;
+}
+
+.exam-tab-content {
+    display: none;
+}
+
+.exam-tab-content.active {
+    display: block;
 }

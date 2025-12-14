@@ -904,6 +904,10 @@ function showCategorySelection() {
     if (courseSelection) {
         courseSelection.classList.add('hidden');
     }
+    const examInfoView = document.getElementById('examInfoView');
+    if (examInfoView) {
+        examInfoView.classList.add('hidden');
+    }
     selectedCategory = null;
     updateNavState('home');
     elements.headerSubtitle.textContent = '大阪府公立高校入試特化英単語';
@@ -1851,9 +1855,59 @@ function setupEventListeners() {
     // コースタブ切り替え
     // 大阪府公立入試について知るボタン
     const examInfoBtn = document.getElementById('examInfoBtn');
-    if (examInfoBtn) {
+    const examInfoView = document.getElementById('examInfoView');
+    const backToCategoryFromExamInfoBtn = document.getElementById('backToCategoryFromExamInfoBtn');
+    
+    if (examInfoBtn && examInfoView) {
         examInfoBtn.addEventListener('click', () => {
-            window.location.href = 'exam-info.html';
+            // カテゴリー選択画面を非表示
+            if (elements.categorySelection) {
+                elements.categorySelection.classList.add('hidden');
+            }
+            // コース選択画面を非表示
+            const courseSelection = document.getElementById('courseSelection');
+            if (courseSelection) {
+                courseSelection.classList.add('hidden');
+            }
+            // 入試情報画面を表示
+            examInfoView.classList.remove('hidden');
+            // ヘッダーのサブタイトルを更新
+            if (elements.headerSubtitle) {
+                elements.headerSubtitle.textContent = '大阪府公立高校入試特化型英単語';
+            }
+        });
+    }
+    
+    // 入試情報画面から戻るボタン
+    if (backToCategoryFromExamInfoBtn && examInfoView) {
+        backToCategoryFromExamInfoBtn.addEventListener('click', () => {
+            examInfoView.classList.add('hidden');
+            if (elements.categorySelection) {
+                elements.categorySelection.classList.remove('hidden');
+            }
+        });
+    }
+    
+    // 入試情報画面のタブ切り替え機能
+    if (examInfoView) {
+        const examTabs = examInfoView.querySelectorAll('.exam-tab');
+        const examTabContents = examInfoView.querySelectorAll('.exam-tab-content');
+        
+        examTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.getAttribute('data-tab');
+                
+                // すべてのタブとコンテンツからactiveクラスを削除
+                examTabs.forEach(t => t.classList.remove('active'));
+                examTabContents.forEach(content => content.classList.remove('active'));
+                
+                // クリックされたタブと対応するコンテンツにactiveクラスを追加
+                tab.classList.add('active');
+                const targetContent = examInfoView.querySelector(`#${targetTab}`);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+            });
         });
     }
     
@@ -4746,8 +4800,9 @@ function displayCurrentReorderQuestion() {
     // 解答エリアをクリアして空欄を生成
     if (answerAreaEl) {
         answerAreaEl.innerHTML = '';
-        // 単語数分の空欄を作成（ピリオドを除く）
-        const blankCount = question.correctOrder.length - 1; // ピリオドを除く
+        // 単語数分の空欄を作成（ピリオドまたは?を除く）
+        const lastChar = question.correctOrder[question.correctOrder.length - 1];
+        const blankCount = question.correctOrder.length - 1; // 最後の記号を除く
         for (let i = 0; i < blankCount; i++) {
             const blankBox = document.createElement('div');
             blankBox.className = 'reorder-blank-box';
@@ -4762,6 +4817,14 @@ function displayCurrentReorderQuestion() {
                 }
             }, { passive: false });
             answerAreaEl.appendChild(blankBox);
+        }
+        
+        // 最後にピリオドまたは?を表示
+        if (lastChar === '.' || lastChar === '?') {
+            const punctuationEl = document.createElement('span');
+            punctuationEl.className = 'reorder-punctuation';
+            punctuationEl.textContent = lastChar;
+            answerAreaEl.appendChild(punctuationEl);
         }
     }
     
