@@ -3494,6 +3494,18 @@ function createProgressSegments(total) {
             const absoluteIndex = currentRangeStart + targetIndex;
             if (absoluteIndex >= currentRangeStart && absoluteIndex < currentRangeEnd) {
                 currentIndex = absoluteIndex;
+                
+                // 例文モードの場合
+                if (isSentenceModeActive) {
+                    currentSentenceIndex = absoluteIndex;
+                    sentenceAnswerSubmitted = false;
+                    displayCurrentSentence();
+                    updateStats();
+                    updateNavButtons();
+                    return;
+                }
+                
+                // 通常モードの場合
                 isCardRevealed = false;
                 inputAnswerSubmitted = false;
                 if (elements.wordCard) {
@@ -4308,6 +4320,14 @@ function handleSentencePass() {
         updateProgressSegments();
     }
     
+    // 画面全体のフィードバック表示（薄い赤）
+    if (elements.feedbackOverlay) {
+        elements.feedbackOverlay.className = 'feedback-overlay wrong active';
+        setTimeout(() => {
+            elements.feedbackOverlay.classList.remove('active');
+        }, 400);
+    }
+    
     // 「次へ」ボタンを表示
     showSentenceNextButton();
 }
@@ -4349,6 +4369,14 @@ function handleSentenceDecide() {
     updateStats();
     if (typeof updateProgressSegments === 'function') {
         updateProgressSegments();
+    }
+    
+    // 画面全体のフィードバック表示（正解は薄い青、不正解は薄い赤）
+    if (elements.feedbackOverlay) {
+        elements.feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
+        setTimeout(() => {
+            elements.feedbackOverlay.classList.remove('active');
+        }, 400);
     }
     
     // 「次へ」ボタンを表示

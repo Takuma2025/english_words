@@ -10,7 +10,8 @@ const sentenceMemorizationData = [
             { index: 2, word: 'any' },
             { index: 3, word: 'other' },
             { index: 4, word: 'river' }
-        ]
+        ],
+        hint: 'ヒント：\n1. l_____ (6文字)\n2. t___ (4文字)\n3. a__ (3文字)\n4. o____ (5文字)\n5. r____ (5文字)'
     },
     // 最上級の文
     {
@@ -21,7 +22,8 @@ const sentenceMemorizationData = [
             { index: 0, word: 'the' },
             { index: 1, word: 'highest' },
             { index: 2, word: 'mountain' }
-        ]
+        ],
+        hint: 'ヒント：\n1. t__ (3文字)\n2. h______ (7文字)\n3. m_______ (8文字)'
     },
     {
         id: 3,
@@ -32,7 +34,8 @@ const sentenceMemorizationData = [
             { index: 1, word: 'most' },
             { index: 2, word: 'beautiful' },
             { index: 3, word: 'flower' }
-        ]
+        ],
+        hint: 'ヒント：\n1. t__ (3文字)\n2. m___ (4文字)\n3. b________ (9文字)\n4. f_____ (6文字)'
     },
     {
         id: 4,
@@ -42,7 +45,8 @@ const sentenceMemorizationData = [
             { index: 0, word: 'the' },
             { index: 1, word: 'tallest' },
             { index: 2, word: 'girl' }
-        ]
+        ],
+        hint: 'ヒント：\n1. t__ (3文字)\n2. t______ (7文字)\n3. g___ (4文字)'
     },
     {
         id: 5,
@@ -53,7 +57,8 @@ const sentenceMemorizationData = [
             { index: 1, word: 'most' },
             { index: 2, word: 'interesting' },
             { index: 3, word: 'movie' }
-        ]
+        ],
+        hint: 'ヒント：\n1. t__ (3文字)\n2. m___ (4文字)\n3. i_________ (11文字)\n4. m____ (5文字)'
     },
     {
         id: 6,
@@ -62,7 +67,8 @@ const sentenceMemorizationData = [
         blanks: [
             { index: 0, word: 'the' },
             { index: 1, word: 'fastest' }
-        ]
+        ],
+        hint: 'ヒント：\n1. t__ (3文字)\n2. f______ (7文字)'
     },
     {
         id: 7,
@@ -74,7 +80,8 @@ const sentenceMemorizationData = [
             { index: 2, word: 'the' },
             { index: 3, word: 'oldest' },
             { index: 4, word: 'buildings' }
-        ]
+        ],
+        hint: 'ヒント：\n1. o__ (3文字)\n2. o_ (2文字)\n3. t__ (3文字)\n4. o_____ (6文字)\n5. b________ (9文字)'
     },
     // as...asの文
     {
@@ -85,7 +92,8 @@ const sentenceMemorizationData = [
             { index: 0, word: 'as' },
             { index: 1, word: 'interesting' },
             { index: 2, word: 'as' }
-        ]
+        ],
+        hint: 'ヒント：\n1. a_ (2文字)\n2. i_________ (11文字)\n3. a_ (2文字)'
     },
     {
         id: 9,
@@ -95,7 +103,8 @@ const sentenceMemorizationData = [
             { index: 0, word: 'as' },
             { index: 1, word: 'tall' },
             { index: 2, word: 'as' }
-        ]
+        ],
+        hint: 'ヒント：\n1. a_ (2文字)\n2. t___ (4文字)\n3. a_ (2文字)'
     },
     {
         id: 10,
@@ -105,7 +114,8 @@ const sentenceMemorizationData = [
             { index: 0, word: 'as' },
             { index: 1, word: 'important' },
             { index: 2, word: 'as' }
-        ]
+        ],
+        hint: 'ヒント：\n1. a_ (2文字)\n2. i________ (9文字)\n3. a_ (2文字)'
     },
     {
         id: 11,
@@ -115,7 +125,8 @@ const sentenceMemorizationData = [
             { index: 0, word: 'as' },
             { index: 1, word: 'difficult' },
             { index: 2, word: 'as' }
-        ]
+        ],
+        hint: 'ヒント：\n1. a_ (2文字)\n2. d________ (9文字)\n3. a_ (2文字)'
     },
     {
         id: 12,
@@ -125,7 +136,8 @@ const sentenceMemorizationData = [
             { index: 0, word: 'as' },
             { index: 1, word: 'well' },
             { index: 2, word: 'as' }
-        ]
+        ],
+        hint: 'ヒント：\n1. a_ (2文字)\n2. w___ (4文字)\n3. a_ (2文字)'
     },
     {
         id: 13,
@@ -135,7 +147,8 @@ const sentenceMemorizationData = [
             { index: 0, word: 'as' },
             { index: 1, word: 'fast' },
             { index: 2, word: 'as' }
-        ]
+        ],
+        hint: 'ヒント：\n1. a_ (2文字)\n2. f___ (4文字)\n3. a_ (2文字)'
     },
     {
         id: 14,
@@ -145,7 +158,8 @@ const sentenceMemorizationData = [
             { index: 0, word: 'as' },
             { index: 1, word: 'hard' },
             { index: 2, word: 'as' }
-        ]
+        ],
+        hint: 'ヒント：\n1. a_ (2文字)\n2. h___ (4文字)\n3. a_ (2文字)'
     },
     {
         id: 15,
@@ -155,7 +169,8 @@ const sentenceMemorizationData = [
             { index: 0, word: 'as' },
             { index: 1, word: 'large' },
             { index: 2, word: 'as' }
-        ]
+        ],
+        hint: '「ほかのどの～よりも...」は、〈 比較級 than any other 単数形の名詞 〉でしたね。'
     }
 ];
 
