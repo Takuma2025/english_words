@@ -33,7 +33,7 @@ let currentSelectedBlankIndex = -1; // 現在選択中の空所のインデッ�
 let isReorderModeActive = false; // 整序英作文モードかどうか
 let reorderData = []; // 整序英作文データ
 let currentReorderIndex = 0;
-let selectedLearningMode = 'card'; // 学習モード: 'card' (英語→日本語) または 'input' (日本語→英語) // 現在の整序英作文のインデックス
+let selectedLearningMode = 'card'; // 学習モード: 'card' (日本語) または 'input' (日本語→英語) // 現在の整序英作文のインデックス
 let reorderAnswerSubmitted = false; // 回答が送信済みかどうか
 let reorderSelectedWords = []; // 選択された単語の配列
 let reorderTouchData = { // タッチドラッグ用のデータ
@@ -1177,62 +1177,109 @@ function showCourseSelection(category, categoryWords) {
     courseTitle.textContent = `${displayCategory} - コースを選んでください`;
     courseList.innerHTML = '';
     
-    // 小学生で習った単語とカテゴリー別に覚える単語の場合は、固定の4つのコースを表示
+    // 小学生で習った単語とカテゴリー別に覚える単語の場合は、固定のサブコースを表示
     if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
-        const courses = [
-            '接続詞',
-            '助動詞',
-            '前置詞',
-            '疑問詞'
+        // 小学生で習った単語グループ
+        const elementaryCourses = [
+            '身の回りのものに関する単語',
+            '家族・家に関する単語',
+            '数字に関する単語',
+            '暦・曜日・季節・時間に関する単語',
+            '乗り物・スポーツに関する単語',
+            '食べ物に関する単語',
+            '動物に関する単語'
         ];
-        
-        courses.forEach(courseName => {
-            // 各コースに対応する単語をフィルタリング
-            let courseWords;
-            // 接続詞、助動詞、前置詞、疑問詞: categoryがコース名と一致するもの
-            courseWords = categoryWords.filter(word => word.category === courseName);
-            
-            // 進捗を計算（カテゴリごと）
-            let correctCountInCourse = 0;
-            let wrongCountInCourse = 0;
-            const { correctSet, wrongSet } = loadCategoryWords(category);
-            
-            courseWords.forEach(word => {
-                const isCorrect = correctSet.has(word.id);
-                const isWrong = wrongSet.has(word.id);
-                
-                // 優先順位変更: 間違い(赤) > 正解(青)
-                if (isWrong) {
-                    wrongCountInCourse++;
-                } else if (isCorrect) {
-                    correctCountInCourse++;
-                }
+
+        // 機能語グループ
+        const functionWordCourses = [
+            '冠詞',
+            '代名詞',
+            '前置詞',
+            '助動詞',
+            '接続詞',
+            '関係代名詞',
+            '機能型副詞'
+        ];
+
+        const { correctSet, wrongSet } = loadCategoryWords(category);
+
+        // 共通でコースカードを追加するヘルパー
+        function addCourseGroup(groupTitle, courses) {
+            const section = document.createElement('div');
+            section.className = 'course-subsection';
+
+            const headerBtn = document.createElement('button');
+            headerBtn.type = 'button';
+            headerBtn.className = 'course-subsection-header';
+            headerBtn.setAttribute('aria-expanded', 'false');
+            headerBtn.textContent = groupTitle;
+
+            const arrow = document.createElement('span');
+            arrow.className = 'course-subsection-arrow';
+            arrow.textContent = '▶';
+            headerBtn.appendChild(arrow);
+
+            const body = document.createElement('div');
+            body.className = 'course-subsection-body hidden';
+
+            headerBtn.addEventListener('click', () => {
+                const isOpen = body.classList.toggle('hidden') === false;
+                section.classList.toggle('open', isOpen);
+                headerBtn.setAttribute('aria-expanded', String(isOpen));
             });
-            
-            const total = courseWords.length;
-            const correctPercent = total === 0 ? 0 : (correctCountInCourse / total) * 100;
-            const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
-            const completedCount = correctCountInCourse + wrongCountInCourse;
-            
-            const courseCard = createCourseCard(
-                courseName,
-                `${total}語`,
-                correctPercent,
-                wrongPercent,
-                completedCount,
-                total,
-                () => {
-                    // コースを選択したら、そのコースの単語で学習方法選択モーダルを表示
-                    const { wrongSet } = loadCategoryWords(category);
-                    const wrongWordsInCourse = courseWords.filter(word => wrongSet.has(word.id));
-                    const savedIndex = loadProgress(category);
-                    const hasProgress = savedIndex > 0;
-                    
-                    showInputModeMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse);
-                }
-            );
-            courseList.appendChild(courseCard);
-        });
+
+            section.appendChild(headerBtn);
+
+            courses.forEach(courseName => {
+                // 各コースに対応する単語をフィルタリング（elementary_words.js 側で category をコース名に合わせておく）
+                const courseWords = categoryWords.filter(word => word.category === courseName);
+
+                // 進捗を計算（サブコースごと）
+                let correctCountInCourse = 0;
+                let wrongCountInCourse = 0;
+
+                courseWords.forEach(word => {
+                    const isCorrect = correctSet.has(word.id);
+                    const isWrong = wrongSet.has(word.id);
+
+                    // 優先順位変更: 間違い(赤) > 正解(青)
+                    if (isWrong) {
+                        wrongCountInCourse++;
+                    } else if (isCorrect) {
+                        correctCountInCourse++;
+                    }
+                });
+
+                const total = courseWords.length;
+                const correctPercent = total === 0 ? 0 : (correctCountInCourse / total) * 100;
+                const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
+                const completedCount = correctCountInCourse + wrongCountInCourse;
+
+                const courseCard = createCourseCard(
+                    courseName,
+                    `${total}語`,
+                    correctPercent,
+                    wrongPercent,
+                    completedCount,
+                    total,
+                    () => {
+                        // コースを選択したら、そのコースの単語で学習方法選択モーダルを表示
+                        const wrongWordsInCourse = courseWords.filter(word => wrongSet.has(word.id));
+                        const savedIndex = loadProgress(category);
+                        const hasProgress = savedIndex > 0;
+
+                        showInputModeMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse);
+                    }
+                );
+                body.appendChild(courseCard);
+            });
+
+            section.appendChild(body);
+            courseList.appendChild(section);
+        }
+
+        addCourseGroup('小学生で習った単語', elementaryCourses);
+        addCourseGroup('機能語', functionWordCourses);
     } else {
         // その他のカテゴリーは100刻みで表示
         const CHUNK = 100;
@@ -3521,7 +3568,7 @@ function displayCurrentWord() {
         }
     }
     
-    // 英語→日本語モードの場合のみ自動で音声を再生（0.3秒遅延）
+    // 日本語モードの場合のみ自動で音声を再生（0.3秒遅延）
     if (!isInputModeActive) {
         setTimeout(() => {
             speakWord(word.word, null);
