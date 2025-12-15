@@ -4225,9 +4225,12 @@ body {
 }
 
 .reorder-blank-box.drag-over {
-    background: #fffc42;
-    border-color: #3b82f6;
+    background: #fff7b2;              /* もっと明るい黄色に点灯 */
+    border-color: #facc15;            /* 黄色の枠 */
     border-width: 2px;
+    box-shadow:                       /* 周りがふわっと光る */
+        0 0 0 2px rgba(250, 204, 21, 0.8),
+        0 0 14px rgba(250, 204, 21, 0.95);
 }
 
 .reorder-answer-box {
