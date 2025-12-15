@@ -1239,7 +1239,7 @@ function showCourseSelection(category, categoryWords) {
             if (groupTitle === '機能語') {
                 const note = document.createElement('p');
                 note.className = 'course-group-note';
-                note.textContent = '機能語とは、具体的な意味や内容を表す単語ではないが、文の中の単語同士の関係性を示し、文法構造を支えるために、文章の中に何度も登場する重要な単語です。';
+                note.textContent = '機能語とは、具体的な意味や内容を表す単語ではないが、文の中の単語同士の関係性を示し、文法構造を支えるために、文章の中に何度も登場する重要な単語のことです。';
                 body.appendChild(note);
             }
 
