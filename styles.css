@@ -3099,9 +3099,8 @@ body {
 }
 
 /* 小学生で習った単語アコーディオン（濃い青グレー＋白字） */
-/* 小学生で習った単語アコーディオン（少し明るめの青グレー＋白字） */
 .course-subsection-elementary .course-subsection-header {
-    background: #4b5563; /* 以前より明るいトーン */
+    background: #10b981; /* OKボタンと同じ緑 */
     color: #ffffff;
 }
 
@@ -3109,13 +3108,18 @@ body {
     color: #e5e7eb;
 }
 
- .course-subsection-elementary .course-subsection-header:hover {
-    background: #374151;
+.course-subsection-elementary .course-subsection-header:hover {
+    background: #15803d;
 }
 
-/* 機能語アコーディオン（やや明るめのグレー＋白字） */
+.course-subsection-elementary .course-group-badge {
+    background-color: #10b981; /* OKボタンと同じ緑 */
+    color: #ffffff;
+}
+
+/* 機能語アコーディオン（紫系＋白字） */
 .course-subsection-function .course-subsection-header {
-    background: #6b7280; /* 以前より明るいトーン */
+    background: #8b5cf6; /* 紫 */
     color: #ffffff;
 }
 
@@ -3124,7 +3128,12 @@ body {
 }
 
 .course-subsection-function .course-subsection-header:hover {
-    background: #4b5563;
+    background: #6d28d9;
+}
+
+.course-subsection-function .course-group-badge {
+    background-color: #8b5cf6;
+    color: #ffffff;
 }
 
 .course-subsection-arrow {
