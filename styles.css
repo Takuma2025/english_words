@@ -883,7 +883,7 @@ body {
     object-fit: contain;
     pointer-events: none;
     z-index: 1;
-    border: 2px solid #9ca3af; /* グレーボーダー */
+    border: 1px solid #9ca3af; /* グレーボーダーを細く */
     border-bottom: none; /* 下のボーダーはなし */
     border-radius: 4px 4px 0 0; /* 上の角だけ丸く（ラディアスを小さく） */
 }
