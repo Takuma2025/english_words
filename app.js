@@ -49,6 +49,12 @@ let reorderTouchData = { // タッチドラッグ用のデータ
     rafId: null // requestAnimationFrameのID
 };
 
+// 表形式入力モード用の変数
+let isTableModeActive = false;
+let tableData = []; // [{label: '1月', answer: 'January', userInput: ''}, ...]
+let currentTableInputIndex = 0; // 現在選択中の入力欄のインデックス
+let tableAnswerChecked = false; // 答え合わせ済みかどうか
+
 // 学習日を記録する関数（日付と学習量を記録）
 function recordStudyDate() {
     const today = new Date();
@@ -418,7 +424,7 @@ function updateCategoryStars() {
                     wrongBar.style.width = `${wrongPercent}%`;
                 }
                 if (text) {
-                    text.textContent = `${completedCount} / ${total}`;
+                    text.textContent = `${completedCount}/${total}語`;
                 }
             } else {
                 // データが未定義の場合は0に設定
@@ -433,7 +439,7 @@ function updateCategoryStars() {
                     wrongBar.style.width = '0%';
                 }
                 if (text) {
-                    text.textContent = '0 / 0';
+                    text.textContent = '0/0語';
                 }
             }
             return; // 例文データの処理が完了したので、以降の単語データ処理をスキップ
@@ -456,7 +462,7 @@ function updateCategoryStars() {
                 wrongBar.style.width = '0%';
             }
             if (text) {
-                text.textContent = '0 / 0';
+                text.textContent = '0/0語';
             }
             return;
         }
@@ -501,7 +507,7 @@ function updateCategoryStars() {
         }
         if (text) {
             // 学習済み数（正解+間違い）/ 総数を表示
-            text.textContent = `${completedCount} / ${total}`;
+            text.textContent = `${completedCount}/${total}語`;
         }
     });
 }
@@ -1230,7 +1236,9 @@ function showCourseSelection(category, categoryWords) {
 
             section.appendChild(headerBtn);
 
-            courses.forEach(courseName => {
+            const circledNumbers = ['❶','❷','❸','❹','❺','❻','❼','❽','❾','❿'];
+
+            courses.forEach((courseName, index) => {
                 // 各コースに対応する単語をフィルタリング（elementary_words.js 側で category をコース名に合わせておく）
                 const courseWords = categoryWords.filter(word => word.category === courseName);
 
@@ -1255,21 +1263,35 @@ function showCourseSelection(category, categoryWords) {
                 const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
                 const completedCount = correctCountInCourse + wrongCountInCourse;
 
+                const numberMark = circledNumbers[index] || '';
+                const badgeLabel =
+                    groupTitle === '小学生で習った単語' && numberMark
+                        ? `小学生${numberMark}`
+                        : groupTitle === '機能語' && numberMark
+                            ? `機能語${numberMark}`
+                            : '';
+
                 const courseCard = createCourseCard(
                     courseName,
-                    `${total}語`,
+                    '',
                     correctPercent,
                     wrongPercent,
                     completedCount,
                     total,
                     () => {
+                        // 「暦・曜日・季節・時間に関する単語」は表形式モードで開始
+                        if (courseName === '暦・曜日・季節・時間に関する単語') {
+                            initTableModeLearning(courseName);
+                            return;
+                        }
                         // コースを選択したら、そのコースの単語で学習方法選択モーダルを表示
                         const wrongWordsInCourse = courseWords.filter(word => wrongSet.has(word.id));
                         const savedIndex = loadProgress(category);
                         const hasProgress = savedIndex > 0;
 
                         showInputModeMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse);
-                    }
+                    },
+                    badgeLabel
                 );
                 body.appendChild(courseCard);
             });
@@ -1314,7 +1336,7 @@ function showCourseSelection(category, categoryWords) {
             
             const courseCard = createCourseCard(
                 `No.${start + 1} - No.${end}`,
-                `${start + 1}語目から${end}語目まで`,
+                '',
                 correctPercent,
                 wrongPercent,
                 completedCount,
@@ -1350,17 +1372,19 @@ function showCourseSelection(category, categoryWords) {
 }
 
 // コースカードを作成
-function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, onClick) {
+function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, onClick, badgeLabel = '') {
     const card = document.createElement('button');
     card.className = 'category-card';
     card.onclick = onClick;
     
     const cardId = `course-${title.replace(/\s+/g, '-')}`;
     
+    const badgeHtml = badgeLabel ? `<span class="course-group-badge">${badgeLabel}</span>` : '';
+
     card.innerHTML = `
         <div class="category-info">
             <div class="category-header">
-                <div class="category-name">${title}</div>
+                <div class="category-name">${badgeHtml}${title}</div>
             </div>
             <div class="category-meta">${description}</div>
             <div class="category-progress">
@@ -1368,7 +1392,7 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
                     <div class="category-progress-correct" style="width: ${correctPercent}%"></div>
                     <div class="category-progress-wrong" style="width: ${wrongPercent}%"></div>
                 </div>
-                <div class="category-progress-text">${completedCount} / ${total}</div>
+                <div class="category-progress-text">${completedCount}/${total}語</div>
             </div>
         </div>
         <div class="category-arrow">
@@ -1557,7 +1581,52 @@ function createMethodCard(title, description, onClick, buttonType = 'default') {
     const button = document.createElement('button');
     button.className = `method-selection-btn method-selection-btn-${buttonType}`;
     button.onclick = onClick;
-    button.textContent = title;
+    
+    // ボタンタイプごとの白アイコン（すべてSVG）
+    let iconSvg = '';
+    if (buttonType === 'start') {
+        // 再生（三角）アイコン
+        iconSvg = `
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <polygon points="8 5 19 12 8 19" fill="currentColor"></polygon>
+            </svg>
+        `;
+    } else if (buttonType === 'continue') {
+        // 右向き二重矢印アイコン
+        iconSvg = `
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <polyline points="6 4 14 12 6 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                <polyline points="12 4 20 12 12 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+            </svg>
+        `;
+    } else if (buttonType === 'wrong') {
+        // ループ（矢印）アイコン
+        iconSvg = `
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <polyline points="3 11 3 4 10 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                <polyline points="21 13 21 20 14 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                <path d="M5 19a9 9 0 0 0 14 -3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M19 5a9 9 0 0 0 -14 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        `;
+    } else if (buttonType === 'shuffle') {
+        // シャッフルアイコン
+        iconSvg = `
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <polyline points="16 3 21 3 21 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                <polyline points="8 21 3 21 3 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                <path d="M21 3L14.5 9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M9.5 14.5L3 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M21 13h-4.5a4 4 0 0 1-3.2-1.6L10.7 9.6A4 4 0 0 0 7.5 8H3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        `;
+    }
+    
+    if (iconSvg) {
+        button.innerHTML = `${iconSvg}<span>${title}</span>`;
+    } else {
+        button.textContent = title;
+    }
     
     return button;
 }

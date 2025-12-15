@@ -940,7 +940,7 @@ body {
     display: flex;
     align-items: center;
     background: #ffffff;
-    border: 1px solid #d1d5db; /* グレーの細いふち線 */
+    border: none; /* 枠線なし */
     border-radius: 0;
     padding: 16px;
     width: 100%;
@@ -1025,7 +1025,7 @@ body {
 .category-progress-bar {
     height: 12px;
     background: #e5e7eb;
-    border-radius: 999px;
+    border-radius: 0;
     overflow: visible;
     display: flex; /* フレックスボックスにしてバーを並べる */
     flex-direction: row;
@@ -2924,6 +2924,15 @@ body {
     color: var(--warning);
 }
 
+/* ブックマークアイコンの塗りつぶし */
+.star-btn svg {
+    fill: none;
+}
+
+.star-btn.active svg {
+    fill: currentColor; /* 有効時は中まで黄色で塗る */
+}
+
 .english-word-wrapper {
     display: flex;
     align-items: baseline;
@@ -3048,11 +3057,32 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 16px; /* アコーディオン見出しを少し大きく */
     font-weight: 700;
     color: #111827;
     cursor: pointer;
     text-align: left;
+}
+
+/* 小学生❶ / 機能語❷ バッジ */
+.course-group-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    margin-right: 8px;
+    border-radius: 999px;
+    background-color: #374151; /* 濃いグレー */
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.course-subsection-header-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
 }
 
 .course-subsection-header:hover {
@@ -3501,6 +3531,10 @@ body {
     -webkit-tap-highlight-color: transparent;
     will-change: transform;
     margin-bottom: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .method-selection-btn:last-child {
