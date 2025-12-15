@@ -940,7 +940,7 @@ body {
     display: flex;
     align-items: center;
     background: #ffffff;
-    border: none;
+    border: 1px solid #d1d5db; /* グレーの細いふち線 */
     border-radius: 0;
     padding: 16px;
     width: 100%;
