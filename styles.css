@@ -3079,6 +3079,15 @@ body {
     white-space: nowrap;
 }
 
+.course-group-badge-text {
+    font-size: 12px;
+}
+
+.course-group-badge-number {
+    font-size: 16px; /* 丸数字だけ大きく */
+    margin-left: 4px;
+}
+
 .course-subsection-header-title {
     font-size: 16px;
     font-weight: 700;
@@ -3087,6 +3096,35 @@ body {
 
 .course-subsection-header:hover {
     background: #eef2f7;
+}
+
+/* 小学生で習った単語アコーディオン（濃い青グレー＋白字） */
+/* 小学生で習った単語アコーディオン（少し明るめの青グレー＋白字） */
+.course-subsection-elementary .course-subsection-header {
+    background: #4b5563; /* 以前より明るいトーン */
+    color: #ffffff;
+}
+
+.course-subsection-elementary .course-subsection-arrow {
+    color: #e5e7eb;
+}
+
+ .course-subsection-elementary .course-subsection-header:hover {
+    background: #374151;
+}
+
+/* 機能語アコーディオン（やや明るめのグレー＋白字） */
+.course-subsection-function .course-subsection-header {
+    background: #6b7280; /* 以前より明るいトーン */
+    color: #ffffff;
+}
+
+.course-subsection-function .course-subsection-arrow {
+    color: #e5e7eb;
+}
+
+.course-subsection-function .course-subsection-header:hover {
+    background: #4b5563;
 }
 
 .course-subsection-arrow {

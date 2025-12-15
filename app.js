@@ -1214,6 +1214,13 @@ function showCourseSelection(category, categoryWords) {
             const section = document.createElement('div');
             section.className = 'course-subsection';
 
+            // グループ別にクラスを付与（スタイル用）
+            if (groupTitle === '小学生で習った単語') {
+                section.classList.add('course-subsection-elementary');
+            } else if (groupTitle === '機能語') {
+                section.classList.add('course-subsection-function');
+            }
+
             const headerBtn = document.createElement('button');
             headerBtn.type = 'button';
             headerBtn.className = 'course-subsection-header';
@@ -1263,13 +1270,13 @@ function showCourseSelection(category, categoryWords) {
                 const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
                 const completedCount = correctCountInCourse + wrongCountInCourse;
 
-                const numberMark = circledNumbers[index] || '';
-                const badgeLabel =
-                    groupTitle === '小学生で習った単語' && numberMark
-                        ? `小学生${numberMark}`
-                        : groupTitle === '機能語' && numberMark
-                            ? `機能語${numberMark}`
-                            : '';
+        const numberMark = circledNumbers[index] || '';
+        const badgeLabel =
+            groupTitle === '小学生で習った単語' && numberMark
+                ? '小学生'
+                : groupTitle === '機能語' && numberMark
+                    ? '機能語'
+                    : '';
 
                 const courseCard = createCourseCard(
                     courseName,
@@ -1291,7 +1298,8 @@ function showCourseSelection(category, categoryWords) {
 
                         showInputModeMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse);
                     },
-                    badgeLabel
+                    badgeLabel,
+                    numberMark
                 );
                 body.appendChild(courseCard);
             });
@@ -1372,14 +1380,22 @@ function showCourseSelection(category, categoryWords) {
 }
 
 // コースカードを作成
-function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, onClick, badgeLabel = '') {
+function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, onClick, badgeLabel = '', badgeNumber = '') {
     const card = document.createElement('button');
     card.className = 'category-card';
     card.onclick = onClick;
     
     const cardId = `course-${title.replace(/\s+/g, '-')}`;
     
-    const badgeHtml = badgeLabel ? `<span class="course-group-badge">${badgeLabel}</span>` : '';
+    let badgeHtml = '';
+    if (badgeLabel) {
+        const numberHtml = badgeNumber ? `<span class="course-group-badge-number">${badgeNumber}</span>` : '';
+        badgeHtml = `
+            <span class="course-group-badge">
+                <span class="course-group-badge-text">${badgeLabel}</span>${numberHtml}
+            </span>
+        `;
+    }
 
     card.innerHTML = `
         <div class="category-info">
