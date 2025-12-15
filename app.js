@@ -1243,7 +1243,8 @@ function showCourseSelection(category, categoryWords) {
 
             section.appendChild(headerBtn);
 
-            const circledNumbers = ['❶','❷','❸','❹','❺','❻','❼','❽','❾','❿'];
+            // サブコース番号（1〜10）
+            const circledNumbers = ['1','2','3','4','5','6','7','8','9','10'];
 
             courses.forEach((courseName, index) => {
                 // 各コースに対応する単語をフィルタリング（elementary_words.js 側で category をコース名に合わせておく）
@@ -1388,13 +1389,8 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
     const cardId = `course-${title.replace(/\s+/g, '-')}`;
     
     let badgeHtml = '';
-    if (badgeLabel) {
-        const numberHtml = badgeNumber ? `<span class="course-group-badge-number">${badgeNumber}</span>` : '';
-        badgeHtml = `
-            <span class="course-group-badge">
-                <span class="course-group-badge-text">${badgeLabel}</span>${numberHtml}
-            </span>
-        `;
+    if (badgeNumber) {
+        badgeHtml = `<span class="course-group-badge">${badgeNumber}</span>`;
     }
 
     card.innerHTML = `

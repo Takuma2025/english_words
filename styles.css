@@ -3064,28 +3064,19 @@ body {
     text-align: left;
 }
 
-/* 小学生❶ / 機能語❷ バッジ */
+/* サブコース番号バッジ（❶〜❿） */
 .course-group-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 10px;
+    padding: 2px 8px;
     margin-right: 8px;
-    border-radius: 999px;
-    background-color: #374151; /* 濃いグレー */
-    color: #ffffff;
-    font-size: 12px;
+    border-radius: 4px;           /* ほぼ四角形 */
+    background-color: #4b5563;    /* デフォルトは濃いグレー */
+    color: #ffffff;               /* 白い文字 */
+    font-size: 16px;              /* 丸数字を見やすく */
     font-weight: 700;
     white-space: nowrap;
-}
-
-.course-group-badge-text {
-    font-size: 12px;
-}
-
-.course-group-badge-number {
-    font-size: 16px; /* 丸数字だけ大きく */
-    margin-left: 4px;
 }
 
 .course-subsection-header-title {
@@ -3108,10 +3099,6 @@ body {
     color: #e5e7eb;
 }
 
-.course-subsection-elementary .course-subsection-header:hover {
-    background: #15803d;
-}
-
 .course-subsection-elementary .course-group-badge {
     background-color: #10b981; /* OKボタンと同じ緑 */
     color: #ffffff;
@@ -3127,12 +3114,8 @@ body {
     color: #e5e7eb;
 }
 
-.course-subsection-function .course-subsection-header:hover {
-    background: #6d28d9;
-}
-
 .course-subsection-function .course-group-badge {
-    background-color: #8b5cf6;
+    background-color: #8b5cf6; /* 紫 */
     color: #ffffff;
 }
 
