@@ -1235,6 +1235,14 @@ function showCourseSelection(category, categoryWords) {
             const body = document.createElement('div');
             body.className = 'course-subsection-body hidden';
 
+            // 「機能語」の場合のみ、説明テキスト（注釈）を先頭に表示
+            if (groupTitle === '機能語') {
+                const note = document.createElement('p');
+                note.className = 'course-group-note';
+                note.textContent = '機能語とは、具体的な意味や内容を表す単語ではないが、文の中の単語同士の関係性を示し、文法構造を支えるために、文章の中に何度も登場する重要な単語です。';
+                body.appendChild(note);
+            }
+
             headerBtn.addEventListener('click', () => {
                 const isOpen = body.classList.toggle('hidden') === false;
                 section.classList.toggle('open', isOpen);
@@ -1271,13 +1279,13 @@ function showCourseSelection(category, categoryWords) {
                 const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
                 const completedCount = correctCountInCourse + wrongCountInCourse;
 
-        const numberMark = circledNumbers[index] || '';
-        const badgeLabel =
-            groupTitle === '小学生で習った単語' && numberMark
-                ? '小学生'
-                : groupTitle === '機能語' && numberMark
-                    ? '機能語'
-                    : '';
+                const numberMark = circledNumbers[index] || '';
+                const badgeLabel =
+                    groupTitle === '小学生で習った単語' && numberMark
+                        ? '小学生'
+                        : groupTitle === '機能語' && numberMark
+                            ? '機能語'
+                            : '';
 
                 const courseCard = createCourseCard(
                     courseName,

@@ -3079,6 +3079,14 @@ body {
     white-space: nowrap;
 }
 
+/* 機能語の注釈テキスト */
+.course-group-note {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #4b5563;
+    margin: 0 0 8px 0;
+}
+
 .course-subsection-header-title {
     font-size: 16px;
     font-weight: 700;
