@@ -4641,6 +4641,12 @@ body {
     width: 28px;
     height: 28px;
 }
+.sns-share-btn img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    display: block;
+}
 
 .sns-share-btn.sns-line {
     background: #06C755;
