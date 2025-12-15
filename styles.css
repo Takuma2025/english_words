@@ -1335,6 +1335,56 @@ body {
     color: #ffffff;
 }
 
+/* 条件英作文特訓コースのスタイル */
+.category-card[data-category="条件英作文特訓コース"] {
+    background: #DC2626; /* 赤みの強い赤 */
+    color: #ffffff;
+}
+
+.category-card[data-category="条件英作文特訓コース"] .category-name {
+    color: #ffffff;
+}
+
+.category-card[data-category="条件英作文特訓コース"] .b-problem-label {
+    background: #000000;
+    color: #ffffff;
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 4px;
+    position: relative;
+    z-index: 3;
+    font-size: 16px;
+}
+
+.category-card[data-category="条件英作文特訓コース"] .sentence-memorization-text {
+    font-size: 22px;
+    font-weight: 700;
+    background: #ffffff;
+    color: #000000;
+    display: block;
+    padding: 4px 8px;
+    border-radius: 0;
+    margin-top: -4px;
+    margin-left: -8px;
+    margin-right: -8px;
+    width: calc(100% + 16px);
+    position: relative;
+    z-index: 2;
+}
+
+.category-card[data-category="条件英作文特訓コース"] .category-meta {
+    color: #ffffff;
+    opacity: 0.95;
+}
+
+.category-card[data-category="条件英作文特訓コース"] .category-arrow {
+    color: #ffffff;
+}
+
+.category-card[data-category="条件英作文特訓コース"] .category-progress {
+    display: none;
+}
+
 .category-card[data-category^="大阪C問題対策"] .category-arrow {
     color: #ffffff;
 }
@@ -3325,6 +3375,43 @@ body {
     padding: 4px 4px 12px 0;
     margin-right: -4px;
     margin-bottom: -12px;
+}
+
+/* モード切り替えトグルボタン */
+.mode-toggle-container {
+    margin: 16px 0 20px 0;
+    width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.mode-toggle-wrapper {
+    display: flex;
+    gap: 8px;
+    background: #f3f4f6;
+    padding: 4px;
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.mode-toggle-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b7280;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mode-toggle-btn.active {
+    background: #ffffff;
+    color: #0055ca;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .method-selection-list {
