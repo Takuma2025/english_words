@@ -4591,3 +4591,98 @@ body {
         margin-bottom: 8px;
     }
 }
+
+/* SNSシェアボタン */
+.sns-share-container {
+    margin-top: 32px;
+    margin-bottom: 24px;
+    padding: 0 16px;
+}
+
+.sns-share-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.sns-share-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.sns-share-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    text-decoration: none;
+    color: #ffffff;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sns-share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sns-share-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.sns-share-btn svg {
+    width: 28px;
+    height: 28px;
+}
+
+.sns-share-btn.sns-line {
+    background: #06C755;
+}
+
+.sns-share-btn.sns-line:active {
+    box-shadow: 0 1px 2px rgba(6, 199, 85, 0.4);
+}
+
+.sns-share-btn.sns-x {
+    background: #000000;
+}
+
+.sns-share-btn.sns-x:active {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.sns-share-btn.sns-instagram {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.sns-share-btn.sns-instagram:active {
+    box-shadow: 0 1px 2px rgba(188, 24, 136, 0.4);
+}
+
+@media (max-width: 600px) {
+    .sns-share-container {
+        margin-top: 24px;
+        margin-bottom: 16px;
+    }
+    
+    .sns-share-buttons {
+        gap: 16px;
+    }
+    
+    .sns-share-btn {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .sns-share-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+}

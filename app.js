@@ -80,7 +80,6 @@ function getAllCorrectWordsCount() {
         'LEVEL2 よくでる300',
         'LEVEL3 差がつく200',
         'LEVEL4 ハイレベル200',
-        '基本語彙500',
         '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
         '大阪C問題対策英単語タイムアタック',
         '大阪C問題対策 英作写経ドリル',
@@ -370,13 +369,11 @@ function updateCategoryStars() {
         'LEVEL4 ハイレベル200': 'Group3 ハイレベル100'
     };
     
-    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '条件英作文特訓コース', '大阪C問題対策英単語タイムアタック', 'PartCディクテーション'];
+    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '条件英作文特訓コース', '大阪C問題対策英単語タイムアタック', 'PartCディクテーション'];
     
     categories.forEach(category => {
         let categoryWords;
-        if (category === '基本語彙500') {
-            categoryWords = wordData.slice(0, Math.min(500, wordData.length));
-        } else if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
+        if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
             // elementaryWordDataが定義されているか確認
             if (typeof elementaryWordData !== 'undefined') {
                 categoryWords = elementaryWordData;
@@ -1005,11 +1002,12 @@ function startCategory(category) {
         'LEVEL4 ハイレベル200': 'Group3 ハイレベル100' // LEVEL4もGroup3のデータを使用（要確認）
     };
     
-    // 基本語彙500の場合は、最初の500語を取得
     // 小学生で習った単語とカテゴリー別に覚える単語の場合は、elementaryWordDataを使用
     let categoryWords;
     if (category === '基本語彙500') {
-        categoryWords = wordData.slice(0, Math.min(500, wordData.length));
+        // 基本語彙500コースは削除されました
+        showAlert('エラー', 'このコースは利用できません。');
+        return;
     } else if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
         // elementaryWordDataが定義されているか確認
         if (typeof elementaryWordData !== 'undefined') {
@@ -1078,18 +1076,8 @@ function startCategory(category) {
     // カテゴリー選択画面を非表示
     elements.categorySelection.classList.add('hidden');
     
-    // 基本語彙500の場合は学習方法選択モーダルを表示
-    if (category === '基本語彙500') {
-        const { wrongSet } = loadCategoryWords(category);
-        const wrongWordsInCategory = categoryWords.filter(word => wrongSet.has(word.id));
-        const savedIndex = loadProgress(category);
-        const hasProgress = savedIndex > 0;
-        
-        showInputModeMethodSelectionModal(category, categoryWords, hasProgress, savedIndex, wrongWordsInCategory);
-    } else {
-        // コース選択画面を表示
-        showCourseSelection(category, categoryWords);
-    }
+    // コース選択画面を表示
+    showCourseSelection(category, categoryWords);
 }
 
 // 日本語→英語モードで学習を初期化
@@ -2063,6 +2051,47 @@ function setupEventListeners() {
         });
     }
     
+    // SNSシェアボタン
+    const lineShareBtn = document.getElementById('lineShareBtn');
+    const xShareBtn = document.getElementById('xShareBtn');
+    const instagramShareBtn = document.getElementById('instagramShareBtn');
+    
+    const shareText = '大阪府公立高校入試特化型英単語アプリ「大阪府英単語コンプリート」で英単語を学習しよう！';
+    const shareUrl = window.location.href;
+    
+    if (lineShareBtn) {
+        lineShareBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const lineUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+            window.open(lineUrl, '_blank', 'width=600,height=400');
+        });
+    }
+    
+    if (xShareBtn) {
+        xShareBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+            window.open(xUrl, '_blank', 'width=600,height=400');
+        });
+    }
+    
+    if (instagramShareBtn) {
+        instagramShareBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Instagramは直接シェアできないため、クリップボードにコピー
+            const shareTextWithUrl = `${shareText}\n${shareUrl}`;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(shareTextWithUrl).then(() => {
+                    showAlert('コピーしました', 'Instagramに貼り付けてシェアしてください。');
+                }).catch(() => {
+                    showAlert('エラー', 'コピーに失敗しました。');
+                });
+            } else {
+                showAlert('情報', 'このブラウザではコピー機能が利用できません。\n' + shareTextWithUrl);
+            }
+        });
+    }
+    
     // 間違い復習ボタン（カテゴリー選択画面） - 削除
     // const wrongWordsBtn = document.getElementById('wrongWordsCategoryBtn');
     // if (wrongWordsBtn) {
@@ -2242,7 +2271,9 @@ function setupEventListeners() {
                 // カテゴリーが選択されている場合
                 let categoryWords;
                 if (selectedCategory === '基本語彙500') {
-                    categoryWords = wordData.slice(0, Math.min(500, wordData.length));
+                    // 基本語彙500コースは削除されました
+                    showAlert('エラー', 'このコースは利用できません。');
+                    return;
                 } else if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
                     if (typeof elementaryWordData !== 'undefined') {
                         categoryWords = elementaryWordData;
@@ -2259,8 +2290,8 @@ function setupEventListeners() {
                     return;
                 }
                 
-                // 基本語彙500と小学生で習った単語の場合は入力モード用のモーダルを表示
-                if (selectedCategory === '基本語彙500' || selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+                // 小学生で習った単語の場合は入力モード用のモーダルを表示
+                if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
                     const { wrongSet } = loadCategoryWords(selectedCategory);
                     const wrongWordsInCategory = categoryWords.filter(word => wrongSet.has(word.id));
                     const savedIndex = loadProgress(selectedCategory);
@@ -4126,7 +4157,7 @@ function clearLearningHistory() {
             localStorage.removeItem('learningProgress');
             
             // カテゴリーごとの進捗も削除
-            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '基本語彙500'];
+            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200'];
             categories.forEach(category => {
                 localStorage.removeItem(`correctWords-${category}`);
                 localStorage.removeItem(`wrongWords-${category}`);
