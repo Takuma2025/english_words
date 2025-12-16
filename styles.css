@@ -4178,6 +4178,174 @@ body {
     justify-content: flex-start; /* 上揃え */
 }
 
+/* 表形式入力モード（月・曜日） */
+.table-mode {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 10px 0 10px;
+    overflow-y: auto;
+    min-height: 0;
+    max-height: 100%;
+    box-sizing: border-box;
+}
+
+.table-mode-content {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px 10px;
+    box-shadow: none;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto 8px auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.table-mode-content .card-top-info {
+    margin-bottom: 24px;
+}
+
+.table-mode .card-top-info,
+.table-mode .word-number {
+    display: none;
+}
+
+.table-container {
+    width: 100%;
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
+.table-mode-hint {
+    color: #6b7280;
+    font-size: 13px;
+    margin: 6px 0 2px 0;
+}
+
+.table-section {
+    margin-bottom: 12px;
+}
+
+.table-section-heading {
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 4px 0;
+    letter-spacing: 0.01em;
+    font-size: 14px;
+}
+
+.table-mode-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+}
+
+.table-mode-table td {
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.table-mode-table td:first-child {
+    font-weight: 600;
+    color: #1f2937;
+    width: 42%;
+    text-align: left;
+}
+
+.table-mode-table td:last-child {
+    width: 58%;
+    text-align: left;
+}
+
+.table-input-cell {
+    position: relative;
+}
+
+.table-input-blank {
+    display: inline-block;
+    min-width: 80px;
+    min-height: 32px;
+    padding: 6px 8px;
+    border: 1px solid #9ca3af;
+    border-radius: 4px;
+    text-align: left;
+    font-weight: 600;
+    color: #111827;
+    background: #f9fafb;
+    cursor: pointer;
+    transition: all 0.2s;
+    vertical-align: middle;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+}
+
+.table-input-blank:hover {
+    border-color: #2563eb;
+    background: #f3f4f6;
+}
+
+.table-input-blank.selected {
+    background: #fffc42;
+    border: 1.5px solid #3b82f6;
+}
+
+.table-input-blank.correct {
+    border-color: #2563eb;
+    color: #2563eb;
+    background: #ffffff;
+}
+
+.table-input-blank.wrong {
+    border-color: #ef4444;
+    color: #ef4444;
+    background: #ffffff;
+}
+
+.table-mode .virtual-keyboard {
+    margin-top: auto;
+    padding-top: 0;
+}
+
+@media (max-width: 600px) {
+    .table-mode {
+        padding: 12px 0 0 0;
+    }
+    
+    .table-mode-content {
+        padding: 10px 14px;
+        margin-bottom: 8px;
+    }
+    
+    .table-container {
+        margin-top: 40px;
+    }
+    
+    .table-mode-table {
+        font-size: 14px;
+    }
+    
+    .table-mode-table td {
+        padding: 10px 12px;
+    }
+    
+    .table-input-blank {
+        min-width: 100px;
+        min-height: 36px;
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+}
+
 .reorder-japanese {
     font-size: clamp(18px, 4.5vw, 24px);
     font-weight: 700;

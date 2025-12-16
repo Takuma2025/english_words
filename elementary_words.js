@@ -1116,6 +1116,141 @@ const elementaryWordData = [
     "meaning": "誰を（目的格）",
     "partOfSpeech": "疑問詞",
     "category": "疑問詞"
+  },
+  // 月（暦）
+  {
+    "id": 6001,
+    "word": "January",
+    "meaning": "1月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 6002,
+    "word": "February",
+    "meaning": "2月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 6003,
+    "word": "March",
+    "meaning": "3月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 6004,
+    "word": "April",
+    "meaning": "4月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 6005,
+    "word": "May",
+    "meaning": "5月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 6006,
+    "word": "June",
+    "meaning": "6月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 6007,
+    "word": "July",
+    "meaning": "7月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 6008,
+    "word": "August",
+    "meaning": "8月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 6009,
+    "word": "September",
+    "meaning": "9月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 6010,
+    "word": "October",
+    "meaning": "10月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 6011,
+    "word": "November",
+    "meaning": "11月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 6012,
+    "word": "December",
+    "meaning": "12月",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  // 曜日
+  {
+    "id": 7001,
+    "word": "Monday",
+    "meaning": "月曜日",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 7002,
+    "word": "Tuesday",
+    "meaning": "火曜日",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 7003,
+    "word": "Wednesday",
+    "meaning": "水曜日",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 7004,
+    "word": "Thursday",
+    "meaning": "木曜日",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 7005,
+    "word": "Friday",
+    "meaning": "金曜日",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 7006,
+    "word": "Saturday",
+    "meaning": "土曜日",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+  },
+  {
+    "id": 7007,
+    "word": "Sunday",
+    "meaning": "日曜日",
+    "partOfSpeech": "名詞",
+    "category": "小学生で習った単語とカテゴリー別に覚える単語"
   }
 ];
 

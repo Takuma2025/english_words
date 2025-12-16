@@ -802,6 +802,80 @@
                         </div>
                     </div>
                     
+                    <!-- 表形式入力モード（月・曜日） -->
+                    <div class="table-mode hidden" id="tableMode">
+                        <div class="table-mode-content">
+                            <!-- No. -->
+                            <div class="word-number" id="tableWordNumber">No.1</div>
+                            <div class="card-top-info">
+                                <button class="star-btn" id="tableStarBtn">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                        <path d="M7 4h10a1 1 0 0 1 1 1v14l-6-4-6 4V5a1 1 0 0 1 1-1z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="table-mode-hint">
+                                空欄をタップして仮想キーボードで入力してください。
+                            </div>
+                            <!-- 表形式の問題表示 -->
+                            <div class="table-container" id="tableContainer">
+                                <!-- 動的に生成 -->
+                            </div>
+                        </div>
+                        <!-- 仮想キーボード -->
+                        <div class="virtual-keyboard" id="tableKeyboard">
+                            <div class="keyboard-row">
+                                <button class="keyboard-key" data-key="q">q</button>
+                                <button class="keyboard-key" data-key="w">w</button>
+                                <button class="keyboard-key" data-key="e">e</button>
+                                <button class="keyboard-key" data-key="r">r</button>
+                                <button class="keyboard-key" data-key="t">t</button>
+                                <button class="keyboard-key" data-key="y">y</button>
+                                <button class="keyboard-key" data-key="u">u</button>
+                                <button class="keyboard-key" data-key="i">i</button>
+                                <button class="keyboard-key" data-key="o">o</button>
+                                <button class="keyboard-key" data-key="p">p</button>
+                            </div>
+                            <div class="keyboard-row">
+                                <button class="keyboard-key" data-key="a">a</button>
+                                <button class="keyboard-key" data-key="s">s</button>
+                                <button class="keyboard-key" data-key="d">d</button>
+                                <button class="keyboard-key" data-key="f">f</button>
+                                <button class="keyboard-key" data-key="g">g</button>
+                                <button class="keyboard-key" data-key="h">h</button>
+                                <button class="keyboard-key" data-key="j">j</button>
+                                <button class="keyboard-key" data-key="k">k</button>
+                                <button class="keyboard-key" data-key="l">l</button>
+                                <button class="keyboard-key keyboard-key-space" data-key=" ">_</button>
+                            </div>
+                            <div class="keyboard-row">
+                                <button class="keyboard-key keyboard-key-shift" id="tableKeyboardShift" data-shift="false">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="18 15 12 9 6 15"></polyline>
+                                    </svg>
+                                </button>
+                                <button class="keyboard-key" data-key="z">z</button>
+                                <button class="keyboard-key" data-key="x">x</button>
+                                <button class="keyboard-key" data-key="c">c</button>
+                                <button class="keyboard-key" data-key="v">v</button>
+                                <button class="keyboard-key" data-key="b">b</button>
+                                <button class="keyboard-key" data-key="n">n</button>
+                                <button class="keyboard-key" data-key="m">m</button>
+                                <button class="keyboard-key keyboard-key-special" id="tableKeyboardBackspace">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="keyboard-actions">
+                                <button class="keyboard-action-btn" id="tableKeyboardPass">パス</button>
+                                <button class="keyboard-action-btn keyboard-action-btn-primary" id="tableKeyboardDecide">解答</button>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="action-hint" id="cardHint">
                         <button class="hint-btn hint-left" id="correctBtn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
