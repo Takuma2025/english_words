@@ -4222,6 +4222,19 @@ body {
     margin-bottom: 0;
 }
 
+.table-mode-header {
+    width: 100%;
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    text-align: center;
+    padding: 6px 8px;
+    box-sizing: border-box;
+    border: 1px solid #0f172a;
+    border-radius: 6px 6px 0 0;
+}
+
 .table-mode-hint {
     color: #6b7280;
     font-size: 13px;
@@ -4243,26 +4256,34 @@ body {
 .table-mode-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: 13px;
     background: #ffffff;
     border: 1px solid #e5e7eb;
 }
 
 .table-mode-table td {
-    padding: 8px 10px;
+    padding: 5px 6px;
     border: 1px solid #e5e7eb;
     vertical-align: middle;
 }
 
+.table-col-jp {
+    width: 46%;
+    background: #c9e3ec;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.table-col-en {
+    width: 54%;
+    background: #f8fafc;
+}
+
 .table-mode-table td:first-child {
-    font-weight: 600;
-    color: #1f2937;
-    width: 42%;
     text-align: left;
 }
 
 .table-mode-table td:last-child {
-    width: 58%;
     text-align: left;
 }
 
@@ -4272,9 +4293,9 @@ body {
 
 .table-input-blank {
     display: inline-block;
-    min-width: 80px;
-    min-height: 32px;
-    padding: 6px 8px;
+    min-width: 64px;
+    min-height: 26px;
+    padding: 3px 5px;
     border: 1px solid #9ca3af;
     border-radius: 4px;
     text-align: left;
@@ -4285,8 +4306,50 @@ body {
     transition: all 0.2s;
     vertical-align: middle;
     box-sizing: border-box;
-    font-size: 14px;
+    font-size: 13px;
     font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+}
+
+.month-fourcol {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.month-row4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    align-items: stretch;
+}
+
+.month-cell4 {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #ffffff;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 32px;
+    box-sizing: border-box;
+}
+
+.month-cell-jp {
+    background: #c9e3ec;
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.month-cell-en {
+    background: #f8fafc;
+}
+
+.month-cell-en .table-input-blank {
+    width: 100%;
+    margin: 0;
 }
 
 .table-input-blank:hover {

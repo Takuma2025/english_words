@@ -5915,7 +5915,7 @@ function displayTableMode() {
         tableWordNumber.style.display = 'none';
     }
     
-    // 現在のグループのみ表を生成
+    // 現在のグループのみ表を生成（日本語を左、英語入力を右）
     const currentItems = [];
     tableData.forEach((item, index) => {
         if (item.group === currentGroupKey) {
@@ -5926,42 +5926,103 @@ function displayTableMode() {
     tableContainer.innerHTML = '';
     
     if (currentItems.length > 0) {
-        const section = document.createElement('div');
-        section.className = 'table-section';
+        // ヘッダー
+        const header = document.createElement('div');
+        header.className = 'table-mode-header';
+        header.textContent = currentGroup ? currentGroup.title : '';
+        tableContainer.appendChild(header);
         
-        const heading = document.createElement('div');
-        heading.className = 'table-section-heading';
-        const stepNumber = currentTableGroupIndex + 1;
-        heading.textContent = currentGroup ? `STEP ${stepNumber}：${currentGroup.title}` : '';
-        section.appendChild(heading);
-        
-        const table = document.createElement('table');
-        table.className = 'table-mode-table';
-        
-        currentItems.forEach(({ item, index }) => {
-            const row = document.createElement('tr');
+        if (currentGroupKey === 'month') {
+            // 1〜6月と7〜12月を行単位で揃える4列（JP/EN/JP/EN）
+            const firstHalf = currentItems.slice(0, 6);
+            const secondHalf = currentItems.slice(6, 12);
             
-            const labelCell = document.createElement('td');
-            labelCell.textContent = item.label;
+            const grid = document.createElement('div');
+            grid.className = 'month-fourcol';
             
-            const inputCell = document.createElement('td');
-            inputCell.className = 'table-input-cell';
-            const blank = document.createElement('div');
-            blank.className = 'table-input-blank';
-            blank.dataset.index = index;
-            blank.textContent = item.userInput || '';
-            blank.addEventListener('click', () => {
-                selectTableInput(index);
+            for (let i = 0; i < 6; i++) {
+                const row = document.createElement('div');
+                row.className = 'month-row4';
+                
+                const leftItem = firstHalf[i];
+                const rightItem = secondHalf[i];
+                
+                // 1〜6月 日本語
+                const cellJp1 = document.createElement('div');
+                cellJp1.className = 'month-cell4 month-cell-jp';
+                cellJp1.textContent = leftItem ? leftItem.item.label : '';
+                row.appendChild(cellJp1);
+                
+                // 1〜6月 解答
+                const cellEn1 = document.createElement('div');
+                cellEn1.className = 'month-cell4 month-cell-en';
+                if (leftItem) {
+                    const blank = document.createElement('div');
+                    blank.className = 'table-input-blank month-blank';
+                    blank.dataset.index = leftItem.index;
+                    blank.textContent = leftItem.item.userInput || '';
+                    blank.addEventListener('click', () => {
+                        selectTableInput(leftItem.index);
+                    });
+                    cellEn1.appendChild(blank);
+                }
+                row.appendChild(cellEn1);
+                
+                // 7〜12月 日本語
+                const cellJp2 = document.createElement('div');
+                cellJp2.className = 'month-cell4 month-cell-jp';
+                cellJp2.textContent = rightItem ? rightItem.item.label : '';
+                row.appendChild(cellJp2);
+                
+                // 7〜12月 解答
+                const cellEn2 = document.createElement('div');
+                cellEn2.className = 'month-cell4 month-cell-en';
+                if (rightItem) {
+                    const blank = document.createElement('div');
+                    blank.className = 'table-input-blank month-blank';
+                    blank.dataset.index = rightItem.index;
+                    blank.textContent = rightItem.item.userInput || '';
+                    blank.addEventListener('click', () => {
+                        selectTableInput(rightItem.index);
+                    });
+                    cellEn2.appendChild(blank);
+                }
+                row.appendChild(cellEn2);
+                
+                grid.appendChild(row);
+            }
+            
+            tableContainer.appendChild(grid);
+        } else {
+            // 曜日は従来の2列テーブル
+            const table = document.createElement('table');
+            table.className = 'table-mode-table';
+            
+            currentItems.forEach(({ item, index }) => {
+                const row = document.createElement('tr');
+                
+                const labelCell = document.createElement('td');
+                labelCell.className = 'table-col-jp';
+                labelCell.textContent = item.label;
+                
+                const inputCell = document.createElement('td');
+                inputCell.className = 'table-input-cell table-col-en';
+                const blank = document.createElement('div');
+                blank.className = 'table-input-blank';
+                blank.dataset.index = index;
+                blank.textContent = item.userInput || '';
+                blank.addEventListener('click', () => {
+                    selectTableInput(index);
+                });
+                inputCell.appendChild(blank);
+                
+                row.appendChild(labelCell);
+                row.appendChild(inputCell);
+                table.appendChild(row);
             });
-            inputCell.appendChild(blank);
             
-            row.appendChild(labelCell);
-            row.appendChild(inputCell);
-            table.appendChild(row);
-        });
-        
-        section.appendChild(table);
-        tableContainer.appendChild(section);
+            tableContainer.appendChild(table);
+        }
     }
     
     // 最初の入力欄を選択
