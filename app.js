@@ -54,6 +54,24 @@ let isTableModeActive = false;
 let tableData = []; // [{label: '1月', answer: 'January', userInput: ''}, ...]
 let currentTableInputIndex = 0; // 現在選択中の入力欄のインデックス
 let tableAnswerChecked = false; // 答え合わせ済みかどうか
+const TABLE_GROUPS = [
+    { key: 'weekday', title: '曜日' },
+    { key: 'month', title: '月（暦）' }
+];
+let currentTableGroupIndex = 0; // 0: 曜日, 1: 月
+
+function getCurrentTableGroup() {
+    return TABLE_GROUPS[currentTableGroupIndex] || TABLE_GROUPS[0];
+}
+
+function getCurrentTableGroupKey() {
+    const group = getCurrentTableGroup();
+    return group ? group.key : null;
+}
+
+function getNextTableGroup() {
+    return TABLE_GROUPS[currentTableGroupIndex + 1] || null;
+}
 
 // 学習日を記録する関数（日付と学習量を記録）
 function recordStudyDate() {
@@ -936,17 +954,20 @@ function showCategorySelection() {
     const inputMode = document.getElementById('inputMode');
     const sentenceMode = document.getElementById('sentenceMode');
     const reorderMode = document.getElementById('reorderMode');
+    const tableMode = document.getElementById('tableMode');
     const cardHint = document.getElementById('cardHint');
     if (wordCard) wordCard.classList.add('hidden');
     if (inputMode) inputMode.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
+    if (tableMode) tableMode.classList.add('hidden');
     if (cardHint) cardHint.classList.add('hidden');
     
     // モードフラグをリセット
     isInputModeActive = false;
     isSentenceModeActive = false;
     isReorderModeActive = false;
+    isTableModeActive = false;
     
     // 進捗ステップボタンを表示
     const progressStepButtons = document.querySelector('.progress-step-buttons');
@@ -5796,6 +5817,413 @@ function saveReorderProgress(questionId, isCorrect) {
     }
     
     saveCategoryWords(selectedCategory, correctSet, wrongSet);
+}
+
+// 表形式モードで学習を初期化
+function initTableModeLearning(courseName) {
+    selectedCategory = '小学生で習った単語とカテゴリー別に覚える単語';
+    isTableModeActive = true;
+    isInputModeActive = false;
+    isSentenceModeActive = false;
+    isReorderModeActive = false;
+    currentTableGroupIndex = 0;
+    
+    // 月・曜日の単語を取得（IDで判定）
+    const monthIds = [6001, 6002, 6003, 6004, 6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012];
+    const weekdayIds = [7001, 7002, 7003, 7004, 7005, 7006, 7007];
+    
+    const monthWords = elementaryWordData.filter(word => monthIds.includes(word.id));
+    const weekdayWords = elementaryWordData.filter(word => weekdayIds.includes(word.id));
+    
+    // 表形式データを初期化
+    tableData = [];
+    
+    // 曜日のデータを追加
+    weekdayWords.forEach(word => {
+        tableData.push({
+            label: word.meaning,
+            answer: word.word,
+            userInput: '',
+            id: word.id,
+            group: 'weekday'
+        });
+    });
+    
+    // 月のデータを追加
+    monthWords.forEach(word => {
+        tableData.push({
+            label: word.meaning,
+            answer: word.word,
+            userInput: '',
+            id: word.id,
+            group: 'month'
+        });
+    });
+    
+    currentTableInputIndex = 0;
+    tableAnswerChecked = false;
+    correctCount = 0;
+    wrongCount = 0;
+    
+    // 画面を切り替え
+    elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
+    elements.mainContent.classList.remove('hidden');
+    elements.headerSubtitle.textContent = courseName;
+    
+    document.body.classList.add('learning-mode');
+    
+    if (elements.homeBtn) {
+        elements.homeBtn.classList.remove('hidden');
+    }
+    
+    // 他のモードを非表示、表形式モードを表示
+    const wordCard = document.getElementById('wordCard');
+    const inputMode = document.getElementById('inputMode');
+    const sentenceMode = document.getElementById('sentenceMode');
+    const reorderMode = document.getElementById('reorderMode');
+    const tableMode = document.getElementById('tableMode');
+    const cardHint = document.getElementById('cardHint');
+    
+    if (wordCard) wordCard.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (sentenceMode) sentenceMode.classList.add('hidden');
+    if (reorderMode) reorderMode.classList.add('hidden');
+    if (tableMode) tableMode.classList.remove('hidden');
+    if (cardHint) cardHint.classList.add('hidden');
+    
+    displayTableMode();
+    setupTableKeyboard();
+    updateNavState('learning');
+}
+
+// 表形式モードを表示
+function displayTableMode() {
+    const tableContainer = document.getElementById('tableContainer');
+    const tableWordNumber = document.getElementById('tableWordNumber');
+    
+    if (!tableContainer) return;
+
+    const currentGroup = TABLE_GROUPS[currentTableGroupIndex] || TABLE_GROUPS[0];
+    const currentGroupKey = currentGroup ? currentGroup.key : 'weekday';
+    
+    // 問題番号を非表示（表形式では不要）
+    if (tableWordNumber) {
+        tableWordNumber.style.display = 'none';
+    }
+    
+    // 現在のグループのみ表を生成
+    const currentItems = [];
+    tableData.forEach((item, index) => {
+        if (item.group === currentGroupKey) {
+            currentItems.push({ item, index });
+        }
+    });
+    
+    tableContainer.innerHTML = '';
+    
+    if (currentItems.length > 0) {
+        const section = document.createElement('div');
+        section.className = 'table-section';
+        
+        const heading = document.createElement('div');
+        heading.className = 'table-section-heading';
+        const stepNumber = currentTableGroupIndex + 1;
+        heading.textContent = currentGroup ? `STEP ${stepNumber}：${currentGroup.title}` : '';
+        section.appendChild(heading);
+        
+        const table = document.createElement('table');
+        table.className = 'table-mode-table';
+        
+        currentItems.forEach(({ item, index }) => {
+            const row = document.createElement('tr');
+            
+            const labelCell = document.createElement('td');
+            labelCell.textContent = item.label;
+            
+            const inputCell = document.createElement('td');
+            inputCell.className = 'table-input-cell';
+            const blank = document.createElement('div');
+            blank.className = 'table-input-blank';
+            blank.dataset.index = index;
+            blank.textContent = item.userInput || '';
+            blank.addEventListener('click', () => {
+                selectTableInput(index);
+            });
+            inputCell.appendChild(blank);
+            
+            row.appendChild(labelCell);
+            row.appendChild(inputCell);
+            table.appendChild(row);
+        });
+        
+        section.appendChild(table);
+        tableContainer.appendChild(section);
+    }
+    
+    // 最初の入力欄を選択
+    if (currentItems.length > 0) {
+        selectTableInput(currentItems[0].index);
+    } else {
+        currentTableInputIndex = -1;
+    }
+}
+
+// 表形式の入力欄を選択
+function selectTableInput(index) {
+    if (tableAnswerChecked) return;
+    
+    currentTableInputIndex = index;
+    
+    // すべての入力欄からselectedクラスを削除
+    document.querySelectorAll('.table-input-blank').forEach(blank => {
+        blank.classList.remove('selected');
+    });
+    
+    // 選択した入力欄にselectedクラスを追加
+    const selectedBlank = document.querySelector(`.table-input-blank[data-index="${index}"]`);
+    if (selectedBlank) {
+        selectedBlank.classList.add('selected');
+    }
+}
+
+// 表形式モードの仮想キーボードを設定
+function setupTableKeyboard() {
+    const keyboard = document.getElementById('tableKeyboard');
+    if (!keyboard) return;
+    
+    // 既存のイベントリスナーを削除
+    const newKeyboard = keyboard.cloneNode(true);
+    keyboard.parentNode.replaceChild(newKeyboard, keyboard);
+    
+    // キーボードキーのイベントリスナー
+    newKeyboard.querySelectorAll('.keyboard-key').forEach(key => {
+        key.addEventListener('click', (e) => {
+            if (tableAnswerChecked) return;
+            const keyValue = key.dataset.key;
+            if (keyValue) {
+                handleTableKeyboardInput(keyValue);
+            }
+        });
+    });
+    
+    // Shiftキー
+    const shiftKey = newKeyboard.querySelector('#tableKeyboardShift');
+    if (shiftKey) {
+        shiftKey.addEventListener('click', () => {
+            if (tableAnswerChecked) return;
+            isShiftActive = !isShiftActive;
+            shiftKey.classList.toggle('active', isShiftActive);
+            shiftKey.dataset.shift = String(isShiftActive);
+            updateKeyboardCase(newKeyboard, isShiftActive);
+        });
+    }
+    
+    // バックスペースキー
+    const backspaceKey = newKeyboard.querySelector('#tableKeyboardBackspace');
+    if (backspaceKey) {
+        backspaceKey.addEventListener('click', () => {
+            if (tableAnswerChecked) return;
+            handleTableKeyboardBackspace();
+        });
+    }
+    
+    // パスボタン
+    const passBtn = newKeyboard.querySelector('#tableKeyboardPass');
+    if (passBtn) {
+        passBtn.addEventListener('click', () => {
+            moveToNextTableQuestion();
+        });
+    }
+    
+    // 解答ボタン
+    const decideBtn = newKeyboard.querySelector('#tableKeyboardDecide');
+    if (decideBtn) {
+        decideBtn.addEventListener('click', () => {
+            if (tableAnswerChecked) {
+                moveToNextTableQuestion();
+            } else {
+                checkTableAnswer();
+            }
+        });
+    }
+    
+    // 初期状態でShiftを無効化
+    isShiftActive = false;
+    if (shiftKey) {
+        shiftKey.classList.remove('active');
+        shiftKey.dataset.shift = 'false';
+    }
+    updateKeyboardCase(newKeyboard, false);
+}
+
+// 表形式モードのキーボード入力処理
+function handleTableKeyboardInput(key) {
+    if (currentTableInputIndex < 0 || currentTableInputIndex >= tableData.length) return;
+    
+    let inputChar = key;
+    if (isShiftActive && key.length === 1 && key.match(/[a-z]/)) {
+        inputChar = key.toUpperCase();
+    }
+    
+    const currentItem = tableData[currentTableInputIndex];
+    currentItem.userInput += inputChar;
+    
+    // 表示を更新
+    const blank = document.querySelector(`.table-input-blank[data-index="${currentTableInputIndex}"]`);
+    if (blank) {
+        blank.textContent = currentItem.userInput;
+    }
+}
+
+// 表形式モードのバックスペース処理
+function handleTableKeyboardBackspace() {
+    if (currentTableInputIndex < 0 || currentTableInputIndex >= tableData.length) return;
+    
+    const currentItem = tableData[currentTableInputIndex];
+    currentItem.userInput = currentItem.userInput.slice(0, -1);
+    
+    // 表示を更新
+    const blank = document.querySelector(`.table-input-blank[data-index="${currentTableInputIndex}"]`);
+    if (blank) {
+        blank.textContent = currentItem.userInput;
+    }
+}
+
+// 表形式モードの答え合わせ
+function checkTableAnswer() {
+    if (tableAnswerChecked) return;
+    
+    tableAnswerChecked = true;
+    let allCorrect = true;
+    const currentGroupKey = getCurrentTableGroupKey();
+    
+    const currentItems = [];
+    tableData.forEach((item, index) => {
+        if (item.group === currentGroupKey) {
+            currentItems.push({ item, index });
+        }
+    });
+    
+    currentItems.forEach(({ item, index }) => {
+        const blank = document.querySelector(`.table-input-blank[data-index="${index}"]`);
+        if (!blank) return;
+        
+        const userAnswer = item.userInput.trim();
+        const correctAnswer = item.answer.trim();
+        const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+        
+        if (isCorrect) {
+            blank.classList.add('correct');
+            blank.classList.remove('wrong', 'selected');
+            correctCount++;
+        } else {
+            blank.classList.add('wrong');
+            blank.classList.remove('correct', 'selected');
+            wrongCount++;
+            allCorrect = false;
+        }
+        
+        // 正解を表示
+        if (!isCorrect) {
+            blank.textContent = `${userAnswer || '(空欄)'} → ${correctAnswer}`;
+        }
+    });
+    
+    // 統計を更新
+    updateStats();
+    
+    // 進捗を保存
+    currentItems.forEach(({ item }) => {
+        const isCorrect = item.userInput.trim().toLowerCase() === item.answer.trim().toLowerCase();
+        saveTableProgress(item.id, isCorrect);
+    });
+    
+    // 画面背景を変更
+    if (elements.feedbackOverlay) {
+        elements.feedbackOverlay.className = `feedback-overlay ${allCorrect ? 'correct' : 'wrong'} active`;
+        setTimeout(() => {
+            elements.feedbackOverlay.classList.remove('active');
+        }, 500);
+    }
+    
+    // 解答ボタンのテキストを変更
+    const decideBtn = document.getElementById('tableKeyboardDecide');
+    if (decideBtn) {
+        const nextGroup = getNextTableGroup();
+        decideBtn.textContent = nextGroup ? '次の問題へ' : 'ホームに戻る';
+    }
+}
+
+// 次の問題へ（表形式モード）
+function moveToNextTableQuestion() {
+    const nextGroup = getNextTableGroup();
+    
+    if (nextGroup) {
+        currentTableGroupIndex += 1;
+        tableAnswerChecked = false;
+        currentTableInputIndex = 0;
+        
+        // 次のグループの入力を初期化
+        const nextGroupKey = getCurrentTableGroupKey();
+        tableData.forEach(item => {
+            if (item.group === nextGroupKey) {
+                item.userInput = '';
+            }
+        });
+        
+        // ボタン・キーボードの表示をリセット
+        const decideBtn = document.getElementById('tableKeyboardDecide');
+        if (decideBtn) {
+            decideBtn.textContent = '解答';
+        }
+        const shiftKey = document.getElementById('tableKeyboardShift');
+        isShiftActive = false;
+        if (shiftKey) {
+            shiftKey.classList.remove('active');
+            shiftKey.dataset.shift = 'false';
+        }
+        if (elements.feedbackOverlay) {
+            elements.feedbackOverlay.classList.remove('active', 'correct', 'wrong');
+        }
+        
+        displayTableMode();
+        setupTableKeyboard();
+        return;
+    }
+    
+    // 最終グループが終わったらホームへ
+    showCategorySelection();
+}
+
+// 表形式モードの進捗を保存
+function saveTableProgress(wordId, isCorrect) {
+    if (!selectedCategory) return;
+    
+    const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+    
+    if (isCorrect) {
+        correctSet.add(wordId);
+        wrongSet.delete(wordId);
+    } else {
+        wrongSet.add(wordId);
+        correctSet.delete(wordId);
+    }
+    
+    saveCategoryWords(selectedCategory, correctSet, wrongSet);
+}
+
+// キーボードの大文字・小文字を更新
+function updateKeyboardCase(keyboard, isShift) {
+    keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        const keyValue = key.dataset.key;
+        if (keyValue && keyValue.length === 1 && keyValue.match(/[a-z]/)) {
+            key.textContent = isShift ? keyValue.toUpperCase() : keyValue;
+        }
+    });
 }
 
 // アプリケーションの起動
