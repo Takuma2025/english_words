@@ -3245,9 +3245,9 @@ body {
     box-shadow: 0 4px 0 #2563eb; /* 濃い青の影 */
 }
 .hint-btn.hint-center { 
-    background-color: #0ea5e9;
-    display: none;
+    background-color: #0ea5e9; /* 水色 */
     box-shadow: 0 4px 0 #0284c7; /* 濃い水色の影 */
+    display: none; /* デフォルトは非表示 */
 }
 .hint-btn.hint-right { 
     background-color: var(--danger);
@@ -4236,12 +4236,13 @@ body {
 }
 
 .reorder-blank-box.drag-over {
-    background: #fff7b2;              /* もっと明るい黄色に点灯 */
-    border-color: #facc15;            /* 黄色の枠 */
-    border-width: 2px;
-    box-shadow:                       /* 周りがふわっと光る */
-        0 0 0 2px rgba(250, 204, 21, 0.8),
-        0 0 14px rgba(250, 204, 21, 0.95);
+    background: #fffc42;              /* 黄色 */
+    border-color: #2563eb;            /* 青の枠 */
+    border-width: 3px;
+    box-shadow:                       /* 広めの黄色光 */
+        0 0 0 4px rgba(255, 252, 66, 0.6),
+        0 0 20px rgba(255, 252, 66, 0.8),
+        0 0 30px rgba(255, 252, 66, 0.5);
 }
 
 .reorder-answer-box {
@@ -4843,5 +4844,205 @@ body {
     .sns-share-btn svg {
         width: 24px;
         height: 24px;
+    }
+}
+
+/* 入試得点力アップコースをウォールシェルフ風に配置 */
+.score-shelf {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.score-shelf .shelf-row {
+    position: relative;
+    padding: 8px 4px 32px;
+    --book-cover: #dc2626;
+    --book-spine: #b91c1c;
+    --book-edge: #fef2f2;
+    --book-title: #ffffff;
+    --book-meta: rgba(255, 255, 255, 0.9);
+}
+
+.score-shelf .shelf-row[data-tone="b"] {
+    --book-cover: #dc2626;
+    --book-spine: #b91c1c;
+    --book-edge: #fef2f2;
+    --book-title: #ffffff;
+    --book-meta: rgba(255, 255, 255, 0.9);
+}
+
+.score-shelf .shelf-row[data-tone="c"] {
+    --book-cover: #dc2626;
+    --book-spine: #b91c1c;
+    --book-edge: #fef2f2;
+    --book-title: #ffffff;
+    --book-meta: rgba(255, 255, 255, 0.9);
+}
+
+.score-shelf .shelf-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0 8px 6px;
+}
+
+.score-shelf .shelf-caption {
+    font-size: 12px;
+    color: #6b7280;
+    letter-spacing: 0.02em;
+}
+
+.score-shelf .shelf-books {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    padding: 12px 8px 4px;
+    align-items: center;
+}
+
+.score-shelf .shelf-tier {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px, 200px));
+    gap: 12px;
+    align-items: stretch;
+    padding-bottom: 26px;
+    justify-content: center;
+    justify-items: center;
+}
+
+.score-shelf .shelf-tier::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 4px;
+    height: 12px;
+    background: #d6b794;
+    border-radius: 4px;
+    box-shadow: 0 8px 14px -6px rgba(0, 0, 0, 0.18);
+}
+
+.score-shelf .book-card {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 200px;
+    justify-self: center;
+    min-width: 0;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--book-cover) !important;
+    color: var(--book-title) !important;
+    border: 1px solid rgba(185, 28, 28, 0.15);
+    border-radius: 6px;
+    padding: 16px 16px 18px;
+    box-shadow: 0 10px 18px -10px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.score-shelf .book-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 20px -14px rgba(0, 0, 0, 0.4);
+}
+
+.score-shelf .book-card:active {
+    transform: translateY(0);
+}
+
+.score-shelf .book-card::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 12px;
+    bottom: 12px;
+    width: 16px;
+    background: var(--book-spine);
+    border-radius: 6px 0 0 6px;
+    box-shadow: inset -3px 0 6px rgba(0, 0, 0, 0.2);
+}
+
+.score-shelf .book-card::after {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 10px;
+    height: 8px;
+    background: var(--book-edge);
+    border-radius: 4px;
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+    opacity: 0.9;
+}
+
+.score-shelf .book-card::marker,
+.score-shelf .book-card * {
+    color: var(--book-title);
+}
+
+.score-shelf .book-card .category-info {
+    width: 100%;
+}
+
+.score-shelf .book-card .category-header {
+    margin-bottom: 6px;
+}
+
+.score-shelf .book-card .category-name {
+    color: var(--book-title) !important;
+    font-size: 17px;
+    line-height: 1.3;
+}
+
+.score-shelf .book-card .category-meta {
+    color: var(--book-meta);
+}
+
+.score-shelf .book-card .category-progress {
+    margin-top: 6px;
+}
+
+.score-shelf .book-card .category-progress-bar {
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 6px;
+}
+
+.score-shelf .book-card .category-progress-correct {
+    background: var(--book-spine);
+}
+
+.score-shelf .book-card .category-progress-text {
+    color: var(--book-title);
+}
+
+.score-shelf .book-card .category-arrow {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 999px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--book-title);
+    box-shadow: 0 6px 10px -8px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 600px) {
+    .score-shelf .book-card {
+        flex: 1 1 calc(50% - 12px);
+        max-width: none;
+    }
+    
+    .score-shelf .shelf-books {
+        padding: 12px 4px 32px;
     }
 }

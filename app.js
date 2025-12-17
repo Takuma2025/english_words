@@ -277,7 +277,7 @@ function updateBarChart() {
     console.log(`Bar chart updated: ${data.length} items displayed for period: ${chartPeriod}`);
 }
 
-// カテゴリごとの正解・間違い単語を読み込む
+// カテゴリごとの正解・間違い単語を読み込む（現在のモードのみ）
 function loadCategoryWords(category) {
     const mode = selectedLearningMode || 'card';
     const savedCorrectWords = localStorage.getItem(`correctWords-${category}_${mode}`);
@@ -295,6 +295,42 @@ function loadCategoryWords(category) {
         const parsed = JSON.parse(savedWrongWords);
         parsed.forEach(id => wrongSet.add(typeof id === 'string' ? parseInt(id, 10) : id));
     }
+    
+    return { correctSet, wrongSet };
+}
+
+// ホーム画面の進捗バー用：カード/入力など全モードの結果を合算して読み込む
+function loadCategoryWordsForProgress(category) {
+    const modes = ['card', 'input'];
+    const correctSet = new Set();
+    const wrongSet = new Set();
+    
+    modes.forEach(mode => {
+        const savedCorrectWords = localStorage.getItem(`correctWords-${category}_${mode}`);
+        const savedWrongWords = localStorage.getItem(`wrongWords-${category}_${mode}`);
+        
+        if (savedCorrectWords) {
+            const parsed = JSON.parse(savedCorrectWords);
+            parsed.forEach(id => {
+                const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                if (!wrongSet.has(numId)) {
+                    correctSet.add(numId);
+                }
+            });
+        }
+        
+        if (savedWrongWords) {
+            const parsed = JSON.parse(savedWrongWords);
+            parsed.forEach(id => {
+                const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                wrongSet.add(numId);
+                // 間違いを優先するため、正解セットからは削除
+                if (correctSet.has(numId)) {
+                    correctSet.delete(numId);
+                }
+            });
+        }
+    });
     
     return { correctSet, wrongSet };
 }
@@ -467,8 +503,8 @@ function updateCategoryStars() {
         let correctCountInCategory = 0;
         let wrongCountInCategory = 0;
         
-        // カテゴリごとの進捗を取得
-        const { correctSet, wrongSet } = loadCategoryWords(category);
+        // カテゴリごとの進捗を取得（全モード合算）
+        const { correctSet, wrongSet } = loadCategoryWordsForProgress(category);
         
         categoryWords.forEach(word => {
             // カテゴリごとの進捗を優先的に使用
@@ -517,8 +553,9 @@ function saveReviewWords() {
 function saveCorrectWords() {
     localStorage.setItem('correctWords', JSON.stringify([...correctWords]));
     // ホーム画面にいる場合は進捗を更新
-    if (!elements.mainContent.classList.contains('hidden')) {
-        // 学習画面にいる場合は更新しない（ホームに戻ったときに更新される）
+    // mainContent が hidden = ホーム画面
+    if (elements.mainContent && elements.mainContent.classList.contains('hidden')) {
+        updateCategoryStars();
     }
 }
 
@@ -526,8 +563,8 @@ function saveCorrectWords() {
 function saveWrongWords() {
     localStorage.setItem('wrongWords', JSON.stringify([...wrongWords]));
     // ホーム画面にいる場合は進捗を更新
-    if (!elements.mainContent.classList.contains('hidden')) {
-        // 学習画面にいる場合は更新しない（ホームに戻ったときに更新される）
+    if (elements.mainContent && elements.mainContent.classList.contains('hidden')) {
+        updateCategoryStars();
     }
 }
 
@@ -3727,6 +3764,7 @@ function markMastered() {
 
     applyMarkers(word);
     updateStats();
+    updateProgressSegments(); // 進捗バーのセグメントを更新
 
     // 画面全体のフィードバック表示（薄い水色）
     elements.feedbackOverlay.className = `feedback-overlay mastered active`;
@@ -3837,6 +3875,7 @@ function markAnswer(isCorrect, isTimeout = false) {
 
     applyMarkers(word);
     updateStats();
+    updateProgressSegments(); // 進捗バーのセグメントを更新
 
     // 画面全体のフィードバック表示（薄い色）
     elements.feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
