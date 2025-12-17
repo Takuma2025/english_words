@@ -5168,11 +5168,41 @@ body {
 }
 
 .grammar-toc-title {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 24px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 32px;
     text-align: center;
+    padding: 16px 24px;
+    position: relative;
+    letter-spacing: 0.02em;
+}
+
+.grammar-toc-title::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #2563eb, transparent);
+    border-radius: 2px;
+}
+
+.grammar-toc-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #2563eb, transparent);
+    border-radius: 2px;
 }
 
 .grammar-chapter-list {
@@ -5232,11 +5262,42 @@ body {
 }
 
 .grammar-chapter-title {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 24px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 32px;
     text-align: center;
+    padding: 20px 24px;
+    position: relative;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+}
+
+.grammar-chapter-title::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #2563eb, transparent);
+    border-radius: 2px;
+}
+
+.grammar-chapter-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #2563eb, transparent);
+    border-radius: 2px;
 }
 
 .grammar-chapter-content {
@@ -5319,9 +5380,26 @@ body {
         padding: 16px 12px;
     }
     
-    .grammar-toc-title,
+    .grammar-toc-title {
+        font-size: 22px;
+        padding: 12px 16px;
+    }
+    
+    .grammar-toc-title::before,
+    .grammar-toc-title::after {
+        width: 60px;
+        height: 3px;
+    }
+    
     .grammar-chapter-title {
-        font-size: 20px;
+        font-size: 22px;
+        padding: 16px 20px;
+    }
+    
+    .grammar-chapter-title::before,
+    .grammar-chapter-title::after {
+        width: 70px;
+        height: 3px;
     }
     
     .grammar-grade-title {
