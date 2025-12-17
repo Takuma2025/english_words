@@ -3521,7 +3521,7 @@ body {
     padding: 0 16px;
     box-sizing: border-box;
     display: flex;
-    justify-content: flex-start; /* 左寄せ配置 */
+    justify-content: center; /* 中央揃えに変更 */
 }
 
 .mode-toggle-wrapper {
@@ -4028,8 +4028,8 @@ body {
     font-size: clamp(16px, 4vw, 20px);
     font-weight: 700;
     color: #1f2937;
-    line-height: 1.6;
-    margin-bottom: 24px;
+    line-height: 1.55;
+    margin-bottom: 12px; /* 日本語と英文の間隔を詰める */
     text-align: left;
     font-family: "Noto Serif JP", "Shippori Mincho", "しっぽり明朝", "Hina Mincho", "ひな明朝", "Zen Old Mincho", "Sawarabi Mincho", "さわらび明朝", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     letter-spacing: 0.05em;
@@ -4039,11 +4039,11 @@ body {
     font-size: clamp(18px, 4.5vw, 24px);
     font-weight: 600;
     color: #1f2937;
-    line-height: 1.8;
-    margin-bottom: 32px;
+    line-height: 1.7;
+    margin-bottom: 18px; /* 日本語との縦間隔を詰める */
     text-align: left;
     font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
-    word-spacing: 0.2em;
+    word-spacing: 0.1em;
 }
 
 .sentence-part {
@@ -4156,13 +4156,13 @@ body {
     
     .sentence-japanese {
         padding: 0 16px;
-        margin-bottom: 20px;
+        margin-bottom: 10px; /* モバイルでも間隔を詰める */
         font-size: clamp(14px, 3.5vw, 18px);
     }
     
     .sentence-english {
         padding: 0 16px;
-        margin-bottom: 24px;
+        margin-bottom: 14px; /* モバイルでも間隔を詰める */
         font-size: clamp(16px, 4vw, 20px);
     }
     
@@ -4893,7 +4893,7 @@ body {
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.06) 35%, rgba(0, 0, 0, 0) 60%),
         radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.12), transparent 45%),
-        linear-gradient(90deg, var(--book-cover) calc(100% - 14px), var(--book-edge) calc(100% - 14px)),
+        linear-gradient(90deg, var(--book-cover) calc(100% - 8px), var(--book-edge) calc(100% - 8px)),
         var(--book-cover) !important;
     color: #ffffff;
     border: 1px solid rgba(37, 99, 235, 0.15) !important;
@@ -5002,7 +5002,7 @@ body {
     background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.06) 35%, rgba(0, 0, 0, 0) 60%),
         radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.12), transparent 45%),
-        linear-gradient(90deg, var(--book-cover) calc(100% - 14px), var(--book-edge) calc(100% - 14px)),
+        linear-gradient(90deg, var(--book-cover) calc(100% - 8px), var(--book-edge) calc(100% - 8px)),
         var(--book-cover) !important;
     color: var(--book-title) !important;
     border: 1px solid rgba(185, 28, 28, 0.15);
@@ -5027,10 +5027,10 @@ body {
 .score-shelf .book-card::before {
     content: "";
     position: absolute;
-    left: -18px;
+    left: -12px;
     top: 12px;
     bottom: 12px;
-    width: 20px;
+    width: 12px;
     background:
         linear-gradient(90deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0) 45%),
         repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08) 3px, transparent 3px, transparent 6px),
@@ -5043,7 +5043,7 @@ body {
     content: "";
     position: absolute;
     left: 16px;
-    right: 30px; /* 表紙幅に合わせて中央寄せ（右端のページ見せ幅ぶん余白） */
+    right: 20px; /* 表紙幅に合わせて中央寄せ（右端のページ見せ幅ぶん余白） */
     top: 10px;
     height: 8px;
     background: linear-gradient(180deg, #fff7f7, var(--book-edge)); /* 縦筋なしでシンプルに */
@@ -5087,7 +5087,7 @@ body {
 }
 
 .score-shelf .book-card .category-info {
-    width: calc(100% - 14px); /* 表紙の短縮分だけテキスト領域も内側に */
+    width: calc(100% - 8px); /* 表紙の短縮分だけテキスト領域も内側に */
     padding-right: 4px;
 }
 
@@ -5124,7 +5124,7 @@ body {
 
 .score-shelf .book-card .category-arrow {
     position: absolute;
-    right: 24px; /* 表紙短縮分を考慮して内側へ寄せる */
+    right: 18px; /* 表紙短縮分を考慮して内側へ寄せる */
     bottom: 12px;
     background: rgba(0, 0, 0, 0.06);
     border-radius: 999px;
@@ -5382,6 +5382,13 @@ body {
     margin-bottom: 16px;
 }
 
+.grammar-exercise-item-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 10px;
+}
+
 .exercise-explanation {
     margin-top: 12px;
     padding: 12px 14px;
@@ -5392,16 +5399,81 @@ body {
     line-height: 1.7;
 }
 
-.grammar-exercise-item-number {
-    font-size: 16px;
-    font-weight: 700;
-    color: #2563eb;
-    margin-bottom: 10px;
-}
-
 .grammar-exercise-grade-btn {
     display: none; /* 初期は非表示。空欄タップ時に表示 */
     margin-top: 12px;
+}
+
+.grammar-exercise-redo-btn {
+    display: inline-flex;
+    margin-top: 12px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #f97316, #ea580c); /* オレンジ */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 
+        0 4px 0 rgba(194, 65, 12, 0.9),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+    width: fit-content;
+}
+
+.grammar-exercise-redo-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 
+        0 5px 0 rgba(194, 65, 12, 0.9),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.grammar-exercise-redo-btn:active {
+    transform: translateY(3px);
+    box-shadow: 
+        0 1px 0 rgba(154, 52, 18, 1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* 文法画面の戻るボタン（画面一番下の右） */
+.grammar-back-btn-bottom {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #0055ca;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    transition: transform 0.05s, box-shadow 0.05s;
+    box-shadow: 0 3px 0 rgba(0, 68, 160, 0.6);
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 999;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+}
+
+.grammar-back-btn-bottom.hidden {
+    display: none;
+}
+
+.grammar-back-btn-bottom:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
+}
+
+.grammar-back-btn-bottom:hover {
+    background: #0055ca;
+    color: #ffffff;
 }
 
 /* 文法演習用キーボード（画面下部に固定） */
@@ -5411,7 +5483,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     width: min(960px, calc(100% - 24px));
-    background: rgba(255, 183, 77, 0.92); /* 明るいオレンジに透明感を付与 */
+    background: rgba(255, 183, 77, 0.7); /* 透明度を少し強めた明るいオレンジ */
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.12);
     z-index: 1000;
     padding: 14px;
@@ -5470,5 +5542,12 @@ body {
         bottom: 8px;
         padding: 10px;
         border-radius: 12px;
+    }
+    
+    .grammar-back-btn-bottom {
+        bottom: 8px;
+        right: 8px;
+        padding: 8px 14px;
+        font-size: 13px;
     }
 }

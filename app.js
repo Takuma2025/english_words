@@ -6115,7 +6115,7 @@ function displayAllGrammarExercises(exercises) {
         exerciseContentEl.appendChild(exerciseItem);
     });
     
-    // キーボードを初期状態で非表示にする（空欄タップで表示）
+    // キーボードを初期状態で非表示（空欄タップ時に表示）
     const keyboard = document.getElementById('grammarExerciseKeyboard');
     if (keyboard) {
         keyboard.classList.add('hidden');
@@ -6474,6 +6474,11 @@ function submitGrammarExerciseAnswer(exerciseIndex) {
         }
         const explanationText = exercise && exercise.explanation ? exercise.explanation : '解説を準備中です。';
         explanationEl.textContent = explanationText;
+
+        // 解説の直下に「解きなおす」を移動
+        if (redoBtn) {
+            explanationEl.insertAdjacentElement('afterend', redoBtn);
+        }
     }
 
     // 間違いがあれば「解きなおす」を表示
