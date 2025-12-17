@@ -4936,11 +4936,15 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    background: var(--book-cover) !important;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.06) 35%, rgba(0, 0, 0, 0) 60%),
+        radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.12), transparent 45%),
+        linear-gradient(90deg, var(--book-cover) calc(100% - 14px), var(--book-edge) calc(100% - 14px)),
+        var(--book-cover) !important;
     color: var(--book-title) !important;
     border: 1px solid rgba(185, 28, 28, 0.15);
     border-radius: 6px;
-    padding: 16px 16px 18px;
+    padding: 16px 14px 18px 16px;
     box-shadow: 0 10px 18px -10px rgba(0, 0, 0, 0.35);
     position: relative;
     overflow: hidden;
@@ -4960,26 +4964,58 @@ body {
 .score-shelf .book-card::before {
     content: "";
     position: absolute;
-    left: -14px;
+    left: -18px;
     top: 12px;
     bottom: 12px;
-    width: 16px;
-    background: var(--book-spine);
+    width: 20px;
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0) 45%),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08) 3px, transparent 3px, transparent 6px),
+        var(--book-spine);
     border-radius: 6px 0 0 6px;
-    box-shadow: inset -3px 0 6px rgba(0, 0, 0, 0.2);
+    box-shadow: inset -4px 0 8px rgba(0, 0, 0, 0.24);
 }
 
 .score-shelf .book-card::after {
     content: "";
     position: absolute;
     left: 16px;
-    right: 16px;
+    right: 30px; /* 表紙幅に合わせて中央寄せ（右端のページ見せ幅ぶん余白） */
     top: 10px;
     height: 8px;
-    background: var(--book-edge);
+    background: linear-gradient(180deg, #fff7f7, var(--book-edge)); /* 縦筋なしでシンプルに */
     border-radius: 4px;
-    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.12);
     opacity: 0.9;
+}
+
+/* 右側ページの厚みを追加 */
+.score-shelf .book-card::before,
+.score-shelf .book-card::after,
+.score-shelf .book-card {
+    background-clip: padding-box;
+}
+
+.score-shelf .book-card::marker,
+.score-shelf .book-card * {
+    color: var(--book-title);
+}
+
+.score-shelf .book-card::after,
+.score-shelf .book-card::before {
+    pointer-events: none;
+}
+
+.score-shelf .book-card::before {
+    box-shadow:
+        inset -3px 0 6px rgba(0, 0, 0, 0.2),
+        180px 0 0 -160px rgba(0, 0, 0, 0.08);
+}
+
+.score-shelf .book-card::after {
+    box-shadow:
+        inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+        180px 0 0 -160px rgba(0, 0, 0, 0.05);
 }
 
 .score-shelf .book-card::marker,
@@ -4988,7 +5024,8 @@ body {
 }
 
 .score-shelf .book-card .category-info {
-    width: 100%;
+    width: calc(100% - 14px); /* 表紙の短縮分だけテキスト領域も内側に */
+    padding-right: 4px;
 }
 
 .score-shelf .book-card .category-header {
@@ -5024,7 +5061,7 @@ body {
 
 .score-shelf .book-card .category-arrow {
     position: absolute;
-    right: 12px;
+    right: 24px; /* 表紙短縮分を考慮して内側へ寄せる */
     bottom: 12px;
     background: rgba(0, 0, 0, 0.06);
     border-radius: 999px;
