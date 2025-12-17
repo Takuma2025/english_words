@@ -4880,6 +4880,69 @@ body {
     --book-meta: rgba(255, 255, 255, 0.9);
 }
 
+/* 単元別対策（青系の本） */
+.score-shelf .shelf-row[data-tone="unit"] {
+    --book-cover: #2563eb;
+    --book-spine: #1d4ed8;
+    --book-edge: #e0e7ff;
+    --book-title: #ffffff;
+    --book-meta: rgba(255, 255, 255, 0.9);
+}
+
+.book-card[data-category="英文法中学３年間の総復習"] {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.06) 35%, rgba(0, 0, 0, 0) 60%),
+        radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.12), transparent 45%),
+        linear-gradient(90deg, var(--book-cover) calc(100% - 14px), var(--book-edge) calc(100% - 14px)),
+        var(--book-cover) !important;
+    color: #ffffff;
+    border: 1px solid rgba(37, 99, 235, 0.15) !important;
+}
+
+.book-card[data-category="英文法中学３年間の総復習"] .category-name {
+    color: #ffffff;
+}
+
+.book-card[data-category="英文法中学３年間の総復習"] .unit-label {
+    background: #000000;
+    color: #ffffff;
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 4px;
+    position: relative;
+    z-index: 3;
+    font-size: 16px;
+}
+
+.book-card[data-category="英文法中学３年間の総復習"] .unit-title-text {
+    font-size: 22px;
+    font-weight: 700;
+    background: #ffffff;
+    color: #000000;
+    display: block;
+    padding: 4px 8px;
+    border-radius: 0;
+    margin-top: -4px;
+    margin-left: -8px;
+    margin-right: -8px;
+    width: calc(100% + 16px);
+    position: relative;
+    z-index: 2;
+}
+
+.book-card[data-category="英文法中学３年間の総復習"] .category-meta {
+    color: #ffffff;
+    opacity: 0.95;
+}
+
+.book-card[data-category="英文法中学３年間の総復習"] .category-arrow {
+    color: #ffffff;
+}
+
+.book-card[data-category="英文法中学３年間の総復習"] .category-progress {
+    display: none;
+}
+
 .score-shelf .shelf-title-row {
     display: flex;
     align-items: baseline;

@@ -5455,10 +5455,20 @@ function handleReorderTouchEnd(e) {
 // タッチドロップ（空欄）
 function handleReorderBlankTouchDrop(blankBox, word, fromBlankIndex) {
     if (!word) return;
+    const targetIndex = blankBox.dataset.blankIndex;
+    
+    // 同じ空欄に同じ語をタップ/ドロップしただけなら何もしない（重複生成を防ぐ）
+    if ((fromBlankIndex !== null && fromBlankIndex !== '' && fromBlankIndex === targetIndex)) {
+        return;
+    }
     
     // 既に単語が入っている場合は、その単語を元の場所に戻す
     const existingBox = blankBox.querySelector('.reorder-answer-box');
     if (existingBox) {
+        if (existingBox.dataset.word === word) {
+            // 同一語を同じ空欄に重ねる場合は変更なし
+            return;
+        }
         const existingWord = existingBox.dataset.word;
         existingBox.remove();
         // 元の単語ボックスを表示
@@ -5575,11 +5585,21 @@ function handleReorderBlankDrop(e) {
     
     const word = e.dataTransfer.getData('text/plain');
     const fromBlankIndex = e.dataTransfer.getData('from-blank');
+    const targetIndex = blankBox.dataset.blankIndex;
     if (!word) return;
+    
+    // 同じ空欄に同じ語をドロップしただけなら何もしない（重複生成を防ぐ）
+    if (fromBlankIndex && fromBlankIndex === targetIndex) {
+        return;
+    }
     
     // 既に単語が入っている場合は、その単語を元の場所に戻す
     const existingBox = blankBox.querySelector('.reorder-answer-box');
     if (existingBox) {
+        if (existingBox.dataset.word === word) {
+            // 同一語を同じ空欄に重ねる場合は変更なし
+            return;
+        }
         const existingWord = existingBox.dataset.word;
         existingBox.remove();
         // 元の単語ボックスを表示
