@@ -5159,3 +5159,161 @@ body {
         padding: 12px 4px 32px;
     }
 }
+
+/* 英文法中学３年間の総復習 目次ページ */
+.grammar-toc-container {
+    padding: 20px 16px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.grammar-toc-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.grammar-chapter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.grammar-grade-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.grammar-grade-title:first-child {
+    margin-top: 0;
+}
+
+.grammar-chapter-item {
+    display: block;
+    font-size: 16px;
+    color: #2563eb;
+    cursor: pointer;
+    transition: color 0.2s;
+    text-decoration: none;
+    line-height: 1.8;
+}
+
+.grammar-chapter-item:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* 英文法解説ページ */
+.grammar-chapter-container {
+    padding: 20px 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+}
+
+.grammar-chapter-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.grammar-chapter-content {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    line-height: 1.8;
+    color: #374151;
+    font-size: 16px;
+}
+
+.grammar-chapter-content p {
+    margin-bottom: 16px;
+}
+
+.grammar-chapter-content p:last-child {
+    margin-bottom: 0;
+}
+
+.grammar-point-box {
+    background: #ffffff;
+    border: 2px solid #2563eb;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.grammar-point-label {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #2563eb;
+}
+
+.grammar-point-content {
+    color: #1f2937;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.grammar-point-content ul {
+    margin-left: 20px;
+    margin-top: 8px;
+}
+
+.grammar-point-content li {
+    margin-bottom: 8px;
+}
+
+.grammar-exercise-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.grammar-exercise-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.grammar-exercise-content {
+    color: #374151;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+@media (max-width: 600px) {
+    .grammar-toc-container,
+    .grammar-chapter-container {
+        padding: 16px 12px;
+    }
+    
+    .grammar-toc-title,
+    .grammar-chapter-title {
+        font-size: 20px;
+    }
+    
+    .grammar-grade-title {
+        font-size: 16px;
+    }
+    
+    .grammar-chapter-item {
+        font-size: 15px;
+    }
+}

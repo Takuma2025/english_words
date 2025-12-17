@@ -850,6 +850,70 @@
                 <h2>単語一覧</h2>
                 <div class="word-list" id="wordList"></div>
             </div>
+
+            <!-- 英文法中学３年間の総復習 目次ページ -->
+            <div class="category-view hidden" id="grammarTableOfContentsView">
+                <button class="back-btn" id="backToCategoryFromGrammarTOCBtn" aria-label="戻る">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    戻る
+                </button>
+                <div class="grammar-toc-container">
+                    <h2 class="grammar-toc-title">中学３年間の英文法【総復習】</h2>
+                    <div class="grammar-chapter-list">
+                        <h3 class="grammar-grade-title">中1</h3>
+                        <span class="grammar-chapter-item" data-chapter="1">第1章 be動詞と一般動詞</span>
+                        <span class="grammar-chapter-item" data-chapter="2">第2章 形容詞・副詞</span>
+                        <span class="grammar-chapter-item" data-chapter="3">第3章 名詞の複数形</span>
+                        <span class="grammar-chapter-item" data-chapter="4">第4章 疑問詞</span>
+                        <span class="grammar-chapter-item" data-chapter="5">第5章 命令文</span>
+                        <span class="grammar-chapter-item" data-chapter="6">第6章 現在進行形</span>
+                        <span class="grammar-chapter-item" data-chapter="7">第7章 一般動詞の過去形</span>
+                        <span class="grammar-chapter-item" data-chapter="8">第8章 be動詞の過去形</span>
+                        <span class="grammar-chapter-item" data-chapter="9">第9章 過去進行形</span>
+                        <h3 class="grammar-grade-title">中2</h3>
+                        <span class="grammar-chapter-item" data-chapter="10">第10章 助動詞</span>
+                        <span class="grammar-chapter-item" data-chapter="11">第11章 There is(are)～の文</span>
+                        <span class="grammar-chapter-item" data-chapter="12">第12章 感嘆文</span>
+                        <span class="grammar-chapter-item" data-chapter="13">第13章 接続詞</span>
+                        <span class="grammar-chapter-item" data-chapter="14">第13章 不定詞（基本３用法）</span>
+                        <span class="grammar-chapter-item" data-chapter="15">第14章 動名詞</span>
+                        <span class="grammar-chapter-item" data-chapter="16">第15章 文型</span>
+                        <span class="grammar-chapter-item" data-chapter="17">第16章 比較</span>
+                        <span class="grammar-chapter-item" data-chapter="18">第17章 付加疑問文</span>
+                        <span class="grammar-chapter-item" data-chapter="19">第18章 前置詞</span>
+                        <h3 class="grammar-grade-title">中3</h3>
+                        <span class="grammar-chapter-item" data-chapter="20">第19章 受動態</span>
+                        <span class="grammar-chapter-item" data-chapter="21">第20章 現在完了</span>
+                        <span class="grammar-chapter-item" data-chapter="22">第21章 不定詞（応用）</span>
+                        <span class="grammar-chapter-item" data-chapter="23">第22章 分詞</span>
+                        <span class="grammar-chapter-item" data-chapter="24">第23章 関係代名詞</span>
+                        <span class="grammar-chapter-item" data-chapter="25">第24章 間接疑問文</span>
+                        <span class="grammar-chapter-item" data-chapter="26">第25章 仮定法</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 英文法解説ページ -->
+            <div class="category-view hidden" id="grammarChapterView">
+                <button class="back-btn" id="backToGrammarTOCBtn" aria-label="戻る">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    戻る
+                </button>
+                <div class="grammar-chapter-container">
+                    <h2 class="grammar-chapter-title" id="grammarChapterTitle"></h2>
+                    <div class="grammar-chapter-content" id="grammarChapterContent">
+                        <!-- 解説内容が動的に挿入される -->
+                    </div>
+                    <div class="grammar-point-box" id="grammarPointBox">
+                        <div class="grammar-point-label">POINT</div>
+                        <div class="grammar-point-content" id="grammarPointContent"></div>
+                    </div>
+                    <div class="grammar-exercise-section" id="grammarExerciseSection">
+                        <h3 class="grammar-exercise-title">演習問題</h3>
+                        <div class="grammar-exercise-content" id="grammarExerciseContent"></div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -884,6 +948,7 @@
     <script src="elementary_words.js"></script>
     <script src="sentence-data.js"></script>
     <script src="reorder-questions.js"></script>
+    <script src="grammar-data.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

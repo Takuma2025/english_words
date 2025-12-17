@@ -1101,6 +1101,10 @@ function startCategory(category) {
         // PartCディクテーション：専用データが必要（現在は空）
         showAlert('準備中', 'PartCディクテーションのデータを準備中です。');
         return;
+    } else if (category === '英文法中学３年間の総復習') {
+        // 英文法中学３年間の総復習：目次ページを表示
+        showGrammarTableOfContents();
+        return;
     } else {
         // マッピングがある場合はそれを使用、なければそのまま使用
         const dataCategory = categoryMapping[category] || category;
@@ -2520,6 +2524,40 @@ function setupEventListeners() {
     
     // 仮想キーボードのイベントリスナー
     setupVirtualKeyboard();
+    
+    // 英文法中学３年間の総復習 目次ページのイベントリスナー
+    const backToCategoryFromGrammarTOCBtn = document.getElementById('backToCategoryFromGrammarTOCBtn');
+    if (backToCategoryFromGrammarTOCBtn) {
+        backToCategoryFromGrammarTOCBtn.addEventListener('click', () => {
+            const grammarTOCView = document.getElementById('grammarTableOfContentsView');
+            if (grammarTOCView) {
+                grammarTOCView.classList.add('hidden');
+            }
+            showCategorySelection();
+        });
+    }
+    
+    // 目次から各章をクリックしたときの処理
+    document.querySelectorAll('.grammar-chapter-item').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const chapterNumber = parseInt(e.currentTarget.getAttribute('data-chapter'), 10);
+            if (chapterNumber) {
+                showGrammarChapter(chapterNumber);
+            }
+        });
+    });
+    
+    // 解説ページから目次に戻るボタン
+    const backToGrammarTOCBtn = document.getElementById('backToGrammarTOCBtn');
+    if (backToGrammarTOCBtn) {
+        backToGrammarTOCBtn.addEventListener('click', () => {
+            const grammarChapterView = document.getElementById('grammarChapterView');
+            if (grammarChapterView) {
+                grammarChapterView.classList.add('hidden');
+            }
+            showGrammarTableOfContents();
+        });
+    }
     
 }
 
@@ -5856,6 +5894,119 @@ function updateKeyboardCase(keyboard, isShift) {
             key.textContent = isShift ? keyValue.toUpperCase() : keyValue;
         }
     });
+}
+
+// 英文法中学３年間の総復習 目次ページを表示
+function showGrammarTableOfContents() {
+    // カテゴリー選択画面を非表示
+    if (elements.categorySelection) {
+        elements.categorySelection.classList.add('hidden');
+    }
+    
+    // コース選択画面を非表示
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
+    
+    // 目次ページを表示
+    const grammarTOCView = document.getElementById('grammarTableOfContentsView');
+    if (grammarTOCView) {
+        grammarTOCView.classList.remove('hidden');
+    }
+    
+    // ヘッダーのサブタイトルを更新
+    if (elements.headerSubtitle) {
+        elements.headerSubtitle.textContent = '中学３年間の英文法【総復習】';
+    }
+    
+    // ホームボタンを表示
+    if (elements.homeBtn) {
+        elements.homeBtn.classList.remove('hidden');
+    }
+}
+
+// 英文法解説ページを表示
+function showGrammarChapter(chapterNumber) {
+    // 目次ページを非表示
+    const grammarTOCView = document.getElementById('grammarTableOfContentsView');
+    if (grammarTOCView) {
+        grammarTOCView.classList.add('hidden');
+    }
+    
+    // 解説ページを表示
+    const grammarChapterView = document.getElementById('grammarChapterView');
+    if (grammarChapterView) {
+        grammarChapterView.classList.remove('hidden');
+    }
+    
+    // grammarDataから該当する章のデータを取得
+    let chapterData = null;
+    if (typeof grammarData !== 'undefined' && grammarData) {
+        chapterData = grammarData.find(data => data.chapter === chapterNumber);
+    }
+    
+    // 章のタイトルを設定
+    const chapterTitleEl = document.getElementById('grammarChapterTitle');
+    if (chapterTitleEl) {
+        if (chapterData && chapterData.title) {
+            chapterTitleEl.textContent = chapterData.title;
+        } else {
+            chapterTitleEl.textContent = `第${chapterNumber}章`;
+        }
+    }
+    
+    // 解説内容を設定
+    const chapterContentEl = document.getElementById('grammarChapterContent');
+    if (chapterContentEl) {
+        if (chapterData && chapterData.explanation) {
+            // HTML形式で保存されている場合はそのまま、テキストの場合は段落タグで囲む
+            chapterContentEl.innerHTML = chapterData.explanation || '<p>解説を準備中です。</p>';
+        } else {
+            chapterContentEl.innerHTML = '<p>解説を準備中です。</p>';
+        }
+    }
+    
+    // POINTボックスを設定
+    const pointContentEl = document.getElementById('grammarPointContent');
+    if (pointContentEl) {
+        if (chapterData && chapterData.point) {
+            // HTML形式で保存されている場合はそのまま、テキストの場合は段落タグで囲む
+            pointContentEl.innerHTML = chapterData.point || '<p>POINTを準備中です。</p>';
+        } else {
+            pointContentEl.innerHTML = '<p>POINTを準備中です。</p>';
+        }
+    }
+    
+    // 演習問題を設定
+    const exerciseContentEl = document.getElementById('grammarExerciseContent');
+    if (exerciseContentEl) {
+        if (chapterData && chapterData.exercises && chapterData.exercises.length > 0) {
+            // 演習問題の配列をHTMLに変換
+            let exerciseHTML = '';
+            chapterData.exercises.forEach((exercise, index) => {
+                exerciseHTML += `<div class="grammar-exercise-item" style="margin-bottom: 20px; padding: 16px; background: #f9fafb; border-radius: 8px;">`;
+                exerciseHTML += `<div class="exercise-number" style="font-weight: 700; margin-bottom: 8px; color: #2563eb;">問題 ${index + 1}</div>`;
+                if (exercise.question) {
+                    exerciseHTML += `<div class="exercise-question" style="margin-bottom: 12px;">${exercise.question}</div>`;
+                }
+                if (exercise.options && exercise.options.length > 0) {
+                    exerciseHTML += `<div class="exercise-options" style="margin-left: 16px;">`;
+                    exercise.options.forEach((option, optIndex) => {
+                        exerciseHTML += `<div style="margin-bottom: 8px;">${String.fromCharCode(65 + optIndex)}. ${option}</div>`;
+                    });
+                    exerciseHTML += `</div>`;
+                }
+                if (exercise.answer) {
+                    exerciseHTML += `<div class="exercise-answer" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; color: #059669; font-weight: 600;">答え: ${exercise.answer}</div>`;
+                }
+                exerciseHTML += `</div>`;
+            });
+            exerciseContentEl.innerHTML = exerciseHTML;
+        } else {
+            exerciseContentEl.innerHTML = '<p>演習問題を準備中です。</p>';
+        }
+    }
 }
 
 // アプリケーションの起動
