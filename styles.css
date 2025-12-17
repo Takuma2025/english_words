@@ -5203,9 +5203,24 @@ body {
     line-height: 1.8;
 }
 
+.grammar-chapter-item .chapter-number {
+    display: inline-block;
+    background: #2563eb;
+    color: #ffffff;
+    padding: 1px 6px;
+    border-radius: 12px;
+    margin-right: 8px;
+    font-weight: 400;
+    font-size: 14px;
+}
+
 .grammar-chapter-item:hover {
     color: #1d4ed8;
     text-decoration: underline;
+}
+
+.grammar-chapter-item:hover .chapter-number {
+    background: #1d4ed8;
 }
 
 /* 英文法解説ページ */
