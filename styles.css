@@ -4851,12 +4851,12 @@ body {
 .score-shelf {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 0; /* 本棚段間の余白なし */
 }
 
 .score-shelf .shelf-row {
     position: relative;
-    padding: 8px 4px 32px;
+    padding: 4px 4px 0; /* 段間の縦余白をほぼゼロに */
     --book-cover: #dc2626;
     --book-spine: #b91c1c;
     --book-edge: #fef2f2;
@@ -5071,6 +5071,19 @@ body {
     justify-content: center;
     color: var(--book-title);
     box-shadow: 0 6px 10px -8px rgba(0, 0, 0, 0.35);
+}
+
+.score-shelf .book-card .book-price {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #4b5563; /* グレー文字 */
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px -6px rgba(0, 0, 0, 0.35);
 }
 
 @media (max-width: 600px) {
