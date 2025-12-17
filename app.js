@@ -5978,34 +5978,507 @@ function showGrammarChapter(chapterNumber) {
         }
     }
     
-    // 演習問題を設定
-    const exerciseContentEl = document.getElementById('grammarExerciseContent');
-    if (exerciseContentEl) {
-        if (chapterData && chapterData.exercises && chapterData.exercises.length > 0) {
-            // 演習問題の配列をHTMLに変換
-            let exerciseHTML = '';
-            chapterData.exercises.forEach((exercise, index) => {
-                exerciseHTML += `<div class="grammar-exercise-item" style="margin-bottom: 20px; padding: 16px; background: #f9fafb; border-radius: 8px;">`;
-                exerciseHTML += `<div class="exercise-number" style="font-weight: 700; margin-bottom: 8px; color: #2563eb;">問題 ${index + 1}</div>`;
-                if (exercise.question) {
-                    exerciseHTML += `<div class="exercise-question" style="margin-bottom: 12px;">${exercise.question}</div>`;
-                }
-                if (exercise.options && exercise.options.length > 0) {
-                    exerciseHTML += `<div class="exercise-options" style="margin-left: 16px;">`;
-                    exercise.options.forEach((option, optIndex) => {
-                        exerciseHTML += `<div style="margin-bottom: 8px;">${String.fromCharCode(65 + optIndex)}. ${option}</div>`;
-                    });
-                    exerciseHTML += `</div>`;
-                }
-                if (exercise.answer) {
-                    exerciseHTML += `<div class="exercise-answer" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; color: #059669; font-weight: 600;">答え: ${exercise.answer}</div>`;
-                }
-                exerciseHTML += `</div>`;
-            });
-            exerciseContentEl.innerHTML = exerciseHTML;
-        } else {
+    // 演習問題を設定（すべての問題を縦に並べて表示）
+    if (chapterData && chapterData.exercises && chapterData.exercises.length > 0) {
+        currentGrammarExercises = chapterData.exercises;
+        displayAllGrammarExercises(chapterData.exercises);
+    } else {
+        currentGrammarExercises = [];
+        const exerciseContentEl = document.getElementById('grammarExerciseContent');
+        if (exerciseContentEl) {
             exerciseContentEl.innerHTML = '<p>演習問題を準備中です。</p>';
         }
+    }
+}
+
+// 英文法演習問題を表示（すべての問題を縦に並べて表示）
+let currentGrammarExerciseIndex = -1; // 現在選択中の問題のインデックス
+let currentGrammarExercises = [];
+let grammarExerciseBlanks = []; // 各問題の空所データを保持 {exerciseIndex: 0, blanks: [...]}
+let grammarExerciseAnswerSubmitted = {}; // 各問題の採点済みフラグ {exerciseIndex: true/false}
+let currentGrammarSelectedBlankIndex = -1;
+let currentGrammarSelectedExerciseIndex = -1; // 現在選択中の問題のインデックス
+let grammarKeyboardOutsideHandlerAttached = false;
+let grammarRedoButtons = {}; // 各問題の解きなおすボタンを保持
+
+// すべての問題を表示
+function displayAllGrammarExercises(exercises) {
+    const exerciseContentEl = document.getElementById('grammarExerciseContent');
+    if (!exerciseContentEl) return;
+    
+    exerciseContentEl.innerHTML = '';
+    grammarExerciseBlanks = [];
+    grammarExerciseAnswerSubmitted = {};
+    currentGrammarSelectedBlankIndex = -1;
+    currentGrammarSelectedExerciseIndex = -1;
+    grammarRedoButtons = {};
+    
+    exercises.forEach((exercise, exerciseIndex) => {
+        // 問題のコンテナを作成
+        const exerciseItem = document.createElement('div');
+        exerciseItem.className = 'grammar-exercise-item';
+        exerciseItem.dataset.exerciseIndex = exerciseIndex;
+        
+        // 問題番号
+        const exerciseNumber = document.createElement('div');
+        exerciseNumber.className = 'grammar-exercise-item-number';
+        exerciseNumber.textContent = `問題 ${exerciseIndex + 1}`;
+        exerciseItem.appendChild(exerciseNumber);
+        
+        // 日本語訳
+        const japaneseEl = document.createElement('div');
+        japaneseEl.className = 'sentence-japanese';
+        japaneseEl.textContent = exercise.japanese;
+        exerciseItem.appendChild(japaneseEl);
+        
+        // 英文を構築（空所を含む）
+        const englishEl = document.createElement('div');
+        englishEl.className = 'sentence-english';
+        englishEl.dataset.exerciseIndex = exerciseIndex;
+        
+        const exerciseBlanks = [];
+        const words = exercise.english.split(' ');
+        
+        words.forEach((word, idx) => {
+            const wordWithoutPunct = word.replace(/[.,!?]/g, '');
+            const blankInfo = exercise.blanks.find(b => b.word.toLowerCase() === wordWithoutPunct.toLowerCase());
+            
+            if (blankInfo) {
+                const blankSpan = document.createElement('span');
+                blankSpan.className = 'sentence-blank';
+                blankSpan.dataset.blankIndex = blankInfo.index;
+                blankSpan.dataset.exerciseIndex = exerciseIndex;
+                blankSpan.textContent = ' '.repeat(blankInfo.word.length);
+                blankSpan.dataset.correctWord = blankInfo.word;
+                
+                const charWidth = 14;
+                const padding = 24;
+                const extraSpace = 8;
+                const calculatedWidth = Math.max(60, (blankInfo.word.length * charWidth) + padding + extraSpace);
+                blankSpan.style.width = `${calculatedWidth}px`;
+                
+                englishEl.appendChild(blankSpan);
+                
+                exerciseBlanks.push({
+                    index: blankInfo.index,
+                    word: blankInfo.word,
+                    userInput: '',
+                    element: blankSpan,
+                    exerciseIndex: exerciseIndex
+                });
+            } else {
+                const partSpan = document.createElement('span');
+                partSpan.className = 'sentence-part';
+                partSpan.textContent = word + (idx < words.length - 1 ? ' ' : '');
+                englishEl.appendChild(partSpan);
+            }
+        });
+        
+        exerciseBlanks.sort((a, b) => a.index - b.index);
+        
+        // 空所にタップイベントを追加
+        exerciseBlanks.forEach(blank => {
+            const isMobile = window.innerWidth <= 600;
+            const charWidth = isMobile ? 12 : 14;
+            const padding = isMobile ? 12 : 24;
+            const extraSpace = isMobile ? 4 : 8;
+            const calculatedWidth = Math.max(isMobile ? 50 : 60, (blank.word.length * charWidth) + padding + extraSpace);
+            blank.element.style.width = `${calculatedWidth}px`;
+            
+            blank.element.addEventListener('click', () => {
+                if (grammarExerciseAnswerSubmitted[exerciseIndex]) return;
+                selectGrammarExerciseBlank(blank.index, exerciseIndex);
+                // キーボードを表示
+                const keyboard = document.getElementById('grammarExerciseKeyboard');
+                if (keyboard) {
+                    keyboard.classList.remove('hidden');
+                }
+            });
+        });
+        
+        grammarExerciseBlanks.push({
+            exerciseIndex: exerciseIndex,
+            blanks: exerciseBlanks
+        });
+        
+        exerciseItem.appendChild(englishEl);
+        
+        // 解きなおすボタン（初期は非表示）
+        const redoBtn = document.createElement('button');
+        redoBtn.className = 'keyboard-action-btn grammar-exercise-redo-btn hidden';
+        redoBtn.textContent = '解きなおす';
+        redoBtn.dataset.exerciseIndex = exerciseIndex;
+        redoBtn.addEventListener('click', () => resetGrammarExercise(exerciseIndex));
+        exerciseItem.appendChild(redoBtn);
+        grammarRedoButtons[exerciseIndex] = redoBtn;
+        
+        exerciseContentEl.appendChild(exerciseItem);
+    });
+    
+    // キーボードを初期状態で非表示にする（空欄タップで表示）
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        keyboard.classList.add('hidden');
+    }
+    
+    // キーボードを設定
+    setupGrammarExerciseKeyboard();
+}
+
+// 旧関数（互換性のため残すが使用しない）
+function displayGrammarExercise(exercise, index, total) {
+    if (!exercise) return;
+    
+    grammarExerciseAnswerSubmitted = false;
+    currentGrammarSelectedBlankIndex = -1;
+    currentGrammarExerciseIndex = index;
+    
+    // ヒントを非表示にリセット
+    const hintContent = document.getElementById('grammarExerciseHintContent');
+    const hintBtn = document.getElementById('grammarExerciseHintBtn');
+    if (hintContent) {
+        hintContent.classList.add('hidden');
+    }
+    if (hintBtn) {
+        const arrowElement = hintBtn.querySelector('.hint-arrow');
+        if (arrowElement) {
+            arrowElement.textContent = '▶';
+        }
+    }
+    
+    // 日本語訳を表示
+    const japaneseEl = document.getElementById('grammarExerciseJapanese');
+    if (japaneseEl) {
+        japaneseEl.textContent = exercise.japanese;
+    }
+    
+    // 英文を構築（空所を含む）
+    const englishEl = document.getElementById('grammarExerciseEnglish');
+    if (englishEl) {
+        englishEl.innerHTML = '';
+        grammarExerciseBlanks = [];
+        
+        // 英文を単語に分割し、空所の位置を特定
+        const words = exercise.english.split(' ');
+        
+        words.forEach((word, idx) => {
+            // 句読点を除去した単語で比較
+            const wordWithoutPunct = word.replace(/[.,!?]/g, '');
+            // 空所かどうかを判定（blanks配列に含まれているか）
+            const blankInfo = exercise.blanks.find(b => b.word.toLowerCase() === wordWithoutPunct.toLowerCase());
+            
+            if (blankInfo) {
+                // 空所を作成
+                const blankSpan = document.createElement('span');
+                blankSpan.className = 'sentence-blank';
+                blankSpan.dataset.blankIndex = blankInfo.index;
+                blankSpan.textContent = ' '.repeat(blankInfo.word.length);
+                blankSpan.dataset.correctWord = blankInfo.word;
+                
+                // 単語の長さに応じて幅を計算
+                const charWidth = 14;
+                const padding = 24;
+                const extraSpace = 8;
+                const calculatedWidth = Math.max(60, (blankInfo.word.length * charWidth) + padding + extraSpace);
+                blankSpan.style.width = `${calculatedWidth}px`;
+                
+                englishEl.appendChild(blankSpan);
+                
+                grammarExerciseBlanks.push({
+                    index: blankInfo.index,
+                    word: blankInfo.word,
+                    userInput: '',
+                    element: blankSpan
+                });
+            } else {
+                // 通常の単語
+                const partSpan = document.createElement('span');
+                partSpan.className = 'sentence-part';
+                partSpan.textContent = word + (idx < words.length - 1 ? ' ' : '');
+                englishEl.appendChild(partSpan);
+            }
+        });
+        
+        // 空所をindex順にソート
+        grammarExerciseBlanks.sort((a, b) => a.index - b.index);
+        
+        // 空所にタップイベントを追加
+        grammarExerciseBlanks.forEach(blank => {
+            const isMobile = window.innerWidth <= 600;
+            const charWidth = isMobile ? 12 : 14;
+            const padding = isMobile ? 12 : 24;
+            const extraSpace = isMobile ? 4 : 8;
+            const calculatedWidth = Math.max(isMobile ? 50 : 60, (blank.word.length * charWidth) + padding + extraSpace);
+            blank.element.style.width = `${calculatedWidth}px`;
+            
+            blank.element.addEventListener('click', () => {
+                if (grammarExerciseAnswerSubmitted) return;
+                selectGrammarExerciseBlank(blank.index);
+                // キーボードを表示
+                const keyboard = document.getElementById('grammarExerciseKeyboard');
+                if (keyboard) {
+                    keyboard.classList.remove('hidden');
+                }
+            });
+        });
+    }
+    
+    // ヒントを設定
+    if (exercise.hint && hintContent) {
+        hintContent.textContent = exercise.hint;
+    }
+    
+    // キーボードを初期状態で非表示にする
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        keyboard.classList.add('hidden');
+    }
+    
+    // キーボードを設定
+    setupGrammarExerciseKeyboard();
+}
+
+// 演習問題の空所を選択
+function selectGrammarExerciseBlank(blankIndex, exerciseIndex) {
+    currentGrammarSelectedBlankIndex = blankIndex;
+    currentGrammarSelectedExerciseIndex = exerciseIndex;
+    
+    // すべての空所から選択状態を削除
+    grammarExerciseBlanks.forEach(exerciseData => {
+        exerciseData.blanks.forEach(blank => {
+            blank.element.classList.remove('selected');
+        });
+    });
+    
+    // 選択された空所にクラスを追加
+    const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === exerciseIndex);
+    if (exerciseData) {
+        const selectedBlank = exerciseData.blanks.find(b => b.index === blankIndex);
+        if (selectedBlank) {
+            selectedBlank.element.classList.add('selected');
+        }
+    }
+}
+
+// 演習問題に文字を入力
+function insertGrammarExerciseLetter(letter) {
+    if (currentGrammarSelectedBlankIndex === -1 || currentGrammarSelectedExerciseIndex === -1) return;
+    
+    const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === currentGrammarSelectedExerciseIndex);
+    if (!exerciseData) return;
+    
+    const selectedBlank = exerciseData.blanks.find(b => b.index === currentGrammarSelectedBlankIndex);
+    if (!selectedBlank) return;
+    
+    selectedBlank.userInput += letter;
+    selectedBlank.element.textContent = selectedBlank.userInput + ' '.repeat(Math.max(0, selectedBlank.word.length - selectedBlank.userInput.length));
+}
+
+// 演習問題のバックスペース
+function handleGrammarExerciseBackspace() {
+    if (currentGrammarSelectedBlankIndex === -1 || currentGrammarSelectedExerciseIndex === -1) return;
+    
+    const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === currentGrammarSelectedExerciseIndex);
+    if (!exerciseData) return;
+    
+    const selectedBlank = exerciseData.blanks.find(b => b.index === currentGrammarSelectedBlankIndex);
+    if (!selectedBlank || selectedBlank.userInput.length === 0) return;
+    
+    selectedBlank.userInput = selectedBlank.userInput.slice(0, -1);
+    selectedBlank.element.textContent = selectedBlank.userInput + ' '.repeat(Math.max(0, selectedBlank.word.length - selectedBlank.userInput.length));
+}
+
+// 解きなおす：入力と状態をリセット
+function resetGrammarExercise(exerciseIndex) {
+    const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === exerciseIndex);
+    if (!exerciseData) return;
+    const exerciseItem = document.querySelector(`.grammar-exercise-item[data-exercise-index="${exerciseIndex}"]`);
+    const redoBtn = grammarRedoButtons[exerciseIndex];
+
+    // 状態リセット
+    grammarExerciseAnswerSubmitted[exerciseIndex] = false;
+    currentGrammarSelectedBlankIndex = -1;
+    currentGrammarSelectedExerciseIndex = -1;
+
+    // 入力と表示リセット
+    exerciseData.blanks.forEach(blank => {
+        blank.userInput = '';
+        blank.element.textContent = ' '.repeat(blank.word.length);
+        blank.element.classList.remove('correct', 'wrong', 'selected');
+    });
+
+    // 解説を非表示に戻す
+    if (exerciseItem) {
+        const explanationEl = exerciseItem.querySelector('.exercise-explanation');
+        if (explanationEl) {
+            explanationEl.remove();
+        }
+    }
+
+    // 解きなおすボタンを隠す
+    if (redoBtn) {
+        redoBtn.classList.add('hidden');
+    }
+
+    // キーボードを閉じる
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        keyboard.classList.add('hidden');
+    }
+}
+
+// 演習問題用キーボード設定
+function setupGrammarExerciseKeyboard() {
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (!keyboard) return;
+    
+    // 既存のイベントリスナーを削除するために、キーボードをクローンして置き換える
+    const keyboardClone = keyboard.cloneNode(true);
+    keyboard.parentNode.replaceChild(keyboardClone, keyboard);
+    const newKeyboard = document.getElementById('grammarExerciseKeyboard');
+    
+    // キーボードキーのイベント
+    newKeyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        const letter = key.dataset.key;
+        
+        if (letter === ' ') {
+            const handleSpace = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                insertGrammarExerciseLetter(' ');
+            };
+            key.addEventListener('touchstart', handleSpace, { passive: false });
+            key.addEventListener('click', handleSpace);
+        } else {
+            const handleLetter = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                insertGrammarExerciseLetter(letter);
+            };
+            key.addEventListener('touchstart', handleLetter, { passive: false });
+            key.addEventListener('click', handleLetter);
+        }
+    });
+    
+    // Shiftキー
+    const shiftKey = document.getElementById('grammarExerciseKeyboardShift');
+    if (shiftKey) {
+        let isShift = false;
+        const handleShift = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            isShift = !isShift;
+            shiftKey.dataset.shift = isShift.toString();
+            updateGrammarExerciseKeyboardCase(newKeyboard, isShift);
+        };
+        shiftKey.addEventListener('touchstart', handleShift, { passive: false });
+        shiftKey.addEventListener('click', handleShift);
+    }
+    
+    // バックスペースキー
+    const backspaceKey = document.getElementById('grammarExerciseKeyboardBackspace');
+    if (backspaceKey) {
+        const handleBackspace = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleGrammarExerciseBackspace();
+        };
+        backspaceKey.addEventListener('touchstart', handleBackspace, { passive: false });
+        backspaceKey.addEventListener('click', handleBackspace);
+    }
+    
+    // 採点キー（キーボード内）
+    const decideKey = document.getElementById('grammarExerciseKeyboardDecide');
+    if (decideKey) {
+        const handleDecide = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (currentGrammarSelectedExerciseIndex !== -1) {
+                submitGrammarExerciseAnswer(currentGrammarSelectedExerciseIndex);
+            }
+        };
+        decideKey.addEventListener('touchstart', handleDecide, { passive: false });
+        decideKey.addEventListener('click', handleDecide);
+    }
+
+    // キーボード外クリックで閉じる（1回だけ登録）
+    if (!grammarKeyboardOutsideHandlerAttached) {
+        document.addEventListener('click', (e) => {
+            const kb = document.getElementById('grammarExerciseKeyboard');
+            if (!kb || kb.classList.contains('hidden')) return;
+            const isKeyboard = kb.contains(e.target);
+            const isBlank = e.target.classList && e.target.classList.contains('sentence-blank');
+            if (!isKeyboard && !isBlank) {
+                kb.classList.add('hidden');
+                currentGrammarSelectedBlankIndex = -1;
+                currentGrammarSelectedExerciseIndex = -1;
+            }
+        });
+        grammarKeyboardOutsideHandlerAttached = true;
+    }
+}
+
+// 演習問題のキーボードの大文字・小文字を更新
+function updateGrammarExerciseKeyboardCase(keyboard, isShift) {
+    keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        const keyValue = key.dataset.key;
+        if (keyValue && keyValue.length === 1 && keyValue.match(/[a-z]/)) {
+            key.textContent = isShift ? keyValue.toUpperCase() : keyValue;
+        }
+    });
+}
+
+// 演習問題の解答を提出
+function submitGrammarExerciseAnswer(exerciseIndex) {
+    if (grammarExerciseAnswerSubmitted[exerciseIndex]) return;
+    
+    const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === exerciseIndex);
+    if (!exerciseData) return;
+    const exerciseItem = document.querySelector(`.grammar-exercise-item[data-exercise-index="${exerciseIndex}"]`);
+    const exercise = currentGrammarExercises[exerciseIndex];
+    const redoBtn = grammarRedoButtons[exerciseIndex];
+    
+    let allCorrect = true;
+    exerciseData.blanks.forEach(blank => {
+        const isCorrect = blank.userInput.trim().toLowerCase() === blank.word.toLowerCase();
+        if (isCorrect) {
+            blank.element.classList.add('correct');
+            blank.element.classList.remove('wrong', 'selected');
+        } else {
+            blank.element.classList.add('wrong');
+            blank.element.classList.remove('correct', 'selected');
+            allCorrect = false;
+        }
+    });
+    
+    grammarExerciseAnswerSubmitted[exerciseIndex] = true;
+    
+    // キーボードを非表示にする
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        // 常時表示とするため非表示にはしない
+        keyboard.classList.remove('hidden');
+    }
+    
+    // 選択状態をリセット
+    currentGrammarSelectedBlankIndex = -1;
+    currentGrammarSelectedExerciseIndex = -1;
+    
+    // 解説の表示
+    if (exerciseItem) {
+        let explanationEl = exerciseItem.querySelector('.exercise-explanation');
+        if (!explanationEl) {
+            explanationEl = document.createElement('div');
+            explanationEl.className = 'exercise-explanation';
+            exerciseItem.appendChild(explanationEl);
+        }
+        const explanationText = exercise && exercise.explanation ? exercise.explanation : '解説を準備中です。';
+        explanationEl.textContent = explanationText;
+    }
+
+    // 間違いがあれば「解きなおす」を表示
+    if (!allCorrect && redoBtn) {
+        redoBtn.classList.remove('hidden');
     }
 }
 

@@ -1,10 +1,12 @@
 // 英文法中学３年間の総復習 問題データ
 // explanation: HTML形式で解説を記述（<p>タグなど使用可）
 // point: HTML形式でPOINTを記述（<ul><li>など使用可）
-// exercises: 演習問題の配列
-//   - question: 問題文（HTML形式可）
-//   - options: 選択肢の配列（空の場合は記述式）
-//   - answer: 答え
+// exercises: 演習問題の配列（厳選例文暗記60と同じ形式）
+//   - id: 問題ID
+//   - japanese: 日本語訳
+//   - english: 英文（空所部分は空白で区切る）
+//   - blanks: 空所の配列 [{index: 0, word: 'longer'}, ...]
+//   - hint: ヒント文
 const grammarData = [
     {
         chapter: 1,
@@ -12,17 +14,98 @@ const grammarData = [
         explanation: "",
         point: "",
         exercises: [
-            // 例:
-            // {
-            //     question: "次の文を英語に訳しなさい。",
-            //     options: [],
-            //     answer: "I am a student."
-            // },
-            // {
-            //     question: "次の（　）に入る適切な語を選びなさい。",
-            //     options: ["am", "is", "are"],
-            //     answer: "is"
-            // }
+            {
+                id: 1,
+                japanese: "私は学生です。",
+                english: "I am a student.",
+                blanks: [
+                    { index: 0, word: 'am' }
+                ],
+                hint: "主語が「I」のときは、be動詞は「am」を使います。"
+            },
+            {
+                id: 2,
+                japanese: "彼は医者です。",
+                english: "He is a doctor.",
+                blanks: [
+                    { index: 0, word: 'is' }
+                ],
+                hint: "主語が「He」「She」「It」や単数形の名詞のときは、be動詞は「is」を使います。"
+            },
+            {
+                id: 3,
+                japanese: "私たちは友達です。",
+                english: "We are friends.",
+                blanks: [
+                    { index: 0, word: 'are' }
+                ],
+                hint: "主語が「We」「You」「They」や複数形の名詞のときは、be動詞は「are」を使います。"
+            },
+            {
+                id: 4,
+                japanese: "私は毎日英語を勉強します。",
+                english: "I study English every day.",
+                blanks: [
+                    { index: 0, word: 'study' }
+                ],
+                hint: "一般動詞の現在形は、主語が「I」「You」「We」「They」や複数形の名詞のときは、動詞の原形を使います。"
+            },
+            {
+                id: 5,
+                japanese: "彼は毎日英語を勉強します。",
+                english: "He studies English every day.",
+                blanks: [
+                    { index: 0, word: 'studies' }
+                ],
+                hint: "一般動詞の現在形は、主語が「He」「She」「It」や単数形の名詞のときは、動詞に「s」または「es」をつけます。"
+            },
+            {
+                id: 6,
+                japanese: "あなたは本を読みますか。",
+                english: "Do you read books?",
+                blanks: [
+                    { index: 0, word: 'Do' }
+                ],
+                hint: "一般動詞の疑問文は、文頭に「Do」または「Does」を置きます。主語が「you」のときは「Do」を使います。"
+            },
+            {
+                id: 7,
+                japanese: "彼女は本を読みますか。",
+                english: "Does she read books?",
+                blanks: [
+                    { index: 0, word: 'Does' }
+                ],
+                hint: "主語が「He」「She」「It」や単数形の名詞のときは「Does」を使い、動詞は原形にします。"
+            },
+            {
+                id: 8,
+                japanese: "私は本を読みません。",
+                english: "I do not read books.",
+                blanks: [
+                    { index: 0, word: 'do' },
+                    { index: 1, word: 'not' }
+                ],
+                hint: "一般動詞の否定文は、「do not」または「does not」を動詞の前に置きます。主語が「I」のときは「do not」を使います。"
+            },
+            {
+                id: 9,
+                japanese: "彼は本を読みません。",
+                english: "He does not read books.",
+                blanks: [
+                    { index: 0, word: 'does' },
+                    { index: 1, word: 'not' }
+                ],
+                hint: "主語が「He」「She」「It」や単数形の名詞のときは「does not」を使い、動詞は原形にします。"
+            },
+            {
+                id: 10,
+                japanese: "あなたは学生ですか。",
+                english: "Are you a student?",
+                blanks: [
+                    { index: 0, word: 'Are' }
+                ],
+                hint: "be動詞の疑問文は、be動詞を文頭に移動します。主語が「you」のときは「Are」を使います。"
+            }
         ]
     },
     {

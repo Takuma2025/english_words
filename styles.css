@@ -5179,6 +5179,7 @@ body {
     padding: 16px 24px;
     position: relative;
     letter-spacing: 0.02em;
+    line-height: 1.5;
 }
 
 .grammar-toc-title::before {
@@ -5301,11 +5302,7 @@ body {
 }
 
 .grammar-chapter-content {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 20px;
     margin-bottom: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     line-height: 1.8;
     color: #374151;
     font-size: 16px;
@@ -5353,10 +5350,7 @@ body {
 }
 
 .grammar-exercise-section {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 32px;
 }
 
 .grammar-exercise-title {
@@ -5372,6 +5366,61 @@ body {
     color: #374151;
     font-size: 16px;
     line-height: 1.8;
+    padding-bottom: 220px; /* キーボード分のスペースを確保（縮小） */
+}
+
+/* 各問題のコンテナ */
+.grammar-exercise-item {
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.grammar-exercise-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 16px;
+}
+
+.exercise-explanation {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: #f9fafb;
+    border-left: 3px solid #2563eb;
+    border-radius: 8px;
+    color: #1f2937;
+    line-height: 1.7;
+}
+
+.grammar-exercise-item-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 10px;
+}
+
+.grammar-exercise-grade-btn {
+    display: none; /* 初期は非表示。空欄タップ時に表示 */
+    margin-top: 12px;
+}
+
+/* 文法演習用キーボード（画面下部に固定） */
+#grammarExerciseKeyboard {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(960px, calc(100% - 24px));
+    background: rgba(255, 183, 77, 0.92); /* 明るいオレンジに透明感を付与 */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.12);
+    z-index: 1000;
+    padding: 14px;
+    border-radius: 14px;
+    max-width: 100%;
+}
+
+#grammarExerciseKeyboard.hidden {
+    display: none;
 }
 
 @media (max-width: 600px) {
@@ -5408,5 +5457,18 @@ body {
     
     .grammar-chapter-item {
         font-size: 15px;
+    }
+    
+    .grammar-exercise-content {
+        padding-bottom: 170px; /* モバイルではキーボードが少し小さい */
+    }
+    
+    #grammarExerciseKeyboard {
+        width: calc(100% - 16px);
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 8px;
+        padding: 10px;
+        border-radius: 12px;
     }
 }
