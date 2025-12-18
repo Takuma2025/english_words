@@ -940,70 +940,70 @@ const elementaryWordData = [
   {
     "id": 4001,
     "word": "in",
-    "meaning": "〜の中に、〜で",
+    "meaning": "①（場所・位置）〜の中に［で］ ②（時）〜に ③（手段）〜で ④（所要時間）〜後に",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4002,
     "word": "on",
-    "meaning": "〜の上に、〜について",
+    "meaning": "①（時・日）〜に ②（場所）〜の上に、〜に（接触） ③（状態）〜中で ④〜について",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4003,
     "word": "at",
-    "meaning": "〜に、〜で",
+    "meaning": "①（場所・位置）〜に（で）、〜のところに ②（時刻）〜に",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4004,
     "word": "by",
-    "meaning": "〜によって、〜までに",
+    "meaning": "①（場所）〜のそばに ②〜によって ③（締切）〜までに",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4005,
     "word": "for",
-    "meaning": "〜のために、〜の間",
+    "meaning": "①〜のために ②〜に向かって ③〜にとって ④〜の間",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4006,
     "word": "with",
-    "meaning": "〜と一緒に、〜を持って",
+    "meaning": "①〜と一緒に ②（道具）〜で、〜を使って ③〜のある、〜を身に付けて・所持して",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4007,
     "word": "from",
-    "meaning": "〜から",
+    "meaning": "〜から、〜出身の",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4008,
     "word": "to",
-    "meaning": "〜へ、〜まで",
+    "meaning": "（方向・到達点）〜へ・〜まで",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4009,
     "word": "of",
-    "meaning": "〜の",
+    "meaning": "①（帰属）〜の ②（同格）〜という… ③（部分）〜の中の…",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4010,
     "word": "about",
-    "meaning": "〜について、〜の周りに",
+    "meaning": "〜について、〜に関して（関する）、およそ、約〜",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
@@ -1015,16 +1015,9 @@ const elementaryWordData = [
     "category": "前置詞"
   },
   {
-    "id": 4012,
-    "word": "onto",
-    "meaning": "〜の上へ",
-    "partOfSpeech": "前置詞",
-    "category": "前置詞"
-  },
-  {
     "id": 4013,
     "word": "over",
-    "meaning": "〜の上に、〜を越えて",
+    "meaning": "①〜の上の方 ②〜じゅう、〜のいたるところに ③〜以上に、〜より多く",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
@@ -1038,28 +1031,28 @@ const elementaryWordData = [
   {
     "id": 4015,
     "word": "between",
-    "meaning": "〜の間に",
+    "meaning": "（2つ、2人）〜の間に",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4016,
     "word": "among",
-    "meaning": "〜の間に（3つ以上）",
+    "meaning": "（3つ、3人以上）〜の間に",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4017,
     "word": "through",
-    "meaning": "〜を通って",
+    "meaning": "①〜を通って ②（手段）〜を通じて",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
   {
     "id": 4018,
     "word": "during",
-    "meaning": "〜の間に",
+    "meaning": "（特定の期間）の間じゅう",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
@@ -1073,7 +1066,7 @@ const elementaryWordData = [
   {
     "id": 4020,
     "word": "after",
-    "meaning": "〜の後に",
+    "meaning": "〜のあとに（で）、〜してから",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
@@ -1087,7 +1080,7 @@ const elementaryWordData = [
   {
     "id": 4022,
     "word": "until",
-    "meaning": "〜まで",
+    "meaning": "（継続）〜までずっと",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },
@@ -1102,13 +1095,6 @@ const elementaryWordData = [
     "id": 4024,
     "word": "without",
     "meaning": "〜なしで",
-    "partOfSpeech": "前置詞",
-    "category": "前置詞"
-  },
-  {
-    "id": 4025,
-    "word": "within",
-    "meaning": "〜の内側に、〜以内に",
     "partOfSpeech": "前置詞",
     "category": "前置詞"
   },

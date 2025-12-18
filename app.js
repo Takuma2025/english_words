@@ -2976,7 +2976,8 @@ function displayInputMode(skipAnimationReset = false) {
             posElement.style.display = 'none';
         }
         
-        inputMeaning.textContent = word.meaning;
+        // 入力モード側も意味を整形して表示
+        setMeaningContent(inputMeaning, word.meaning);
     }
     
     // 過去登場回数を表示（入力モード）
@@ -3724,6 +3725,72 @@ function getPartOfSpeechShort(pos) {
     return firstPos.charAt(0);
 }
 
+// 意味テキストを整形して表示（①②③付きは縦に揃えて表示）
+function setMeaningContent(meaningElement, text) {
+    if (!meaningElement) return;
+    if (!text) {
+        meaningElement.textContent = '';
+        meaningElement.classList.remove('meaning-multiline-root');
+        return;
+    }
+    
+    // ①が含まれていなければ従来どおり一行表示
+    if (!text.includes('①')) {
+        meaningElement.textContent = text;
+        meaningElement.classList.remove('meaning-multiline-root');
+        return;
+    }
+    
+    // ①〜の番号付きの場合、番号ごとに行を分けて左揃え表示
+    const numerals = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩'];
+    const lines = [];
+    let currentNum = null;
+    let buffer = '';
+    
+    for (const ch of text) {
+        if (numerals.includes(ch)) {
+            if (currentNum !== null) {
+                lines.push({ num: currentNum, text: buffer.trim() });
+            }
+            currentNum = ch;
+            buffer = '';
+        } else {
+            buffer += ch;
+        }
+    }
+    if (currentNum !== null) {
+        lines.push({ num: currentNum, text: buffer.trim() });
+    }
+    
+    // 行がうまく取れなかった場合はフォールバック
+    if (lines.length === 0) {
+        meaningElement.textContent = text;
+        meaningElement.classList.remove('meaning-multiline-root');
+        return;
+    }
+    
+    meaningElement.innerHTML = '';
+    meaningElement.classList.add('meaning-multiline-root');
+    
+    lines.forEach(({ num, text: lineText }) => {
+        if (!lineText) return;
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'meaning-line';
+        
+        const numSpan = document.createElement('span');
+        numSpan.className = 'meaning-index';
+        numSpan.textContent = num;
+        
+        const textSpan = document.createElement('span');
+        textSpan.className = 'meaning-text';
+        textSpan.textContent = lineText;
+        
+        lineDiv.appendChild(numSpan);
+        lineDiv.appendChild(textSpan);
+        meaningElement.appendChild(lineDiv);
+    });
+}
+
 // 品詞のクラスを取得する関数
 function getPartOfSpeechClass(pos) {
     if (!pos) return 'other';
@@ -3829,7 +3896,8 @@ function displayCurrentWord() {
     elements.wordNumber.style.backgroundColor = '';
     elements.wordNumber.style.color = '';
 
-    elements.meaning.textContent = word.meaning;
+    // 意味を表示（①②③があれば行ごとに整形）
+    setMeaningContent(elements.meaning, word.meaning);
     
     // 用例を表示（あれば）
     const exampleContainer = document.getElementById('exampleContainer');

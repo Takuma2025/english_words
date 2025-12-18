@@ -3190,6 +3190,29 @@ body {
     letter-spacing: 0.05em;
 }
 
+/* ①②③付きの複数意味用 */
+.meaning-multiline-root {
+    display: inline-block;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.meaning-line {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 4px;
+}
+
+.meaning-index {
+    flex-shrink: 0;
+}
+
+.meaning-text {
+    text-align: left;
+}
+
 .example-container {
     margin-top: 6px;
     display: inline-flex;
