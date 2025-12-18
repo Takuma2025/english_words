@@ -2980,7 +2980,7 @@ body {
     top: -0.18em;
 }
 
-/* 過去登場回数表示 */
+/* 入試登場回数表示 */
 .word-appearance-count {
     display: flex;
     align-items: center;
@@ -2988,21 +2988,23 @@ body {
     gap: 0;
     margin-top: 12px;
     margin-bottom: 8px;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .appearance-label {
     background-color: #718096;
     color: #ffffff;
-    padding: 4px 8px;
+    padding: 3px 7px;
     border-radius: 4px 0 0 4px;
     font-weight: 500;
+    font-size: 12px;
 }
 
 .appearance-value {
     color: #1f2937;
-    padding: 4px 8px;
+    padding: 3px 7px;
     font-weight: 600;
+    font-size: 12px;
 }
 
 /* 意味のときの品詞位置調整 */

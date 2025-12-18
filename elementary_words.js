@@ -704,7 +704,7 @@ const elementaryWordData = [
   {
     "id": 2001,
     "word": "can",
-    "meaning": "（可能）〜できる、（許可）〜してもよい、〜",
+    "meaning": "（可能）〜できる、（許可）〜してもよい",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
     "appearanceCount": 374,
@@ -790,7 +790,7 @@ const elementaryWordData = [
     "meaning": "（可能）〜することができる",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
-    "appearanceCount": 27,
+    "appearanceCount": 8,
     "example": {
       "english": "I <strong>am able to</strong> play the piano.",
       "japanese": "私はピアノを弾けます。"
@@ -802,7 +802,7 @@ const elementaryWordData = [
     "meaning": "（未来）〜するつもり",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
-    "appearanceCount": 41,
+    "appearanceCount": 14,
     "example": {
       "english": "I <strong>am going to</strong> go to the park next week.",
       "japanese": "私は来週公園に行くつもりです。"
@@ -814,7 +814,7 @@ const elementaryWordData = [
     "meaning": "（義務）〜しなければならない",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
-    "appearanceCount": 51,
+    "appearanceCount": 22,
     "example": {
       "english": "I <strong>have to</strong> do my homework.",
       "japanese": "私は宿題をしなければなりません。"
@@ -822,11 +822,11 @@ const elementaryWordData = [
   },
   {
     "id": 2014,
-    "word": "Will(Can) you 〜 ?",
+    "word": "Will you～?(Can you～?)",
     "meaning": "（依頼）〜してくれませんか",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
-    "appearanceCount": 20,
+    "appearanceCount": 31,
     "example": {
       "english": "<strong>Can you</strong> open the door?",
       "japanese": "ドアを開けてくれませんか。"
@@ -834,11 +834,11 @@ const elementaryWordData = [
   },
   {
     "id": 2015,
-    "word": "Would(Could) you 〜 ?",
+    "word": "Would you～?(Could you〜?)",
     "meaning": "（依頼）〜していただけませんか",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
-    "appearanceCount": 20,
+    "appearanceCount": 2,
     "example": {
       "english": "<strong>Would you</strong> close the window?",
       "japanese": "窓を閉めていただけませんか。"
@@ -850,7 +850,7 @@ const elementaryWordData = [
     "meaning": "（勧誘）〜はいかがですか",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
-    "appearanceCount": 18,
+    "appearanceCount": 1,
     "example": {
       "english": "<strong>Would you like</strong> some cake?",
       "japanese": "ケーキはいかがですか。"
@@ -858,11 +858,11 @@ const elementaryWordData = [
   },
   {
     "id": 2017,
-    "word": "May(Can) I 〜 ?",
+    "word": "Can I～?(May I〜?)",
     "meaning": "（許可）〜してもいいですか",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
-    "appearanceCount": 28,
+    "appearanceCount": 10,
     "example": {
       "english": "<strong>May I</strong> use the phone?",
       "japanese": "電話を使ってもいいですか。"
@@ -874,7 +874,7 @@ const elementaryWordData = [
     "meaning": "（提案）［私が］〜しましょうか",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
-    "appearanceCount": 4,
+    "appearanceCount": 2,
     "example": {
       "english": "<strong>Shall I</strong> open the window?",
       "japanese": "窓を開けましょうか。"
@@ -886,7 +886,7 @@ const elementaryWordData = [
     "meaning": "（勧誘）［いっしょに］〜しませんか",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
-    "appearanceCount": 12,
+    "appearanceCount": 10,
     "example": {
       "english": "<strong>Shall we</strong> play tennis?",
       "japanese": "（いっしょに）テニスをしませんか。"
@@ -1042,7 +1042,7 @@ const elementaryWordData = [
     "meaning": "〜している間に",
     "partOfSpeech": "接続詞",
     "category": "接続詞",
-    "appearanceCount": 42,
+    "appearanceCount": 8,
     "example": {
       "english": "<strong>While</strong> I was eating breakfast, I was reading a newspaper.",
       "japanese": "朝食を食べながら、新聞を読んでいました。"
@@ -1138,7 +1138,7 @@ const elementaryWordData = [
     "meaning": "〜するとすぐに",
     "partOfSpeech": "接続詞",
     "category": "接続詞",
-    "appearanceCount": 18,
+    "appearanceCount": 2,
     "example": {
       "english": "I will play games <strong>as soon as</strong> I finish my homework.",
       "japanese": "宿題を終えたらすぐに、ゲームをするつもりです。"
@@ -1150,7 +1150,7 @@ const elementaryWordData = [
     "meaning": "たとえ〜でも",
     "partOfSpeech": "接続詞",
     "category": "接続詞",
-    "appearanceCount": 9,
+    "appearanceCount": 6,
     "example": {
       "english": "I will go there <strong>even if</strong> it is raining.",
       "japanese": "たとえ雨が降っていても、そこに行くつもりです。"
