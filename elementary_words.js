@@ -780,8 +780,8 @@ const elementaryWordData = [
     "category": "冠詞",
     "appearanceCount": 1105,
     "example": {
-      "english": "I have a bike.",
-      "japanese": "私は自転車を1台持っています。"
+      "english": "<strong>a</strong> bike",
+      "japanese": "（１台の）自転車"
     }
   },
   {
@@ -792,8 +792,8 @@ const elementaryWordData = [
     "category": "冠詞",
     "appearanceCount": 119,
     "example": {
-      "english": "She has an umbrella.",
-      "japanese": "彼女は1本のかさを持っています。"
+      "english": "<strong>an</strong> umbrella",
+      "japanese": "（1本の）かさ"
     }
   },
   {
@@ -804,7 +804,7 @@ const elementaryWordData = [
     "category": "冠詞",
     "appearanceCount": 2988,
     "example": {
-      "english": "Please open the window.",
+      "english": "Please open <strong>the</strong> window.",
       "japanese": "その窓を開けてください。"
     }
   },
@@ -815,8 +815,8 @@ const elementaryWordData = [
     "partOfSpeech": "名詞",
     "category": "冠詞",
     "example": {
-      "english": "Mr. Sato is our English teacher.",
-      "japanese": "佐藤先生は私たちの英語の先生です。"
+      "english": "<strong>Mr.</strong> Sato",
+      "japanese": "佐藤先生（男性）"
     }
   },
   {
@@ -826,8 +826,8 @@ const elementaryWordData = [
     "partOfSpeech": "名詞",
     "category": "冠詞",
     "example": {
-      "english": "Ms. Brown is my homeroom teacher.",
-      "japanese": "ブラウン先生は私の担任の先生です。"
+      "english": "<strong>Ms.</strong> Brown",
+      "japanese": "ブラウンさん（女性）"
     }
   },
   // 接続詞
@@ -945,7 +945,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 1337,
     "example": {
-      "english": "in the library",
+      "english": "<strong>in</strong> the library",
       "japanese": "図書館(の中)に"
     }
   },
@@ -957,7 +957,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 283,
     "example": {
-      "english": "on the table",
+      "english": "<strong>on</strong> the table",
       "japanese": "テーブル(の上)に"
     }
   },
@@ -969,7 +969,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 264,
     "example": {
-      "english": "at the station",
+      "english": "<strong>at</strong> the station",
       "japanese": "駅(に)で"
     }
   },
@@ -981,7 +981,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 214,
     "example": {
-      "english": "by the park",
+      "english": "<strong>by</strong> the park",
       "japanese": "公園のそばに"
     }
   },
@@ -993,8 +993,8 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 507,
     "example": {
-      "english": "for them",
-      "japanese": "彼らのために"
+      "english": "<strong>for</strong> us",
+      "japanese": "私たちのために"
     }
   },
   {
@@ -1005,7 +1005,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 322,
     "example": {
-      "english": "with him",
+      "english": "<strong>with</strong> him",
       "japanese": "彼と一緒に"
     }
   },
@@ -1017,7 +1017,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 271,
     "example": {
-      "english": "from Canada",
+      "english": "<strong>from</strong> Canada",
       "japanese": "カナダ出身の"
     }
   },
@@ -1029,7 +1029,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 1449,
     "example": {
-      "english": "to Tokyo",
+      "english": "<strong>to</strong> Tokyo",
       "japanese": "東京へ"
     }
   },
@@ -1041,7 +1041,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 989,
     "example": {
-      "english": " history of Japan ",
+      "english": "history <strong>of</strong> Japan ",
       "japanese": "日本の歴史"
     }
   },
@@ -1053,7 +1053,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 575,
     "example": {
-      "english": "about music",
+      "english": "<strong>about</strong> music",
       "japanese": "音楽について"
     }
   },
@@ -1065,7 +1065,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 22,
     "example": {
-      "english": "into the room",
+      "english": "<strong>into</strong> the room",
       "japanese": "部屋の中へ"
     }
   },
@@ -1077,7 +1077,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 20,
     "example": {
-      "english": "over the bridge",
+      "english": "<strong>over</strong> the bridge",
       "japanese": "橋の上"
     }
   },
@@ -1089,7 +1089,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 20,
     "example": {
-      "english": "under the table",
+      "english": "<strong>under</strong> the table",
       "japanese": "テーブルの下"
     }
   },
@@ -1101,7 +1101,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 33,
     "example": {
-      "english": "between the two buildings",
+      "english": "<strong>between</strong> the two buildings",
       "japanese": "2つの建物の間"
     }
   },
@@ -1113,7 +1113,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 20,
     "example": {
-      "english": "among the trees",
+      "english": "<strong>among</strong> the trees",
       "japanese": "木々の間"
     }
   },
@@ -1125,7 +1125,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 33,
     "example": {
-      "english": "through the forest",
+      "english": "<strong>through</strong> the forest",
       "japanese": "森を通って"
     }
   },
@@ -1137,7 +1137,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 21,
     "example": {
-      "english": "during the summer",
+      "english": "<strong>during</strong> the summer",
       "japanese": "夏の間"
     }
   },
@@ -1149,7 +1149,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 59,
     "example": {
-      "english": "before the meeting",
+      "english": "<strong>before</strong> the meeting",
       "japanese": "会議の前"
     }
   },
@@ -1161,7 +1161,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 104,
     "example": {
-      "english": "after the party",
+      "english": "<strong>after</strong> the party",
       "japanese": "パーティーのあと"
     }
   },
@@ -1173,7 +1173,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 9,
     "example": {
-      "english": "since yesterday",
+      "english": "<strong>since</strong> yesterday",
       "japanese": "昨日から"
     }
   },
@@ -1185,7 +1185,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 12,
     "example": {
-      "english": "until tomorrow",
+      "english": "<strong>until</strong> tomorrow",
       "japanese": "明日まで"
     }
   },
@@ -1197,7 +1197,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 1,
     "example": {
-      "english": "against the law",
+      "english": "<strong>against</strong> the law",
       "japanese": "法律に反対して"
     }
   },
@@ -1209,7 +1209,7 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 57,
     "example": {
-      "english": "without a word",
+      "english": "<strong>without</strong> a word",
       "japanese": "一言も言わずに"
     }
   },

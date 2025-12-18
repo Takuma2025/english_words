@@ -3906,7 +3906,18 @@ function displayCurrentWord() {
     if (exampleContainer && exampleEnglishEl && exampleJapaneseEl) {
         if (word.example && (word.example.english || word.example.japanese)) {
             exampleContainer.style.display = '';
-            exampleEnglishEl.textContent = word.example.english || '';
+
+            const exampleEn = word.example.english || '';
+            // 用例中の今回の単語を太字にする（英語のみ）
+            if (exampleEn && word.word) {
+                const escaped = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
+                const highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
+                exampleEnglishEl.innerHTML = highlighted;
+            } else {
+                exampleEnglishEl.textContent = exampleEn;
+            }
+
             exampleJapaneseEl.textContent = word.example.japanese || '';
         } else {
             exampleContainer.style.display = 'none';
