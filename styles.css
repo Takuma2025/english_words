@@ -1851,11 +1851,20 @@ body {
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease;
     transform: rotateY(0deg);
     transform-style: preserve-3d;
     backface-visibility: hidden;
     flex-shrink: 0;
+    border: 3px solid transparent;
+}
+
+.input-mode-content.marker-correct {
+    border-color: #3b82f6;
+}
+
+.input-mode-content.marker-wrong {
+    border-color: #ef4444;
 }
 
 /* カードフリップアニメーション */
@@ -2649,12 +2658,34 @@ body {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1px solid #e2e8f0;
+    border: 3px solid #e2e8f0;
+    transition: border-color 0.3s ease;
+}
+
+.word-card.marker-correct .card-face,
+.word-card.marker-correct .card-back {
+    border-color: #3b82f6;
+}
+
+.word-card.marker-wrong .card-face,
+.word-card.marker-wrong .card-back {
+    border-color: #ef4444;
 }
 
 .card-back {
-    transform: rotateY(180deg);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
     background: #ffffff;
+    border-radius: 24px;
+    box-shadow: var(--card-shadow);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    border: 3px solid #e2e8f0;
+    transform: rotateY(180deg);
+    transition: border-color 0.3s ease;
 }
 
 /* Front Face */

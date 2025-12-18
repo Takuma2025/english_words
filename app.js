@@ -3397,8 +3397,12 @@ function applyMarkers(word) {
         el.classList.remove('marker-review', 'marker-correct', 'marker-wrong');
     };
 
+    const inputModeContent = document.getElementById('inputMode')?.querySelector('.input-mode-content');
+
     clearMarker(wordNumberEl);
     clearMarker(inputWordNumberEl);
+    clearMarker(elements.wordCard);
+    clearMarker(inputModeContent);
 
     if (!word) return;
 
@@ -3427,7 +3431,9 @@ function applyMarkers(word) {
 
     if (markerClass) {
         if (wordNumberEl) wordNumberEl.classList.add(markerClass);
-        if (inputWordNumberEl) wordNumberEl && inputWordNumberEl.classList.add(markerClass);
+        if (inputWordNumberEl) inputWordNumberEl.classList.add(markerClass);
+        if (elements.wordCard) elements.wordCard.classList.add(markerClass);
+        if (inputModeContent) inputModeContent.classList.add(markerClass);
     }
 }
 
