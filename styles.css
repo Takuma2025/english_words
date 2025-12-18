@@ -264,205 +264,6 @@ body {
 }
 
 /* 学習グラフ（縦棒グラフ） */
-.chart-container {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 16px;
-    margin: 0;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.chart-header {
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.chart-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #ffffff;
-    margin: 0;
-    padding: 8px 12px;
-    background: #3182ce;
-    border: none;
-    border-radius: 8px;
-    display: inline-block;
-}
-
-.chart-period-tabs {
-    display: flex;
-    gap: 4px;
-    background: #f3f4f6;
-    padding: 4px;
-    border-radius: 8px;
-}
-
-.chart-period-tab {
-    padding: 6px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #6b7280;
-    background: transparent;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-}
-
-.chart-period-tab:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: #374151;
-}
-
-.chart-period-tab.active {
-    background: #ffffff;
-    color: #1f2937;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.chart-content {
-    width: 100%;
-}
-
-.bar-chart {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-    height: 200px;
-    gap: 4px;
-    padding: 0 4px;
-    overflow-x: auto;
-    overflow-y: hidden;
-}
-
-/* 1週間表示 */
-.bar-chart[data-period="week"] {
-    gap: 8px;
-    padding: 0 8px;
-}
-
-/* 1か月表示 */
-.bar-chart[data-period="month"] {
-    gap: 1px;
-    padding: 0 1px;
-}
-
-/* 1年表示 */
-.bar-chart[data-period="year"] {
-    gap: 6px;
-    padding: 0 6px;
-}
-
-.bar-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
-    position: relative;
-    min-width: 0;
-}
-
-/* 1か月表示ではバーを細く */
-.bar-chart[data-period="month"] .bar-item {
-    flex: 0 0 auto;
-    min-width: 4px;
-    max-width: 6px;
-}
-
-/* 1年表示ではバーを少し広く */
-.bar-chart[data-period="year"] .bar-item {
-    flex: 1;
-    min-width: 20px;
-}
-
-.bar-value {
-    font-size: 12px;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 4px;
-    min-height: 18px;
-}
-
-/* 1か月表示では文字を小さく */
-.bar-chart[data-period="month"] .bar-value {
-    font-size: 8px;
-    min-height: 12px;
-    margin-bottom: 2px;
-}
-
-.bar-wrapper {
-    flex: 1;
-    width: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    min-height: 0;
-    position: relative;
-}
-
-.bar-wrapper::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: #e5e7eb;
-    z-index: 1;
-}
-
-.bar {
-    width: 100%;
-    max-width: 24px;
-    background: #3b82f6;
-    border-radius: 4px 4px 0 0;
-    transition: all 0.3s ease;
-    min-height: 4px;
-}
-
-/* 1か月表示ではバーを細く */
-.bar-chart[data-period="month"] .bar {
-    max-width: 4px;
-    border-radius: 2px 2px 0 0;
-}
-
-.bar-item-today .bar {
-    background: #2563eb;
-}
-
-.bar-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: #6b7280;
-    margin-top: 4px;
-}
-
-.bar-date {
-    font-size: 10px;
-    color: #9ca3af;
-    margin-top: 2px;
-}
-
-.bar-item-today .bar-label,
-.bar-item-today .bar-date {
-    color: #2563eb;
-    font-weight: 700;
-}
-
-.bar-year {
-    font-size: 9px;
-    color: #9ca3af;
-    margin-top: 2px;
-    white-space: nowrap;
-    line-height: 1;
-}
 
 /* 1年表示のスタイル調整 */
 .bar-chart[data-period="year"] .bar-item {
@@ -1092,14 +893,30 @@ body {
 }
 
 .category-progress-bar {
-    height: 12px;
+    height: 18px;
     background: #e5e7eb;
     border-radius: 0;
     overflow: visible;
     display: flex; /* フレックスボックスにしてバーを並べる */
     flex-direction: row;
     width: 100%;
-    min-height: 12px;
+    min-height: 18px;
+    position: relative;
+}
+
+.category-progress-bar.category-progress-complete::after {
+    content: "✧ COMPLETE!! ✧";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 1px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    text-transform: uppercase;
 }
 
 .category-progress-fill {

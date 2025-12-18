@@ -23,7 +23,6 @@ let totalTimeRemaining = 0; // 残り時間（秒）
 let wordStartTime = 0; // 現在の単語の開始時間
 let wordTimerInterval = null; // 単語あたりのタイマーのインターバル
 const TIME_PER_WORD = 2; // 1単語あたりの時間（秒）
-let chartPeriod = 'week'; // グラフの表示期間: 'week', 'month', 'year'
 let isSentenceModeActive = false; // 厳選例文暗記モードかどうか
 let sentenceData = []; // 例文データ
 let currentSentenceIndex = 0; // 現在の例文のインデックス
@@ -51,231 +50,6 @@ let reorderTouchData = { // タッチドラッグ用のデータ
 
  // 0: 曜日, 1: 月
 
-// 学習日を記録する関数（日付と学習量を記録）
-function recordStudyDate() {
-    const today = new Date();
-    const dateStr = today.toISOString().split('T')[0]; // YYYY-MM-DD形式
-    
-    const savedData = localStorage.getItem('studyDates');
-    let studyData = savedData ? JSON.parse(savedData) : {};
-    
-    // 今日の学習量を1増やす
-    if (!studyData[dateStr]) {
-        studyData[dateStr] = 0;
-    }
-    studyData[dateStr]++;
-    
-    localStorage.setItem('studyDates', JSON.stringify(studyData));
-}
-
-// 学習日データを読み込む関数
-function loadStudyDates() {
-    const savedData = localStorage.getItem('studyDates');
-    return savedData ? JSON.parse(savedData) : {};
-}
-
-// すべてのカテゴリーの正解単語数を集計する関数
-function getAllCorrectWordsCount() {
-    const categories = [
-        '小学生で習った単語とカテゴリー別に覚える単語',
-        'LEVEL1 超よくでる400',
-        'LEVEL2 よくでる300',
-        'LEVEL3 差がつく200',
-        'LEVEL4 ハイレベル200',
-        '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
-        '大阪C問題対策英単語タイムアタック',
-        '大阪C問題対策 英作写経ドリル',
-        '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
-    ];
-    
-    const allCorrectWords = new Set();
-    
-    categories.forEach(category => {
-        const { correctSet } = loadCategoryWords(category);
-        correctSet.forEach(wordId => {
-            allCorrectWords.add(wordId);
-        });
-    });
-    
-    return allCorrectWords.size;
-}
-
-// 指定日の覚えた単語数を取得する関数
-function getCorrectWordsCountForDate(targetDate) {
-    // 日付ごとの覚えた単語数を記録するキー
-    const dateKey = `correctWordsCount-${targetDate}`;
-    const savedCount = localStorage.getItem(dateKey);
-    
-    if (savedCount !== null) {
-        return parseInt(savedCount, 10);
-    }
-    
-    // 保存されていない場合は0を返す（その日は学習していない）
-    return 0;
-}
-
-// 日付ごとの覚えた単語数を保存する関数
-function saveCorrectWordsCountForDate(dateStr, count) {
-    const dateKey = `correctWordsCount-${dateStr}`;
-    localStorage.setItem(dateKey, count.toString());
-}
-
-// 指定期間のデータを取得する関数
-function getChartData(period) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayStr = today.toISOString().split('T')[0];
-    const data = [];
-    
-    if (period === 'week') {
-        // 直近1週間（7日間）のデータを取得
-        for (let i = 6; i >= 0; i--) {
-            const date = new Date(today);
-            date.setDate(date.getDate() - i);
-            const dateStr = date.toISOString().split('T')[0];
-            const count = getCorrectWordsCountForDate(dateStr);
-            data.push({ date, dateStr, count, label: '', dateLabel: '' });
-        }
-    } else if (period === 'month') {
-        // 直近1か月（31日間）のデータを取得
-        for (let i = 30; i >= 0; i--) {
-            const date = new Date(today);
-            date.setDate(date.getDate() - i);
-            const dateStr = date.toISOString().split('T')[0];
-            const count = getCorrectWordsCountForDate(dateStr);
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
-            data.push({ 
-                date, 
-                dateStr, 
-                count, 
-                label: weekday, 
-                dateLabel: `${month}/${day}` 
-            });
-        }
-    } else if (period === 'year') {
-        // 直近1年（12か月）のデータを取得（月ごとに集計）
-        for (let i = 11; i >= 0; i--) {
-            const date = new Date(today);
-            date.setMonth(date.getMonth() - i);
-            date.setDate(1); // 月初めに設定
-            const year = date.getFullYear();
-            const month = date.getMonth() + 1;
-            
-            // その月の全データを集計
-            let monthCount = 0;
-            const lastDay = new Date(year, month, 0).getDate();
-            for (let day = 1; day <= lastDay; day++) {
-                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                monthCount += getCorrectWordsCountForDate(dateStr);
-            }
-            
-            data.push({ 
-                date, 
-                dateStr: `${year}-${String(month).padStart(2, '0')}`, 
-                count: monthCount, 
-                label: `${month}月`, 
-                dateLabel: `${month}`,
-                year: year
-            });
-        }
-    }
-    
-    return { data, todayStr };
-}
-
-// 縦棒グラフを更新する関数
-function updateBarChart() {
-    const barChart = document.getElementById('barChart');
-    const chartTitle = document.getElementById('chartTitle');
-    if (!barChart) {
-        console.warn('barChart element not found');
-        return;
-    }
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // タイトルを更新
-    const periodLabels = {
-        'week': '学習記録（直近1週間）',
-        'month': '学習記録（直近1か月）',
-        'year': '学習記録（直近1年）'
-    };
-    if (chartTitle) {
-        chartTitle.textContent = periodLabels[chartPeriod] || periodLabels['week'];
-    }
-    
-    // 期間に応じたデータを取得
-    const { data, todayStr } = getChartData(chartPeriod);
-    
-    // 最大学習量を取得（グラフの高さを決定するため）
-    const maxCount = Math.max(...data.map(d => d.count), 1);
-    
-    // グラフをクリア
-    barChart.innerHTML = '';
-    
-    // 期間属性を設定（CSSでスタイルを調整するため）
-    barChart.setAttribute('data-period', chartPeriod);
-    
-    // 各データを表示
-    data.forEach(({ date, dateStr, count, label, dateLabel, year }, index) => {
-        const isToday = chartPeriod === 'week' && dateStr === todayStr;
-        const isCurrentMonth = chartPeriod === 'year' && 
-            date.getFullYear() === today.getFullYear() && 
-            date.getMonth() === today.getMonth();
-        const isCurrentDay = chartPeriod === 'month' && dateStr === todayStr;
-        
-        // ラベルを決定
-        let displayLabel = label;
-        let displayDateLabel = dateLabel;
-        let displayYear = '';
-        
-        if (chartPeriod === 'week') {
-            const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            displayLabel = weekday;
-            displayDateLabel = `${month}/${day}`;
-        } else if (chartPeriod === 'month') {
-            // 月表示では、すべての日付を表示（曜日も表示）
-            const dayOfMonth = date.getDate();
-            const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
-            displayLabel = weekday;
-            displayDateLabel = `${dayOfMonth}`;
-        } else if (chartPeriod === 'year') {
-            // 1年表示では、月を表示
-            const month = date.getMonth() + 1;
-            displayLabel = '';
-            displayDateLabel = `${month}月`;
-            // 1月のときだけ年号を表示
-            if (month === 1 && year) {
-                displayYear = year;
-            }
-        }
-        
-        // バーの高さを計算（最大値に対する割合）
-        const heightPercent = maxCount > 0 ? (count / maxCount) * 100 : 0;
-        
-        const barItem = document.createElement('div');
-        barItem.className = `bar-item${isToday || isCurrentMonth || isCurrentDay ? ' bar-item-today' : ''}`;
-        
-        barItem.innerHTML = `
-            <div class="bar-value" style="${count === 0 ? 'display: none;' : ''}">${count}</div>
-            <div class="bar-wrapper">
-                <div class="bar" style="height: ${heightPercent}%; ${count === 0 ? 'display: none;' : ''}"></div>
-            </div>
-            ${displayLabel ? `<div class="bar-label">${displayLabel}</div>` : ''}
-            ${displayDateLabel ? `<div class="bar-date">${displayDateLabel}</div>` : ''}
-            <div class="bar-year">${displayYear || ''}</div>
-        `;
-        
-        barChart.appendChild(barItem);
-    });
-    
-    console.log(`Bar chart updated: ${data.length} items displayed for period: ${chartPeriod}`);
-}
 
 // カテゴリごとの正解・間違い単語を読み込む（現在のモードのみ）
 function loadCategoryWords(category) {
@@ -444,16 +218,27 @@ function updateCategoryStars() {
                 const wrongPercent = total === 0 ? 0 : (wrongCountInCategory / total) * 100;
                 const completedCount = correctCountInCategory + wrongCountInCategory;
                 
+                // 全部青（間違い0、正解数=総数）のときだけCOMPLETE!!
+                const isComplete = total > 0 && wrongCountInCategory === 0 && correctCountInCategory === total;
+                
                 // 進捗バーとテキストを更新
                 const correctBar = document.getElementById(`progress-correct-${category}`);
                 const wrongBar = document.getElementById(`progress-wrong-${category}`);
                 const text = document.getElementById(`progress-text-${category}`);
+                const barContainer = correctBar ? correctBar.parentElement : null;
                 
                 if (correctBar) {
                     correctBar.style.width = `${correctPercent}%`;
                 }
                 if (wrongBar) {
                     wrongBar.style.width = `${wrongPercent}%`;
+                }
+                if (barContainer) {
+                    if (isComplete) {
+                        barContainer.classList.add('category-progress-complete');
+                    } else {
+                        barContainer.classList.remove('category-progress-complete');
+                    }
                 }
                 if (text) {
                     text.textContent = `${completedCount}/${total}語`;
@@ -526,16 +311,27 @@ function updateCategoryStars() {
         const wrongPercent = total === 0 ? 0 : (wrongCountInCategory / total) * 100;
         const completedCount = correctCountInCategory + wrongCountInCategory;
 
+        // 全部青（間違い0、正解数=総数）のときだけCOMPLETE!!
+        const isComplete = total > 0 && wrongCountInCategory === 0 && correctCountInCategory === total;
+
         // 進捗バーとテキストを更新
         const correctBar = document.getElementById(`progress-correct-${category}`);
         const wrongBar = document.getElementById(`progress-wrong-${category}`);
         const text = document.getElementById(`progress-text-${category}`);
+        const barContainer = correctBar ? correctBar.parentElement : null;
         
         if (correctBar) {
             correctBar.style.width = `${correctPercent}%`;
         }
         if (wrongBar) {
             wrongBar.style.width = `${wrongPercent}%`;
+        }
+        if (barContainer) {
+            if (isComplete) {
+                barContainer.classList.add('category-progress-complete');
+            } else {
+                barContainer.classList.remove('category-progress-complete');
+            }
         }
         if (text) {
             // 学習済み数（正解+間違い）/ 総数を表示
@@ -926,11 +722,6 @@ function init() {
         showCategorySelection();
     }
     
-    // 縦棒グラフを初期表示
-    setTimeout(() => {
-        updateBarChart();
-    }, 100);
-    
     // ホーム画面に追加されていない場合のみオーバレイを表示
     checkAndShowInstallPrompt();
 }
@@ -1073,17 +864,6 @@ function showCategorySelection() {
     
     updateCategoryStars(); // 星の表示を更新
     
-    // 今日の覚えた単語数を記録（ホームに戻る時）
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayStr = today.toISOString().split('T')[0];
-    const currentCount = getAllCorrectWordsCount();
-    saveCorrectWordsCountForDate(todayStr, currentCount);
-    
-    // 縦棒グラフを更新（少し遅延させてDOMが確実に読み込まれた後に実行）
-    setTimeout(() => {
-        updateBarChart();
-    }, 50);
 }
 
 // カテゴリーを選択してコース選択画面を表示
@@ -1494,6 +1274,11 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
         badgeHtml = `<span class="course-group-badge">${badgeNumber}</span>`;
     }
 
+    // 全部青（間違い0、正解数=総数）のときだけCOMPLETE!!
+    const isComplete = total > 0 && wrongPercent === 0 && correctPercent === 100;
+    const progressBarClass = isComplete ? 'category-progress-bar category-progress-complete' : 'category-progress-bar';
+    const progressText = `${completedCount}/${total}語`;
+
     card.innerHTML = `
         <div class="category-info">
             <div class="category-header">
@@ -1501,11 +1286,11 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
             </div>
             <div class="category-meta">${description}</div>
             <div class="category-progress">
-                <div class="category-progress-bar">
+                <div class="${progressBarClass}">
                     <div class="category-progress-correct" style="width: ${correctPercent}%"></div>
                     <div class="category-progress-wrong" style="width: ${wrongPercent}%"></div>
                 </div>
-                <div class="category-progress-text">${completedCount}/${total}語</div>
+                <div class="category-progress-text">${progressText}</div>
             </div>
         </div>
         <div class="category-arrow">
@@ -2251,22 +2036,6 @@ function setupEventListeners() {
             inputModeToggle.classList.add('active');
             cardModeToggle.classList.remove('active');
             updateCategoryStars(); // 進捗表示を更新
-        });
-    }
-    
-    // グラフ期間選択タブ切り替え
-    const chartPeriodTabs = document.querySelectorAll('.chart-period-tab');
-    if (chartPeriodTabs.length) {
-        chartPeriodTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                chartPeriodTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                const period = tab.getAttribute('data-period');
-                if (period && ['week', 'month', 'year'].includes(period)) {
-                    chartPeriod = period;
-                    updateBarChart();
-                }
-            });
         });
     }
     
@@ -4086,10 +3855,6 @@ function markAnswer(isCorrect, isTimeout = false) {
     const word = currentWords[currentIndex];
     answeredWords.add(word.id);
     
-    // 学習日を記録（最初の回答時のみ）
-    if (answeredWords.size === 1) {
-        recordStudyDate();
-    }
 
     // 現在の問題の回答状況を記録
     const questionIndex = currentIndex - currentRangeStart;
