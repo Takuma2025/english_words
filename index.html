@@ -104,6 +104,15 @@
         <main class="app-main">
             <!-- カテゴリー選択画面 -->
             <div class="category-view" id="categorySelection">
+                <button class="exam-info-btn" id="examInfoBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>大阪府公立入試について知る</span>
+                    <img src="nyushi.image.png" alt="入試" class="exam-info-btn-image">
+                </button>
                 <!-- 学習グラフ -->
                 <div class="chart-container">
                     <div class="chart-header">
@@ -120,30 +129,9 @@
                         </div>
                     </div>
                 </div>
-                <button class="exam-info-btn" id="examInfoBtn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                    <span>大阪府公立入試について知る</span>
-                    <img src="nyushi.image.png" alt="入試" class="exam-info-btn-image">
-                </button>
                 <div class="course-tabs" id="courseTabs">
                     <button class="course-tab active" data-target="courseMasterSection">英単語マスターコース</button>
                     <button class="course-tab" data-target="courseScoreSection">入試得点力アップコース</button>
-                </div>
-                <div class="mode-toggle-container" id="masterCourseModeToggle">
-                    <div class="mode-toggle-wrapper">
-                        <button class="mode-toggle-btn active" id="cardModeToggle" data-mode="card">
-                            <span class="mode-toggle-main">英語→日本語</span>
-                            <span class="mode-toggle-sub">モード</span>
-                        </button>
-                        <button class="mode-toggle-btn" id="inputModeToggle" data-mode="input">
-                            <span class="mode-toggle-main">日本語→英語</span>
-                            <span class="mode-toggle-sub">モード</span>
-                        </button>
-                    </div>
                 </div>
                 <div class="category-list">
                     <div class="course-section" id="courseMasterSection">
@@ -346,6 +334,18 @@
                             <div class="category-arrow">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
+                        </button>
+                    </div>
+                </div>
+                <div class="mode-toggle-container" id="masterCourseModeToggle">
+                    <div class="mode-toggle-wrapper">
+                        <button class="mode-toggle-btn active" id="cardModeToggle" data-mode="card">
+                            <span class="mode-toggle-main">英語→日本語</span>
+                            <span class="mode-toggle-sub">モード</span>
+                        </button>
+                        <button class="mode-toggle-btn" id="inputModeToggle" data-mode="input">
+                            <span class="mode-toggle-main">日本語→英語</span>
+                            <span class="mode-toggle-sub">モード</span>
                         </button>
                     </div>
                 </div>
@@ -826,34 +826,34 @@
                     <h2 class="grammar-toc-title">中学３年間の英文法<br>【総復習】</h2>
                     <div class="grammar-chapter-list">
                         <h3 class="grammar-grade-title">中1</h3>
-                        <span class="grammar-chapter-item" data-chapter="1"><span class="chapter-checkbox" data-chapter="1"></span><span class="chapter-number">第1章</span> be動詞と一般動詞</span>
-                        <span class="grammar-chapter-item" data-chapter="2"><span class="chapter-checkbox" data-chapter="2"></span><span class="chapter-number">第2章</span> 形容詞・副詞</span>
-                        <span class="grammar-chapter-item" data-chapter="3"><span class="chapter-checkbox" data-chapter="3"></span><span class="chapter-number">第3章</span> 名詞の複数形</span>
-                        <span class="grammar-chapter-item" data-chapter="4"><span class="chapter-checkbox" data-chapter="4"></span><span class="chapter-number">第4章</span> 疑問詞</span>
-                        <span class="grammar-chapter-item" data-chapter="5"><span class="chapter-checkbox" data-chapter="5"></span><span class="chapter-number">第5章</span> 命令文</span>
-                        <span class="grammar-chapter-item" data-chapter="6"><span class="chapter-checkbox" data-chapter="6"></span><span class="chapter-number">第6章</span> 現在進行形</span>
-                        <span class="grammar-chapter-item" data-chapter="7"><span class="chapter-checkbox" data-chapter="7"></span><span class="chapter-number">第7章</span> 一般動詞の過去形</span>
-                        <span class="grammar-chapter-item" data-chapter="8"><span class="chapter-checkbox" data-chapter="8"></span><span class="chapter-number">第8章</span> be動詞の過去形</span>
-                        <span class="grammar-chapter-item" data-chapter="9"><span class="chapter-checkbox" data-chapter="9"></span><span class="chapter-number">第9章</span> 過去進行形</span>
+                        <span class="grammar-chapter-item" data-chapter="1"><span class="chapter-number">第1章</span> be動詞と一般動詞<span class="chapter-checkbox" data-chapter="1"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="2"><span class="chapter-number">第2章</span> 形容詞・副詞<span class="chapter-checkbox" data-chapter="2"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="3"><span class="chapter-number">第3章</span> 名詞の複数形<span class="chapter-checkbox" data-chapter="3"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="4"><span class="chapter-number">第4章</span> 疑問詞<span class="chapter-checkbox" data-chapter="4"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="5"><span class="chapter-number">第5章</span> 命令文<span class="chapter-checkbox" data-chapter="5"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="6"><span class="chapter-number">第6章</span> 現在進行形<span class="chapter-checkbox" data-chapter="6"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="7"><span class="chapter-number">第7章</span> 一般動詞の過去形<span class="chapter-checkbox" data-chapter="7"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="8"><span class="chapter-number">第8章</span> be動詞の過去形<span class="chapter-checkbox" data-chapter="8"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="9"><span class="chapter-number">第9章</span> 過去進行形<span class="chapter-checkbox" data-chapter="9"></span></span>
                         <h3 class="grammar-grade-title">中2</h3>
-                        <span class="grammar-chapter-item" data-chapter="10"><span class="chapter-checkbox" data-chapter="10"></span><span class="chapter-number">第10章</span> 助動詞</span>
-                        <span class="grammar-chapter-item" data-chapter="11"><span class="chapter-checkbox" data-chapter="11"></span><span class="chapter-number">第11章</span> There is(are)～の文</span>
-                        <span class="grammar-chapter-item" data-chapter="12"><span class="chapter-checkbox" data-chapter="12"></span><span class="chapter-number">第12章</span> 感嘆文</span>
-                        <span class="grammar-chapter-item" data-chapter="13"><span class="chapter-checkbox" data-chapter="13"></span><span class="chapter-number">第13章</span> 接続詞</span>
-                        <span class="grammar-chapter-item" data-chapter="14"><span class="chapter-checkbox" data-chapter="14"></span><span class="chapter-number">第13章</span> 不定詞（基本３用法）</span>
-                        <span class="grammar-chapter-item" data-chapter="15"><span class="chapter-checkbox" data-chapter="15"></span><span class="chapter-number">第14章</span> 動名詞</span>
-                        <span class="grammar-chapter-item" data-chapter="16"><span class="chapter-checkbox" data-chapter="16"></span><span class="chapter-number">第15章</span> 文型</span>
-                        <span class="grammar-chapter-item" data-chapter="17"><span class="chapter-checkbox" data-chapter="17"></span><span class="chapter-number">第16章</span> 比較</span>
-                        <span class="grammar-chapter-item" data-chapter="18"><span class="chapter-checkbox" data-chapter="18"></span><span class="chapter-number">第17章</span> 付加疑問文</span>
-                        <span class="grammar-chapter-item" data-chapter="19"><span class="chapter-checkbox" data-chapter="19"></span><span class="chapter-number">第18章</span> 前置詞</span>
+                        <span class="grammar-chapter-item" data-chapter="10"><span class="chapter-number">第10章</span> 助動詞<span class="chapter-checkbox" data-chapter="10"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="11"><span class="chapter-number">第11章</span> There is(are)～の文<span class="chapter-checkbox" data-chapter="11"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="12"><span class="chapter-number">第12章</span> 感嘆文<span class="chapter-checkbox" data-chapter="12"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="13"><span class="chapter-number">第13章</span> 接続詞<span class="chapter-checkbox" data-chapter="13"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="14"><span class="chapter-number">第13章</span> 不定詞（基本３用法）<span class="chapter-checkbox" data-chapter="14"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="15"><span class="chapter-number">第14章</span> 動名詞<span class="chapter-checkbox" data-chapter="15"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="16"><span class="chapter-number">第15章</span> 文型<span class="chapter-checkbox" data-chapter="16"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="17"><span class="chapter-number">第16章</span> 比較<span class="chapter-checkbox" data-chapter="17"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="18"><span class="chapter-number">第17章</span> 付加疑問文<span class="chapter-checkbox" data-chapter="18"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="19"><span class="chapter-number">第18章</span> 前置詞<span class="chapter-checkbox" data-chapter="19"></span></span>
                         <h3 class="grammar-grade-title">中3</h3>
-                        <span class="grammar-chapter-item" data-chapter="20"><span class="chapter-checkbox" data-chapter="20"></span><span class="chapter-number">第19章</span> 受動態</span>
-                        <span class="grammar-chapter-item" data-chapter="21"><span class="chapter-checkbox" data-chapter="21"></span><span class="chapter-number">第20章</span> 現在完了</span>
-                        <span class="grammar-chapter-item" data-chapter="22"><span class="chapter-checkbox" data-chapter="22"></span><span class="chapter-number">第21章</span> 不定詞（応用）</span>
-                        <span class="grammar-chapter-item" data-chapter="23"><span class="chapter-checkbox" data-chapter="23"></span><span class="chapter-number">第22章</span> 分詞</span>
-                        <span class="grammar-chapter-item" data-chapter="24"><span class="chapter-checkbox" data-chapter="24"></span><span class="chapter-number">第23章</span> 関係代名詞</span>
-                        <span class="grammar-chapter-item" data-chapter="25"><span class="chapter-checkbox" data-chapter="25"></span><span class="chapter-number">第24章</span> 間接疑問文</span>
-                        <span class="grammar-chapter-item" data-chapter="26"><span class="chapter-checkbox" data-chapter="26"></span><span class="chapter-number">第25章</span> 仮定法</span>
+                        <span class="grammar-chapter-item" data-chapter="20"><span class="chapter-number">第19章</span> 受動態<span class="chapter-checkbox" data-chapter="20"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="21"><span class="chapter-number">第20章</span> 現在完了<span class="chapter-checkbox" data-chapter="21"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="22"><span class="chapter-number">第21章</span> 不定詞（応用）<span class="chapter-checkbox" data-chapter="22"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="23"><span class="chapter-number">第22章</span> 分詞<span class="chapter-checkbox" data-chapter="23"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="24"><span class="chapter-number">第23章</span> 関係代名詞<span class="chapter-checkbox" data-chapter="24"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="25"><span class="chapter-number">第24章</span> 間接疑問文<span class="chapter-checkbox" data-chapter="25"></span></span>
+                        <span class="grammar-chapter-item" data-chapter="26"><span class="chapter-number">第25章</span> 仮定法<span class="chapter-checkbox" data-chapter="26"></span></span>
                     </div>
                 </div>
             </div>

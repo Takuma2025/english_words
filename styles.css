@@ -946,6 +946,16 @@ body {
     color: #ffffff;
 }
 
+.course-tab[data-target="courseMasterSection"].active {
+    background: #3182ce; /* LEVEL1と同じ青 */
+    color: #ffffff;
+}
+
+.course-tab[data-target="courseScoreSection"].active {
+    background: #dc2626; /* 赤 */
+    color: #ffffff;
+}
+
 .course-section {
     display: flex;
     flex-direction: column;
@@ -5189,6 +5199,10 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.grammar-chapter-item .chapter-checkbox {
+    margin-left: 8px;
 }
 
 .grammar-chapter-item .chapter-checkbox {
