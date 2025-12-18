@@ -3190,6 +3190,41 @@ body {
     letter-spacing: 0.05em;
 }
 
+.example-container {
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 6px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.example-label {
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    background-color: #4b5563; /* グレー背景 */
+    color: #ffffff;           /* 白字 */
+    padding: 2px 6px;
+    border-radius: 999px;
+}
+
+.example-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.example-english {
+    margin-bottom: 0;
+    font-size: 12px;
+    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif; /* 単語カードと同じ系統 */
+}
+
+.example-japanese {
+    font-size: 11px;
+}
+
 
 
 /* Hints */

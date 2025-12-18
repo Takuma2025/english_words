@@ -771,6 +771,65 @@ const elementaryWordData = [
     "partOfSpeech": "助動詞",
     "category": "助動詞"
   },
+  // 冠詞・敬称（機能語：a / an / the / Mr. / Ms.）
+  {
+    "id": 2101,
+    "word": "a",
+    "meaning": "（１つの）〜、１人の〜",
+    "partOfSpeech": "冠詞",
+    "category": "冠詞",
+    "appearanceCount": 1105,
+    "example": {
+      "english": "I have a bike.",
+      "japanese": "私は自転車を1台持っています。"
+    }
+  },
+  {
+    "id": 2102,
+    "word": "an",
+    "meaning": "（１つの）〜、１人の〜（母音の音の前で使う）",
+    "partOfSpeech": "冠詞",
+    "category": "冠詞",
+    "appearanceCount": 119,
+    "example": {
+      "english": "She has an umbrella.",
+      "japanese": "彼女は1本のかさを持っています。"
+    }
+  },
+  {
+    "id": 2103,
+    "word": "the",
+    "meaning": "その〜（話し手と聞き手の両方がわかっているものにつける）",
+    "partOfSpeech": "冠詞",
+    "category": "冠詞",
+    "appearanceCount": 2988,
+    "example": {
+      "english": "Please open the window.",
+      "japanese": "その窓を開けてください。"
+    }
+  },
+  {
+    "id": 2104,
+    "word": "Mr.",
+    "meaning": "〜さん、〜先生（男性に対する敬称）",
+    "partOfSpeech": "名詞",
+    "category": "冠詞",
+    "example": {
+      "english": "Mr. Sato is our English teacher.",
+      "japanese": "佐藤先生は私たちの英語の先生です。"
+    }
+  },
+  {
+    "id": 2105,
+    "word": "Ms.",
+    "meaning": "〜さん、〜先生（女性に対する敬称）",
+    "partOfSpeech": "名詞",
+    "category": "冠詞",
+    "example": {
+      "english": "Ms. Brown is my homeroom teacher.",
+      "japanese": "ブラウン先生は私の担任の先生です。"
+    }
+  },
   // 接続詞
   {
     "id": 3001,

@@ -2970,15 +2970,20 @@ function displayInputMode(skipAnimationReset = false) {
     // 過去登場回数を表示（入力モード）
     const inputAppearanceCountEl = document.getElementById('inputWordAppearanceCount');
     if (inputAppearanceCountEl) {
-        const count =
-            typeof word.appearanceCount === 'number' && !isNaN(word.appearanceCount)
-                ? word.appearanceCount
-                : 0;
-        const valueSpan = inputAppearanceCountEl.querySelector('.appearance-value');
-        if (valueSpan) {
-            valueSpan.textContent = ` ${count}回`;
+        // Mr. / Ms. は過去登場回数を表示しない
+        if (word.word === 'Mr.' || word.word === 'Ms.') {
+            inputAppearanceCountEl.style.display = 'none';
+        } else {
+            const count =
+                typeof word.appearanceCount === 'number' && !isNaN(word.appearanceCount)
+                    ? word.appearanceCount
+                    : 0;
+            const valueSpan = inputAppearanceCountEl.querySelector('.appearance-value');
+            if (valueSpan) {
+                valueSpan.textContent = ` ${count}回`;
+            }
+            inputAppearanceCountEl.style.display = 'flex';
         }
-        inputAppearanceCountEl.style.display = 'flex';
     }
     
     // 文字数分の入力フィールドを生成
@@ -3772,15 +3777,20 @@ function displayCurrentWord() {
     // 過去登場回数を表示（カードモード）
     const appearanceCountEl = document.getElementById('wordAppearanceCount');
     if (appearanceCountEl) {
-        const count =
-            typeof word.appearanceCount === 'number' && !isNaN(word.appearanceCount)
-                ? word.appearanceCount
-                : 0;
-        const valueSpan = appearanceCountEl.querySelector('.appearance-value');
-        if (valueSpan) {
-            valueSpan.textContent = ` ${count}回`;
+        // Mr. / Ms. は過去登場回数を表示しない
+        if (word.word === 'Mr.' || word.word === 'Ms.') {
+            appearanceCountEl.style.display = 'none';
+        } else {
+            const count =
+                typeof word.appearanceCount === 'number' && !isNaN(word.appearanceCount)
+                    ? word.appearanceCount
+                    : 0;
+            const valueSpan = appearanceCountEl.querySelector('.appearance-value');
+            if (valueSpan) {
+                valueSpan.textContent = ` ${count}回`;
+            }
+            appearanceCountEl.style.display = 'flex';
         }
-        appearanceCountEl.style.display = 'flex';
     }
     
     // 裏面の意味と品詞を一緒に表示（品詞を左横に）
@@ -3808,6 +3818,22 @@ function displayCurrentWord() {
     elements.wordNumber.style.color = '';
 
     elements.meaning.textContent = word.meaning;
+    
+    // 用例を表示（あれば）
+    const exampleContainer = document.getElementById('exampleContainer');
+    const exampleEnglishEl = document.getElementById('exampleEnglish');
+    const exampleJapaneseEl = document.getElementById('exampleJapanese');
+    if (exampleContainer && exampleEnglishEl && exampleJapaneseEl) {
+        if (word.example && (word.example.english || word.example.japanese)) {
+            exampleContainer.style.display = '';
+            exampleEnglishEl.textContent = word.example.english || '';
+            exampleJapaneseEl.textContent = word.example.japanese || '';
+        } else {
+            exampleContainer.style.display = 'none';
+            exampleEnglishEl.textContent = '';
+            exampleJapaneseEl.textContent = '';
+        }
+    }
 
     // elements.cardHint.textContent = 'タップでカードをひっくり返す'; // ヒントはCSSで固定表示に変更したためJS制御不要
     updateStarButton();
