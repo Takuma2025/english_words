@@ -1299,7 +1299,7 @@ function showCourseSelection(category, categoryWords) {
             // グループ別にクラスを付与（スタイル用）
             if (groupTitle === '小学生で習った単語') {
                 section.classList.add('course-subsection-elementary');
-            } else if (groupTitle === '機能語') {
+            } else if (groupTitle === '英文でよく登場する機能語') {
                 section.classList.add('course-subsection-function');
             }
 
@@ -1317,11 +1317,11 @@ function showCourseSelection(category, categoryWords) {
             const body = document.createElement('div');
             body.className = 'course-subsection-body hidden';
 
-            // 「機能語」の場合のみ、説明テキスト（注釈）を先頭に表示
-            if (groupTitle === '機能語') {
+            // 「英文でよく登場する機能語」の場合のみ、説明テキスト（注釈）を先頭に表示
+            if (groupTitle === '英文でよく登場する機能語') {
                 const note = document.createElement('p');
                 note.className = 'course-group-note';
-                note.textContent = '機能語とは、具体的な意味や内容を表す単語ではないが、文の中の単語同士の関係性を示し、文法構造を支えるために、文章の中に何度も登場する重要な単語のことです。';
+                note.textContent = '機能語とは、具体的な意味や内容を表す単語ではないが、文の中の単語同士の関係性を示し、文法構造を支えるために、英文中に何度も登場する重要な単語のことです。';
                 body.appendChild(note);
             }
 
@@ -1395,7 +1395,7 @@ function showCourseSelection(category, categoryWords) {
         }
 
         addCourseGroup('小学生で習った単語', elementaryCourses);
-        addCourseGroup('機能語', functionWordCourses);
+        addCourseGroup('英文でよく登場する機能語', functionWordCourses);
     } else {
         // その他のカテゴリーは100刻みで表示
         const CHUNK = 100;
@@ -1557,8 +1557,8 @@ function showInputModeMethodSelectionModal(category, categoryWords, hasProgress,
         methodList.appendChild(wrongCard);
     }
 
-    // シャッフルして学習するボタン（常に表示）
-    const shuffleCard = createMethodCard('シャッフル', '単語の順序をランダムにして学習します', () => {
+    // ランダムで学習するボタン（常に表示）
+    const shuffleCard = createMethodCard('ランダム', '単語の順番をランダムにして学習します', () => {
             closeModal();
         const shuffledWords = [...categoryWords].sort(() => Math.random() - 0.5);
         if (selectedLearningMode === 'input') {
@@ -1644,8 +1644,8 @@ function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex
         methodList.appendChild(wrongCard);
     }
 
-    // シャッフルして学習するボタン（常に表示）
-    const shuffleCard = createMethodCard('シャッフル', '単語の順序をランダムにして学習します', () => {
+    // ランダムで学習するボタン（常に表示）
+    const shuffleCard = createMethodCard('ランダム', '単語の順番をランダムにして学習します', () => {
             closeModal();
         const shuffledWords = [...courseWords].sort(() => Math.random() - 0.5);
         if (selectedLearningMode === 'input') {
@@ -2967,6 +2967,20 @@ function displayInputMode(skipAnimationReset = false) {
         inputMeaning.textContent = word.meaning;
     }
     
+    // 過去登場回数を表示（入力モード）
+    const inputAppearanceCountEl = document.getElementById('inputWordAppearanceCount');
+    if (inputAppearanceCountEl) {
+        const count =
+            typeof word.appearanceCount === 'number' && !isNaN(word.appearanceCount)
+                ? word.appearanceCount
+                : 0;
+        const valueSpan = inputAppearanceCountEl.querySelector('.appearance-value');
+        if (valueSpan) {
+            valueSpan.textContent = ` ${count}回`;
+        }
+        inputAppearanceCountEl.style.display = 'flex';
+    }
+    
     // 文字数分の入力フィールドを生成
     if (letterInputs) {
         letterInputs.innerHTML = '';
@@ -3754,6 +3768,20 @@ function displayCurrentWord() {
     
     elements.englishWord.textContent = word.word;
     applyMarkers(word);
+    
+    // 過去登場回数を表示（カードモード）
+    const appearanceCountEl = document.getElementById('wordAppearanceCount');
+    if (appearanceCountEl) {
+        const count =
+            typeof word.appearanceCount === 'number' && !isNaN(word.appearanceCount)
+                ? word.appearanceCount
+                : 0;
+        const valueSpan = appearanceCountEl.querySelector('.appearance-value');
+        if (valueSpan) {
+            valueSpan.textContent = ` ${count}回`;
+        }
+        appearanceCountEl.style.display = 'flex';
+    }
     
     // 裏面の意味と品詞を一緒に表示（品詞を左横に）
     const meaningWrapper = elements.meaning.parentElement;
