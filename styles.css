@@ -991,9 +991,9 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* 入試得点力アップコースのカード（赤背景） */
+/* 入試得点力アップコースのカード（背景画像） */
 .score-course-card {
-    background: #DC2626 !important; /* 赤背景 */
+    background: #DC2626 url('nyushicourse.png') center center / cover no-repeat !important;
     position: relative;
     padding: 16px;
     display: flex;
@@ -1023,14 +1023,16 @@ body {
 .score-course-title-container .category-name {
     color: #1f2937 !important; /* 黒字 */
     margin: 0;
-    font-family: "Noto Serif JP", "Shippori Mincho", "しっぽり明朝", "Hina Mincho", "ひな明朝", "Zen Old Mincho", "Sawarabi Mincho", "さわらび明朝", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     font-weight: 700; /* 太字 */
-    letter-spacing: 0.05em; /* 英単語カードと同じ文字間隔 */
+    /* 英単語マスターコースと同じフォント（デフォルトのゴシック体） */
 }
 
 /* 説明文は赤背景の上に白字 */
 .score-course-card .category-meta {
     color: #ffffff !important; /* 白字 */
+    background: rgba(31, 41, 55, 0.7) !important; /* 透明度のある濃いめグレー */
+    padding: 8px 12px;
+    border-radius: 4px;
     margin-top: 8px;
     margin-bottom: 0;
 }
@@ -1062,13 +1064,13 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* 既存の本型スタイルを上書き */
+/* 既存の本型スタイルを上書き（背景画像を維持） */
 .score-course-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"],
 .score-course-card[data-category="条件英作文特訓コース"],
 .score-course-card[data-category="大阪C問題対策英単語タイムアタック"],
 .score-course-card[data-category="大阪C問題対策 英作写経ドリル"],
 .score-course-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] {
-    background: #DC2626 !important; /* 赤背景 */
+    background: #DC2626 url('nyushicourse.png') center center / cover no-repeat !important; /* 背景画像を維持 */
     color: #ffffff !important;
 }
 
