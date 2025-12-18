@@ -3912,7 +3912,9 @@ function displayCurrentWord() {
             if (exampleEn && word.word) {
                 const escaped = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
-                const highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
+                let highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
+                // 先頭が小文字の場合は、タグをスキップして最初の英字のみ大文字化
+                highlighted = highlighted.replace(/^(\s*(<[^>]+>\s*)*)([a-z])/, (_, prefix, _tags, first) => `${prefix}${first.toUpperCase()}`);
                 exampleEnglishEl.innerHTML = highlighted;
             } else {
                 exampleEnglishEl.textContent = exampleEn;

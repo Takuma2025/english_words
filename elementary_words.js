@@ -704,72 +704,193 @@ const elementaryWordData = [
   {
     "id": 2001,
     "word": "can",
-    "meaning": "〜できる",
+    "meaning": "（可能）〜できる、（許可）〜してもよい、〜",
     "partOfSpeech": "助動詞",
-    "category": "助動詞"
+    "category": "助動詞",
+    "appearanceCount": 374,
+    "example": {
+      "english": "I <strong>can</strong> play the piano.",
+      "japanese": "私はピアノを弾けます。"
+    }
   },
   {
     "id": 2002,
     "word": "could",
     "meaning": "〜できた、〜できるかもしれない",
     "partOfSpeech": "助動詞",
-    "category": "助動詞"
+    "category": "助動詞",
+    "appearanceCount": 100,
+    "example": {
+      "english": "My father <strong>could</strong> speak English well.",
+      "japanese": "父は英語を上手に話すことができました。"
+    }
   },
   {
     "id": 2003,
     "word": "may",
-    "meaning": "〜してもよい、〜かもしれない",
+    "meaning": "（推量）〜かもしれない、（許可）〜してもよい",
     "partOfSpeech": "助動詞",
-    "category": "助動詞"
-  },
-  {
-    "id": 2004,
-    "word": "might",
-    "meaning": "〜かもしれない",
-    "partOfSpeech": "助動詞",
-    "category": "助動詞"
+    "category": "助動詞",
+    "appearanceCount": 71,
+    "example": {
+      "english": "I <strong>may</strong> be late for the party.",
+      "japanese": "私はパーティーに遅れるかもしれません。"
+    }
   },
   {
     "id": 2005,
     "word": "must",
-    "meaning": "〜しなければならない、〜に違いない",
+    "meaning": "（義務）〜しなければならない",
     "partOfSpeech": "助動詞",
-    "category": "助動詞"
+    "category": "助動詞",
+    "appearanceCount": 22,
+    "example": {
+      "english": "You <strong>must</strong> do your homework.",
+      "japanese": "あなたは宿題をしなければなりません。"
+    }
   },
   {
     "id": 2006,
     "word": "should",
-    "meaning": "〜すべきだ、〜するはずだ",
+    "meaning": "（義務）〜すべきである",
     "partOfSpeech": "助動詞",
-    "category": "助動詞"
+    "category": "助動詞",
+    "appearanceCount": 63,
+    "example": {
+      "english": "We <strong>should</strong> take a break.",
+      "japanese": "私たちは休憩を取るべきです。"
+    }
   },
   {
     "id": 2007,
     "word": "will",
-    "meaning": "〜するだろう、〜するつもりだ",
+    "meaning": "（未来）〜するつもり、〜でしょう",
     "partOfSpeech": "助動詞",
-    "category": "助動詞"
+    "category": "助動詞",
+    "appearanceCount": 323,
+    "example": {
+      "english": "I <strong>will</strong> go to the park next week.",
+      "japanese": "私は来週公園に行くつもりです。"
+    }
   },
-  {
-    "id": 2008,
+  {"id": 2008,
     "word": "would",
-    "meaning": "〜するだろう、〜するつもりだった",
+    "meaning": "〜した、〜するつもりだった、(would like toで)〜したい",
     "partOfSpeech": "助動詞",
-    "category": "助動詞"
+    "category": "助動詞",
+    "appearanceCount": 100,
+    "example": {
+      "english": "I <strong>would</strong> like to go abroad.",
+      "japanese": "私は海外に行きたいです。"
+    }
   },
   {
-    "id": 2009,
-    "word": "shall",
-    "meaning": "〜しましょう、〜するつもりだ",
+    "id": 2011,
+    "word": "be able to",
+    "meaning": "（可能）〜することができる",
     "partOfSpeech": "助動詞",
-    "category": "助動詞"
+    "category": "助動詞",
+    "appearanceCount": 27,
+    "example": {
+      "english": "I <strong>am able to</strong> play the piano.",
+      "japanese": "私はピアノを弾けます。"
+    }
   },
   {
-    "id": 2010,
-    "word": "ought to",
-    "meaning": "〜すべきだ",
+    "id": 2012,
+    "word": "be going to",
+    "meaning": "（未来）〜するつもり",
     "partOfSpeech": "助動詞",
-    "category": "助動詞"
+    "category": "助動詞",
+    "appearanceCount": 41,
+    "example": {
+      "english": "I <strong>am going to</strong> go to the park next week.",
+      "japanese": "私は来週公園に行くつもりです。"
+    }
+  },
+  {
+    "id": 2013,
+    "word": "have to",
+    "meaning": "（義務）〜しなければならない",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞",
+    "appearanceCount": 51,
+    "example": {
+      "english": "I <strong>have to</strong> do my homework.",
+      "japanese": "私は宿題をしなければなりません。"
+    }
+  },
+  {
+    "id": 2014,
+    "word": "Will(Can) you 〜 ?",
+    "meaning": "（依頼）〜してくれませんか",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞",
+    "appearanceCount": 20,
+    "example": {
+      "english": "<strong>Can you</strong> open the door?",
+      "japanese": "ドアを開けてくれませんか。"
+    }
+  },
+  {
+    "id": 2015,
+    "word": "Would(Could) you 〜 ?",
+    "meaning": "（依頼）〜していただけませんか",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞",
+    "appearanceCount": 20,
+    "example": {
+      "english": "<strong>Would you</strong> close the window?",
+      "japanese": "窓を閉めていただけませんか。"
+    }
+  },
+  {
+    "id": 2016,
+    "word": "Would you like 〜 ?",
+    "meaning": "（勧誘）〜はいかがですか",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞",
+    "appearanceCount": 18,
+    "example": {
+      "english": "<strong>Would you like</strong> some cake?",
+      "japanese": "ケーキはいかがですか。"
+    }
+  },
+  {
+    "id": 2017,
+    "word": "May(Can) I 〜 ?",
+    "meaning": "（許可）〜してもいいですか",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞",
+    "appearanceCount": 28,
+    "example": {
+      "english": "<strong>May I</strong> use the phone?",
+      "japanese": "電話を使ってもいいですか。"
+    }
+  },
+  {
+    "id": 2018,
+    "word": "Shall I 〜 ?",
+    "meaning": "（提案）［私が］〜しましょうか",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞",
+    "appearanceCount": 4,
+    "example": {
+      "english": "<strong>Shall I</strong> open the window?",
+      "japanese": "窓を開けましょうか。"
+    }
+  },
+  {
+    "id": 2019,
+    "word": "Shall we 〜 ?",
+    "meaning": "（勧誘）［いっしょに］〜しませんか",
+    "partOfSpeech": "助動詞",
+    "category": "助動詞",
+    "appearanceCount": 12,
+    "example": {
+      "english": "<strong>Shall we</strong> play tennis?",
+      "japanese": "（いっしょに）テニスをしませんか。"
+    }
   },
   // 冠詞・敬称（機能語：a / an / the / Mr. / Ms.）
   {
@@ -834,107 +955,206 @@ const elementaryWordData = [
   {
     "id": 3001,
     "word": "and",
-    "meaning": "そして、〜と",
+    "meaning": "〜と…、そして",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 823,
+    "example": {
+      "english": "apple <strong>and</strong> banana",
+      "japanese": "りんごとバナナ"
+    }
   },
   {
     "id": 3002,
     "word": "but",
-    "meaning": "しかし、でも",
+    "meaning": "しかし、だが",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 171,
+    "example": {
+      "english": "I was sick yesterday, <strong>but</strong> I went to school.",
+      "japanese": "昨日病気だったが、今日は学校に行った。"
+    }
   },
   {
     "id": 3003,
     "word": "or",
-    "meaning": "または、それとも",
+    "meaning": "〜かもしくは…",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 99,
+    "example": {
+      "english": "English <strong>or</strong> Japanese",
+      "japanese": "英語か日本語"
+    }
   },
   {
     "id": 3004,
     "word": "so",
-    "meaning": "だから、それで",
+    "meaning": "だから",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 213,
+    "example": {
+      "english": "I'm tired, <strong>so</strong> I'm going to bed.",
+      "japanese": "疲れているから、寝る"
+    }
   },
   {
     "id": 3005,
     "word": "because",
-    "meaning": "なぜなら〜だから",
+    "meaning": "（理由や原因を説明して）〜なので、〜だから",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 95,
+    "example": {
+      "english": "I like summer <strong>because</strong> I can go to the beach.",
+      "japanese": "私は海に行けるから、夏が好きです."
+    }
   },
   {
     "id": 3006,
     "word": "if",
     "meaning": "もし〜なら",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 113,
+    "example": {
+      "english": "<strong>If</strong> it is sunny tomorrow, we will play teenis.",
+      "japanese": "明日晴れたらテニスをするつもりです。"
+    }
   },
   {
     "id": 3007,
     "word": "when",
     "meaning": "〜のとき",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 250,
+    "example": {
+      "english": "Tom was watching TV <strong>when</strong> his mother came home.",
+      "japanese": "母が帰ってきたとき、トムはテレビを見ていました。"
+    }
   },
   {
     "id": 3008,
     "word": "while",
-    "meaning": "〜の間に、〜する一方で",
+    "meaning": "〜している間に",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 42,
+    "example": {
+      "english": "<strong>While</strong> I was eating breakfast, I was reading a newspaper.",
+      "japanese": "朝食を食べながら、新聞を読んでいました。"
+    }
   },
   {
     "id": 3009,
     "word": "though",
-    "meaning": "〜だけれども",
+    "meaning": "〜けれども",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 27,
+    "example": {
+      "english": "I studied hard <strong>though</strong> I was tired.",
+      "japanese": "疲れていたけれども、私は勉強を頑張りました。"
+    }
   },
   {
     "id": 3010,
     "word": "although",
-    "meaning": "〜だけれども",
+    "meaning": "〜けれども",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 27,
+    "example": {
+      "english": "I studied hard <strong>although</strong> I was tired.",
+      "japanese": "疲れていたけれども、私は勉強を頑張りました。"
+    }
   },
   {
     "id": 3011,
     "word": "since",
     "meaning": "〜以来、〜なので",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 9,
+    "example": {
+      "english": "I have known him <strong>since</strong> I was a child.",
+      "japanese": "私は子供の頃から、彼を知っています。"
+    }
   },
   {
     "id": 3012,
     "word": "until",
-    "meaning": "〜まで",
+    "meaning": "〜するまでずっと",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 12,
+    "example": {
+      "english": "I must wait here <strong>until</strong> he comes back.",
+      "japanese": "彼が帰ってきたら、ここで待たなければなりません。"
+    }
   },
   {
     "id": 3013,
     "word": "before",
     "meaning": "〜の前に",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 59,
+    "example": {
+      "english": "I will go home <strong>before</strong> it is dark.",
+      "japanese": "暗くなる前に、家に帰るつもりです。"
+    }
   },
   {
     "id": 3014,
     "word": "after",
     "meaning": "〜の後に",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 104,
+    "example": {
+      "english": "We met at the station <strong>after</strong> the party.",
+      "japanese": "私たちはパーティーのあと、駅で会いました。"
+    }
   },
   {
     "id": 3015,
     "word": "that",
-    "meaning": "〜ということ、〜というもの",
+    "meaning": "（ひとまとまりの内容を表して）～ということ・もの",
     "partOfSpeech": "接続詞",
-    "category": "接続詞"
+    "category": "接続詞",
+    "appearanceCount": 628,
+    "example": {
+      "english": "I know <strong>that</strong> he is a doctor.",
+      "japanese": "私は彼が医者であることを知っています。"
+    }
+  },
+  {
+    "id": 3016,
+    "word": "as soon as",
+    "meaning": "〜するとすぐに",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞",
+    "appearanceCount": 18,
+    "example": {
+      "english": "I will play games <strong>as soon as</strong> I finish my homework.",
+      "japanese": "宿題を終えたらすぐに、ゲームをするつもりです。"
+    }
+  },
+  {
+    "id": 3017,
+    "word": "even if",
+    "meaning": "たとえ〜でも",
+    "partOfSpeech": "接続詞",
+    "category": "接続詞",
+    "appearanceCount": 9,
+    "example": {
+      "english": "I will go there <strong>even if</strong> it is raining.",
+      "japanese": "たとえ雨が降っていても、そこに行くつもりです。"
+    }
   },
   // 前置詞
   {
