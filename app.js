@@ -923,6 +923,29 @@ function init() {
     checkAndShowInstallPrompt();
 }
 
+// ヘッダーボタンの表示/非表示を制御
+// mode: 'home' = ホーム画面（ハンバーガーメニュー表示）、'back' = 戻るボタン表示、'learning' = 両方非表示（中断ボタンは別途表示）
+function updateHeaderButtons(mode) {
+    const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
+    const headerBackBtn = document.getElementById('headerBackBtn');
+    
+    if (hamburgerMenuBtn) {
+        if (mode === 'home') {
+            hamburgerMenuBtn.classList.remove('hidden');
+        } else {
+            hamburgerMenuBtn.classList.add('hidden');
+        }
+    }
+    
+    if (headerBackBtn) {
+        if (mode === 'back') {
+            headerBackBtn.classList.remove('hidden');
+        } else {
+            headerBackBtn.classList.add('hidden');
+        }
+    }
+}
+
 // カテゴリー選択画面を表示
 function showCategorySelection() {
     // タイマーを停止
@@ -954,6 +977,25 @@ function showCategorySelection() {
     selectedCategory = null;
     updateNavState('home');
     elements.headerSubtitle.textContent = '大阪府公立高校入試特化英単語';
+    
+    // ハンバーガーメニューを表示、戻るボタンを非表示
+    updateHeaderButtons('home');
+    
+    // 文法モードのビューを非表示
+    const grammarTOCView = document.getElementById('grammarTableOfContentsView');
+    if (grammarTOCView) {
+        grammarTOCView.classList.add('hidden');
+    }
+    const grammarChapterView = document.getElementById('grammarChapterView');
+    if (grammarChapterView) {
+        grammarChapterView.classList.add('hidden');
+    }
+    
+    // 文法モードのキーボードを非表示
+    const grammarKeyboard = document.getElementById('grammarExerciseKeyboard');
+    if (grammarKeyboard) {
+        grammarKeyboard.classList.add('hidden');
+    }
     
     // カテゴリー選択画面ではホームボタンを非表示
     if (elements.homeBtn) {
@@ -1176,7 +1218,10 @@ function initInputModeLearning(category, words, startIndex = 0) {
     if (elements.homeBtn) {
         elements.homeBtn.classList.remove('hidden');
     }
-
+    
+    // ハンバーガーメニューと戻るボタンを非表示（中断ボタンは別途表示）
+    updateHeaderButtons('learning');
+    
     // カードモード、例文モード、整序英作文モードを非表示、入力モードを表示
     const wordCard = document.getElementById('wordCard');
     const inputMode = document.getElementById('inputMode');
@@ -1406,6 +1451,9 @@ function showCourseSelection(category, categoryWords) {
     
     courseSelection.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
+    
+    // ハンバーガーメニューを非表示、戻るボタンを表示
+    updateHeaderButtons('back');
     
     // 「超よくでる」の場合のみ画像を表示
     const courseSelectionImage = document.getElementById('courseSelectionImage');
@@ -1718,6 +1766,9 @@ function initTimeAttackLearning(category, words) {
     if (elements.homeBtn) {
         elements.homeBtn.classList.remove('hidden');
     }
+    
+    // ハンバーガーメニューと戻るボタンを非表示（中断ボタンは別途表示）
+    updateHeaderButtons('learning');
     
     // 進捗ステップボタンを非表示（タイムアタックモード）
     const progressStepButtons = document.querySelector('.progress-step-buttons');
@@ -2102,7 +2153,6 @@ function setupEventListeners() {
     // 大阪府公立入試について知るボタン
     const examInfoBtn = document.getElementById('examInfoBtn');
     const examInfoView = document.getElementById('examInfoView');
-    const backToCategoryFromExamInfoBtn = document.getElementById('backToCategoryFromExamInfoBtn');
     
     if (examInfoBtn && examInfoView) {
         examInfoBtn.addEventListener('click', () => {
@@ -2121,16 +2171,8 @@ function setupEventListeners() {
             if (elements.headerSubtitle) {
                 elements.headerSubtitle.textContent = '大阪府公立高校入試特化型英単語';
             }
-        });
-    }
-    
-    // 入試情報画面から戻るボタン
-    if (backToCategoryFromExamInfoBtn && examInfoView) {
-        backToCategoryFromExamInfoBtn.addEventListener('click', () => {
-            examInfoView.classList.add('hidden');
-            if (elements.categorySelection) {
-                elements.categorySelection.classList.remove('hidden');
-            }
+            // ハンバーガーメニューを非表示、戻るボタンを表示
+            updateHeaderButtons('back');
         });
     }
     
@@ -2369,18 +2411,6 @@ function setupEventListeners() {
     }
     
     
-    // コース選択画面から戻るボタン
-    const backToCategoryBtn = document.getElementById('backToCategoryBtn');
-    if (backToCategoryBtn) {
-        backToCategoryBtn.addEventListener('click', () => {
-            const courseSelection = document.getElementById('courseSelection');
-            if (courseSelection) {
-                courseSelection.classList.add('hidden');
-            }
-            elements.categorySelection.classList.remove('hidden');
-            elements.headerSubtitle.textContent = '大阪府公立高校入試特化型英単語';
-        });
-    }
     
     // ハンバーガーメニューボタンとサイドバー
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
@@ -2425,6 +2455,70 @@ function setupEventListeners() {
     if (sidebarOverlay) {
         sidebarOverlay.addEventListener('click', () => {
             closeSidebar();
+        });
+    }
+    
+    // ヘッダーの戻るボタン
+    const headerBackBtn = document.getElementById('headerBackBtn');
+    if (headerBackBtn) {
+        headerBackBtn.addEventListener('click', () => {
+            // 現在の画面に応じて適切な画面に戻る
+            const grammarChapterView = document.getElementById('grammarChapterView');
+            const grammarTOCView = document.getElementById('grammarTableOfContentsView');
+            const courseSelection = document.getElementById('courseSelection');
+            const examInfoView = document.getElementById('examInfoView');
+            
+            if (grammarChapterView && !grammarChapterView.classList.contains('hidden')) {
+                // 文法解説ページから目次ページに戻る
+                grammarChapterView.classList.add('hidden');
+                showGrammarTableOfContents();
+            } else if (grammarTOCView && !grammarTOCView.classList.contains('hidden')) {
+                // 文法目次ページからカテゴリー選択画面に戻る
+                grammarTOCView.classList.add('hidden');
+                showCategorySelection();
+            } else if (examInfoView && !examInfoView.classList.contains('hidden')) {
+                // 入試情報画面からカテゴリー選択画面に戻る
+                examInfoView.classList.add('hidden');
+                showCategorySelection();
+            } else if (courseSelection && !courseSelection.classList.contains('hidden')) {
+                // コース選択画面からカテゴリー選択画面に戻る
+                courseSelection.classList.add('hidden');
+                showCategorySelection();
+            } else if (elements.mainContent && !elements.mainContent.classList.contains('hidden')) {
+                // 学習画面からコース選択画面またはカテゴリー選択画面に戻る
+                if (selectedCategory) {
+                    // コース選択画面に戻る
+                    const categoryMapping = {
+                        'LEVEL1 超よくでる400': 'Group1 超頻出600',
+                        'LEVEL2 よくでる300': 'Group2 頻出200',
+                        'LEVEL3 差がつく200': 'Group3 ハイレベル100',
+                        'LEVEL4 ハイレベル200': 'Group3 ハイレベル100'
+                    };
+                    let categoryWords;
+                    if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+                        if (typeof elementaryWordData !== 'undefined') {
+                            categoryWords = elementaryWordData;
+                        } else {
+                            showCategorySelection();
+                            return;
+                        }
+                    } else {
+                        const dataCategory = categoryMapping[selectedCategory] || selectedCategory;
+                        categoryWords = wordData.filter(word => word.category === dataCategory);
+                    }
+                    if (categoryWords.length > 0) {
+                        elements.mainContent.classList.add('hidden');
+                        showCourseSelection(selectedCategory, categoryWords);
+                    } else {
+                        showCategorySelection();
+                    }
+                } else {
+                    showCategorySelection();
+                }
+            } else {
+                // その他の場合はカテゴリー選択画面に戻る
+                showCategorySelection();
+            }
         });
     }
     
@@ -4519,6 +4613,9 @@ function initSentenceModeLearning(category) {
     if (elements.homeBtn) {
         elements.homeBtn.classList.remove('hidden');
     }
+    
+    // ハンバーガーメニューと戻るボタンを非表示（中断ボタンは別途表示）
+    updateHeaderButtons('learning');
 
     // カードモード、入力モード、整序英作文モードを非表示、例文モードを表示
     const wordCard = document.getElementById('wordCard');
@@ -5111,6 +5208,9 @@ function initReorderModeLearning(category) {
     if (elements.homeBtn) {
         elements.homeBtn.classList.remove('hidden');
     }
+    
+    // ハンバーガーメニューと戻るボタンを非表示（中断ボタンは別途表示）
+    updateHeaderButtons('learning');
 
     // 他のモードを非表示、整序英作文モードを表示
     const wordCard = document.getElementById('wordCard');
@@ -5924,6 +6024,9 @@ function showGrammarTableOfContents() {
     if (elements.homeBtn) {
         elements.homeBtn.classList.remove('hidden');
     }
+    
+    // ハンバーガーメニューを非表示、戻るボタンを表示
+    updateHeaderButtons('back');
 }
 
 // 英文法解説ページを表示
@@ -5945,6 +6048,23 @@ function showGrammarChapter(chapterNumber) {
     if (typeof grammarData !== 'undefined' && grammarData) {
         chapterData = grammarData.find(data => data.chapter === chapterNumber);
     }
+    
+    // ヘッダーのサブタイトルを更新
+    if (elements.headerSubtitle) {
+        if (chapterData && chapterData.title) {
+            elements.headerSubtitle.textContent = chapterData.title;
+        } else {
+            elements.headerSubtitle.textContent = `第${chapterNumber}章`;
+        }
+    }
+    
+    // ホームボタンを表示
+    if (elements.homeBtn) {
+        elements.homeBtn.classList.remove('hidden');
+    }
+    
+    // ハンバーガーメニューを非表示、戻るボタンを表示
+    updateHeaderButtons('back');
     
     // 章のタイトルを設定
     const chapterTitleEl = document.getElementById('grammarChapterTitle');
@@ -5976,6 +6096,12 @@ function showGrammarChapter(chapterNumber) {
         } else {
             pointContentEl.innerHTML = '<p>POINTを準備中です。</p>';
         }
+    }
+    
+    // 演習問題セクションを表示
+    const grammarExerciseSection = document.getElementById('grammarExerciseSection');
+    if (grammarExerciseSection) {
+        grammarExerciseSection.classList.remove('hidden');
     }
     
     // 演習問題を設定（すべての問題を縦に並べて表示）
@@ -6337,6 +6463,34 @@ function setupGrammarExerciseKeyboard() {
     keyboard.parentNode.replaceChild(keyboardClone, keyboard);
     const newKeyboard = document.getElementById('grammarExerciseKeyboard');
     
+    // Shift状態を保持する変数
+    let isShift = false;
+    
+    // Shiftキー
+    const shiftKey = document.getElementById('grammarExerciseKeyboardShift');
+    if (shiftKey) {
+        const handleShift = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            isShift = !isShift;
+            shiftKey.dataset.shift = isShift.toString();
+            updateGrammarExerciseKeyboardCase(newKeyboard, isShift);
+        };
+        shiftKey.addEventListener('touchstart', handleShift, { passive: false });
+        shiftKey.addEventListener('click', handleShift);
+    }
+    
+    // Shift状態を解除する関数
+    const resetShiftState = () => {
+        if (isShift) {
+            isShift = false;
+            if (shiftKey) {
+                shiftKey.dataset.shift = 'false';
+                updateGrammarExerciseKeyboardCase(newKeyboard, false);
+            }
+        }
+    };
+    
     // キーボードキーのイベント
     newKeyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
         const letter = key.dataset.key;
@@ -6349,31 +6503,35 @@ function setupGrammarExerciseKeyboard() {
             };
             key.addEventListener('touchstart', handleSpace, { passive: false });
             key.addEventListener('click', handleSpace);
+        } else if (key.dataset.shiftKey) {
+            // アポストロフィ/アンダーバーキー
+            const handleApostrophe = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // Shift状態を再確認
+                const currentShift = shiftKey && shiftKey.dataset.shift === 'true';
+                const charToInsert = currentShift ? key.dataset.shiftKey : letter;
+                insertGrammarExerciseLetter(charToInsert);
+            };
+            key.addEventListener('touchstart', handleApostrophe, { passive: false });
+            key.addEventListener('click', handleApostrophe);
         } else {
             const handleLetter = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                insertGrammarExerciseLetter(letter);
+                // Shift状態を再確認して大文字・小文字を切り替え
+                const currentShift = shiftKey && shiftKey.dataset.shift === 'true';
+                const charToInsert = (currentShift && letter.match(/[a-z]/)) ? letter.toUpperCase() : letter;
+                insertGrammarExerciseLetter(charToInsert);
+                // 大文字を入力した場合は、自動的にShift状態を解除
+                if (currentShift && letter.match(/[a-z]/) && charToInsert === letter.toUpperCase()) {
+                    resetShiftState();
+                }
             };
             key.addEventListener('touchstart', handleLetter, { passive: false });
             key.addEventListener('click', handleLetter);
         }
     });
-    
-    // Shiftキー
-    const shiftKey = document.getElementById('grammarExerciseKeyboardShift');
-    if (shiftKey) {
-        let isShift = false;
-        const handleShift = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            isShift = !isShift;
-            shiftKey.dataset.shift = isShift.toString();
-            updateGrammarExerciseKeyboardCase(newKeyboard, isShift);
-        };
-        shiftKey.addEventListener('touchstart', handleShift, { passive: false });
-        shiftKey.addEventListener('click', handleShift);
-    }
     
     // バックスペースキー
     const backspaceKey = document.getElementById('grammarExerciseKeyboardBackspace');
@@ -6425,6 +6583,10 @@ function updateGrammarExerciseKeyboardCase(keyboard, isShift) {
         if (keyValue && keyValue.length === 1 && keyValue.match(/[a-z]/)) {
             key.textContent = isShift ? keyValue.toUpperCase() : keyValue;
         }
+        // アポストロフィ/アンダーバーの切り替え
+        if (key.dataset.shiftKey) {
+            key.textContent = isShift ? key.dataset.shiftKey : key.dataset.key;
+        }
     });
 }
 
@@ -6440,7 +6602,8 @@ function submitGrammarExerciseAnswer(exerciseIndex) {
     
     let allCorrect = true;
     exerciseData.blanks.forEach(blank => {
-        const isCorrect = blank.userInput.trim().toLowerCase() === blank.word.toLowerCase();
+        // 大文字・小文字を区別して比較
+        const isCorrect = blank.userInput.trim() === blank.word;
         if (isCorrect) {
             blank.element.classList.add('correct');
             blank.element.classList.remove('wrong', 'selected');

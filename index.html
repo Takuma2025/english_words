@@ -37,6 +37,11 @@
                     <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
             </button>
+            <button class="header-back-btn hidden" id="headerBackBtn" aria-label="戻る">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
             <div class="header-content">
                 <h1>
                     大阪府英単語コンプリート
@@ -397,10 +402,6 @@
 
             <!-- 大阪府公立入試について -->
             <div class="category-view hidden" id="examInfoView">
-                <button class="back-btn" id="backToCategoryFromExamInfoBtn" aria-label="戻る">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                    戻る
-                </button>
                 <div class="exam-info-container">
                     <div class="exam-info-header">
                         <h2 class="exam-info-title">大阪府公立高校入試 英語について</h2>
@@ -521,10 +522,6 @@
 
             <!-- コース選択画面（100刻み） -->
             <div class="category-view hidden" id="courseSelection">
-                <button class="back-btn" id="backToCategoryBtn" aria-label="戻る">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                    戻る
-                </button>
                 <div class="section-title" id="courseSelectionTitle">コースを選んでください</div>
                 <div class="category-list" id="courseList">
                     <!-- 動的に生成 -->
@@ -929,7 +926,7 @@
                                     <button class="keyboard-key" data-key="j">j</button>
                                     <button class="keyboard-key" data-key="k">k</button>
                                     <button class="keyboard-key" data-key="l">l</button>
-                                    <button class="keyboard-key keyboard-key-space" data-key=" ">_</button>
+                                    <button class="keyboard-key keyboard-key-apostrophe" data-key="&#39;" data-shift-key="_">&#39;</button>
                                 </div>
                                 <div class="keyboard-row">
                                     <button class="keyboard-key keyboard-key-shift" id="grammarExerciseKeyboardShift" data-shift="false">
