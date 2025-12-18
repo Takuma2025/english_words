@@ -719,8 +719,20 @@ function speakWord(word, buttonElement) {
         // ネイティブ音声を取得
         const voice = getNativeVoice();
         
+        // 表示用の綴りとは別に、発音用テキストを調整
+        let speakText = word;
+        // 単独の a は「エイ」ではなく短母音「ア」に近づける
+        if (word === 'a' || word === 'A') {
+            // 英語音声で /ə/ に近づけるために "uh" を使用
+            speakText = 'uh';
+        }
+        // Ms. は「エムズ」ではなく「ミズ」と読ませたい
+        if (word === 'Ms.' || word === 'Ms') {
+            speakText = 'miz';
+        }
+        
         // 音声合成の設定
-        const utterance = new SpeechSynthesisUtterance(word);
+        const utterance = new SpeechSynthesisUtterance(speakText);
         utterance.lang = voice ? voice.lang : 'en-US';
         
         // より自然な発音のためのパラメータ調整
