@@ -5237,9 +5237,11 @@ body {
 }
 
 .grammar-toc-title-inner {
-    display: inline-block;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
     background: #ffffff;
-    padding: 4px 32px;
+    padding: 4px 0;
     border-radius: 0;
 }
 
@@ -5379,9 +5381,11 @@ body {
 }
 
 .grammar-chapter-title-inner {
-    display: inline-block;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
     background: #ffffff;
-    padding: 4px 32px;
+    padding: 4px 0;
 }
 
 .grammar-chapter-title::before {
