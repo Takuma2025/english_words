@@ -942,161 +942,276 @@ const elementaryWordData = [
     "word": "in",
     "meaning": "①（場所・位置）〜の中に［で］ ②（時）〜に ③（手段）〜で ④（所要時間）〜後に",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 1337,
+    "example": {
+      "english": "in the library",
+      "japanese": "図書館(の中)に"
+    }
   },
   {
     "id": 4002,
     "word": "on",
     "meaning": "①（時・日）〜に ②（場所）〜の上に、〜に（接触） ③（状態）〜中で ④〜について",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 283,
+    "example": {
+      "english": "on the table",
+      "japanese": "テーブル(の上)に"
+    }
   },
   {
     "id": 4003,
     "word": "at",
-    "meaning": "①（場所・位置）〜に（で）、〜のところに ②（時刻）〜に",
+    "meaning": "①（場所・位置）〜に（で）②（時刻）〜に",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 264,
+    "example": {
+      "english": "at the station",
+      "japanese": "駅(に)で"
+    }
   },
   {
     "id": 4004,
     "word": "by",
     "meaning": "①（場所）〜のそばに ②〜によって ③（締切）〜までに",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 214,
+    "example": {
+      "english": "by the park",
+      "japanese": "公園のそばに"
+    }
   },
   {
     "id": 4005,
     "word": "for",
     "meaning": "①〜のために ②〜に向かって ③〜にとって ④〜の間",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 507,
+    "example": {
+      "english": "for them",
+      "japanese": "彼らのために"
+    }
   },
   {
     "id": 4006,
     "word": "with",
     "meaning": "①〜と一緒に ②（道具）〜で、〜を使って ③〜のある、〜を身に付けて・所持して",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 322,
+    "example": {
+      "english": "with him",
+      "japanese": "彼と一緒に"
+    }
   },
   {
     "id": 4007,
     "word": "from",
     "meaning": "〜から、〜出身の",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 271,
+    "example": {
+      "english": "from Canada",
+      "japanese": "カナダ出身の"
+    }
   },
   {
     "id": 4008,
     "word": "to",
     "meaning": "（方向・到達点）〜へ・〜まで",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 1449,
+    "example": {
+      "english": "to Tokyo",
+      "japanese": "東京へ"
+    }
   },
   {
     "id": 4009,
     "word": "of",
     "meaning": "①（帰属）〜の ②（同格）〜という… ③（部分）〜の中の…",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 989,
+    "example": {
+      "english": " history of Japan ",
+      "japanese": "日本の歴史"
+    }
   },
   {
     "id": 4010,
     "word": "about",
     "meaning": "〜について、〜に関して（関する）、およそ、約〜",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 575,
+    "example": {
+      "english": "about music",
+      "japanese": "音楽について"
+    }
   },
   {
     "id": 4011,
     "word": "into",
     "meaning": "〜の中へ",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 22,
+    "example": {
+      "english": "into the room",
+      "japanese": "部屋の中へ"
+    }
   },
   {
     "id": 4013,
     "word": "over",
     "meaning": "①〜の上の方 ②〜じゅう、〜のいたるところに ③〜以上に、〜より多く",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 20,
+    "example": {
+      "english": "over the bridge",
+      "japanese": "橋の上"
+    }
   },
   {
     "id": 4014,
     "word": "under",
     "meaning": "〜の下に",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 20,
+    "example": {
+      "english": "under the table",
+      "japanese": "テーブルの下"
+    }
   },
   {
     "id": 4015,
     "word": "between",
     "meaning": "（2つ、2人）〜の間に",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 33,
+    "example": {
+      "english": "between the two buildings",
+      "japanese": "2つの建物の間"
+    }
   },
   {
     "id": 4016,
     "word": "among",
     "meaning": "（3つ、3人以上）〜の間に",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 20,
+    "example": {
+      "english": "among the trees",
+      "japanese": "木々の間"
+    }
   },
   {
     "id": 4017,
     "word": "through",
     "meaning": "①〜を通って ②（手段）〜を通じて",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 33,
+    "example": {
+      "english": "through the forest",
+      "japanese": "森を通って"
+    }
   },
   {
     "id": 4018,
     "word": "during",
     "meaning": "（特定の期間）の間じゅう",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 21,
+    "example": {
+      "english": "during the summer",
+      "japanese": "夏の間"
+    }
   },
   {
     "id": 4019,
     "word": "before",
     "meaning": "〜の前に",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 59,
+    "example": {
+      "english": "before the meeting",
+      "japanese": "会議の前"
+    }
   },
   {
     "id": 4020,
     "word": "after",
     "meaning": "〜のあとに（で）、〜してから",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 104,
+    "example": {
+      "english": "after the party",
+      "japanese": "パーティーのあと"
+    }
   },
   {
     "id": 4021,
     "word": "since",
     "meaning": "〜以来",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 9,
+    "example": {
+      "english": "since yesterday",
+      "japanese": "昨日から"
+    }
   },
   {
     "id": 4022,
     "word": "until",
     "meaning": "（継続）〜までずっと",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 12,
+    "example": {
+      "english": "until tomorrow",
+      "japanese": "明日まで"
+    }
   },
   {
     "id": 4023,
     "word": "against",
     "meaning": "〜に反対して、〜に対して",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 1,
+    "example": {
+      "english": "against the law",
+      "japanese": "法律に反対して"
+    }
   },
   {
     "id": 4024,
     "word": "without",
     "meaning": "〜なしで",
     "partOfSpeech": "前置詞",
-    "category": "前置詞"
+    "category": "前置詞",
+    "appearanceCount": 57,
+    "example": {
+      "english": "without a word",
+      "japanese": "一言も言わずに"
+    }
   },
   // 疑問詞
   {
