@@ -6030,10 +6030,78 @@ function showGrammarTableOfContents() {
     
     // ハンバーガーメニューを非表示、戻るボタンを表示
     updateHeaderButtons('back');
+    
+    // 各章のチェックボタンの状態を更新
+    updateGrammarChapterCheckboxes();
+}
+
+// 各章のチェックボタンの状態を更新
+function updateGrammarChapterCheckboxes() {
+    // すべての章のチェックボタンを取得
+    document.querySelectorAll('.chapter-checkbox').forEach(checkbox => {
+        const chapterNumber = parseInt(checkbox.dataset.chapter, 10);
+        if (isGrammarChapterCompleted(chapterNumber)) {
+            checkbox.classList.add('completed');
+        } else {
+            checkbox.classList.remove('completed');
+        }
+    });
+}
+
+// 章が完了しているかチェック
+function isGrammarChapterCompleted(chapterNumber) {
+    // localStorageから進捗を取得
+    const progressKey = `grammar-chapter-${chapterNumber}-progress`;
+    const progress = localStorage.getItem(progressKey);
+    if (!progress) return false;
+    
+    try {
+        const progressData = JSON.parse(progress);
+        // 章のデータを取得
+        let chapterData = null;
+        if (typeof grammarData !== 'undefined' && grammarData) {
+            chapterData = grammarData.find(data => data.chapter === chapterNumber);
+        }
+        if (!chapterData) return false;
+        
+        // セクション構造がある場合
+        if (chapterData.sections && chapterData.sections.length > 0) {
+            // すべてのセクションのすべての問題が正解しているかチェック
+            for (let sectionIndex = 0; sectionIndex < chapterData.sections.length; sectionIndex++) {
+                const section = chapterData.sections[sectionIndex];
+                if (section.exercises && section.exercises.length > 0) {
+                    for (let exerciseIndex = 0; exerciseIndex < section.exercises.length; exerciseIndex++) {
+                        const exerciseKey = `${chapterNumber}-section${sectionIndex}-ex${exerciseIndex}`;
+                        if (!progressData[exerciseKey] || !progressData[exerciseKey].allCorrect) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        } else {
+            // 従来の構造の場合
+            if (chapterData.exercises && chapterData.exercises.length > 0) {
+                for (let exerciseIndex = 0; exerciseIndex < chapterData.exercises.length; exerciseIndex++) {
+                    const exerciseKey = `${chapterNumber}-${exerciseIndex}`;
+                    if (!progressData[exerciseKey] || !progressData[exerciseKey].allCorrect) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    } catch (e) {
+        return false;
+    }
 }
 
 // 英文法解説ページを表示
 function showGrammarChapter(chapterNumber) {
+    // 現在の章番号を設定
+    currentGrammarChapterNumber = chapterNumber;
+    
     // 状態変数をリセット
     grammarExerciseBlanks = [];
     grammarExerciseAnswerSubmitted = {};
@@ -6355,6 +6423,7 @@ let currentGrammarSelectedBlankIndex = -1;
 let currentGrammarSelectedExerciseIndex = -1; // 現在選択中の問題のインデックス
 let grammarKeyboardOutsideHandlerAttached = false;
 let grammarRedoButtons = {}; // 各問題の解きなおすボタンを保持
+let currentGrammarChapterNumber = -1; // 現在表示中の章番号
 
 // すべての問題を表示
 function displayAllGrammarExercises(exercises) {
@@ -6885,6 +6954,53 @@ function submitGrammarExerciseAnswer(exerciseIndex) {
     // 間違いがあれば「解きなおす」を表示
     if (!allCorrect && redoBtn) {
         redoBtn.classList.remove('hidden');
+    }
+    
+    // 進捗を保存
+    if (currentGrammarChapterNumber > 0) {
+        saveGrammarExerciseProgress(currentGrammarChapterNumber, exerciseIndex, allCorrect, exerciseItem);
+    }
+}
+
+// 文法問題の進捗を保存
+function saveGrammarExerciseProgress(chapterNumber, exerciseIndex, allCorrect, exerciseItem) {
+    const progressKey = `grammar-chapter-${chapterNumber}-progress`;
+    let progress = {};
+    try {
+        const saved = localStorage.getItem(progressKey);
+        if (saved) {
+            progress = JSON.parse(saved);
+        }
+    } catch (e) {
+        progress = {};
+    }
+    
+    // 問題のキーを生成（セクション構造の場合はsectionIndexとexerciseIndexを含む）
+    let exerciseKey = '';
+    if (exerciseItem && exerciseItem.dataset.sectionIndex !== undefined) {
+        const sectionIndex = exerciseItem.dataset.sectionIndex;
+        const localIndex = exerciseItem.dataset.localIndex;
+        exerciseKey = `${chapterNumber}-section${sectionIndex}-ex${localIndex}`;
+    } else {
+        // 従来の構造の場合
+        exerciseKey = `${chapterNumber}-${exerciseIndex}`;
+    }
+    
+    // 進捗を保存
+    progress[exerciseKey] = {
+        allCorrect: allCorrect,
+        timestamp: Date.now()
+    };
+    
+    localStorage.setItem(progressKey, JSON.stringify(progress));
+    
+    // 章が完了したかチェックして、目次ページのチェックボタンを更新
+    if (isGrammarChapterCompleted(chapterNumber)) {
+        // 目次ページが表示されている場合は、チェックボタンを更新
+        const grammarTOCView = document.getElementById('grammarTableOfContentsView');
+        if (grammarTOCView && !grammarTOCView.classList.contains('hidden')) {
+            updateGrammarChapterCheckboxes();
+        }
     }
 }
 

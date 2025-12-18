@@ -5185,6 +5185,45 @@ body {
     line-height: 1.8;
 }
 
+.grammar-chapter-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.grammar-chapter-item .chapter-checkbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #e5e7eb; /* グレー背景 */
+    flex-shrink: 0;
+    position: relative;
+}
+
+.grammar-chapter-item .chapter-checkbox.completed {
+    background: #10b981; /* 緑背景 */
+}
+
+.grammar-chapter-item .chapter-checkbox::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 4px;
+    border: 2px solid #9ca3af; /* グレーのチェックマーク */
+    border-top: none;
+    border-right: none;
+    transform: rotate(-45deg);
+    top: 6px;
+    left: 6px;
+}
+
+.grammar-chapter-item .chapter-checkbox.completed::after {
+    border-color: #ffffff; /* 白のチェックマーク */
+}
+
 .grammar-chapter-item .chapter-number {
     display: inline-block;
     background: #2563eb;
