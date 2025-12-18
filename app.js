@@ -6015,6 +6015,9 @@ function showGrammarTableOfContents() {
         grammarTOCView.classList.remove('hidden');
     }
     
+    // スクロール位置をトップに戻す
+    window.scrollTo(0, 0);
+    
     // ヘッダーのサブタイトルを更新
     if (elements.headerSubtitle) {
         elements.headerSubtitle.textContent = '中学３年間の英文法【総復習】';
@@ -6042,6 +6045,9 @@ function showGrammarChapter(chapterNumber) {
     if (grammarChapterView) {
         grammarChapterView.classList.remove('hidden');
     }
+    
+    // スクロール位置をトップに戻す
+    window.scrollTo(0, 0);
     
     // grammarDataから該当する章のデータを取得
     let chapterData = null;

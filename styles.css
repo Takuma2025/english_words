@@ -991,6 +991,97 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+/* 入試得点力アップコースのカード（赤背景） */
+.score-course-card {
+    background: #DC2626 !important; /* 赤背景 */
+    position: relative;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.score-course-card .category-arrow {
+    color: #ffffff !important; /* 白字 */
+    position: absolute;
+    right: 16px; /* 右端 */
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* 白背景のタイトルコンテナ（タイトルだけ） */
+.score-course-title-container {
+    background: #ffffff;
+    border-radius: 0; /* 四角 */
+    padding: 8px 12px;
+    margin-top: 24px; /* ラベルのスペースを確保 */
+    position: relative;
+    display: inline-block;
+    width: auto;
+}
+
+.score-course-title-container .category-name {
+    color: #1f2937 !important; /* 黒字 */
+    margin: 0;
+    font-family: "Noto Serif JP", "Shippori Mincho", "しっぽり明朝", "Hina Mincho", "ひな明朝", "Zen Old Mincho", "Sawarabi Mincho", "さわらび明朝", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-weight: 700; /* 太字 */
+    letter-spacing: 0.05em; /* 英単語カードと同じ文字間隔 */
+}
+
+/* 説明文は赤背景の上に白字 */
+.score-course-card .category-meta {
+    color: #ffffff !important; /* 白字 */
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+.score-course-card .category-progress {
+    margin-top: 8px;
+}
+
+.score-course-card .category-progress-text {
+    color: #ffffff !important; /* 白字 */
+}
+
+.score-course-card .category-progress-bar {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 黒背景のラベル（白背景コンテナの上に重ねる） */
+.score-course-label {
+    position: absolute;
+    top: 16px; /* カードの上端から */
+    left: 16px; /* カードの左端から */
+    background: #1f2937; /* 黒背景 */
+    color: #ffffff; /* 白字 */
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 既存の本型スタイルを上書き */
+.score-course-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"],
+.score-course-card[data-category="条件英作文特訓コース"],
+.score-course-card[data-category="大阪C問題対策英単語タイムアタック"],
+.score-course-card[data-category="大阪C問題対策 英作写経ドリル"],
+.score-course-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] {
+    background: #DC2626 !important; /* 赤背景 */
+    color: #ffffff !important;
+}
+
+/* 既存のラベルスタイルを非表示 */
+.score-course-card .b-problem-label,
+.score-course-card .c-problem-label,
+.score-course-card .sentence-memorization-text,
+.score-course-card .time-attack-text,
+.score-course-card .unit-label,
+.score-course-card .unit-title-text {
+    display: none !important;
+}
+
 .category-info {
     flex: 1;
 }
@@ -5375,11 +5466,10 @@ body {
 }
 
 .grammar-section {
-    margin-bottom: 48px;
+    margin-bottom: 0;
 }
 
 .grammar-section:last-child {
-    margin-bottom: 0;
     padding-bottom: 220px; /* 最後のセクションにキーボード分のスペースを確保 */
 }
 
@@ -5388,6 +5478,7 @@ body {
     font-weight: 700;
     color: #1f2937;
     margin-bottom: 20px;
+    margin-top: 0;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -5413,6 +5504,7 @@ body {
 
 .grammar-exercise-section {
     margin-top: 32px;
+    margin-bottom: 0;
 }
 
 .grammar-exercise-title {
@@ -5420,6 +5512,7 @@ body {
     font-weight: 700;
     color: #1f2937;
     margin-bottom: 16px;
+    margin-top: 0;
     padding-bottom: 8px;
     border-bottom: 2px solid #e5e7eb;
 }
@@ -5441,7 +5534,7 @@ body {
 .grammar-exercise-item:last-child {
     border-bottom: none;
     padding-bottom: 0;
-    margin-bottom: 16px;
+    margin-bottom: 0;
 }
 
 .grammar-exercise-item-number {

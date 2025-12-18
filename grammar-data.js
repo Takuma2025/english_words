@@ -142,6 +142,30 @@ const grammarData = [
                         hint: "主語が「He」のときは、be動詞は「is」を使います。"
                     }
                 ]
+            },
+            {
+                title: "疑問文",
+                point: "<ul><li>be動詞の疑問文は、be動詞を文頭に移動する。</li><li>一般動詞の疑問文は、文頭に「Do」または「Does」を置く。</li></ul>",
+                exercises: [
+                    {
+                        id: 13,
+                        japanese: "私は学生ですか。",
+                        english: "Are you a student?",
+                        blanks: [
+                            { index: 0, word: 'Are' }
+                        ],
+                        hint: "be動詞の疑問文は、be動詞を文頭に移動します。"
+                    },
+                    {
+                        id: 14,
+                        japanese: "彼は医者ですか。",
+                        english: "Does he study English every day?",
+                        blanks: [
+                            { index: 0, word: 'Does' }
+                        ],
+                        hint: "主語が「He」「She」「It」や単数形の名詞のときは「Does」を使い、動詞は原形にします。"
+                    }
+                ]
             }
         ]
     },
