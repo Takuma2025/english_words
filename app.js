@@ -6097,6 +6097,13 @@ function showGrammarChapter(chapterNumber) {
             chapterData.sections.forEach((section, sectionIndex) => {
                 displayGrammarSection(section, sectionIndex);
             });
+            // すべてのセクションを表示した後、キーボードを設定（最後に1回だけ）
+            setupGrammarExerciseKeyboard();
+            // キーボードを初期状態で非表示
+            const keyboard = document.getElementById('grammarExerciseKeyboard');
+            if (keyboard) {
+                keyboard.classList.add('hidden');
+            }
         } else {
             // 従来の構造（POINTと演習問題を1つずつ表示）
             const grammarExerciseSection = document.getElementById('grammarExerciseSection');
@@ -6295,8 +6302,24 @@ function displayGrammarSectionExercises(exercises, sectionIndex, exerciseContent
         });
         
         exerciseItem.appendChild(englishEl);
+        
+        // 解きなおすボタン（初期は非表示）
+        const redoBtn = document.createElement('button');
+        redoBtn.className = 'grammar-exercise-redo-btn hidden';
+        redoBtn.textContent = '解きなおす';
+        redoBtn.dataset.exerciseIndex = globalExerciseIndex;
+        redoBtn.addEventListener('click', () => resetGrammarExercise(globalExerciseIndex));
+        exerciseItem.appendChild(redoBtn);
+        grammarRedoButtons[globalExerciseIndex] = redoBtn;
+        
         exerciseContentEl.appendChild(exerciseItem);
     });
+    
+    // キーボードを初期状態で非表示（空欄タップ時に表示）
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        keyboard.classList.add('hidden');
+    }
 }
 
 // 英文法演習問題を表示（すべての問題を縦に並べて表示）
