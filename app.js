@@ -5901,7 +5901,7 @@ function showGrammarTableOfContents() {
     
     // ヘッダーのサブタイトルを更新
     if (elements.headerSubtitle) {
-        elements.headerSubtitle.textContent = '中学３年間の英文法【総復習】';
+        elements.headerSubtitle.textContent = '中学３年間の英文法';
     }
     
     // ハンバーガーメニューを非表示、戻るボタンを表示、中断ボタンを非表示
