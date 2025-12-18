@@ -3194,8 +3194,8 @@ body {
 .meaning-multiline-root {
     display: inline-block;
     text-align: left;
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 1.6;
 }
 
 .meaning-line {
@@ -3242,12 +3242,12 @@ body {
 
 .example-english {
     margin-bottom: 0;
-    font-size: 12px;
+    font-size: 16px;
     font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif; /* 単語カードと同じ系統 */
 }
 
 .example-japanese {
-    font-size: 11px;
+    font-size: 15px;
 }
 
 
