@@ -2980,6 +2980,31 @@ body {
     top: -0.18em;
 }
 
+/* 過去登場回数表示 */
+.word-appearance-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.appearance-label {
+    background-color: #718096;
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 4px 0 0 4px;
+    font-weight: 500;
+}
+
+.appearance-value {
+    color: #1f2937;
+    padding: 4px 8px;
+    font-weight: 600;
+}
+
 /* 意味のときの品詞位置調整 */
 .meaning-wrapper .pos-inline {
     align-self: baseline;
