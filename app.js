@@ -6034,6 +6034,15 @@ function showGrammarTableOfContents() {
 
 // 英文法解説ページを表示
 function showGrammarChapter(chapterNumber) {
+    // 状態変数をリセット
+    grammarExerciseBlanks = [];
+    grammarExerciseAnswerSubmitted = {};
+    grammarRedoButtons = {};
+    currentGrammarSelectedBlankIndex = -1;
+    currentGrammarSelectedExerciseIndex = -1;
+    currentGrammarExerciseIndex = -1;
+    currentGrammarExercises = [];
+    
     // 目次ページを非表示
     const grammarTOCView = document.getElementById('grammarTableOfContentsView');
     if (grammarTOCView) {
@@ -6048,6 +6057,12 @@ function showGrammarChapter(chapterNumber) {
     
     // スクロール位置をトップに戻す
     window.scrollTo(0, 0);
+    
+    // キーボードを非表示に
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        keyboard.classList.add('hidden');
+    }
     
     // grammarDataから該当する章のデータを取得
     let chapterData = null;
@@ -6204,6 +6219,9 @@ function displayGrammarSection(section, sectionIndex) {
 // セクションの演習問題を表示
 function displayGrammarSectionExercises(exercises, sectionIndex, exerciseContentEl) {
     if (!exerciseContentEl) return;
+    
+    // このセクション用の状態をクリア（念のため）
+    // 注意: showGrammarChapterの最初で全体をリセットしているので、これは冗長だが安全のため
     
     exercises.forEach((exercise, exerciseIndex) => {
         // グローバルなインデックスを計算（セクションごとに連番を振る）

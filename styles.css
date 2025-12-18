@@ -991,98 +991,7 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* 入試得点力アップコースのカード（背景画像） */
-.score-course-card {
-    background: #DC2626 url('nyushicourse.png') center center / cover no-repeat !important;
-    position: relative;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.score-course-card .category-arrow {
-    color: #ffffff !important; /* 白字 */
-    position: absolute;
-    right: 16px; /* 右端 */
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-/* 白背景のタイトルコンテナ（タイトルだけ） */
-.score-course-title-container {
-    background: #ffffff;
-    border-radius: 0; /* 四角 */
-    padding: 8px 12px;
-    margin-top: 24px; /* ラベルのスペースを確保 */
-    position: relative;
-    display: inline-block;
-    width: auto;
-}
-
-.score-course-title-container .category-name {
-    color: #1f2937 !important; /* 黒字 */
-    margin: 0;
-    font-weight: 700; /* 太字 */
-    /* 英単語マスターコースと同じフォント（デフォルトのゴシック体） */
-}
-
-/* 説明文は赤背景の上に白字 */
-.score-course-card .category-meta {
-    color: #ffffff !important; /* 白字 */
-    background: rgba(31, 41, 55, 0.7) !important; /* 透明度のある濃いめグレー */
-    padding: 8px 12px;
-    border-radius: 4px;
-    margin-top: 8px;
-    margin-bottom: 0;
-}
-
-.score-course-card .category-progress {
-    margin-top: 8px;
-}
-
-.score-course-card .category-progress-text {
-    color: #ffffff !important; /* 白字 */
-}
-
-.score-course-card .category-progress-bar {
-    background: rgba(255, 255, 255, 0.2) !important;
-}
-
-/* 黒背景のラベル（白背景コンテナの上に重ねる） */
-.score-course-label {
-    position: absolute;
-    top: 16px; /* カードの上端から */
-    left: 16px; /* カードの左端から */
-    background: #1f2937; /* 黒背景 */
-    color: #ffffff; /* 白字 */
-    padding: 4px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 700;
-    z-index: 10;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* 既存の本型スタイルを上書き（背景画像を維持） */
-.score-course-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"],
-.score-course-card[data-category="条件英作文特訓コース"],
-.score-course-card[data-category="大阪C問題対策英単語タイムアタック"],
-.score-course-card[data-category="大阪C問題対策 英作写経ドリル"],
-.score-course-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] {
-    background: #DC2626 url('nyushicourse.png') center center / cover no-repeat !important; /* 背景画像を維持 */
-    color: #ffffff !important;
-}
-
-/* 既存のラベルスタイルを非表示 */
-.score-course-card .b-problem-label,
-.score-course-card .c-problem-label,
-.score-course-card .sentence-memorization-text,
-.score-course-card .time-attack-text,
-.score-course-card .unit-label,
-.score-course-card .unit-title-text {
-    display: none !important;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じデザイン */
 
 .category-info {
     flex: 1;
@@ -1126,6 +1035,18 @@ body {
     padding: 2px 6px;
     border-radius: 4px;
     font-weight: 700;
+    margin-right: 2px;
+}
+
+.exam-type-badge {
+    display: inline-block;
+    background-color: #DC2626; /* 赤色背景 */
+    color: #ffffff; /* 白字 */
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 400; /* 細い文字 */
+    font-size: 12px; /* 少し小さく */
+    letter-spacing: -0.5px; /* ギュッと詰める */
     margin-right: 2px;
 }
 
@@ -1197,25 +1118,7 @@ body {
     text-align: right;
 }
 
-/* 大阪C問題対策英単語タイムアタックコースの進捗バーを非表示 */
-.category-card[data-category="大阪C問題対策英単語タイムアタック"] .category-progress {
-    display: none;
-}
-
-/* 大阪C問題対策 英作写経ドリルコースの進捗バーを非表示 */
-.category-card[data-category="大阪C問題対策 英作写経ドリル"] .category-progress {
-    display: none;
-}
-
-/* 大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】コースの進捗バーを非表示 */
-.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-progress {
-    display: none;
-}
-
-/* 大阪B問題対策 例文暗記60【和文英訳対策】コースの進捗バーを非表示 */
-.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .category-progress {
-    display: none;
-}
+/* 入試得点力アップコースの進捗バーは表示（英単語マスターコースと同じ） */
 
 /* 大阪C問題対策英単語タイムアタックコース時の非表示要素 */
 .card-area-wrapper:has(.word-timer-bar:not(.hidden)) .progress-range-display {
@@ -1234,15 +1137,7 @@ body {
     display: none;
 }
 
-/* 大阪C問題対策英単語タイムアタックコースのカテゴリーカードを赤本の色に */
-.category-card[data-category="大阪C問題対策英単語タイムアタック"] {
-    background: #DC2626; /* 赤みの強い赤 */
-    color: #ffffff;
-}
-
-.category-card[data-category="大阪C問題対策英単語タイムアタック"] .category-name {
-    color: #ffffff;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
 .category-card[data-category="大阪C問題対策英単語タイムアタック"] .c-problem-label {
     background: #000000;
@@ -1275,10 +1170,7 @@ body {
     font-size: 14px;
 }
 
-.category-card[data-category="大阪C問題対策英単語タイムアタック"] .category-meta {
-    color: #ffffff;
-    opacity: 0.95;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
 .category-card[data-category="PartCディクテーション"] .category-progress {
     display: none;
@@ -1330,15 +1222,7 @@ body {
     color: #ffffff;
 }
 
-/* 大阪C問題対策 英作写経ドリルコースのカテゴリーカードを赤本の色に */
-.category-card[data-category="大阪C問題対策 英作写経ドリル"] {
-    background: #DC2626; /* 赤みの強い赤 */
-    color: #ffffff;
-}
-
-.category-card[data-category="大阪C問題対策 英作写経ドリル"] .category-name {
-    color: #ffffff;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
 .category-card[data-category="大阪C問題対策 英作写経ドリル"] .c-problem-label {
     background: #000000;
@@ -1367,20 +1251,9 @@ body {
     z-index: 2;
 }
 
-.category-card[data-category="大阪C問題対策 英作写経ドリル"] .category-meta {
-    color: #ffffff;
-    opacity: 0.95;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
-/* 大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】コースのカテゴリーカードを赤本の色に */
-.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] {
-    background: #DC2626; /* 赤みの強い赤 */
-    color: #ffffff;
-}
-
-.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-name {
-    color: #ffffff;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
 .category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .c-problem-label {
     background: #000000;
@@ -1413,20 +1286,9 @@ body {
     font-size: 14px;
 }
 
-.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .category-meta {
-    color: #ffffff;
-    opacity: 0.95;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
-/* 大阪B問題対策 厳選例文暗記60【和文英訳対策】コースのカテゴリーカードを赤本の色に */
-.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] {
-    background: #DC2626; /* 赤みの強い赤 */
-    color: #ffffff;
-}
-
-.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .category-name {
-    color: #ffffff;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
 .category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .b-problem-label {
     background: #000000;
@@ -1459,24 +1321,9 @@ body {
     font-size: 14px;
 }
 
-.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .category-meta {
-    color: #ffffff;
-    opacity: 0.95;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
-.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .category-arrow {
-    color: #ffffff;
-}
-
-/* 条件英作文特訓コースのスタイル */
-.category-card[data-category="条件英作文特訓コース"] {
-    background: #DC2626; /* 赤みの強い赤 */
-    color: #ffffff;
-}
-
-.category-card[data-category="条件英作文特訓コース"] .category-name {
-    color: #ffffff;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
 .category-card[data-category="条件英作文特訓コース"] .b-problem-label {
     background: #000000;
@@ -1505,22 +1352,11 @@ body {
     z-index: 2;
 }
 
-.category-card[data-category="条件英作文特訓コース"] .category-meta {
-    color: #ffffff;
-    opacity: 0.95;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
-.category-card[data-category="条件英作文特訓コース"] .category-arrow {
-    color: #ffffff;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
-.category-card[data-category="条件英作文特訓コース"] .category-progress {
-    display: none;
-}
-
-.category-card[data-category^="大阪C問題対策"] .category-arrow {
-    color: #ffffff;
-}
+/* 入試得点力アップコースのカードは英単語マスターコースと同じ白背景 */
 
 /* 鍵アイコンのスタイル（得点力アップコース） */
 .category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .lock-icon,
