@@ -1078,6 +1078,10 @@ body {
     margin-left: 4px;
 }
 
+.category-stars-purple {
+    color: #e91e63;
+}
+
 .category-meta {
     font-size: 13px;
     color: #6b7280;
@@ -4972,7 +4976,7 @@ body {
 }
 
 .book-card[data-category="英文法中学３年間の総復習"] .unit-title-text {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
     background: #ffffff;
     color: #000000;
