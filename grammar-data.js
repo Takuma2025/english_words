@@ -15,13 +15,13 @@ const grammarData = [
     {
         chapter: 1,
         title: "第1章 be動詞と一般動詞",
-        explanation: "<p>be動詞と一般動詞は、英語の文を作る上で最も基本的な要素です。</p>",
+        explanation: "<p>be動詞と一般動詞は、英語の文を作る上で<span class=\"grammar-important\">最も基本的な要素</span>です。</p>",
         // sections配列がある場合は、セクション構造で表示されます
         // sectionsがない場合は、従来のpointとexercisesが表示されます
         sections: [
             {
                 title: "肯定文",
-                point: "<ul><li>be動詞は主語によって形が変わる（I am, You are, He/She/It is）。</li><li>一般動詞は主語が三人称単数現在の場合、動詞の語尾に-sまたは-esがつく。</li></ul>",
+                point: "<ul><li>be動詞は<span class=\"grammar-important\">主語によって形が変わる</span>（I am, You are, He/She/It is）。</li><li>一般動詞は主語が<span class=\"grammar-important\">三人称単数現在</span>の場合、動詞の語尾に-sまたは-esがつく。</li></ul>",
                 exercises: [
             {
                 id: 1,

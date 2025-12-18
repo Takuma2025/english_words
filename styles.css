@@ -5353,6 +5353,18 @@ body {
     margin-bottom: 8px;
 }
 
+/* 英文法解説で大事なところをピンク色にする */
+.grammar-important {
+    color: #e91e63;
+    font-weight: 600;
+}
+
+.grammar-chapter-content .grammar-important,
+.grammar-point-content .grammar-important {
+    color: #e91e63;
+    font-weight: 600;
+}
+
 .grammar-sections-container {
     margin-top: 24px;
 }

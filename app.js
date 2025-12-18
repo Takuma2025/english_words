@@ -928,6 +928,7 @@ function init() {
 function updateHeaderButtons(mode) {
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
     const headerBackBtn = document.getElementById('headerBackBtn');
+    const homeBtn = document.getElementById('homeBtn');
     
     if (hamburgerMenuBtn) {
         if (mode === 'home') {
@@ -942,6 +943,15 @@ function updateHeaderButtons(mode) {
             headerBackBtn.classList.remove('hidden');
         } else {
             headerBackBtn.classList.add('hidden');
+        }
+    }
+    
+    // 中断ボタンは学習中のみ表示
+    if (homeBtn) {
+        if (mode === 'learning') {
+            homeBtn.classList.remove('hidden');
+        } else {
+            homeBtn.classList.add('hidden');
         }
     }
 }
@@ -995,11 +1005,6 @@ function showCategorySelection() {
     const grammarKeyboard = document.getElementById('grammarExerciseKeyboard');
     if (grammarKeyboard) {
         grammarKeyboard.classList.add('hidden');
-    }
-    
-    // カテゴリー選択画面ではホームボタンを非表示
-    if (elements.homeBtn) {
-        elements.homeBtn.classList.add('hidden');
     }
     
     // ハンバーガーメニューボタンは常に表示（変更不要）
@@ -1214,12 +1219,7 @@ function initInputModeLearning(category, words, startIndex = 0) {
     
     document.body.classList.add('learning-mode');
 
-    // 学習画面ではホームボタンを表示
-    if (elements.homeBtn) {
-        elements.homeBtn.classList.remove('hidden');
-    }
-    
-    // ハンバーガーメニューと戻るボタンを非表示（中断ボタンは別途表示）
+    // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
     updateHeaderButtons('learning');
     
     // カードモード、例文モード、整序英作文モードを非表示、入力モードを表示
@@ -1763,11 +1763,7 @@ function initTimeAttackLearning(category, words) {
     document.body.classList.add('learning-mode');
     document.body.classList.add('time-attack-mode');
     
-    if (elements.homeBtn) {
-        elements.homeBtn.classList.remove('hidden');
-    }
-    
-    // ハンバーガーメニューと戻るボタンを非表示（中断ボタンは別途表示）
+    // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
     updateHeaderButtons('learning');
     
     // 進捗ステップボタンを非表示（タイムアタックモード）
@@ -4609,12 +4605,8 @@ function initSentenceModeLearning(category) {
     elements.headerSubtitle.textContent = category;
     
     document.body.classList.add('learning-mode');
-
-    if (elements.homeBtn) {
-        elements.homeBtn.classList.remove('hidden');
-    }
     
-    // ハンバーガーメニューと戻るボタンを非表示（中断ボタンは別途表示）
+    // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
     updateHeaderButtons('learning');
 
     // カードモード、入力モード、整序英作文モードを非表示、例文モードを表示
@@ -5204,12 +5196,8 @@ function initReorderModeLearning(category) {
     elements.headerSubtitle.textContent = displayTitle;
     
     document.body.classList.add('learning-mode');
-
-    if (elements.homeBtn) {
-        elements.homeBtn.classList.remove('hidden');
-    }
     
-    // ハンバーガーメニューと戻るボタンを非表示（中断ボタンは別途表示）
+    // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
     updateHeaderButtons('learning');
 
     // 他のモードを非表示、整序英作文モードを表示
@@ -6023,12 +6011,7 @@ function showGrammarTableOfContents() {
         elements.headerSubtitle.textContent = '中学３年間の英文法【総復習】';
     }
     
-    // ホームボタンを表示
-    if (elements.homeBtn) {
-        elements.homeBtn.classList.remove('hidden');
-    }
-    
-    // ハンバーガーメニューを非表示、戻るボタンを表示
+    // ハンバーガーメニューを非表示、戻るボタンを表示、中断ボタンを非表示
     updateHeaderButtons('back');
     
     // 各章のチェックボタンの状態を更新
@@ -6147,12 +6130,7 @@ function showGrammarChapter(chapterNumber) {
         }
     }
     
-    // ホームボタンを表示
-    if (elements.homeBtn) {
-        elements.homeBtn.classList.remove('hidden');
-    }
-    
-    // ハンバーガーメニューを非表示、戻るボタンを表示
+    // ハンバーガーメニューを非表示、戻るボタンを表示、中断ボタンを非表示
     updateHeaderButtons('back');
     
     // 章のタイトルを設定
