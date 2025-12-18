@@ -833,7 +833,7 @@ body {
 }
 
 .category-name {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 700;
     color: #1f2937;
     margin-bottom: 0;
@@ -905,7 +905,7 @@ body {
 }
 
 .category-progress-bar.category-progress-complete::after {
-    content: "✧ COMPLETE!! ✧";
+    content: "COMPLETE!!";
     position: absolute;
     inset: 0;
     display: flex;
