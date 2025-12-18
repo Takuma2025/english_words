@@ -7,13 +7,22 @@
 //   - english: 英文（空所部分は空白で区切る）
 //   - blanks: 空所の配列 [{index: 0, word: 'longer'}, ...]
 //   - hint: ヒント文
+// sections: セクションの配列（四角１、四角２など）
+//   - title: セクションタイトル（例：「肯定文」「否定文」）
+//   - point: HTML形式でPOINTを記述
+//   - exercises: 演習問題の配列
 const grammarData = [
     {
         chapter: 1,
         title: "第1章 be動詞と一般動詞",
-        explanation: "",
-        point: "",
-        exercises: [
+        explanation: "<p>be動詞と一般動詞は、英語の文を作る上で最も基本的な要素です。</p>",
+        // sections配列がある場合は、セクション構造で表示されます
+        // sectionsがない場合は、従来のpointとexercisesが表示されます
+        sections: [
+            {
+                title: "肯定文",
+                point: "<ul><li>be動詞は主語によって形が変わる（I am, You are, He/She/It is）。</li><li>一般動詞は主語が三人称単数現在の場合、動詞の語尾に-sまたは-esがつく。</li></ul>",
+                exercises: [
             {
                 id: 1,
                 japanese: "私は学生です。",
@@ -105,6 +114,34 @@ const grammarData = [
                     { index: 0, word: 'Are' }
                 ],
                 hint: "be動詞の疑問文は、be動詞を文頭に移動します。主語が「you」のときは「Are」を使います。"
+            }
+                ]
+            },
+            {
+                title: "否定文",
+                point: "<ul><li>be動詞の否定文は、be動詞の後に「not」を置く。</li><li>一般動詞の否定文は、「do not」または「does not」を動詞の前に置く。</li></ul>",
+                exercises: [
+                    {
+                        id: 11,
+                        japanese: "私は学生ではありません。",
+                        english: "I am not a student.",
+                        blanks: [
+                            { index: 0, word: 'am' },
+                            { index: 1, word: 'not' }
+                        ],
+                        hint: "be動詞の否定文は、be動詞の後に「not」を置きます。"
+                    },
+                    {
+                        id: 12,
+                        japanese: "彼は医者ではありません。",
+                        english: "He is not a doctor.",
+                        blanks: [
+                            { index: 0, word: 'is' },
+                            { index: 1, word: 'not' }
+                        ],
+                        hint: "主語が「He」のときは、be動詞は「is」を使います。"
+                    }
+                ]
             }
         ]
     },

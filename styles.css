@@ -4839,21 +4839,12 @@ body {
     background: #06C755;
 }
 
-.sns-share-btn.sns-line:active {
-}
-
 .sns-share-btn.sns-x {
     background: #000000;
 }
 
-.sns-share-btn.sns-x:active {
-}
-
 .sns-share-btn.sns-instagram {
     background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-}
-
-.sns-share-btn.sns-instagram:active {
 }
 
 @media (max-width: 600px) {
@@ -5377,6 +5368,47 @@ body {
 
 .grammar-point-content li {
     margin-bottom: 8px;
+}
+
+.grammar-sections-container {
+    margin-top: 24px;
+}
+
+.grammar-section {
+    margin-bottom: 48px;
+}
+
+.grammar-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 220px; /* 最後のセクションにキーボード分のスペースを確保 */
+}
+
+.grammar-section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.grammar-section-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #2563eb;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.grammar-section-title-text {
+    color: #1f2937;
 }
 
 .grammar-exercise-section {

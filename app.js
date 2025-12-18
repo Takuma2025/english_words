@@ -6087,34 +6087,216 @@ function showGrammarChapter(chapterNumber) {
         }
     }
     
-    // POINTボックスを設定
-    const pointContentEl = document.getElementById('grammarPointContent');
-    if (pointContentEl) {
-        if (chapterData && chapterData.point) {
-            // HTML形式で保存されている場合はそのまま、テキストの場合は段落タグで囲む
-            pointContentEl.innerHTML = chapterData.point || '<p>POINTを準備中です。</p>';
+    // セクション構造がある場合はセクションを表示、ない場合は従来の表示
+    const sectionsContainer = document.getElementById('grammarSectionsContainer');
+    if (sectionsContainer) {
+        sectionsContainer.innerHTML = '';
+        
+        if (chapterData && chapterData.sections && chapterData.sections.length > 0) {
+            // セクション構造で表示
+            chapterData.sections.forEach((section, sectionIndex) => {
+                displayGrammarSection(section, sectionIndex);
+            });
         } else {
-            pointContentEl.innerHTML = '<p>POINTを準備中です。</p>';
+            // 従来の構造（POINTと演習問題を1つずつ表示）
+            const grammarExerciseSection = document.getElementById('grammarExerciseSection');
+            if (grammarExerciseSection) {
+                grammarExerciseSection.style.display = 'block';
+            }
+            
+            // POINTボックスを設定
+            const pointContentEl = document.getElementById('grammarPointContent');
+            if (pointContentEl) {
+                if (chapterData && chapterData.point) {
+                    pointContentEl.innerHTML = chapterData.point || '<p>POINTを準備中です。</p>';
+                } else {
+                    pointContentEl.innerHTML = '<p>POINTを準備中です。</p>';
+                }
+            }
+            
+            // 演習問題を設定
+            if (chapterData && chapterData.exercises && chapterData.exercises.length > 0) {
+                currentGrammarExercises = chapterData.exercises;
+                displayAllGrammarExercises(chapterData.exercises);
+            } else {
+                currentGrammarExercises = [];
+                const exerciseContentEl = document.getElementById('grammarExerciseContent');
+                if (exerciseContentEl) {
+                    exerciseContentEl.innerHTML = '<p>演習問題を準備中です。</p>';
+                }
+            }
         }
     }
+}
+
+// 文法セクションを表示
+function displayGrammarSection(section, sectionIndex) {
+    const sectionsContainer = document.getElementById('grammarSectionsContainer');
+    if (!sectionsContainer) return;
     
-    // 演習問題セクションを表示
-    const grammarExerciseSection = document.getElementById('grammarExerciseSection');
-    if (grammarExerciseSection) {
-        grammarExerciseSection.classList.remove('hidden');
+    // セクションコンテナを作成
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'grammar-section';
+    sectionDiv.dataset.sectionIndex = sectionIndex;
+    
+    // セクションタイトル（青背景の四角に数字、その横にタイトル）
+    const sectionTitle = document.createElement('h3');
+    sectionTitle.className = 'grammar-section-title';
+    const sectionNumber = document.createElement('span');
+    sectionNumber.className = 'grammar-section-number';
+    sectionNumber.textContent = sectionIndex + 1;
+    sectionTitle.appendChild(sectionNumber);
+    const sectionTitleText = document.createElement('span');
+    sectionTitleText.className = 'grammar-section-title-text';
+    sectionTitleText.textContent = section.title || '';
+    sectionTitle.appendChild(sectionTitleText);
+    sectionDiv.appendChild(sectionTitle);
+    
+    // POINTボックス
+    if (section.point) {
+        const pointBox = document.createElement('div');
+        pointBox.className = 'grammar-point-box';
+        const pointLabel = document.createElement('div');
+        pointLabel.className = 'grammar-point-label';
+        pointLabel.textContent = 'POINT';
+        pointBox.appendChild(pointLabel);
+        const pointContent = document.createElement('div');
+        pointContent.className = 'grammar-point-content';
+        pointContent.innerHTML = section.point;
+        pointBox.appendChild(pointContent);
+        sectionDiv.appendChild(pointBox);
     }
     
-    // 演習問題を設定（すべての問題を縦に並べて表示）
-    if (chapterData && chapterData.exercises && chapterData.exercises.length > 0) {
-        currentGrammarExercises = chapterData.exercises;
-        displayAllGrammarExercises(chapterData.exercises);
-    } else {
-        currentGrammarExercises = [];
-        const exerciseContentEl = document.getElementById('grammarExerciseContent');
-        if (exerciseContentEl) {
-            exerciseContentEl.innerHTML = '<p>演習問題を準備中です。</p>';
-        }
+    // 演習問題セクション
+    if (section.exercises && section.exercises.length > 0) {
+        const exerciseSection = document.createElement('div');
+        exerciseSection.className = 'grammar-exercise-section';
+        const exerciseTitle = document.createElement('h3');
+        exerciseTitle.className = 'grammar-exercise-title';
+        exerciseTitle.textContent = '演習問題';
+        exerciseSection.appendChild(exerciseTitle);
+        const exerciseContent = document.createElement('div');
+        exerciseContent.className = 'grammar-exercise-content';
+        exerciseContent.dataset.sectionIndex = sectionIndex;
+        exerciseSection.appendChild(exerciseContent);
+        sectionDiv.appendChild(exerciseSection);
+        
+        // 演習問題を表示
+        displayGrammarSectionExercises(section.exercises, sectionIndex, exerciseContent);
     }
+    
+    sectionsContainer.appendChild(sectionDiv);
+}
+
+// セクションの演習問題を表示
+function displayGrammarSectionExercises(exercises, sectionIndex, exerciseContentEl) {
+    if (!exerciseContentEl) return;
+    
+    exercises.forEach((exercise, exerciseIndex) => {
+        // グローバルなインデックスを計算（セクションごとに連番を振る）
+        const globalExerciseIndex = `${sectionIndex}-${exerciseIndex}`;
+        
+        // 問題のコンテナを作成
+        const exerciseItem = document.createElement('div');
+        exerciseItem.className = 'grammar-exercise-item';
+        exerciseItem.dataset.exerciseIndex = globalExerciseIndex;
+        exerciseItem.dataset.sectionIndex = sectionIndex;
+        exerciseItem.dataset.localIndex = exerciseIndex;
+        exerciseItem.dataset.exerciseData = JSON.stringify(exercise); // 問題データを保持
+        
+        // 問題番号
+        const exerciseNumber = document.createElement('div');
+        exerciseNumber.className = 'grammar-exercise-item-number';
+        exerciseNumber.textContent = `問題 ${exerciseIndex + 1}`;
+        exerciseItem.appendChild(exerciseNumber);
+        
+        // 日本語訳
+        const japaneseEl = document.createElement('div');
+        japaneseEl.className = 'sentence-japanese';
+        japaneseEl.textContent = exercise.japanese;
+        exerciseItem.appendChild(japaneseEl);
+        
+        // 英文を構築（空所を含む）
+        const englishEl = document.createElement('div');
+        englishEl.className = 'sentence-english';
+        englishEl.dataset.exerciseIndex = globalExerciseIndex;
+        englishEl.dataset.sectionIndex = sectionIndex;
+        englishEl.dataset.localIndex = exerciseIndex;
+        
+        const exerciseBlanks = [];
+        const words = exercise.english.split(' ');
+        
+        words.forEach((word, idx) => {
+            const wordWithoutPunct = word.replace(/[.,!?]/g, '');
+            const blankInfo = exercise.blanks.find(b => b.word.toLowerCase() === wordWithoutPunct.toLowerCase());
+            
+            if (blankInfo) {
+                const blankSpan = document.createElement('span');
+                blankSpan.className = 'sentence-blank';
+                blankSpan.dataset.blankIndex = blankInfo.index;
+                blankSpan.dataset.exerciseIndex = globalExerciseIndex;
+                blankSpan.dataset.sectionIndex = sectionIndex;
+                blankSpan.dataset.localIndex = exerciseIndex;
+                blankSpan.textContent = ' '.repeat(blankInfo.word.length);
+                blankSpan.dataset.correctWord = blankInfo.word;
+                
+                const charWidth = 14;
+                const padding = 24;
+                const extraSpace = 8;
+                const calculatedWidth = Math.max(60, (blankInfo.word.length * charWidth) + padding + extraSpace);
+                blankSpan.style.width = `${calculatedWidth}px`;
+                
+                englishEl.appendChild(blankSpan);
+                
+                exerciseBlanks.push({
+                    index: blankInfo.index,
+                    word: blankInfo.word,
+                    userInput: '',
+                    element: blankSpan,
+                    exerciseIndex: globalExerciseIndex,
+                    sectionIndex: sectionIndex,
+                    localIndex: exerciseIndex
+                });
+            } else {
+                const partSpan = document.createElement('span');
+                partSpan.className = 'sentence-part';
+                partSpan.textContent = word + (idx < words.length - 1 ? ' ' : '');
+                englishEl.appendChild(partSpan);
+            }
+        });
+        
+        exerciseBlanks.sort((a, b) => a.index - b.index);
+        
+        // 空所にタップイベントを追加
+        exerciseBlanks.forEach(blank => {
+            const isMobile = window.innerWidth <= 600;
+            const charWidth = isMobile ? 12 : 14;
+            const padding = isMobile ? 12 : 24;
+            const extraSpace = isMobile ? 4 : 8;
+            const calculatedWidth = Math.max(isMobile ? 50 : 60, (blank.word.length * charWidth) + padding + extraSpace);
+            blank.element.style.width = `${calculatedWidth}px`;
+            
+            blank.element.addEventListener('click', () => {
+                if (grammarExerciseAnswerSubmitted[globalExerciseIndex]) return;
+                selectGrammarExerciseBlank(blank.index, globalExerciseIndex);
+                // キーボードを表示
+                const keyboard = document.getElementById('grammarExerciseKeyboard');
+                if (keyboard) {
+                    keyboard.classList.remove('hidden');
+                }
+            });
+        });
+        
+        grammarExerciseBlanks.push({
+            exerciseIndex: globalExerciseIndex,
+            sectionIndex: sectionIndex,
+            localIndex: exerciseIndex,
+            blanks: exerciseBlanks
+        });
+        
+        exerciseItem.appendChild(englishEl);
+        exerciseContentEl.appendChild(exerciseItem);
+    });
 }
 
 // 英文法演習問題を表示（すべての問題を縦に並べて表示）
@@ -6144,6 +6326,7 @@ function displayAllGrammarExercises(exercises) {
         const exerciseItem = document.createElement('div');
         exerciseItem.className = 'grammar-exercise-item';
         exerciseItem.dataset.exerciseIndex = exerciseIndex;
+        exerciseItem.dataset.exerciseData = JSON.stringify(exercise); // 問題データを保持
         
         // 問題番号
         const exerciseNumber = document.createElement('div');
@@ -6597,7 +6780,15 @@ function submitGrammarExerciseAnswer(exerciseIndex) {
     const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === exerciseIndex);
     if (!exerciseData) return;
     const exerciseItem = document.querySelector(`.grammar-exercise-item[data-exercise-index="${exerciseIndex}"]`);
-    const exercise = currentGrammarExercises[exerciseIndex];
+    
+    // 問題データを取得（セクション構造の場合はdata-exercise-dataから、従来の場合はcurrentGrammarExercisesから）
+    let exercise = null;
+    if (exerciseItem && exerciseItem.dataset.exerciseData) {
+        exercise = JSON.parse(exerciseItem.dataset.exerciseData);
+    } else if (currentGrammarExercises && currentGrammarExercises[exerciseIndex]) {
+        exercise = currentGrammarExercises[exerciseIndex];
+    }
+    
     const redoBtn = grammarRedoButtons[exerciseIndex];
     
     let allCorrect = true;
