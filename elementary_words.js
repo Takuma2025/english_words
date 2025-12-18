@@ -716,7 +716,7 @@ const elementaryWordData = [
   {
     "id": 2002,
     "word": "could",
-    "meaning": "〜できた、〜できるかもしれない",
+    "meaning": "〜できた",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
     "appearanceCount": 100,
@@ -775,7 +775,7 @@ const elementaryWordData = [
   },
   {"id": 2008,
     "word": "would",
-    "meaning": "〜した、〜するつもりだった、(would like toで)〜したい",
+    "meaning": "〜だろう、〜するつもりだ、(would like toで)〜したい",
     "partOfSpeech": "助動詞",
     "category": "助動詞",
     "appearanceCount": 100,
@@ -935,6 +935,7 @@ const elementaryWordData = [
     "meaning": "〜さん、〜先生（男性に対する敬称）",
     "partOfSpeech": "名詞",
     "category": "冠詞",
+    "appearanceCount": 80,
     "example": {
       "english": "<strong>Mr.</strong> Sato",
       "japanese": "佐藤先生（男性）"
@@ -946,6 +947,7 @@ const elementaryWordData = [
     "meaning": "〜さん、〜先生（女性に対する敬称）",
     "partOfSpeech": "名詞",
     "category": "冠詞",
+    "appearanceCount": 19,
     "example": {
       "english": "<strong>Ms.</strong> Brown",
       "japanese": "ブラウンさん（女性）"
@@ -972,7 +974,7 @@ const elementaryWordData = [
     "category": "接続詞",
     "appearanceCount": 171,
     "example": {
-      "english": "I was sick yesterday, <strong>but</strong> I went to school.",
+      "english": "I was sick yesterday, <strong>but</strong> I went to school today.",
       "japanese": "昨日病気だったが、今日は学校に行った。"
     }
   },
@@ -1154,6 +1156,43 @@ const elementaryWordData = [
     "example": {
       "english": "I will go there <strong>even if</strong> it is raining.",
       "japanese": "たとえ雨が降っていても、そこに行くつもりです。"
+    }
+  },
+  // 関係代名詞
+  {
+    "id": 3101,
+    "word": "who",
+    "meaning": "〈人〉について、後ろから説明する働きを持つ",
+    "partOfSpeech": "関係代名詞",
+    "category": "関係代名詞",
+    "appearanceCount": 126,
+    "example": {
+      "english": "The boy <strong>who</strong> is singing is my brother.",
+      "japanese": "歌っている少年は私の弟です。"
+    }
+  },
+  {
+    "id": 3102,
+    "word": "which",
+    "meaning": "〈物〉について、後ろから説明する働きを持つ",
+    "partOfSpeech": "関係代名詞",
+    "category": "関係代名詞",
+    "appearanceCount": 186,
+    "example": {
+      "english": "This is the book <strong>which</strong> I bought yesterday.",
+      "japanese": "これが私が昨日買った本です。"
+    }
+  },
+  {
+    "id": 3103,
+    "word": "that",
+    "meaning": "〈人/物〉について、後ろから説明する働きを持つ",
+    "partOfSpeech": "関係代名詞",
+    "category": "関係代名詞",
+    "appearanceCount": 628,
+    "example": {
+      "english": "He is the teacher <strong>that</strong> I respect.",
+      "japanese": "彼は私が尊敬している先生です。"
     }
   },
   // 前置詞
@@ -1433,7 +1472,260 @@ const elementaryWordData = [
       "japanese": "一言も言わずに"
     }
   },
-  // 疑問詞
+  // 副詞（機能語）
+  {
+    "id": 8001,
+    "word": "always",
+    "meaning": "（頻度）いつも",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 20,
+    "example": {
+      "english": "My father is <strong>always</strong> tired after work.",
+      "japanese": "父は仕事後、いつも疲れています。"
+    }
+  },
+  {
+    "id": 8002,
+    "word": "usually",
+    "meaning": "（頻度）たいてい、ふつうは",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 29,
+    "example": {
+      "english": "My mother <strong>usually</strong> goes to the supermarket.",
+      "japanese": "母はたいていそのスーパーに行きます。"
+    }
+  },
+  {
+    "id": 8003,
+    "word": "often",
+    "meaning": "（頻度）よく、しばしば",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 37,
+    "example": {
+      "english": "I <strong>often</strong> go to the park.",
+      "japanese": "私はよくその公園に行きます。"
+    }
+  },
+  {
+    "id": 8004,
+    "word": "sometimes",
+    "meaning": "（頻度）ときどき",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 35,
+    "example": {
+      "english": "We are <strong>sometimes</strong> late for school.",
+      "japanese": "私たちはときどき学校に遅れます。"
+    }
+  },
+  {
+    "id": 8005,
+    "word": "never",
+    "meaning": "（頻度）決して〜ない、（否定）これまで一度も〜ない",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 18,
+    "example": {
+      "english": "I <strong>never</strong> study at home on Sunday.",
+      "japanese": "私は日曜日に決して家で勉強しません。"
+    }
+  },
+  {
+    "id": 8006,
+    "word": "very",
+    "meaning": "（程度）とても",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 180,
+    "example": {
+      "english": "This dog is <strong>very</strong> big.",
+      "japanese": "この犬はとても大きいです。"
+    }
+  },
+  {
+    "id": 8007,
+    "word": "so",
+    "meaning": "（程度）そんなに、とても、（指示）そのように",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 213,
+    "example": {
+      "english": "This movie isn't <strong>so</strong> interesting.",
+      "japanese": "この映画はそんなに面白くありません。"
+    }
+  },
+  {
+    "id": 8008,
+    "word": "too",
+    "meaning": "（程度）〜すぎる、（追加）〜も［文末］",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 60,
+    "example": {
+      "english": "This box is <strong>too</strong> heavy.",
+      "japanese": "この箱は重すぎます。"
+    }
+  },
+  {
+    "id": 8009,
+    "word": "almost",
+    "meaning": "（程度）ほとんど",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 11,
+    "example": {
+      "english": "<strong>Almost</strong> all the students like soccer.",
+      "japanese": "ほとんどすべての学生がサッカーが好きです。"
+    }
+  },
+  {
+    "id": 8010,
+    "word": "just",
+    "meaning": "（程度）ちょうど、単に、ちょっと",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 21,
+    "example": {
+      "english": "I have <strong>just</strong> finished my homework.",
+      "japanese": "私はちょうど宿題を終わらせたところです。"
+    }
+  },
+  {
+    "id": 8011,
+    "word": "again",
+    "meaning": "（時）再び",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 31,
+    "example": {
+      "english": "I'm glad to see you <strong>again</strong>.",
+      "japanese": "またあなたに会えてうれしいです。"
+    }
+  },
+  {
+    "id": 8012,
+    "word": "already",
+    "meaning": "（時）すでに",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 15,
+    "example": {
+      "english": "I have <strong>already</strong> cleaned the room.",
+      "japanese": "私はすでに部屋を掃除しました。"
+    }
+  },
+  {
+    "id": 8013,
+    "word": "still",
+    "meaning": "（時）まだ、今でも",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 20,
+    "example": {
+      "english": "I'm still hungry.",
+      "japanese": "私はまだお腹が空いています。"
+    }
+  },
+  {
+    "id": 8014,
+    "word": "yet",
+    "meaning": "（時）［否定文で］まだ、［疑問文で］もう",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 8,
+    "example": {
+      "english": "I haven't read the book <strong>yet</strong>.",
+      "japanese": "私はまだその本を読んでいません。"
+    }
+  },
+  {
+    "id": 8015,
+    "word": "ever",
+    "meaning": "（時）これまでに、かつて",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 6,
+    "example": {
+      "english": "Have you <strong>ever</strong> been to the United States.",
+      "japanese": "あなたはこれまでにアメリカに行ったことがありますか。"
+    }
+  }, 
+  {
+    "id": 8016,
+    "word": "here",
+    "meaning": "（場所）ここ",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 37,
+    "example": {
+      "english": "Come <strong>here</strong>.",
+      "japanese": "ここに来てください。"
+    }
+  },
+  {
+    "id": 8017,
+    "word": "there",
+    "meaning": "（場所）そこ",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 261,
+    "example": {
+      "english": "You should go <strong>there</strong>.",
+      "japanese": "あなたはそこに行くべきです。"
+    }
+  },
+  {
+    "id": 8018,
+    "word": "also",
+    "meaning": "（追加）〜もまた",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 131,
+    "example": {
+      "english": "I <strong>also</strong> like music.",
+      "japanese": "私も音楽が好きです。"
+    }
+  },
+  {
+    "id": 8019,
+    "word": "only",
+    "meaning": "（限定・強調）〜だけ、唯一の",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 51,
+    "example": {
+      "english": "I have <strong>only</strong> one book.",
+      "japanese": "私は本を１冊しか持っていません。"
+    }
+  },
+  {
+    "id": 8020,
+    "word": "even",
+    "meaning": "（限定・強調）〜でさえ（すら）",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 27,
+    "example": {
+      "english": "He even forgot my name.",
+      "japanese": "彼は私の名前さえ忘れてしまいました。"
+    }
+  },
+  {
+    "id": 8021,
+    "word": "not",
+    "meaning": "（否定）〜でない",
+    "partOfSpeech": "副詞",
+    "category": "機能型副詞",
+    "appearanceCount": 127,
+    "example": {
+      "english": "I do <strong>not</strong> like math.",
+      "japanese": "私は数学が好きではありません。"
+    }
+  },
+  // 疑問詞（機能語）
   {
     "id": 5001,
     "word": "what",

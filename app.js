@@ -1294,6 +1294,7 @@ function showCourseSelection(category, categoryWords) {
         const functionWordCourses = [
             '冠詞',
             '代名詞',
+            '疑問詞',
             '前置詞',
             '助動詞',
             '接続詞',
@@ -2980,23 +2981,18 @@ function displayInputMode(skipAnimationReset = false) {
         setMeaningContent(inputMeaning, word.meaning);
     }
     
-    // 過去登場回数を表示（入力モード）
+    // 入試登場回数を表示（入力モード）
     const inputAppearanceCountEl = document.getElementById('inputWordAppearanceCount');
     if (inputAppearanceCountEl) {
-        // Mr. / Ms. は過去登場回数を表示しない
-        if (word.word === 'Mr.' || word.word === 'Ms.') {
-            inputAppearanceCountEl.style.display = 'none';
-        } else {
-            const count =
-                typeof word.appearanceCount === 'number' && !isNaN(word.appearanceCount)
-                    ? word.appearanceCount
-                    : 0;
-            const valueSpan = inputAppearanceCountEl.querySelector('.appearance-value');
-            if (valueSpan) {
-                valueSpan.textContent = ` ${count}回`;
-            }
-            inputAppearanceCountEl.style.display = 'flex';
+        const count =
+            typeof word.appearanceCount === 'number' && !isNaN(word.appearanceCount)
+                ? word.appearanceCount
+                : 0;
+        const valueSpan = inputAppearanceCountEl.querySelector('.appearance-value');
+        if (valueSpan) {
+            valueSpan.textContent = ` ${count}回`;
         }
+        inputAppearanceCountEl.style.display = 'flex';
     }
     
     // 文字数分の入力フィールドを生成
@@ -3607,35 +3603,41 @@ function showWrongWords() {
     });
 }
 
-// マーカーを適用（重ね塗りなし。黄は上段、赤/青は下段で2本見える）
+// マーカーを適用：英単語ではなく「No.」に状態を表示する
 function applyMarkers(word) {
+    const wordNumberEl = elements.wordNumber;
+    const inputWordNumberEl = document.getElementById('inputWordNumber');
+
+    // 以前の英字部分のマーカーを念のためクリア
+    if (elements.englishWord) {
+        elements.englishWord.style.backgroundImage = '';
+        elements.englishWord.style.backgroundSize = '';
+        elements.englishWord.style.backgroundRepeat = '';
+        elements.englishWord.style.backgroundPosition = '';
+    }
+    const inputMeaning = document.getElementById('inputMeaning');
+    if (inputMeaning) {
+        inputMeaning.style.backgroundImage = '';
+        inputMeaning.style.backgroundSize = '';
+        inputMeaning.style.backgroundRepeat = '';
+        inputMeaning.style.backgroundPosition = '';
+    }
+
+    const clearMarker = (el) => {
+        if (!el) return;
+        el.classList.remove('marker-review', 'marker-correct', 'marker-wrong');
+    };
+
+    clearMarker(wordNumberEl);
+    clearMarker(inputWordNumberEl);
+
     if (!word) return;
-    
-    // タイムアタックモードのときはマーカーを表示しない
+
+    // タイムアタックモードのときはマーカーを付けない
     if (isTimeAttackMode) {
-        // マーカーをクリア
-        if (elements.englishWord) {
-            elements.englishWord.style.backgroundImage = '';
-            elements.englishWord.style.backgroundSize = '';
-            elements.englishWord.style.backgroundRepeat = '';
-            elements.englishWord.style.backgroundPosition = '';
-        }
-        const inputMeaning = document.getElementById('inputMeaning');
-        if (inputMeaning) {
-            inputMeaning.style.backgroundImage = '';
-            inputMeaning.style.backgroundSize = '';
-            inputMeaning.style.backgroundRepeat = '';
-            inputMeaning.style.backgroundPosition = '';
-        }
         return;
     }
 
-    // start/endは0-1で位置指定。黄は上段、赤/青は下段。間に小さな空白を設ける。
-    const band = (color, start = 0.6, end = 0.82) =>
-        `linear-gradient(180deg, transparent ${start * 100}%, ${color} ${start * 100}%, ${color} ${end * 100}%, transparent ${end * 100}%)`;
-
-    const layers = [];
-    
     // カテゴリごとの進捗を取得（カテゴリがある場合）
     let categoryCorrectSet = correctWords;
     let categoryWrongSet = wrongWords;
@@ -3645,38 +3647,18 @@ function applyMarkers(word) {
         categoryWrongSet = categoryWords.wrongSet;
     }
 
-    if (reviewWords.has(word.id)) {
-        // 黄は蛍光マーカー風（上段、少し広め・明るめ）
-        layers.push(band('rgba(253, 253, 112, 0.55)', 0.34, 0.54));
-        // 下段は赤優先、なければ青（黄との間に僅かな空白）
-        if (categoryWrongSet.has(word.id)) {
-            layers.push(band('rgba(239, 68, 68, 0.28)', 0.60, 0.82));
-        } else if (categoryCorrectSet.has(word.id)) {
-            layers.push(band('rgba(59, 130, 246, 0.32)', 0.60, 0.82));
-        }
-    } else if (categoryWrongSet.has(word.id)) {
-        layers.push(band('rgba(239, 68, 68, 0.30)', 0.60, 0.82));
+    let markerClass = '';
+
+    // 間違い（赤）を優先、その次に正解（青）
+    if (categoryWrongSet.has(word.id)) {
+        markerClass = 'marker-wrong';
     } else if (categoryCorrectSet.has(word.id)) {
-        layers.push(band('rgba(59, 130, 246, 0.35)', 0.60, 0.82));
+        markerClass = 'marker-correct';
     }
 
-    const image = layers.join(',');
-    
-    // カードモードの場合
-    if (elements.englishWord) {
-        elements.englishWord.style.backgroundImage = image;
-        elements.englishWord.style.backgroundSize = image ? '100% 100%' : '';
-        elements.englishWord.style.backgroundRepeat = image ? 'no-repeat' : '';
-        elements.englishWord.style.backgroundPosition = image ? '0 0' : '';
-    }
-    
-    // 入力モードの場合
-    const inputMeaning = document.getElementById('inputMeaning');
-    if (inputMeaning) {
-        inputMeaning.style.backgroundImage = image;
-        inputMeaning.style.backgroundSize = image ? '100% 100%' : '';
-        inputMeaning.style.backgroundRepeat = image ? 'no-repeat' : '';
-        inputMeaning.style.backgroundPosition = image ? '0 0' : '';
+    if (markerClass) {
+        if (wordNumberEl) wordNumberEl.classList.add(markerClass);
+        if (inputWordNumberEl) wordNumberEl && inputWordNumberEl.classList.add(markerClass);
     }
 }
 
@@ -3853,23 +3835,18 @@ function displayCurrentWord() {
     elements.englishWord.textContent = word.word;
     applyMarkers(word);
     
-    // 過去登場回数を表示（カードモード）
+    // 入試登場回数を表示（カードモード）
     const appearanceCountEl = document.getElementById('wordAppearanceCount');
     if (appearanceCountEl) {
-        // Mr. / Ms. は過去登場回数を表示しない
-        if (word.word === 'Mr.' || word.word === 'Ms.') {
-            appearanceCountEl.style.display = 'none';
-        } else {
-            const count =
-                typeof word.appearanceCount === 'number' && !isNaN(word.appearanceCount)
-                    ? word.appearanceCount
-                    : 0;
-            const valueSpan = appearanceCountEl.querySelector('.appearance-value');
-            if (valueSpan) {
-                valueSpan.textContent = ` ${count}回`;
-            }
-            appearanceCountEl.style.display = 'flex';
+        const count =
+            typeof word.appearanceCount === 'number' && !isNaN(word.appearanceCount)
+                ? word.appearanceCount
+                : 0;
+        const valueSpan = appearanceCountEl.querySelector('.appearance-value');
+        if (valueSpan) {
+            valueSpan.textContent = ` ${count}回`;
         }
+        appearanceCountEl.style.display = 'flex';
     }
     
     // 裏面の意味と品詞を一緒に表示（品詞を左横に）
@@ -3912,10 +3889,14 @@ function displayCurrentWord() {
             if (exampleEn && word.word) {
                 const escaped = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
-                let highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
-                // 先頭が小文字の場合は、タグをスキップして最初の英字のみ大文字化
-                highlighted = highlighted.replace(/^(\s*(<[^>]+>\s*)*)([a-z])/, (_, prefix, _tags, first) => `${prefix}${first.toUpperCase()}`);
-                exampleEnglishEl.innerHTML = highlighted;
+                const highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
+                
+                // 例文が文（. ! ? で終わる）かつ先頭が小文字なら大文字化（strongなどのタグはスキップ）
+                let finalText = highlighted;
+                if (/[.!?]\s*$/.test(exampleEn)) {
+                    finalText = highlighted.replace(/^(\s*(?:<[^>]+>\s*)*)([a-z])/, (_m, prefix, first) => `${prefix}${first.toUpperCase()}`);
+                }
+                exampleEnglishEl.innerHTML = finalText;
             } else {
                 exampleEnglishEl.textContent = exampleEn;
             }
