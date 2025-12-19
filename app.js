@@ -48,6 +48,14 @@ let reorderTouchData = { // タッチドラッグ用のデータ
     rafId: null // requestAnimationFrameのID
 };
 const EXAM_DATE_KEY = 'osakaExamDate';
+const EXAM_TITLE_KEY = 'examCountdownTitle';
+const EXAM_TITLE_OPTIONS = [
+    '大阪府公立入試まで',
+    '私立高校入試まで',
+    '実力テストまで',
+    '定期テストまで',
+    '模擬試験まで'
+];
 let examCountdownTimer = null;
 
  // 0: 曜日, 1: 月
@@ -166,6 +174,22 @@ function saveExamDate(dateStr) {
     localStorage.setItem(EXAM_DATE_KEY, dateStr);
 }
 
+function loadExamTitle() {
+    const saved = localStorage.getItem(EXAM_TITLE_KEY);
+    if (saved && EXAM_TITLE_OPTIONS.includes(saved)) {
+        return saved;
+    }
+    const def = EXAM_TITLE_OPTIONS[0];
+    localStorage.setItem(EXAM_TITLE_KEY, def);
+    return def;
+}
+
+function saveExamTitle(titleStr) {
+    if (EXAM_TITLE_OPTIONS.includes(titleStr)) {
+        localStorage.setItem(EXAM_TITLE_KEY, titleStr);
+    }
+}
+
 function calcRemainingDays(dateStr) {
     if (!dateStr) return null;
     const target = new Date(`${dateStr}T00:00:00`);
@@ -200,9 +224,17 @@ function updateExamCountdownDisplay() {
 
 function initExamCountdown() {
     const dateInput = document.getElementById('examDateInput');
+    const titleSelect = document.getElementById('examTitleSelect');
     const saved = loadExamDate();
     if (dateInput) {
         dateInput.value = saved;
+    }
+    if (titleSelect) {
+        const savedTitle = loadExamTitle();
+        titleSelect.value = savedTitle;
+        titleSelect.addEventListener('change', () => {
+            saveExamTitle(titleSelect.value);
+        });
     }
     updateExamCountdownDisplay();
     

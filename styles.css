@@ -5588,7 +5588,7 @@ body {
     padding: 14px 16px;
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -5611,6 +5611,30 @@ body {
     font-size: 16px;
     font-weight: 800;
     color: #1f2937;
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 4px auto 6px;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #2563eb;
+}
+
+.exam-countdown-title select {
+    background: transparent url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='5 7 10 12 15 7'/></svg>") no-repeat right -2px center;
+    background-size: 14px 14px;
+    border: none;
+    font: inherit;
+    color: inherit;
+    text-align: center;
+    text-align-last: center;
+    padding: 0 18px 0 0;
+    margin: 0;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+}
+
+.exam-countdown-title select:focus {
+    outline: none;
 }
 
 .exam-date-input-row {

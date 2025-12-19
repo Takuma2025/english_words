@@ -116,7 +116,15 @@
                 <!-- 入試カウントダウン -->
                 <div class="exam-countdown-card" id="examCountdownCard">
                     <div class="exam-countdown-left">
-                        <div class="exam-countdown-title">大阪府公立入試まで</div>
+                        <div class="exam-countdown-title">
+                            <select id="examTitleSelect" aria-label="カウントダウン対象">
+                                <option value="大阪府公立入試まで">大阪府公立入試まで</option>
+                                <option value="私立高校入試まで">私立高校入試まで</option>
+                                <option value="実力テストまで">実力テストまで</option>
+                                <option value="定期テストまで">定期テストまで</option>
+                                <option value="模擬試験まで">模擬試験まで</option>
+                            </select>
+                        </div>
                         <div class="exam-date-input-row">
                             <label for="examDateInput">入試日</label>
                             <input type="date" id="examDateInput" aria-label="入試日">
