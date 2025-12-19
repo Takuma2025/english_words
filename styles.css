@@ -5750,7 +5750,7 @@ body {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
-    z-index: 1100;
+    z-index: 10000;
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
@@ -5769,7 +5769,7 @@ body {
     bottom: 0;
     top: 5%;
     background: #ffffff;
-    z-index: 1101;
+    z-index: 10001;
     border-radius: 20px 20px 0 0;
     box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
     transform: translateY(100%);
@@ -5813,11 +5813,11 @@ body {
 .filter-sheet-content {
     flex: 1;
     overflow-y: auto;
-    padding: 24px 16px;
+    padding: 24px 20px;
     padding-top: 70px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
 }
 
 #wordFilterView .section-title {
@@ -5828,7 +5828,7 @@ body {
 
 .filter-category-header {
     width: 100%;
-    max-width: 480px;
+    max-width: 100%;
     margin-bottom: 16px;
     text-align: center;
 }
@@ -5876,11 +5876,11 @@ body {
 
 .filter-card-container {
     width: 100%;
-    max-width: 480px;
+    max-width: 100%;
     background: transparent;
     border: none;
     border-radius: 0;
-    padding: 0 20px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -5932,6 +5932,7 @@ body {
     cursor: pointer;
     transition: all 0.15s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
 }
 
 .filter-checkbox:hover,
@@ -6012,7 +6013,8 @@ body {
     cursor: pointer;
     flex: 1;
     letter-spacing: 0.01em;
-    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .filter-checkbox:has(input:checked) .checkbox-label {
