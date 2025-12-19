@@ -2562,7 +2562,8 @@ function setupEventListeners() {
         completionBackBtn.addEventListener('click', () => {
             hideCompletion();
             setTimeout(() => {
-                showCategorySelection();
+                // 単元メニュー（コース選択画面）に戻る
+                returnToCourseSelection();
             }, 350);
         });
     }
@@ -4337,9 +4338,33 @@ function showCompletion() {
     if (completionCorrectCount) completionCorrectCount.textContent = correctCount;
     if (completionWrongCount) completionWrongCount.textContent = wrongCount;
     
+    // 今回の学習範囲の総数
+    const total = currentWords.length;
+    
+    // +◯語覚えた表示
+    const completionGained = document.getElementById('completionGained');
+    if (completionGained) {
+        if (correctCount > 0) {
+            completionGained.textContent = `+${correctCount}語 覚えた！`;
+            completionGained.classList.remove('hidden');
+        } else {
+            completionGained.classList.add('hidden');
+        }
+    }
+    
+    // コンプリート判定（今回の学習範囲で全問正解したか）
+    const confettiContainer = document.getElementById('confettiContainer');
+    
+    // 今回の学習で間違いがなく、全問正解した場合にコンプリート
+    const isComplete = total > 0 && correctCount === total && wrongCount === 0;
+    
+    // 紙吹雪をクリア
+    if (confettiContainer) {
+        confettiContainer.innerHTML = '';
+    }
+    
     // 進捗テキストを設定
     const completionProgressText = document.getElementById('completionProgressText');
-    const total = currentWords.length;
     if (completionProgressText) {
         completionProgressText.textContent = `${correctCount + wrongCount}/${total}語`;
     }
@@ -4347,15 +4372,25 @@ function showCompletion() {
     // 進捗バーを初期化（0%）
     const completionProgressCorrect = document.getElementById('completionProgressCorrect');
     const completionProgressWrong = document.getElementById('completionProgressWrong');
+    const completionProgressBar = document.querySelector('.completion-progress-bar');
     if (completionProgressCorrect) completionProgressCorrect.style.width = '0%';
     if (completionProgressWrong) completionProgressWrong.style.width = '0%';
+    
+    // 進捗バーのCOMPLETE表示
+    if (completionProgressBar) {
+        if (isComplete) {
+            completionProgressBar.classList.add('completion-progress-complete');
+        } else {
+            completionProgressBar.classList.remove('completion-progress-complete');
+        }
+    }
     
     // 復習ボタンの表示/非表示
     const completionReviewBtn = document.getElementById('completionReviewBtn');
     if (completionReviewBtn) {
         if (wrongCount > 0) {
             completionReviewBtn.classList.remove('hidden');
-            completionReviewBtn.textContent = `覚えていない単語を復習（${wrongCount}語）`;
+            completionReviewBtn.innerHTML = `<svg class="completion-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> 覚えていない単語を復習（${wrongCount}語）`;
         } else {
             completionReviewBtn.classList.add('hidden');
         }
@@ -4380,7 +4415,38 @@ function showCompletion() {
                 completionProgressWrong.style.width = `${wrongPercent}%`;
             }
         }, 300);
+        
+        // コンプリート時は紙吹雪を表示
+        if (isComplete && confettiContainer) {
+            createConfetti(confettiContainer);
+        }
     });
+}
+
+// 紙吹雪を生成
+function createConfetti(container) {
+    const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
+    const confettiCount = 50;
+    
+    for (let i = 0; i < confettiCount; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.width = (Math.random() * 10 + 5) + 'px';
+            confetti.style.height = (Math.random() * 10 + 5) + 'px';
+            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+            container.appendChild(confetti);
+            
+            // アニメーション終了後に削除
+            setTimeout(() => {
+                confetti.remove();
+            }, 4000);
+        }, i * 30);
+    }
 }
 
 // 完了画面を閉じる
@@ -4392,6 +4458,48 @@ function hideCompletion() {
             completionOverlay.classList.add('hidden');
         }, 300);
     }
+}
+
+// 単元メニュー（コース選択画面）に戻る
+function returnToCourseSelection() {
+    const category = selectedCategory;
+    
+    // 学習モードをリセット
+    document.body.classList.remove('learning-mode');
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent) {
+        mainContent.classList.add('hidden');
+    }
+    
+    // コース名からデータカテゴリー名へのマッピング
+    const categoryMapping = {
+        'LEVEL1 大阪府必須400': 'Group1 超頻出600',
+        'LEVEL2 大阪府重要300': 'Group2 頻出200',
+        'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
+        'LEVEL4 私立難関校対策300': 'Group3 ハイレベル100'
+    };
+    
+    // カテゴリーに応じて単語データを取得
+    let categoryWords;
+    if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
+        if (typeof elementaryWordData !== 'undefined') {
+            categoryWords = elementaryWordData;
+        } else {
+            showCategorySelection();
+            return;
+        }
+    } else {
+        const dataCategory = categoryMapping[category] || category;
+        categoryWords = wordData.filter(word => word.category === dataCategory);
+    }
+    
+    if (!categoryWords || categoryWords.length === 0) {
+        showCategorySelection();
+        return;
+    }
+    
+    // コース選択画面を表示
+    showCourseSelection(category, categoryWords);
 }
 
 // 覚えていない単語を復習
