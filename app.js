@@ -2442,6 +2442,56 @@ function setupEventListeners() {
         filterOverlay.addEventListener('click', closeFilterSheet);
     }
     
+    // スワイプで閉じる機能
+    const wordFilterViewEl = document.getElementById('wordFilterView');
+    if (wordFilterViewEl) {
+        let touchStartY = 0;
+        let touchCurrentY = 0;
+        let isDragging = false;
+        
+        wordFilterViewEl.addEventListener('touchstart', (e) => {
+            // スクロール可能なコンテンツの先頭にいる場合のみスワイプを有効に
+            const filterSheetContent = wordFilterViewEl.querySelector('.filter-sheet-content');
+            if (filterSheetContent && filterSheetContent.scrollTop <= 0) {
+                touchStartY = e.touches[0].clientY;
+                isDragging = true;
+            }
+        }, { passive: true });
+        
+        wordFilterViewEl.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            touchCurrentY = e.touches[0].clientY;
+            const deltaY = touchCurrentY - touchStartY;
+            
+            // 下方向にスワイプしている場合のみ
+            if (deltaY > 0) {
+                // シートを下にずらす（最大200pxまで）
+                const translateY = Math.min(deltaY * 0.5, 200);
+                wordFilterViewEl.style.transform = `translateY(${translateY}px)`;
+                wordFilterViewEl.style.transition = 'none';
+            }
+        }, { passive: true });
+        
+        wordFilterViewEl.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            const deltaY = touchCurrentY - touchStartY;
+            wordFilterViewEl.style.transition = 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)';
+            
+            // 100px以上下にスワイプしたら閉じる
+            if (deltaY > 100) {
+                closeFilterSheet();
+            } else {
+                // 元に戻す
+                wordFilterViewEl.style.transform = 'translateY(0)';
+            }
+            
+            touchStartY = 0;
+            touchCurrentY = 0;
+        }, { passive: true });
+    }
+    
     // ハンバーガーメニューボタンとサイドバー
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
     const sidebar = document.getElementById('sidebar');

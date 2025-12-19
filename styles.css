@@ -5807,6 +5807,7 @@ body {
     overflow-y: auto;
     padding: 24px 12px;
     padding-top: 70px;
+    padding-bottom: 100px;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -6110,11 +6111,17 @@ body {
 }
 
 .filter-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     flex-direction: row;
     gap: 12px;
-    margin-top: 6px;
-    width: 100%;
+    padding: 16px 12px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    background: #ffffff;
+    z-index: 10;
 }
 
 @media (max-width: 460px) {

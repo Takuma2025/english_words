@@ -524,77 +524,6 @@
                 </div>
             </div>
 
-            <!-- 学習フィルター画面（ボトムシート） -->
-            <div class="filter-overlay hidden" id="filterOverlay"></div>
-            <div class="filter-sheet hidden" id="wordFilterView">
-                <button class="filter-close-btn" id="filterCloseBtn" aria-label="閉じる">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-                <div class="filter-sheet-content">
-                <div class="filter-category-header">
-                    <div class="filter-category-title" id="filterCategoryTitle">カテゴリー名</div>
-                    <div class="filter-category-progress">
-                        <div class="filter-category-progress-bar">
-                            <div class="filter-category-progress-correct" id="filterProgressCorrect" style="width: 0%"></div>
-                            <div class="filter-category-progress-wrong" id="filterProgressWrong" style="width: 0%"></div>
-                        </div>
-                        <div class="filter-category-progress-text" id="filterProgressText">0/0語</div>
-                    </div>
-                </div>
-                <div class="filter-card-container">
-                    <div class="filter-section">
-                        <div class="filter-section-title">問題を絞る</div>
-                        <div class="filter-options">
-                            <label class="filter-checkbox filter-checkbox-all">
-                                <input type="checkbox" id="filterAll" checked>
-                                <span class="checkbox-label">すべて</span>
-                            </label>
-                            <label class="filter-checkbox">
-                                <input type="checkbox" id="filterUnlearned" checked>
-                                <span class="checkbox-label">未学習 <span class="filter-icon filter-icon-gray"></span></span>
-                            </label>
-                            <label class="filter-checkbox">
-                                <input type="checkbox" id="filterWrong" checked>
-                                <span class="checkbox-label">覚えていない <span class="filter-icon filter-icon-red"></span></span>
-                            </label>
-                            <label class="filter-checkbox">
-                                <input type="checkbox" id="filterCorrect" checked>
-                                <span class="checkbox-label">覚えた <span class="filter-icon filter-icon-blue"></span></span>
-                            </label>
-                            <label class="filter-checkbox">
-                                <input type="checkbox" id="filterBookmark" checked>
-                                <span class="checkbox-label">ブックマーク <svg class="filter-icon-bookmark" width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1h12v14l-6-4-6 4V1z"/></svg></span>
-                            </label>
-                        </div>
-                        <div class="filter-info" id="filterInfo">
-                            <span id="filteredWordCount">0語</span>が選択されています
-                        </div>
-                    </div>
-
-                    <div class="filter-section">
-                        <div class="filter-section-title">出題順</div>
-                        <div class="order-options">
-                            <label class="order-radio">
-                                <input type="radio" name="wordOrder" id="orderSequential" value="sequential" checked>
-                                <span class="radio-label">番号順</span>
-                            </label>
-                            <label class="order-radio">
-                                <input type="radio" name="wordOrder" id="orderRandom" value="random">
-                                <span class="radio-label">ランダム順</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="filter-actions">
-                        <button class="filter-start-btn" id="filterStartBtn">学習を開始</button>
-                    </div>
-                </div>
-                </div>
-            </div>
-
             <!-- 学習画面 -->
             <div class="learning-view hidden" id="mainContent">
                 <!-- カウントダウンオーバーレイ（タイムアタックモード時のみ） -->
@@ -1064,6 +993,77 @@
             <p class="install-message" id="installMessage">このアプリをホーム画面に追加すると、より快適に学習できます。</p>
             <div class="install-instructions" id="installInstructions"></div>
             <button class="install-close-btn" id="installCloseBtn">閉じる</button>
+        </div>
+    </div>
+
+    <!-- 学習フィルター画面（ボトムシート） - body直下に配置 -->
+    <div class="filter-overlay hidden" id="filterOverlay"></div>
+    <div class="filter-sheet hidden" id="wordFilterView">
+        <button class="filter-close-btn" id="filterCloseBtn" aria-label="閉じる">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <div class="filter-sheet-content">
+            <div class="filter-category-header">
+                <div class="filter-category-title" id="filterCategoryTitle">カテゴリー名</div>
+                <div class="filter-category-progress">
+                    <div class="filter-category-progress-bar">
+                        <div class="filter-category-progress-correct" id="filterProgressCorrect" style="width: 0%"></div>
+                        <div class="filter-category-progress-wrong" id="filterProgressWrong" style="width: 0%"></div>
+                    </div>
+                    <div class="filter-category-progress-text" id="filterProgressText">0/0語</div>
+                </div>
+            </div>
+            <div class="filter-card-container">
+                <div class="filter-section">
+                    <div class="filter-section-title">問題を絞る</div>
+                    <div class="filter-options">
+                        <label class="filter-checkbox filter-checkbox-all">
+                            <input type="checkbox" id="filterAll" checked>
+                            <span class="checkbox-label">すべて</span>
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" id="filterUnlearned" checked>
+                            <span class="checkbox-label">未学習 <span class="filter-icon filter-icon-gray"></span></span>
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" id="filterWrong" checked>
+                            <span class="checkbox-label">覚えていない <span class="filter-icon filter-icon-red"></span></span>
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" id="filterCorrect" checked>
+                            <span class="checkbox-label">覚えた <span class="filter-icon filter-icon-blue"></span></span>
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" id="filterBookmark" checked>
+                            <span class="checkbox-label">ブックマーク <svg class="filter-icon-bookmark" width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1h12v14l-6-4-6 4V1z"/></svg></span>
+                        </label>
+                    </div>
+                    <div class="filter-info" id="filterInfo">
+                        <span id="filteredWordCount">0語</span>が選択されています
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <div class="filter-section-title">出題順</div>
+                    <div class="order-options">
+                        <label class="order-radio">
+                            <input type="radio" name="wordOrder" id="orderSequential" value="sequential" checked>
+                            <span class="radio-label">番号順</span>
+                        </label>
+                        <label class="order-radio">
+                            <input type="radio" name="wordOrder" id="orderRandom" value="random">
+                            <span class="radio-label">ランダム順</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-actions">
+                    <button class="filter-start-btn" id="filterStartBtn">学習を開始</button>
+                </div>
+            </div>
         </div>
     </div>
 
