@@ -2971,9 +2971,6 @@ body {
     color: #ffffff;
 }
 
-.course-subsection-elementary .course-subsection-arrow {
-    color: #e5e7eb;
-}
 
 .course-subsection-elementary .course-group-badge {
     background-color: #10b981; /* OKボタンと同じ緑 */
@@ -2986,9 +2983,6 @@ body {
     color: #ffffff;
 }
 
-.course-subsection-function .course-subsection-arrow {
-    color: #e5e7eb;
-}
 
 .course-subsection-function .course-group-badge {
     background-color: #8b5cf6; /* 紫 */
@@ -2996,13 +2990,25 @@ body {
 }
 
 .course-subsection-arrow {
-    font-size: 12px;
-    color: #6b7280;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 10px solid #6b7280;
     transition: transform 0.2s;
 }
 
 .course-subsection.open .course-subsection-arrow {
     transform: rotate(90deg);
+}
+
+.course-subsection-elementary .course-subsection-arrow {
+    border-left-color: #ffffff;
+}
+
+.course-subsection-function .course-subsection-arrow {
+    border-left-color: #ffffff;
 }
 
 .course-subsection-body {
@@ -5735,6 +5741,167 @@ body {
         height: 72px;
         font-size: 32px;
     }
+}
+
+/* 学習完了画面 */
+.completion-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10002;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    padding: 20px;
+}
+
+.completion-overlay.show {
+    opacity: 1;
+}
+
+.completion-content {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 32px 24px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.completion-overlay.show .completion-content {
+    transform: scale(1) translateY(0);
+}
+
+.completion-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #2563eb;
+    margin-bottom: 8px;
+}
+
+.completion-course-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 24px;
+}
+
+.completion-progress-container {
+    margin-bottom: 24px;
+}
+
+.completion-progress-bar {
+    height: 24px;
+    background: #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.completion-progress-correct {
+    height: 100%;
+    background: #2563eb;
+    width: 0%;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.completion-progress-wrong {
+    height: 100%;
+    background: #dc2626;
+    width: 0%;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0.3s;
+}
+
+.completion-progress-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b7280;
+    text-align: right;
+}
+
+.completion-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 28px;
+}
+
+.completion-stat {
+    text-align: center;
+}
+
+.completion-stat-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+    margin-bottom: 4px;
+}
+
+.completion-stat-value {
+    font-size: 32px;
+    font-weight: 800;
+}
+
+.completion-stat-correct .completion-stat-value {
+    color: #2563eb;
+}
+
+.completion-stat-wrong .completion-stat-value {
+    color: #dc2626;
+}
+
+.completion-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.completion-btn {
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.completion-btn-review {
+    background: #dc2626;
+    color: #ffffff;
+    box-shadow: 0 4px 0 #b91c1c;
+}
+
+.completion-btn-review:hover {
+    background: #b91c1c;
+}
+
+.completion-btn-review:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #b91c1c;
+}
+
+.completion-btn-back {
+    background: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 4px 0 #1d4ed8;
+}
+
+.completion-btn-back:hover {
+    background: #1d4ed8;
+}
+
+.completion-btn-back:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #1d4ed8;
 }
 
 /* フィルター画面オーバーレイ */

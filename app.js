@@ -1213,7 +1213,6 @@ function showCourseSelection(category, categoryWords) {
 
             const arrow = document.createElement('span');
             arrow.className = 'course-subsection-arrow';
-            arrow.textContent = '▶';
             headerBtn.appendChild(arrow);
 
             const body = document.createElement('div');
@@ -1454,16 +1453,16 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     const savedBookmarks = localStorage.getItem('reviewWords');
     const bookmarks = savedBookmarks ? new Set(JSON.parse(savedBookmarks).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set();
     
-    // そのカテゴリーの単語でブックマーク、正解、間違いのいずれかがあるかチェック
+    // そのカテゴリーの単語でブックマーク、正解、間違い、未学習をカウント
     const bookmarkCount = categoryWords.filter(word => bookmarks.has(word.id)).length;
     const correctCount = categoryWords.filter(word => correctSet.has(word.id)).length;
     const wrongCount = categoryWords.filter(word => wrongSet.has(word.id)).length;
+    const unlearnedCount = categoryWords.filter(word => !correctSet.has(word.id) && !wrongSet.has(word.id)).length;
+    
     const hasBookmarkInCategory = bookmarkCount > 0;
     const hasCorrectInCategory = correctCount > 0;
     const hasWrongInCategory = wrongCount > 0;
-    
-    // 学習履歴があるかチェック（そのカテゴリー内で正解、間違い、ブックマークのいずれかがあるか）
-    const hasLearningHistory = hasCorrectInCategory || hasWrongInCategory || hasBookmarkInCategory;
+    const hasUnlearnedInCategory = unlearnedCount > 0;
     
     // フィルターチェックボックスの状態を設定
     const filterAll = document.getElementById('filterAll');
@@ -1472,51 +1471,30 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     const filterBookmark = document.getElementById('filterBookmark');
     const filterCorrect = document.getElementById('filterCorrect');
     
+    // 各フィルターの有効/無効を設定（存在する種類のみ選択可能）
     if (filterUnlearned) {
-        filterUnlearned.checked = true;
-        filterUnlearned.disabled = false;
+        filterUnlearned.checked = hasUnlearnedInCategory;
+        filterUnlearned.disabled = !hasUnlearnedInCategory;
+    }
+    if (filterWrong) {
+        filterWrong.checked = hasWrongInCategory;
+        filterWrong.disabled = !hasWrongInCategory;
+    }
+    if (filterBookmark) {
+        filterBookmark.checked = hasBookmarkInCategory;
+        filterBookmark.disabled = !hasBookmarkInCategory;
+    }
+    if (filterCorrect) {
+        filterCorrect.checked = hasCorrectInCategory;
+        filterCorrect.disabled = !hasCorrectInCategory;
     }
     
-    if (hasLearningHistory) {
-        // 学習履歴がある場合、存在する種類だけ選択可能に
-        if (filterWrong) {
-            filterWrong.checked = hasWrongInCategory;
-            filterWrong.disabled = !hasWrongInCategory;
-        }
-        if (filterBookmark) {
-            filterBookmark.checked = hasBookmarkInCategory;
-            filterBookmark.disabled = !hasBookmarkInCategory;
-        }
-        if (filterCorrect) {
-            filterCorrect.checked = hasCorrectInCategory;
-            filterCorrect.disabled = !hasCorrectInCategory;
-        }
-        // 「すべて」をチェック（有効なフィルターがすべてONのときのみ）
-        if (filterAll) {
-            const enabledFilters = [filterUnlearned, filterWrong, filterBookmark, filterCorrect].filter(cb => cb && !cb.disabled);
-            const allEnabledChecked = enabledFilters.every(cb => cb.checked);
-            filterAll.disabled = enabledFilters.length === 0;
-            filterAll.checked = enabledFilters.length === 0 ? false : allEnabledChecked;
-        }
-        } else {
-        // 初回学習の場合、未学習以外を無効化
-        if (filterWrong) {
-            filterWrong.checked = false;
-            filterWrong.disabled = true;
-        }
-        if (filterBookmark) {
-            filterBookmark.checked = false;
-            filterBookmark.disabled = true;
-        }
-        if (filterCorrect) {
-            filterCorrect.checked = false;
-            filterCorrect.disabled = true;
-        }
-        // 「すべて」を有効化（初回学習時は「すべて」=「未学習」のみ）
-        if (filterAll) {
-            filterAll.checked = true;
-            filterAll.disabled = false;
-        }
+    // 「すべて」をチェック（有効なフィルターがすべてONのときのみ）
+    if (filterAll) {
+        const enabledFilters = [filterUnlearned, filterWrong, filterBookmark, filterCorrect].filter(cb => cb && !cb.disabled);
+        const allEnabledChecked = enabledFilters.every(cb => cb.checked);
+        filterAll.disabled = enabledFilters.length === 0;
+        filterAll.checked = enabledFilters.length === 0 ? false : allEnabledChecked;
     }
     
     // フィルター情報を更新
@@ -2573,6 +2551,25 @@ function setupEventListeners() {
     if (sidebarOverlay) {
         sidebarOverlay.addEventListener('click', () => {
             closeSidebar();
+        });
+    }
+    
+    // 完了画面のボタン
+    const completionBackBtn = document.getElementById('completionBackBtn');
+    const completionReviewBtn = document.getElementById('completionReviewBtn');
+    
+    if (completionBackBtn) {
+        completionBackBtn.addEventListener('click', () => {
+            hideCompletion();
+            setTimeout(() => {
+                showCategorySelection();
+            }, 350);
+        });
+    }
+    
+    if (completionReviewBtn) {
+        completionReviewBtn.addEventListener('click', () => {
+            reviewWrongWords();
         });
     }
     
@@ -4321,42 +4318,106 @@ function markAnswer(isCorrect, isTimeout = false) {
 
 // 完了画面を表示
 function showCompletion() {
-    // elements.englishWord.textContent = '完了！'; // 削除：カード表示を変更しない
-    showConfirm(`学習完了！\n覚えた数: ${correctCount}\n覚えていない数: ${wrongCount}\n\nもう一度学習しますか？`).then(result => {
-        if (result) {
-            // 進捗をリセットして最初から
-            if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習') {
-                resetProgress(selectedCategory);
-            }
-            
-            if (selectedCategory === '間違い復習') {
-                // 間違い復習の場合はリストを再取得（削除されたものを除外）
-                const wrongs = wordData.filter(word => wrongWords.has(word.id));
-                if (wrongs.length === 0) {
-                    showAlert('通知', '全ての間違いをクリアしました！');
-                    showCategorySelection();
-                    return;
-                }
-                initLearning('間違い復習', wrongs, 0);
-            } else if (selectedCategory === '復習チェック') {
-                // 復習チェックの場合もリストを再取得（削除されたものを除外）
-                const reviews = wordData.filter(word => reviewWords.has(word.id));
-                if (reviews.length === 0) {
-                    showAlert('通知', '全ての復習チェックをクリアしました！');
-                    showCategorySelection();
-                    return;
-                }
-                initLearning('復習チェック', reviews, 0);
-            } else if (selectedCategory) {
-                // 通常カテゴリー
-                initLearning(selectedCategory, currentWords, 0);
-            } else {
-                showCategorySelection();
-            }
+    const completionOverlay = document.getElementById('completionOverlay');
+    if (!completionOverlay) {
+        // フォールバック：旧方式
+        showCategorySelection();
+        return;
+    }
+    
+    // カテゴリー名を設定
+    const completionCourseTitle = document.getElementById('completionCourseTitle');
+    if (completionCourseTitle) {
+        completionCourseTitle.textContent = currentFilterCourseTitle || selectedCategory || '';
+    }
+    
+    // 統計を設定
+    const completionCorrectCount = document.getElementById('completionCorrectCount');
+    const completionWrongCount = document.getElementById('completionWrongCount');
+    if (completionCorrectCount) completionCorrectCount.textContent = correctCount;
+    if (completionWrongCount) completionWrongCount.textContent = wrongCount;
+    
+    // 進捗テキストを設定
+    const completionProgressText = document.getElementById('completionProgressText');
+    const total = currentWords.length;
+    if (completionProgressText) {
+        completionProgressText.textContent = `${correctCount + wrongCount}/${total}語`;
+    }
+    
+    // 進捗バーを初期化（0%）
+    const completionProgressCorrect = document.getElementById('completionProgressCorrect');
+    const completionProgressWrong = document.getElementById('completionProgressWrong');
+    if (completionProgressCorrect) completionProgressCorrect.style.width = '0%';
+    if (completionProgressWrong) completionProgressWrong.style.width = '0%';
+    
+    // 復習ボタンの表示/非表示
+    const completionReviewBtn = document.getElementById('completionReviewBtn');
+    if (completionReviewBtn) {
+        if (wrongCount > 0) {
+            completionReviewBtn.classList.remove('hidden');
+            completionReviewBtn.textContent = `覚えていない単語を復習（${wrongCount}語）`;
         } else {
-            showCategorySelection(); // キャンセル時はホームへ
+            completionReviewBtn.classList.add('hidden');
         }
+    }
+    
+    // オーバーレイを表示
+    completionOverlay.classList.remove('hidden');
+    
+    // アニメーション開始
+    requestAnimationFrame(() => {
+        completionOverlay.classList.add('show');
+        
+        // 少し遅れて進捗バーをアニメーション
+        setTimeout(() => {
+            const correctPercent = total > 0 ? (correctCount / total) * 100 : 0;
+            const wrongPercent = total > 0 ? (wrongCount / total) * 100 : 0;
+            
+            if (completionProgressCorrect) {
+                completionProgressCorrect.style.width = `${correctPercent}%`;
+            }
+            if (completionProgressWrong) {
+                completionProgressWrong.style.width = `${wrongPercent}%`;
+            }
+        }, 300);
     });
+}
+
+// 完了画面を閉じる
+function hideCompletion() {
+    const completionOverlay = document.getElementById('completionOverlay');
+    if (completionOverlay) {
+        completionOverlay.classList.remove('show');
+        setTimeout(() => {
+            completionOverlay.classList.add('hidden');
+        }, 300);
+    }
+}
+
+// 覚えていない単語を復習
+function reviewWrongWords() {
+    hideCompletion();
+    
+    // 今回の学習で間違えた単語を取得
+    const wrongWordsInSession = currentWords.filter(word => {
+        const { wrongSet } = loadCategoryWords(selectedCategory);
+        return wrongSet.has(word.id);
+    });
+    
+    if (wrongWordsInSession.length === 0) {
+        showAlert('通知', '覚えていない単語はありません');
+        showCategorySelection();
+        return;
+    }
+    
+    // 間違えた単語で学習を開始
+    setTimeout(() => {
+        if (selectedLearningMode === 'input') {
+            initInputModeLearning(selectedCategory, wrongWordsInSession, 0);
+        } else {
+            initLearning(selectedCategory, wrongWordsInSession, 0, wrongWordsInSession.length, 0);
+        }
+    }, 350);
 }
 
 // 進捗バーのセグメントを生成（20問ずつ表示）

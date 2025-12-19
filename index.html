@@ -996,6 +996,35 @@
         </div>
     </div>
 
+    <!-- 学習完了画面 -->
+    <div class="completion-overlay hidden" id="completionOverlay">
+        <div class="completion-content">
+            <div class="completion-title">学習完了！</div>
+            <div class="completion-course-title" id="completionCourseTitle">カテゴリー名</div>
+            <div class="completion-progress-container">
+                <div class="completion-progress-bar">
+                    <div class="completion-progress-correct" id="completionProgressCorrect"></div>
+                    <div class="completion-progress-wrong" id="completionProgressWrong"></div>
+                </div>
+                <div class="completion-progress-text" id="completionProgressText">0/0語</div>
+            </div>
+            <div class="completion-stats">
+                <div class="completion-stat completion-stat-correct">
+                    <div class="completion-stat-label">覚えた</div>
+                    <div class="completion-stat-value" id="completionCorrectCount">0</div>
+                </div>
+                <div class="completion-stat completion-stat-wrong">
+                    <div class="completion-stat-label">覚えていない</div>
+                    <div class="completion-stat-value" id="completionWrongCount">0</div>
+                </div>
+            </div>
+            <div class="completion-actions">
+                <button class="completion-btn completion-btn-review hidden" id="completionReviewBtn">覚えていない単語を復習</button>
+                <button class="completion-btn completion-btn-back" id="completionBackBtn">戻る</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 学習フィルター画面（ボトムシート） - body直下に配置 -->
     <div class="filter-overlay hidden" id="filterOverlay"></div>
     <div class="filter-sheet hidden" id="wordFilterView">
