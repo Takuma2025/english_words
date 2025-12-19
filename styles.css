@@ -5783,6 +5783,8 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.08em;
     padding-left: 2px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #2563eb;
 }
 
 .filter-options {
@@ -5855,13 +5857,13 @@ body {
 .filter-checkbox input[type="checkbox"]:checked::after {
     content: '';
     position: absolute;
-    left: 5px;
-    top: 2px;
-    width: 6px;
-    height: 10px;
+    left: 50%;
+    top: 45%;
+    width: 5px;
+    height: 9px;
     border: solid #ffffff;
     border-width: 0 2.5px 2.5px 0;
-    transform: rotate(45deg);
+    transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .filter-checkbox input[type="checkbox"]:disabled {
@@ -5893,6 +5895,38 @@ body {
 .filter-checkbox:has(input:checked) .checkbox-label {
     color: #1e40af;
     font-weight: 600;
+}
+
+.filter-icon {
+    display: inline-block;
+    margin-left: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border-width: 2.5px;
+    border-style: solid;
+    vertical-align: middle;
+}
+
+.filter-icon-gray {
+    border-color: #9ca3af;
+}
+
+.filter-icon-blue {
+    border-color: #2563eb;
+}
+
+.filter-icon-red {
+    border-color: #dc2626;
+}
+
+.filter-icon-bookmark {
+    display: inline-block;
+    margin-left: 6px;
+    width: 14px;
+    height: 16px;
+    vertical-align: middle;
+    color: #f59e0b;
 }
 
 .order-radio input[type="radio"] {
@@ -5963,10 +5997,7 @@ body {
     flex-direction: row;
     gap: 12px;
     margin-top: 6px;
-    max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
-    justify-content: center;
+    width: 100%;
 }
 
 @media (max-width: 460px) {
