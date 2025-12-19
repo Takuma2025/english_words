@@ -47,6 +47,8 @@ let reorderTouchData = { // タッチドラッグ用のデータ
     cloneHeight: 0, // クローンの高さ（パフォーマンス最適化用）
     rafId: null // requestAnimationFrameのID
 };
+const EXAM_DATE_KEY = 'osakaExamDate';
+let examCountdownTimer = null;
 
  // 0: 曜日, 1: 月
 
@@ -136,6 +138,79 @@ function loadData() {
         const parsed = JSON.parse(savedWrongWords);
         wrongWords = new Set(parsed.map(id => typeof id === 'string' ? parseInt(id, 10) : id));
     }
+}
+
+// 入試日関連 ------------------------------
+function getDefaultExamDateStr() {
+    const today = new Date();
+    // 3月10日をデフォルト（今年の3月10日を過ぎていれば翌年）
+    const baseMonth = 2; // 0-indexed (March)
+    const baseDay = 10;
+    const year = (today.getMonth() > baseMonth || (today.getMonth() === baseMonth && today.getDate() > baseDay))
+        ? today.getFullYear() + 1
+        : today.getFullYear();
+    const monthStr = String(baseMonth + 1).padStart(2, '0');
+    const dayStr = String(baseDay).padStart(2, '0');
+    return `${year}-${monthStr}-${dayStr}`;
+}
+
+function loadExamDate() {
+    const saved = localStorage.getItem(EXAM_DATE_KEY);
+    if (saved) return saved;
+    const def = getDefaultExamDateStr();
+    localStorage.setItem(EXAM_DATE_KEY, def);
+    return def;
+}
+
+function saveExamDate(dateStr) {
+    localStorage.setItem(EXAM_DATE_KEY, dateStr);
+}
+
+function calcRemainingDays(dateStr) {
+    if (!dateStr) return null;
+    const target = new Date(`${dateStr}T00:00:00`);
+    if (Number.isNaN(target.getTime())) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    target.setHours(0, 0, 0, 0);
+    const diffMs = target - today;
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    return Math.max(diffDays, 0);
+}
+
+function updateExamCountdownDisplay() {
+    const dateInput = document.getElementById('examDateInput');
+    if (!dateInput) return;
+    const dateStr = dateInput.value || loadExamDate();
+    const remaining = calcRemainingDays(dateStr);
+    if (remaining === null) return;
+    
+    const clamped = Math.min(remaining, 999);
+    const padded = String(clamped).padStart(3, '0');
+    const hundredsEl = document.getElementById('examDaysHundreds');
+    const tensEl = document.getElementById('examDaysTens');
+    const onesEl = document.getElementById('examDaysOnes');
+    const textEl = document.getElementById('examDaysText');
+    
+    if (hundredsEl) hundredsEl.textContent = padded[0];
+    if (tensEl) tensEl.textContent = padded[1];
+    if (onesEl) onesEl.textContent = padded[2];
+    if (textEl) textEl.textContent = remaining.toString();
+}
+
+function initExamCountdown() {
+    const dateInput = document.getElementById('examDateInput');
+    const saved = loadExamDate();
+    if (dateInput) {
+        dateInput.value = saved;
+    }
+    updateExamCountdownDisplay();
+    
+    if (examCountdownTimer) {
+        clearInterval(examCountdownTimer);
+    }
+    // 1時間ごとに残日数を更新
+    examCountdownTimer = setInterval(updateExamCountdownDisplay, 60 * 60 * 1000);
 }
 
 // 進捗を読み込む（モードごとに分ける）
@@ -695,6 +770,7 @@ function init() {
         preventZoom();
         assignCategories();
         loadData();
+        initExamCountdown();
         setupEventListeners();
         
         // スプラッシュ画面を表示
@@ -793,6 +869,7 @@ function showCategorySelection() {
     
     // ハンバーガーメニューを表示、戻るボタンを非表示
     updateHeaderButtons('home');
+    updateExamCountdownDisplay();
     
     // 文法モードのビューを非表示
     const grammarTOCView = document.getElementById('grammarTableOfContentsView');
@@ -1327,9 +1404,12 @@ function showWordFilterView(category, categoryWords) {
     const bookmarks = savedBookmarks ? new Set(JSON.parse(savedBookmarks).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set();
     
     // そのカテゴリーの単語でブックマーク、正解、間違いのいずれかがあるかチェック
-    const hasBookmarkInCategory = categoryWords.some(word => bookmarks.has(word.id));
-    const hasCorrectInCategory = categoryWords.some(word => correctSet.has(word.id));
-    const hasWrongInCategory = categoryWords.some(word => wrongSet.has(word.id));
+    const bookmarkCount = categoryWords.filter(word => bookmarks.has(word.id)).length;
+    const correctCount = categoryWords.filter(word => correctSet.has(word.id)).length;
+    const wrongCount = categoryWords.filter(word => wrongSet.has(word.id)).length;
+    const hasBookmarkInCategory = bookmarkCount > 0;
+    const hasCorrectInCategory = correctCount > 0;
+    const hasWrongInCategory = wrongCount > 0;
     
     // 学習履歴があるかチェック（そのカテゴリー内で正解、間違い、ブックマークのいずれかがあるか）
     const hasLearningHistory = hasCorrectInCategory || hasWrongInCategory || hasBookmarkInCategory;
@@ -1347,23 +1427,25 @@ function showWordFilterView(category, categoryWords) {
     }
     
     if (hasLearningHistory) {
-        // 学習履歴がある場合、すべてのフィルターを有効化
+        // 学習履歴がある場合、存在する種類だけ選択可能に
         if (filterWrong) {
-            filterWrong.checked = true;
-            filterWrong.disabled = false;
+            filterWrong.checked = hasWrongInCategory;
+            filterWrong.disabled = !hasWrongInCategory;
         }
         if (filterBookmark) {
-            filterBookmark.checked = true;
-            filterBookmark.disabled = false;
+            filterBookmark.checked = hasBookmarkInCategory;
+            filterBookmark.disabled = !hasBookmarkInCategory;
         }
         if (filterCorrect) {
-            filterCorrect.checked = true;
-            filterCorrect.disabled = false;
+            filterCorrect.checked = hasCorrectInCategory;
+            filterCorrect.disabled = !hasCorrectInCategory;
         }
-        // 「すべて」をチェック
+        // 「すべて」をチェック（有効なフィルターがすべてONのときのみ）
         if (filterAll) {
-            filterAll.checked = true;
-            filterAll.disabled = false;
+            const enabledFilters = [filterUnlearned, filterWrong, filterBookmark, filterCorrect].filter(cb => cb && !cb.disabled);
+            const allEnabledChecked = enabledFilters.every(cb => cb.checked);
+            filterAll.disabled = enabledFilters.length === 0;
+            filterAll.checked = enabledFilters.length === 0 ? false : allEnabledChecked;
         }
     } else {
         // 初回学習の場合、未学習以外を無効化
@@ -2166,6 +2248,29 @@ function setupEventListeners() {
     const filterWrong = document.getElementById('filterWrong');
     const filterBookmark = document.getElementById('filterBookmark');
     const filterCorrect = document.getElementById('filterCorrect');
+    const examDateInput = document.getElementById('examDateInput');
+    const examDateSaveBtn = document.getElementById('examDateSaveBtn');
+
+    // 入試日設定
+    if (examDateSaveBtn) {
+        examDateSaveBtn.addEventListener('click', () => {
+            const value = examDateInput ? examDateInput.value : '';
+            if (!value) {
+                alert('入試日を選択してください。');
+                return;
+            }
+            saveExamDate(value);
+            updateExamCountdownDisplay();
+        });
+    }
+    if (examDateInput) {
+        examDateInput.addEventListener('change', () => {
+            if (examDateInput.value) {
+                saveExamDate(examDateInput.value);
+                updateExamCountdownDisplay();
+            }
+        });
+    }
     
     // 「すべて」チェックボックスの変更イベント
     if (filterAll) {

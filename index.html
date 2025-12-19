@@ -113,6 +113,27 @@
                     <span>大阪府公立入試について知る</span>
                     <img src="nyushi.image.png" alt="入試" class="exam-info-btn-image">
                 </button>
+                <!-- 入試カウントダウン -->
+                <div class="exam-countdown-card" id="examCountdownCard">
+                    <div class="exam-countdown-left">
+                        <div class="exam-countdown-title">大阪府公立入試まで</div>
+                        <div class="exam-date-input-row">
+                            <label for="examDateInput">入試日</label>
+                            <input type="date" id="examDateInput" aria-label="入試日">
+                            <button class="exam-date-save-btn" id="examDateSaveBtn">設定</button>
+                        </div>
+                    </div>
+                    <div class="exam-countdown-right">
+                        <div class="exam-calendar">
+                            <div class="calendar-mark">あと</div>
+                            <div class="calendar-tile"><span id="examDaysHundreds">0</span></div>
+                            <div class="calendar-tile"><span id="examDaysTens">0</span></div>
+                            <div class="calendar-tile"><span id="examDaysOnes">0</span></div>
+                            <div class="calendar-mark">日</div>
+                        </div>
+                        <div class="exam-calendar-label">日めくりカレンダー</div>
+                    </div>
+                </div>
                 <div class="course-tabs" id="courseTabs">
                     <button class="course-tab active" data-target="courseMasterSection">英単語マスターコース</button>
                     <button class="course-tab" data-target="courseScoreSection">入試得点力アップコース</button>
