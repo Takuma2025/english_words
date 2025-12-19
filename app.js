@@ -1418,16 +1418,10 @@ function showWordFilterView(category, categoryWords) {
     currentFilterCategory = category;
     currentFilterWords = categoryWords;
     
-    // コース選択画面を非表示
-    const courseSelection = document.getElementById('courseSelection');
-    if (courseSelection) {
-        courseSelection.classList.add('hidden');
-    }
-    
-    // フィルター画面を表示
     const wordFilterView = document.getElementById('wordFilterView');
     if (wordFilterView) {
         wordFilterView.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // バックグラウンドスクロールを防止
     }
     
     // 初回学習かどうかを判定（そのカテゴリーの単語に対してブックマーク、赤、青がすべてない場合）
@@ -1479,7 +1473,7 @@ function showWordFilterView(category, categoryWords) {
             filterAll.disabled = enabledFilters.length === 0;
             filterAll.checked = enabledFilters.length === 0 ? false : allEnabledChecked;
         }
-    } else {
+        } else {
         // 初回学習の場合、未学習以外を無効化
         if (filterWrong) {
             filterWrong.checked = false;
@@ -2356,6 +2350,7 @@ function setupEventListeners() {
             const wordFilterView = document.getElementById('wordFilterView');
             if (wordFilterView) {
                 wordFilterView.classList.add('hidden');
+                document.body.style.overflow = '';
             }
             
             // 学習を開始
@@ -2373,6 +2368,7 @@ function setupEventListeners() {
             const wordFilterView = document.getElementById('wordFilterView');
             if (wordFilterView) {
                 wordFilterView.classList.add('hidden');
+                document.body.style.overflow = '';
             }
             const courseSelection = document.getElementById('courseSelection');
             if (courseSelection) {
@@ -2454,6 +2450,7 @@ function setupEventListeners() {
             } else if (wordFilterView && !wordFilterView.classList.contains('hidden')) {
                 // フィルター画面からコース選択画面に戻る
                 wordFilterView.classList.add('hidden');
+                document.body.style.overflow = '';
                 if (courseSelection) {
                     courseSelection.classList.remove('hidden');
                 }
