@@ -5574,14 +5574,6 @@ body {
     }
 }
 
-/* 学習フィルター画面 */
-#wordFilterView {
-    width: 100%;
-    max-width: 520px;
-    margin: 0 auto 12px;
-    padding: 8px 0 12px;
-}
-
 .exam-countdown-card {
     width: 100%;
     max-width: 720px;
@@ -5813,7 +5805,7 @@ body {
 .filter-sheet-content {
     flex: 1;
     overflow-y: auto;
-    padding: 24px 20px;
+    padding: 24px 12px;
     padding-top: 70px;
     display: flex;
     flex-direction: column;
@@ -6126,13 +6118,11 @@ body {
 }
 
 @media (max-width: 460px) {
-    #wordFilterView {
-        padding: 12px;
-        max-width: 100%;
+    .filter-sheet-content {
+        padding: 70px 8px 16px;
     }
     .filter-card-container {
-        padding: 16px 14px;
-        border-radius: 12px;
+        padding: 0;
     }
     .filter-options {
         grid-template-columns: 1fr;
@@ -6157,14 +6147,12 @@ body {
 }
 
 @media (max-width: 600px) {
-    #wordFilterView {
-        max-width: 100%;
-        padding: 12px;
+    .filter-sheet-content {
+        padding: 70px 10px 16px;
     }
     .filter-card-container {
         max-width: 100%;
-        padding: 20px 16px;
-        border-radius: 14px;
+        padding: 0;
     }
     .filter-actions {
         max-width: 100%;
