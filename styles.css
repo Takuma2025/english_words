@@ -5576,18 +5576,10 @@ body {
 
 /* 学習フィルター画面 */
 #wordFilterView {
-    position: fixed;
-    inset: 0;
-    z-index: 1200;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(2px);
-    overflow-y: auto;
-    box-sizing: border-box;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto 12px;
+    padding: 8px 0 12px;
 }
 
 .exam-countdown-card {
@@ -5761,198 +5753,272 @@ body {
 
 .filter-card-container {
     width: 100%;
-    max-width: 520px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 0;
-    padding: 16px 14px;
+    max-width: 480px;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    border: none;
+    border-radius: 16px;
+    padding: 24px 20px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    box-shadow: none;
+    gap: 20px;
+    box-shadow: 0 4px 24px rgba(37, 99, 235, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .filter-section {
-    margin-bottom: 12px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    margin-bottom: 0;
+    background: transparent;
+    border: none;
     border-radius: 0;
-    padding: 8px 10px 6px;
+    padding: 0;
     box-shadow: none;
     position: relative;
 }
 
 .filter-section-title {
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 700;
-    color: #1f2937;
+    color: #2563eb;
     margin-bottom: 12px;
-    text-align: center;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-left: 2px;
 }
 
-.filter-options,
+.filter-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
 .order-options {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
 }
 
 .filter-checkbox,
 .order-radio {
     display: flex;
     align-items: center;
-    padding: 8px 10px;
+    padding: 12px 14px;
     background: #ffffff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.05);
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .filter-checkbox:hover,
 .order-radio:hover {
+    border-color: #93c5fd;
+    background: #f0f7ff;
+}
+
+.filter-checkbox:has(input:checked),
+.order-radio:has(input:checked) {
     border-color: #2563eb;
-    background: #eef4ff;
-    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
 }
 
 .filter-checkbox-all {
     font-weight: 700;
-    position: relative;
-    background: linear-gradient(90deg, #eef4ff, #ffffff);
-    border-color: #2563eb;
+    grid-column: span 2;
 }
 
 .filter-checkbox-all::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 14px;
-    box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.12);
-    pointer-events: none;
+    content: none;
 }
 
 .filter-checkbox input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
     width: 20px;
     height: 20px;
     margin-right: 12px;
     cursor: pointer;
-    accent-color: #2563eb;
+    border: 2px solid #cbd5e1;
+    border-radius: 6px;
+    background: #ffffff;
+    transition: all 0.15s ease;
+    position: relative;
+    flex-shrink: 0;
 }
 
 .filter-checkbox input[type="checkbox"]:checked {
     background: #2563eb;
+    border-color: #2563eb;
+}
+
+.filter-checkbox input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 6px;
+    height: 10px;
+    border: solid #ffffff;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
 }
 
 .filter-checkbox input[type="checkbox"]:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.4;
+    background: #f1f5f9;
 }
 
 .filter-checkbox:has(input[type="checkbox"]:disabled) {
-    opacity: 0.65;
+    opacity: 0.5;
     cursor: not-allowed;
 }
 
 .filter-checkbox:has(input[type="checkbox"]:disabled):hover {
-    border-color: #e2e8f0;
+    border-color: #e5e7eb;
     background: #ffffff;
     box-shadow: none;
 }
 
 .checkbox-label {
     font-size: 14px;
-    color: #1f2937;
+    font-weight: 500;
+    color: #374151;
     cursor: pointer;
     flex: 1;
     letter-spacing: 0.01em;
 }
 
+.filter-checkbox:has(input:checked) .checkbox-label {
+    color: #1e40af;
+    font-weight: 600;
+}
+
 .order-radio input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
     width: 20px;
     height: 20px;
     margin-right: 12px;
     cursor: pointer;
-    accent-color: #2563eb;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    background: #ffffff;
+    transition: all 0.15s ease;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.order-radio input[type="radio"]:checked {
+    border-color: #2563eb;
+    background: #ffffff;
+}
+
+.order-radio input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2563eb;
 }
 
 .order-radio input[type="radio"]:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.4;
+    background: #f1f5f9;
 }
 
 .order-radio:has(input[type="radio"]:disabled) {
-    opacity: 0.65;
+    opacity: 0.5;
     cursor: not-allowed;
 }
 
 .order-radio:has(input[type="radio"]:disabled):hover {
-    border-color: #e2e8f0;
+    border-color: #e5e7eb;
     background: #ffffff;
     box-shadow: none;
 }
 
 .radio-label {
     font-size: 14px;
-    color: #1f2937;
+    font-weight: 500;
+    color: #374151;
     cursor: pointer;
     flex: 1;
     letter-spacing: 0.01em;
 }
 
+.order-radio:has(input:checked) .radio-label {
+    color: #1e40af;
+    font-weight: 600;
+}
+
 .filter-actions {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 14px;
-    max-width: 520px;
+    flex-direction: row;
+    gap: 12px;
+    margin-top: 6px;
+    max-width: 480px;
     margin-left: auto;
     margin-right: auto;
+    justify-content: center;
 }
 
 @media (max-width: 460px) {
     #wordFilterView {
-        padding: 10px;
-        align-items: flex-start;
+        padding: 12px;
+        max-width: 100%;
     }
-    .filter-options,
+    .filter-card-container {
+        padding: 16px 14px;
+        border-radius: 12px;
+    }
+    .filter-options {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .filter-checkbox-all {
+        grid-column: span 1;
+    }
     .order-options {
         grid-template-columns: 1fr;
-        gap: 6px;
-    }
-    .filter-section {
-        padding: 8px 10px 8px;
-        border-radius: 6px;
+        gap: 8px;
     }
     .filter-checkbox,
     .order-radio {
-        padding: 8px 10px;
+        padding: 10px 12px;
         border-radius: 10px;
     }
     .filter-actions {
         max-width: 100%;
-        gap: 6px;
-        padding: 0 2px;
+        gap: 10px;
     }
 }
 
 @media (max-width: 600px) {
     #wordFilterView {
+        max-width: 100%;
         padding: 12px;
-        align-items: flex-start;
     }
-    .filter-card-container,
+    .filter-card-container {
+        max-width: 100%;
+        padding: 20px 16px;
+        border-radius: 14px;
+    }
     .filter-actions {
         max-width: 100%;
     }
-    .filter-section {
-        margin-bottom: 10px;
-        padding: 8px 12px 8px;
+    .filter-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
     }
-    .filter-options,
     .order-options {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
     }
     .filter-checkbox,
@@ -5965,8 +6031,8 @@ body {
     }
     .filter-actions {
         max-width: 100%;
-        margin-top: 12px;
-        gap: 8px;
+        margin-top: 8px;
+        gap: 10px;
     }
     .filter-start-btn,
     .filter-back-btn {
@@ -5986,7 +6052,8 @@ body {
 }
 
 .filter-start-btn {
-    width: 100%;
+    flex: 1 1 0;
+    width: auto;
     padding: 12px 14px;
     background: #0055ca;
     color: #ffffff;
@@ -6009,7 +6076,8 @@ body {
 }
 
 .filter-back-btn {
-    width: 100%;
+    flex: 1 1 0;
+    width: auto;
     padding: 12px 14px;
     background: #ffffff;
     color: #1f2937;
@@ -6033,17 +6101,19 @@ body {
 }
 
 .filter-info {
-    margin-top: 12px;
-    padding: 12px 16px;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
+    margin-top: 14px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #bfdbfe;
     border-radius: 10px;
     text-align: center;
     font-size: 14px;
-    color: #6b7280;
+    color: #1e40af;
+    font-weight: 500;
 }
 
 .filter-info #filteredWordCount {
-    font-weight: 700;
+    font-weight: 800;
     color: #2563eb;
+    font-size: 16px;
 }
