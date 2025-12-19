@@ -5756,15 +5756,16 @@ body {
 /* フィルター画面（ボトムシート） */
 #wordFilterView {
     position: fixed;
-    left: 0;
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
     bottom: 0;
     top: 5%;
+    width: 100%;
+    max-width: 540px;
     background: #ffffff;
     z-index: 10001;
     border-radius: 20px 20px 0 0;
     box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
-    transform: translateY(100%);
     transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
     overflow: hidden;
     display: flex;
@@ -5772,7 +5773,7 @@ body {
 }
 
 #wordFilterView.show {
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 .filter-close-btn {
@@ -5844,8 +5845,24 @@ body {
     height: 18px;
     background: #e5e7eb;
     border-radius: 0;
-    overflow: hidden;
+    overflow: visible;
     display: flex;
+    position: relative;
+}
+
+.filter-category-progress-bar.filter-progress-complete::after {
+    content: "COMPLETE!!";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 1px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    text-transform: uppercase;
 }
 
 .filter-category-progress-correct {

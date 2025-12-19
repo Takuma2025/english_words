@@ -1427,7 +1427,7 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     if (wordFilterView) {
         // 初期状態を設定
         wordFilterView.classList.remove('hidden');
-        wordFilterView.style.transform = 'translateY(100%)';
+        wordFilterView.style.transform = 'translateX(-50%) translateY(100%)';
         wordFilterView.style.transition = 'none';
         
         if (filterOverlay) {
@@ -1439,7 +1439,7 @@ function showWordFilterView(category, categoryWords, courseTitle) {
         
         requestAnimationFrame(() => {
             wordFilterView.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
-            wordFilterView.style.transform = 'translateY(0)';
+            wordFilterView.style.transform = 'translateX(-50%) translateY(0)';
             wordFilterView.classList.add('show');
             if (filterOverlay) {
                 filterOverlay.classList.add('show');
@@ -1545,6 +1545,17 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     }
     if (filterProgressText) {
         filterProgressText.textContent = `${completedCount}/${total}語`;
+    }
+    
+    // COMPLETE表示（全部青で間違い0の場合）
+    const filterProgressBar = document.querySelector('.filter-category-progress-bar');
+    if (filterProgressBar) {
+        const isComplete = total > 0 && wrongCount === 0 && correctCount === total;
+        if (isComplete) {
+            filterProgressBar.classList.add('filter-progress-complete');
+        } else {
+            filterProgressBar.classList.remove('filter-progress-complete');
+        }
     }
     
     // ハンバーガーメニューを非表示、戻るボタンを表示
@@ -2427,7 +2438,7 @@ function setupEventListeners() {
         if (wordFilterView) {
             // なめらかに下にスライド
             wordFilterView.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
-            wordFilterView.style.transform = 'translateY(100%)';
+            wordFilterView.style.transform = 'translateX(-50%) translateY(100%)';
             wordFilterView.classList.remove('show');
         }
         if (filterOverlay) {
@@ -2490,7 +2501,7 @@ function setupEventListeners() {
             
             // 下方向にスワイプしている場合のみ
             if (deltaY > 0) {
-                wordFilterViewEl.style.transform = `translateY(${deltaY}px)`;
+                wordFilterViewEl.style.transform = `translateX(-50%) translateY(${deltaY}px)`;
             }
         }, { passive: true });
         
@@ -2508,7 +2519,7 @@ function setupEventListeners() {
             } else {
                 // 元に戻す
                 wordFilterViewEl.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
-                wordFilterViewEl.style.transform = 'translateY(0)';
+                wordFilterViewEl.style.transform = 'translateX(-50%) translateY(0)';
                 setTimeout(() => {
                     wordFilterViewEl.style.transition = '';
                 }, 300);
