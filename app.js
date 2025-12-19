@@ -1284,7 +1284,7 @@ function showCourseSelection(category, categoryWords) {
                         const savedIndex = loadProgress(category);
                         const hasProgress = savedIndex > 0;
 
-                        showInputModeMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse);
+                        showInputModeMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, courseName);
                     },
                     badgeLabel,
                     numberMark
@@ -1330,8 +1330,9 @@ function showCourseSelection(category, categoryWords) {
             const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
             const completedCount = correctCountInCourse + wrongCountInCourse;
             
+            const courseTitle = `No.${start + 1} - No.${end}`;
             const courseCard = createCourseCard(
-                `No.${start + 1} - No.${end}`,
+                courseTitle,
                 '',
                 correctPercent,
                 wrongPercent,
@@ -1344,7 +1345,7 @@ function showCourseSelection(category, categoryWords) {
                     const savedIndex = loadProgress(category);
                     const hasProgress = savedIndex > start && savedIndex < end;
                     
-                    showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, start, end);
+                    showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, start, end, courseTitle);
                 }
             );
             courseList.appendChild(courseCard);
@@ -1413,21 +1414,27 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
 // 学習フィルター画面を表示
 let currentFilterWords = [];
 let currentFilterCategory = '';
+let currentFilterCourseTitle = '';
 
-function showWordFilterView(category, categoryWords) {
+function showWordFilterView(category, categoryWords, courseTitle) {
     currentFilterCategory = category;
     currentFilterWords = categoryWords;
+    currentFilterCourseTitle = courseTitle || category;
     
-    // コース選択画面を非表示
-    const courseSelection = document.getElementById('courseSelection');
-    if (courseSelection) {
-        courseSelection.classList.add('hidden');
-    }
-    
-    // フィルター画面を表示
+    // フィルター画面をボトムシートとして表示
     const wordFilterView = document.getElementById('wordFilterView');
+    const filterOverlay = document.getElementById('filterOverlay');
     if (wordFilterView) {
         wordFilterView.classList.remove('hidden');
+        // 少し遅らせてアニメーションを発火
+        requestAnimationFrame(() => {
+            wordFilterView.classList.add('show');
+            if (filterOverlay) {
+                filterOverlay.classList.remove('hidden');
+                filterOverlay.classList.add('show');
+            }
+        });
+        document.body.style.overflow = 'hidden';
     }
     
     // 初回学習かどうかを判定（そのカテゴリーの単語に対してブックマーク、赤、青がすべてない場合）
@@ -1503,6 +1510,31 @@ function showWordFilterView(category, categoryWords) {
     // フィルター情報を更新
     updateFilterInfo();
     
+    // カテゴリータイトルと進捗バーを更新
+    const filterCategoryTitle = document.getElementById('filterCategoryTitle');
+    const filterProgressCorrect = document.getElementById('filterProgressCorrect');
+    const filterProgressWrong = document.getElementById('filterProgressWrong');
+    const filterProgressText = document.getElementById('filterProgressText');
+    
+    if (filterCategoryTitle) {
+        filterCategoryTitle.textContent = currentFilterCourseTitle;
+    }
+    
+    const total = categoryWords.length;
+    const correctPercent = total > 0 ? (correctCount / total) * 100 : 0;
+    const wrongPercent = total > 0 ? (wrongCount / total) * 100 : 0;
+    const completedCount = correctCount + wrongCount;
+    
+    if (filterProgressCorrect) {
+        filterProgressCorrect.style.width = `${correctPercent}%`;
+    }
+    if (filterProgressWrong) {
+        filterProgressWrong.style.width = `${wrongPercent}%`;
+    }
+    if (filterProgressText) {
+        filterProgressText.textContent = `${completedCount}/${total}語`;
+    }
+    
     // ハンバーガーメニューを非表示、戻るボタンを表示
     updateHeaderButtons('back');
 }
@@ -1533,27 +1565,28 @@ function getFilteredWords() {
         const isBookmark = bookmarks.has(word.id);
         const isUnlearned = !isCorrect && !isWrong;
         
-        if (isUnlearned && !filterUnlearned) return false;
-        if (isWrong && !filterWrong) return false;
-        if (isBookmark && !filterBookmark) return false;
-        if (isCorrect && !filterCorrect) return false;
+        // いずれかの選択されたフィルターに該当すれば含める（OR条件）
+        if (filterUnlearned && isUnlearned) return true;
+        if (filterWrong && isWrong) return true;
+        if (filterBookmark && isBookmark) return true;
+        if (filterCorrect && isCorrect) return true;
         
-        return true;
+        return false;
     });
     
     return filtered;
 }
 
 // 入力モード用の学習方法選択モーダルを表示（後方互換性のため残す）
-function showInputModeMethodSelectionModal(category, categoryWords, hasProgress, savedIndex, wrongWordsInCategory) {
+function showInputModeMethodSelectionModal(category, categoryWords, hasProgress, savedIndex, wrongWordsInCategory, courseTitle) {
     // フィルター画面を表示
-    showWordFilterView(category, categoryWords);
+    showWordFilterView(category, categoryWords, courseTitle);
 }
 
 // 学習方法選択モーダルを表示（後方互換性のため残す）
-function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, courseStart, courseEnd) {
+function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, courseStart, courseEnd, courseTitle) {
     // フィルター画面を表示
-    showWordFilterView(category, courseWords);
+    showWordFilterView(category, courseWords, courseTitle);
 }
 
 // 学習方法ボタンを作成
@@ -2352,11 +2385,18 @@ function setupEventListeners() {
                 wordsToLearn = wordsToLearn.sort(() => Math.random() - 0.5);
             }
             
-            // フィルター画面を非表示
+            // フィルター画面を非表示（ボトムシートを閉じる）
             const wordFilterView = document.getElementById('wordFilterView');
+            const filterOverlayEl = document.getElementById('filterOverlay');
             if (wordFilterView) {
+                wordFilterView.classList.remove('show');
                 wordFilterView.classList.add('hidden');
             }
+            if (filterOverlayEl) {
+                filterOverlayEl.classList.remove('show');
+                filterOverlayEl.classList.add('hidden');
+            }
+            document.body.style.overflow = '';
             
             // 学習を開始
             if (selectedLearningMode === 'input') {
@@ -2367,18 +2407,39 @@ function setupEventListeners() {
         });
     }
     
+    // フィルター画面を閉じる関数
+    function closeFilterSheet() {
+        const wordFilterView = document.getElementById('wordFilterView');
+        const filterOverlay = document.getElementById('filterOverlay');
+        if (wordFilterView) {
+            wordFilterView.classList.remove('show');
+        }
+        if (filterOverlay) {
+            filterOverlay.classList.remove('show');
+        }
+        document.body.style.overflow = '';
+        // アニメーション完了後にhiddenを追加
+        setTimeout(() => {
+            if (wordFilterView) wordFilterView.classList.add('hidden');
+            if (filterOverlay) filterOverlay.classList.add('hidden');
+        }, 350);
+    }
+    
     // 戻るボタン
     if (filterBackBtn) {
-        filterBackBtn.addEventListener('click', () => {
-            const wordFilterView = document.getElementById('wordFilterView');
-            if (wordFilterView) {
-                wordFilterView.classList.add('hidden');
-            }
-            const courseSelection = document.getElementById('courseSelection');
-            if (courseSelection) {
-                courseSelection.classList.remove('hidden');
-            }
-        });
+        filterBackBtn.addEventListener('click', closeFilterSheet);
+    }
+    
+    // ×ボタン
+    const filterCloseBtn = document.getElementById('filterCloseBtn');
+    if (filterCloseBtn) {
+        filterCloseBtn.addEventListener('click', closeFilterSheet);
+    }
+    
+    // オーバーレイクリックで閉じる
+    const filterOverlay = document.getElementById('filterOverlay');
+    if (filterOverlay) {
+        filterOverlay.addEventListener('click', closeFilterSheet);
     }
     
     // ハンバーガーメニューボタンとサイドバー
