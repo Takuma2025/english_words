@@ -1425,15 +1425,27 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     const wordFilterView = document.getElementById('wordFilterView');
     const filterOverlay = document.getElementById('filterOverlay');
     if (wordFilterView) {
+        // 初期状態を設定
         wordFilterView.classList.remove('hidden');
-        // 少し遅らせてアニメーションを発火
+        wordFilterView.style.transform = 'translateY(100%)';
+        wordFilterView.style.transition = 'none';
+        
+        if (filterOverlay) {
+            filterOverlay.classList.remove('hidden');
+        }
+        
+        // リフローを強制してから、なめらかにアニメーション開始
+        wordFilterView.offsetHeight;
+        
         requestAnimationFrame(() => {
+            wordFilterView.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
+            wordFilterView.style.transform = 'translateY(0)';
             wordFilterView.classList.add('show');
             if (filterOverlay) {
-                filterOverlay.classList.remove('hidden');
                 filterOverlay.classList.add('show');
             }
         });
+        
         document.body.style.overflow = 'hidden';
     }
     
@@ -2407,22 +2419,31 @@ function setupEventListeners() {
         });
     }
     
-    // フィルター画面を閉じる関数
+    // フィルター画面を閉じる関数（下にスライドして閉じる）
     function closeFilterSheet() {
         const wordFilterView = document.getElementById('wordFilterView');
         const filterOverlay = document.getElementById('filterOverlay');
+        
         if (wordFilterView) {
+            // なめらかに下にスライド
+            wordFilterView.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
+            wordFilterView.style.transform = 'translateY(100%)';
             wordFilterView.classList.remove('show');
         }
         if (filterOverlay) {
             filterOverlay.classList.remove('show');
         }
         document.body.style.overflow = '';
-        // アニメーション完了後にhiddenを追加
+        
+        // アニメーション完了後にhiddenを追加してtransformをリセット
         setTimeout(() => {
-            if (wordFilterView) wordFilterView.classList.add('hidden');
+            if (wordFilterView) {
+                wordFilterView.classList.add('hidden');
+                wordFilterView.style.transform = '';
+                wordFilterView.style.transition = '';
+            }
             if (filterOverlay) filterOverlay.classList.add('hidden');
-        }, 350);
+        }, 400);
     }
     
     // 戻るボタン
@@ -2448,13 +2469,17 @@ function setupEventListeners() {
         let touchStartY = 0;
         let touchCurrentY = 0;
         let isDragging = false;
+        let startTime = 0;
         
         wordFilterViewEl.addEventListener('touchstart', (e) => {
             // スクロール可能なコンテンツの先頭にいる場合のみスワイプを有効に
             const filterSheetContent = wordFilterViewEl.querySelector('.filter-sheet-content');
-            if (filterSheetContent && filterSheetContent.scrollTop <= 0) {
+            if (filterSheetContent && filterSheetContent.scrollTop <= 5) {
                 touchStartY = e.touches[0].clientY;
+                touchCurrentY = touchStartY;
                 isDragging = true;
+                startTime = Date.now();
+                wordFilterViewEl.style.transition = 'none';
             }
         }, { passive: true });
         
@@ -2465,10 +2490,7 @@ function setupEventListeners() {
             
             // 下方向にスワイプしている場合のみ
             if (deltaY > 0) {
-                // シートを下にずらす（最大200pxまで）
-                const translateY = Math.min(deltaY * 0.5, 200);
-                wordFilterViewEl.style.transform = `translateY(${translateY}px)`;
-                wordFilterViewEl.style.transition = 'none';
+                wordFilterViewEl.style.transform = `translateY(${deltaY}px)`;
             }
         }, { passive: true });
         
@@ -2477,14 +2499,19 @@ function setupEventListeners() {
             isDragging = false;
             
             const deltaY = touchCurrentY - touchStartY;
-            wordFilterViewEl.style.transition = 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)';
+            const deltaTime = Date.now() - startTime;
+            const velocity = deltaY / deltaTime; // px/ms
             
-            // 100px以上下にスワイプしたら閉じる
-            if (deltaY > 100) {
+            // 速度が速い場合、または50px以上下にスワイプしたら閉じる
+            if (velocity > 0.5 || deltaY > 50) {
                 closeFilterSheet();
             } else {
                 // 元に戻す
+                wordFilterViewEl.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
                 wordFilterViewEl.style.transform = 'translateY(0)';
+                setTimeout(() => {
+                    wordFilterViewEl.style.transition = '';
+                }, 300);
             }
             
             touchStartY = 0;
