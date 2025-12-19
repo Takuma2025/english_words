@@ -175,13 +175,13 @@ function resetProgress(category) {
 function updateCategoryStars() {
     // コース名からデータカテゴリー名へのマッピング
     const categoryMapping = {
-        'LEVEL1 超よくでる400': 'Group1 超頻出600',
-        'LEVEL2 よくでる300': 'Group2 頻出200',
-        'LEVEL3 差がつく200': 'Group3 ハイレベル100',
-        'LEVEL4 ハイレベル200': 'Group3 ハイレベル100'
+        'LEVEL1 大阪府必須400': 'Group1 超頻出600',
+        'LEVEL2 大阪府重要300': 'Group2 頻出200',
+        'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
+        'LEVEL4 私立難関校対策300': 'Group3 ハイレベル100'
     };
     
-    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '条件英作文特訓コース', '大阪C問題対策英単語タイムアタック', 'PartCディクテーション'];
+    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 大阪府必須400', 'LEVEL2 大阪府重要300', 'LEVEL3 大阪府差がつく200', 'LEVEL4 私立難関校対策300', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '条件英作文特訓コース', '大阪C問題対策英単語タイムアタック', 'PartCディクテーション'];
     
     categories.forEach(category => {
         let categoryWords;
@@ -874,10 +874,10 @@ function startCategory(category) {
     
     // コース名からデータカテゴリー名へのマッピング
     const categoryMapping = {
-        'LEVEL1 超よくでる400': 'Group1 超頻出600',
-        'LEVEL2 よくでる300': 'Group2 頻出200',
-        'LEVEL3 差がつく200': 'Group3 ハイレベル100',
-        'LEVEL4 ハイレベル200': 'Group3 ハイレベル100' // LEVEL4もGroup3のデータを使用（要確認）
+        'LEVEL1 大阪府必須400': 'Group1 超頻出600',
+        'LEVEL2 大阪府重要300': 'Group2 頻出200',
+        'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
+        'LEVEL4 私立難関校対策300': 'Group3 ハイレベル100' // LEVEL4もGroup3のデータを使用（要確認）
     };
     
     // 小学生で習った単語とカテゴリー別に覚える単語の場合は、elementaryWordDataを使用
@@ -1251,7 +1251,7 @@ function showCourseSelection(category, categoryWords) {
     // 「超よくでる」の場合のみ画像を表示
     const courseSelectionImage = document.getElementById('courseSelectionImage');
     if (courseSelectionImage) {
-        if (category === 'LEVEL1 超よくでる400') {
+        if (category === 'LEVEL1 大阪府必須400') {
             courseSelectionImage.style.display = 'block';
         } else {
             courseSelectionImage.style.display = 'none';
@@ -1301,177 +1301,145 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
     return card;
     }
 
-// 入力モード用の学習方法選択モーダルを表示
-function showInputModeMethodSelectionModal(category, categoryWords, hasProgress, savedIndex, wrongWordsInCategory) {
-    elements.modalTitle.textContent = category;
-    elements.modalMessage.textContent = '学習方法を選んでください';
-    elements.modalActions.innerHTML = '';
+// 学習フィルター画面を表示
+let currentFilterWords = [];
+let currentFilterCategory = '';
+
+function showWordFilterView(category, categoryWords) {
+    currentFilterCategory = category;
+    currentFilterWords = categoryWords;
     
-    // カード形式のコンテナを作成
-    const methodList = document.createElement('div');
-    methodList.className = 'method-selection-list';
+    // コース選択画面を非表示
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
     
-    // 学習するボタンまたは前回の続きから学習するボタン（前回のデータがある場合は前回の続きからのみ表示）
-    if (hasProgress && savedIndex > 0 && savedIndex < categoryWords.length) {
-        // 前回の続きから学習するボタン
-        const continueCard = createMethodCard('前回の続きから', '前回の続きから学習を再開します', () => {
-            closeModal();
-            if (selectedLearningMode === 'input') {
-                // 入力モードで開始
-                initInputModeLearning(category, categoryWords, savedIndex);
-            } else {
-                // カードモードで開始
-                initLearning(category, categoryWords, savedIndex, categoryWords.length, 0);
-            }
-        }, 'continue');
-        methodList.appendChild(continueCard);
+    // フィルター画面を表示
+    const wordFilterView = document.getElementById('wordFilterView');
+    if (wordFilterView) {
+        wordFilterView.classList.remove('hidden');
+    }
+    
+    // 初回学習かどうかを判定（そのカテゴリーの単語に対してブックマーク、赤、青がすべてない場合）
+    const { correctSet, wrongSet } = loadCategoryWords(category);
+    const savedBookmarks = localStorage.getItem('reviewWords');
+    const bookmarks = savedBookmarks ? new Set(JSON.parse(savedBookmarks).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set();
+    
+    // そのカテゴリーの単語でブックマーク、正解、間違いのいずれかがあるかチェック
+    const hasBookmarkInCategory = categoryWords.some(word => bookmarks.has(word.id));
+    const hasCorrectInCategory = categoryWords.some(word => correctSet.has(word.id));
+    const hasWrongInCategory = categoryWords.some(word => wrongSet.has(word.id));
+    
+    // 学習履歴があるかチェック（そのカテゴリー内で正解、間違い、ブックマークのいずれかがあるか）
+    const hasLearningHistory = hasCorrectInCategory || hasWrongInCategory || hasBookmarkInCategory;
+    
+    // フィルターチェックボックスの状態を設定
+    const filterAll = document.getElementById('filterAll');
+    const filterUnlearned = document.getElementById('filterUnlearned');
+    const filterWrong = document.getElementById('filterWrong');
+    const filterBookmark = document.getElementById('filterBookmark');
+    const filterCorrect = document.getElementById('filterCorrect');
+    
+    if (filterUnlearned) {
+        filterUnlearned.checked = true;
+        filterUnlearned.disabled = false;
+    }
+    
+    if (hasLearningHistory) {
+        // 学習履歴がある場合、すべてのフィルターを有効化
+        if (filterWrong) {
+            filterWrong.checked = true;
+            filterWrong.disabled = false;
+        }
+        if (filterBookmark) {
+            filterBookmark.checked = true;
+            filterBookmark.disabled = false;
+        }
+        if (filterCorrect) {
+            filterCorrect.checked = true;
+            filterCorrect.disabled = false;
+        }
+        // 「すべて」をチェック
+        if (filterAll) {
+            filterAll.checked = true;
+            filterAll.disabled = false;
+        }
     } else {
-        // 学習するボタン
-        const startCard = createMethodCard('学習する', '最初から学習を開始します', () => {
-            closeModal();
-            if (selectedLearningMode === 'input') {
-                // 入力モードで開始
-                initInputModeLearning(category, categoryWords, 0);
-            } else {
-                // カードモードで開始
-                initLearning(category, categoryWords, 0, categoryWords.length, 0);
-            }
-        }, 'start');
-        methodList.appendChild(startCard);
-    }
-
-    // まだ覚えていない問題のみ学習するボタン（間違いがある場合のみ）
-    if (wrongWordsInCategory.length > 0) {
-        const wrongCard = createMethodCard('まだ覚えていない単語のみ', `まだ覚えていない単語${wrongWordsInCategory.length}問だけを復習します`, () => {
-            closeModal();
-            if (selectedLearningMode === 'input') {
-                // 入力モードで開始
-                initInputModeLearning('間違い復習', wrongWordsInCategory, 0);
-            } else {
-                // カードモードで開始
-                initLearning('間違い復習', wrongWordsInCategory, 0, wrongWordsInCategory.length, 0);
-            }
-        }, 'wrong');
-        methodList.appendChild(wrongCard);
-    }
-
-    // ランダムで学習するボタン（常に表示）
-    const shuffleCard = createMethodCard('ランダム', '単語の順番をランダムにして学習します', () => {
-            closeModal();
-        const shuffledWords = [...categoryWords].sort(() => Math.random() - 0.5);
-        if (selectedLearningMode === 'input') {
-            // 入力モードで開始
-            initInputModeLearning(category, shuffledWords, 0);
-        } else {
-            // カードモードで開始
-            initLearning(category, shuffledWords, 0, shuffledWords.length, 0);
+        // 初回学習の場合、未学習以外を無効化
+        if (filterWrong) {
+            filterWrong.checked = false;
+            filterWrong.disabled = true;
         }
-    }, 'shuffle');
-    methodList.appendChild(shuffleCard);
-    
-    elements.modalActions.appendChild(methodList);
-    
-    // 背景クリックで閉じるイベント
-    const handleOverlayClick = (e) => {
-        if (e.target === elements.modalOverlay) {
-            closeModal();
-            elements.modalOverlay.removeEventListener('click', handleOverlayClick);
+        if (filterBookmark) {
+            filterBookmark.checked = false;
+            filterBookmark.disabled = true;
         }
-    };
-    elements.modalOverlay.addEventListener('click', handleOverlayClick);
+        if (filterCorrect) {
+            filterCorrect.checked = false;
+            filterCorrect.disabled = true;
+        }
+        // 「すべて」を有効化（初回学習時は「すべて」=「未学習」のみ）
+        if (filterAll) {
+            filterAll.checked = true;
+            filterAll.disabled = false;
+        }
+    }
     
-    elements.modalOverlay.classList.remove('hidden');
-    // アニメーション用
-    setTimeout(() => {
-        elements.modalOverlay.classList.add('active');
-    }, 10);
+    // フィルター情報を更新
+    updateFilterInfo();
+    
+    // ハンバーガーメニューを非表示、戻るボタンを表示
+    updateHeaderButtons('back');
 }
 
-// 学習方法選択モーダルを表示
+// フィルター情報を更新
+function updateFilterInfo() {
+    const filteredWords = getFilteredWords();
+    const filteredWordCount = document.getElementById('filteredWordCount');
+    if (filteredWordCount) {
+        filteredWordCount.textContent = `${filteredWords.length}語`;
+    }
+}
+
+// フィルター条件に基づいて単語を取得
+function getFilteredWords() {
+    const { correctSet, wrongSet } = loadCategoryWords(currentFilterCategory);
+    const savedBookmarks = localStorage.getItem('reviewWords');
+    const bookmarks = savedBookmarks ? new Set(JSON.parse(savedBookmarks).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set();
+    
+    const filterUnlearned = document.getElementById('filterUnlearned')?.checked ?? true;
+    const filterWrong = document.getElementById('filterWrong')?.checked ?? true;
+    const filterBookmark = document.getElementById('filterBookmark')?.checked ?? true;
+    const filterCorrect = document.getElementById('filterCorrect')?.checked ?? true;
+    
+    const filtered = currentFilterWords.filter(word => {
+        const isCorrect = correctSet.has(word.id);
+        const isWrong = wrongSet.has(word.id);
+        const isBookmark = bookmarks.has(word.id);
+        const isUnlearned = !isCorrect && !isWrong;
+        
+        if (isUnlearned && !filterUnlearned) return false;
+        if (isWrong && !filterWrong) return false;
+        if (isBookmark && !filterBookmark) return false;
+        if (isCorrect && !filterCorrect) return false;
+        
+        return true;
+    });
+    
+    return filtered;
+}
+
+// 入力モード用の学習方法選択モーダルを表示（後方互換性のため残す）
+function showInputModeMethodSelectionModal(category, categoryWords, hasProgress, savedIndex, wrongWordsInCategory) {
+    // フィルター画面を表示
+    showWordFilterView(category, categoryWords);
+}
+
+// 学習方法選択モーダルを表示（後方互換性のため残す）
 function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, courseStart, courseEnd) {
-    elements.modalTitle.textContent = category;
-    elements.modalMessage.textContent = '学習方法を選んでください';
-    elements.modalActions.innerHTML = '';
-    
-    // カード形式のコンテナを作成
-    const methodList = document.createElement('div');
-    methodList.className = 'method-selection-list';
-    
-    // 学習するボタンまたは前回の続きから学習するボタン（前回のデータがある場合は前回の続きからのみ表示）
-    if (hasProgress && savedIndex >= courseStart && savedIndex < courseEnd) {
-        // 前回の続きから学習するボタン
-        const relativeIndex = savedIndex - courseStart;
-        const continueCard = createMethodCard('前回の続きから', '前回の続きから学習を再開します', () => {
-            closeModal();
-            if (selectedLearningMode === 'input') {
-                // 入力モードで開始
-                initInputModeLearning(category, courseWords, savedIndex);
-            } else {
-                // カードモードで開始
-                initLearning(category, courseWords, relativeIndex, courseWords.length, courseStart);
-            }
-        }, 'continue');
-        methodList.appendChild(continueCard);
-    } else {
-        // 学習するボタン
-        const startCard = createMethodCard('学習する', '最初から学習を開始します', () => {
-            closeModal();
-            if (selectedLearningMode === 'input') {
-                // 入力モードで開始
-                initInputModeLearning(category, courseWords, 0);
-            } else {
-                // カードモードで開始
-                initLearning(category, courseWords, 0, courseWords.length, courseStart);
-            }
-        }, 'start');
-        methodList.appendChild(startCard);
-    }
-
-    // まだ覚えていない単語のみ学習するボタン（間違いがある場合のみ）
-    if (wrongWordsInCourse.length > 0) {
-        const wrongCard = createMethodCard('まだ覚えていない単語のみ', `まだ覚えていない単語${wrongWordsInCourse.length}問だけを復習します`, () => {
-            closeModal();
-            if (selectedLearningMode === 'input') {
-                // 入力モードで開始
-                initInputModeLearning('間違い復習', wrongWordsInCourse, 0);
-            } else {
-                // カードモードで開始
-            initLearning('間違い復習', wrongWordsInCourse, 0, wrongWordsInCourse.length, 0);
-            }
-        }, 'wrong');
-        methodList.appendChild(wrongCard);
-    }
-
-    // ランダムで学習するボタン（常に表示）
-    const shuffleCard = createMethodCard('ランダム', '単語の順番をランダムにして学習します', () => {
-            closeModal();
-        const shuffledWords = [...courseWords].sort(() => Math.random() - 0.5);
-        if (selectedLearningMode === 'input') {
-            // 入力モードで開始
-            initInputModeLearning(category, shuffledWords, 0);
-        } else {
-            // カードモードで開始
-            initLearning(category, shuffledWords, 0, shuffledWords.length, courseStart);
-        }
-    }, 'shuffle');
-    methodList.appendChild(shuffleCard);
-    
-    elements.modalActions.appendChild(methodList);
-    
-    // 背景クリックで閉じるイベント
-    const handleOverlayClick = (e) => {
-        if (e.target === elements.modalOverlay) {
-            closeModal();
-            elements.modalOverlay.removeEventListener('click', handleOverlayClick);
-        }
-    };
-    elements.modalOverlay.addEventListener('click', handleOverlayClick);
-    
-    elements.modalOverlay.classList.remove('hidden');
-    // アニメーション用
-    setTimeout(() => {
-        elements.modalOverlay.classList.add('active');
-    }, 10);
+    // フィルター画面を表示
+    showWordFilterView(category, courseWords);
 }
 
 // 学習方法ボタンを作成
@@ -2190,6 +2158,92 @@ function setupEventListeners() {
     
     
     
+    // フィルター画面のイベントリスナー
+    const filterStartBtn = document.getElementById('filterStartBtn');
+    const filterBackBtn = document.getElementById('filterBackBtn');
+    const filterAll = document.getElementById('filterAll');
+    const filterUnlearned = document.getElementById('filterUnlearned');
+    const filterWrong = document.getElementById('filterWrong');
+    const filterBookmark = document.getElementById('filterBookmark');
+    const filterCorrect = document.getElementById('filterCorrect');
+    
+    // 「すべて」チェックボックスの変更イベント
+    if (filterAll) {
+        filterAll.addEventListener('change', () => {
+            const isChecked = filterAll.checked;
+            if (filterUnlearned && !filterUnlearned.disabled) filterUnlearned.checked = isChecked;
+            if (filterWrong && !filterWrong.disabled) filterWrong.checked = isChecked;
+            if (filterBookmark && !filterBookmark.disabled) filterBookmark.checked = isChecked;
+            if (filterCorrect && !filterCorrect.disabled) filterCorrect.checked = isChecked;
+            updateFilterInfo();
+        });
+    }
+    
+    // 個別フィルターチェックボックスの変更イベント
+    [filterUnlearned, filterWrong, filterBookmark, filterCorrect].forEach(checkbox => {
+        if (checkbox) {
+            checkbox.addEventListener('change', () => {
+                // 「すべて」の状態を更新
+                if (filterAll) {
+                    const allChecked = [filterUnlearned, filterWrong, filterBookmark, filterCorrect]
+                        .filter(cb => cb && !cb.disabled)
+                        .every(cb => cb.checked);
+                    filterAll.checked = allChecked;
+                }
+                updateFilterInfo();
+            });
+        }
+    });
+    
+    // 学習開始ボタン
+    if (filterStartBtn) {
+        filterStartBtn.addEventListener('click', () => {
+            const filteredWords = getFilteredWords();
+            if (filteredWords.length === 0) {
+                alert('選択された単語がありません。フィルターを調整してください。');
+                return;
+            }
+            
+            // 出題順を取得
+            const orderSequential = document.getElementById('orderSequential');
+            const isSequential = orderSequential?.checked ?? true;
+            
+            // 出題順に応じて単語を並び替え
+            let wordsToLearn = [...filteredWords];
+            if (!isSequential) {
+                // ランダム順
+                wordsToLearn = wordsToLearn.sort(() => Math.random() - 0.5);
+            }
+            
+            // フィルター画面を非表示
+            const wordFilterView = document.getElementById('wordFilterView');
+            if (wordFilterView) {
+                wordFilterView.classList.add('hidden');
+            }
+            
+            // 学習を開始
+            if (selectedLearningMode === 'input') {
+                initInputModeLearning(currentFilterCategory, wordsToLearn, 0);
+            } else {
+                initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
+            }
+        });
+    }
+    
+    // 戻るボタン
+    if (filterBackBtn) {
+        filterBackBtn.addEventListener('click', () => {
+            const wordFilterView = document.getElementById('wordFilterView');
+            if (wordFilterView) {
+                wordFilterView.classList.add('hidden');
+            }
+            const courseSelection = document.getElementById('courseSelection');
+            if (courseSelection) {
+                courseSelection.classList.remove('hidden');
+            }
+        });
+    }
+    
     // ハンバーガーメニューボタンとサイドバー
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
     const sidebar = document.getElementById('sidebar');
@@ -2246,6 +2300,8 @@ function setupEventListeners() {
             const courseSelection = document.getElementById('courseSelection');
             const examInfoView = document.getElementById('examInfoView');
             
+            const wordFilterView = document.getElementById('wordFilterView');
+            
             if (grammarChapterView && !grammarChapterView.classList.contains('hidden')) {
                 // 文法解説ページから目次ページに戻る
                 grammarChapterView.classList.add('hidden');
@@ -2258,6 +2314,12 @@ function setupEventListeners() {
                 // 入試情報画面からカテゴリー選択画面に戻る
                 examInfoView.classList.add('hidden');
                 showCategorySelection();
+            } else if (wordFilterView && !wordFilterView.classList.contains('hidden')) {
+                // フィルター画面からコース選択画面に戻る
+                wordFilterView.classList.add('hidden');
+                if (courseSelection) {
+                    courseSelection.classList.remove('hidden');
+                }
             } else if (courseSelection && !courseSelection.classList.contains('hidden')) {
                 // コース選択画面からカテゴリー選択画面に戻る
                 courseSelection.classList.add('hidden');
@@ -2267,10 +2329,10 @@ function setupEventListeners() {
                 if (selectedCategory) {
                     // コース選択画面に戻る
                     const categoryMapping = {
-                        'LEVEL1 超よくでる400': 'Group1 超頻出600',
-                        'LEVEL2 よくでる300': 'Group2 頻出200',
-                        'LEVEL3 差がつく200': 'Group3 ハイレベル100',
-                        'LEVEL4 ハイレベル200': 'Group3 ハイレベル100'
+                        'LEVEL1 大阪府必須400': 'Group1 超頻出600',
+                        'LEVEL2 大阪府重要300': 'Group2 頻出200',
+                        'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
+                        'LEVEL4 私立難関校対策300': 'Group3 ハイレベル100'
                     };
                     let categoryWords;
                     if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
@@ -4350,7 +4412,7 @@ function clearLearningHistory() {
             localStorage.removeItem('learningProgress');
             
             // カテゴリーごとの進捗も削除
-            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超よくでる400', 'LEVEL2 よくでる300', 'LEVEL3 差がつく200', 'LEVEL4 ハイレベル200'];
+            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 大阪府必須400', 'LEVEL2 大阪府重要300', 'LEVEL3 大阪府差がつく200', 'LEVEL4 私立難関校対策300'];
             categories.forEach(category => {
                 localStorage.removeItem(`correctWords-${category}`);
                 localStorage.removeItem(`wrongWords-${category}`);
