@@ -5110,11 +5110,26 @@ function updateStats() {
         updateTimerDisplay();
     }
     
-    // 進捗バーのセグメントを生成（初回のみ）
+    // 進捗バーのセグメントを生成
     const container = document.getElementById('progressBarContainer');
     
     // totalが0より大きい場合、セグメントを生成
     if (total > 0 && container) {
+        // 現在のインデックス（相対位置）
+        const relativeIndex = currentIndex - currentRangeStart;
+        
+        // 現在のインデックスが表示範囲外に出たか確認
+        const displayStart = progressBarStartIndex;
+        const displayEnd = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT;
+        
+        if (relativeIndex < displayStart || relativeIndex >= displayEnd) {
+            // 現在のインデックスが含まれる範囲に切り替え
+            progressBarStartIndex = Math.floor(relativeIndex / PROGRESS_BAR_DISPLAY_COUNT) * PROGRESS_BAR_DISPLAY_COUNT;
+            // totalを超えないようにする
+            progressBarStartIndex = Math.min(progressBarStartIndex, Math.max(0, total - 1));
+            createProgressSegments(total);
+        }
+        
         // セグメント数が合わない場合は生成（表示範囲の20個分のみ）
         const expectedSegmentCount = Math.min(PROGRESS_BAR_DISPLAY_COUNT, total - progressBarStartIndex);
         if (container.children.length !== expectedSegmentCount) {
