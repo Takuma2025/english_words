@@ -350,6 +350,19 @@ function startAiAnalysisLearning(words) {
     initLearning('AI分析 苦手単語', words, 0, words.length, 0);
 }
 
+// 大阪府のすべての英単語で学習を開始
+function startAllWordsLearning() {
+    const allWords = getAllWordData();
+    
+    if (!allWords || allWords.length === 0) {
+        showAlert('エラー', '単語データが見つかりません。');
+        return;
+    }
+    
+    // 学習フィルター画面を表示
+    showWordFilterView('大阪府のすべての英単語', allWords, '大阪府のすべての英単語');
+}
+
 // 入試日関連 ------------------------------
 function getDefaultExamDateStr() {
     const today = new Date();
@@ -490,7 +503,7 @@ function updateCategoryStars() {
         'LEVEL4 私立難関校対策300': 'Group3 ハイレベル100'
     };
     
-    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 大阪府必須400', 'LEVEL2 大阪府重要300', 'LEVEL3 大阪府差がつく200', 'LEVEL4 私立難関校対策300', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '条件英作文特訓コース', '大阪C問題対策英単語タイムアタック', 'PartCディクテーション'];
+    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 大阪府必須400', 'LEVEL2 大阪府重要300', 'LEVEL3 大阪府差がつく200', 'LEVEL4 私立難関校対策300', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '条件英作文特訓コース', '大阪C問題対策英単語タイムアタック', 'PartCディクテーション', '大阪府のすべての英単語'];
     
     categories.forEach(category => {
         let categoryWords;
@@ -501,6 +514,85 @@ function updateCategoryStars() {
             } else {
                 categoryWords = [];
             }
+        } else if (category === '大阪府のすべての英単語') {
+            // 全単語データを使用
+            categoryWords = getAllWordData();
+            
+            // 全単語の進捗を計算（各単語の元のカテゴリーの進捗を確認）
+            let correctCountInCategory = 0;
+            let wrongCountInCategory = 0;
+            
+            // 全モードの進捗を合算
+            const modes = ['card', 'input'];
+            const allCorrectSet = new Set();
+            const allWrongSet = new Set();
+            
+            modes.forEach(mode => {
+                categoryWords.forEach(word => {
+                    const wordCategory = word.category || 'Group1 超頻出600';
+                    const savedCorrectWords = localStorage.getItem(`correctWords-${wordCategory}_${mode}`);
+                    const savedWrongWords = localStorage.getItem(`wrongWords-${wordCategory}_${mode}`);
+                    
+                    if (savedCorrectWords) {
+                        const parsed = JSON.parse(savedCorrectWords);
+                        parsed.forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            if (!allWrongSet.has(numId)) {
+                                allCorrectSet.add(numId);
+                            }
+                        });
+                    }
+                    
+                    if (savedWrongWords) {
+                        const parsed = JSON.parse(savedWrongWords);
+                        parsed.forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            allWrongSet.add(numId);
+                            if (allCorrectSet.has(numId)) {
+                                allCorrectSet.delete(numId);
+                            }
+                        });
+                    }
+                });
+            });
+            
+            categoryWords.forEach(word => {
+                if (allWrongSet.has(word.id)) {
+                    wrongCountInCategory++;
+                } else if (allCorrectSet.has(word.id)) {
+                    correctCountInCategory++;
+                }
+            });
+            
+            const total = categoryWords.length;
+            const correctPercent = total === 0 ? 0 : (correctCountInCategory / total) * 100;
+            const wrongPercent = total === 0 ? 0 : (wrongCountInCategory / total) * 100;
+            const completedCount = correctCountInCategory + wrongCountInCategory;
+            const isComplete = total > 0 && wrongCountInCategory === 0 && correctCountInCategory === total;
+            
+            const correctBar = document.getElementById(`progress-correct-${category}`);
+            const wrongBar = document.getElementById(`progress-wrong-${category}`);
+            const text = document.getElementById(`progress-text-${category}`);
+            const barContainer = correctBar ? correctBar.parentElement : null;
+            
+            if (correctBar) {
+                correctBar.style.width = `${correctPercent}%`;
+            }
+            if (wrongBar) {
+                wrongBar.style.width = `${wrongPercent}%`;
+            }
+            if (barContainer) {
+                if (isComplete) {
+                    barContainer.classList.add('category-progress-complete');
+                } else {
+                    barContainer.classList.remove('category-progress-complete');
+                }
+            }
+            if (text) {
+                text.textContent = `${completedCount}/${total}語`;
+            }
+            
+            return; // 処理完了
         } else if (category === '大阪C問題対策英単語タイムアタック') {
             // タイムアタックモード：Group1 超頻出600の単語を使用
             categoryWords = wordData.filter(word => word.category === 'Group1 超頻出600');
@@ -2473,6 +2565,14 @@ function setupEventListeners() {
     if (aiAnalysisCardBtn) {
         aiAnalysisCardBtn.addEventListener('click', () => {
             openAiAnalysisMenu();
+        });
+    }
+    
+    // 大阪府のすべての英単語カードボタン
+    const allWordsCardBtn = document.getElementById('allWordsCardBtn');
+    if (allWordsCardBtn) {
+        allWordsCardBtn.addEventListener('click', () => {
+            startAllWordsLearning();
         });
     }
     
@@ -4903,24 +5003,25 @@ function markAnswer(isCorrect, isTimeout = false) {
     // 既にカードが非表示（スワイプで即座に消された場合）かどうか確認
     const isAlreadyHidden = elements.wordCard.style.opacity === '0';
     
-    // カードを表面に戻す（非表示状態で）
-    if (cardInner) {
-        cardInner.style.transition = 'none';
-        cardInner.style.transform = 'rotateY(0deg)';
-    }
-    elements.wordCard.classList.remove('flipped');
-    elements.wordCard.style.opacity = '0';
-    elements.wordCard.offsetHeight; // 強制リフロー
-
-    // フェードアウト処理（既に非表示なら待機時間を短縮）
-    const fadeOutDelay = isAlreadyHidden ? 0 : 200;
-    
+    // スワイプと同じ方向にスライドアウト（覚えた=左、覚えていない=右）
     if (!isAlreadyHidden) {
-        elements.wordCard.classList.add('fade-out');
+        const slideDirection = isCorrect ? -1 : 1; // 左=-1, 右=1
+        elements.wordCard.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+        elements.wordCard.style.transform = `translateX(${slideDirection * 120}%) scale(0.8)`;
+        elements.wordCard.style.opacity = '0.2';
     }
 
     setTimeout(() => {
-        elements.wordCard.classList.remove('fade-out');
+        // カードを表面に戻す（非表示状態で）
+        elements.wordCard.style.transition = 'none';
+        if (cardInner) {
+            cardInner.style.transition = 'none';
+            cardInner.style.transform = 'rotateY(0deg)';
+        }
+        elements.wordCard.classList.remove('flipped');
+        elements.wordCard.style.transform = '';
+        elements.wordCard.style.opacity = '0';
+        elements.wordCard.offsetHeight; // 強制リフロー
         
         currentIndex++;
         
@@ -4953,6 +5054,7 @@ function markAnswer(isCorrect, isTimeout = false) {
         // 最後の単語の場合は完了画面を表示
         if (currentIndex >= currentRangeEnd) {
             elements.wordCard.style.opacity = '';
+            elements.wordCard.style.transition = '';
             if (cardInner) {
                 cardInner.style.transition = '';
                 cardInner.style.transform = '';
@@ -4986,6 +5088,7 @@ function markAnswer(isCorrect, isTimeout = false) {
             
             // 下からふわっと浮いてくる
             requestAnimationFrame(() => {
+                elements.wordCard.style.transition = '';
                 elements.wordCard.style.opacity = '';
                 elements.wordCard.classList.add('float-up');
                 
@@ -4995,7 +5098,7 @@ function markAnswer(isCorrect, isTimeout = false) {
                 }, 450);
             });
         }
-    }, fadeOutDelay);
+    }, isAlreadyHidden ? 0 : 220);
 }
 
 // 完了画面を表示

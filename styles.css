@@ -674,6 +674,56 @@ body {
     box-sizing: border-box;
 }
 
+.category-cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.category-cards-row .category-card {
+    padding: 10px 12px;
+}
+
+.category-cards-row .category-name {
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+.category-cards-row .category-description {
+    font-size: 0.7rem !important;
+    margin-top: 2px !important;
+    line-height: 1.3;
+}
+
+.category-cards-row .category-meta {
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.category-cards-row .category-arrow {
+    flex-shrink: 0;
+}
+
+.category-cards-row .category-arrow svg {
+    width: 20px;
+    height: 20px;
+}
+
+.category-cards-row .category-progress {
+    margin-top: 6px;
+}
+
+.category-cards-row .category-progress-text {
+    font-size: 11px;
+}
+
+@media (max-width: 600px) {
+    .category-cards-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 .course-section-title {
     font-size: clamp(16px, 3.5vw, 20px);
     font-weight: 700;
@@ -820,10 +870,6 @@ body {
 }
 
 /* AI分析カード */
-.category-card-ai {
-    /* 通常のカードと同じスタイル、特別なスタイルはなし */
-}
-
 .ai-sparkle {
     margin-right: 6px;
 }

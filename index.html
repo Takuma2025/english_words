@@ -159,24 +159,42 @@
                 </div>
                 <div class="category-list">
                     <div class="course-section" id="courseMasterSection">
-                        <button class="category-card category-card-ai" id="aiAnalysisCardBtn">
-                            <div class="category-info">
-                                <div class="category-header">
-                                    <div class="category-name"><span class="ai-badge"><span class="ai-sparkle">˖✧</span>AI分析</span> 苦手・要復習単語</div>
+                        <div class="category-cards-row">
+                            <button class="category-card category-card-ai" id="aiAnalysisCardBtn">
+                                <div class="category-info">
+                                    <div class="category-header">
+                                        <div class="category-name"><span class="ai-badge">AI<span class="ai-sparkle">✧</span>分析</span> 苦手・要復習単語</div>
+                                    </div>
+                                    <div class="category-description" style="font-size: 0.75rem; color: #718096; margin-top: 4px;">AIがあなたの苦手・要復習単語を自動で分析して作成した、あなただけの個別最適メニュー</div>
                                 </div>
-                                <div class="category-description" style="font-size: 0.75rem; color: #718096; margin-top: 4px;">間違えた単語・解答に時間がかかった単語をAIが自動でピックアップ</div>
-                                <div class="category-meta">あなただけの苦手克服メニュー</div>
-                            </div>
-                            <div class="category-arrow">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </button>
+                                <div class="category-arrow">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </div>
+                            </button>
+                            <button class="category-card" id="allWordsCardBtn">
+                                <div class="category-info">
+                                    <div class="category-header">
+                                        <div class="category-name">大阪府のすべての英単語</div>
+                                    </div>
+                                    <div class="category-meta">全単語をまとめて学習</div>
+                                    <div class="category-progress">
+                                        <div class="category-progress-bar">
+                                            <div class="category-progress-correct" id="progress-correct-大阪府のすべての英単語" style="width: 0%"></div>
+                                            <div class="category-progress-wrong" id="progress-wrong-大阪府のすべての英単語" style="width: 0%"></div>
+                                        </div>
+                                        <div class="category-progress-text" id="progress-text-大阪府のすべての英単語">0/0語</div>
+                                    </div>
+                                </div>
+                                <div class="category-arrow">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </div>
+                            </button>
+                        </div>
                         <button class="category-card" data-category="小学生で習った単語とカテゴリー別に覚える単語">
                             <div class="category-info">
                                 <div class="category-header">
                                     <div class="category-name">カテゴリー別に覚える単語</div>
                                 </div>
-                                <div class="category-description" style="font-size: 0.75rem; color: #718096; margin-top: 4px;">小学生で習った単語のうち基本的な名詞だけをカテゴリー別に覚えましょう。</div>
                                 <div class="category-meta">基礎からカテゴリー別に学習</div>
                                 <div class="category-progress">
                                     <div class="category-progress-bar">
