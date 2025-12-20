@@ -3928,10 +3928,10 @@ function setupSwipeDetection(card) {
         }
 
         if (isHorizontal && Math.abs(dx) > threshold) {
-            // スワイプ判定前にカードのスタイルを即座にリセット
+            // スワイプ判定前にカードを即座に非表示
             card.style.transition = 'none';
             card.style.transform = '';
-            card.style.opacity = '';
+            card.style.opacity = '0';
             card.offsetHeight; // 強制リフロー
             
             // 裏面：判定
@@ -3941,10 +3941,10 @@ function setupSwipeDetection(card) {
                 markAnswer(false);
             }
         } else if (isMistakeMode && isVertical && dy < -threshold) {
-            // スワイプ判定前にカードのスタイルを即座にリセット
+            // スワイプ判定前にカードを即座に非表示
             card.style.transition = 'none';
             card.style.transform = '';
-            card.style.opacity = '';
+            card.style.opacity = '0';
             card.offsetHeight; // 強制リフロー
             
             // 上スワイプ（完璧）
@@ -4664,22 +4664,28 @@ function markAnswer(isCorrect, isTimeout = false) {
     isCardAnimating = true;
 
     const cardInner = elements.wordCard ? elements.wordCard.querySelector('.card-inner') : null;
+    
+    // 既にカードが非表示（スワイプで即座に消された場合）かどうか確認
+    const isAlreadyHidden = elements.wordCard.style.opacity === '0';
+    
+    // カードを表面に戻す（非表示状態で）
+    if (cardInner) {
+        cardInner.style.transition = 'none';
+        cardInner.style.transform = 'rotateY(0deg)';
+    }
+    elements.wordCard.classList.remove('flipped');
+    elements.wordCard.style.opacity = '0';
+    elements.wordCard.offsetHeight; // 強制リフロー
 
-    // フェードアウト（裏面のままでOK）
-    elements.wordCard.classList.add('fade-out');
+    // フェードアウト処理（既に非表示なら待機時間を短縮）
+    const fadeOutDelay = isAlreadyHidden ? 0 : 200;
+    
+    if (!isAlreadyHidden) {
+        elements.wordCard.classList.add('fade-out');
+    }
 
     setTimeout(() => {
-        // フェードアウト完了（見えない状態）
-        // ここでカードを表面に戻す
-        if (cardInner) {
-            cardInner.style.transition = 'none';
-            cardInner.style.transform = 'rotateY(0deg)';
-        }
-        elements.wordCard.classList.remove('flipped');
-        elements.wordCard.offsetHeight;
-        
         elements.wordCard.classList.remove('fade-out');
-        elements.wordCard.style.opacity = '0';
         
         currentIndex++;
         
@@ -4748,7 +4754,7 @@ function markAnswer(isCorrect, isTimeout = false) {
                 }, 450);
             });
         }
-    }, 200);
+    }, fadeOutDelay);
 }
 
 // 完了画面を表示
