@@ -501,7 +501,6 @@ const elements = {
     modalTitle: document.getElementById('modalTitle'),
     modalMessage: document.getElementById('modalMessage'),
     modalActions: document.getElementById('modalActions'),
-    headerSubtitle: document.getElementById('headerSubtitle'),
     unitName: document.getElementById('unitName'),
     unitInterruptBtn: document.getElementById('unitInterruptBtn'),
     correctBtn: document.getElementById('correctBtn'),
@@ -942,7 +941,6 @@ function showCategorySelection() {
     }
     selectedCategory = null;
     updateNavState('home');
-    elements.headerSubtitle.textContent = '大阪府公立高校入試特化英単語';
     updateThemeColor(false); // ホーム画面では青に
     
     // ハンバーガーメニューを表示、戻るボタンを非表示
@@ -1163,7 +1161,6 @@ function initInputModeLearning(category, words, startIndex = 0) {
         courseSelection.classList.add('hidden');
     }
     elements.mainContent.classList.remove('hidden');
-    elements.headerSubtitle.textContent = category;
     if (elements.unitName) {
         // 入試得点力アップコースの場合はカテゴリー名を直接使用
         const scoreUpCategories = [
@@ -1425,7 +1422,6 @@ function showCourseSelection(category, categoryWords) {
     }
     
     courseSelection.classList.remove('hidden');
-    elements.headerSubtitle.textContent = category;
     
     // ハンバーガーメニューを非表示、戻るボタンを表示
     updateHeaderButtons('back');
@@ -1817,7 +1813,6 @@ function initTimeAttackLearning(category, words) {
         courseSelection.classList.add('hidden');
     }
     elements.mainContent.classList.remove('hidden');
-    elements.headerSubtitle.textContent = category;
     if (elements.unitName) {
         // 入試得点力アップコースの場合はカテゴリー名を直接使用
         const scoreUpCategories = [
@@ -2152,7 +2147,6 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         courseSelection.classList.add('hidden');
     }
     elements.mainContent.classList.remove('hidden');
-    elements.headerSubtitle.textContent = category;
     if (elements.unitName) {
         // 入試得点力アップコースの場合はカテゴリー名を直接使用
         const scoreUpCategories = [
@@ -2283,10 +2277,6 @@ function setupEventListeners() {
             }
             // 入試情報画面を表示
             examInfoView.classList.remove('hidden');
-            // ヘッダーのサブタイトルを更新
-            if (elements.headerSubtitle) {
-                elements.headerSubtitle.textContent = '大阪府公立高校入試特化型英単語';
-            }
             // ハンバーガーメニューを非表示、戻るボタンを表示
             updateHeaderButtons('back');
         });
@@ -2827,8 +2817,8 @@ function setupEventListeners() {
         completionBackBtn.addEventListener('click', () => {
             hideCompletion();
             setTimeout(() => {
-                // 単元メニュー（コース選択画面）に戻る
-                returnToCourseSelection();
+                // ホーム画面（カテゴリー選択画面）に戻る
+                showCategorySelection();
             }, 350);
         });
     }
@@ -4364,14 +4354,17 @@ function displayCurrentWord() {
     // 意味を表示（①②③があれば行ごとに整形）
     setMeaningContent(elements.meaning, word.meaning);
     
-    // 用例を表示（あれば）
+    // 用例を表示（あれば）※アウトプットモードでは非表示
     const exampleContainer = document.getElementById('exampleContainer');
     const exampleEnglishEl = document.getElementById('exampleEnglish');
     const exampleJapaneseEl = document.getElementById('exampleJapanese');
     const exampleLabel = exampleContainer ? exampleContainer.querySelector('.example-label') : null;
     const exampleText = exampleContainer ? exampleContainer.querySelector('.example-text') : null;
     if (exampleContainer && exampleEnglishEl && exampleJapaneseEl) {
-        if (word.example && (word.example.english || word.example.japanese)) {
+        // アウトプットモードでは用例を表示しない
+        if (currentLearningMode !== 'input' && word.example && (word.example.english || word.example.japanese)) {
+            exampleContainer.style.display = 'none';
+        } else if (currentLearningMode === 'input' && word.example && (word.example.english || word.example.japanese)) {
             exampleContainer.style.display = '';
 
             const exampleEn = word.example.english || '';
@@ -5523,7 +5516,6 @@ function initSentenceModeLearning(category) {
         courseSelection.classList.add('hidden');
     }
     elements.mainContent.classList.remove('hidden');
-    elements.headerSubtitle.textContent = category;
     if (elements.unitName) {
         // 入試得点力アップコースの場合はカテゴリー名を直接使用
         const scoreUpCategories = [
@@ -6136,7 +6128,6 @@ function initReorderModeLearning(category) {
     elements.mainContent.classList.remove('hidden');
     // サブタイトルから【整序英作文(記号選択)対策】を削除
     const displayTitle = category.replace('【整序英作文(記号選択)対策】', '').trim();
-    elements.headerSubtitle.textContent = displayTitle;
     if (elements.unitName) {
         // コース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
         const unitDisplayTitle = currentFilterCourseTitle || displayTitle;
@@ -6956,10 +6947,6 @@ function showGrammarTableOfContents() {
     // スクロール位置をトップに戻す
     window.scrollTo(0, 0);
     
-    // ヘッダーのサブタイトルを更新
-    if (elements.headerSubtitle) {
-        elements.headerSubtitle.textContent = '中学３年間の英文法';
-    }
     
     // 左上のタイトルを更新
     if (elements.unitName) {
@@ -7076,14 +7063,6 @@ function showGrammarChapter(chapterNumber) {
         chapterData = grammarData.find(data => data.chapter === chapterNumber);
     }
     
-    // ヘッダーのサブタイトルを更新
-    if (elements.headerSubtitle) {
-        if (chapterData && chapterData.title) {
-            elements.headerSubtitle.textContent = chapterData.title;
-        } else {
-            elements.headerSubtitle.textContent = `第${chapterNumber}章`;
-        }
-    }
     
     // 左上のタイトルを更新
     if (elements.unitName) {

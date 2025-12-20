@@ -45,7 +45,6 @@
             <div class="header-content">
                 <h1>
                     大阪府英単語コンプリート
-                    <span class="subtitle" id="headerSubtitle">大阪府公立高校入試特化型英単語</span>
                 </h1>
             </div>
         </header>
@@ -1043,7 +1042,9 @@
     <div class="completion-overlay hidden" id="completionOverlay">
         <div class="confetti-container" id="confettiContainer"></div>
         <div class="completion-content">
-            <div class="completion-title">学習完了！</div>
+            <div class="completion-header">
+                <div class="completion-title">学習結果</div>
+            </div>
             <div class="completion-gained hidden" id="completionGained">+0語 覚えた！</div>
             <div class="completion-course-title" id="completionCourseTitle">カテゴリー名</div>
             <div class="completion-progress-container">
@@ -1065,7 +1066,7 @@
             </div>
             <div class="completion-actions">
                 <button class="completion-btn completion-btn-review hidden" id="completionReviewBtn">覚えていない単語を復習</button>
-                <button class="completion-btn completion-btn-back" id="completionBackBtn">戻る</button>
+                <button class="completion-btn completion-btn-back" id="completionBackBtn">ホーム画面に戻る</button>
             </div>
         </div>
     </div>
@@ -1140,7 +1141,7 @@
                         </label>
                         <label class="filter-checkbox">
                             <input type="checkbox" id="filterBookmark" checked>
-                            <span class="checkbox-label">ブックマーク <svg class="filter-icon-bookmark" width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1h12v14l-6-4-6 4V1z"/></svg></span>
+                            <span class="checkbox-label">ブックマーク <svg class="filter-icon-bookmark" width="14" height="16" viewBox="0 0 14 16" fill="#f59e0b" stroke="#f59e0b" stroke-width="2"><path d="M1 1h12v14l-6-4-6 4V1z" fill="#f59e0b"/></svg></span>
                         </label>
                     </div>
                     <div class="filter-info" id="filterInfo">
