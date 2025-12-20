@@ -1116,8 +1116,23 @@ function initInputModeLearning(category, words, startIndex = 0) {
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
     if (elements.unitName) {
-        // コース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
-        const displayTitle = currentFilterCourseTitle || category;
+        // 入試得点力アップコースの場合はカテゴリー名を直接使用
+        const scoreUpCategories = [
+            '英文法中学３年間の総復習',
+            '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
+            '条件英作文特訓コース',
+            '大阪C問題対策英単語タイムアタック',
+            '大阪C問題対策 英作写経ドリル',
+            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+        ];
+        let displayTitle;
+        if (scoreUpCategories.includes(category)) {
+            // 入試得点力アップコースの場合はカテゴリー名をそのまま使用
+            displayTitle = category;
+        } else {
+            // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
+            displayTitle = currentFilterCourseTitle || category;
+        }
         elements.unitName.textContent = displayTitle;
     }
     
@@ -1677,8 +1692,23 @@ function initTimeAttackLearning(category, words) {
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
     if (elements.unitName) {
-        // コース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
-        const displayTitle = currentFilterCourseTitle || category;
+        // 入試得点力アップコースの場合はカテゴリー名を直接使用
+        const scoreUpCategories = [
+            '英文法中学３年間の総復習',
+            '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
+            '条件英作文特訓コース',
+            '大阪C問題対策英単語タイムアタック',
+            '大阪C問題対策 英作写経ドリル',
+            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+        ];
+        let displayTitle;
+        if (scoreUpCategories.includes(category)) {
+            // 入試得点力アップコースの場合はカテゴリー名をそのまま使用
+            displayTitle = category;
+        } else {
+            // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
+            displayTitle = currentFilterCourseTitle || category;
+        }
         elements.unitName.textContent = displayTitle;
     }
     
@@ -1991,8 +2021,23 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
     if (elements.unitName) {
-        // コース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
-        const displayTitle = currentFilterCourseTitle || category;
+        // 入試得点力アップコースの場合はカテゴリー名を直接使用
+        const scoreUpCategories = [
+            '英文法中学３年間の総復習',
+            '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
+            '条件英作文特訓コース',
+            '大阪C問題対策英単語タイムアタック',
+            '大阪C問題対策 英作写経ドリル',
+            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+        ];
+        let displayTitle;
+        if (scoreUpCategories.includes(category)) {
+            // 入試得点力アップコースの場合はカテゴリー名をそのまま使用
+            displayTitle = category;
+        } else {
+            // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
+            displayTitle = currentFilterCourseTitle || category;
+        }
         elements.unitName.textContent = displayTitle;
     }
     
@@ -5037,8 +5082,23 @@ function initSentenceModeLearning(category) {
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
     if (elements.unitName) {
-        // コース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
-        const displayTitle = currentFilterCourseTitle || category;
+        // 入試得点力アップコースの場合はカテゴリー名を直接使用
+        const scoreUpCategories = [
+            '英文法中学３年間の総復習',
+            '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
+            '条件英作文特訓コース',
+            '大阪C問題対策英単語タイムアタック',
+            '大阪C問題対策 英作写経ドリル',
+            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+        ];
+        let displayTitle;
+        if (scoreUpCategories.includes(category)) {
+            // 入試得点力アップコースの場合はカテゴリー名をそのまま使用
+            displayTitle = category;
+        } else {
+            // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
+            displayTitle = currentFilterCourseTitle || category;
+        }
         elements.unitName.textContent = displayTitle;
     }
     
@@ -6454,6 +6514,11 @@ function showGrammarTableOfContents() {
         elements.headerSubtitle.textContent = '中学３年間の英文法';
     }
     
+    // 左上のタイトルを更新
+    if (elements.unitName) {
+        elements.unitName.textContent = '中学３年間の英文法';
+    }
+    
     // ハンバーガーメニューを非表示、戻るボタンを表示、中断ボタンを非表示
     updateHeaderButtons('back');
     
@@ -6570,6 +6635,15 @@ function showGrammarChapter(chapterNumber) {
             elements.headerSubtitle.textContent = chapterData.title;
         } else {
             elements.headerSubtitle.textContent = `第${chapterNumber}章`;
+        }
+    }
+    
+    // 左上のタイトルを更新
+    if (elements.unitName) {
+        if (chapterData && chapterData.title) {
+            elements.unitName.textContent = chapterData.title;
+        } else {
+            elements.unitName.textContent = `第${chapterNumber}章`;
         }
     }
     
