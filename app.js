@@ -842,7 +842,7 @@ function updateThemeColor(isLearningMode) {
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
     if (themeColorMeta) {
         // 即座に色を変更（アニメーションなし）
-        themeColorMeta.setAttribute('content', '#f5f5f5');
+        themeColorMeta.setAttribute('content', isLearningMode ? '#f5f5f5' : '#0055ca');
     }
 }
 
@@ -905,6 +905,7 @@ function showCategorySelection() {
     selectedCategory = null;
     updateNavState('home');
     elements.headerSubtitle.textContent = '大阪府公立高校入試特化英単語';
+    updateThemeColor(false); // ホーム画面では青に
     
     // ハンバーガーメニューを表示、戻るボタンを非表示
     updateHeaderButtons('home');
@@ -929,6 +930,7 @@ function showCategorySelection() {
     // ハンバーガーメニューボタンは常に表示（変更不要）
     
     document.body.classList.remove('learning-mode');
+    updateThemeColor(false);
     
     // すべての学習モードを非表示にする
     const wordCard = document.getElementById('wordCard');
@@ -4540,6 +4542,7 @@ function returnToCourseSelection() {
     
     // 学習モードをリセット
     document.body.classList.remove('learning-mode');
+    updateThemeColor(false);
     const mainContent = document.getElementById('mainContent');
     if (mainContent) {
         mainContent.classList.add('hidden');
