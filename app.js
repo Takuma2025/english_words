@@ -837,11 +837,12 @@ function init() {
 }
 
 // ヘッダーボタンの表示/非表示を制御
-// テーマカラーを更新
+// テーマカラーを更新（即座に変更）
 function updateThemeColor(isLearningMode) {
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
     if (themeColorMeta) {
-        themeColorMeta.setAttribute('content', isLearningMode ? '#f5f5f5' : '#0055ca');
+        // 即座に色を変更（アニメーションなし）
+        themeColorMeta.setAttribute('content', '#f5f5f5');
     }
 }
 
@@ -928,7 +929,6 @@ function showCategorySelection() {
     // ハンバーガーメニューボタンは常に表示（変更不要）
     
     document.body.classList.remove('learning-mode');
-    updateThemeColor(false);
     
     // すべての学習モードを非表示にする
     const wordCard = document.getElementById('wordCard');
@@ -4540,7 +4540,6 @@ function returnToCourseSelection() {
     
     // 学習モードをリセット
     document.body.classList.remove('learning-mode');
-    updateThemeColor(false);
     const mainContent = document.getElementById('mainContent');
     if (mainContent) {
         mainContent.classList.add('hidden');
