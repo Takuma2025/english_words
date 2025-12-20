@@ -4074,6 +4074,8 @@ function displayCurrentWord() {
     const exampleContainer = document.getElementById('exampleContainer');
     const exampleEnglishEl = document.getElementById('exampleEnglish');
     const exampleJapaneseEl = document.getElementById('exampleJapanese');
+    const exampleLabel = exampleContainer ? exampleContainer.querySelector('.example-label') : null;
+    const exampleText = exampleContainer ? exampleContainer.querySelector('.example-text') : null;
     if (exampleContainer && exampleEnglishEl && exampleJapaneseEl) {
         if (word.example && (word.example.english || word.example.japanese)) {
             exampleContainer.style.display = '';
@@ -4096,6 +4098,38 @@ function displayCurrentWord() {
             }
 
             exampleJapaneseEl.textContent = word.example.japanese || '';
+            
+            // 用例テキストを初期状態で非表示にする
+            if (exampleText) {
+                exampleText.style.display = 'none';
+            }
+            
+            // 用例ラベルのクリックイベントを設定（一度だけ）
+            if (exampleLabel && exampleText && !exampleLabel.dataset.listenerAdded) {
+                exampleLabel.dataset.listenerAdded = 'true';
+                exampleLabel.addEventListener('click', (e) => {
+                    e.stopPropagation(); // カードのフリップを防ぐ
+                    const textEl = exampleContainer.querySelector('.example-text');
+                    if (textEl) {
+                        if (textEl.style.display === 'none') {
+                            textEl.style.display = 'flex';
+                            exampleLabel.textContent = '用例を閉じる';
+                        } else {
+                            textEl.style.display = 'none';
+                            exampleLabel.textContent = '用例を見る';
+                        }
+                    }
+                });
+            }
+            
+            // 初期状態のラベルテキストを設定
+            if (exampleLabel && exampleText) {
+                if (exampleText.style.display === 'none' || !exampleText.style.display) {
+                    exampleLabel.textContent = '用例を見る';
+                } else {
+                    exampleLabel.textContent = '用例を閉じる';
+                }
+            }
         } else {
             exampleContainer.style.display = 'none';
             exampleEnglishEl.textContent = '';
