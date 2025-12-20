@@ -3925,6 +3925,7 @@ function getPartOfSpeechShort(pos) {
         '代名詞': '代',
         '助動詞': '助',
         '間投詞': '間',
+        '関係代名詞': '関',
         '形容詞・副詞': '形',
         '動詞・名詞': '動',
         '名詞・動詞': '名',
@@ -4553,7 +4554,7 @@ function showCompletion() {
 // 紙吹雪を生成
 function createConfetti(container) {
     const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
-    const confettiCount = 50;
+    const confettiCount = 60;
     
     for (let i = 0; i < confettiCount; i++) {
         setTimeout(() => {
@@ -4561,33 +4562,51 @@ function createConfetti(container) {
             confetti.className = 'confetti';
             confetti.style.left = Math.random() * 100 + '%';
             confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.width = (Math.random() * 10 + 5) + 'px';
-            confetti.style.height = (Math.random() * 10 + 5) + 'px';
-            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-            // より長い時間でゆっくりと落ちるように
-            const duration = Math.random() * 3 + 3;
-            confetti.style.animationDuration = duration + 's';
-            confetti.style.animationDelay = (Math.random() * 0.5) + 's';
             
-            // 個別の横揺れアニメーションを生成
-            const swayAmount = (Math.random() * 40 + 20) * (Math.random() > 0.5 ? 1 : -1);
+            // 細長い長方形の紙吹雪
+            const width = Math.random() * 6 + 4;
+            const height = Math.random() * 12 + 8;
+            confetti.style.width = width + 'px';
+            confetti.style.height = height + 'px';
+            confetti.style.borderRadius = '1px';
+            
+            // アニメーション時間
+            const duration = Math.random() * 2 + 3;
+            confetti.style.animationDuration = duration + 's';
+            confetti.style.animationDelay = (Math.random() * 0.3) + 's';
+            
+            // 横揺れの強さ（左右ランダム）
+            const swayDirection = Math.random() > 0.5 ? 1 : -1;
+            const swayAmount1 = (Math.random() * 30 + 15) * swayDirection;
+            const swayAmount2 = (Math.random() * 25 + 10) * -swayDirection;
+            const swayAmount3 = (Math.random() * 20 + 10) * swayDirection;
+            
+            // 回転角度
+            const rotateStart = Math.random() * 360;
+            const rotateEnd = rotateStart + (Math.random() * 720 + 360) * (Math.random() > 0.5 ? 1 : -1);
+            
+            // 個別のキーフレームアニメーション
             const keyframes = `
                 @keyframes confettiFall${i} {
                     0% {
-                        transform: translateY(0) translateX(0) rotate(0deg);
+                        transform: translateY(0) translateX(0) rotate(${rotateStart}deg) rotateX(0deg);
                         opacity: 1;
                     }
-                    25% {
-                        transform: translateY(25vh) translateX(${swayAmount * 0.5}px) rotate(180deg);
+                    20% {
+                        transform: translateY(20vh) translateX(${swayAmount1}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.2}deg) rotateX(90deg);
                     }
-                    50% {
-                        transform: translateY(50vh) translateX(${swayAmount}px) rotate(360deg);
+                    40% {
+                        transform: translateY(40vh) translateX(${swayAmount2}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.4}deg) rotateX(180deg);
                     }
-                    75% {
-                        transform: translateY(75vh) translateX(${swayAmount * 0.5}px) rotate(540deg);
+                    60% {
+                        transform: translateY(60vh) translateX(${swayAmount3}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.6}deg) rotateX(270deg);
+                    }
+                    80% {
+                        transform: translateY(80vh) translateX(${swayAmount1 * 0.5}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.8}deg) rotateX(360deg);
+                        opacity: 1;
                     }
                     100% {
-                        transform: translateY(100vh) translateX(0) rotate(720deg);
+                        transform: translateY(100vh) translateX(${swayAmount2 * 0.3}px) rotate(${rotateEnd}deg) rotateX(450deg);
                         opacity: 0;
                     }
                 }
@@ -4604,7 +4623,7 @@ function createConfetti(container) {
                 confetti.remove();
                 style.remove();
             }, (duration + 0.5) * 1000);
-        }, i * 30);
+        }, i * 25);
     }
 }
 
