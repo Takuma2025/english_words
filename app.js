@@ -2224,9 +2224,6 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     isSentenceModeActive = false;
     isReorderModeActive = false;
     
-    // スワイプヒント
-    const progressSwipeHint = document.getElementById('progressSwipeHint');
-    
     // currentLearningMode === 'input'の場合は「眺めるだけ」のカードモード
     if (currentLearningMode === 'input') {
         // 判定ボタンを非表示、カード下のナビゲーションボタンを表示
@@ -2235,8 +2232,6 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         // 上の「前の単語へ」「次の単語へ」ボタンを非表示
         if (progressStepLeft) progressStepLeft.classList.add('hidden');
         if (progressStepRight) progressStepRight.classList.add('hidden');
-        // スワイプヒントを表示
-        if (progressSwipeHint) progressSwipeHint.classList.remove('hidden');
     } else {
         // 通常のカードモード（アウトプット）
         if (cardHint) cardHint.classList.remove('hidden');
@@ -2244,8 +2239,6 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         // 上の「前の単語へ」「次の単語へ」ボタンを非表示（アウトプットモードでも非表示）
         if (progressStepLeft) progressStepLeft.classList.add('hidden');
         if (progressStepRight) progressStepRight.classList.add('hidden');
-        // スワイプヒントを非表示
-        if (progressSwipeHint) progressSwipeHint.classList.add('hidden');
     }
     
     // 例文モード用のナビゲーションボタンを非表示
@@ -2480,9 +2473,21 @@ function setupEventListeners() {
         });
     }
     
-    // 進捗バーの矢印ボタン
-    // 進捗バーのスワイプ機能を設定
-    setupProgressBarSwipe();
+    // 進捗バーの左右矢印ボタン
+    const progressNavLeft = document.getElementById('progressNavLeft');
+    const progressNavRight = document.getElementById('progressNavRight');
+    if (progressNavLeft) {
+        progressNavLeft.addEventListener('click', (e) => {
+            e.stopPropagation();
+            scrollProgressBarLeft();
+        });
+    }
+    if (progressNavRight) {
+        progressNavRight.addEventListener('click', (e) => {
+            e.stopPropagation();
+            scrollProgressBarRight();
+        });
+    }
     
     // 進捗バーの1つずつ移動ボタン
     const progressStepLeft = document.getElementById('progressStepLeft');
@@ -5153,16 +5158,6 @@ function createProgressSegments(total) {
     
     // 矢印ボタンの状態を更新
     updateProgressNavButtons(total);
-    
-    // 続きがあるかどうかでクラスを切り替え
-    const wrapper = container.closest('.progress-bar-wrapper');
-    if (wrapper) {
-        if (displayEnd < total) {
-            wrapper.classList.add('has-more-right');
-        } else {
-            wrapper.classList.remove('has-more-right');
-        }
-    }
 }
 
 // 進捗バーのセグメントを更新
@@ -5207,133 +5202,25 @@ function updateProgressSegments() {
     updateProgressRangeText(total);
 }
 
-// 進捗バーの表示範囲テキストを更新（ボタン削除に伴い関数名を変更）
+// 進捗バーの表示範囲テキストと矢印ボタンの状態を更新
 function updateProgressNavButtons(total) {
     // 表示範囲のテキストを更新
     updateProgressRangeText(total);
-}
-
-// 進捗バーのスワイプ機能を設定
-function setupProgressBarSwipe() {
-    const progressBarContainer = document.getElementById('progressBarContainer');
-    if (!progressBarContainer) return;
     
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchEndX = 0;
-    let touchEndY = 0;
-    let isSwiping = false;
-    let isHorizontalSwipe = false;
-    const minSwipeDistance = 50; // 最小スワイプ距離（ピクセル）
+    // 矢印ボタンの表示/非表示と状態を更新
+    const progressNavLeft = document.getElementById('progressNavLeft');
+    const progressNavRight = document.getElementById('progressNavRight');
     
-    progressBarContainer.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        isSwiping = true;
-        isHorizontalSwipe = false;
-        progressBarContainer.classList.add('swiping');
-    }, { passive: true });
+    if (progressNavLeft) {
+        const canGoLeft = progressBarStartIndex > 0;
+        progressNavLeft.style.display = canGoLeft ? 'flex' : 'none';
+        progressNavLeft.disabled = !canGoLeft;
+    }
     
-    progressBarContainer.addEventListener('touchmove', (e) => {
-        if (!isSwiping) return;
-        const currentX = e.touches[0].clientX;
-        const currentY = e.touches[0].clientY;
-        const deltaX = currentX - touchStartX;
-        const deltaY = currentY - touchStartY;
-        
-        // 水平方向のスワイプかどうかを判定
-        if (!isHorizontalSwipe && Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
-            isHorizontalSwipe = true;
-        }
-        
-        // 水平方向のスワイプのみ処理（垂直方向のスクロールを防ぐ）
-        if (isHorizontalSwipe) {
-            e.preventDefault();
-            // スワイプ中の視覚的フィードバック（最大20pxまで移動）
-            const maxOffset = 20;
-            const offset = Math.max(-maxOffset, Math.min(maxOffset, deltaX * 0.3));
-            progressBarContainer.style.transform = `translateX(${offset}px)`;
-        }
-    }, { passive: false });
-    
-    progressBarContainer.addEventListener('touchend', (e) => {
-        if (!isSwiping) return;
-        touchEndX = e.changedTouches[0].clientX;
-        touchEndY = e.changedTouches[0].clientY;
-        progressBarContainer.style.transform = '';
-        progressBarContainer.classList.remove('swiping');
-        isSwiping = false;
-        
-        // 水平方向のスワイプのみ処理
-        if (isHorizontalSwipe) {
-            handleSwipe();
-        }
-        isHorizontalSwipe = false;
-    }, { passive: true });
-    
-    progressBarContainer.addEventListener('touchcancel', () => {
-        progressBarContainer.style.transform = '';
-        progressBarContainer.classList.remove('swiping');
-        isSwiping = false;
-        isHorizontalSwipe = false;
-    }, { passive: true });
-    
-    // マウスドラッグでも対応（デスクトップ用）
-    let isDragging = false;
-    let mouseStartX = 0;
-    progressBarContainer.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        isSwiping = true;
-        mouseStartX = e.clientX;
-        touchStartX = e.clientX;
-        progressBarContainer.classList.add('swiping');
-        e.preventDefault();
-    });
-    
-    progressBarContainer.addEventListener('mousemove', (e) => {
-        if (!isDragging || !isSwiping) return;
-        const currentX = e.clientX;
-        const deltaX = currentX - mouseStartX;
-        // スワイプ中の視覚的フィードバック（最大20pxまで移動）
-        const maxOffset = 20;
-        const offset = Math.max(-maxOffset, Math.min(maxOffset, deltaX * 0.3));
-        progressBarContainer.style.transform = `translateX(${offset}px)`;
-    });
-    
-    progressBarContainer.addEventListener('mouseup', (e) => {
-        if (isDragging) {
-            touchEndX = e.clientX;
-            progressBarContainer.style.transform = '';
-            progressBarContainer.classList.remove('swiping');
-            isSwiping = false;
-            isDragging = false;
-            handleSwipe();
-        }
-    });
-    
-    progressBarContainer.addEventListener('mouseleave', () => {
-        progressBarContainer.style.transform = '';
-        progressBarContainer.classList.remove('swiping');
-        isSwiping = false;
-        isDragging = false;
-    });
-    
-    function handleSwipe() {
-        // アウトプットモードのときはスワイプで移動しない
-        if (currentLearningMode !== 'input') {
-            return;
-        }
-        
-        const swipeDistance = touchStartX - touchEndX;
-        
-        // 右から左にスワイプ（指を左に動かす = swipeDistance > 0）→ 次の20個に移動（右に進む）
-        if (swipeDistance > minSwipeDistance) {
-            scrollProgressBarRight();
-        }
-        // 左から右にスワイプ（指を右に動かす = swipeDistance < 0）→ 前の20個に移動（左に戻る）
-        else if (swipeDistance < -minSwipeDistance) {
-            scrollProgressBarLeft();
-        }
+    if (progressNavRight) {
+        const canGoRight = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT < total;
+        progressNavRight.style.display = canGoRight ? 'flex' : 'none';
+        progressNavRight.disabled = !canGoRight;
     }
 }
 

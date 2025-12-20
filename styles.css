@@ -1368,25 +1368,71 @@ body {
     padding-top: 0;
 }
 
-/* 続きがあることを示すフェードと矢印（高さ可変でも中央揃え） */
-.progress-bar-wrapper.has-more-right::after {
-    content: '›';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 26px;
-    height: 100%;
+.progress-nav-arrow {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    padding-right: 6px;
-    font-size: 18px;
-    font-weight: 700;
+    justify-content: center;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
     color: #6b7280;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(243, 244, 246, 0.9) 65%, rgba(243, 244, 246, 1) 100%);
-    pointer-events: none;
-    z-index: 10;
+    padding: 0;
+}
+
+.progress-nav-row .progress-nav-left {
+    order: 1;
+}
+
+.progress-nav-row .progress-nav-stats {
+    order: 2;
+}
+
+.progress-nav-row .progress-nav-right {
+    order: 3;
+}
+
+.progress-nav-arrow:hover:not(:disabled) {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.progress-nav-arrow:active:not(:disabled) {
+    background: #d1d5db;
+    transform: scale(0.95);
+}
+
+.progress-nav-arrow:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.progress-nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    position: relative;
+    width: 100%;
+}
+
+.progress-nav-stats {
+    display: flex;
+    align-items: center;
+}
+
+.progress-nav-row .progress-nav-left {
+    position: absolute;
+    left: 0;
+}
+
+.progress-nav-row .progress-nav-right {
+    position: absolute;
+    right: 0;
 }
 
 .progress-bottom-row {
@@ -1733,6 +1779,7 @@ body {
     fill: #ffffff;
 }
 
+
 .progress-segment:hover {
     transform: scaleY(1.2);
 }
@@ -1747,15 +1794,27 @@ body {
 
 .progress-segment.current {
     position: relative;
-    background: #1e40af !important;
+}
+
+.progress-segment.current:not(:has(.progress-segment-flag))::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffffff;
+    z-index: 10;
 }
 
 .progress-segment.current.correct {
-    background: #1e40af !important;
+    background: #22c55e !important;
 }
 
 .progress-segment.current.wrong {
-    background: #1e40af !important;
+    background: #dc2626 !important;
 }
 
 .progress-fill {

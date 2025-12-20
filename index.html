@@ -550,7 +550,20 @@
                                 <div class="progress-bar-container" id="progressBarContainer">
                                     <!-- セグメントは動的に生成 -->
                                 </div>
-                                <div class="progress-swipe-hint" id="progressSwipeHint">← → スワイプで移動</div>
+                            </div>
+                            <div class="progress-nav-row">
+                                <button class="progress-nav-arrow progress-nav-left" id="progressNavLeft" aria-label="前の範囲へ" style="display: none;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                </button>
+                                <div class="progress-nav-stats">
+                                    <div class="progress-stats-content">
+                                        <span class="progress-stats-label">進捗</span>
+                                        <span id="progressText">0/0</span>
+                                    </div>
+                                </div>
+                                <button class="progress-nav-arrow progress-nav-right" id="progressNavRight" aria-label="次の範囲へ" style="display: none;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </button>
                             </div>
                             <div class="progress-bottom-row">
                                 <button class="progress-step-btn progress-step-left" id="progressStepLeft" aria-label="前の単語へ">
@@ -558,10 +571,6 @@
                                     <span>前の単語へ</span>
                                 </button>
                                 <div class="progress-stats">
-                                    <div class="progress-stats-content">
-                                        <span class="progress-stats-label">進捗</span>
-                                        <span id="progressText">0/0</span>
-                                    </div>
                                     <div class="progress-stats-scores">
                                         <span class="score-correct">
                                             <span class="score-label">正解</span>
