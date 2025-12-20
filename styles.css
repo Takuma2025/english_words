@@ -6119,15 +6119,15 @@ body.learning-mode .word-card {
 }
 
 
-/* フィルター画面の上部固定ヘッダー */
+/* フィルター画面の上部固定ヘッダー（×ボタンの高さの横部分を白にする） */
 #wordFilterView::before {
     content: '';
-    position: sticky;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 0;
-    background: transparent;
+    height: 56px;
+    background: #ffffff;
     z-index: 4;
     pointer-events: none;
 }
@@ -6170,6 +6170,7 @@ body.learning-mode .word-card {
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
     padding: 0;
+    padding-top: 72px;
     padding-bottom: calc(100px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
@@ -6593,18 +6594,19 @@ body.learning-mode .word-card {
 }
 
 .filter-actions {
-    position: sticky;
+    position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 540px;
     display: flex;
     flex-direction: row;
     gap: 12px;
     padding: 16px 12px;
     padding-bottom: calc(16px + env(safe-area-inset-bottom));
     background: #ffffff;
-    z-index: 10;
-    margin-top: auto;
+    z-index: 10003;
     box-shadow: none;
 }
 
@@ -6701,8 +6703,8 @@ body.learning-mode .word-card {
     font-size: 17px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 0 #0044a0, inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 24px rgba(0, 85, 202, 0.25);
+    transition: all 0.1s ease;
+    box-shadow: 0 4px 0 #0044a0;
 }
 
 .filter-start-btn:hover {
@@ -6710,8 +6712,8 @@ body.learning-mode .word-card {
 }
 
 .filter-start-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #0044a0, inset 0 1px 2px rgba(0, 0, 0, 0.12);
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #0044a0;
 }
 
 .filter-back-btn {
