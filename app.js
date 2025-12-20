@@ -839,16 +839,25 @@ function init() {
 // ヘッダーボタンの表示/非表示を制御
 // テーマカラーを更新（即座に変更、フェードなし）
 function updateThemeColor(isLearningMode) {
-    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeColorMeta) {
-        // メタタグを削除して再作成することで、フェードアニメーションを無効化
-        const color = isLearningMode ? '#f5f5f5' : '#0055ca';
-        themeColorMeta.remove();
-        const newMeta = document.createElement('meta');
-        newMeta.name = 'theme-color';
-        newMeta.content = color;
-        document.head.appendChild(newMeta);
-    }
+    const color = isLearningMode ? '#f5f5f5' : '#0055ca';
+    
+    // requestAnimationFrameを使って即座に更新
+    requestAnimationFrame(() => {
+        const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+        
+        if (themeColorMeta) {
+            // 即座に色を変更（setAttributeで直接更新）
+            themeColorMeta.setAttribute('content', color);
+            
+            // さらに確実にするため、メタタグを削除して再作成
+            const parent = themeColorMeta.parentNode;
+            themeColorMeta.remove();
+            const newMeta = document.createElement('meta');
+            newMeta.name = 'theme-color';
+            newMeta.content = color;
+            parent.insertBefore(newMeta, parent.firstChild);
+        }
+    });
 }
 
 // フィードバックオーバーレイの位置を更新（タイトルコンテナのボーダーの下から開始）
@@ -1169,8 +1178,9 @@ function initInputModeLearning(category, words, startIndex = 0) {
         elements.unitName.textContent = displayTitle;
     }
     
-    document.body.classList.add('learning-mode');
+    // テーマカラーを先に更新（クラス追加の前に）
     updateThemeColor(true);
+    document.body.classList.add('learning-mode');
     // フィードバックオーバーレイの位置を更新（少し遅延させてDOMが更新されるのを待つ）
     setTimeout(() => {
         updateFeedbackOverlayPosition();
@@ -1750,9 +1760,10 @@ function initTimeAttackLearning(category, words) {
         elements.unitName.textContent = displayTitle;
     }
     
+    // テーマカラーを先に更新（クラス追加の前に）
+    updateThemeColor(true);
     document.body.classList.add('learning-mode');
     document.body.classList.add('time-attack-mode');
-    updateThemeColor(true);
     // フィードバックオーバーレイの位置を更新（少し遅延させてDOMが更新されるのを待つ）
     setTimeout(() => {
         updateFeedbackOverlayPosition();
@@ -2084,8 +2095,9 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         elements.unitName.textContent = displayTitle;
     }
     
-    document.body.classList.add('learning-mode');
+    // テーマカラーを先に更新（クラス追加の前に）
     updateThemeColor(true);
+    document.body.classList.add('learning-mode');
     // フィードバックオーバーレイの位置を更新（少し遅延させてDOMが更新されるのを待つ）
     setTimeout(() => {
         updateFeedbackOverlayPosition();
@@ -5151,6 +5163,8 @@ function initSentenceModeLearning(category) {
         elements.unitName.textContent = displayTitle;
     }
     
+    // テーマカラーを先に更新（クラス追加の前に）
+    updateThemeColor(true);
     document.body.classList.add('learning-mode');
     
     // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
@@ -5747,6 +5761,8 @@ function initReorderModeLearning(category) {
         elements.unitName.textContent = unitDisplayTitle;
     }
     
+    // テーマカラーを先に更新（クラス追加の前に）
+    updateThemeColor(true);
     document.body.classList.add('learning-mode');
     
     // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
