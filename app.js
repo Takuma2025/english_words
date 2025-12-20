@@ -4824,6 +4824,11 @@ function showCompletion() {
                 // COMPLETEの場合はwrongがないので、correctのみで1秒
                 const animationTime = 1000; // correctアニメーションの時間
                 setTimeout(() => {
+                    // クラスを一度削除してから再追加することで、アニメーションを強制的に再実行
+                    completionProgressBar.classList.remove('completion-progress-complete');
+                    // 強制リフロー
+                    completionProgressBar.offsetHeight;
+                    // クラスを再追加
                     completionProgressBar.classList.add('completion-progress-complete');
                 }, animationTime + 50); // 少し余裕を持たせる
             }

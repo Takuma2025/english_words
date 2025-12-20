@@ -1690,21 +1690,15 @@ body {
 }
 
 .progress-segment.current {
-    background: rgba(0, 0, 0, 0.1);
-    outline: 2px solid #4b5563;
-    outline-offset: -2px;
+    background: #4b5563 !important;
 }
 
 .progress-segment.current.correct {
     background: #3b82f6;
-    outline: 2px solid #4b5563;
-    outline-offset: -2px;
 }
 
 .progress-segment.current.wrong {
     background: #ef4444;
-    outline: 2px solid #4b5563;
-    outline-offset: -2px;
 }
 
 .progress-fill {
@@ -2919,7 +2913,7 @@ body.learning-mode .word-card-container {
 }
 
 .word-card.flipped .word-number {
-    transform: rotateY(180deg);
+    display: none;
 }
 
 .badges {
