@@ -6175,9 +6175,6 @@ body.learning-mode .word-card {
     max-width: 100%;
     margin-bottom: 16px;
     text-align: center;
-    touch-action: pan-y;
-    position: relative;
-    z-index: 1;
 }
 
 .filter-category-title {
