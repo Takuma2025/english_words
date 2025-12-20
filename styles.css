@@ -875,7 +875,7 @@ body {
 
 .ai-badge {
     display: inline-block;
-    background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #4dabf7 100%);
+    background-color: #0055ca;
     color: #ffffff;
     padding: 1px 6px;
     border-radius: 4px;

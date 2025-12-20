@@ -1547,11 +1547,13 @@ function showCourseSelection(category, categoryWords) {
             '冠詞',
             '代名詞',
             '疑問詞',
+            '数や量をあらわす限定詞',
             '前置詞',
             '助動詞',
             '接続詞',
             '関係代名詞',
-            '機能型副詞'
+            '機能型副詞',
+            'あいさつや返事を表す間投詞'
         ];
 
         const { correctSet, wrongSet } = loadCategoryWords(category);
@@ -4477,9 +4479,11 @@ function getPartOfSpeechShort(pos) {
         '前置詞': '前',
         '接続詞': '接',
         '冠詞': '冠',
+        '数や量をあらわす限定詞': '限',
         '代名詞': '代',
         '助動詞': '助',
         '間投詞': '間',
+        'あいさつや返事を表す間投詞': '間',
         '関係代名詞': '関',
         '形容詞・副詞': '形',
         '動詞・名詞': '動',
