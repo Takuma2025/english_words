@@ -718,12 +718,6 @@ body {
     font-size: 11px;
 }
 
-@media (max-width: 600px) {
-    .category-cards-row {
-        grid-template-columns: 1fr;
-    }
-}
-
 .course-section-title {
     font-size: clamp(16px, 3.5vw, 20px);
     font-weight: 700;
