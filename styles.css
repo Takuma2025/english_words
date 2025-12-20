@@ -678,7 +678,7 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 0;
 }
 
 .category-cards-row .category-card {
