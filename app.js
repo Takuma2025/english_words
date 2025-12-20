@@ -4766,6 +4766,21 @@ function showCompletion() {
         return;
     }
     
+    // 前回のアニメーション状態を完全にリセット
+    const completionProgressBar = document.querySelector('.completion-progress-bar');
+    if (completionProgressBar) {
+        // クラスを確実に削除
+        completionProgressBar.classList.remove('completion-progress-complete');
+        // 強制リフローで確実に反映
+        completionProgressBar.offsetHeight;
+    }
+    
+    // オーバーレイを非表示にして、アニメーションをリセット
+    completionOverlay.classList.remove('show');
+    completionOverlay.classList.add('hidden');
+    // 強制リフロー
+    completionOverlay.offsetHeight;
+    
     // カテゴリー名を設定
     const completionCourseTitle = document.getElementById('completionCourseTitle');
     if (completionCourseTitle) {
@@ -4812,14 +4827,8 @@ function showCompletion() {
     // 進捗バーを初期化（0%）
     const completionProgressCorrect = document.getElementById('completionProgressCorrect');
     const completionProgressWrong = document.getElementById('completionProgressWrong');
-    const completionProgressBar = document.querySelector('.completion-progress-bar');
     if (completionProgressCorrect) completionProgressCorrect.style.width = '0%';
     if (completionProgressWrong) completionProgressWrong.style.width = '0%';
-    
-    // 進捗バーのCOMPLETE表示（最初は削除して、アニメーション完了後に追加）
-    if (completionProgressBar) {
-        completionProgressBar.classList.remove('completion-progress-complete');
-    }
     
     // 復習ボタンの表示/非表示
     const completionReviewBtn = document.getElementById('completionReviewBtn');
@@ -4858,13 +4867,15 @@ function showCompletion() {
                 // COMPLETEの場合はwrongがないので、correctのみで1秒
                 const animationTime = 1000; // correctアニメーションの時間
                 setTimeout(() => {
-                    // クラスを一度削除してから再追加することで、アニメーションを強制的に再実行
+                    // クラスを確実に削除（念のため）
                     completionProgressBar.classList.remove('completion-progress-complete');
-                    // 強制リフロー
-                    completionProgressBar.offsetHeight;
-                    // クラスを再追加
-                    completionProgressBar.classList.add('completion-progress-complete');
-                }, animationTime + 50); // 少し余裕を持たせる
+                    // 強制リフローで確実に反映
+                    void completionProgressBar.offsetHeight;
+                    // 少し待ってからクラスを再追加（アニメーションを確実に再実行）
+                    requestAnimationFrame(() => {
+                        completionProgressBar.classList.add('completion-progress-complete');
+                    });
+                }, animationTime + 100); // 少し余裕を持たせる
             }
         }, 300);
         
@@ -4958,6 +4969,11 @@ function hideCompletion() {
         completionOverlay.classList.remove('show');
         setTimeout(() => {
             completionOverlay.classList.add('hidden');
+            // アニメーション関連のクラスを削除して、次回の表示時に確実に再実行されるようにする
+            const completionProgressBar = document.querySelector('.completion-progress-bar');
+            if (completionProgressBar) {
+                completionProgressBar.classList.remove('completion-progress-complete');
+            }
         }, 300);
     }
 }
@@ -5045,20 +5061,22 @@ function createProgressSegments(total) {
         segment.className = 'progress-segment';
         segment.dataset.index = i;
         
-        // アウトプットモードのときはクリック不可
-        if (currentLearningMode === 'output') {
+        // アウトプットモード（カードモード）のときはクリック不可
+        if (currentLearningMode !== 'input') {
             segment.classList.add('progress-segment-disabled');
         }
         
-        // 数字を追加
-        const numberSpan = document.createElement('span');
-        numberSpan.className = 'progress-segment-number';
-        numberSpan.textContent = i + 1;
-        segment.appendChild(numberSpan);
+        // 最後のセグメントの場合はフラッグマークを追加
+        if (i === total - 1) {
+            const flagSpan = document.createElement('span');
+            flagSpan.className = 'progress-segment-number progress-segment-flag';
+            flagSpan.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" fill="#ffffff"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>';
+            segment.appendChild(flagSpan);
+        }
         
         segment.addEventListener('click', () => {
-            // アウトプットモードのときは移動できない
-            if (currentLearningMode === 'output') {
+            // アウトプットモード（カードモード）のときは移動できない
+            if (currentLearningMode !== 'input') {
                 return;
             }
             
@@ -5135,6 +5153,16 @@ function createProgressSegments(total) {
     
     // 矢印ボタンの状態を更新
     updateProgressNavButtons(total);
+    
+    // 続きがあるかどうかでクラスを切り替え
+    const wrapper = container.closest('.progress-bar-wrapper');
+    if (wrapper) {
+        if (displayEnd < total) {
+            wrapper.classList.add('has-more-right');
+        } else {
+            wrapper.classList.remove('has-more-right');
+        }
+    }
 }
 
 // 進捗バーのセグメントを更新

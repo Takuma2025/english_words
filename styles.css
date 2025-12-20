@@ -1368,6 +1368,26 @@ body {
     padding-top: 0;
 }
 
+/* 続きがあることを示すフェードと矢印 */
+.progress-bar-wrapper.has-more-right::after {
+    content: '›';
+    position: absolute;
+    right: 0;
+    top: calc(14px + 12px);
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #6b7280;
+    background: linear-gradient(to right, transparent, #f3f4f6 50%);
+    pointer-events: none;
+    z-index: 10;
+}
+
 .progress-bottom-row {
     display: flex;
     align-items: center;
@@ -1684,6 +1704,7 @@ body {
 
 .progress-segment-disabled {
     cursor: default;
+    pointer-events: none;
 }
 
 .progress-segment-number {
@@ -1692,6 +1713,23 @@ body {
     font-weight: 500;
     line-height: 1;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-segment-number.progress-segment-flag {
+    color: #ffffff;
+}
+
+.progress-segment-number.progress-segment-flag svg {
+    width: 12px;
+    height: 12px;
+    stroke: #ffffff;
+}
+
+.progress-segment-number.progress-segment-flag svg path {
+    fill: #ffffff;
 }
 
 .progress-segment:hover {
