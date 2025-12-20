@@ -702,12 +702,7 @@ body {
 }
 
 .category-cards-row .category-arrow {
-    flex-shrink: 0;
-}
-
-.category-cards-row .category-arrow svg {
-    width: 20px;
-    height: 20px;
+    display: none;
 }
 
 .category-cards-row .category-progress {
@@ -1278,7 +1273,7 @@ body {
 
 
 .category-arrow {
-    color: #9ca3af;
+    display: none;
 }
 
 /* Learning View */
