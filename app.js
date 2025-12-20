@@ -2601,6 +2601,14 @@ function setupEventListeners() {
         
         wordFilterViewEl.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
+            
+            const filterSheetContent = wordFilterViewEl.querySelector('.filter-sheet-content');
+            // スクロール中はスワイプで閉じる機能を無効化
+            if (filterSheetContent && filterSheetContent.scrollTop > 5) {
+                isDragging = false;
+                return;
+            }
+            
             touchCurrentY = e.touches[0].clientY;
             const deltaY = touchCurrentY - touchStartY;
             

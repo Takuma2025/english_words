@@ -896,7 +896,7 @@ const elementaryWordData = [
   {
     "id": 2101,
     "word": "a",
-    "meaning": "（１つの）〜、１人の〜",
+    "meaning": "１つの〜、１人の〜",
     "partOfSpeech": "冠詞",
     "category": "冠詞",
     "appearanceCount": 1105,
@@ -908,7 +908,7 @@ const elementaryWordData = [
   {
     "id": 2102,
     "word": "an",
-    "meaning": "（１つの）〜、１人の〜（母音の音の前で使う）",
+    "meaning": "１つの〜、１人の〜（母音の音の前で使う）",
     "partOfSpeech": "冠詞",
     "category": "冠詞",
     "appearanceCount": 119,
@@ -920,7 +920,7 @@ const elementaryWordData = [
   {
     "id": 2103,
     "word": "the",
-    "meaning": "その〜（話し手と聞き手の両方がわかっているものにつける）",
+    "meaning": "その〜",
     "partOfSpeech": "冠詞",
     "category": "冠詞",
     "appearanceCount": 2988,
@@ -962,8 +962,8 @@ const elementaryWordData = [
     "category": "接続詞",
     "appearanceCount": 823,
     "example": {
-      "english": "apple <strong>and</strong> banana",
-      "japanese": "りんごとバナナ"
+      "english": "apples <strong>and</strong> oranges",
+      "japanese": "りんごとオレンジ"
     }
   },
   {
@@ -1022,7 +1022,7 @@ const elementaryWordData = [
     "category": "接続詞",
     "appearanceCount": 113,
     "example": {
-      "english": "<strong>If</strong> it is sunny tomorrow, we will play teenis.",
+      "english": "<strong>If</strong> it is sunny tomorrow, we will play tennis.",
       "japanese": "明日晴れたらテニスをするつもりです。"
     }
   },
@@ -1312,8 +1312,8 @@ const elementaryWordData = [
     "category": "前置詞",
     "appearanceCount": 575,
     "example": {
-      "english": "<strong>about</strong> music",
-      "japanese": "音楽について"
+      "english": "<strong>about</strong> music / about 40 years ago",
+      "japanese": "音楽について / 約40年前"
     }
   },
   {

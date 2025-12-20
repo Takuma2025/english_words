@@ -6152,12 +6152,16 @@ body.learning-mode .word-card {
 .filter-sheet-content {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
     padding: 24px 12px;
     padding-top: 70px;
     padding-bottom: 100px;
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    min-height: 0;
 }
 
 #wordFilterView .section-title {

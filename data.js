@@ -5,19 +5,22 @@ const wordData = [
         id: 1,
         word: "ability",
         meaning: "能力、才能",
-        partOfSpeech: "名詞"
+        partOfSpeech: "名詞",
+        appearanceCount: 36
     },
     {
         id: 2,
         word: "accept",
         meaning: "受け入れる、承認する",
-        partOfSpeech: "動詞"
+        partOfSpeech: "動詞",
+        appearanceCount: 28
     },
     {
         id: 3,
         word: "achieve",
         meaning: "達成する、成し遂げる",
-        partOfSpeech: "動詞"
+        partOfSpeech: "動詞",
+        appearanceCount: 15
     },
     {
         id: 4,
