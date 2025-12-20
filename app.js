@@ -837,12 +837,34 @@ function init() {
 }
 
 // ヘッダーボタンの表示/非表示を制御
-// テーマカラーを更新（即座に変更）
+// テーマカラーを更新（即座に変更、フェードなし）
 function updateThemeColor(isLearningMode) {
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
     if (themeColorMeta) {
-        // 即座に色を変更（アニメーションなし）
-        themeColorMeta.setAttribute('content', isLearningMode ? '#f5f5f5' : '#0055ca');
+        // メタタグを削除して再作成することで、フェードアニメーションを無効化
+        const color = isLearningMode ? '#f5f5f5' : '#0055ca';
+        themeColorMeta.remove();
+        const newMeta = document.createElement('meta');
+        newMeta.name = 'theme-color';
+        newMeta.content = color;
+        document.head.appendChild(newMeta);
+    }
+}
+
+// フィードバックオーバーレイの位置を更新（タイトルコンテナのボーダーの下から開始）
+function updateFeedbackOverlayPosition() {
+    if (!document.body.classList.contains('learning-mode')) return;
+    
+    const unitHeaderContainer = document.querySelector('.unit-header-container');
+    const feedbackOverlay = document.getElementById('feedbackOverlay');
+    
+    if (unitHeaderContainer && feedbackOverlay) {
+        const rect = unitHeaderContainer.getBoundingClientRect();
+        // ボーダーの下の位置を取得（rect.bottomはボーダーを含む）
+        const topPosition = rect.bottom;
+        
+        feedbackOverlay.style.top = `${topPosition}px`;
+        feedbackOverlay.style.height = `calc(100vh - ${topPosition}px)`;
     }
 }
 
@@ -1149,6 +1171,10 @@ function initInputModeLearning(category, words, startIndex = 0) {
     
     document.body.classList.add('learning-mode');
     updateThemeColor(true);
+    // フィードバックオーバーレイの位置を更新（少し遅延させてDOMが更新されるのを待つ）
+    setTimeout(() => {
+        updateFeedbackOverlayPosition();
+    }, 0);
 
     // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
     updateHeaderButtons('learning');
@@ -1727,6 +1753,10 @@ function initTimeAttackLearning(category, words) {
     document.body.classList.add('learning-mode');
     document.body.classList.add('time-attack-mode');
     updateThemeColor(true);
+    // フィードバックオーバーレイの位置を更新（少し遅延させてDOMが更新されるのを待つ）
+    setTimeout(() => {
+        updateFeedbackOverlayPosition();
+    }, 0);
     
     // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
     updateHeaderButtons('learning');
@@ -2056,6 +2086,10 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     
     document.body.classList.add('learning-mode');
     updateThemeColor(true);
+    // フィードバックオーバーレイの位置を更新（少し遅延させてDOMが更新されるのを待つ）
+    setTimeout(() => {
+        updateFeedbackOverlayPosition();
+    }, 0);
     
     // タイマーを停止（タイムアタックモード以外）
     if (timerInterval) {
@@ -6664,6 +6698,11 @@ function showGrammarChapter(chapterNumber) {
     
     // ハンバーガーメニューを非表示、戻るボタンを表示、中断ボタンを非表示
     updateHeaderButtons('back');
+    
+    // フィードバックオーバーレイの位置を更新（少し遅延させてDOMが更新されるのを待つ）
+    setTimeout(() => {
+        updateFeedbackOverlayPosition();
+    }, 0);
     
     // 章のタイトルを設定
     const chapterTitleEl = document.getElementById('grammarChapterTitle');

@@ -102,6 +102,7 @@ body {
     background-color: transparent;
 }
 
+
 .feedback-overlay.active {
     opacity: 1;
 }
