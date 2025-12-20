@@ -1729,66 +1729,160 @@ const elementaryWordData = [
   {
     "id": 5001,
     "word": "what",
-    "meaning": "何",
+    "meaning": "何、何の、どんな",
     "partOfSpeech": "疑問詞",
-    "category": "疑問詞"
+    "category": "疑問詞",
+    "appearanceCount": 211,
+    "example": {
+      "english": "<strong>What</strong> animal is that?",
+      "japanese": "あれは何の動物ですか。"
+    }
   },
   {
     "id": 5002,
     "word": "who",
-    "meaning": "誰",
+    "meaning": "だれ",
     "partOfSpeech": "疑問詞",
-    "category": "疑問詞"
-  },
+    "category": "疑問詞",
+    "appearanceCount": 126,
+    "example": {
+      "english": "<strong>Who</strong> is that man?",
+      "japanese": "あの男性は誰ですか。"
+    }
+  },  
   {
     "id": 5003,
     "word": "which",
-    "meaning": "どちら、どれ",
+    "meaning": "どちら、どれ、どの",
     "partOfSpeech": "疑問詞",
-    "category": "疑問詞"
+    "category": "疑問詞",
+    "appearanceCount": 186,
+    "example": {
+      "english": "<strong>Which</strong> season do you like?",
+      "japanese": "あなたはどの季節が好きですか。"
+    }
   },
   {
     "id": 5004,
     "word": "when",
     "meaning": "いつ",
     "partOfSpeech": "疑問詞",
-    "category": "疑問詞"
+    "category": "疑問詞",
+    "appearanceCount": 186,
+    "example": {
+      "english": "<strong>When</strong> did you arrive here?",
+      "japanese": "あなたはいつここに到着しましたか。"
+    }
   },
   {
     "id": 5005,
     "word": "where",
-    "meaning": "どこ",
+    "meaning": "どこに（で）、どこへ",
     "partOfSpeech": "疑問詞",
-    "category": "疑問詞"
+    "category": "疑問詞",
+    "appearanceCount": 126,
+    "example": {
+      "english": "<strong>Where</strong> is the station?",
+      "japanese": "駅はどこにありますか。"
+    }
   },
   {
     "id": 5006,
     "word": "why",
     "meaning": "なぜ",
     "partOfSpeech": "疑問詞",
-    "category": "疑問詞"
+    "category": "疑問詞",
+    "appearanceCount": 47,
+    "example": {
+      "english": "<strong>Why</strong> do you like music?",
+      "japanese": "あなたはなぜ音楽が好きなのですか。"
+    }
   },
   {
     "id": 5007,
     "word": "how",
-    "meaning": "どのように、どれくらい",
+    "meaning": "どのように（どうやって）、どれくらい",
     "partOfSpeech": "疑問詞",
-    "category": "疑問詞"
+    "category": "疑問詞",
+    "appearanceCount": 171,
+    "example": {
+      "english": "<strong>How</strong> does he go to school every day?",
+      "japanese": "彼は毎日どうやって学校に行きますか。"
+    }
   },
   {
     "id": 5008,
     "word": "whose",
-    "meaning": "誰の",
+    "meaning": "だれの",
     "partOfSpeech": "疑問詞",
-    "category": "疑問詞"
+    "category": "疑問詞",
+    "appearanceCount": 5,
+    "example": {
+      "english": "<strong>Whose</strong> book is this?",
+      "japanese": "この本は誰の本ですか。"
+    }
   },
   {
     "id": 5009,
-    "word": "whom",
-    "meaning": "誰を（目的格）",
+    "word": "how much",
+    "meaning": "いくら（値段・料金をたずねる）",
     "partOfSpeech": "疑問詞",
-    "category": "疑問詞"
+    "category": "疑問詞",
+    "appearanceCount": 6,
+    "example": {
+      "english": "<strong>How much</strong> is this notebook?",
+      "japanese": "このノートはいくらですか。"
+    }
   },
+　{
+  "id": 5010,
+  "word": "how many",
+  "meaning": "いくつ（数をたずねる）",
+  "partOfSpeech": "疑問詞",
+  "category": "疑問詞",
+  "appearanceCount": 6,
+  "example": {
+    "english": "<strong>How many</strong> books are there in the library?",
+    "japanese": "その図書館には本が何冊ありますか。"
+  }
+  },
+  {
+  "id": 5011,
+  "word": "how long",
+  "meaning": "どれくらいの間（期間をたずねる）",
+  "partOfSpeech": "疑問詞",
+  "category": "疑問詞",
+  "appearanceCount": 3,
+  "example": {
+    "english": "<strong>How long</strong> will you stay at the hotel?",
+    "japanese": "あなたはホテルにどのくらい滞在するつもりですか。"
+  }
+  },
+  {
+    "id": 5012,
+    "word": "how old",
+    "meaning": "何歳（年齢をたずねる）",
+    "partOfSpeech": "疑問詞",
+    "category": "疑問詞",
+    "appearanceCount": 3,
+    "example": {
+      "english": "<strong>How old</strong> is your father?",
+      "japanese": "あなたの父親は何歳ですか。"
+   }
+  },
+  {
+    "id": 5013,
+    "word": "how far",
+    "meaning": "どのくらいの距離（距離をたずねる）",
+    "partOfSpeech": "疑問詞",
+    "category": "疑問詞",
+    "appearanceCount": 1,
+    "example": {
+      "english": "<strong>How far</strong> is it from here to the station?",
+      "japanese": "ここから駅までどのくらいの距離がありますか。"
+    }
+  },
+
   // 月（暦）
   {
     "id": 6001,

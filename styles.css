@@ -819,6 +819,26 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+/* AI分析カード */
+.category-card-ai {
+    /* 通常のカードと同じスタイル、特別なスタイルはなし */
+}
+
+.ai-sparkle {
+    margin-right: 6px;
+}
+
+.ai-badge {
+    display: inline-block;
+    background-color: #0055ca;
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 600;
+    margin-right: 4px;
+}
+
 /* 入試得点力アップコースのカードは英単語マスターコースと同じデザイン */
 
 .category-info {

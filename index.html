@@ -23,10 +23,7 @@
 <body>
     <!-- スプラッシュ画面 -->
     <div id="splashScreen" class="splash-screen">
-        <div class="splash-content">
-                    <h1 class="splash-title">大阪府英単語コンプリート</h1>
-            <img src="osaka_5_nashi_b.png" alt="大阪" class="splash-image">
-        </div>
+        <img src="osaka_5_nashi_b.png" alt="大阪" class="splash-image">
     </div>
     
     <div id="feedbackOverlay" class="feedback-overlay"></div>
@@ -83,6 +80,17 @@
                             <polyline points="10 9 9 9 8 9"></polyline>
                         </svg>
                         <span>学習方法を選択</span>
+                    </button>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">AI分析</div>
+                    <button class="sidebar-menu-item" id="aiAnalysisMenuBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M10 14l2-2 3 3"></path>
+                            <path d="M8 12a4 4 0 1 1 8 0 4 4 0 1 1-8 0"></path>
+                        </svg>
+                        <span>AI分析 苦手単語</span>
                     </button>
                 </div>
                 <div class="sidebar-section">
@@ -151,11 +159,24 @@
                 </div>
                 <div class="category-list">
                     <div class="course-section" id="courseMasterSection">
+                        <button class="category-card category-card-ai" id="aiAnalysisCardBtn">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="ai-badge"><span class="ai-sparkle">˖✧</span>AI分析</span> 苦手・要復習単語</div>
+                                </div>
+                                <div class="category-description" style="font-size: 0.75rem; color: #718096; margin-top: 4px;">間違えた単語・解答に時間がかかった単語をAIが自動でピックアップ</div>
+                                <div class="category-meta">あなただけの苦手克服メニュー</div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
                         <button class="category-card" data-category="小学生で習った単語とカテゴリー別に覚える単語">
                             <div class="category-info">
                                 <div class="category-header">
                                     <div class="category-name">カテゴリー別に覚える単語</div>
                                 </div>
+                                <div class="category-description" style="font-size: 0.75rem; color: #718096; margin-top: 4px;">小学生で習った単語のうち基本的な名詞だけをカテゴリー別に覚えましょう。</div>
                                 <div class="category-meta">基礎からカテゴリー別に学習</div>
                                 <div class="category-progress">
                                     <div class="category-progress-bar">

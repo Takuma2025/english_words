@@ -22,6 +22,7 @@ let timerInterval = null; // タイマーのインターバル
 let totalTimeRemaining = 0; // 残り時間（秒）
 let wordStartTime = 0; // 現在の単語の開始時間
 let wordTimerInterval = null; // 単語あたりのタイマーのインターバル
+let wordResponseStartTime = 0; // 単語ごとの解答開始時刻（AI分析用）
 const TIME_PER_WORD = 2; // 1単語あたりの時間（秒）
 let isSentenceModeActive = false; // 厳選例文暗記モードかどうか
 let sentenceData = []; // 例文データ
@@ -59,6 +60,11 @@ const EXAM_TITLE_OPTIONS = [
     '模擬試験まで'
 ];
 let examCountdownTimer = null;
+
+// AI分析（苦手単語）用の設定
+const WORD_STATS_KEY = 'wordStatsV1';
+const SLOW_RESPONSE_THRESHOLD_MS = 8000;
+let wordStats = {};
 
  // 0: 曜日, 1: 月
 
@@ -148,6 +154,200 @@ function loadData() {
         const parsed = JSON.parse(savedWrongWords);
         wrongWords = new Set(parsed.map(id => typeof id === 'string' ? parseInt(id, 10) : id));
     }
+}
+
+// 単語ごとの学習記録を読み込む（AI分析用）
+function loadWordStats() {
+    try {
+        const saved = localStorage.getItem(WORD_STATS_KEY);
+        if (!saved) {
+            wordStats = {};
+            return;
+        }
+        const parsed = JSON.parse(saved);
+        wordStats = parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+        console.error('Failed to load word stats:', error);
+        wordStats = {};
+    }
+}
+
+// 単語ごとの学習記録を保存
+function saveWordStats() {
+    try {
+        localStorage.setItem(WORD_STATS_KEY, JSON.stringify(wordStats));
+    } catch (error) {
+        console.error('Failed to save word stats:', error);
+    }
+}
+
+// 全単語データを取得（小学生データを含む）
+function getAllWordData() {
+    const mainWords = Array.isArray(wordData) ? wordData : [];
+    const elementaryWords = (typeof elementaryWordData !== 'undefined' && Array.isArray(elementaryWordData))
+        ? elementaryWordData
+        : [];
+    return [...mainWords, ...elementaryWords];
+}
+
+// IDから単語データを取得
+function getWordById(wordId) {
+    if (wordId === undefined || wordId === null) return null;
+    const allWords = getAllWordData();
+    for (let i = 0; i < allWords.length; i++) {
+        if (allWords[i].id === wordId) return allWords[i];
+    }
+    return null;
+}
+
+// 単語への回答結果を記録（AI分析用）
+function recordWordResult(word, isCorrect, { responseMs = null, isTimeout = false } = {}) {
+    if (!word || typeof word.id === 'undefined') return;
+    
+    const now = Date.now();
+    const existing = wordStats[word.id] || {};
+    const normalized = {
+        totalAttempts: Number(existing.totalAttempts) || 0,
+        wrongCount: Number(existing.wrongCount) || 0,
+        correctCount: Number(existing.correctCount) || 0,
+        slowCount: Number(existing.slowCount) || 0,
+        firstWrongAt: typeof existing.firstWrongAt === 'number' ? existing.firstWrongAt : null,
+        firstCorrectAfterWrongAt: typeof existing.firstCorrectAfterWrongAt === 'number' ? existing.firstCorrectAfterWrongAt : null,
+        lastReviewedAt: typeof existing.lastReviewedAt === 'number' ? existing.lastReviewedAt : null,
+        lastResponseMs: typeof existing.lastResponseMs === 'number' ? existing.lastResponseMs : null,
+        maxResponseMs: typeof existing.maxResponseMs === 'number' ? existing.maxResponseMs : 0
+    };
+    
+    normalized.totalAttempts += 1;
+    normalized.lastReviewedAt = now;
+    
+    if (!isCorrect) {
+        normalized.wrongCount += 1;
+        if (!normalized.firstWrongAt) {
+            normalized.firstWrongAt = now;
+        }
+    } else {
+        normalized.correctCount += 1;
+        if (normalized.firstWrongAt && !normalized.firstCorrectAfterWrongAt) {
+            normalized.firstCorrectAfterWrongAt = now;
+        }
+    }
+    
+    if (typeof responseMs === 'number' && !Number.isNaN(responseMs)) {
+        normalized.lastResponseMs = responseMs;
+        normalized.maxResponseMs = Math.max(normalized.maxResponseMs || 0, responseMs);
+        if (responseMs >= SLOW_RESPONSE_THRESHOLD_MS) {
+            normalized.slowCount += 1;
+        }
+    }
+    
+    // タイムアウトの記録は今後の拡張用（現在はカウントのみ活用）
+    if (isTimeout) {
+        normalized.wasTimeout = true;
+    }
+    
+    wordStats[word.id] = normalized;
+    saveWordStats();
+}
+
+// AI分析対象の単語リストを取得
+function getAiAnalysisWords() {
+    const summary = {
+        wrong: 0,
+        unreviewedAfterCorrect: 0,
+        slow: 0
+    };
+    
+    const reasonMap = new Map();
+    const wordMap = new Map();
+    getAllWordData().forEach(word => {
+        if (word && typeof word.id !== 'undefined') {
+            wordMap.set(word.id, word);
+        }
+    });
+    
+    Object.entries(wordStats || {}).forEach(([idStr, statRaw]) => {
+        const id = parseInt(idStr, 10);
+        const word = wordMap.get(id);
+        if (!word) return;
+        
+        const stat = {
+            wrongCount: Number(statRaw.wrongCount) || 0,
+            slowCount: Number(statRaw.slowCount) || 0,
+            firstWrongAt: typeof statRaw.firstWrongAt === 'number' ? statRaw.firstWrongAt : null,
+            firstCorrectAfterWrongAt: typeof statRaw.firstCorrectAfterWrongAt === 'number' ? statRaw.firstCorrectAfterWrongAt : null,
+            lastReviewedAt: typeof statRaw.lastReviewedAt === 'number' ? statRaw.lastReviewedAt : null,
+            maxResponseMs: typeof statRaw.maxResponseMs === 'number' ? statRaw.maxResponseMs : 0,
+            lastResponseMs: typeof statRaw.lastResponseMs === 'number' ? statRaw.lastResponseMs : null,
+            totalAttempts: Number(statRaw.totalAttempts) || 0
+        };
+        
+        const reasons = [];
+        
+        if (stat.wrongCount > 0) {
+            summary.wrong += 1;
+            reasons.push(`間違え ${stat.wrongCount}回`);
+        }
+        
+        if (stat.firstWrongAt && stat.firstCorrectAfterWrongAt && stat.lastReviewedAt === stat.firstCorrectAfterWrongAt) {
+            summary.unreviewedAfterCorrect += 1;
+            reasons.push('初回ミス後に1回だけ正解');
+        }
+        
+        const slowMs = stat.maxResponseMs || stat.lastResponseMs || 0;
+        if (slowMs >= SLOW_RESPONSE_THRESHOLD_MS || stat.slowCount > 0) {
+            summary.slow += 1;
+            const seconds = slowMs ? (slowMs / 1000).toFixed(1) : '';
+            reasons.push(seconds ? `解答 ${seconds}秒` : '解答8秒以上');
+        }
+        
+        if (reasons.length > 0) {
+            reasonMap.set(id, reasons);
+        }
+    });
+    
+    const words = Array.from(reasonMap.keys())
+        .map(id => wordMap.get(id))
+        .filter(Boolean)
+        .sort((a, b) => {
+            const statA = wordStats[a.id] || {};
+            const statB = wordStats[b.id] || {};
+            const wrongDiff = (statB.wrongCount || 0) - (statA.wrongCount || 0);
+            if (wrongDiff !== 0) return wrongDiff;
+            const slowDiff = (statB.maxResponseMs || 0) - (statA.maxResponseMs || 0);
+            if (slowDiff !== 0) return slowDiff;
+            return (statB.totalAttempts || 0) - (statA.totalAttempts || 0);
+        });
+    
+    return { words, summary, reasonMap };
+}
+
+// AI分析メニューを開く
+function openAiAnalysisMenu() {
+    const { words } = getAiAnalysisWords();
+    
+    if (!words.length) {
+        showAlert('通知', 'AI分析の対象となる単語がまだありません。通常の学習を進めてください。');
+        return;
+    }
+    
+    const message = `対象: ${words.length}語\nこれらの単語だけで学習を開始しますか？`;
+    
+    showModal('AI分析 苦手単語', message, [
+        { text: '開始する', type: 'confirm', onClick: () => startAiAnalysisLearning(words) },
+        { text: 'キャンセル', type: 'cancel' }
+    ]);
+}
+
+// AI分析対象の単語で学習を開始
+function startAiAnalysisLearning(words) {
+    if (!words || words.length === 0) {
+        showAlert('通知', '学習対象の単語がありません。');
+        return;
+    }
+    const mode = selectedLearningMode || 'card';
+    currentLearningMode = mode;
+    initLearning('AI分析 苦手単語', words, 0, words.length, 0);
 }
 
 // 入試日関連 ------------------------------
@@ -805,6 +1005,7 @@ function init() {
         preventZoom();
         assignCategories();
         loadData();
+        loadWordStats();
         initExamCountdown();
         setupEventListeners();
         
@@ -1288,11 +1489,19 @@ function showCourseSelection(category, categoryWords) {
             const body = document.createElement('div');
             body.className = 'course-subsection-body hidden';
 
+            // 「小学生で習った単語」の場合のみ、説明テキスト（注釈）を先頭に表示
+            if (groupTitle === '小学生で習った単語') {
+                const note = document.createElement('p');
+                note.className = 'course-group-note';
+                note.textContent = '小学生で習った単語のうち、基本的な名詞のみをまとめました。カテゴリー別に覚えましょう。';
+                body.appendChild(note);
+            }
+
             // 「英文でよく登場する機能語」の場合のみ、説明テキスト（注釈）を先頭に表示
             if (groupTitle === '英文でよく登場する機能語') {
                 const note = document.createElement('p');
                 note.className = 'course-group-note';
-                note.textContent = '機能語とは、具体的な意味や内容を表す単語ではないが、文の中の単語同士の関係性を示し、文法構造を支えるために、英文中に何度も登場する重要な単語のことです。';
+                note.textContent = '機能語とは、具体的な意味や内容を表す単語ではないが、文の中の単語同士の関係性を示し、文法構造を支えるために、英文中に何度も登場する重要な単語のことです。カテゴリー別に覚えましょう。';
                 body.appendChild(note);
             }
 
@@ -2259,6 +2468,14 @@ function setupEventListeners() {
         });
     });
     
+    // AI分析カードボタン
+    const aiAnalysisCardBtn = document.getElementById('aiAnalysisCardBtn');
+    if (aiAnalysisCardBtn) {
+        aiAnalysisCardBtn.addEventListener('click', () => {
+            openAiAnalysisMenu();
+        });
+    }
+    
     // コースタブ切り替え
     // 大阪府公立入試について知るボタン
     const examInfoBtn = document.getElementById('examInfoBtn');
@@ -2770,6 +2987,7 @@ function setupEventListeners() {
     const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
     const homeFromSidebarBtn = document.getElementById('homeFromSidebarBtn');
+    const aiAnalysisMenuBtn = document.getElementById('aiAnalysisMenuBtn');
     
     // サイドバーを開く
     function openSidebar() {
@@ -2953,6 +3171,13 @@ function setupEventListeners() {
         clearHistoryBtn.addEventListener('click', () => {
             closeSidebar();
             clearLearningHistory();
+        });
+    }
+    
+    if (aiAnalysisMenuBtn) {
+        aiAnalysisMenuBtn.addEventListener('click', () => {
+            closeSidebar();
+            openAiAnalysisMenu();
         });
     }
     
@@ -3307,6 +3532,7 @@ function displayInputMode(skipAnimationReset = false) {
 
     const word = currentWords[currentIndex];
     inputAnswerSubmitted = false;
+    wordResponseStartTime = Date.now();
     
     // No.を更新（カードモードと入力モードの両方）
     if (elements.wordNumber) {
@@ -4273,6 +4499,7 @@ function displayCurrentWord() {
     }
 
     const word = currentWords[currentIndex];
+    wordResponseStartTime = Date.now();
     isCardRevealed = false;
     elements.wordCard.classList.remove('flipped');
     elements.wordCard.style.transform = '';
@@ -4567,7 +4794,13 @@ function markMastered() {
         }
         
         // 進捗を保存
-        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== '大阪C問題対策英単語タイムアタック') {
+        if (
+            selectedCategory &&
+            selectedCategory !== '復習チェック' &&
+            selectedCategory !== '間違い復習' &&
+            selectedCategory !== '大阪C問題対策英単語タイムアタック' &&
+            selectedCategory !== 'AI分析 苦手単語'
+        ) {
             saveProgress(selectedCategory, currentIndex);
         }
         // 最後の単語の場合は完了画面を表示
@@ -4601,6 +4834,8 @@ function markAnswer(isCorrect, isTimeout = false) {
 
     const word = currentWords[currentIndex];
     answeredWords.add(word.id);
+    const responseMs = wordResponseStartTime ? (Date.now() - wordResponseStartTime) : null;
+    recordWordResult(word, isCorrect, { responseMs, isTimeout });
     
 
     // 現在の問題の回答状況を記録
@@ -4614,12 +4849,13 @@ function markAnswer(isCorrect, isTimeout = false) {
         correctWords.add(word.id);
         
         // カテゴリごとの進捗を更新
-        if (selectedCategory) {
-            const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+        const categoryKey = selectedCategory === 'AI分析 苦手単語' ? word.category : selectedCategory;
+        if (categoryKey) {
+            const { correctSet, wrongSet } = loadCategoryWords(categoryKey);
             correctSet.add(word.id);
             // 正解した場合は間違いリストから削除
             wrongSet.delete(word.id);
-            saveCategoryWords(selectedCategory, correctSet, wrongSet);
+            saveCategoryWords(categoryKey, correctSet, wrongSet);
         }
         
         saveCorrectWords();
@@ -4630,12 +4866,13 @@ function markAnswer(isCorrect, isTimeout = false) {
         wrongWords.add(word.id);
         
         // カテゴリごとの進捗を更新
-        if (selectedCategory) {
-            const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+        const categoryKeyWrong = selectedCategory === 'AI分析 苦手単語' ? word.category : selectedCategory;
+        if (categoryKeyWrong) {
+            const { correctSet, wrongSet } = loadCategoryWords(categoryKeyWrong);
             wrongSet.add(word.id);
             // 間違えた場合は正解リストから削除
             correctSet.delete(word.id);
-            saveCategoryWords(selectedCategory, correctSet, wrongSet);
+            saveCategoryWords(categoryKeyWrong, correctSet, wrongSet);
         }
         
         saveWrongWords();
@@ -4699,7 +4936,13 @@ function markAnswer(isCorrect, isTimeout = false) {
         }
         
         // 進捗を保存
-        if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習' && selectedCategory !== '大阪C問題対策英単語タイムアタック') {
+        if (
+            selectedCategory &&
+            selectedCategory !== '復習チェック' &&
+            selectedCategory !== '間違い復習' &&
+            selectedCategory !== '大阪C問題対策英単語タイムアタック' &&
+            selectedCategory !== 'AI分析 苦手単語'
+        ) {
             saveProgress(selectedCategory, currentIndex);
         }
         
@@ -5025,6 +5268,10 @@ function reviewWrongWords() {
     
     // 今回の学習で間違えた単語を取得
     const wrongWordsInSession = currentWords.filter(word => {
+        if (selectedCategory === 'AI分析 苦手単語') {
+            const { wrongSet } = loadCategoryWords(word.category);
+            return wrongSet.has(word.id);
+        }
         const { wrongSet } = loadCategoryWords(selectedCategory);
         return wrongSet.has(word.id);
     });
