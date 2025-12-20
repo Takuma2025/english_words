@@ -1368,22 +1368,23 @@ body {
     padding-top: 0;
 }
 
-/* 続きがあることを示すフェードと矢印 */
+/* 続きがあることを示すフェードと矢印（高さ可変でも中央揃え） */
 .progress-bar-wrapper.has-more-right::after {
     content: '›';
     position: absolute;
     right: 0;
-    top: calc(14px + 12px);
+    top: 50%;
     transform: translateY(-50%);
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    padding-right: 6px;
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 700;
     color: #6b7280;
-    background: linear-gradient(to right, transparent, #f3f4f6 50%);
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(243, 244, 246, 0.9) 65%, rgba(243, 244, 246, 1) 100%);
     pointer-events: none;
     z-index: 10;
 }
@@ -1651,7 +1652,7 @@ body {
     margin-bottom: 8px;
     display: flex;
     gap: 2px;
-    padding: 2px;
+    padding: 2px 12px 2px 2px; /* 右端に矢印分の余白 */
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
@@ -1858,6 +1859,7 @@ body {
     }
     .progress-bar-container {
         height: 20px;
+        padding: 2px 12px 2px 2px;
     }
     .input-result {
         bottom: 6px;
@@ -1931,6 +1933,7 @@ body {
     }
     .progress-bar-container {
         height: 18px;
+        padding: 2px 12px 2px 2px;
     }
     .input-result {
         bottom: 4px;
@@ -2702,6 +2705,8 @@ body {
     perspective: 1200px;
     touch-action: pan-y;
     margin-top: 20px;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .word-card {
@@ -2711,6 +2716,8 @@ body {
     top: 0;
     left: 0;
     perspective: 1200px;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 /* カードアニメーション - 下からふわっと浮いてくる */
@@ -2890,6 +2897,8 @@ body.learning-mode .word-card-container {
     height: 100%;
     transform-style: preserve-3d;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .word-card.flipped .card-inner {
@@ -2904,6 +2913,8 @@ body.learning-mode .word-card-container {
     background: #ffffff;
     border-radius: 24px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    user-select: none;
+    -webkit-user-select: none;
     padding: 24px;
     display: flex;
     flex-direction: column;
