@@ -6157,12 +6157,13 @@ body.learning-mode .word-card {
     touch-action: pan-y;
     padding: 24px 12px;
     padding-top: 70px;
-    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     align-items: stretch;
     min-height: 0;
     overscroll-behavior: contain;
+    scroll-behavior: smooth;
 }
 
 #wordFilterView .section-title {
@@ -6562,7 +6563,7 @@ body.learning-mode .word-card {
 }
 
 .filter-actions {
-    position: fixed;
+    position: sticky;
     bottom: 0;
     left: 0;
     right: 0;
@@ -6573,6 +6574,8 @@ body.learning-mode .word-card {
     padding-bottom: calc(16px + env(safe-area-inset-bottom));
     background: #ffffff;
     z-index: 10;
+    margin-top: auto;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 460px) {
