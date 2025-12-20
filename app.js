@@ -841,23 +841,28 @@ function init() {
 function updateThemeColor(isLearningMode) {
     const color = isLearningMode ? '#f5f5f5' : '#0055ca';
     
-    // requestAnimationFrameを使って即座に更新
-    requestAnimationFrame(() => {
-        const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    // 同期的に即座に更新（requestAnimationFrameを使わない）
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    const statusBarStyleMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    
+    if (themeColorMeta) {
+        // 即座に色を変更（setAttributeで直接更新）
+        themeColorMeta.setAttribute('content', color);
         
-        if (themeColorMeta) {
-            // 即座に色を変更（setAttributeで直接更新）
-            themeColorMeta.setAttribute('content', color);
-            
-            // さらに確実にするため、メタタグを削除して再作成
-            const parent = themeColorMeta.parentNode;
-            themeColorMeta.remove();
-            const newMeta = document.createElement('meta');
-            newMeta.name = 'theme-color';
-            newMeta.content = color;
-            parent.insertBefore(newMeta, parent.firstChild);
-        }
-    });
+        // さらに確実にするため、メタタグを削除して再作成
+        const parent = themeColorMeta.parentNode;
+        themeColorMeta.remove();
+        const newMeta = document.createElement('meta');
+        newMeta.name = 'theme-color';
+        newMeta.content = color;
+        parent.insertBefore(newMeta, parent.firstChild);
+    }
+    
+    // iOS用のステータスバースタイルも更新
+    if (statusBarStyleMeta) {
+        // 薄いグレーの場合は黒テキスト、青の場合は白テキスト
+        statusBarStyleMeta.setAttribute('content', isLearningMode ? 'default' : 'black-translucent');
+    }
 }
 
 // フィードバックオーバーレイの位置を更新（タイトルコンテナのボーダーの下から開始）
@@ -4559,14 +4564,46 @@ function createConfetti(container) {
             confetti.style.width = (Math.random() * 10 + 5) + 'px';
             confetti.style.height = (Math.random() * 10 + 5) + 'px';
             confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-            confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            // より長い時間でゆっくりと落ちるように
+            const duration = Math.random() * 3 + 3;
+            confetti.style.animationDuration = duration + 's';
             confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+            
+            // 個別の横揺れアニメーションを生成
+            const swayAmount = (Math.random() * 40 + 20) * (Math.random() > 0.5 ? 1 : -1);
+            const keyframes = `
+                @keyframes confettiFall${i} {
+                    0% {
+                        transform: translateY(0) translateX(0) rotate(0deg);
+                        opacity: 1;
+                    }
+                    25% {
+                        transform: translateY(25vh) translateX(${swayAmount * 0.5}px) rotate(180deg);
+                    }
+                    50% {
+                        transform: translateY(50vh) translateX(${swayAmount}px) rotate(360deg);
+                    }
+                    75% {
+                        transform: translateY(75vh) translateX(${swayAmount * 0.5}px) rotate(540deg);
+                    }
+                    100% {
+                        transform: translateY(100vh) translateX(0) rotate(720deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            const style = document.createElement('style');
+            style.textContent = keyframes;
+            document.head.appendChild(style);
+            
+            confetti.style.animationName = `confettiFall${i}`;
             container.appendChild(confetti);
             
             // アニメーション終了後に削除
             setTimeout(() => {
                 confetti.remove();
-            }, 4000);
+                style.remove();
+            }, (duration + 0.5) * 1000);
         }, i * 30);
     }
 }
