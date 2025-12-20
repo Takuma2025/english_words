@@ -6105,7 +6105,7 @@ body.learning-mode .word-card {
     left: 50%;
     transform: translateX(-50%) translateY(100%);
     bottom: 0;
-    top: 5%;
+    top: 15%;
     width: 100%;
     max-width: 540px;
     background: #ffffff;
@@ -6150,18 +6150,20 @@ body.learning-mode .word-card {
 }
 
 .filter-sheet-content {
-    flex: 1;
+    flex: 1 1 auto;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
     padding: 24px 12px;
     padding-top: 70px;
-    padding-bottom: 100px;
+    padding-bottom: calc(100px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     align-items: stretch;
     min-height: 0;
+    height: 0;
+    overscroll-behavior: contain;
 }
 
 #wordFilterView .section-title {
