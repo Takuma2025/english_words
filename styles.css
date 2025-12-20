@@ -6111,11 +6111,25 @@ body.learning-mode .word-card {
     background: #ffffff;
     z-index: 10001;
     border-radius: 20px 20px 0 0;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: none;
     transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
     overflow: hidden;
     display: flex;
     flex-direction: column;
+}
+
+
+/* フィルター画面の上部固定ヘッダー */
+#wordFilterView::before {
+    content: '';
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    background: transparent;
+    z-index: 4;
+    pointer-events: none;
 }
 
 #wordFilterView.show {
@@ -6155,8 +6169,7 @@ body.learning-mode .word-card {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
-    padding: 24px 12px;
-    padding-top: 70px;
+    padding: 0;
     padding-bottom: calc(80px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
@@ -6164,6 +6177,7 @@ body.learning-mode .word-card {
     min-height: 0;
     overscroll-behavior: contain;
     scroll-behavior: smooth;
+    position: relative;
 }
 
 #wordFilterView .section-title {
@@ -6173,9 +6187,14 @@ body.learning-mode .word-card {
 }
 
 .filter-category-header {
+    position: sticky;
+    top: 0;
     width: 100%;
     max-width: 100%;
     margin-bottom: 16px;
+    padding: 16px 12px 24px;
+    background: #ffffff;
+    z-index: 5;
     text-align: center;
 }
 
@@ -6242,7 +6261,7 @@ body.learning-mode .word-card {
     background: transparent;
     border: none;
     border-radius: 0;
-    padding: 0;
+    padding: 0 12px 24px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -6563,19 +6582,20 @@ body.learning-mode .word-card {
 }
 
 .filter-actions {
-    position: sticky;
+    position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 540px;
     display: flex;
     flex-direction: row;
     gap: 12px;
     padding: 16px 12px;
     padding-bottom: calc(16px + env(safe-area-inset-bottom));
     background: #ffffff;
-    z-index: 10;
-    margin-top: auto;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10003;
+    box-shadow: none;
 }
 
 @media (max-width: 460px) {
