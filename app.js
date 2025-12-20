@@ -5044,6 +5044,13 @@ function createProgressSegments(total) {
         const segment = document.createElement('div');
         segment.className = 'progress-segment';
         segment.dataset.index = i;
+        
+        // 数字を追加
+        const numberSpan = document.createElement('span');
+        numberSpan.className = 'progress-segment-number';
+        numberSpan.textContent = i + 1;
+        segment.appendChild(numberSpan);
+        
         segment.addEventListener('click', () => {
             const targetIndex = parseInt(segment.dataset.index);
             const absoluteIndex = currentRangeStart + targetIndex;

@@ -1675,6 +1675,19 @@ body {
     cursor: pointer;
     position: relative;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 0 2px;
+}
+
+.progress-segment-number {
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .progress-segment:hover {
@@ -1691,27 +1704,15 @@ body {
 
 .progress-segment.current {
     position: relative;
-}
-
-.progress-segment.current::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 5px 0 5px 7px;
-    border-color: transparent transparent transparent #ffffff;
+    background: #1e40af !important;
 }
 
 .progress-segment.current.correct {
-    background: #3b82f6;
+    background: #1e40af !important;
 }
 
 .progress-segment.current.wrong {
-    background: #ef4444;
+    background: #1e40af !important;
 }
 
 .progress-fill {
