@@ -1638,7 +1638,7 @@ body {
     cursor: grab;
     user-select: none;
     -webkit-user-select: none;
-    touch-action: pan-y;
+    touch-action: pan-x;
     transition: transform 0.1s ease-out;
 }
 
@@ -2772,15 +2772,7 @@ body.learning-mode .word-card {
     transition: border-color 0.3s ease;
 }
 
-.word-card.marker-correct .card-face,
-.word-card.marker-correct .card-back {
-    border-color: #3b82f6;
-}
-
-.word-card.marker-wrong .card-face,
-.word-card.marker-wrong .card-back {
-    border-color: #ef4444;
-}
+/* カードの赤・青囲みは削除 - 単語番号下のマーカーのみ使用 */
 
 .card-back {
     position: absolute;
@@ -2830,11 +2822,11 @@ body.learning-mode .word-card {
 
 /* 単語No.に対するマーカー（覚えた／覚えていない） */
 .word-number.marker-correct {
-    box-shadow: 0 5px 0 rgba(59, 130, 246, 0.7);
+    box-shadow: 0 8px 0 #3b82f6;
 }
 
 .word-number.marker-wrong {
-    box-shadow: 0 5px 0 rgba(239, 68, 68, 0.7);
+    box-shadow: 0 8px 0 #ef4444;
 }
 
 .word-card.flipped .word-number {

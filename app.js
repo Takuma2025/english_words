@@ -32,7 +32,8 @@ let currentSelectedBlankIndex = -1; // 現在選択中の空所のインデッ�
 let isReorderModeActive = false; // 整序英作文モードかどうか
 let reorderData = []; // 整序英作文データ
 let currentReorderIndex = 0;
-let selectedLearningMode = 'card'; // 学習モード: 'card' (日本語) または 'input' (日本語→英語) // 現在の整序英作文のインデックス
+let selectedLearningMode = 'card'; // 学習モード: 'card' (英語→日本語) または 'input' (日本語→英語) // 現在の整序英作文のインデックス
+let filterLearningMode = 'output'; // フィルター画面の学習モード: 'input' または 'output'
 let reorderAnswerSubmitted = false; // 回答が送信済みかどうか
 let reorderSelectedWords = []; // 選択された単語の配列
 let reorderTouchData = { // タッチドラッグ用のデータ
@@ -1610,8 +1611,27 @@ function showWordFilterView(category, categoryWords, courseTitle) {
         }
     }
     
+    // ラジオボタンの状態とfilterLearningModeを同期（カテゴリー選択画面のトグルとは独立）
+    const modeInput = document.getElementById('modeInput');
+    const modeOutput = document.getElementById('modeOutput');
+    if (modeInput && modeOutput) {
+        // ラジオボタンの状態を確認してfilterLearningModeを更新
+        if (modeInput.checked) {
+            filterLearningMode = 'input';
+        } else if (modeOutput.checked) {
+            filterLearningMode = 'output';
+        } else {
+            // どちらも選択されていない場合はデフォルトで'output'
+            filterLearningMode = 'output';
+            modeOutput.checked = true;
+        }
+    }
+    
     // ハンバーガーメニューを非表示、戻るボタンを表示
     updateHeaderButtons('back');
+    
+    // 出題数選択セクションを更新
+    updateQuestionCountSection();
 }
 
 // 出題数選択セクションを更新
@@ -2189,6 +2209,8 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     const sentenceMode = document.getElementById('sentenceMode');
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
+    const cardNavBtnLeft = document.getElementById('cardNavBtnLeft');
+    const cardNavBtnRight = document.getElementById('cardNavBtnRight');
     const progressStepButtons = document.querySelector('.progress-step-buttons');
     const sentenceNavigation = document.getElementById('sentenceNavigation');
     // 進捗ステップボタンを表示（タイムアタックモード以外）
@@ -2203,7 +2225,20 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     isInputModeActive = false;
     isSentenceModeActive = false;
     isReorderModeActive = false;
-    if (cardHint) cardHint.classList.remove('hidden');
+    
+    // selectedLearningMode === 'input'の場合は「眺めるだけ」のカードモード
+    if (selectedLearningMode === 'input') {
+        // 判定ボタンを非表示、移動ボタンを表示
+        if (cardHint) cardHint.classList.add('hidden');
+        if (cardNavBtnLeft) cardNavBtnLeft.classList.remove('hidden');
+        if (cardNavBtnRight) cardNavBtnRight.classList.remove('hidden');
+    } else {
+        // 通常のカードモード
+        if (cardHint) cardHint.classList.remove('hidden');
+        if (cardNavBtnLeft) cardNavBtnLeft.classList.add('hidden');
+        if (cardNavBtnRight) cardNavBtnRight.classList.add('hidden');
+    }
+    
     // カードモードのときは進捗バーの「前の単語へ・次の単語へ」ボタンを表示
     if (progressStepButtons) progressStepButtons.classList.remove('hidden');
     // 例文モード用のナビゲーションボタンを非表示
@@ -2551,9 +2586,9 @@ function setupEventListeners() {
     document.addEventListener('change', (e) => {
         if (e.target.name === 'learningMode') {
             if (e.target.value === 'input') {
-                selectedLearningMode = 'input';
+                filterLearningMode = 'input';
             } else if (e.target.value === 'output') {
-                selectedLearningMode = 'output';
+                filterLearningMode = 'output';
             }
             updateQuestionCountSection();
         }
@@ -2627,7 +2662,7 @@ function setupEventListeners() {
             }
             
             // アウトプットモードの場合、出題数を制限
-            if (selectedLearningMode === 'output') {
+            if (filterLearningMode === 'output') {
                 const questionCountValue = document.getElementById('questionCountValue');
                 let questionCount = wordsToLearn.length; // デフォルトはすべて
                 if (questionCountValue && questionCountValue.dataset.count) {
@@ -2637,6 +2672,12 @@ function setupEventListeners() {
                     }
                 }
                 wordsToLearn = wordsToLearn.slice(0, questionCount);
+            }
+            
+            // 出題数制限後の単語数チェック
+            if (wordsToLearn.length === 0) {
+                alert('選択された単語がありません。フィルターを調整してください。');
+                return;
             }
             
             // フィルター画面を非表示（ボトムシートを閉じる）
@@ -2653,11 +2694,15 @@ function setupEventListeners() {
             document.body.style.overflow = '';
             
             // 学習を開始
-            if (selectedLearningMode === 'input') {
-                initInputModeLearning(currentFilterCategory, wordsToLearn, 0);
-            } else {
-                initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
-            }
+            // filterLearningMode === 'input'の場合は「眺めるだけ」のカードモードとしてinitLearningを呼ぶ
+            // filterLearningMode === 'output'または未設定の場合は通常のカードモード
+            // ただし、カテゴリー選択画面のselectedLearningModeも考慮する
+            const actualMode = filterLearningMode === 'input' ? 'input' : (selectedLearningMode === 'input' ? 'input' : 'card');
+            const previousMode = selectedLearningMode;
+            selectedLearningMode = actualMode;
+            initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
+            // selectedLearningModeを元に戻す（カテゴリー選択画面のトグル状態を保持）
+            selectedLearningMode = previousMode;
         });
     }
     
@@ -3391,7 +3436,8 @@ function goToPreviousWord() {
         
         currentIndex--;
         
-        if (isInputModeActive) {
+        // selectedLearningMode === 'input'の場合はカードモードとして表示
+        if (isInputModeActive && selectedLearningMode !== 'input') {
             displayInputMode();
         } else {
             displayCurrentWord();
@@ -3610,7 +3656,8 @@ function goToPreviousWord() {
         
         currentIndex--;
         
-        if (isInputModeActive) {
+        // selectedLearningMode === 'input'の場合はカードモードとして表示
+        if (isInputModeActive && selectedLearningMode !== 'input') {
             displayInputMode();
         } else {
             displayCurrentWord();
@@ -3636,7 +3683,8 @@ function goToNextWord() {
         
         updateProgressSegments();
         
-        if (isInputModeActive) {
+        // selectedLearningMode === 'input'の場合はカードモードとして表示
+        if (isInputModeActive && selectedLearningMode !== 'input') {
             displayInputMode();
         } else {
             displayCurrentWord();
@@ -4296,7 +4344,7 @@ function displayCurrentWord() {
     }
     
     // 日本語モードの場合のみ自動で音声を再生（0.3秒遅延）
-    if (!isInputModeActive) {
+    if (!isInputModeActive && selectedLearningMode !== 'input') {
         setTimeout(() => {
             speakWord(word.word, null);
         }, 300);
@@ -4810,12 +4858,9 @@ function reviewWrongWords() {
     }
     
     // 間違えた単語で学習を開始
+    // selectedLearningMode === 'input'の場合は「眺めるだけ」のカードモードとしてinitLearningを呼ぶ
     setTimeout(() => {
-        if (selectedLearningMode === 'input') {
-            initInputModeLearning(selectedCategory, wrongWordsInSession, 0);
-        } else {
-            initLearning(selectedCategory, wrongWordsInSession, 0, wrongWordsInSession.length, 0);
-        }
+        initLearning(selectedCategory, wrongWordsInSession, 0, wrongWordsInSession.length, 0);
     }, 350);
 }
 
@@ -4867,8 +4912,8 @@ function createProgressSegments(total) {
                 if (elements.wordCard) {
                     elements.wordCard.classList.remove('flipped');
                 }
-                // 入力モードかカードモードかで適切な関数を呼ぶ
-                if (isInputModeActive) {
+                // selectedLearningMode === 'input'の場合はカードモードとして表示
+                if (isInputModeActive && selectedLearningMode !== 'input') {
                     displayInputMode();
                 } else {
                     displayCurrentWord();
@@ -4965,46 +5010,72 @@ function setupProgressBarSwipe() {
     if (!progressBarContainer) return;
     
     let touchStartX = 0;
+    let touchStartY = 0;
     let touchEndX = 0;
+    let touchEndY = 0;
     let isSwiping = false;
+    let isHorizontalSwipe = false;
     const minSwipeDistance = 50; // 最小スワイプ距離（ピクセル）
     
     progressBarContainer.addEventListener('touchstart', (e) => {
         touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
         isSwiping = true;
+        isHorizontalSwipe = false;
         progressBarContainer.classList.add('swiping');
     }, { passive: true });
     
     progressBarContainer.addEventListener('touchmove', (e) => {
         if (!isSwiping) return;
         const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
         const deltaX = currentX - touchStartX;
-        // スワイプ中の視覚的フィードバック（最大20pxまで移動）
-        const maxOffset = 20;
-        const offset = Math.max(-maxOffset, Math.min(maxOffset, deltaX * 0.3));
-        progressBarContainer.style.transform = `translateX(${offset}px)`;
-    }, { passive: true });
+        const deltaY = currentY - touchStartY;
+        
+        // 水平方向のスワイプかどうかを判定
+        if (!isHorizontalSwipe && Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+            isHorizontalSwipe = true;
+        }
+        
+        // 水平方向のスワイプのみ処理（垂直方向のスクロールを防ぐ）
+        if (isHorizontalSwipe) {
+            e.preventDefault();
+            // スワイプ中の視覚的フィードバック（最大20pxまで移動）
+            const maxOffset = 20;
+            const offset = Math.max(-maxOffset, Math.min(maxOffset, deltaX * 0.3));
+            progressBarContainer.style.transform = `translateX(${offset}px)`;
+        }
+    }, { passive: false });
     
     progressBarContainer.addEventListener('touchend', (e) => {
         if (!isSwiping) return;
         touchEndX = e.changedTouches[0].clientX;
+        touchEndY = e.changedTouches[0].clientY;
         progressBarContainer.style.transform = '';
         progressBarContainer.classList.remove('swiping');
         isSwiping = false;
-        handleSwipe();
+        
+        // 水平方向のスワイプのみ処理
+        if (isHorizontalSwipe) {
+            handleSwipe();
+        }
+        isHorizontalSwipe = false;
     }, { passive: true });
     
     progressBarContainer.addEventListener('touchcancel', () => {
         progressBarContainer.style.transform = '';
         progressBarContainer.classList.remove('swiping');
         isSwiping = false;
+        isHorizontalSwipe = false;
     }, { passive: true });
     
     // マウスドラッグでも対応（デスクトップ用）
     let isDragging = false;
+    let mouseStartX = 0;
     progressBarContainer.addEventListener('mousedown', (e) => {
         isDragging = true;
         isSwiping = true;
+        mouseStartX = e.clientX;
         touchStartX = e.clientX;
         progressBarContainer.classList.add('swiping');
         e.preventDefault();
@@ -5013,7 +5084,7 @@ function setupProgressBarSwipe() {
     progressBarContainer.addEventListener('mousemove', (e) => {
         if (!isDragging || !isSwiping) return;
         const currentX = e.clientX;
-        const deltaX = currentX - touchStartX;
+        const deltaX = currentX - mouseStartX;
         // スワイプ中の視覚的フィードバック（最大20pxまで移動）
         const maxOffset = 20;
         const offset = Math.max(-maxOffset, Math.min(maxOffset, deltaX * 0.3));
@@ -5041,13 +5112,13 @@ function setupProgressBarSwipe() {
     function handleSwipe() {
         const swipeDistance = touchStartX - touchEndX;
         
-        // 左から右にスワイプ（左へ移動：前の20個）
+        // 右にスワイプ（指を右に動かす = touchStartX < touchEndX = swipeDistance < 0）→ 次の20個に移動
         if (swipeDistance < -minSwipeDistance) {
-            scrollProgressBarLeft();
-        }
-        // 右から左にスワイプ（右へ移動：次の20個）
-        else if (swipeDistance > minSwipeDistance) {
             scrollProgressBarRight();
+        }
+        // 左にスワイプ（指を左に動かす = touchStartX > touchEndX = swipeDistance > 0）→ 前の20個に移動
+        else if (swipeDistance > minSwipeDistance) {
+            scrollProgressBarLeft();
         }
     }
 }
@@ -5075,13 +5146,12 @@ function scrollProgressBarLeft() {
     }
 }
 
-// 進捗バーを右にスクロール
+// 進捗バーを右にスクロール（次の20個へ）
 function scrollProgressBarRight() {
     const total = currentRangeEnd - currentRangeStart;
     if (progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT < total) {
         // 20個ずつ次の範囲に移動
-        progressBarStartIndex = Math.min(total - PROGRESS_BAR_DISPLAY_COUNT, 
-            progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT);
+        progressBarStartIndex = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT;
         createProgressSegments(total);
         updateProgressSegments(); // セグメントの色を更新
         updateNavButtons(); // ボタン状態を更新
