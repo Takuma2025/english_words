@@ -5045,6 +5045,11 @@ function createProgressSegments(total) {
         segment.className = 'progress-segment';
         segment.dataset.index = i;
         
+        // アウトプットモードのときはクリック不可
+        if (currentLearningMode === 'output') {
+            segment.classList.add('progress-segment-disabled');
+        }
+        
         // 数字を追加
         const numberSpan = document.createElement('span');
         numberSpan.className = 'progress-segment-number';
@@ -5052,6 +5057,11 @@ function createProgressSegments(total) {
         segment.appendChild(numberSpan);
         
         segment.addEventListener('click', () => {
+            // アウトプットモードのときは移動できない
+            if (currentLearningMode === 'output') {
+                return;
+            }
+            
             const targetIndex = parseInt(segment.dataset.index);
             const absoluteIndex = currentRangeStart + targetIndex;
             if (absoluteIndex >= currentRangeStart && absoluteIndex < currentRangeEnd) {

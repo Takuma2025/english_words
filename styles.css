@@ -1622,7 +1622,7 @@ body {
 
 
 .progress-bar-container {
-    height: 16px;
+    height: 24px;
     background: transparent;
     border-radius: 0;
     overflow-x: auto;
@@ -1680,6 +1680,10 @@ body {
     justify-content: center;
     gap: 2px;
     padding: 0 2px;
+}
+
+.progress-segment-disabled {
+    cursor: default;
 }
 
 .progress-segment-number {
@@ -1815,7 +1819,7 @@ body {
         margin-bottom: 6px;
     }
     .progress-bar-container {
-        height: 14px;
+        height: 20px;
     }
     .input-result {
         bottom: 6px;
@@ -1888,7 +1892,7 @@ body {
         margin-bottom: 4px;
     }
     .progress-bar-container {
-        height: 12px;
+        height: 18px;
     }
     .input-result {
         bottom: 4px;
