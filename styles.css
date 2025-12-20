@@ -679,13 +679,13 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 0;
     margin-bottom: 0;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 2px solid #d1d5db;
 }
 
 .category-cards-row .category-card {
     padding: 10px 12px;
     border-bottom: none;
-    border-right: 1px solid #e5e7eb;
+    border-right: 2px solid #d1d5db;
 }
 
 .category-cards-row .category-card:last-child {
@@ -693,7 +693,7 @@ body {
 }
 
 .category-cards-row .category-name {
-    font-size: 18px;
+    font-size: 20px;
     line-height: 1.3;
 }
 
@@ -845,7 +845,7 @@ body {
     align-items: center;
     background: #ffffff;
     border: none;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 2px solid #d1d5db;
     border-radius: 0;
     padding: 16px;
     width: 100%;
@@ -3298,7 +3298,7 @@ body.learning-mode .word-card-container {
 .course-subsection {
     border: 1px solid #e5e7eb;
     border-radius: 10px;
-    background: #f9fafb;
+    background: #ffffff;
     margin-top: 8px;
     overflow: hidden;
 }
@@ -6174,10 +6174,11 @@ body.learning-mode .word-card-container {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: "Century Gothic", "Century Schoolbook", "Century", serif;
     font-size: 40px;
     font-weight: 800;
     color: #111827;
-    box-shadow: inset 0 -3px 0 #e2e8f0;
+    box-shadow: inset 0 -3px 0 #94a3b8;
 }
 
 .exam-calendar-label {
