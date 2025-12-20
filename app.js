@@ -837,6 +837,14 @@ function init() {
 }
 
 // ヘッダーボタンの表示/非表示を制御
+// テーマカラーを更新
+function updateThemeColor(isLearningMode) {
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+        themeColorMeta.setAttribute('content', isLearningMode ? '#f5f5f5' : '#0055ca');
+    }
+}
+
 // mode: 'home' = ホーム画面（ハンバーガーメニュー表示）、'back' = 戻るボタン表示、'learning' = 両方非表示（中断ボタンは別途表示）
 function updateHeaderButtons(mode) {
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
@@ -920,6 +928,7 @@ function showCategorySelection() {
     // ハンバーガーメニューボタンは常に表示（変更不要）
     
     document.body.classList.remove('learning-mode');
+    updateThemeColor(false);
     
     // すべての学習モードを非表示にする
     const wordCard = document.getElementById('wordCard');
@@ -1137,6 +1146,7 @@ function initInputModeLearning(category, words, startIndex = 0) {
     }
     
     document.body.classList.add('learning-mode');
+    updateThemeColor(true);
 
     // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
     updateHeaderButtons('learning');
@@ -1714,6 +1724,7 @@ function initTimeAttackLearning(category, words) {
     
     document.body.classList.add('learning-mode');
     document.body.classList.add('time-attack-mode');
+    updateThemeColor(true);
     
     // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
     updateHeaderButtons('learning');
@@ -2042,6 +2053,7 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     }
     
     document.body.classList.add('learning-mode');
+    updateThemeColor(true);
     
     // タイマーを停止（タイムアタックモード以外）
     if (timerInterval) {
@@ -4528,6 +4540,7 @@ function returnToCourseSelection() {
     
     // 学習モードをリセット
     document.body.classList.remove('learning-mode');
+    updateThemeColor(false);
     const mainContent = document.getElementById('mainContent');
     if (mainContent) {
         mainContent.classList.add('hidden');
