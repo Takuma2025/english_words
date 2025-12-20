@@ -6150,7 +6150,7 @@ body.learning-mode .word-card {
 }
 
 .filter-sheet-content {
-    flex: 1 1 auto;
+    flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -6162,7 +6162,6 @@ body.learning-mode .word-card {
     flex-direction: column;
     align-items: stretch;
     min-height: 0;
-    height: 0;
     overscroll-behavior: contain;
 }
 
