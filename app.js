@@ -34,6 +34,7 @@ let reorderData = []; // 整序英作文データ
 let currentReorderIndex = 0;
 let selectedLearningMode = 'card'; // 学習モード: 'card' (英語→日本語) または 'input' (日本語→英語) // 現在の整序英作文のインデックス
 let filterLearningMode = 'output'; // フィルター画面の学習モード: 'input' または 'output'
+let currentLearningMode = 'card'; // 現在学習中のモード: 'card' または 'input'
 let reorderAnswerSubmitted = false; // 回答が送信済みかどうか
 let reorderSelectedWords = []; // 選択された単語の配列
 let reorderTouchData = { // タッチドラッグ用のデータ
@@ -2209,14 +2210,11 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     const sentenceMode = document.getElementById('sentenceMode');
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
-    const cardNavBtnLeft = document.getElementById('cardNavBtnLeft');
-    const cardNavBtnRight = document.getElementById('cardNavBtnRight');
-    const progressStepButtons = document.querySelector('.progress-step-buttons');
+    const inputModeNav = document.getElementById('inputModeNav');
+    const progressStepLeft = document.getElementById('progressStepLeft');
+    const progressStepRight = document.getElementById('progressStepRight');
     const sentenceNavigation = document.getElementById('sentenceNavigation');
-    // 進捗ステップボタンを表示（タイムアタックモード以外）
-    if (progressStepButtons) {
-        progressStepButtons.classList.remove('hidden');
-    }
+    
     if (inputMode) inputMode.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
@@ -2226,21 +2224,30 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     isSentenceModeActive = false;
     isReorderModeActive = false;
     
-    // selectedLearningMode === 'input'の場合は「眺めるだけ」のカードモード
-    if (selectedLearningMode === 'input') {
-        // 判定ボタンを非表示、移動ボタンを表示
+    // スワイプヒント
+    const progressSwipeHint = document.getElementById('progressSwipeHint');
+    
+    // currentLearningMode === 'input'の場合は「眺めるだけ」のカードモード
+    if (currentLearningMode === 'input') {
+        // 判定ボタンを非表示、カード下のナビゲーションボタンを表示
         if (cardHint) cardHint.classList.add('hidden');
-        if (cardNavBtnLeft) cardNavBtnLeft.classList.remove('hidden');
-        if (cardNavBtnRight) cardNavBtnRight.classList.remove('hidden');
+        if (inputModeNav) inputModeNav.classList.remove('hidden');
+        // 上の「前の単語へ」「次の単語へ」ボタンを非表示
+        if (progressStepLeft) progressStepLeft.classList.add('hidden');
+        if (progressStepRight) progressStepRight.classList.add('hidden');
+        // スワイプヒントを表示
+        if (progressSwipeHint) progressSwipeHint.classList.remove('hidden');
     } else {
-        // 通常のカードモード
+        // 通常のカードモード（アウトプット）
         if (cardHint) cardHint.classList.remove('hidden');
-        if (cardNavBtnLeft) cardNavBtnLeft.classList.add('hidden');
-        if (cardNavBtnRight) cardNavBtnRight.classList.add('hidden');
+        if (inputModeNav) inputModeNav.classList.add('hidden');
+        // 上の「前の単語へ」「次の単語へ」ボタンを非表示（アウトプットモードでも非表示）
+        if (progressStepLeft) progressStepLeft.classList.add('hidden');
+        if (progressStepRight) progressStepRight.classList.add('hidden');
+        // スワイプヒントを非表示
+        if (progressSwipeHint) progressSwipeHint.classList.add('hidden');
     }
     
-    // カードモードのときは進捗バーの「前の単語へ・次の単語へ」ボタンを表示
-    if (progressStepButtons) progressStepButtons.classList.remove('hidden');
     // 例文モード用のナビゲーションボタンを非表示
     if (sentenceNavigation) sentenceNavigation.classList.add('hidden');
 
@@ -2519,7 +2526,21 @@ function setupEventListeners() {
         });
     }
     
-    
+    // インプットモード用ナビゲーションボタン
+    const inputNavLeft = document.getElementById('inputNavLeft');
+    const inputNavRight = document.getElementById('inputNavRight');
+    if (inputNavLeft) {
+        inputNavLeft.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goToPreviousWord();
+        });
+    }
+    if (inputNavRight) {
+        inputNavRight.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goToNextWord();
+        });
+    }
     
     // フィルター画面のイベントリスナー
     const filterStartBtn = document.getElementById('filterStartBtn');
@@ -2697,12 +2718,8 @@ function setupEventListeners() {
             // filterLearningMode === 'input'の場合は「眺めるだけ」のカードモードとしてinitLearningを呼ぶ
             // filterLearningMode === 'output'または未設定の場合は通常のカードモード
             // ただし、カテゴリー選択画面のselectedLearningModeも考慮する
-            const actualMode = filterLearningMode === 'input' ? 'input' : (selectedLearningMode === 'input' ? 'input' : 'card');
-            const previousMode = selectedLearningMode;
-            selectedLearningMode = actualMode;
+            currentLearningMode = filterLearningMode === 'input' ? 'input' : (selectedLearningMode === 'input' ? 'input' : 'card');
             initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
-            // selectedLearningModeを元に戻す（カテゴリー選択画面のトグル状態を保持）
-            selectedLearningMode = previousMode;
         });
     }
     
@@ -3424,31 +3441,6 @@ function displayInputMode(skipAnimationReset = false) {
     updateStats();
 }
 
-// 前の単語に移動（履歴ベースではなく単純なインデックス操作）
-function goToPreviousWord() {
-    if (currentIndex > currentRangeStart) {
-        // 現在のカードの状態をリセット
-        isCardRevealed = false;
-        inputAnswerSubmitted = false;
-        if (elements.wordCard) {
-            elements.wordCard.classList.remove('flipped');
-        }
-        
-        currentIndex--;
-        
-        // selectedLearningMode === 'input'の場合はカードモードとして表示
-        if (isInputModeActive && selectedLearningMode !== 'input') {
-            displayInputMode();
-        } else {
-            displayCurrentWord();
-        }
-        updateStats(); // 進捗バーを更新
-        updateProgressSegments();
-        updateNavButtons(); // ボタン状態を更新
-        // 前に戻った場合、進捗保存はしない（進んだときのみ保存するのが一般的）
-    }
-}
-
 // 次の入力フィールドを追加
 function addNextInputField() {
     const letterInputs = document.getElementById('letterInputs');
@@ -3646,53 +3638,140 @@ function showInputCompletionScreen() {
 
 // 前の単語に移動（履歴ベースではなく単純なインデックス操作）
 function goToPreviousWord() {
-    if (currentIndex > currentRangeStart) {
-        // 現在のカードの状態をリセット
+    if (currentIndex > currentRangeStart && !isCardAnimating) {
+        isCardAnimating = true;
         isCardRevealed = false;
         inputAnswerSubmitted = false;
+        
+        const cardInner = elements.wordCard ? elements.wordCard.querySelector('.card-inner') : null;
+        
         if (elements.wordCard) {
-            elements.wordCard.classList.remove('flipped');
-        }
-        
-        currentIndex--;
-        
-        // selectedLearningMode === 'input'の場合はカードモードとして表示
-        if (isInputModeActive && selectedLearningMode !== 'input') {
-            displayInputMode();
+            // フェードアウト（裏面のままでOK、見えなくなってから裏返す）
+            elements.wordCard.classList.add('fade-out');
+            
+            setTimeout(() => {
+                // フェードアウト完了（見えない状態）
+                // ここでカードを表面に戻す（見えないので裏返しは見えない）
+                if (cardInner) {
+                    cardInner.style.transition = 'none';
+                    cardInner.style.transform = 'rotateY(0deg)';
+                }
+                elements.wordCard.classList.remove('flipped');
+                elements.wordCard.offsetHeight; // 強制リフロー
+                
+                currentIndex--;
+                updateProgressSegments();
+                
+                // フェードアウトクラスをリセット
+                elements.wordCard.classList.remove('fade-out');
+                elements.wordCard.style.opacity = '0'; // 明示的に非表示を維持
+                
+                // 内容を更新
+                if (isInputModeActive && currentLearningMode !== 'input') {
+                    displayInputMode();
+                } else {
+                    displayCurrentWord();
+                }
+                
+                // カード内部の回転アニメーションを復元
+                if (cardInner) {
+                    cardInner.style.transition = '';
+                    cardInner.style.transform = '';
+                }
+                
+                // 少し待ってから下からふわっと浮いてくる
+                requestAnimationFrame(() => {
+                    elements.wordCard.style.opacity = '';
+                    elements.wordCard.classList.add('float-up');
+                    
+                    setTimeout(() => {
+                        elements.wordCard.classList.remove('float-up');
+                        isCardAnimating = false;
+                    }, 450);
+                });
+                
+                updateStats();
+                updateNavButtons();
+            }, 200);
         } else {
+            currentIndex--;
+            updateProgressSegments();
             displayCurrentWord();
+            updateStats();
+            updateNavButtons();
+            isCardAnimating = false;
         }
-        updateStats(); // 進捗バーを更新
-        updateProgressSegments();
-        updateNavButtons(); // ボタン状態を更新
-        // 前に戻った場合、進捗保存はしない（進んだときのみ保存するのが一般的）
     }
 }
 
+// カードアニメーション中かどうか
+let isCardAnimating = false;
+
 // 次の単語に移動（回答せずに進む場合）
 function goToNextWord() {
-    if (currentIndex < currentRangeEnd - 1) {
-        // 現在のカードの状態をリセット
+    if (currentIndex < currentRangeEnd - 1 && !isCardAnimating) {
+        isCardAnimating = true;
         isCardRevealed = false;
         inputAnswerSubmitted = false;
+        
+        const cardInner = elements.wordCard ? elements.wordCard.querySelector('.card-inner') : null;
+        
         if (elements.wordCard) {
-            elements.wordCard.classList.remove('flipped');
-        }
-
-        currentIndex++;
-        
-        updateProgressSegments();
-        
-        // selectedLearningMode === 'input'の場合はカードモードとして表示
-        if (isInputModeActive && selectedLearningMode !== 'input') {
-            displayInputMode();
+            // フェードアウト（裏面のままでOK、見えなくなってから裏返す）
+            elements.wordCard.classList.add('fade-out');
+            
+            setTimeout(() => {
+                // フェードアウト完了（見えない状態）
+                // ここでカードを表面に戻す（見えないので裏返しは見えない）
+                if (cardInner) {
+                    cardInner.style.transition = 'none';
+                    cardInner.style.transform = 'rotateY(0deg)';
+                }
+                elements.wordCard.classList.remove('flipped');
+                elements.wordCard.offsetHeight; // 強制リフロー
+                
+                currentIndex++;
+                updateProgressSegments();
+                
+                // フェードアウトクラスをリセット
+                elements.wordCard.classList.remove('fade-out');
+                elements.wordCard.style.opacity = '0'; // 明示的に非表示を維持
+                
+                // 内容を更新
+                if (isInputModeActive && currentLearningMode !== 'input') {
+                    displayInputMode();
+                } else {
+                    displayCurrentWord();
+                }
+                
+                // カード内部の回転アニメーションを復元
+                if (cardInner) {
+                    cardInner.style.transition = '';
+                    cardInner.style.transform = '';
+                }
+                
+                // 少し待ってから下からふわっと浮いてくる
+                requestAnimationFrame(() => {
+                    elements.wordCard.style.opacity = '';
+                    elements.wordCard.classList.add('float-up');
+                    
+                    setTimeout(() => {
+                        elements.wordCard.classList.remove('float-up');
+                        isCardAnimating = false;
+                    }, 450);
+                });
+                
+                updateStats();
+                updateNavButtons();
+            }, 200);
         } else {
+            currentIndex++;
+            updateProgressSegments();
             displayCurrentWord();
+            updateStats();
+            updateNavButtons();
+            isCardAnimating = false;
         }
-        updateStats(); // 進捗バーを更新
-        updateNavButtons(); // ボタン状態を更新
-        // ここで進捗保存するかは要件次第だが、回答していないので保存しない方が無難
-        // もし「見た」だけで進捗とするなら保存する。今回は保存しない。
     }
 }
 
@@ -3823,6 +3902,14 @@ function setupSwipeDetection(card) {
 
         // トランジションを有効化
         card.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+
+        // インプットモードのときはスワイプで判定しない（眺めるだけ）
+        if (currentLearningMode === 'input') {
+            // 元に戻る
+            card.style.transform = '';
+            card.style.opacity = '';
+            return;
+        }
 
         if (isHorizontal && Math.abs(dx) > threshold) {
             // 裏面：判定
@@ -4315,6 +4402,7 @@ function displayCurrentWord() {
     updateStarButton();
     updateStats();
     updateNavButtons(); // ボタン状態更新
+    updateCardStack(); // カードスタック表示更新
     
     // タイムアタックモードの場合、単語開始時間をリセット
     if (isTimeAttackMode) {
@@ -4543,16 +4631,28 @@ function markAnswer(isCorrect, isTimeout = false) {
         return;
     }
 
-    // 軽いスワイプアニメーション
-    const direction = isCorrect ? -120 : 120;
-    elements.wordCard.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
-    elements.wordCard.style.transform = `translateX(${direction}%) rotate(${isCorrect ? -12 : 12}deg)`;
-    elements.wordCard.style.opacity = '0.2';
+    // アニメーション中なら処理しない
+    if (isCardAnimating) return;
+    isCardAnimating = true;
+
+    const cardInner = elements.wordCard ? elements.wordCard.querySelector('.card-inner') : null;
+
+    // フェードアウト（裏面のままでOK）
+    elements.wordCard.classList.add('fade-out');
 
     setTimeout(() => {
-        elements.wordCard.style.transition = '';
-        elements.wordCard.style.transform = '';
-        elements.wordCard.style.opacity = '';
+        // フェードアウト完了（見えない状態）
+        // ここでカードを表面に戻す
+        if (cardInner) {
+            cardInner.style.transition = 'none';
+            cardInner.style.transform = 'rotateY(0deg)';
+        }
+        elements.wordCard.classList.remove('flipped');
+        elements.wordCard.offsetHeight;
+        
+        elements.wordCard.classList.remove('fade-out');
+        elements.wordCard.style.opacity = '0';
+        
         currentIndex++;
         
         // タイムアタックモードの場合、使用時間を減算
@@ -4561,6 +4661,7 @@ function markAnswer(isCorrect, isTimeout = false) {
             totalTimeRemaining = Math.max(0, totalTimeRemaining - elapsed);
             if (totalTimeRemaining <= 0) {
                 handleTimeUp();
+                isCardAnimating = false;
                 return;
             }
         }
@@ -4576,8 +4677,14 @@ function markAnswer(isCorrect, isTimeout = false) {
         
         // 最後の単語の場合は完了画面を表示
         if (currentIndex >= currentRangeEnd) {
+            elements.wordCard.style.opacity = '';
+            if (cardInner) {
+                cardInner.style.transition = '';
+                cardInner.style.transform = '';
+            }
+            isCardAnimating = false;
+            
             if (isTimeAttackMode) {
-                // タイムアタックモードの完了処理
                 if (timerInterval) {
                     clearInterval(timerInterval);
                     timerInterval = null;
@@ -4593,9 +4700,27 @@ function markAnswer(isCorrect, isTimeout = false) {
                 showCompletion();
             }
         } else {
+            // 内容を更新
             displayCurrentWord();
+            
+            // カード内部の回転アニメーションを復元
+            if (cardInner) {
+                cardInner.style.transition = '';
+                cardInner.style.transform = '';
+            }
+            
+            // 下からふわっと浮いてくる
+            requestAnimationFrame(() => {
+                elements.wordCard.style.opacity = '';
+                elements.wordCard.classList.add('float-up');
+                
+                setTimeout(() => {
+                    elements.wordCard.classList.remove('float-up');
+                    isCardAnimating = false;
+                }, 450);
+            });
         }
-    }, 180);
+    }, 200);
 }
 
 // 完了画面を表示
@@ -4912,8 +5037,8 @@ function createProgressSegments(total) {
                 if (elements.wordCard) {
                     elements.wordCard.classList.remove('flipped');
                 }
-                // selectedLearningMode === 'input'の場合はカードモードとして表示
-                if (isInputModeActive && selectedLearningMode !== 'input') {
+                // currentLearningMode === 'input'の場合はカードモードとして表示
+                if (isInputModeActive && currentLearningMode !== 'input') {
                     displayInputMode();
                 } else {
                     displayCurrentWord();
@@ -5110,14 +5235,19 @@ function setupProgressBarSwipe() {
     });
     
     function handleSwipe() {
+        // アウトプットモードのときはスワイプで移動しない
+        if (currentLearningMode !== 'input') {
+            return;
+        }
+        
         const swipeDistance = touchStartX - touchEndX;
         
-        // 右にスワイプ（指を右に動かす = touchStartX < touchEndX = swipeDistance < 0）→ 次の20個に移動
-        if (swipeDistance < -minSwipeDistance) {
+        // 右から左にスワイプ（指を左に動かす = swipeDistance > 0）→ 次の20個に移動（右に進む）
+        if (swipeDistance > minSwipeDistance) {
             scrollProgressBarRight();
         }
-        // 左にスワイプ（指を左に動かす = touchStartX > touchEndX = swipeDistance > 0）→ 前の20個に移動
-        else if (swipeDistance > minSwipeDistance) {
+        // 左から右にスワイプ（指を右に動かす = swipeDistance < 0）→ 前の20個に移動（左に戻る）
+        else if (swipeDistance < -minSwipeDistance) {
             scrollProgressBarLeft();
         }
     }
@@ -5155,6 +5285,33 @@ function scrollProgressBarRight() {
         createProgressSegments(total);
         updateProgressSegments(); // セグメントの色を更新
         updateNavButtons(); // ボタン状態を更新
+    }
+}
+
+// カードスタックを更新（残り枚数に応じて表示）
+function updateCardStack() {
+    const remainingCards = currentRangeEnd - currentIndex;
+    
+    const stack1 = document.getElementById('cardStack1');
+    const stack2 = document.getElementById('cardStack2');
+    const stack3 = document.getElementById('cardStack3');
+    const stack4 = document.getElementById('cardStack4');
+    const stack5 = document.getElementById('cardStack5');
+    
+    if (stack1) {
+        stack1.classList.toggle('hidden', remainingCards <= 1);
+    }
+    if (stack2) {
+        stack2.classList.toggle('hidden', remainingCards <= 2);
+    }
+    if (stack3) {
+        stack3.classList.toggle('hidden', remainingCards <= 3);
+    }
+    if (stack4) {
+        stack4.classList.toggle('hidden', remainingCards <= 4);
+    }
+    if (stack5) {
+        stack5.classList.toggle('hidden', remainingCards <= 5);
     }
 }
 

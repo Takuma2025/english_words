@@ -586,7 +586,16 @@
                     </div>
                     
                     <!-- 通常のカード学習モード -->
-                    <div class="word-card" id="wordCard">
+                    <div class="word-card-container" id="wordCardContainer">
+                        <!-- カードスタック（残り枚数表示用） -->
+                        <div class="card-stack card-stack-1" id="cardStack1"></div>
+                        <div class="card-stack card-stack-2" id="cardStack2"></div>
+                        <div class="card-stack card-stack-3" id="cardStack3"></div>
+                        <div class="card-stack card-stack-4" id="cardStack4"></div>
+                        <div class="card-stack card-stack-5" id="cardStack5"></div>
+                        
+                        <!-- メインカード -->
+                        <div class="word-card" id="wordCard">
                         <!-- 単語あたりの時間プログレスバー（タイムアタックモード時のみ） -->
                         <div class="word-timer-bar hidden" id="wordTimerBar">
                             <span class="word-timer-countdown" id="wordTimerCountdown">2.0秒</span>
@@ -642,6 +651,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
                     </div>
                     
                     <!-- 厳選例文暗記モード -->
@@ -849,6 +859,18 @@
                         </button>
                         <button class="hint-btn hint-right" id="wrongBtn">
                             覚えていない
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                    
+                    <!-- インプットモード用ナビゲーションボタン -->
+                    <div class="input-mode-nav hidden" id="inputModeNav">
+                        <button class="input-nav-btn" id="inputNavLeft">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                            前の単語へ
+                        </button>
+                        <button class="input-nav-btn" id="inputNavRight">
+                            次の単語へ
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                         </button>
                     </div>
