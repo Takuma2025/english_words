@@ -5185,16 +5185,17 @@ function updateProgressSegments() {
         const segmentIndex = parseInt(segment.dataset.index);
         segment.classList.remove('correct', 'wrong', 'current');
         
-        // 現在の問題をハイライト（タイムアタックモードのときは表示しない）
-        if (!isTimeAttackMode && segmentIndex === currentQuestionIndex) {
-            segment.classList.add('current');
-        }
-        
         // 回答状況に応じて色を設定（タイムアタックモードでも色をつける）
         if (questionStatus[segmentIndex] === 'correct') {
             segment.classList.add('correct');
         } else if (questionStatus[segmentIndex] === 'wrong') {
             segment.classList.add('wrong');
+        }
+        
+        // 現在の問題をハイライト（タイムアタックモードのときは表示しない）
+        // currentクラスを最後に追加して、correct/wrongと併用できるようにする
+        if (!isTimeAttackMode && segmentIndex === currentQuestionIndex) {
+            segment.classList.add('current');
         }
     });
     

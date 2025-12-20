@@ -1270,9 +1270,9 @@ body {
 .card-top-section {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     margin-top: 0;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     padding-top: 0;
     width: 100%;
     flex-shrink: 0;
@@ -1415,7 +1415,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 8px;
+    margin-top: none;
     position: relative;
     width: 100%;
 }
@@ -1809,11 +1809,11 @@ body {
     z-index: 10;
 }
 
-.progress-segment.current.correct {
+.progress-segment.correct.current {
     background: #22c55e !important;
 }
 
-.progress-segment.current.wrong {
+.progress-segment.wrong.current {
     background: #dc2626 !important;
 }
 
@@ -3461,7 +3461,7 @@ body.learning-mode .word-card-container {
     gap: 8px;
     padding: 0 16px;
     position: absolute;
-    bottom: 60px; /* かなり下に配置 */
+    bottom: 20px; /* さらに下に配置 */
     left: 0;
     right: 0;
     width: 100%;
