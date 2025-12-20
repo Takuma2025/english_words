@@ -3811,8 +3811,8 @@ function setupSwipeDetection(card) {
     };
 
     const handleStart = (e) => {
-        // 表面ならスワイプ無効
-        if (!card.classList.contains('flipped')) return;
+        // インプットモード以外で表面ならスワイプ無効
+        if (currentLearningMode !== 'input' && !card.classList.contains('flipped')) return;
         
         const point = getPoint(e);
         startX = point.x;
@@ -3855,8 +3855,8 @@ function setupSwipeDetection(card) {
     const handleMove = (e) => {
         if (!isDragging) return;
         
-        // 表面ならスワイプ無効
-        if (!card.classList.contains('flipped')) return;
+        // インプットモード以外で表面ならスワイプ無効
+        if (currentLearningMode !== 'input' && !card.classList.contains('flipped')) return;
         
         // ブラウザのデフォルト動作を防ぐ
         e.preventDefault();
@@ -3903,15 +3903,37 @@ function setupSwipeDetection(card) {
         // トランジションを有効化
         card.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
 
-        // インプットモードのときはスワイプで判定しない（眺めるだけ）
+        // インプットモードのときはスワイプで次/前に移動（判定なし）
         if (currentLearningMode === 'input') {
-            // 元に戻る
-            card.style.transform = '';
-            card.style.opacity = '';
+            if (isHorizontal && Math.abs(dx) > threshold) {
+                // スワイプ判定前にカードのスタイルを即座にリセット
+                card.style.transition = 'none';
+                card.style.transform = '';
+                card.style.opacity = '';
+                card.offsetHeight; // 強制リフロー
+                
+                if (dx < 0) {
+                    // 左スワイプ: 次の単語へ
+                    goToNextWord();
+                } else {
+                    // 右スワイプ: 前の単語へ
+                    goToPreviousWord();
+                }
+            } else {
+                // 元に戻る
+                card.style.transform = '';
+                card.style.opacity = '';
+            }
             return;
         }
 
         if (isHorizontal && Math.abs(dx) > threshold) {
+            // スワイプ判定前にカードのスタイルを即座にリセット
+            card.style.transition = 'none';
+            card.style.transform = '';
+            card.style.opacity = '';
+            card.offsetHeight; // 強制リフロー
+            
             // 裏面：判定
             if (dx < 0) {
                 markAnswer(true);
@@ -3919,6 +3941,12 @@ function setupSwipeDetection(card) {
                 markAnswer(false);
             }
         } else if (isMistakeMode && isVertical && dy < -threshold) {
+            // スワイプ判定前にカードのスタイルを即座にリセット
+            card.style.transition = 'none';
+            card.style.transform = '';
+            card.style.opacity = '';
+            card.offsetHeight; // 強制リフロー
+            
             // 上スワイプ（完璧）
             markMastered();
         } else {
