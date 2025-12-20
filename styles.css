@@ -6105,7 +6105,7 @@ body.learning-mode .word-card {
     left: 50%;
     transform: translateX(-50%) translateY(100%);
     bottom: 0;
-    top: 15%;
+    top: 8%;
     width: 100%;
     max-width: 540px;
     background: #ffffff;
@@ -6395,7 +6395,7 @@ body.learning-mode .word-card {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-    margin-bottom: 72px;
+    margin-bottom: 150px;
 }
 
 .filter-checkbox,
