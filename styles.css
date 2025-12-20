@@ -1213,6 +1213,48 @@ body {
     min-height: 0;
 }
 
+.unit-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 8px 16px;
+    background: transparent;
+    border-bottom: 3px solid #718096;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.unit-name {
+    color: #1a202c;
+    flex: 1;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.unit-interrupt-btn {
+    color: #dc2626;
+    text-align: right;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.unit-interrupt-btn:hover {
+    color: #b91c1c;
+}
+
+.unit-interrupt-btn:active {
+    color: #991b1b;
+}
+
 .card-top-section {
     display: flex;
     flex-direction: column;
@@ -1314,11 +1356,20 @@ body {
     padding-top: 0;
 }
 
-.progress-step-buttons {
+.progress-bottom-row {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
     margin-top: 4px;
+    gap: 8px;
+    position: relative;
+}
+
+.progress-step-buttons {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
     padding: 0 2px;
 }
 
@@ -1347,10 +1398,12 @@ body {
 
 .progress-step-btn.progress-step-left {
     margin-right: auto;
+    flex-shrink: 0;
 }
 
 .progress-step-btn.progress-step-right {
     margin-left: auto;
+    flex-shrink: 0;
 }
 
 .progress-step-btn svg {
@@ -1442,8 +1495,10 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    margin-top: 2px;
-    width: 100%;
+    flex-shrink: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .progress-stats-content {
@@ -1457,6 +1512,8 @@ body {
     padding: 4px 10px;
     border-radius: 8px;
     gap: 6px;
+    height: 32px;
+    box-sizing: border-box;
 }
 
 .progress-stats-label {
@@ -2583,6 +2640,47 @@ body {
     perspective: 1200px;
     touch-action: pan-y;
     margin-top: 8px;
+}
+
+/* 学習モード時のスタイル */
+body.learning-mode .app-header {
+    display: none;
+}
+
+body.learning-mode .app-main {
+    padding-top: env(safe-area-inset-top);
+}
+
+body.learning-mode .word-card {
+    aspect-ratio: 3/4;
+    max-height: 500px;
+}
+
+/* 中断ボタン（固定表示） */
+.home-btn-fixed {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 8px);
+    right: 16px;
+    z-index: 1002;
+    background: #6b7280;
+    border: none;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #4b5563;
+    transition: all 0.1s ease;
+}
+
+.home-btn-fixed:hover {
+    background: #5b6370;
+}
+
+.home-btn-fixed:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #4b5563;
 }
 
 /* 単語あたりのタイマーバー */

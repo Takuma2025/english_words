@@ -500,6 +500,8 @@ const elements = {
     modalMessage: document.getElementById('modalMessage'),
     modalActions: document.getElementById('modalActions'),
     headerSubtitle: document.getElementById('headerSubtitle'),
+    unitName: document.getElementById('unitName'),
+    unitInterruptBtn: document.getElementById('unitInterruptBtn'),
     correctBtn: document.getElementById('correctBtn'),
     wrongBtn: document.getElementById('wrongBtn'),
     masteredBtn: document.getElementById('masteredBtn'),
@@ -857,13 +859,9 @@ function updateHeaderButtons(mode) {
         }
     }
     
-    // 中断ボタンは学習中のみ表示
+    // 中断ボタンは常に非表示（上部コンテナの中断ボタンを使用）
     if (homeBtn) {
-        if (mode === 'learning') {
-            homeBtn.classList.remove('hidden');
-        } else {
-            homeBtn.classList.add('hidden');
-        }
+        homeBtn.classList.add('hidden');
     }
 }
 
@@ -1117,6 +1115,11 @@ function initInputModeLearning(category, words, startIndex = 0) {
     }
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
+    if (elements.unitName) {
+        // コース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
+        const displayTitle = currentFilterCourseTitle || category;
+        elements.unitName.textContent = displayTitle;
+    }
     
     document.body.classList.add('learning-mode');
 
@@ -1673,6 +1676,11 @@ function initTimeAttackLearning(category, words) {
     }
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
+    if (elements.unitName) {
+        // コース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
+        const displayTitle = currentFilterCourseTitle || category;
+        elements.unitName.textContent = displayTitle;
+    }
     
     document.body.classList.add('learning-mode');
     document.body.classList.add('time-attack-mode');
@@ -1982,13 +1990,13 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     }
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
+    if (elements.unitName) {
+        // コース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
+        const displayTitle = currentFilterCourseTitle || category;
+        elements.unitName.textContent = displayTitle;
+    }
     
     document.body.classList.add('learning-mode');
-    
-    // 学習画面ではホームボタンを表示
-    if (elements.homeBtn) {
-        elements.homeBtn.classList.remove('hidden');
-    }
     
     // タイマーを停止（タイムアタックモード以外）
     if (timerInterval) {
@@ -2252,6 +2260,15 @@ function setupEventListeners() {
     // ホームボタン
     if (elements.homeBtn) {
         elements.homeBtn.addEventListener('click', async () => {
+            if (await showConfirm('学習を中断してホームに戻りますか？')) {
+                showCategorySelection();
+            }
+        });
+    }
+    
+    // 上部コンテナの中断ボタン
+    if (elements.unitInterruptBtn) {
+        elements.unitInterruptBtn.addEventListener('click', async () => {
             if (await showConfirm('学習を中断してホームに戻りますか？')) {
                 showCategorySelection();
             }
@@ -5019,6 +5036,11 @@ function initSentenceModeLearning(category) {
     }
     elements.mainContent.classList.remove('hidden');
     elements.headerSubtitle.textContent = category;
+    if (elements.unitName) {
+        // コース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
+        const displayTitle = currentFilterCourseTitle || category;
+        elements.unitName.textContent = displayTitle;
+    }
     
     document.body.classList.add('learning-mode');
     
@@ -5610,6 +5632,11 @@ function initReorderModeLearning(category) {
     // サブタイトルから【整序英作文(記号選択)対策】を削除
     const displayTitle = category.replace('【整序英作文(記号選択)対策】', '').trim();
     elements.headerSubtitle.textContent = displayTitle;
+    if (elements.unitName) {
+        // コース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
+        const unitDisplayTitle = currentFilterCourseTitle || displayTitle;
+        elements.unitName.textContent = unitDisplayTitle;
+    }
     
     document.body.classList.add('learning-mode');
     
