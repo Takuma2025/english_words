@@ -3783,19 +3783,27 @@ function checkInputModeScrollable() {
     const inputModeContent = document.querySelector('.input-mode-content');
     if (!inputModeContent) return;
     
+    // 既存のスクロールインジケーターを削除
+    const existingIndicator = inputModeContent.querySelector('.scroll-indicator');
+    if (existingIndicator) {
+        existingIndicator.remove();
+    }
+    
     // 少し遅延してコンテンツが反映された後にチェック
     requestAnimationFrame(() => {
         const isScrollable = inputModeContent.scrollHeight > inputModeContent.clientHeight;
         if (isScrollable) {
-            inputModeContent.classList.add('scrollable');
+            // スクロールインジケーターを追加
+            const indicator = document.createElement('div');
+            indicator.className = 'scroll-indicator';
+            indicator.textContent = 'スクロール';
+            inputModeContent.appendChild(indicator);
             
             // スクロールイベントを追加（一度だけ）
             if (!inputModeContent.dataset.scrollListenerAdded) {
                 inputModeContent.addEventListener('scroll', handleInputModeScroll);
                 inputModeContent.dataset.scrollListenerAdded = 'true';
             }
-        } else {
-            inputModeContent.classList.remove('scrollable');
         }
     });
 }
@@ -3803,12 +3811,16 @@ function checkInputModeScrollable() {
 // インプットモードのスクロールを処理
 function handleInputModeScroll(e) {
     const element = e.target;
+    const indicator = document.querySelector('.scroll-indicator');
+    
+    if (!indicator) return;
+    
     const scrolledToBottom = element.scrollHeight - element.scrollTop - element.clientHeight < 20;
     
     if (scrolledToBottom || element.scrollTop > 10) {
-        element.classList.add('scrolled');
+        indicator.classList.add('hidden');
     } else {
-        element.classList.remove('scrolled');
+        indicator.classList.remove('hidden');
     }
 }
 
@@ -3823,8 +3835,13 @@ function displayInputMode(skipAnimationReset = false) {
     if (!skipAnimationReset) {
         const inputModeContent = document.querySelector('.input-mode-content');
         if (inputModeContent) {
-            inputModeContent.classList.remove('flip-out', 'flip-in', 'active', 'scrollable', 'scrolled');
+            inputModeContent.classList.remove('flip-out', 'flip-in', 'active');
             inputModeContent.scrollTop = 0; // スクロール位置をリセット
+        }
+        // スクロールインジケーターを削除
+        const scrollIndicator = document.querySelector('.scroll-indicator');
+        if (scrollIndicator) {
+            scrollIndicator.remove();
         }
     }
 
