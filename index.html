@@ -579,6 +579,9 @@
                 <div class="card-area-wrapper">
                     <!-- 単元名と中断ボタンのコンテナ -->
                     <div class="unit-header-container">
+                        <button class="input-back-btn hidden" id="inputBackBtn" aria-label="戻る">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
                         <span class="unit-name" id="unitName">単元名</span>
                         <button class="unit-interrupt-btn" id="unitInterruptBtn">中断</button>
                     </div>
@@ -638,8 +641,7 @@
                     <!-- インプットモード一覧表示（眺める用） -->
                     <div class="input-list-view hidden" id="inputListView">
                         <div class="input-list-header">
-                            <div class="input-list-title">インプットモード</div>
-                            <div class="input-list-sub">スクロールしながら眺めて覚える</div>
+                            <div class="input-list-title">単語一覧</div>
                         </div>
                         <div class="input-list-scroll" id="inputListContainer">
                             <!-- 動的に生成 -->

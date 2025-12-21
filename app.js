@@ -2554,6 +2554,10 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     isSentenceModeActive = false;
     isReorderModeActive = false;
     
+    // インプットモード用戻るボタンと中断ボタンの制御
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    const unitInterruptBtn = document.getElementById('unitInterruptBtn');
+    
     // currentLearningMode === 'input'の場合は「眺めるだけ」のカードモード
     if (currentLearningMode === 'input') {
         // 判定ボタンを非表示、カード下のナビゲーションボタンを表示
@@ -2564,6 +2568,9 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         if (progressStepRight) progressStepRight.classList.add('hidden');
         if (cardTopSection) cardTopSection.classList.add('hidden');
         if (wordCardContainer) wordCardContainer.classList.add('hidden');
+        // 戻るボタン表示、中断ボタン非表示
+        if (inputBackBtn) inputBackBtn.classList.remove('hidden');
+        if (unitInterruptBtn) unitInterruptBtn.classList.add('hidden');
         renderInputListView(currentWords);
     } else {
         // 通常のカードモード（アウトプット）
@@ -2574,6 +2581,9 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         if (progressStepRight) progressStepRight.classList.add('hidden');
         if (cardTopSection) cardTopSection.classList.remove('hidden');
         if (inputListView) inputListView.classList.add('hidden');
+        // 戻るボタン非表示、中断ボタン表示
+        if (inputBackBtn) inputBackBtn.classList.add('hidden');
+        if (unitInterruptBtn) unitInterruptBtn.classList.remove('hidden');
     }
     
     // 例文モード用のナビゲーションボタンを非表示
@@ -2815,6 +2825,49 @@ function setupEventListeners() {
     if (elements.unitInterruptBtn) {
         elements.unitInterruptBtn.addEventListener('click', async () => {
             if (await showConfirm('学習を中断してホームに戻りますか？')) {
+                showCategorySelection();
+            }
+        });
+    }
+    
+    // インプットモード用戻るボタン
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    if (inputBackBtn) {
+        inputBackBtn.addEventListener('click', () => {
+            // 学習モードをリセット
+            document.body.classList.remove('learning-mode');
+            updateThemeColor(false);
+            
+            if (elements.mainContent) {
+                elements.mainContent.classList.add('hidden');
+            }
+            
+            // コース選択画面に戻る
+            if (selectedCategory) {
+                const categoryMapping = {
+                    'LEVEL1 大阪府必須400': 'Group1 超頻出600',
+                    'LEVEL2 大阪府重要300': 'Group2 頻出200',
+                    'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
+                    'LEVEL4 私立難関校対策300': 'Group3 ハイレベル100'
+                };
+                let categoryWords;
+                if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+                    if (typeof elementaryWordData !== 'undefined') {
+                        categoryWords = elementaryWordData;
+                    } else {
+                        showCategorySelection();
+                        return;
+                    }
+                } else {
+                    const dataCategory = categoryMapping[selectedCategory] || selectedCategory;
+                    categoryWords = wordData.filter(word => word.category === dataCategory);
+                }
+                if (categoryWords && categoryWords.length > 0) {
+                    showCourseSelection(selectedCategory, categoryWords);
+                } else {
+                    showCategorySelection();
+                }
+            } else {
                 showCategorySelection();
             }
         });
@@ -4739,7 +4792,7 @@ function renderInputListView(words) {
         row.appendChild(wordEl);
         
         const audioBtn = document.createElement('button');
-        audioBtn.className = 'input-list-audio';
+        audioBtn.className = 'audio-btn';
         audioBtn.setAttribute('type', 'button');
         audioBtn.setAttribute('aria-label', `${word.word}の音声を再生`);
         audioBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
