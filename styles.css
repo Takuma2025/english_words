@@ -928,7 +928,7 @@ body {
 }
 
 .ai-word-number {
-    display: inline;
+    display: none;
 }
 
 .ai-word-count-large .ai-word-unit {
@@ -945,7 +945,7 @@ body {
 }
 
 .ai-word-count-large .ai-analyzing {
-    display: none;
+    display: flex;
     font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif !important;
     font-size: 20px !important;
     font-weight: 400 !important;
@@ -7765,13 +7765,13 @@ body.learning-mode .word-card-container {
 .filter-section-title {
     font-size: 18px;
     font-weight: 700;
-    color: #2563eb;
+    color: #0055ca;
     margin-bottom: 14px;
     text-align: left;
     letter-spacing: 0.02em;
     padding-left: 2px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #2563eb;
+    border-bottom: 2px solid #0055ca;
 }
 
 .filter-options {
@@ -7788,20 +7788,21 @@ body.learning-mode .word-card-container {
 
 .question-count-control {
     margin-top: 14px;
-    padding: 10px 16px;
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    border: 1px solid #bfdbfe;
-    border-radius: 10px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .question-count-label {
     font-size: 14px;
     font-weight: 600;
-    color: #1e40af;
+    color: #0055ca;
 }
 
 .question-count-buttons {
@@ -7833,9 +7834,9 @@ body.learning-mode .word-card-container {
 }
 
 .question-count-btn:hover {
-    border-color: #2563eb;
-    color: #2563eb;
-    background: #eff6ff;
+    border-color: #0055ca;
+    color: #0055ca;
+    background: #f8fafc;
 }
 
 .question-count-btn:active {
@@ -7856,7 +7857,7 @@ body.learning-mode .word-card-container {
 .question-count-value {
     font-size: 16px;
     font-weight: 700;
-    color: #2563eb;
+    color: #0055ca;
     min-width: 60px;
     text-align: center;
 }
@@ -7864,13 +7865,15 @@ body.learning-mode .word-card-container {
 .mode-radio {
     display: flex;
     align-items: center;
-    padding: 14px 16px;
+    padding: 18px 20px;
     background: #ffffff;
     border: 2px solid #e5e7eb;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.15s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    width: 100%;
+    border-width: 2px;
 }
 
 .mode-radio:hover {
@@ -7878,43 +7881,11 @@ body.learning-mode .word-card-container {
     background: #f0f7ff;
 }
 
-.mode-radio:has(input:checked) {
-    border-color: #2563eb;
+.mode-radio.mode-radio-selected {
+    border-color: #0055ca;
     border-width: 4px;
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
-}
-
-.mode-radio input[type="radio"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    margin-right: 12px;
-    cursor: pointer;
-    border: 2px solid #cbd5e1;
-    border-radius: 50%;
-    background: #ffffff;
-    transition: all 0.15s ease;
-    position: relative;
-    flex-shrink: 0;
-}
-
-.mode-radio input[type="radio"]:checked {
-    background: #2563eb;
-    border-color: #2563eb;
-}
-
-.mode-radio input[type="radio"]:checked::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 8px;
-    height: 8px;
-    background: #ffffff;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 8px rgba(0, 85, 202, 0.15);
 }
 
 .mode-content {
@@ -7933,7 +7904,7 @@ body.learning-mode .word-card-container {
 }
 
 .mode-label {
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 900;
     color: #1f2937;
     display: inline-flex;
@@ -7947,19 +7918,21 @@ body.learning-mode .word-card-container {
     flex-shrink: 0;
     opacity: 0.5;
     stroke: #64748b;
+    color: #64748b;
 }
 
-.mode-radio:has(input:checked) .mode-label {
-    color: #1e40af;
+.mode-radio.mode-radio-selected .mode-label {
+    color: #0055ca;
 }
 
-.mode-radio:has(input:checked) .mode-icon-large {
-    stroke: #1e40af;
+.mode-radio.mode-radio-selected .mode-icon-large {
+    stroke: #0055ca;
+    color: #0055ca;
     opacity: 1;
 }
 
 .mode-description {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
     color: #6b7280;
 }
@@ -7993,9 +7966,9 @@ body.learning-mode .word-card-container {
 
 .filter-checkbox:has(input:checked),
 .order-radio:has(input:checked) {
-    border-color: #2563eb;
+    border-color: #0055ca;
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 2px 8px rgba(0, 85, 202, 0.15);
 }
 
 .filter-checkbox-all {
@@ -8023,8 +7996,8 @@ body.learning-mode .word-card-container {
 }
 
 .filter-checkbox input[type="checkbox"]:checked {
-    background: #2563eb;
-    border-color: #2563eb;
+    background: #0055ca;
+    border-color: #0055ca;
 }
 
 .filter-checkbox input[type="checkbox"]:checked::after {
@@ -8068,7 +8041,7 @@ body.learning-mode .word-card-container {
 }
 
 .filter-checkbox:has(input:checked) .checkbox-label {
-    color: #1e40af;
+    color: #0055ca;
     font-weight: 600;
 }
 
@@ -8129,7 +8102,7 @@ body.learning-mode .word-card-container {
 }
 
 .order-radio input[type="radio"]:checked {
-    border-color: #2563eb;
+    border-color: #0055ca;
     background: #ffffff;
 }
 
@@ -8142,7 +8115,7 @@ body.learning-mode .word-card-container {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #2563eb;
+    background: #0055ca;
 }
 
 .order-radio input[type="radio"]:disabled {
@@ -8172,7 +8145,7 @@ body.learning-mode .word-card-container {
 }
 
 .order-radio:has(input:checked) .radio-label {
-    color: #1e40af;
+    color: #0055ca;
     font-weight: 600;
 }
 
@@ -8326,19 +8299,20 @@ body.learning-mode .word-card-container {
 
 .filter-info {
     margin-top: 14px;
-    padding: 10px 16px;
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    border: 1px solid #bfdbfe;
-    border-radius: 10px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
     text-align: center;
     font-size: 14px;
-    color: #1e40af;
+    color: #374151;
     font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .filter-info #filteredWordCount {
     font-weight: 800;
-    color: #2563eb;
+    color: #0055ca;
     font-size: 16px;
 }
 

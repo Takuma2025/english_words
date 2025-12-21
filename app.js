@@ -2203,19 +2203,20 @@ function showWordFilterView(category, categoryWords, courseTitle) {
         }
     }
     
-    // ラジオボタンの状態とfilterLearningModeを同期（カテゴリー選択画面のトグルとは独立）
+    // ボタンの状態とfilterLearningModeを同期（カテゴリー選択画面のトグルとは独立）
     const modeInput = document.getElementById('modeInput');
     const modeOutput = document.getElementById('modeOutput');
     if (modeInput && modeOutput) {
-        // ラジオボタンの状態を確認してfilterLearningModeを更新
-        if (modeInput.checked) {
+        // ボタンの状態を確認してfilterLearningModeを更新
+        if (modeInput.classList.contains('mode-radio-selected')) {
             filterLearningMode = 'input';
-        } else if (modeOutput.checked) {
+        } else if (modeOutput.classList.contains('mode-radio-selected')) {
             filterLearningMode = 'output';
         } else {
-            // どちらも選択されていない場合はデフォルトで'output'
-            filterLearningMode = 'output';
-            modeOutput.checked = true;
+            // どちらも選択されていない場合はデフォルトで'input'
+            filterLearningMode = 'input';
+            modeInput.classList.add('mode-radio-selected');
+            modeOutput.classList.remove('mode-radio-selected');
         }
     }
     
@@ -2233,7 +2234,7 @@ function updateQuestionCountSection() {
     
     if (questionCountSection && modeOutput) {
         const filteredWords = getFilteredWords();
-        const isOutputMode = modeOutput.checked;
+        const isOutputMode = modeOutput.classList.contains('mode-radio-selected');
         
         if (isOutputMode) {
             if (filteredWords.length > 10) {
@@ -2280,7 +2281,7 @@ function updateFilterInfo() {
     // アウトプットモードの場合、出題数選択を更新
     const questionCountSection = document.getElementById('questionCountSection');
     const modeOutput = document.getElementById('modeOutput');
-    if (questionCountSection && modeOutput && modeOutput.checked && questionCountSection.style.display !== 'none') {
+    if (questionCountSection && modeOutput && modeOutput.classList.contains('mode-radio-selected') && questionCountSection.style.display !== 'none') {
         updateQuestionCountOptions(filteredWords.length);
     }
 }
@@ -3373,17 +3374,26 @@ function setupEventListeners() {
     });
     
     // 学習モードの変更イベント
-    // 学習モード変更時のイベントリスナー（イベント委譲）
-    document.addEventListener('change', (e) => {
-        if (e.target.name === 'learningMode') {
-            if (e.target.value === 'input') {
-                filterLearningMode = 'input';
-            } else if (e.target.value === 'output') {
-                filterLearningMode = 'output';
-            }
+    const modeInput = document.getElementById('modeInput');
+    const modeOutput = document.getElementById('modeOutput');
+    
+    if (modeInput) {
+        modeInput.addEventListener('click', () => {
+            modeInput.classList.add('mode-radio-selected');
+            modeOutput.classList.remove('mode-radio-selected');
+            filterLearningMode = 'input';
             updateQuestionCountSection();
-        }
-    });
+        });
+    }
+    
+    if (modeOutput) {
+        modeOutput.addEventListener('click', () => {
+            modeOutput.classList.add('mode-radio-selected');
+            modeInput.classList.remove('mode-radio-selected');
+            filterLearningMode = 'output';
+            updateQuestionCountSection();
+        });
+    }
     
     // プラス・マイナスボタンのイベントリスナー（直接追加で反応を改善）
     const questionCountValue = document.getElementById('questionCountValue');
