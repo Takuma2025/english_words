@@ -675,6 +675,8 @@ const eventLeisureWords = [
   { id: 11607, word: "ceremony", meaning: "式典、儀式", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 10 },
   { id: 11608, word: "New Year", meaning: "新年、正月（New Year's Day：元日、１月１日、New Year's Eve：大みそか）", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 7 },
   { id: 11609, word: "Christmas", meaning: "クリスマス", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
+  { id: 11622, word: "field trip", meaning: "遠足、校外学習", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
+  { id: 11623, word: "school trip", meaning: "修学旅行、学校旅行", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
   // 余暇活動
   { id: 11610, word: "tour", meaning: "ツアー、見学、旅行", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 21 },
   { id: 11611, word: "concert", meaning: "コンサート、演奏会", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 18 },
@@ -687,6 +689,7 @@ const eventLeisureWords = [
   { id: 11618, word: "hiking", meaning: "ハイキング、登山", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
   { id: 11619, word: "parade", meaning: "パレード、行列", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
   { id: 11620, word: "picnic", meaning: "ピクニック、遠足", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
+  { id: 11621, word: "fishing", meaning: "釣り、魚釣り", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 10 },
 ];
 
 // ============================================
@@ -727,6 +730,14 @@ const pronounWords = [
   { id: 20121, word: "ours", meaning: "私たちのもの（所有代名詞）", partOfSpeech: "代名詞", category: "代名詞", appearanceCount: 20, example: { english: "This land is <strong>ours</strong>.", japanese: "この土地は私たちのものです。" } },
   { id: 20122, word: "it", meaning: "それは（主格）、それを/に（目的格）", partOfSpeech: "代名詞", category: "代名詞", appearanceCount: 1000, example: { english: "<strong>It</strong> is a cat.", japanese: "それは猫です。" } },
   { id: 20123, word: "its", meaning: "それの、その（所有格）", partOfSpeech: "代名詞", category: "代名詞", appearanceCount: 100, example: { english: "The dog wagged <strong>its</strong> tail.", japanese: "その犬はしっぽを振りました。" } },
+  // 再帰代名詞
+  { id: 20128, word: "myself", meaning: "私自身（を/に）", partOfSpeech: "代名詞", category: "代名詞", appearanceCount: 1, example: { english: "I came here by<strong>myself</strong>.", japanese: "私はひとりでここに来ました。" } },
+  { id: 20129, word: "yourself", meaning: "あなた自身（を/に）", partOfSpeech: "代名詞", category: "代名詞", appearanceCount: 0, example: { english: "Please help <strong>yourself</strong>.", japanese: "（飲食物などを）どうぞご自由にお取りください。" } },
+  { id: 20130, word: "himself", meaning: "彼自身（を/に）", partOfSpeech: "代名詞", category: "代名詞", appearanceCount: 2, example: { english: "\"She is very beautiful.\"he said to<strong>himself</strong>.", japanese: "「彼女は美しい」と彼は（心の中で）思いました。" } },
+  { id: 20131, word: "herself", meaning: "彼女自身（を/に）", partOfSpeech: "代名詞", category: "代名詞", appearanceCount: 0, example: { english: "She made it <strong>herself</strong>.", japanese: "彼女はそれを自分で作りました。" } },
+  { id: 20132, word: "itself", meaning: "それ自身（を/に）", partOfSpeech: "代名詞", category: "代名詞", appearanceCount: 0, example: { english: "The door opened by <strong>itself</strong>.", japanese: "ドアがひとりでに開きました。" } },
+  { id: 20133, word: "ourselves", meaning: "私たち自身（を/に）", partOfSpeech: "代名詞", category: "代名詞", appearanceCount: 0, example: { english: "We enjoyed <strong>ourselves</strong>.", japanese: "私たちは楽しみました。" } },
+  { id: 20134, word: "themselves", meaning: "彼ら（彼女ら）自身（を/に）", partOfSpeech: "代名詞", category: "代名詞", appearanceCount: 0, example: { english: "They did it <strong>themselves</strong>.", japanese: "彼らはそれを自分たちでやりました。" } },
   { id: 20124, word: "this", meaning: "これは、この", partOfSpeech: "代名詞・限定詞", category: "代名詞", appearanceCount: 600, example: { english: "<strong>This</strong> is my pen.", japanese: "これは私のペンです。" } },
   { id: 20125, word: "these", meaning: "これらは、これらの", partOfSpeech: "代名詞・限定詞", category: "代名詞", appearanceCount: 100, example: { english: "<strong>These</strong> are my books.", japanese: "これらは私の本です。" } },
   { id: 20126, word: "that", meaning: "あれは、あの、それは", partOfSpeech: "代名詞・限定詞", category: "代名詞", appearanceCount: 800, example: { english: "<strong>That</strong> is a bird.", japanese: "あれは鳥です。" } },
@@ -740,8 +751,10 @@ const indefinitePronounWords = [
   { id: 20203, word: "nothing", meaning: "何も〜ない", partOfSpeech: "代名詞", category: "不定代名詞", appearanceCount: 8, example: { english: "There is <strong>nothing</strong> in the box.", japanese: "箱の中には何もありません。" } },
   { id: 20204, word: "everything", meaning: "すべてのもの、すべてのこと", partOfSpeech: "代名詞", category: "不定代名詞", appearanceCount: 12, example: { english: "<strong>Everything</strong> is ready.", japanese: "すべての準備ができています。" } },
   { id: 20205, word: "everyone", meaning: "みんな、すべての人", partOfSpeech: "代名詞", category: "不定代名詞", appearanceCount: 23, example: { english: "<strong>Everyone</strong> has a book.", japanese: "みんな本を持っています。" } },
-  { id: 20206, word: "someone", meaning: "だれか（人）", partOfSpeech: "代名詞", category: "不定代名詞", appearanceCount: 8, example: { english: "<strong>Someone</strong> is calling you.", japanese: "だれかがあなたを呼んでいます。" } },
+  { id: 20206, word: "someone", meaning: "だれか、ある人", partOfSpeech: "代名詞", category: "不定代名詞", appearanceCount: 8, example: { english: "<strong>Someone</strong> is calling you.", japanese: "だれかがあなたを呼んでいます。" } },
   { id: 20207, word: "anyone", meaning: "（肯定文で）誰でも、（否定文で）誰も、（疑問文で）誰か", partOfSpeech: "代名詞", category: "不定代名詞", appearanceCount: 1, example: { english: "Can <strong>anyone</strong> help me?", japanese: "だれか手伝ってくれますか。" } },
+  { id: 20209, word: "somebody", meaning: "だれか、ある人", partOfSpeech: "代名詞", category: "不定代名詞", appearanceCount: 0, example: { english: "<strong>Somebody</strong> is at the door.", japanese: "だれかがドアにいます。" } },
+  { id: 20210, word: "nobody", meaning: "だれも〜ない", partOfSpeech: "代名詞", category: "不定代名詞", appearanceCount: 0, example: { english: "<strong>Nobody</strong> knows the answer.", japanese: "だれも答えを知りません。" } },
   { id: 20208, word: "everybody", meaning: "みんな、すべての人", partOfSpeech: "代名詞", category: "不定代名詞", appearanceCount: 1, example: { english: "<strong>Everybody</strong> likes music.", japanese: "みんな音楽が好きです。" } },
 ];
 
@@ -752,11 +765,13 @@ const adverbWords = [
   { id: 20303, word: "very", meaning: "とても", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 180, example: { english: "This dog is <strong>very</strong> big.", japanese: "この犬はとても大きいです。" } },
   { id: 20304, word: "so", meaning: "そんなに、とても、そのように", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 213, example: { english: "This movie isn't <strong>so</strong> interesting.", japanese: "この映画はそんなに面白くありません。" } },
   { id: 20305, word: "too", meaning: "〜すぎる、〜も［文末］", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 60, example: { english: "This box is <strong>too</strong> heavy.", japanese: "この箱は重すぎます。" } },
+  { id: 20312, word: "quite", meaning: "かなり、まったく、相当、とても", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 2, example: { english: "It's <strong>quite</strong> cold today.", japanese: "今日はかなり寒いです。" } },
   { id: 20306, word: "almost", meaning: "ほとんど", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 11, example: { english: "<strong>Almost</strong> all the students like soccer.", japanese: "ほとんどすべての学生がサッカーが好きです。" } },
-  { id: 20307, word: "just", meaning: "ちょうど、単に、ちょっと", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 21, example: { english: "I have <strong>just</strong> finished my homework.", japanese: "私はちょうど宿題を終わらせたところです。" } },
+  { id: 20307, word: "just", meaning: "ちょうど、ぴったりの、単に、ちょっと", partOfSpeech: "副詞・形容詞", category: "副詞（否定・程度・焦点）", appearanceCount: 21, example: { english: "I have <strong>just</strong> finished my homework.", japanese: "私はちょうど宿題を終わらせたところです。" } },
   { id: 20308, word: "also", meaning: "〜もまた", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 131, example: { english: "I <strong>also</strong> like music.", japanese: "私も音楽が好きです。" } },
   { id: 20309, word: "only", meaning: "〜だけ、唯一の", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 51, example: { english: "I have <strong>only</strong> one book.", japanese: "私は本を１冊しか持っていません。" } },
   { id: 20310, word: "even", meaning: "〜でさえ（すら）", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 27, example: { english: "He <strong>even</strong> forgot my name.", japanese: "彼は私の名前さえ忘れてしまいました。" } },
+  { id: 20311, word: "else", meaning: "ほかに（の）、その他に（の）", partOfSpeech: "副詞・形容詞", category: "副詞（否定・程度・焦点）", appearanceCount: 5, example: { english: "I want to talk to someone <strong>else</strong>.", japanese: "私はほかのだれかと話したい。" } },
 ];
 
 // 疑問詞
@@ -778,7 +793,7 @@ const questionWords = [
 
 // 限定詞（数量）
 const quantifierWords = [
-  { id: 20501, word: "all", meaning: "すべての", partOfSpeech: "限定詞・形容詞", category: "限定詞（数量）", appearanceCount: 40, example: { english: "<strong>All</strong> boys in this class play soccer.", japanese: "このクラスの男の子はすべてサッカーをします。" } },
+  { id: 20501, word: "all", meaning: "すべての、すべてのもの", partOfSpeech: "限定詞・形容詞・代名詞", category: "限定詞（数量）", appearanceCount: 40, example: { english: "<strong>All</strong> boys in this class play soccer.", japanese: "このクラスの男の子はすべてサッカーをします。" } },
   { id: 20502, word: "each", meaning: "それぞれの、各々の", partOfSpeech: "限定詞・形容詞", category: "限定詞（数量）", appearanceCount: 101, example: { english: "<strong>Each</strong> student has a book.", japanese: "それぞれの学生が本を持っています。" } },
   { id: 20503, word: "every", meaning: "すべての、毎〜", partOfSpeech: "限定詞・形容詞", category: "限定詞（数量）", appearanceCount: 34, example: { english: "<strong>Every</strong> girl in this class is good at English.", japanese: "このクラスの女の子はみんな英語が得意です。" } },
   { id: 20504, word: "some", meaning: "いくつかの、いくらかの", partOfSpeech: "限定詞・形容詞", category: "限定詞（数量）", appearanceCount: 287, example: { english: "I have <strong>some</strong> books.", japanese: "私は本を何冊か（いくつか）持っています。" } },
@@ -808,6 +823,7 @@ const prepositionWords = [
   { id: 20610, word: "about", meaning: "〜について、〜に関して（関する）、およそ、約〜", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 575, example: { english: "<strong>about</strong> music / about 40 years ago", japanese: "音楽について / 約40年前" } },
   { id: 20611, word: "into", meaning: "〜の中へ", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 22, example: { english: "<strong>into</strong> the room", japanese: "部屋の中へ" } },
   { id: 20612, word: "over", meaning: "①〜の上の方 ②〜じゅう、〜のいたるところに ③〜以上に、〜より多く", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 20, example: { english: "<strong>over</strong> the bridge", japanese: "橋の上" } },
+  { id: 20628, word: "above", meaning: "〜の上に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1, example: { english: "<strong>above</strong>your head", japanese: "頭の上" } },
   { id: 20613, word: "under", meaning: "〜の下に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 20, example: { english: "<strong>under</strong> the table", japanese: "テーブルの下" } },
   { id: 20614, word: "between", meaning: "（2つ、2人）〜の間に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 33, example: { english: "<strong>between</strong> the two buildings", japanese: "2つの建物の間" } },
   { id: 20615, word: "among", meaning: "（3つ、3人以上）〜の間に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 20, example: { english: "<strong>among</strong> the trees", japanese: "木々の間" } },
@@ -819,26 +835,37 @@ const prepositionWords = [
   { id: 20621, word: "until", meaning: "〜までずっと", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 12, example: { english: "<strong>until</strong> tomorrow", japanese: "明日まで" } },
   { id: 20622, word: "against", meaning: "〜に反対して、〜に対して", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1, example: { english: "<strong>against</strong> the law", japanese: "法律に反対して" } },
   { id: 20623, word: "without", meaning: "〜なしで", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 57, example: { english: "<strong>without</strong> a word", japanese: "一言も言わずに" } },
+  { id: 20624, word: "along", meaning: "〜に沿って", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 16, example: { english: "walk <strong>along</strong> the river", japanese: "川に沿って歩く" } },
+  { id: 20625, word: "across", meaning: "〜を横切って、〜の向こう側に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 2, example: { english: "walk <strong>across</strong> the street", japanese: "通りを横切って歩く" } },
+  { id: 20626, word: "beside", meaning: "〜のそばに、〜の隣に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 7, example: { english: "sit <strong>beside</strong> me", japanese: "私の隣に座る" } },
+  { id: 20627, word: "below", meaning: "下に・下記に（へ/を/の）", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 12, example: { english: "the room <strong>below</strong>", japanese: "下の部屋" } },
+  { id: 20629, word: "toward", meaning: "〜の方へ、〜に向かって", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1, example: { english: "walk <strong>toward</strong> the station", japanese: "駅の方へ歩く" } },
+  { id: 20630, word: "behind", meaning: "〜の後ろに", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "behind the house", japanese: "家の後ろに" } },
+  { id: 20631, word: "beyond", meaning: "〜を越えて、〜の向こうに", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "beyond the mountain", japanese: "山を越えて" } },
+  { id: 20632, word: "plus", meaning: "〜に加えて、〜プラス", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "Two <strong>plus</strong> three is five.", japanese: "2プラス3は5です。" } },
+  { id: 20633, word: "till", meaning: "〜まで", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "from morning <strong>till</strong> night", japanese: "朝から夜まで" } },
+  { id: 20634, word: "within", meaning: "〜以内に（で）", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "within a few minutes", japanese: "数分以内で" } },
 ];
 
 // 助動詞・助動詞的表現
 const auxiliaryWords = [
-  { id: 20701, word: "can", meaning: "（可能）〜できる、（許可）〜してもよい", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 374, example: { english: "I <strong>can</strong> play the piano.", japanese: "私はピアノを弾けます。" } },
-  { id: 20702, word: "could", meaning: "〜できた", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 100, example: { english: "My father <strong>could</strong> speak English well.", japanese: "父は英語を上手に話すことができました。" } },
-  { id: 20703, word: "may", meaning: "（推量）〜かもしれない、（許可）〜してもよい", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 71, example: { english: "I <strong>may</strong> be late for the party.", japanese: "私はパーティーに遅れるかもしれません。" } },
-  { id: 20704, word: "must", meaning: "（義務）〜しなければならない", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 22, example: { english: "You <strong>must</strong> do your homework.", japanese: "あなたは宿題をしなければなりません。" } },
-  { id: 20705, word: "should", meaning: "（義務）〜すべきである", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 63, example: { english: "We <strong>should</strong> take a break.", japanese: "私たちは休憩を取るべきです。" } },
-  { id: 20706, word: "will", meaning: "（未来）〜するつもり、〜でしょう", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 323, example: { english: "I <strong>will</strong> go to the park next week.", japanese: "私は来週公園に行くつもりです。" } },
-  { id: 20707, word: "would", meaning: "〜だろう、〜するつもりだ、(would like toで)〜したい", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 100, example: { english: "I <strong>would</strong> like to go abroad.", japanese: "私は海外に行きたいです。" } },
-  { id: 20708, word: "be able to", meaning: "（可能）〜することができる", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 8, example: { english: "I <strong>am able to</strong> play the piano.", japanese: "私はピアノを弾けます。" } },
-  { id: 20709, word: "be going to", meaning: "（未来）〜するつもり", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 14, example: { english: "I <strong>am going to</strong> go to the park next week.", japanese: "私は来週公園に行くつもりです。" } },
-  { id: 20710, word: "have to", meaning: "（義務）〜しなければならない", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 22, example: { english: "I <strong>have to</strong> do my homework.", japanese: "私は宿題をしなければなりません。" } },
-  { id: 20711, word: "Will you～?(Can you～?)", meaning: "（依頼）〜してくれませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 31, example: { english: "<strong>Can you</strong> open the door?", japanese: "ドアを開けてくれませんか。" } },
-  { id: 20712, word: "Would you～?(Could you〜?)", meaning: "（依頼）〜していただけませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 2, example: { english: "<strong>Would you</strong> close the window?", japanese: "窓を閉めていただけませんか。" } },
-  { id: 20713, word: "Would you like 〜 ?", meaning: "（勧誘）〜はいかがですか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 1, example: { english: "<strong>Would you like</strong> some cake?", japanese: "ケーキはいかがですか。" } },
-  { id: 20714, word: "Can I～?(May I〜?)", meaning: "（許可）〜してもいいですか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 10, example: { english: "<strong>May I</strong> use the phone?", japanese: "電話を使ってもいいですか。" } },
-  { id: 20715, word: "Shall I 〜 ?", meaning: "（提案）［私が］〜しましょうか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 2, example: { english: "<strong>Shall I</strong> open the window?", japanese: "窓を開けましょうか。" } },
-  { id: 20716, word: "Shall we 〜 ?", meaning: "（勧誘）［いっしょに］〜しませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 10, example: { english: "<strong>Shall we</strong> play tennis?", japanese: "（いっしょに）テニスをしませんか。" } },
+  { id: 20701, word: "can", meaning: "〜できる、〜してもよい", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 374, example: { english: "I <strong>can</strong> play the piano.", japanese: "私はピアノを弾けます。" } },
+  { id: 20702, word: "could", meaning: "（canの過去形）〜できた", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 100, example: { english: "My father <strong>could</strong> speak English well.", japanese: "父は英語を上手に話すことができました。" } },
+  { id: 20703, word: "may", meaning: "〜かもしれない、〜してもよい", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 71, example: { english: "I <strong>may</strong> be late for the party.", japanese: "私はパーティーに遅れるかもしれません。" } },
+  { id: 20717, word: "might", meaning: "（mayの過去形）（ひょっとして）〜かもしれない", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 0, example: { english: "I <strong>might</strong> go to the party.", japanese: "ひょっとしてパーティーに行くかもしれません。" } },
+  { id: 20704, word: "must", meaning: "〜しなければならない", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 22, example: { english: "You <strong>must</strong> do your homework.", japanese: "あなたは宿題をしなければなりません。" } },
+  { id: 20705, word: "should", meaning: "〜すべきである", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 63, example: { english: "We <strong>should</strong> take a break.", japanese: "私たちは休憩を取るべきです。" } },
+  { id: 20706, word: "will", meaning: "〜するつもり、〜でしょう", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 323, example: { english: "I <strong>will</strong> go to the park next week.", japanese: "私は来週公園に行くつもりです。" } },
+  { id: 20707, word: "would", meaning: "（willの過去形）〜だろう、〜するつもりだ、(would like toで)〜したい", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 100, example: { english: "I <strong>would</strong> like to go abroad.", japanese: "私は海外に行きたいです。" } },
+  { id: 20708, word: "be able to", meaning: "〜することができる", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 8, example: { english: "I <strong>am able to</strong> play the piano.", japanese: "私はピアノを弾けます。" } },
+  { id: 20709, word: "be going to", meaning: "〜するつもり", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 14, example: { english: "I <strong>am going to</strong> go to the park next week.", japanese: "私は来週公園に行くつもりです。" } },
+  { id: 20710, word: "have to", meaning: "〜しなければならない、（don't have to～：～する必要はない）", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 22, example: { english: "I <strong>have to</strong> do my homework.", japanese: "私は宿題をしなければなりません。" } },
+  { id: 20711, word: "Will you～?(Can you～?)", meaning: "〜してくれませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 31, example: { english: "<strong>Can you</strong> open the door?", japanese: "ドアを開けてくれませんか。" } },
+  { id: 20712, word: "Would you～?(Could you〜?)", meaning: "〜していただけませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 2, example: { english: "<strong>Would you</strong> close the window?", japanese: "窓を閉めていただけませんか。" } },
+  { id: 20713, word: "Would you like 〜 ?", meaning: "〜はいかがですか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 1, example: { english: "<strong>Would you like</strong> some cake?", japanese: "ケーキはいかがですか。" } },
+  { id: 20714, word: "Can I～?(May I〜?)", meaning: "〜してもいいですか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 10, example: { english: "<strong>May I</strong> use the phone?", japanese: "電話を使ってもいいですか。" } },
+  { id: 20715, word: "Shall I 〜 ?", meaning: "（私が）〜しましょうか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 2, example: { english: "<strong>Shall I</strong> open the window?", japanese: "窓を開けましょうか。" } },
+  { id: 20716, word: "Shall we 〜 ?", meaning: "（いっしょに）〜しませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 10, example: { english: "<strong>Shall we</strong> play tennis?", japanese: "（いっしょに）テニスをしませんか。" } },
 ];
 
 // 接続詞
@@ -847,10 +874,11 @@ const conjunctionWords = [
   { id: 20802, word: "but", meaning: "しかし、だが", partOfSpeech: "接続詞", category: "接続詞", appearanceCount: 171, example: { english: "I was sick yesterday, <strong>but</strong> I went to school today.", japanese: "昨日病気だったが、今日は学校に行った。" } },
   { id: 20803, word: "or", meaning: "〜かもしくは…", partOfSpeech: "接続詞", category: "接続詞", appearanceCount: 99, example: { english: "English <strong>or</strong> Japanese", japanese: "英語か日本語" } },
   { id: 20804, word: "so", meaning: "だから", partOfSpeech: "接続詞", category: "接続詞", appearanceCount: 213, example: { english: "I'm tired, <strong>so</strong> I'm going to bed.", japanese: "疲れているから、寝る" } },
+  { id: 20818, word: "however", meaning: "しかし、けれども", partOfSpeech: "接続詞・副詞", category: "接続詞", appearanceCount: 49, example: { english: "I wanted to go; <strong>however</strong>, I was too busy.", japanese: "行きたかったが、しかし忙しすぎた。" } },
   { id: 20805, word: "because", meaning: "（理由や原因を説明して）〜なので、〜だから", partOfSpeech: "接続詞", category: "接続詞", appearanceCount: 95, example: { english: "I like summer <strong>because</strong> I can go to the beach.", japanese: "私は海に行けるから、夏が好きです." } },
   { id: 20806, word: "if", meaning: "もし〜なら", partOfSpeech: "接続詞", category: "接続詞", appearanceCount: 113, example: { english: "<strong>If</strong> it is sunny tomorrow, we will play tennis.", japanese: "明日晴れたらテニスをするつもりです。" } },
   { id: 20807, word: "when", meaning: "〜のとき", partOfSpeech: "接続詞", category: "接続詞", appearanceCount: 250, example: { english: "Tom was watching TV <strong>when</strong> his mother came home.", japanese: "母が帰ってきたとき、トムはテレビを見ていました。" } },
-  { id: 20808, word: "while", meaning: "〜している間に", partOfSpeech: "接続詞", category: "接続詞", appearanceCount: 8, example: { english: "<strong>While</strong> I was eating breakfast, I was reading a newspaper.", japanese: "朝食を食べながら、新聞を読んでいました。" } },
+  { id: 20808, word: "while", meaning: "〜している間に、（after a while：しばらくの間）", partOfSpeech: "接続詞・名詞", category: "接続詞", appearanceCount: 8, example: { english: "<strong>While</strong> I was eating breakfast, I was reading a newspaper.", japanese: "朝食を食べながら、新聞を読んでいました。" } },
   { id: 20809, word: "though", meaning: "〜けれども", partOfSpeech: "接続詞", category: "接続詞", appearanceCount: 27, example: { english: "I studied hard <strong>though</strong> I was tired.", japanese: "疲れていたけれども、私は勉強を頑張りました。" } },
   { id: 20810, word: "although", meaning: "〜けれども", partOfSpeech: "接続詞", category: "接続詞", appearanceCount: 27, example: { english: "I studied hard <strong>although</strong> I was tired.", japanese: "疲れていたけれども、私は勉強を頑張りました。" } },
   { id: 20811, word: "since", meaning: "〜から、～以来、〜なので", partOfSpeech: "接続詞", category: "接続詞", appearanceCount: 9, example: { english: "I have known him <strong>since</strong> I was a child.", japanese: "私は子供の頃から、彼を知っています。" } },
@@ -884,6 +912,7 @@ const interjectionWords = [
   { id: 21011, word: "well", meaning: "ええっと…（考え中）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 151, example: { english: "<strong>Well</strong>, I'm not sure.", japanese: "ええっと…、わかりません。" } },
   { id: 21012, word: "please", meaning: "どうぞ、どうか（お願いします）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 84, example: { english: "<strong>Please</strong> help me.", japanese: "どうか、助けてください。" } },
   { id: 21013, word: "welcome", meaning: "ようこそ、いらっしゃい（歓迎）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 11, example: { english: "<strong>Welcome</strong> to our party.", japanese: "パーティーへようこそ。" } },
+  { id: 21014, word: "yeah", meaning: "うん、ああ（yesのくだけた表現）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 5, example: { english: "<strong>Yeah</strong>, I think so.", japanese: "うん、そう思う。" } },
 ];
 
 // ============================================
@@ -1008,11 +1037,12 @@ function getVocabularyByCategory(categoryName) {
 }
 
 /**
- * 小学生で習った単語をすべて取得
+ * 小学生で習った単語をすべて取得（カテゴリー別単語＋機能語）
  * @returns {Array} 小学生で習った単語の配列
  */
 function getElementaryVocabulary() {
   return [
+    // カテゴリー別単語
     ...familyHomeWords,
     ...numberWords,
     ...dailyItemsInstrumentsWords,
@@ -1030,6 +1060,18 @@ function getElementaryVocabulary() {
     ...countryWords,
     ...directionWords,
     ...eventLeisureWords,
+    // 機能語
+    ...articleWords,
+    ...pronounWords,
+    ...indefinitePronounWords,
+    ...adverbWords,
+    ...questionWords,
+    ...quantifierWords,
+    ...prepositionWords,
+    ...auxiliaryWords,
+    ...conjunctionWords,
+    ...relativeWords,
+    ...interjectionWords,
   ];
 }
 

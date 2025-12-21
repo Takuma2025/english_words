@@ -884,6 +884,62 @@ body {
     margin-right: 4px;
 }
 
+.category-card-ai .category-name {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.category-card-ai .category-name .ai-badge {
+    display: block;
+    width: fit-content;
+    margin: 0 auto 4px;
+}
+
+.category-card-ai .category-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.category-card-ai .category-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ai-word-count-large {
+    font-size: 48px;
+    font-weight: 700;
+    color: #dc2626;
+    text-align: center;
+    margin-top: 2px;
+    line-height: 1;
+}
+
+.ai-word-count-large > span:not(.ai-word-unit) {
+    font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: #dc2626;
+}
+
+.ai-word-count-large .ai-word-unit {
+    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #dc2626;
+}
+
+.ai-word-count-large span {
+    font-size: 48px;
+    font-weight: 700;
+    color: #dc2626;
+}
+
 /* 入試得点力アップコースのカードは英単語マスターコースと同じデザイン */
 
 .category-info {
@@ -979,6 +1035,10 @@ body {
     margin-top: 8px;
 }
 
+#allWordsCardBtn .category-progress {
+    position: relative;
+}
+
 .category-progress-bar {
     height: 18px;
     background: #e5e7eb;
@@ -1035,6 +1095,39 @@ body {
     font-weight: 600;
     color: #374151;
     text-align: right;
+}
+
+#allWordsCardBtn .category-progress {
+    position: relative;
+    padding-bottom: 24px;
+}
+
+#allWordsCardBtn .category-progress-percent {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 18px;
+    text-align: center;
+    line-height: 1;
+}
+
+#allWordsCardBtn .category-progress-text {
+    margin-top: 4px;
+    text-align: right;
+}
+
+.category-progress-percent span {
+    font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: #3b82f6;
+}
+
+.category-progress-percent .percent-unit {
+    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: #3b82f6;
 }
 
 /* 入試得点力アップコースの進捗バーは表示（英単語マスターコースと同じ） */
@@ -4317,6 +4410,15 @@ body.learning-mode .word-card-container {
 
 .sidebar-menu-item span {
     flex: 1;
+}
+
+.sidebar-menu-item .ai-word-count {
+    font-size: 24px;
+    font-weight: 700;
+    color: #dc2626;
+    margin-left: auto;
+    min-width: 32px;
+    text-align: right;
 }
 
 /* Modal */
