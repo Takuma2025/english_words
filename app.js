@@ -497,14 +497,14 @@ function resetProgress(category) {
 function updateCategoryStars() {
     // コース名からデータカテゴリー名へのマッピング
     const categoryMapping = {
-        'LEVEL1 大阪府必須400': 'Group1 超頻出600',
-        'LEVEL2 大阪府重要300': 'Group2 頻出200',
-        'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
+        'LEVEL1 超重要単語400': 'Group1 超頻出600',
+        'LEVEL2 重要単語300': 'Group2 頻出200',
+        'LEVEL3 差がつく単語200': 'Group3 ハイレベル100',
         'LEVEL4 私立高校入試レベル': 'Group3 ハイレベル100',
         'LEVEL5 難関私立高校入試レベル': 'Group3 ハイレベル100'
     };
     
-    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 大阪府必須400', 'LEVEL2 大阪府重要300', 'LEVEL3 大阪府差がつく200', 'LEVEL4 私立高校入試レベル', 'LEVEL5 難関私立高校入試レベル', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '条件英作文特訓コース', '大阪C問題対策英単語タイムアタック', 'PartCディクテーション', '大阪府のすべての英単語'];
+    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超重要単語400', 'LEVEL2 重要単語300', 'LEVEL3 差がつく単語200', 'LEVEL4 私立高校入試レベル', 'LEVEL5 難関私立高校入試レベル', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '条件英作文特訓コース', '大阪C問題対策英単語タイムアタック', 'PartCディクテーション', '大阪府のすべての英単語'];
     
     categories.forEach(category => {
         let categoryWords;
@@ -1324,9 +1324,9 @@ function startCategory(category) {
     
     // コース名からデータカテゴリー名へのマッピング
     const categoryMapping = {
-        'LEVEL1 大阪府必須400': 'Group1 超頻出600',
-        'LEVEL2 大阪府重要300': 'Group2 頻出200',
-        'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
+        'LEVEL1 超重要単語400': 'Group1 超頻出600',
+        'LEVEL2 重要単語300': 'Group2 頻出200',
+        'LEVEL3 差がつく単語200': 'Group3 ハイレベル100',
         'LEVEL4 私立高校入試レベル': 'Group3 ハイレベル100',
         'LEVEL5 難関私立高校入試レベル': 'Group3 ハイレベル100'
     };
@@ -1757,7 +1757,7 @@ function showCourseSelection(category, categoryWords) {
     // 「超よくでる」の場合のみ画像を表示
     const courseSelectionImage = document.getElementById('courseSelectionImage');
     if (courseSelectionImage) {
-        if (category === 'LEVEL1 大阪府必須400') {
+        if (category === 'LEVEL1 超重要単語400') {
             courseSelectionImage.style.display = 'block';
         } else {
             courseSelectionImage.style.display = 'none';
@@ -2847,9 +2847,9 @@ function setupEventListeners() {
             // コース選択画面に戻る
             if (selectedCategory) {
                 const categoryMapping = {
-                    'LEVEL1 大阪府必須400': 'Group1 超頻出600',
-                    'LEVEL2 大阪府重要300': 'Group2 頻出200',
-                    'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
+                    'LEVEL1 超重要単語400': 'Group1 超頻出600',
+                    'LEVEL2 重要単語300': 'Group2 頻出200',
+                    'LEVEL3 差がつく単語200': 'Group3 ハイレベル100',
                     'LEVEL4 私立高校入試レベル': 'Group3 ハイレベル100',
                     'LEVEL5 難関私立高校入試レベル': 'Group3 ハイレベル100'
                 };
@@ -5639,9 +5639,9 @@ function returnToCourseSelection() {
     
     // コース名からデータカテゴリー名へのマッピング
     const categoryMapping = {
-        'LEVEL1 大阪府必須400': 'Group1 超頻出600',
-        'LEVEL2 大阪府重要300': 'Group2 頻出200',
-        'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
+        'LEVEL1 超重要単語400': 'Group1 超頻出600',
+        'LEVEL2 重要単語300': 'Group2 頻出200',
+        'LEVEL3 差がつく単語200': 'Group3 ハイレベル100',
         'LEVEL4 私立高校入試レベル': 'Group3 ハイレベル100',
         'LEVEL5 難関私立高校入試レベル': 'Group3 ハイレベル100'
     };
@@ -6019,7 +6019,7 @@ function clearLearningHistory() {
             localStorage.removeItem('learningProgress');
             
             // カテゴリーごとの進捗も削除
-            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 大阪府必須400', 'LEVEL2 大阪府重要300', 'LEVEL3 大阪府差がつく200', 'LEVEL4 私立高校入試レベル', 'LEVEL5 難関私立高校入試レベル'];
+            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超重要単語400', 'LEVEL2 重要単語300', 'LEVEL3 差がつく単語200', 'LEVEL4 私立高校入試レベル', 'LEVEL5 難関私立高校入試レベル'];
             categories.forEach(category => {
                 localStorage.removeItem(`correctWords-${category}`);
                 localStorage.removeItem(`wrongWords-${category}`);

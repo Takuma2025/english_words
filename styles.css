@@ -7124,6 +7124,15 @@ body.learning-mode .word-card-container {
 
 .mode-content {
     display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+}
+
+.mode-text {
+    display: flex;
     flex-direction: column;
     gap: 2px;
 }
@@ -7132,10 +7141,24 @@ body.learning-mode .word-card-container {
     font-size: 15px;
     font-weight: 700;
     color: #1f2937;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mode-icon-large {
+    flex-shrink: 0;
+    opacity: 0.5;
+    stroke: #64748b;
 }
 
 .mode-radio:has(input:checked) .mode-label {
     color: #1e40af;
+}
+
+.mode-radio:has(input:checked) .mode-icon-large {
+    stroke: #1e40af;
+    opacity: 1;
 }
 
 .mode-description {
