@@ -928,7 +928,9 @@ body {
     padding: 2px 6px;
     border-radius: 4px;
     font-weight: 700;
-    margin-right: 2px;
+    margin-right: 6px;
+    font-size: 0.85em;
+    vertical-align: baseline;
 }
 
 .exam-type-badge {
@@ -6457,7 +6459,7 @@ body.learning-mode .word-card-container {
 }
 
 .calendar-mark {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
     color: #1f2937;
     padding: 0 2px;
@@ -6473,7 +6475,7 @@ body.learning-mode .word-card-container {
     align-items: center;
     justify-content: center;
     font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif;
-    font-size: 48px;
+    font-size: 56px;
     font-weight: 700;
     color: #111827;
     box-shadow: inset 0 -3px 0 #94a3b8;
@@ -6493,7 +6495,10 @@ body.learning-mode .word-card-container {
     .calendar-tile {
         width: 64px;
         height: 84px;
-        font-size: 40px;
+        font-size: 48px;
+    }
+    .calendar-mark {
+        font-size: 24px;
     }
 }
 
