@@ -2189,12 +2189,21 @@ body.reorder-mode-active .word-card-container {
     color: #1f2937;
     border-bottom: 1px solid #d1d5db;
     margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .input-list-title {
     font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.01em;
+}
+
+.input-list-hint {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 400;
 }
 
 .input-list-scroll {
@@ -2255,6 +2264,8 @@ body.reorder-mode-active .word-card-container {
     flex-direction: column;
     gap: 10px;
     background: #f8fafc;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .input-list-meta {
@@ -7016,6 +7027,8 @@ body.learning-mode .word-card-container {
     transition: all 0.15s ease;
     user-select: none;
     line-height: 1;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
     padding: 0;
     text-align: center;
 }

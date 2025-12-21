@@ -500,10 +500,11 @@ function updateCategoryStars() {
         'LEVEL1 大阪府必須400': 'Group1 超頻出600',
         'LEVEL2 大阪府重要300': 'Group2 頻出200',
         'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
-        'LEVEL4 私立難関校対策300': 'Group3 ハイレベル100'
+        'LEVEL4 私立高校入試レベル': 'Group3 ハイレベル100',
+        'LEVEL5 難関私立高校入試レベル': 'Group3 ハイレベル100'
     };
     
-    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 大阪府必須400', 'LEVEL2 大阪府重要300', 'LEVEL3 大阪府差がつく200', 'LEVEL4 私立難関校対策300', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '条件英作文特訓コース', '大阪C問題対策英単語タイムアタック', 'PartCディクテーション', '大阪府のすべての英単語'];
+    const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 大阪府必須400', 'LEVEL2 大阪府重要300', 'LEVEL3 大阪府差がつく200', 'LEVEL4 私立高校入試レベル', 'LEVEL5 難関私立高校入試レベル', '大阪B問題対策 厳選例文暗記60【和文英訳対策】', '条件英作文特訓コース', '大阪C問題対策英単語タイムアタック', 'PartCディクテーション', '大阪府のすべての英単語'];
     
     categories.forEach(category => {
         let categoryWords;
@@ -1326,7 +1327,8 @@ function startCategory(category) {
         'LEVEL1 大阪府必須400': 'Group1 超頻出600',
         'LEVEL2 大阪府重要300': 'Group2 頻出200',
         'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
-        'LEVEL4 私立難関校対策300': 'Group3 ハイレベル100' // LEVEL4もGroup3のデータを使用（要確認）
+        'LEVEL4 私立高校入試レベル': 'Group3 ハイレベル100',
+        'LEVEL5 難関私立高校入試レベル': 'Group3 ハイレベル100'
     };
     
     // 小学生で習った単語とカテゴリー別に覚える単語の場合は、elementaryWordDataを使用
@@ -1549,13 +1551,13 @@ function showCourseSelection(category, categoryWords) {
             '冠詞',
             '代名詞',
             '不定代名詞',
+            '副詞（否定・程度・焦点）',
             '疑問詞',
             '限定詞（数量）',
             '前置詞',
             '助動詞・助動詞的表現',
             '接続詞',
             '関係代名詞',
-            '副詞（否定・程度・焦点）',
             '間投詞'
         ];
 
@@ -1625,8 +1627,8 @@ function showCourseSelection(category, categoryWords) {
 
             section.appendChild(headerBtn);
 
-            // サブコース番号（1〜10）
-            const circledNumbers = ['1','2','3','4','5','6','7','8','9','10'];
+            // サブコース番号（1〜11）
+            const circledNumbers = ['1','2','3','4','5','6','7','8','9','10','11'];
 
             courses.forEach((courseName, index) => {
                 // 各コースに対応する単語をフィルタリング（elementary_words.js 側で category をコース名に合わせておく）
@@ -2824,7 +2826,7 @@ function setupEventListeners() {
     // 上部コンテナの中断ボタン
     if (elements.unitInterruptBtn) {
         elements.unitInterruptBtn.addEventListener('click', async () => {
-            if (await showConfirm('学習を中断してホームに戻りますか？')) {
+            if (await showConfirm('学習を中断してホームに戻りますか？\n\n中断してもここまでのデータは保存されます。')) {
                 showCategorySelection();
             }
         });
@@ -2848,7 +2850,8 @@ function setupEventListeners() {
                     'LEVEL1 大阪府必須400': 'Group1 超頻出600',
                     'LEVEL2 大阪府重要300': 'Group2 頻出200',
                     'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
-                    'LEVEL4 私立難関校対策300': 'Group3 ハイレベル100'
+                    'LEVEL4 私立高校入試レベル': 'Group3 ハイレベル100',
+                    'LEVEL5 難関私立高校入試レベル': 'Group3 ハイレベル100'
                 };
                 let categoryWords;
                 if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
@@ -3020,51 +3023,68 @@ function setupEventListeners() {
         }
     });
     
-    // プラス・マイナスボタンのイベントリスナー（イベント委譲）
-    document.addEventListener('click', (e) => {
-        const questionCountValue = document.getElementById('questionCountValue');
-        const questionCountMinus = document.getElementById('questionCountMinus');
-        const questionCountPlus = document.getElementById('questionCountPlus');
-        
+    // プラス・マイナスボタンのイベントリスナー（直接追加で反応を改善）
+    const questionCountValue = document.getElementById('questionCountValue');
+    const questionCountMinus = document.getElementById('questionCountMinus');
+    const questionCountPlus = document.getElementById('questionCountPlus');
+    
+    function handleQuestionCountChange(isPlus) {
         if (!questionCountValue) return;
         
         const filteredWords = getFilteredWords();
         const maxCount = filteredWords.length;
         
-        if (e.target.id === 'questionCountMinus' || e.target.closest('#questionCountMinus')) {
-            if (filteredWords.length < 10) return;
-            
-            let currentCount = parseInt(questionCountValue.dataset.count) || maxCount;
+        if (filteredWords.length < 10) return;
+        
+        let currentCount = parseInt(questionCountValue.dataset.count) || maxCount;
+        
+        if (isPlus) {
+            currentCount = Math.min(maxCount, currentCount + 10);
+        } else {
             currentCount = Math.max(10, currentCount - 10);
-            
-            questionCountValue.dataset.count = currentCount;
-            questionCountValue.textContent = currentCount + '問';
-            
-            // ボタンの有効/無効を更新
-            if (questionCountMinus) questionCountMinus.disabled = currentCount <= 10;
-            if (questionCountPlus) questionCountPlus.disabled = false;
         }
         
-        if (e.target.id === 'questionCountPlus' || e.target.closest('#questionCountPlus')) {
-            if (filteredWords.length < 10) return;
-            
-            let currentCount = parseInt(questionCountValue.dataset.count) || 10;
-            currentCount = Math.min(maxCount, currentCount + 10);
-            
-            questionCountValue.dataset.count = currentCount;
-            
-            // 最大値なら「すべて」と表示
-            if (currentCount >= maxCount) {
-                questionCountValue.textContent = 'すべて';
-            } else {
-                questionCountValue.textContent = currentCount + '問';
-            }
-            
-            // ボタンの有効/無効を更新
-            if (questionCountMinus) questionCountMinus.disabled = false;
-            if (questionCountPlus) questionCountPlus.disabled = currentCount >= maxCount;
+        questionCountValue.dataset.count = currentCount;
+        
+        // 最大値なら「すべて」と表示
+        if (currentCount >= maxCount) {
+            questionCountValue.textContent = 'すべて';
+        } else {
+            questionCountValue.textContent = currentCount + '問';
         }
-    });
+        
+        // ボタンの有効/無効を更新
+        if (questionCountMinus) questionCountMinus.disabled = currentCount <= 10;
+        if (questionCountPlus) questionCountPlus.disabled = currentCount >= maxCount;
+    }
+    
+    // マイナスボタン
+    if (questionCountMinus) {
+        questionCountMinus.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleQuestionCountChange(false);
+        });
+        questionCountMinus.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleQuestionCountChange(false);
+        });
+    }
+    
+    // プラスボタン
+    if (questionCountPlus) {
+        questionCountPlus.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleQuestionCountChange(true);
+        });
+        questionCountPlus.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleQuestionCountChange(true);
+        });
+    }
     
     
     // 学習開始ボタン
@@ -3282,7 +3302,8 @@ function setupEventListeners() {
                         'LEVEL1 大阪府必須400': 'Group1 超頻出600',
                         'LEVEL2 大阪府重要300': 'Group2 頻出200',
                         'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
-                        'LEVEL4 私立難関校対策300': 'Group3 ハイレベル100'
+                        'LEVEL4 私立高校入試レベル': 'Group3 ハイレベル100',
+                        'LEVEL5 難関私立高校入試レベル': 'Group3 ハイレベル100'
                     };
                     let categoryWords;
                     if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
@@ -5066,7 +5087,8 @@ function displayCurrentWord() {
     }
     
     // 日本語モードの場合のみ自動で音声を再生（0.3秒遅延）
-    if (!isInputModeActive && selectedLearningMode !== 'input') {
+    // インプットモード（眺める用）の場合は自動再生しない
+    if (!isInputModeActive && selectedLearningMode !== 'input' && currentLearningMode !== 'input') {
         setTimeout(() => {
             speakWord(word.word, null);
         }, 300);
@@ -5620,7 +5642,8 @@ function returnToCourseSelection() {
         'LEVEL1 大阪府必須400': 'Group1 超頻出600',
         'LEVEL2 大阪府重要300': 'Group2 頻出200',
         'LEVEL3 大阪府差がつく200': 'Group3 ハイレベル100',
-        'LEVEL4 私立難関校対策300': 'Group3 ハイレベル100'
+        'LEVEL4 私立高校入試レベル': 'Group3 ハイレベル100',
+        'LEVEL5 難関私立高校入試レベル': 'Group3 ハイレベル100'
     };
     
     // カテゴリーに応じて単語データを取得
@@ -5996,7 +6019,7 @@ function clearLearningHistory() {
             localStorage.removeItem('learningProgress');
             
             // カテゴリーごとの進捗も削除
-            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 大阪府必須400', 'LEVEL2 大阪府重要300', 'LEVEL3 大阪府差がつく200', 'LEVEL4 私立難関校対策300'];
+            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 大阪府必須400', 'LEVEL2 大阪府重要300', 'LEVEL3 大阪府差がつく200', 'LEVEL4 私立高校入試レベル', 'LEVEL5 難関私立高校入試レベル'];
             categories.forEach(category => {
                 localStorage.removeItem(`correctWords-${category}`);
                 localStorage.removeItem(`wrongWords-${category}`);

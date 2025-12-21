@@ -1246,7 +1246,7 @@ const elementaryWordData = [
   {
     "id": 3011,
     "word": "since",
-    "meaning": "〜以来、〜なので",
+    "meaning": "〜から、～以来、〜なので",
     "partOfSpeech": "接続詞",
     "category": "接続詞",
     "appearanceCount": 9,
@@ -2306,6 +2306,331 @@ const elementaryWordData = [
     "example": {
       "english": "<strong>Everybody</strong> likes music.",
       "japanese": "みんな音楽が好きです。"
+    }
+  },
+  // 代名詞（人称代名詞・指示代名詞）
+  {
+    "id": 9101,
+    "word": "I",
+    "meaning": "私は(主格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 1500,
+    "example": {
+      "english": "<strong>I</strong> like baseball very much.",
+      "japanese": "私は野球が大好きです。"
+    }
+  },
+  {
+    "id": 9102,
+    "word": "my",
+    "meaning": "私の（所有格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 500,
+    "example": {
+      "english": "This is <strong>my</strong> book.",
+      "japanese": "これは私の本です。"
+    }
+  },
+  {
+    "id": 9103,
+    "word": "me",
+    "meaning": "私を/に（目的格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 300,
+    "example": {
+      "english": "Please help <strong>me</strong>.",
+      "japanese": "私を助けてください。"
+    }
+  },
+  {
+    "id": 9104,
+    "word": "mine",
+    "meaning": "私のもの（所有代名詞）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 50,
+    "example": {
+      "english": "This pen is <strong>mine</strong>.",
+      "japanese": "このペンは私のものです。"
+    }
+  },
+  {
+    "id": 9105,
+    "word": "you",
+    "meaning": "あなた（たち）［は/を/に］（主格・目的格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 800,
+    "example": {
+      "english": "I love <strong>you</strong>.",
+      "japanese": "私はあなたを愛しています。"
+    }
+  },
+  {
+    "id": 9106,
+    "word": "your",
+    "meaning": "あなた（たち）の（所有格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 400,
+    "example": {
+      "english": "Is this <strong>your</strong> bag?",
+      "japanese": "これはあなたのかばんですか。"
+    }
+  },
+  {
+    "id": 9107,
+    "word": "yours",
+    "meaning": "あなた（たち）のもの（所有代名詞）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 30,
+    "example": {
+      "english": "This book is <strong>yours</strong>.",
+      "japanese": "この本はあなたのものです。"
+    }
+  },
+  {
+    "id": 9108,
+    "word": "he",
+    "meaning": "彼は（主格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 600,
+    "example": {
+      "english": "<strong>He</strong> is an English teacher.",
+      "japanese": "彼は英語の先生です。"
+    }
+  },
+  {
+    "id": 9109,
+    "word": "his",
+    "meaning": "彼の（所有格）、彼のもの（所有代名詞）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 350,
+    "example": {
+      "english": "That is <strong>his</strong> car.",
+      "japanese": "あれは彼の車です。"
+    }
+  },
+  {
+    "id": 9110,
+    "word": "him",
+    "meaning": "彼を/に（目的格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 200,
+    "example": {
+      "english": "I gave <strong>him</strong> a present.",
+      "japanese": "私は彼にプレゼントをあげました。"
+    }
+  },
+  {
+    "id": 9111,
+    "word": "she",
+    "meaning": "彼女は（主格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 400,
+    "example": {
+      "english": "<strong>She</strong> is my sister.",
+      "japanese": "彼女は私の姉です。"
+    }
+  },
+  {
+    "id": 9112,
+    "word": "her",
+    "meaning": "彼女の（所有格）、彼女を/に（目的格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 300,
+    "example": {
+      "english": "I like <strong>her</strong> smile.",
+      "japanese": "私は彼女の笑顔が好きです。"
+    }
+  },
+  {
+    "id": 9113,
+    "word": "hers",
+    "meaning": "彼女のもの（所有代名詞）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 20,
+    "example": {
+      "english": "This bag is <strong>hers</strong>.",
+      "japanese": "このかばんは彼女のものです。"
+    }
+  },
+  {
+    "id": 9114,
+    "word": "they",
+    "meaning": "彼ら（彼女ら・それら）は（主格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 500,
+    "example": {
+      "english": "<strong>They</strong> are students.",
+      "japanese": "彼らは学生です。"
+    }
+  },
+  {
+    "id": 9115,
+    "word": "their",
+    "meaning": "彼ら（彼女ら・それら）の（所有格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 250,
+    "example": {
+      "english": "<strong>Their</strong> house is big.",
+      "japanese": "彼らの家は大きいです。"
+    }
+  },
+  {
+    "id": 9116,
+    "word": "them",
+    "meaning": "彼ら（彼女ら・それら）を/に（目的格",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 200,
+    "example": {
+      "english": "I met <strong>them</strong> yesterday.",
+      "japanese": "私は昨日彼らに会いました。"
+    }
+  },
+  {
+    "id": 9117,
+    "word": "theirs",
+    "meaning": "彼ら（彼女ら）のもの（所有代名詞）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 15,
+    "example": {
+      "english": "This dog is <strong>theirs</strong>.",
+      "japanese": "この犬は彼らのものです。"
+    }
+  },
+  {
+    "id": 9118,
+    "word": "we",
+    "meaning": "私たちは（主格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 400,
+    "example": {
+      "english": "<strong>We</strong> are friends.",
+      "japanese": "私たちは友達です。"
+    }
+  },
+  {
+    "id": 9119,
+    "word": "our",
+    "meaning": "私たちの（所有格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 200,
+    "example": {
+      "english": "This is <strong>our</strong> school.",
+      "japanese": "これは私たちの学校です。"
+    }
+  },
+  {
+    "id": 9120,
+    "word": "us",
+    "meaning": "私たちを/に（目的格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 150,
+    "example": {
+      "english": "Please tell <strong>us</strong> the story.",
+      "japanese": "私たちにその話を聞かせてください。"
+    }
+  },
+  {
+    "id": 9121,
+    "word": "ours",
+    "meaning": "私たちのもの（所有代名詞）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 20,
+    "example": {
+      "english": "This land is <strong>ours</strong>.",
+      "japanese": "この土地は私たちのものです。"
+    }
+  },
+  {
+    "id": 9122,
+    "word": "it",
+    "meaning": "それは（主格）、それを/に（目的格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 1000,
+    "example": {
+      "english": "<strong>It</strong> is a cat.",
+      "japanese": "それは猫です。"
+    }
+  },
+  {
+    "id": 9123,
+    "word": "its",
+    "meaning": "それの、その（所有格）",
+    "partOfSpeech": "代名詞",
+    "category": "代名詞",
+    "appearanceCount": 100,
+    "example": {
+      "english": "The dog wagged <strong>its</strong> tail.",
+      "japanese": "その犬はしっぽを振りました。"
+    }
+  },
+  {
+    "id": 9124,
+    "word": "this",
+    "meaning": "これ、この",
+    "partOfSpeech": "代名詞・限定詞",
+    "category": "代名詞",
+    "appearanceCount": 600,
+    "example": {
+      "english": "<strong>This</strong> is my pen.",
+      "japanese": "これは私のペンです。"
+    }
+  },
+  {
+    "id": 9125,
+    "word": "these",
+    "meaning": "これら、これらの",
+    "partOfSpeech": "代名詞・限定詞",
+    "category": "代名詞",
+    "appearanceCount": 100,
+    "example": {
+      "english": "<strong>These</strong> are my books.",
+      "japanese": "これらは私の本です。"
+    }
+  },
+  {
+    "id": 9126,
+    "word": "that",
+    "meaning": "あれ、あの、それ",
+    "partOfSpeech": "代名詞・限定詞",
+    "category": "代名詞",
+    "appearanceCount": 800,
+    "example": {
+      "english": "<strong>That</strong> is a bird.",
+      "japanese": "あれは鳥です。"
+    }
+  },
+  {
+    "id": 9127,
+    "word": "those",
+    "meaning": "あれら、あれらの",
+    "partOfSpeech": "代名詞・限定詞",
+    "category": "代名詞",
+    "appearanceCount": 80,
+    "example": {
+      "english": "<strong>Those</strong> are my friends.",
+      "japanese": "あれらは私の友達です。"
     }
   }
 ];
