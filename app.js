@@ -1,6 +1,133 @@
 // アプリケーションの状態管理
 let currentWords = [];
 let currentIndex = 0;
+
+// 効果音システム
+const SoundEffects = {
+    audioContext: null,
+    enabled: true,
+    
+    init() {
+        try {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.log('Web Audio API not supported');
+            this.enabled = false;
+        }
+    },
+    
+    resume() {
+        if (this.audioContext && this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
+        }
+    },
+    
+    // タップ音（軽いクリック音）
+    playTap() {
+        if (!this.enabled || !this.audioContext) return;
+        this.resume();
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        gainNode.gain.exponentialDecayTo = 0.01;
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.05);
+    },
+    
+    // 正解音（明るい音）
+    playCorrect() {
+        if (!this.enabled || !this.audioContext) return;
+        this.resume();
+        const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+        notes.forEach((freq, i) => {
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            oscillator.frequency.value = freq;
+            oscillator.type = 'sine';
+            const startTime = this.audioContext.currentTime + i * 0.08;
+            gainNode.gain.setValueAtTime(0.15, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.15);
+            oscillator.start(startTime);
+            oscillator.stop(startTime + 0.15);
+        });
+    },
+    
+    // 不正解音（低めの音）
+    playWrong() {
+        if (!this.enabled || !this.audioContext) return;
+        this.resume();
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.value = 200;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.3);
+    },
+    
+    // 完了音（お祝い音）
+    playComplete() {
+        if (!this.enabled || !this.audioContext) return;
+        this.resume();
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, i) => {
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            oscillator.frequency.value = freq;
+            oscillator.type = 'sine';
+            const startTime = this.audioContext.currentTime + i * 0.12;
+            gainNode.gain.setValueAtTime(0.12, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.4);
+            oscillator.start(startTime);
+            oscillator.stop(startTime + 0.4);
+        });
+    },
+    
+    // カードめくり音
+    playFlip() {
+        if (!this.enabled || !this.audioContext) return;
+        this.resume();
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(600, this.audioContext.currentTime + 0.08);
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.08, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.08);
+    },
+    
+    // ボタン押下音（カチッ）
+    playClick() {
+        if (!this.enabled || !this.audioContext) return;
+        this.resume();
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.value = 1000;
+        oscillator.type = 'square';
+        gainNode.gain.setValueAtTime(0.05, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.03);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.03);
+    }
+};
 let answeredWords = new Set();
 let correctCount = 0;
 let wrongCount = 0;
@@ -1280,6 +1407,9 @@ function preventZoom() {
 // 初期化
 function init() {
     try {
+        // 効果音システムを初期化
+        SoundEffects.init();
+        
         preventZoom();
         assignCategories();
         loadData();
@@ -2220,8 +2350,8 @@ function showWordFilterView(category, categoryWords, courseTitle) {
         }
     }
     
-    // ハンバーガーメニューを非表示、戻るボタンを表示
-    updateHeaderButtons('back');
+    // ハンバーガーメニューと戻るボタンを非表示（フィルター画面はボトムシートなので不要）
+    updateHeaderButtons('home');
     
     // 出題数選択セクションを更新
     updateQuestionCountSection();
@@ -3837,6 +3967,14 @@ function setupEventListeners() {
         });
     }
     
+    // すべてのボタンにタップ音を追加
+    document.addEventListener('click', (e) => {
+        const target = e.target.closest('button, .category-card, .course-btn, .study-btn, .mode-radio, .order-radio, .filter-checkbox, .menu-item, .main-menu-btn, .start-learning-btn');
+        if (target && !target.classList.contains('correct-btn') && !target.classList.contains('wrong-btn')) {
+            SoundEffects.playTap();
+        }
+    }, true);
+    
 }
 
 // 仮想キーボードの設定
@@ -3986,6 +4124,9 @@ function setupVirtualKeyboard() {
 // 文字を入力フィールドに挿入
 function insertLetter(letter) {
     if (inputAnswerSubmitted || !isInputModeActive) return;
+    
+    // キークリック音を再生
+    SoundEffects.playClick();
     
     const letterInputs = document.getElementById('letterInputs');
     if (!letterInputs) return;
@@ -4861,6 +5002,8 @@ function revealCard() {
     
     isCardRevealed = true;
     elements.wordCard.classList.add('flipped');
+    // カードめくり音を再生
+    SoundEffects.playFlip();
     // カードがひっくり返ったとき、ボタンを表示
     const actionHint = document.getElementById('cardHint');
     if (actionHint) {
@@ -5723,6 +5866,13 @@ function markMastered() {
 // スワイプまたはボタンで正解/不正解をマーク
 function markAnswer(isCorrect, isTimeout = false) {
     if (currentIndex >= currentRangeEnd) return;
+    
+    // 効果音を再生
+    if (isCorrect) {
+        SoundEffects.playCorrect();
+    } else {
+        SoundEffects.playWrong();
+    }
 
     const word = currentWords[currentIndex];
     answeredWords.add(word.id);
@@ -5901,6 +6051,9 @@ function markAnswer(isCorrect, isTimeout = false) {
 
 // 完了画面を表示
 function showCompletion() {
+    // 完了音を再生
+    SoundEffects.playComplete();
+    
     const completionOverlay = document.getElementById('completionOverlay');
     if (!completionOverlay) {
         // フォールバック：旧方式
@@ -6990,6 +7143,9 @@ function selectSentenceBlank(blankIndex) {
 function insertSentenceLetter(letter) {
     if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
     
+    // キークリック音を再生
+    SoundEffects.playClick();
+    
     // 選択中の空所を取得
     let currentBlank = sentenceBlanks.find(b => b.index === currentSelectedBlankIndex);
     
@@ -7132,10 +7288,13 @@ function handleSentenceDecide() {
         blank.element.textContent = blank.word;
     });
     
+    // 効果音を再生
     if (isCorrect) {
+        SoundEffects.playCorrect();
         correctCount++;
         questionStatus[currentSentenceIndex] = 'correct';
     } else {
+        SoundEffects.playWrong();
         wrongCount++;
         questionStatus[currentSentenceIndex] = 'wrong';
     }
@@ -8028,11 +8187,13 @@ function handleReorderSubmit() {
         }, 500);
     }
     
-    // 統計を更新
+    // 統計を更新と効果音
     if (isCorrect) {
+        SoundEffects.playCorrect();
         correctCount++;
         questionStatus[currentReorderIndex] = 'correct';
     } else {
+        SoundEffects.playWrong();
         wrongCount++;
         questionStatus[currentReorderIndex] = 'wrong';
     }
@@ -8796,6 +8957,9 @@ function selectGrammarExerciseBlank(blankIndex, exerciseIndex) {
 function insertGrammarExerciseLetter(letter) {
     if (currentGrammarSelectedBlankIndex === -1 || currentGrammarSelectedExerciseIndex === -1) return;
     
+    // キークリック音を再生
+    SoundEffects.playClick();
+    
     const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === currentGrammarSelectedExerciseIndex);
     if (!exerciseData) return;
     
@@ -9302,8 +9466,12 @@ function selectExamQuizAnswer(selectedIndex) {
     const question = examQuizState.shuffledQuestions[examQuizState.currentIndex];
     const isCorrect = selectedIndex === question.correct;
     
+    // 効果音を再生
     if (isCorrect) {
+        SoundEffects.playCorrect();
         examQuizState.correctCount++;
+    } else {
+        SoundEffects.playWrong();
     }
     
     // 選択肢のスタイルを更新
