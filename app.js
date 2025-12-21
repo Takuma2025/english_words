@@ -1971,7 +1971,7 @@ function updateQuestionCountSection() {
         const isOutputMode = modeOutput.checked;
         
         if (isOutputMode) {
-            if (filteredWords.length >= 10) {
+            if (filteredWords.length > 10) {
                 questionCountSection.style.display = 'flex';
                 updateQuestionCountOptions(filteredWords.length);
             } else {
