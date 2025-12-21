@@ -4947,23 +4947,9 @@ function renderInputListView(words) {
         }
         meta.appendChild(number);
         
-        if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
-            const badge = document.createElement('span');
-            badge.className = 'input-list-appearance';
-            badge.innerHTML = `<span class="appearance-label">入試登場回数</span><span class="appearance-count">${word.appearanceCount}回</span>`;
-            meta.appendChild(badge);
-        }
-        
-        const row = document.createElement('div');
-        row.className = 'input-list-row';
-        
-        const pos = document.createElement('span');
-        pos.className = 'pos-inline part-of-speech input-list-pos';
-        pos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
-        row.appendChild(pos);
-        
+        // ブックマークボタンを作成
         const starBtn = document.createElement('button');
-        starBtn.className = 'star-btn';
+        starBtn.className = 'star-btn input-list-star-btn';
         starBtn.setAttribute('type', 'button');
         if (reviewWords.has(word.id)) {
             starBtn.classList.add('active');
@@ -4974,6 +4960,27 @@ function renderInputListView(words) {
             toggleReviewById(word.id, starBtn);
         });
         starBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+        
+        // 入試登場回数とブックマークを横並びにするラッパー
+        const appearanceWrapper = document.createElement('div');
+        appearanceWrapper.className = 'input-list-appearance-wrapper';
+        
+        if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
+            const badge = document.createElement('span');
+            badge.className = 'input-list-appearance';
+            badge.innerHTML = `<span class="appearance-label">入試登場回数</span><span class="appearance-count">${word.appearanceCount}回</span>`;
+            appearanceWrapper.appendChild(badge);
+        }
+        appearanceWrapper.appendChild(starBtn);
+        meta.appendChild(appearanceWrapper);
+        
+        const row = document.createElement('div');
+        row.className = 'input-list-row';
+        
+        const pos = document.createElement('span');
+        pos.className = 'pos-inline part-of-speech input-list-pos';
+        pos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
+        row.appendChild(pos);
         
         const wordEl = document.createElement('span');
         wordEl.className = 'input-list-word';
@@ -4991,8 +4998,6 @@ function renderInputListView(words) {
         });
         row.appendChild(audioBtn);
         
-        row.appendChild(starBtn);
-        
         front.appendChild(meta);
         front.appendChild(row);
         
@@ -5002,7 +5007,18 @@ function renderInputListView(words) {
         
         const meaningEl = document.createElement('div');
         meaningEl.className = 'input-list-meaning';
-        meaningEl.textContent = word.meaning || '';
+        
+        // 品詞と意味を横並びで表示
+        const meaningWrapper = document.createElement('div');
+        meaningWrapper.className = 'input-list-meaning-wrapper';
+        const meaningPos = document.createElement('span');
+        meaningPos.className = 'pos-inline part-of-speech input-list-meaning-pos';
+        meaningPos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
+        meaningWrapper.appendChild(meaningPos);
+        const meaningText = document.createElement('span');
+        meaningText.textContent = word.meaning || '';
+        meaningWrapper.appendChild(meaningText);
+        meaningEl.appendChild(meaningWrapper);
         back.appendChild(meaningEl);
         
         if (word.example && (word.example.english || word.example.japanese)) {
@@ -6376,10 +6392,17 @@ function initSentenceModeLearning(category) {
     // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
     updateHeaderButtons('learning');
 
+    // インプットモード用戻るボタンと中断ボタンの制御
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    const unitInterruptBtn = document.getElementById('unitInterruptBtn');
+    if (inputBackBtn) inputBackBtn.classList.add('hidden');
+    if (unitInterruptBtn) unitInterruptBtn.classList.remove('hidden');
+
     // カードモード、入力モード、整序英作文モードを非表示、例文モードを表示
     const wordCard = document.getElementById('wordCard');
     const wordCardContainer = document.getElementById('wordCardContainer');
     const inputMode = document.getElementById('inputMode');
+    const inputListView = document.getElementById('inputListView');
     const sentenceMode = document.getElementById('sentenceMode');
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
@@ -6387,6 +6410,7 @@ function initSentenceModeLearning(category) {
     if (wordCard) wordCard.classList.add('hidden');
     if (wordCardContainer) wordCardContainer.classList.add('hidden');
     if (inputMode) inputMode.classList.add('hidden');
+    if (inputListView) inputListView.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.remove('hidden');
     // モードフラグをリセット
@@ -6977,10 +7001,17 @@ function initReorderModeLearning(category) {
     // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
     updateHeaderButtons('learning');
 
+    // インプットモード用戻るボタンと中断ボタンの制御
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    const unitInterruptBtn = document.getElementById('unitInterruptBtn');
+    if (inputBackBtn) inputBackBtn.classList.add('hidden');
+    if (unitInterruptBtn) unitInterruptBtn.classList.remove('hidden');
+
     // 他のモードを非表示、整序英作文モードを表示
     const wordCard = document.getElementById('wordCard');
     const wordCardContainer = document.getElementById('wordCardContainer');
     const inputMode = document.getElementById('inputMode');
+    const inputListView = document.getElementById('inputListView');
     const sentenceMode = document.getElementById('sentenceMode');
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
@@ -6988,6 +7019,7 @@ function initReorderModeLearning(category) {
     if (wordCard) wordCard.classList.add('hidden');
     if (wordCardContainer) wordCardContainer.classList.add('hidden');
     if (inputMode) inputMode.classList.add('hidden');
+    if (inputListView) inputListView.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.remove('hidden');
     if (cardHint) cardHint.classList.add('hidden');

@@ -2176,6 +2176,7 @@ body.reorder-mode-active .word-card-container {
     backface-visibility: hidden;
     flex-shrink: 0;
     border: 3px solid transparent;
+    min-height: 400px;
 }
 
 /* インプットモードのスクロールバーをカスタマイズ */
@@ -2325,7 +2326,7 @@ body.reorder-mode-active .word-card-container {
 .input-list-front,
 .input-list-back {
     width: 100%;
-    min-height: 120px;
+    min-height: 200px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     padding: 16px;
@@ -2336,6 +2337,57 @@ body.reorder-mode-active .word-card-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.input-list-meta {
+    flex-shrink: 0;
+}
+
+.input-list-appearance-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.input-list-star-btn {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    padding: 6px;
+    margin-top: -4px;
+}
+
+.input-list-row {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.input-list-meaning {
+    margin-top: auto;
+    margin-bottom: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.input-list-meaning-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.input-list-meaning-pos {
+    margin-right: 4px;
+    padding: 2px 5px 1px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.input-list-example {
+    margin-top: 0;
 }
 
 .input-list-back {
@@ -2357,18 +2409,19 @@ body.reorder-mode-active .word-card-container {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    flex-shrink: 0;
 }
 
 .input-list-number {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 700;
     color: #64748b;
     position: relative;
-    padding: 4px 8px;
+    padding: 3px 6px;
     background: rgba(255, 255, 255, 0.9);
-    border-radius: 6px;
+    border-radius: 5px;
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
 }
 
 .input-list-number::after {
@@ -2383,7 +2436,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-number.marker-correct {
-    box-shadow: 0 8px 0 #3b82f6;
+    box-shadow: 0 4px 0 #3b82f6;
 }
 
 .input-list-number.marker-correct::after {
@@ -2391,7 +2444,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-number.marker-wrong {
-    box-shadow: 0 8px 0 #ef4444;
+    box-shadow: 0 4px 0 #ef4444;
 }
 
 .input-list-number.marker-wrong::after {
@@ -2431,7 +2484,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-word {
-    font-size: 28px;
+    font-size: 36px;
     font-weight: 800;
     letter-spacing: 0.03em;
     color: #0f172a;
@@ -2453,9 +2506,9 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-meaning {
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 700;
-    line-height: 1.5;
+    line-height: 1.6;
     word-break: break-word;
     overflow-wrap: break-word;
 }
@@ -2473,6 +2526,15 @@ body.reorder-mode-active .word-card-container {
     overflow-wrap: break-word;
 }
 
+.input-list-example .example-english {
+    font-size: 18px;
+    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+}
+
+.input-list-example .example-japanese {
+    font-size: 17px;
+}
+
 @media (max-width: 640px) {
     .input-list-view {
         padding: 0 8px 16px 8px;
@@ -2481,7 +2543,7 @@ body.reorder-mode-active .word-card-container {
     .input-list-front,
     .input-list-back {
         padding: 14px;
-        min-height: 120px;
+        min-height: 200px;
     }
     .input-list-meta {
         flex-direction: row;
@@ -2493,7 +2555,16 @@ body.reorder-mode-active .word-card-container {
         padding-bottom: 5px;
     }
     .input-list-word {
-        font-size: 24px;
+        font-size: 32px;
+    }
+    .input-list-meaning {
+        font-size: 18px;
+    }
+    .input-list-example .example-english {
+        font-size: 16px;
+    }
+    .input-list-example .example-japanese {
+        font-size: 15px;
     }
 }
 
@@ -3498,12 +3569,12 @@ body.learning-mode .word-card-container {
 /* インプットモードの単語番号にも同じ立体感のあるマーカーを適用 */
 #inputWordNumber {
     position: relative;
-    font-size: 4px !important;
-    padding: 3px 4px !important;
+    font-size: 10px !important;
+    padding: 2px 5px !important;
     line-height: 1.2;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     background: linear-gradient(180deg, #ffffff, #e2e8f0);
-    border-radius: 6px;
+    border-radius: 5px;
 }
 
 #inputWordNumber::after {
