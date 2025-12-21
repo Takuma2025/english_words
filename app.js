@@ -184,10 +184,16 @@ function saveWordStats() {
 // 全単語データを取得（小学生データを含む）
 function getAllWordData() {
     const mainWords = Array.isArray(wordData) ? wordData : [];
+    // vocabulary-data.jsから取得（優先）
+    const vocabularyWords = (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function')
+        ? getAllVocabulary()
+        : [];
+    // 既存のelementaryWordDataとの互換性（後方互換性のため）
     const elementaryWords = (typeof elementaryWordData !== 'undefined' && Array.isArray(elementaryWordData))
         ? elementaryWordData
         : [];
-    return [...mainWords, ...elementaryWords];
+    // vocabulary-data.jsのデータを優先し、既存データとマージ
+    return [...mainWords, ...vocabularyWords, ...elementaryWords];
 }
 
 // IDから単語データを取得
@@ -509,8 +515,11 @@ function updateCategoryStars() {
     categories.forEach(category => {
         let categoryWords;
         if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
-            // elementaryWordDataが定義されているか確認
-            if (typeof elementaryWordData !== 'undefined') {
+            // vocabulary-data.jsから取得（優先）
+            if (typeof getElementaryVocabulary !== 'undefined' && typeof getElementaryVocabulary === 'function') {
+                categoryWords = getElementaryVocabulary();
+            } else if (typeof elementaryWordData !== 'undefined') {
+                // 既存のelementaryWordDataとの互換性
                 categoryWords = elementaryWordData;
             } else {
                 categoryWords = [];
@@ -1338,8 +1347,11 @@ function startCategory(category) {
         showAlert('エラー', 'このコースは利用できません。');
         return;
     } else if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
-        // elementaryWordDataが定義されているか確認
-        if (typeof elementaryWordData !== 'undefined') {
+        // vocabulary-data.jsから取得（優先）
+        if (typeof getElementaryVocabulary !== 'undefined' && typeof getElementaryVocabulary === 'function') {
+            categoryWords = getElementaryVocabulary();
+        } else if (typeof elementaryWordData !== 'undefined') {
+            // 既存のelementaryWordDataとの互換性
             categoryWords = elementaryWordData;
         } else {
             showAlert('エラー', '小学生で習った単語データが見つかりません。');
@@ -1535,16 +1547,23 @@ function showCourseSelection(category, categoryWords) {
     
     // 小学生で習った単語とカテゴリー別に覚える単語の場合は、固定のサブコースを表示
     if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
-        // 小学生で習った単語グループ
+        // 小学生で習った単語グループ（身近なもの→基礎概念→社会・環境→グローバルの順）
         const elementaryCourses = [
-            '身の回りのものに関する単語',
             '家族・家に関する単語',
-            '体に関する単語',
             '数字に関する単語',
-            '暦・曜日・季節・時間に関する単語',
-            '乗り物・スポーツに関する単語',
-            '食べ物に関する単語',
-            '動物に関する単語'
+            '日用品・楽器に関する単語',
+            '体に関する単語',
+            '色に関する単語',
+            '食べ物・飲み物に関する単語',
+            '町の施設に関する単語',
+            '乗り物に関する単語',
+            '職業に関する単語',
+            'スポーツに関する単語',
+            '曜日・月・季節に関する単語',
+            '動物に関する単語',
+            '自然・天気に関する単語',
+            '学校に関する単語',
+            '国名や地域に関する単語'
         ];
 
         // 機能語グループ
@@ -1628,12 +1647,18 @@ function showCourseSelection(category, categoryWords) {
 
             section.appendChild(headerBtn);
 
-            // サブコース番号（1〜11）
-            const circledNumbers = ['1','2','3','4','5','6','7','8','9','10','11'];
+            // サブコース番号（1〜15）
+            const circledNumbers = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'];
 
             courses.forEach((courseName, index) => {
-                // 各コースに対応する単語をフィルタリング（elementary_words.js 側で category をコース名に合わせておく）
-                const courseWords = categoryWords.filter(word => word.category === courseName);
+                // 各コースに対応する単語を取得（vocabulary-data.jsから優先的に取得）
+                let courseWords = [];
+                if (typeof getVocabularyByCategory !== 'undefined' && typeof getVocabularyByCategory === 'function') {
+                    courseWords = getVocabularyByCategory(courseName);
+                } else {
+                    // 既存のcategoryWordsからフィルタリング（後方互換性）
+                    courseWords = categoryWords.filter(word => word.category === courseName);
+                }
 
                 // 進捗を計算（サブコースごと）
                 let correctCountInCourse = 0;
@@ -2605,9 +2630,27 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
 
 // イベントリスナーの設定
 function setupEventListeners() {
+    // 学校リストトグル（カテゴリーボタンのイベントより先に登録）
+    document.querySelectorAll('.school-toggle').forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation(); // 親のcategory-cardへのイベント伝播を防止
+            e.preventDefault();
+            const targetId = toggle.getAttribute('data-target');
+            const schoolList = document.getElementById(targetId);
+            if (schoolList) {
+                schoolList.classList.toggle('hidden');
+                toggle.classList.toggle('active');
+            }
+        });
+    });
+    
     // カテゴリーボタン (クラス名変更に対応)
     document.querySelectorAll('.category-card[data-category]').forEach(btn => {
         btn.addEventListener('click', (e) => {
+            // 学校トグルがクリックされた場合は何もしない
+            if (e.target.closest('.school-toggle') || e.target.closest('.school-list')) {
+                return;
+            }
             const category = e.currentTarget.getAttribute('data-category');
             startCategory(category);
         });
@@ -2914,7 +2957,11 @@ function setupEventListeners() {
                 };
                 let categoryWords;
                 if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-                    if (typeof elementaryWordData !== 'undefined') {
+                    // vocabulary-data.jsから取得（優先）
+                    if (typeof getElementaryVocabulary !== 'undefined' && typeof getElementaryVocabulary === 'function') {
+                        categoryWords = getElementaryVocabulary();
+                    } else if (typeof elementaryWordData !== 'undefined') {
+                        // 既存のelementaryWordDataとの互換性
                         categoryWords = elementaryWordData;
                     } else {
                         showCategorySelection();
@@ -3397,7 +3444,11 @@ function setupEventListeners() {
                     showAlert('エラー', 'このコースは利用できません。');
                     return;
                 } else if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-                    if (typeof elementaryWordData !== 'undefined') {
+                    // vocabulary-data.jsから取得（優先）
+                    if (typeof getElementaryVocabulary !== 'undefined' && typeof getElementaryVocabulary === 'function') {
+                        categoryWords = getElementaryVocabulary();
+                    } else if (typeof elementaryWordData !== 'undefined') {
+                        // 既存のelementaryWordDataとの互換性
                         categoryWords = elementaryWordData;
                     } else {
                         showAlert('エラー', '小学生で習った単語データが見つかりません。');
@@ -5770,7 +5821,11 @@ function returnToCourseSelection() {
     // カテゴリーに応じて単語データを取得
     let categoryWords;
     if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
-        if (typeof elementaryWordData !== 'undefined') {
+        // vocabulary-data.jsから取得（優先）
+        if (typeof getElementaryVocabulary !== 'undefined' && typeof getElementaryVocabulary === 'function') {
+            categoryWords = getElementaryVocabulary();
+        } else if (typeof elementaryWordData !== 'undefined') {
+            // 既存のelementaryWordDataとの互換性
             categoryWords = elementaryWordData;
         } else {
             showCategorySelection();

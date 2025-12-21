@@ -1,151 +1,154 @@
 // 小学生で習った単語とカテゴリー別に覚える単語データ
 const elementaryWordData = [
+  // 色に関する単語
   {
     "id": 1001,
     "word": "red",
     "meaning": "赤",
     "partOfSpeech": "名詞・形容詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "色に関する単語"
   },
   {
     "id": 1002,
     "word": "blue",
     "meaning": "青",
     "partOfSpeech": "名詞・形容詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "色に関する単語"
   },
   {
     "id": 1003,
     "word": "yellow",
     "meaning": "黄色",
     "partOfSpeech": "名詞・形容詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "色に関する単語"
   },
   {
     "id": 1004,
     "word": "green",
     "meaning": "緑",
     "partOfSpeech": "名詞・形容詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "色に関する単語"
   },
   {
     "id": 1005,
     "word": "orange",
     "meaning": "オレンジ色",
     "partOfSpeech": "名詞・形容詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "色に関する単語"
   },
   {
     "id": 1006,
     "word": "purple",
     "meaning": "紫",
     "partOfSpeech": "名詞・形容詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "色に関する単語"
   },
   {
     "id": 1007,
     "word": "pink",
     "meaning": "ピンク",
     "partOfSpeech": "名詞・形容詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "色に関する単語"
   },
   {
     "id": 1008,
     "word": "black",
     "meaning": "黒",
     "partOfSpeech": "名詞・形容詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "色に関する単語"
   },
   {
     "id": 1009,
     "word": "white",
     "meaning": "白",
     "partOfSpeech": "名詞・形容詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "色に関する単語"
   },
   {
     "id": 1010,
     "word": "brown",
     "meaning": "茶色",
     "partOfSpeech": "名詞・形容詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "色に関する単語"
   },
+  // 動物に関する単語
   {
     "id": 1011,
     "word": "cat",
     "meaning": "猫",
     "partOfSpeech": "名詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "動物に関する単語"
   },
   {
     "id": 1012,
     "word": "dog",
     "meaning": "犬",
     "partOfSpeech": "名詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "動物に関する単語"
   },
   {
     "id": 1013,
     "word": "bird",
     "meaning": "鳥",
     "partOfSpeech": "名詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "動物に関する単語"
   },
   {
     "id": 1014,
     "word": "fish",
     "meaning": "魚",
     "partOfSpeech": "名詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "動物に関する単語"
   },
   {
     "id": 1015,
     "word": "rabbit",
     "meaning": "うさぎ",
     "partOfSpeech": "名詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "動物に関する単語"
   },
   {
     "id": 1016,
     "word": "elephant",
     "meaning": "象",
     "partOfSpeech": "名詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "動物に関する単語"
   },
   {
     "id": 1017,
     "word": "lion",
     "meaning": "ライオン",
     "partOfSpeech": "名詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "動物に関する単語"
   },
   {
     "id": 1018,
     "word": "tiger",
     "meaning": "トラ",
     "partOfSpeech": "名詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "動物に関する単語"
   },
   {
     "id": 1019,
     "word": "bear",
     "meaning": "熊",
     "partOfSpeech": "名詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "動物に関する単語"
   },
   {
     "id": 1020,
     "word": "monkey",
     "meaning": "サル",
     "partOfSpeech": "名詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "動物に関する単語"
   },
+  // 食べ物・飲み物に関する単語
   {
     "id": 1021,
     "word": "apple",
     "meaning": "りんご",
     "partOfSpeech": "名詞",
-    "category": "小学生で習った単語とカテゴリー別に覚える単語"
+    "category": "食べ物・飲み物に関する単語"
   },
   {
     "id": 1022,
@@ -3403,7 +3406,7 @@ const elementaryWordData = [
     "word": "Sunday",
     "meaning": "日曜日",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 23
   },
   {
@@ -3411,7 +3414,7 @@ const elementaryWordData = [
     "word": "Monday",
     "meaning": "月曜日",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 4
   },
   {
@@ -3419,7 +3422,7 @@ const elementaryWordData = [
     "word": "Tuesday",
     "meaning": "火曜日",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 3
   },
   {
@@ -3427,7 +3430,7 @@ const elementaryWordData = [
     "word": "Wednesday",
     "meaning": "水曜日",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 4
   },
   {
@@ -3435,7 +3438,7 @@ const elementaryWordData = [
     "word": "Thursday",
     "meaning": "木曜日",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 4
   },
   {
@@ -3443,7 +3446,7 @@ const elementaryWordData = [
     "word": "Friday",
     "meaning": "金曜日",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 11
   },
   {
@@ -3451,7 +3454,7 @@ const elementaryWordData = [
     "word": "Saturday",
     "meaning": "土曜日",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 28
   },
   {
@@ -3459,7 +3462,7 @@ const elementaryWordData = [
     "word": "January",
     "meaning": "１月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 3
   },
   {
@@ -3467,7 +3470,7 @@ const elementaryWordData = [
     "word": "February",
     "meaning": "２月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 0
   },
   {
@@ -3475,7 +3478,7 @@ const elementaryWordData = [
     "word": "March",
     "meaning": "３月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 4
   },
   {
@@ -3483,7 +3486,7 @@ const elementaryWordData = [
     "word": "April",
     "meaning": "４月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 2
   },
   {
@@ -3491,7 +3494,7 @@ const elementaryWordData = [
     "word": "May",
     "meaning": "５月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 71
   },
   {
@@ -3499,7 +3502,7 @@ const elementaryWordData = [
     "word": "June",
     "meaning": "６月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 6
   },
   {
@@ -3507,7 +3510,7 @@ const elementaryWordData = [
     "word": "July",
     "meaning": "７月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 2
   },
   {
@@ -3515,7 +3518,7 @@ const elementaryWordData = [
     "word": "August",
     "meaning": "８月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 2
   },
   {
@@ -3523,7 +3526,7 @@ const elementaryWordData = [
     "word": "September",
     "meaning": "９月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 1
   },
   {
@@ -3531,7 +3534,7 @@ const elementaryWordData = [
     "word": "October",
     "meaning": "１０月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 2
   },
   {
@@ -3539,7 +3542,7 @@ const elementaryWordData = [
     "word": "November",
     "meaning": "１１月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 6
   },
   {
@@ -3547,7 +3550,7 @@ const elementaryWordData = [
     "word": "December",
     "meaning": "１２月",
     "partOfSpeech": "名詞",
-    "category": "曜日・月に関する単語",
+    "category": "曜日・月・季節に関する単語",
     "appearanceCount": 6
   }
 ];

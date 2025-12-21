@@ -2199,10 +2199,10 @@ body.reorder-mode-active .word-card-container {
     background: linear-gradient(180deg, #64748b, #475569);
 }
 
-/* スクロールインジケーター（カード右端に固定表示） */
+/* スクロールインジケーター（カード右端に表示） */
 .scroll-indicator {
-    position: fixed;
-    right: calc(50% - 290px);
+    position: absolute;
+    right: 4px;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
@@ -2221,7 +2221,7 @@ body.reorder-mode-active .word-card-container {
     box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
     animation: scrollPulse 1.5s ease-in-out infinite;
     pointer-events: none;
-    z-index: 100;
+    z-index: 20;
     letter-spacing: 0.05em;
 }
 
@@ -2232,12 +2232,7 @@ body.reorder-mode-active .word-card-container {
     animation: scrollArrow 1.5s ease-in-out infinite;
 }
 
-/* スマホ向けのスクロールインジケーター位置調整 */
-@media (max-width: 600px) {
-    .scroll-indicator {
-        right: 8px;
-    }
-}
+/* スクロールインジケーターはカード内に固定するため位置調整メディアクエリ不要 */
 
 @keyframes scrollPulse {
     0%, 100% {
@@ -3503,8 +3498,12 @@ body.learning-mode .word-card-container {
 /* インプットモードの単語番号にも同じ立体感のあるマーカーを適用 */
 #inputWordNumber {
     position: relative;
-    font-size: 8px;
-    padding: 3px 5px;
+    font-size: 4px !important;
+    padding: 3px 4px !important;
+    line-height: 1.2;
+    letter-spacing: 0.12em;
+    background: linear-gradient(180deg, #ffffff, #e2e8f0);
+    border-radius: 6px;
 }
 
 #inputWordNumber::after {
@@ -3846,6 +3845,11 @@ body.learning-mode .word-card-container {
     flex-direction: column;
     justify-content: center;
     text-align: center;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 12px;
 }
 
 .meaning-wrapper {
@@ -5169,6 +5173,70 @@ body.learning-mode .word-card-container {
         min-height: 26px;
         padding: 2px 6px;
     }
+
+/* 意味・用例エリアのスクロールバーとインジケーター */
+.meaning-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.meaning-content::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 6px;
+    margin: 8px 0;
+}
+
+.meaning-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #94a3b8, #64748b);
+    border-radius: 6px;
+    border: 2px solid #e2e8f0;
+}
+
+.meaning-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #64748b, #475569);
+}
+
+.meaning-scroll-indicator {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: linear-gradient(180deg, #3b82f6, #2563eb);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    padding: 8px 6px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+    animation: scrollPulse 1.5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 20;
+    letter-spacing: 0.05em;
+}
+
+.meaning-scroll-indicator::after {
+    content: '↓';
+    font-size: 14px;
+    margin-top: 2px;
+    animation: scrollArrow 1.5s ease-in-out infinite;
+}
+
+.meaning-scroll-indicator.hidden {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+@media (max-width: 600px) {
+    .meaning-scroll-indicator {
+        right: 4px;
+    }
+}
     
     .reorder-answer-box {
         padding: 2px 6px;
@@ -7667,4 +7735,70 @@ body.learning-mode .word-card-container {
     font-weight: 800;
     color: #2563eb;
     font-size: 16px;
+}
+
+/* 学校リストトグル */
+.school-toggle {
+    color: #2563eb;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.school-toggle:hover {
+    color: #1d4ed8;
+}
+
+.school-toggle-icon {
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.school-toggle.active .school-toggle-icon {
+    transform: rotate(180deg);
+}
+
+.school-list {
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    animation: schoolListFadeIn 0.2s ease;
+}
+
+.school-list.hidden {
+    display: none;
+}
+
+@keyframes schoolListFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.school-list-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #0369a1;
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+}
+
+.school-list-items {
+    font-size: 12px;
+    color: #334155;
+    line-height: 1.5;
+    font-weight: 400;
 }
