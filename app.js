@@ -1134,7 +1134,7 @@ function init() {
 // ヘッダーボタンの表示/非表示を制御
 // テーマカラーを更新（即座に変更、フェードなし）
 function updateThemeColor(isLearningMode) {
-    const color = isLearningMode ? '#f5f5f5' : '#0055ca';
+    const color = isLearningMode ? '#ffffff' : '#0055ca';
     
     // 同期的に即座に更新（requestAnimationFrameを使わない）
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
@@ -2807,11 +2807,69 @@ function setupEventListeners() {
 
     // elements.showWrongWordsBtn.addEventListener('click', showWrongWords); // 削除
     
-    // 正解・不正解・完璧ボタン
-    elements.correctBtn.addEventListener('click', () => markAnswer(true));
-    elements.wrongBtn.addEventListener('click', () => markAnswer(false));
+    // 正解・不正解・完璧ボタン（スワイプと同じスライドアウトアニメーション）
+    // 途中まで遅く、途中から加速するイージング
+    const swipeOutEasing = 'cubic-bezier(0.4, 0, 0.9, 0.4)';
+    const swipeOutDuration = 220; // ミリ秒
+    
+    elements.correctBtn.addEventListener('click', () => {
+        // カードが裏返されていない場合は何もしない
+        if (!elements.wordCard.classList.contains('flipped')) return;
+        // アニメーション中なら処理しない
+        if (isCardAnimating) return;
+        
+        // スワイプと同じように左にスライドアウト
+        isCardAnimating = true;
+        elements.wordCard.style.transition = `transform ${swipeOutDuration}ms ${swipeOutEasing}, opacity ${swipeOutDuration}ms ${swipeOutEasing}`;
+        elements.wordCard.style.transform = 'translateX(-120%) rotate(-12deg)';
+        elements.wordCard.style.opacity = '0';
+        
+        setTimeout(() => {
+            elements.wordCard.style.transition = 'none';
+            elements.wordCard.style.transform = '';
+            isCardAnimating = false;
+            markAnswer(true);
+        }, swipeOutDuration);
+    });
+    elements.wrongBtn.addEventListener('click', () => {
+        // カードが裏返されていない場合は何もしない
+        if (!elements.wordCard.classList.contains('flipped')) return;
+        // アニメーション中なら処理しない
+        if (isCardAnimating) return;
+        
+        // スワイプと同じように右にスライドアウト
+        isCardAnimating = true;
+        elements.wordCard.style.transition = `transform ${swipeOutDuration}ms ${swipeOutEasing}, opacity ${swipeOutDuration}ms ${swipeOutEasing}`;
+        elements.wordCard.style.transform = 'translateX(120%) rotate(12deg)';
+        elements.wordCard.style.opacity = '0';
+        
+        setTimeout(() => {
+            elements.wordCard.style.transition = 'none';
+            elements.wordCard.style.transform = '';
+            isCardAnimating = false;
+            markAnswer(false);
+        }, swipeOutDuration);
+    });
     if (elements.masteredBtn) {
-    elements.masteredBtn.addEventListener('click', () => markMastered());
+        elements.masteredBtn.addEventListener('click', () => {
+            // カードが裏返されていない場合は何もしない
+            if (!elements.wordCard.classList.contains('flipped')) return;
+            // アニメーション中なら処理しない
+            if (isCardAnimating) return;
+            
+            // 上にスライドアウト（完璧）
+            isCardAnimating = true;
+            elements.wordCard.style.transition = `transform ${swipeOutDuration}ms ${swipeOutEasing}, opacity ${swipeOutDuration}ms ${swipeOutEasing}`;
+            elements.wordCard.style.transform = 'translateY(-120%) scale(0.8)';
+            elements.wordCard.style.opacity = '0';
+            
+            setTimeout(() => {
+                elements.wordCard.style.transition = 'none';
+                elements.wordCard.style.transform = '';
+                isCardAnimating = false;
+                markMastered();
+            }, swipeOutDuration);
+        });
     }
     
     // ホームボタン
@@ -4098,6 +4156,9 @@ function goToPreviousWord() {
                     displayCurrentWord();
                 }
                 
+                // displayCurrentWord()でopacityがリセットされるので、再度非表示に設定
+                elements.wordCard.style.opacity = '0';
+                
                 // カード内部の回転アニメーションを復元
                 if (cardInner) {
                     cardInner.style.transition = '';
@@ -4106,11 +4167,13 @@ function goToPreviousWord() {
                 
                 // 少し待ってから下からふわっと浮いてくる
                 requestAnimationFrame(() => {
+                    elements.wordCard.style.transition = 'opacity 0.35s ease-out, transform 0.35s ease-out';
                     elements.wordCard.style.opacity = '';
                     elements.wordCard.classList.add('float-up');
                     
                     setTimeout(() => {
                         elements.wordCard.classList.remove('float-up');
+                        elements.wordCard.style.transition = '';
                         isCardAnimating = false;
                     }, 450);
                 });
@@ -4169,6 +4232,9 @@ function goToNextWord() {
                     displayCurrentWord();
                 }
                 
+                // displayCurrentWord()でopacityがリセットされるので、再度非表示に設定
+                elements.wordCard.style.opacity = '0';
+                
                 // カード内部の回転アニメーションを復元
                 if (cardInner) {
                     cardInner.style.transition = '';
@@ -4177,11 +4243,13 @@ function goToNextWord() {
                 
                 // 少し待ってから下からふわっと浮いてくる
                 requestAnimationFrame(() => {
+                    elements.wordCard.style.transition = 'opacity 0.35s ease-out, transform 0.35s ease-out';
                     elements.wordCard.style.opacity = '';
                     elements.wordCard.classList.add('float-up');
                     
                     setTimeout(() => {
                         elements.wordCard.classList.remove('float-up');
+                        elements.wordCard.style.transition = '';
                         isCardAnimating = false;
                     }, 450);
                 });
@@ -5373,6 +5441,9 @@ function markAnswer(isCorrect, isTimeout = false) {
             // 内容を更新
             displayCurrentWord();
             
+            // displayCurrentWord()でopacityがリセットされるので、再度非表示に設定
+            elements.wordCard.style.opacity = '0';
+            
             // カード内部の回転アニメーションを復元
             if (cardInner) {
                 cardInner.style.transition = '';
@@ -5381,12 +5452,13 @@ function markAnswer(isCorrect, isTimeout = false) {
             
             // 下からふわっと浮いてくる
             requestAnimationFrame(() => {
-                elements.wordCard.style.transition = '';
+                elements.wordCard.style.transition = 'opacity 0.35s ease-out, transform 0.35s ease-out';
                 elements.wordCard.style.opacity = '';
                 elements.wordCard.classList.add('float-up');
                 
                 setTimeout(() => {
                     elements.wordCard.classList.remove('float-up');
+                    elements.wordCard.style.transition = '';
                     isCardAnimating = false;
                 }, 450);
             });
