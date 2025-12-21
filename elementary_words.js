@@ -2315,7 +2315,7 @@ const elementaryWordData = [
     "meaning": "私は(主格）",
     "partOfSpeech": "代名詞",
     "category": "代名詞",
-    "appearanceCount": 1500,
+    "appearanceCount": 1441,
     "example": {
       "english": "<strong>I</strong> like baseball very much.",
       "japanese": "私は野球が大好きです。"
@@ -2327,10 +2327,10 @@ const elementaryWordData = [
     "meaning": "私の（所有格）",
     "partOfSpeech": "代名詞",
     "category": "代名詞",
-    "appearanceCount": 500,
+    "appearanceCount": 324,
     "example": {
-      "english": "This is <strong>my</strong> book.",
-      "japanese": "これは私の本です。"
+      "english": "<strong>my</strong> book",
+      "japanese": "私の本"
     }
   },
   {
@@ -2339,7 +2339,7 @@ const elementaryWordData = [
     "meaning": "私を/に（目的格）",
     "partOfSpeech": "代名詞",
     "category": "代名詞",
-    "appearanceCount": 300,
+    "appearanceCount": 178,
     "example": {
       "english": "Please help <strong>me</strong>.",
       "japanese": "私を助けてください。"
@@ -2351,7 +2351,7 @@ const elementaryWordData = [
     "meaning": "私のもの（所有代名詞）",
     "partOfSpeech": "代名詞",
     "category": "代名詞",
-    "appearanceCount": 50,
+    "appearanceCount": 6,
     "example": {
       "english": "This pen is <strong>mine</strong>.",
       "japanese": "このペンは私のものです。"
@@ -2363,7 +2363,7 @@ const elementaryWordData = [
     "meaning": "あなた（たち）［は/を/に］（主格・目的格）",
     "partOfSpeech": "代名詞",
     "category": "代名詞",
-    "appearanceCount": 800,
+    "appearanceCount": 923,
     "example": {
       "english": "I love <strong>you</strong>.",
       "japanese": "私はあなたを愛しています。"
@@ -2375,7 +2375,7 @@ const elementaryWordData = [
     "meaning": "あなた（たち）の（所有格）",
     "partOfSpeech": "代名詞",
     "category": "代名詞",
-    "appearanceCount": 400,
+    "appearanceCount": 232,
     "example": {
       "english": "Is this <strong>your</strong> bag?",
       "japanese": "これはあなたのかばんですか。"
@@ -2387,7 +2387,7 @@ const elementaryWordData = [
     "meaning": "あなた（たち）のもの（所有代名詞）",
     "partOfSpeech": "代名詞",
     "category": "代名詞",
-    "appearanceCount": 30,
+    "appearanceCount": 9,
     "example": {
       "english": "This book is <strong>yours</strong>.",
       "japanese": "この本はあなたのものです。"
@@ -2588,7 +2588,7 @@ const elementaryWordData = [
   {
     "id": 9124,
     "word": "this",
-    "meaning": "これ、この",
+    "meaning": "これは、この",
     "partOfSpeech": "代名詞・限定詞",
     "category": "代名詞",
     "appearanceCount": 600,
@@ -2600,7 +2600,7 @@ const elementaryWordData = [
   {
     "id": 9125,
     "word": "these",
-    "meaning": "これら、これらの",
+    "meaning": "これらは、これらの",
     "partOfSpeech": "代名詞・限定詞",
     "category": "代名詞",
     "appearanceCount": 100,
@@ -2612,7 +2612,7 @@ const elementaryWordData = [
   {
     "id": 9126,
     "word": "that",
-    "meaning": "あれ、あの、それ",
+    "meaning": "あれは、あの、それは",
     "partOfSpeech": "代名詞・限定詞",
     "category": "代名詞",
     "appearanceCount": 800,
@@ -2624,7 +2624,7 @@ const elementaryWordData = [
   {
     "id": 9127,
     "word": "those",
-    "meaning": "あれら、あれらの",
+    "meaning": "あれらは、あれらの",
     "partOfSpeech": "代名詞・限定詞",
     "category": "代名詞",
     "appearanceCount": 80,
@@ -2632,6 +2632,923 @@ const elementaryWordData = [
       "english": "<strong>Those</strong> are my friends.",
       "japanese": "あれらは私の友達です。"
     }
+  },
+  // 家族・家に関する単語
+  {
+    "id": 10001,
+    "word": "sister",
+    "meaning": "姉妹、姉、妹",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 52
+  },
+  {
+    "id": 10002,
+    "word": "family",
+    "meaning": "家族",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 48
+  },
+  {
+    "id": 10003,
+    "word": "house",
+    "meaning": "家",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 42
+  },
+  {
+    "id": 10004,
+    "word": "home",
+    "meaning": "家に、家、家庭",
+    "partOfSpeech": "名詞・副詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 36
+  },
+  {
+    "id": 10005,
+    "word": "room",
+    "meaning": "部屋",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 34
+  },
+  {
+    "id": 10006,
+    "word": "table",
+    "meaning": "テーブル",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 26
+  },
+  {
+    "id": 10007,
+    "word": "brother",
+    "meaning": "兄弟、兄、弟",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 23
+  },
+  {
+    "id": 10008,
+    "word": "floor",
+    "meaning": "ゆか、階",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 18
+  },
+  {
+    "id": 10009,
+    "word": "grandfather",
+    "meaning": "祖父、おじいさん",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 16
+  },
+  {
+    "id": 10010,
+    "word": "grandmother",
+    "meaning": "祖母、おばあさん",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 13
+  },
+  {
+    "id": 10011,
+    "word": "desk",
+    "meaning": "机",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 8
+  },
+  {
+    "id": 10012,
+    "word": "wall",
+    "meaning": "壁",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 7
+  },
+  {
+    "id": 10013,
+    "word": "window",
+    "meaning": "窓",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 6
+  },
+  {
+    "id": 10014,
+    "word": "daughter",
+    "meaning": "娘",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 4
+  },
+  {
+    "id": 10015,
+    "word": "father",
+    "meaning": "父、父親",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 4
+  },
+  {
+    "id": 10016,
+    "word": "bath",
+    "meaning": "入浴、浴室・風呂場",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 3
+  },
+  {
+    "id": 10017,
+    "word": "kitchen",
+    "meaning": "台所",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 3
+  },
+  {
+    "id": 10018,
+    "word": "chair",
+    "meaning": "いす",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10019,
+    "word": "child",
+    "meaning": "子ども （複数形: children）",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10020,
+    "word": "door",
+    "meaning": "ドア",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10021,
+    "word": "mother",
+    "meaning": "母、母親",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10022,
+    "word": "parent",
+    "meaning": "親",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10023,
+    "word": "son",
+    "meaning": "息子",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10024,
+    "word": "bed",
+    "meaning": "ベッド",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10025,
+    "word": "uncle",
+    "meaning": "おじ",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 13
+  },
+  {
+    "id": 10026,
+    "word": "aunt",
+    "meaning": "おば",
+    "partOfSpeech": "名詞",
+    "category": "家族・家に関する単語",
+    "appearanceCount": 7
+  },
+  // 国名
+  {
+    "id": 10027,
+    "word": "Japan",
+    "meaning": "日本",
+    "partOfSpeech": "名詞",
+    "category": "国名",
+    "appearanceCount": 140
+  },
+  {
+    "id": 10028,
+    "word": "America",
+    "meaning": "アメリカ（合衆国）",
+    "partOfSpeech": "名詞",
+    "category": "国名",
+    "appearanceCount": 32
+  },
+  {
+    "id": 10029,
+    "word": "Australia",
+    "meaning": "オーストラリア（大陸）",
+    "partOfSpeech": "名詞",
+    "category": "国名",
+    "appearanceCount": 25
+  },
+  {
+    "id": 10030,
+    "word": "Canada",
+    "meaning": "カナダ",
+    "partOfSpeech": "名詞",
+    "category": "国名",
+    "appearanceCount": 15
+  },
+  {
+    "id": 10031,
+    "word": "Germany",
+    "meaning": "ドイツ",
+    "partOfSpeech": "名詞",
+    "category": "国名",
+    "appearanceCount": 10
+  },
+  {
+    "id": 10032,
+    "word": "Korea",
+    "meaning": "韓国・朝鮮",
+    "partOfSpeech": "名詞",
+    "category": "国名",
+    "appearanceCount": 10
+  },
+  {
+    "id": 10033,
+    "word": "China",
+    "meaning": "中国",
+    "partOfSpeech": "名詞",
+    "category": "国名",
+    "appearanceCount": 7
+  },
+  {
+    "id": 10034,
+    "word": "France",
+    "meaning": "フランス",
+    "partOfSpeech": "名詞",
+    "category": "国名",
+    "appearanceCount": 5
+  },
+  {
+    "id": 10035,
+    "word": "England",
+    "meaning": "英国、イギリス",
+    "partOfSpeech": "名詞",
+    "category": "国名",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10036,
+    "word": "United States",
+    "meaning": "アメリカ合衆国",
+    "partOfSpeech": "名詞",
+    "category": "国名",
+    "appearanceCount": 0
+  },
+  // 体に関する単語
+  {
+    "id": 10037,
+    "word": "body",
+    "meaning": "からだ",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 42
+  },
+  {
+    "id": 10038,
+    "word": "back",
+    "meaning": "背中",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 28
+  },
+  {
+    "id": 10039,
+    "word": "hand",
+    "meaning": "手",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 9
+  },
+  {
+    "id": 10040,
+    "word": "head",
+    "meaning": "頭",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 5
+  },
+  {
+    "id": 10041,
+    "word": "leg",
+    "meaning": "脚",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 5
+  },
+  {
+    "id": 10042,
+    "word": "arm",
+    "meaning": "腕",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 4
+  },
+  {
+    "id": 10043,
+    "word": "mouth",
+    "meaning": "口",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 3
+  },
+  {
+    "id": 10044,
+    "word": "ear",
+    "meaning": "耳",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10045,
+    "word": "face",
+    "meaning": "顔、面",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10046,
+    "word": "eye",
+    "meaning": "目",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10047,
+    "word": "finger",
+    "meaning": "指（手の親指はthumb、足の指はtoe）",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10048,
+    "word": "foot",
+    "meaning": "足（足首から下） （複数形: feet）",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10049,
+    "word": "heart",
+    "meaning": "心臓、心",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10050,
+    "word": "nose",
+    "meaning": "鼻",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10051,
+    "word": "tooth",
+    "meaning": "歯 （複数形: teeth）",
+    "partOfSpeech": "名詞",
+    "category": "体に関する単語",
+    "appearanceCount": 0
+  },
+  // 数字に関する単語
+  {
+    "id": 10052,
+    "word": "zero",
+    "meaning": "ゼロ",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 2
+  },
+  {
+    "id": 10053,
+    "word": "one",
+    "meaning": "１（の）、１つ",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 205
+  },
+  {
+    "id": 10054,
+    "word": "two",
+    "meaning": "２（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 131
+  },
+  {
+    "id": 10055,
+    "word": "three",
+    "meaning": "３（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 29
+  },
+  {
+    "id": 10056,
+    "word": "four",
+    "meaning": "４（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 30
+  },
+  {
+    "id": 10057,
+    "word": "five",
+    "meaning": "５（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 24
+  },
+  {
+    "id": 10058,
+    "word": "six",
+    "meaning": "６（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 14
+  },
+  {
+    "id": 10059,
+    "word": "seven",
+    "meaning": "７（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 9
+  },
+  {
+    "id": 10060,
+    "word": "eight",
+    "meaning": "８（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 7
+  },
+  {
+    "id": 10061,
+    "word": "nine",
+    "meaning": "９（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 5
+  },
+  {
+    "id": 10062,
+    "word": "ten",
+    "meaning": "１０（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 8
+  },
+  {
+    "id": 10063,
+    "word": "eleven",
+    "meaning": "１１（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10064,
+    "word": "twelve",
+    "meaning": "１２（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10065,
+    "word": "thirteen",
+    "meaning": "１３（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10066,
+    "word": "fourteen",
+    "meaning": "１４（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 3
+  },
+  {
+    "id": 10067,
+    "word": "fifteen",
+    "meaning": "１５（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 4
+  },
+  {
+    "id": 10068,
+    "word": "sixteen",
+    "meaning": "１６（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10069,
+    "word": "seventeen",
+    "meaning": "１７（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10070,
+    "word": "eighteen",
+    "meaning": "１８（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10071,
+    "word": "nineteen",
+    "meaning": "１９（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 5
+  },
+  {
+    "id": 10072,
+    "word": "twenty",
+    "meaning": "２０（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 20
+  },
+  {
+    "id": 10073,
+    "word": "thirty",
+    "meaning": "３０（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 9
+  },
+  {
+    "id": 10074,
+    "word": "forty",
+    "meaning": "４０（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10075,
+    "word": "fifty",
+    "meaning": "５０（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 10
+  },
+  {
+    "id": 10076,
+    "word": "sixty",
+    "meaning": "６０（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10077,
+    "word": "seventy",
+    "meaning": "７０（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 4
+  },
+  {
+    "id": 10078,
+    "word": "eighty",
+    "meaning": "８０（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 3
+  },
+  {
+    "id": 10079,
+    "word": "ninety",
+    "meaning": "９０（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10080,
+    "word": "hundred",
+    "meaning": "１００（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 18
+  },
+  {
+    "id": 10081,
+    "word": "thousand",
+    "meaning": "1,000（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 9
+  },
+  {
+    "id": 10082,
+    "word": "million",
+    "meaning": "100万",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 8
+  },
+  {
+    "id": 10083,
+    "word": "first",
+    "meaning": "１番め（の）、最初（の）、まず第一に、最初に、初めて",
+    "partOfSpeech": "名詞・形容詞・副詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 115
+  },
+  {
+    "id": 10084,
+    "word": "second",
+    "meaning": "２番め（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 17
+  },
+  {
+    "id": 10085,
+    "word": "third",
+    "meaning": "３番め（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 8
+  },
+  {
+    "id": 10086,
+    "word": "fourth",
+    "meaning": "４番め（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10087,
+    "word": "fifth",
+    "meaning": "５番め（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 6
+  },
+  {
+    "id": 10088,
+    "word": "sixth",
+    "meaning": "６番め（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 3
+  },
+  {
+    "id": 10089,
+    "word": "seventh",
+    "meaning": "７番め（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 4
+  },
+  {
+    "id": 10090,
+    "word": "eighth",
+    "meaning": "８番め（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10091,
+    "word": "ninth",
+    "meaning": "９番め（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10092,
+    "word": "tenth",
+    "meaning": "１０番め（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10093,
+    "word": "twice",
+    "meaning": "２度・２回、２倍",
+    "partOfSpeech": "副詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 13
+  },
+  {
+    "id": 10094,
+    "word": "half",
+    "meaning": "半分（の）",
+    "partOfSpeech": "名詞・形容詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 11
+  },
+  {
+    "id": 10095,
+    "word": "percent",
+    "meaning": "パーセント",
+    "partOfSpeech": "名詞",
+    "category": "数字に関する単語",
+    "appearanceCount": 11
+  },
+  // 曜日・月に関する単語
+  {
+    "id": 10096,
+    "word": "Sunday",
+    "meaning": "日曜日",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 23
+  },
+  {
+    "id": 10097,
+    "word": "Monday",
+    "meaning": "月曜日",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 4
+  },
+  {
+    "id": 10098,
+    "word": "Tuesday",
+    "meaning": "火曜日",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 3
+  },
+  {
+    "id": 10099,
+    "word": "Wednesday",
+    "meaning": "水曜日",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 4
+  },
+  {
+    "id": 10100,
+    "word": "Thursday",
+    "meaning": "木曜日",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 4
+  },
+  {
+    "id": 10101,
+    "word": "Friday",
+    "meaning": "金曜日",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 11
+  },
+  {
+    "id": 10102,
+    "word": "Saturday",
+    "meaning": "土曜日",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 28
+  },
+  {
+    "id": 10103,
+    "word": "January",
+    "meaning": "１月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 3
+  },
+  {
+    "id": 10104,
+    "word": "February",
+    "meaning": "２月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 0
+  },
+  {
+    "id": 10105,
+    "word": "March",
+    "meaning": "３月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 4
+  },
+  {
+    "id": 10106,
+    "word": "April",
+    "meaning": "４月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 2
+  },
+  {
+    "id": 10107,
+    "word": "May",
+    "meaning": "５月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 71
+  },
+  {
+    "id": 10108,
+    "word": "June",
+    "meaning": "６月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 6
+  },
+  {
+    "id": 10109,
+    "word": "July",
+    "meaning": "７月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 2
+  },
+  {
+    "id": 10110,
+    "word": "August",
+    "meaning": "８月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 2
+  },
+  {
+    "id": 10111,
+    "word": "September",
+    "meaning": "９月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 1
+  },
+  {
+    "id": 10112,
+    "word": "October",
+    "meaning": "１０月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 2
+  },
+  {
+    "id": 10113,
+    "word": "November",
+    "meaning": "１１月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 6
+  },
+  {
+    "id": 10114,
+    "word": "December",
+    "meaning": "１２月",
+    "partOfSpeech": "名詞",
+    "category": "曜日・月に関する単語",
+    "appearanceCount": 6
   }
 ];
 

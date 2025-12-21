@@ -1539,6 +1539,7 @@ function showCourseSelection(category, categoryWords) {
         const elementaryCourses = [
             '身の回りのものに関する単語',
             '家族・家に関する単語',
+            '体に関する単語',
             '数字に関する単語',
             '暦・曜日・季節・時間に関する単語',
             '乗り物・スポーツに関する単語',
@@ -3777,6 +3778,40 @@ function handleBackspace() {
     }
 }
 
+// インプットモードのスクロール可能性をチェック
+function checkInputModeScrollable() {
+    const inputModeContent = document.querySelector('.input-mode-content');
+    if (!inputModeContent) return;
+    
+    // 少し遅延してコンテンツが反映された後にチェック
+    requestAnimationFrame(() => {
+        const isScrollable = inputModeContent.scrollHeight > inputModeContent.clientHeight;
+        if (isScrollable) {
+            inputModeContent.classList.add('scrollable');
+            
+            // スクロールイベントを追加（一度だけ）
+            if (!inputModeContent.dataset.scrollListenerAdded) {
+                inputModeContent.addEventListener('scroll', handleInputModeScroll);
+                inputModeContent.dataset.scrollListenerAdded = 'true';
+            }
+        } else {
+            inputModeContent.classList.remove('scrollable');
+        }
+    });
+}
+
+// インプットモードのスクロールを処理
+function handleInputModeScroll(e) {
+    const element = e.target;
+    const scrolledToBottom = element.scrollHeight - element.scrollTop - element.clientHeight < 20;
+    
+    if (scrolledToBottom || element.scrollTop > 10) {
+        element.classList.add('scrolled');
+    } else {
+        element.classList.remove('scrolled');
+    }
+}
+
 // 日本語→英語入力モードの表示
 function displayInputMode(skipAnimationReset = false) {
     if (currentIndex >= currentRangeEnd) {
@@ -3788,7 +3823,8 @@ function displayInputMode(skipAnimationReset = false) {
     if (!skipAnimationReset) {
         const inputModeContent = document.querySelector('.input-mode-content');
         if (inputModeContent) {
-            inputModeContent.classList.remove('flip-out', 'flip-in', 'active');
+            inputModeContent.classList.remove('flip-out', 'flip-in', 'active', 'scrollable', 'scrolled');
+            inputModeContent.scrollTop = 0; // スクロール位置をリセット
         }
     }
 
@@ -4048,6 +4084,9 @@ function submitAnswer() {
     
     // 次へボタンを表示（自動で進まない）
     showNextButton();
+    
+    // スクロール可能性をチェック
+    checkInputModeScrollable();
 }
 
 // わからないボタンを押した場合の処理
@@ -4086,6 +4125,9 @@ function markAnswerAsDontKnow() {
     
     // 次へボタンを表示（自動で進まない）
     showNextButton();
+    
+    // スクロール可能性をチェック
+    checkInputModeScrollable();
 }
 
 // 次へボタンを表示
