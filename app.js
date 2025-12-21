@@ -1318,6 +1318,8 @@ function startCategory(category) {
     // デバッグ用ログ
     console.log('startCategory called with category:', category);
     selectedCategory = category;
+    // モード用のボディクラスをいったんリセット
+    document.body.classList.remove('sentence-mode-active', 'reorder-mode-active');
     
     // コース名からデータカテゴリー名へのマッピング
     const categoryMapping = {
@@ -1546,15 +1548,31 @@ function showCourseSelection(category, categoryWords) {
         const functionWordCourses = [
             '冠詞',
             '代名詞',
+            '不定代名詞',
             '疑問詞',
-            '数や量をあらわす限定詞',
+            '限定詞（数量）',
             '前置詞',
-            '助動詞',
+            '助動詞・助動詞的表現',
             '接続詞',
             '関係代名詞',
-            '機能型副詞',
-            'あいさつや返事を表す間投詞'
+            '副詞（否定・程度・焦点）',
+            '間投詞'
         ];
+
+        // 各機能語カテゴリーの説明
+        const functionWordDescriptions = {
+            '冠詞': 'aやtheなど名詞の前に置く冠詞を覚えましょう。',
+            '代名詞': 'Iやyouなど名詞の代わりに使う代名詞を覚えましょう。',
+            '不定代名詞': 'somethingやanyoneなど不特定の人や物を表す不定代名詞を覚えましょう。',
+            '疑問詞': 'whatやwhereなど疑問文を作る疑問詞を覚えましょう。',
+            '限定詞（数量）': 'manyやsomeなど数量を表す限定詞を覚えましょう。',
+            '前置詞': 'inやonなど名詞の前に置いて位置や関係を表す前置詞を覚えましょう。',
+            '助動詞・助動詞的表現': 'canやwillなど動詞の前に置いて意味を加える助動詞とhave toなどの助動詞的表現を覚えましょう。',
+            '接続詞': '文や語句をつなぐ、andやbutなどの等位接続詞やwhenやifなどの従属接続詞を覚えましょう。',
+            '関係代名詞': 'whichやthatなど名詞を修飾する関係代名詞を覚えましょう。',
+            '副詞（否定・程度・焦点）': 'notやveryなど否定や程度を表す副詞を覚えましょう。',
+            '間投詞': 'hiやyesなどあいさつや返事を表す間投詞を覚えましょう。'
+        };
 
         const { correctSet, wrongSet } = loadCategoryWords(category);
 
@@ -1643,9 +1661,14 @@ function showCourseSelection(category, categoryWords) {
                             ? '機能語'
                             : '';
 
+                // 機能語グループの場合のみ説明を追加
+                const description = groupTitle === '英文でよく登場する機能語' && functionWordDescriptions[courseName] 
+                    ? functionWordDescriptions[courseName] 
+                    : '';
+
                 const courseCard = createCourseCard(
                     courseName,
-                    '',
+                    description,
                     correctPercent,
                     wrongPercent,
                     completedCount,
@@ -1760,12 +1783,14 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
     const progressBarClass = isComplete ? 'category-progress-bar category-progress-complete' : 'category-progress-bar';
     const progressText = `${completedCount}/${total}語`;
 
+    const descriptionHtml = description ? `<div class="category-meta">${description}</div>` : '';
+    
     card.innerHTML = `
         <div class="category-info">
             <div class="category-header">
                 <div class="category-name">${badgeHtml}${title}</div>
             </div>
-            <div class="category-meta">${description}</div>
+            ${descriptionHtml}
             <div class="category-progress">
                 <div class="${progressBarClass}">
                     <div class="category-progress-correct" style="width: ${correctPercent}%"></div>
@@ -2225,18 +2250,21 @@ function startCountdown() {
                 countdownOverlay.classList.add('hidden');
                 countdownNumber.classList.remove('go');
                 
-                // 学習画面の要素を表示
+                // 学習画面の要素を表示（例文モード・整序英作文モード以外のとき）
                 const wordCard = document.getElementById('wordCard');
                 const cardHint = document.getElementById('cardHint');
                 const statsBar = document.getElementById('statsBar');
                 const progressStatsScores = document.querySelector('.progress-stats-scores');
                 
-                if (wordCard) wordCard.classList.remove('hidden');
-                if (cardHint) cardHint.classList.remove('hidden');
-                if (statsBar) statsBar.classList.remove('hidden');
-                if (progressStatsScores) {
-                    progressStatsScores.style.display = 'flex';
+                // 例文モード・整序英作文モードではカードを表示しない
+                if (!isSentenceModeActive && !isReorderModeActive) {
+                    if (wordCard) wordCard.classList.remove('hidden');
+                    if (cardHint) cardHint.classList.remove('hidden');
+                    if (progressStatsScores) {
+                        progressStatsScores.style.display = 'flex';
+                    }
                 }
+                if (statsBar) statsBar.classList.remove('hidden');
                 
                 // 最初の単語を表示
                 displayCurrentWord();
@@ -2508,6 +2536,9 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
     const inputModeNav = document.getElementById('inputModeNav');
+    const wordCardContainer = document.getElementById('wordCardContainer');
+    const cardTopSection = document.querySelector('.card-top-section');
+    const inputListView = document.getElementById('inputListView');
     const progressStepLeft = document.getElementById('progressStepLeft');
     const progressStepRight = document.getElementById('progressStepRight');
     const sentenceNavigation = document.getElementById('sentenceNavigation');
@@ -2516,6 +2547,8 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
     if (wordCard) wordCard.classList.remove('hidden');
+    if (wordCardContainer) wordCardContainer.classList.remove('hidden');
+    if (inputListView) inputListView.classList.add('hidden');
     // モードフラグをリセット
     isInputModeActive = false;
     isSentenceModeActive = false;
@@ -2525,10 +2558,13 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     if (currentLearningMode === 'input') {
         // 判定ボタンを非表示、カード下のナビゲーションボタンを表示
         if (cardHint) cardHint.classList.add('hidden');
-        if (inputModeNav) inputModeNav.classList.remove('hidden');
+        if (inputModeNav) inputModeNav.classList.add('hidden');
         // 上の「前の単語へ」「次の単語へ」ボタンを非表示
         if (progressStepLeft) progressStepLeft.classList.add('hidden');
         if (progressStepRight) progressStepRight.classList.add('hidden');
+        if (cardTopSection) cardTopSection.classList.add('hidden');
+        if (wordCardContainer) wordCardContainer.classList.add('hidden');
+        renderInputListView(currentWords);
     } else {
         // 通常のカードモード（アウトプット）
         if (cardHint) cardHint.classList.remove('hidden');
@@ -2536,6 +2572,8 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         // 上の「前の単語へ」「次の単語へ」ボタンを非表示（アウトプットモードでも非表示）
         if (progressStepLeft) progressStepLeft.classList.add('hidden');
         if (progressStepRight) progressStepRight.classList.add('hidden');
+        if (cardTopSection) cardTopSection.classList.remove('hidden');
+        if (inputListView) inputListView.classList.add('hidden');
     }
     
     // 例文モード用のナビゲーションボタンを非表示
@@ -4351,6 +4389,27 @@ function toggleReview() {
     }
 }
 
+// 復習チェックの切り替え（ID指定、一覧用）
+function toggleReviewById(wordId, buttonEl) {
+    if (wordId === undefined || wordId === null) return;
+    
+    if (reviewWords.has(wordId)) {
+        reviewWords.delete(wordId);
+    } else {
+        reviewWords.add(wordId);
+    }
+    
+    saveReviewWords();
+    
+    if (buttonEl) {
+        if (reviewWords.has(wordId)) {
+            buttonEl.classList.add('active');
+        } else {
+            buttonEl.classList.remove('active');
+        }
+    }
+}
+
 // ★ボタンの状態を更新（復習チェック用）
 function updateStarButton() {
     if (currentIndex >= currentWords.length) return;
@@ -4467,7 +4526,7 @@ function applyMarkers(word) {
     }
 }
 
-// 品詞を一文字に変換する関数
+// 品詞を一文字に変換する関数（複数品詞対応）
 function getPartOfSpeechShort(pos) {
     if (!pos) return '';
     
@@ -4479,40 +4538,41 @@ function getPartOfSpeechShort(pos) {
         '前置詞': '前',
         '接続詞': '接',
         '冠詞': '冠',
-        '数や量をあらわす限定詞': '限',
+        '限定詞（数量）': '限',
         '代名詞': '代',
         '助動詞': '助',
         '間投詞': '間',
-        'あいさつや返事を表す間投詞': '間',
-        '関係代名詞': '関',
-        '形容詞・副詞': '形',
-        '動詞・名詞': '動',
-        '名詞・動詞': '名',
-        '形容詞・名詞': '形',
-        '副詞・形容詞': '副'
+        '関係代名詞': '関'
     };
     
-    // 複数の品詞が「・」で区切られている場合は最初のものを使用
-    const firstPos = pos.split('・')[0].trim();
+    // 複数の品詞が「・」で区切られている場合は、すべての品詞を変換
+    const posParts = pos.split('・').map(p => p.trim());
     
-    // マッピングに存在する場合は変換、存在しない場合は最初の文字を取得
-    if (posMap[firstPos]) {
-        return posMap[firstPos];
-    }
+    const shortParts = posParts.map(part => {
+        // マッピングに存在する場合は変換
+        if (posMap[part]) {
+            return posMap[part];
+        }
+        
+        // マッピングにない場合は、品詞名に含まれる文字から推測
+        if (part.includes('動')) return '動';
+        if (part.includes('名')) return '名';
+        if (part.includes('形')) return '形';
+        if (part.includes('副')) return '副';
+        if (part.includes('前')) return '前';
+        if (part.includes('接')) return '接';
+        if (part.includes('冠')) return '冠';
+        if (part.includes('代')) return '代';
+        if (part.includes('助')) return '助';
+        if (part.includes('間')) return '間';
+        if (part.includes('関')) return '関';
+        
+        // それでも見つからない場合は最初の文字を返す
+        return part.charAt(0);
+    });
     
-    // マッピングにない場合は、品詞名に含まれる文字から推測
-    if (firstPos.includes('動')) return '動';
-    if (firstPos.includes('名')) return '名';
-    if (firstPos.includes('形')) return '形';
-    if (firstPos.includes('副')) return '副';
-    if (firstPos.includes('前')) return '前';
-    if (firstPos.includes('接')) return '接';
-    if (firstPos.includes('冠')) return '冠';
-    if (firstPos.includes('代')) return '代';
-    if (firstPos.includes('助')) return '助';
-    
-    // それでも見つからない場合は最初の文字を返す
-    return firstPos.charAt(0);
+    // 複数の品詞がある場合は「・」で区切って返す
+    return shortParts.join('・');
 }
 
 // 意味テキストを整形して表示（①②③付きは縦に揃えて表示）
@@ -4592,6 +4652,170 @@ function getPartOfSpeechClass(pos) {
     if (firstPos.includes('形容詞') || firstPos.includes('形')) return 'adjective';
     if (firstPos.includes('副詞') || firstPos.includes('副')) return 'adverb';
     return 'other';
+}
+
+// インプットモード（眺める用）の一覧を描画
+function renderInputListView(words) {
+    const listView = document.getElementById('inputListView');
+    const container = document.getElementById('inputListContainer');
+    
+    if (!listView || !container) return;
+    
+    container.innerHTML = '';
+    
+    if (!Array.isArray(words) || words.length === 0) {
+        listView.classList.add('hidden');
+        return;
+    }
+    
+    listView.classList.remove('hidden');
+    
+    // 進捗マーカー用のセットを取得
+    let categoryCorrectSet = correctWords;
+    let categoryWrongSet = wrongWords;
+    if (selectedCategory) {
+        const sets = loadCategoryWords(selectedCategory);
+        categoryCorrectSet = sets.correctSet;
+        categoryWrongSet = sets.wrongSet;
+    }
+    
+    words.forEach((word) => {
+        const item = document.createElement('div');
+        item.className = 'input-list-item';
+        
+        const inner = document.createElement('div');
+        inner.className = 'input-list-inner';
+        
+        // 表面
+        const front = document.createElement('div');
+        front.className = 'input-list-front';
+        
+        const meta = document.createElement('div');
+        meta.className = 'input-list-meta';
+        
+        const number = document.createElement('span');
+        number.className = 'input-list-number';
+        number.textContent = `No.${word.id}`;
+        if (categoryWrongSet.has(word.id)) {
+            number.classList.add('marker-wrong');
+            item.classList.add('marker-wrong');
+        } else if (categoryCorrectSet.has(word.id)) {
+            number.classList.add('marker-correct');
+            item.classList.add('marker-correct');
+        }
+        meta.appendChild(number);
+        
+        if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
+            const badge = document.createElement('span');
+            badge.className = 'input-list-appearance';
+            badge.innerHTML = `<span class="appearance-label">入試登場回数</span><span class="appearance-count">${word.appearanceCount}回</span>`;
+            meta.appendChild(badge);
+        }
+        
+        const row = document.createElement('div');
+        row.className = 'input-list-row';
+        
+        const pos = document.createElement('span');
+        pos.className = 'pos-inline part-of-speech input-list-pos';
+        pos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
+        row.appendChild(pos);
+        
+        const starBtn = document.createElement('button');
+        starBtn.className = 'star-btn';
+        starBtn.setAttribute('type', 'button');
+        if (reviewWords.has(word.id)) {
+            starBtn.classList.add('active');
+        }
+        starBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4h10a1 1 0 0 1 1 1v14l-6-4-6 4V5a1 1 0 0 1 1-1z"></path></svg>';
+        starBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleReviewById(word.id, starBtn);
+        });
+        starBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+        
+        const wordEl = document.createElement('span');
+        wordEl.className = 'input-list-word';
+        wordEl.textContent = word.word;
+        row.appendChild(wordEl);
+        
+        const audioBtn = document.createElement('button');
+        audioBtn.className = 'input-list-audio';
+        audioBtn.setAttribute('type', 'button');
+        audioBtn.setAttribute('aria-label', `${word.word}の音声を再生`);
+        audioBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+        audioBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            speakWord(word.word, audioBtn);
+        });
+        row.appendChild(audioBtn);
+        
+        row.appendChild(starBtn);
+        
+        front.appendChild(meta);
+        front.appendChild(row);
+        
+        // 裏面
+        const back = document.createElement('div');
+        back.className = 'input-list-back';
+        
+        const meaningEl = document.createElement('div');
+        meaningEl.className = 'input-list-meaning';
+        meaningEl.textContent = word.meaning || '';
+        back.appendChild(meaningEl);
+        
+        if (word.example && (word.example.english || word.example.japanese)) {
+            const exampleBox = document.createElement('div');
+            exampleBox.className = 'example-container input-list-example';
+            
+            const exampleLabel = document.createElement('span');
+            exampleLabel.className = 'example-label';
+            exampleLabel.textContent = '用例';
+            exampleBox.appendChild(exampleLabel);
+            
+            const exampleText = document.createElement('div');
+            exampleText.className = 'example-text';
+            
+            if (word.example.english) {
+                const exEn = document.createElement('div');
+                exEn.className = 'example-english';
+                // 単語を太字にする
+                const exampleEn = word.example.english;
+                if (exampleEn && word.word) {
+                    const escaped = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
+                    const highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
+                    let finalText = highlighted;
+                    if (/[.!?]\s*$/.test(exampleEn)) {
+                        finalText = highlighted.replace(/^(\s*(?:<[^>]+>\s*)*)([a-z])/, (_m, prefix, first) => `${prefix}${first.toUpperCase()}`);
+                    }
+                    exEn.innerHTML = finalText;
+                } else {
+                    exEn.textContent = exampleEn;
+                }
+                exampleText.appendChild(exEn);
+            }
+            
+            if (word.example.japanese) {
+                const exJa = document.createElement('div');
+                exJa.className = 'example-japanese';
+                exJa.textContent = word.example.japanese;
+                exampleText.appendChild(exJa);
+            }
+            
+            exampleBox.appendChild(exampleText);
+            back.appendChild(exampleBox);
+        }
+        
+        inner.appendChild(front);
+        inner.appendChild(back);
+        
+        item.addEventListener('click', () => {
+            item.classList.toggle('flipped');
+        });
+        
+        item.appendChild(inner);
+        container.appendChild(item);
+    });
 }
 
 // 現在の単語を表示
@@ -5840,6 +6064,8 @@ function initSentenceModeLearning(category) {
     sentenceData = sentenceMemorizationData;
     isSentenceModeActive = true;
     isInputModeActive = false; // 入力モードを無効化
+    document.body.classList.add('sentence-mode-active');
+    document.body.classList.remove('reorder-mode-active');
     currentSentenceIndex = 0;
     sentenceAnswerSubmitted = false;
     
@@ -5900,12 +6126,14 @@ function initSentenceModeLearning(category) {
 
     // カードモード、入力モード、整序英作文モードを非表示、例文モードを表示
     const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
     const inputMode = document.getElementById('inputMode');
     const sentenceMode = document.getElementById('sentenceMode');
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
     const progressStepButtons = document.querySelector('.progress-step-buttons');
     if (wordCard) wordCard.classList.add('hidden');
+    if (wordCardContainer) wordCardContainer.classList.add('hidden');
     if (inputMode) inputMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.remove('hidden');
@@ -6450,6 +6678,8 @@ function initReorderModeLearning(category) {
     isReorderModeActive = true;
     isSentenceModeActive = false;
     isInputModeActive = false;
+    document.body.classList.add('reorder-mode-active');
+    document.body.classList.remove('sentence-mode-active');
     currentReorderIndex = 0;
     reorderAnswerSubmitted = false;
     
@@ -6497,12 +6727,14 @@ function initReorderModeLearning(category) {
 
     // 他のモードを非表示、整序英作文モードを表示
     const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
     const inputMode = document.getElementById('inputMode');
     const sentenceMode = document.getElementById('sentenceMode');
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
     const progressStepButtons = document.querySelector('.progress-step-buttons');
     if (wordCard) wordCard.classList.add('hidden');
+    if (wordCardContainer) wordCardContainer.classList.add('hidden');
     if (inputMode) inputMode.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.remove('hidden');

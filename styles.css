@@ -968,6 +968,8 @@ body {
 .category-meta {
     font-size: 13px;
     color: #6b7280;
+    margin-top: 4px;
+    line-height: 1.4;
 }
 
 .category-progress {
@@ -1921,6 +1923,11 @@ body {
     overflow-y: hidden;
 }
 
+.card-area-wrapper:has(#inputListView:not(.hidden)) {
+    overflow-y: hidden;
+    padding-top: 0;
+}
+
 /* 日本語→英語入力モード（基本語彙500専用） */
 .input-mode {
     flex: 1;
@@ -1934,6 +1941,35 @@ body {
     perspective: 1200px;
     transform-style: preserve-3d;
     justify-content: flex-start; /* 上揃え */
+}
+
+/* 例文・整序モードではカードUIを隠す */
+/* 例文モード・整序英作文モードではカード関連要素を完全に非表示 */
+body.sentence-mode-active #wordCard,
+body.reorder-mode-active #wordCard,
+body.sentence-mode-active #cardHint,
+body.reorder-mode-active #cardHint,
+body.sentence-mode-active .word-card,
+body.reorder-mode-active .word-card,
+body.sentence-mode-active #wordCardContainer,
+body.reorder-mode-active #wordCardContainer,
+body.sentence-mode-active .word-card-container,
+body.reorder-mode-active .word-card-container {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* hiddenクラスが付いたカードを確実に非表示 */
+.word-card.hidden,
+#wordCard.hidden,
+.word-card-container.hidden,
+#wordCardContainer.hidden {
+    display: none !important;
+    visibility: hidden !important;
 }
 
 /* 入力モード内の仮想キーボードを下部に固定 */
@@ -2113,6 +2149,255 @@ body {
     backface-visibility: hidden;
     flex-shrink: 0;
     border: 3px solid transparent;
+}
+
+.input-list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 12px 20px 12px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.input-list-header {
+    padding: 4px 6px 2px;
+    color: #4b5563;
+}
+
+.input-list-title {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+.input-list-sub {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+.input-list-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.input-list-item {
+    background: #ffffff;
+    border: none;
+    border-bottom: 1px solid #d1d5db;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.input-list-item:last-child {
+    border-bottom: none;
+}
+
+.input-list-inner {
+    position: relative;
+    width: 100%;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+}
+
+.input-list-item.flipped .input-list-inner {
+    transform: rotateY(180deg);
+}
+
+.input-list-front,
+.input-list-back {
+    width: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    padding: 12px 14px;
+    box-sizing: border-box;
+}
+
+.input-list-front {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-list-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f8fafc;
+}
+
+.input-list-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.input-list-number {
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    position: relative;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 6px;
+    font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
+    letter-spacing: 0.1em;
+}
+
+.input-list-number::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px;
+    background: transparent;
+    border-radius: 999px;
+}
+
+.input-list-number.marker-correct {
+    box-shadow: 0 8px 0 #3b82f6;
+}
+
+.input-list-number.marker-correct::after {
+    background: #3b82f6;
+}
+
+.input-list-number.marker-wrong {
+    box-shadow: 0 8px 0 #ef4444;
+}
+
+.input-list-number.marker-wrong::after {
+    background: #ef4444;
+}
+
+.input-list-appearance {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #4b5563;
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.input-list-appearance .appearance-count {
+    color: #111827;
+    font-weight: 800;
+}
+
+.input-list-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-list-pos {
+    margin-right: 4px;
+    top: 0;
+    padding: 2px 5px 1px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.input-list-word {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: #0f172a;
+    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+}
+
+.input-list-row .star-btn {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    padding: 6px;
+    margin-left: auto;
+}
+
+.input-list-audio {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #e5e7eb;
+    background: linear-gradient(145deg, #f3f4f6, #e5e7eb);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #4b5563;
+    cursor: pointer;
+    margin-left: 4px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.08);
+    transition: transform 0.08s ease, box-shadow 0.12s ease;
+}
+
+.input-list-audio:hover {
+    transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 3px 8px rgba(0, 0, 0, 0.12);
+    color: #111827;
+}
+
+.input-list-audio:active {
+    transform: translateY(0);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.input-list-audio svg {
+    pointer-events: none;
+}
+
+.input-list-meaning {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.input-list-example {
+    margin-top: 6px;
+}
+
+.input-list-example .example-text {
+    position: static;
+    background: transparent;
+    padding: 0;
+    margin-top: 0;
+}
+
+@media (max-width: 640px) {
+    .input-list-view {
+        padding: 0 8px 16px 8px;
+        gap: 0;
+    }
+    .input-list-front,
+    .input-list-back {
+        padding: 12px;
+    }
+    .input-list-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    .input-list-number {
+        padding-bottom: 5px;
+    }
+    .input-list-word {
+        font-size: 24px;
+    }
 }
 
 .input-mode-content.marker-correct {

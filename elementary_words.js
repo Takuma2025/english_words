@@ -700,13 +700,13 @@ const elementaryWordData = [
     "partOfSpeech": "名詞",
     "category": "小学生で習った単語とカテゴリー別に覚える単語"
   },
-  // 助動詞
+  // 助動詞・助動詞的表現
   {
     "id": 2001,
     "word": "can",
     "meaning": "（可能）〜できる、（許可）〜してもよい",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 374,
     "example": {
       "english": "I <strong>can</strong> play the piano.",
@@ -718,7 +718,7 @@ const elementaryWordData = [
     "word": "could",
     "meaning": "〜できた",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 100,
     "example": {
       "english": "My father <strong>could</strong> speak English well.",
@@ -730,7 +730,7 @@ const elementaryWordData = [
     "word": "may",
     "meaning": "（推量）〜かもしれない、（許可）〜してもよい",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 71,
     "example": {
       "english": "I <strong>may</strong> be late for the party.",
@@ -742,7 +742,7 @@ const elementaryWordData = [
     "word": "must",
     "meaning": "（義務）〜しなければならない",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 22,
     "example": {
       "english": "You <strong>must</strong> do your homework.",
@@ -754,7 +754,7 @@ const elementaryWordData = [
     "word": "should",
     "meaning": "（義務）〜すべきである",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 63,
     "example": {
       "english": "We <strong>should</strong> take a break.",
@@ -766,7 +766,7 @@ const elementaryWordData = [
     "word": "will",
     "meaning": "（未来）〜するつもり、〜でしょう",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 323,
     "example": {
       "english": "I <strong>will</strong> go to the park next week.",
@@ -777,7 +777,7 @@ const elementaryWordData = [
     "word": "would",
     "meaning": "〜だろう、〜するつもりだ、(would like toで)〜したい",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 100,
     "example": {
       "english": "I <strong>would</strong> like to go abroad.",
@@ -789,7 +789,7 @@ const elementaryWordData = [
     "word": "be able to",
     "meaning": "（可能）〜することができる",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 8,
     "example": {
       "english": "I <strong>am able to</strong> play the piano.",
@@ -801,7 +801,7 @@ const elementaryWordData = [
     "word": "be going to",
     "meaning": "（未来）〜するつもり",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 14,
     "example": {
       "english": "I <strong>am going to</strong> go to the park next week.",
@@ -813,7 +813,7 @@ const elementaryWordData = [
     "word": "have to",
     "meaning": "（義務）〜しなければならない",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 22,
     "example": {
       "english": "I <strong>have to</strong> do my homework.",
@@ -825,7 +825,7 @@ const elementaryWordData = [
     "word": "Will you～?(Can you～?)",
     "meaning": "（依頼）〜してくれませんか",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 31,
     "example": {
       "english": "<strong>Can you</strong> open the door?",
@@ -837,7 +837,7 @@ const elementaryWordData = [
     "word": "Would you～?(Could you〜?)",
     "meaning": "（依頼）〜していただけませんか",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 2,
     "example": {
       "english": "<strong>Would you</strong> close the window?",
@@ -849,7 +849,7 @@ const elementaryWordData = [
     "word": "Would you like 〜 ?",
     "meaning": "（勧誘）〜はいかがですか",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 1,
     "example": {
       "english": "<strong>Would you like</strong> some cake?",
@@ -861,7 +861,7 @@ const elementaryWordData = [
     "word": "Can I～?(May I〜?)",
     "meaning": "（許可）〜してもいいですか",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 10,
     "example": {
       "english": "<strong>May I</strong> use the phone?",
@@ -873,7 +873,7 @@ const elementaryWordData = [
     "word": "Shall I 〜 ?",
     "meaning": "（提案）［私が］〜しましょうか",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 2,
     "example": {
       "english": "<strong>Shall I</strong> open the window?",
@@ -885,7 +885,7 @@ const elementaryWordData = [
     "word": "Shall we 〜 ?",
     "meaning": "（勧誘）［いっしょに］〜しませんか",
     "partOfSpeech": "助動詞",
-    "category": "助動詞",
+    "category": "助動詞・助動詞的表現",
     "appearanceCount": 10,
     "example": {
       "english": "<strong>Shall we</strong> play tennis?",
@@ -953,13 +953,13 @@ const elementaryWordData = [
       "japanese": "ブラウンさん（女性）"
     }
   },
-  // 数や量をあらわす限定詞（機能語：all / each / every / such / some / any / no / both / either）
+  // 限定詞（数量）
   {
     "id": 2106,
     "word": "all",
     "meaning": "すべての",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 40,
     "example": {
       "english": "<strong>All</strong> boys in this class play soccer.",
@@ -971,7 +971,7 @@ const elementaryWordData = [
     "word": "each",
     "meaning": "それぞれの、各々の",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 101,
     "example": {
       "english": "<strong>Each</strong> student has a book.",
@@ -983,7 +983,7 @@ const elementaryWordData = [
     "word": "every",
     "meaning": "すべての、毎〜",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 34,
     "example": {
       "english": "<strong>Every</strong> girl in this class is good at English.",
@@ -995,7 +995,7 @@ const elementaryWordData = [
     "word": "some",
     "meaning": "いくつかの、いくらかの",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 287,
     "example": {
       "english": "I have <strong>some</strong> books.",
@@ -1007,7 +1007,7 @@ const elementaryWordData = [
     "word": "any",
     "meaning": "（疑問文・否定文で）いくつかの、どれでも",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 30,
     "example": {
       "english": "Do you have <strong>any</strong> questions?",
@@ -1019,7 +1019,7 @@ const elementaryWordData = [
     "word": "no",
     "meaning": "〜が（まったく）ない",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 73,
     "example": {
       "english": "He has <strong>no</strong> money.",
@@ -1027,35 +1027,11 @@ const elementaryWordData = [
     }
   },
   {
-    "id": 2113,
-    "word": "both",
-    "meaning": "両方の、両方とも",
-    "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
-    "appearanceCount": 31,
-    "example": {
-      "english": "<strong>Both</strong> of us live in Kobe.",
-      "japanese": "私たちは二人とも神戸に住んでいます。"
-    }
-  },
-  {
-    "id": 2114,
-    "word": "either",
-    "meaning": "どちらかの、どちらでも",
-    "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
-    "appearanceCount": 4,
-    "example": {
-      "english": "You can take <strong>either</strong> book.",
-      "japanese": "どちらの本を取ってもいいです。"
-    }
-  },
-  {
     "id": 2115,
     "word": "many",
     "meaning": "たくさんの（数えられる名詞に）",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 258,
     "example": {
       "english": "I have <strong>many</strong> books.",
@@ -1067,7 +1043,7 @@ const elementaryWordData = [
     "word": "much",
     "meaning": "たくさんの（数えられない名詞に）",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 46,
     "example": {
       "english": "I want to drink <strong>much</strong> water.",
@@ -1079,7 +1055,7 @@ const elementaryWordData = [
     "word": "a few",
     "meaning": "少しの、いくつかの（数えられる名詞に、肯定的）",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 22,
     "example": {
       "english": "I have <strong>a few</strong> friends.",
@@ -1091,7 +1067,7 @@ const elementaryWordData = [
     "word": "a little",
     "meaning": "少しの（数えられない名詞に、肯定的）",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 5,
     "example": {
       "english": "There is <strong>a little</strong> water in the glass.",
@@ -1103,7 +1079,7 @@ const elementaryWordData = [
     "word": "few",
     "meaning": "ほとんどない、（数えられる名詞に、否定的）",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 23,
     "example": {
       "english": "I have <strong>few</strong> friends.",
@@ -1115,7 +1091,7 @@ const elementaryWordData = [
     "word": "little",
     "meaning": "ほとんどない、わずかな（数えられない名詞に、否定的）、小さい",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 15,
     "example": {
       "english": "I have <strong>little</strong> money.",
@@ -1127,7 +1103,7 @@ const elementaryWordData = [
     "word": "several",
     "meaning": "いくつかの、数個の",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 15,
     "example": {
       "english": "Ken bought <strong>several</strong> pens.",
@@ -1139,7 +1115,7 @@ const elementaryWordData = [
     "word": "a lot of",
     "meaning": "たくさんの、多くの",
     "partOfSpeech": "限定詞・形容詞",
-    "category": "数や量をあらわす限定詞",
+    "category": "限定詞（数量）",
     "appearanceCount": 50,
     "example": {
       "english": "I have <strong>a lot of</strong> friends.",
@@ -1665,13 +1641,13 @@ const elementaryWordData = [
       "japanese": "一言も言わずに"
     }
   },
-  // 副詞（機能語）
+  // 副詞（否定・程度・焦点）
   {
     "id": 8021,
     "word": "not",
     "meaning": "（否定）〜でない",
     "partOfSpeech": "副詞",
-    "category": "機能型副詞",
+    "category": "副詞（否定・程度・焦点）",
     "appearanceCount": 127,
     "example": {
       "english": "I do <strong>not</strong> like math.",
@@ -1683,7 +1659,7 @@ const elementaryWordData = [
     "word": "never",
     "meaning": "決して〜ない、これまで一度も〜ない",
     "partOfSpeech": "副詞",
-    "category": "機能型副詞",
+    "category": "副詞（否定・程度・焦点）",
     "appearanceCount": 18,
     "example": {
       "english": "I <strong>never</strong> study at home on Sunday.",
@@ -1695,7 +1671,7 @@ const elementaryWordData = [
     "word": "very",
     "meaning": "とても",
     "partOfSpeech": "副詞",
-    "category": "機能型副詞",
+    "category": "副詞（否定・程度・焦点）",
     "appearanceCount": 180,
     "example": {
       "english": "This dog is <strong>very</strong> big.",
@@ -1707,7 +1683,7 @@ const elementaryWordData = [
     "word": "so",
     "meaning": "そんなに、とても、そのように",
     "partOfSpeech": "副詞",
-    "category": "機能型副詞",
+    "category": "副詞（否定・程度・焦点）",
     "appearanceCount": 213,
     "example": {
       "english": "This movie isn't <strong>so</strong> interesting.",
@@ -1719,7 +1695,7 @@ const elementaryWordData = [
     "word": "too",
     "meaning": "〜すぎる、〜も［文末］",
     "partOfSpeech": "副詞",
-    "category": "機能型副詞",
+    "category": "副詞（否定・程度・焦点）",
     "appearanceCount": 60,
     "example": {
       "english": "This box is <strong>too</strong> heavy.",
@@ -1731,7 +1707,7 @@ const elementaryWordData = [
     "word": "almost",
     "meaning": "ほとんど",
     "partOfSpeech": "副詞",
-    "category": "機能型副詞",
+    "category": "副詞（否定・程度・焦点）",
     "appearanceCount": 11,
     "example": {
       "english": "<strong>Almost</strong> all the students like soccer.",
@@ -1743,7 +1719,7 @@ const elementaryWordData = [
     "word": "just",
     "meaning": "ちょうど、単に、ちょっと",
     "partOfSpeech": "副詞",
-    "category": "機能型副詞",
+    "category": "副詞（否定・程度・焦点）",
     "appearanceCount": 21,
     "example": {
       "english": "I have <strong>just</strong> finished my homework.",
@@ -1751,71 +1727,11 @@ const elementaryWordData = [
     }
   },
   {
-    "id": 8012,
-    "word": "already",
-    "meaning": "すでに",
-    "partOfSpeech": "副詞",
-    "category": "機能型副詞",
-    "appearanceCount": 15,
-    "example": {
-      "english": "I have <strong>already</strong> cleaned the room.",
-      "japanese": "私はすでに部屋を掃除しました。"
-    }
-  },
-  {
-    "id": 8014,
-    "word": "yet",
-    "meaning": "［否定文で］まだ、［疑問文で］もう",
-    "partOfSpeech": "副詞",
-    "category": "機能型副詞",
-    "appearanceCount": 8,
-    "example": {
-      "english": "I haven't read the book <strong>yet</strong>.",
-      "japanese": "私はまだその本を読んでいません。"
-    }
-  },
-  {
-    "id": 8015,
-    "word": "ever",
-    "meaning": "これまでに、かつて",
-    "partOfSpeech": "副詞",
-    "category": "機能型副詞",
-    "appearanceCount": 6,
-    "example": {
-      "english": "Have you <strong>ever</strong> been to the United States.",
-      "japanese": "あなたはこれまでにアメリカに行ったことがありますか。"
-    }
-  }, 
-  {
-    "id": 8013,
-    "word": "still",
-    "meaning": "まだ、今でも",
-    "partOfSpeech": "副詞",
-    "category": "機能型副詞",
-    "appearanceCount": 20,
-    "example": {
-      "english": "I'm still hungry.",
-      "japanese": "私はまだお腹が空いています。"
-    }
-  },
-  {
-    "id": 8011,
-    "word": "again",
-    "meaning": "再び",
-    "partOfSpeech": "副詞",
-    "category": "機能型副詞",
-    "appearanceCount": 31,
-    "example": {
-      "english": "I'm glad to see you <strong>again</strong>.",
-      "japanese": "またあなたに会えてうれしいです。"
-    }
-  },
-  {
     "id": 8018,
     "word": "also",
     "meaning": "〜もまた",
     "partOfSpeech": "副詞",
-    "category": "機能型副詞",
+    "category": "副詞（否定・程度・焦点）",
     "appearanceCount": 131,
     "example": {
       "english": "I <strong>also</strong> like music.",
@@ -1827,7 +1743,7 @@ const elementaryWordData = [
     "word": "only",
     "meaning": "〜だけ、唯一の",
     "partOfSpeech": "副詞",
-    "category": "機能型副詞",
+    "category": "副詞（否定・程度・焦点）",
     "appearanceCount": 51,
     "example": {
       "english": "I have <strong>only</strong> one book.",
@@ -1839,7 +1755,7 @@ const elementaryWordData = [
     "word": "even",
     "meaning": "〜でさえ（すら）",
     "partOfSpeech": "副詞",
-    "category": "機能型副詞",
+    "category": "副詞（否定・程度・焦点）",
     "appearanceCount": 27,
     "example": {
       "english": "He even forgot my name.",
@@ -2139,13 +2055,13 @@ const elementaryWordData = [
     "partOfSpeech": "名詞",
     "category": "小学生で習った単語とカテゴリー別に覚える単語"
   },
-  // あいさつや返事を表す間投詞
+  // 間投詞
   {
     "id": 8001,
     "word": "hi",
     "meaning": "やあ、こんにちは",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 176,
     "example": {
       "english": "<strong>Hi</strong>! How are you?",
@@ -2157,7 +2073,7 @@ const elementaryWordData = [
     "word": "hello",
     "meaning": "やあ、こんにちは",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 50,
     "example": {
       "english": "<strong>Hello</strong>, nice to meet you.",
@@ -2169,7 +2085,7 @@ const elementaryWordData = [
     "word": "hey",
     "meaning": "やあ、おい、ちょっと",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 0,
     "example": {
       "english": "<strong>Hey</strong>, wait for me!",
@@ -2181,7 +2097,7 @@ const elementaryWordData = [
     "word": "bye",
     "meaning": "さようなら",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 70,
     "example": {
       "english": "<strong>Bye</strong>, see you later.",
@@ -2193,7 +2109,7 @@ const elementaryWordData = [
     "word": "goodbye",
     "meaning": "さようなら",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 2,
     "example": {
       "english": "<strong>Goodbye</strong>, see you later.",
@@ -2205,7 +2121,7 @@ const elementaryWordData = [
     "word": "oh",
     "meaning": "ああ！、おお！",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 161,
     "example": {
       "english": "<strong>Oh</strong>, I see!",
@@ -2217,7 +2133,7 @@ const elementaryWordData = [
     "word": "wow",
     "meaning": "わあ、おお（驚きや喜び）",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 15,
     "example": {
       "english": "<strong>Wow</strong>, that's nice!",
@@ -2229,7 +2145,7 @@ const elementaryWordData = [
     "word": "yes",
     "meaning": "はい",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 191,
     "example": {
       "english": "<strong>Yes</strong>, I am.",
@@ -2241,7 +2157,7 @@ const elementaryWordData = [
     "word": "no",
     "meaning": "いいえ、いや、だめだ",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 73,
     "example": {
       "english": "<strong>No</strong>, I don't.",
@@ -2252,8 +2168,8 @@ const elementaryWordData = [
     "id": 8009,
     "word": "OK",
     "meaning": "わかりました、それでは、大丈夫な",
-    "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "partOfSpeech": "間投詞・形容詞",
+    "category": "間投詞",
     "appearanceCount": 70,
     "example": {
       "english": "<strong>Thank you</strong> for your help.",
@@ -2264,7 +2180,7 @@ const elementaryWordData = [
     "word": "well",
     "meaning": "ええっと…（考え中）",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 151,
     "example": {
       "english": "<strong>Well</strong>, I'm not sure.",
@@ -2276,7 +2192,7 @@ const elementaryWordData = [
     "word": "please",
     "meaning": "どうぞ、どうか（お願いします）",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 84,
     "example": {
       "english": "<strong>Please</strong> help me.",
@@ -2288,11 +2204,108 @@ const elementaryWordData = [
     "word": "welcome",
     "meaning": "ようこそ、いらっしゃい（歓迎）",
     "partOfSpeech": "間投詞",
-    "category": "あいさつや返事を表す間投詞",
+    "category": "間投詞",
     "appearanceCount": 11,
     "example": {
       "english": "<strong>Welcome</strong> to our party.",
       "japanese": "パーティーへようこそ。"
+    }
+  },
+  // 不定代名詞
+  {
+    "id": 9001,
+    "word": "something",
+    "meaning": "何か（もの・こと）",
+    "partOfSpeech": "代名詞",
+    "category": "不定代名詞",
+    "appearanceCount": 36,
+    "example": {
+      "english": "I want <strong>something</strong> to drink.",
+      "japanese": "私は何か飲みものがほしいです。"
+    }
+  },
+  {
+    "id": 9002,
+    "word": "anything",
+    "meaning": "（否定文で）何も～ない、（疑問文で）何か",
+    "partOfSpeech": "代名詞",
+    "category": "不定代名詞",
+    "appearanceCount": 21,
+    "example": {
+      "english": "Do you have <strong>anything</strong> to eat?",
+      "japanese": "何か食べ物はありますか。"
+    }
+  },
+  {
+    "id": 9003,
+    "word": "nothing",
+    "meaning": "何も〜ない",
+    "partOfSpeech": "代名詞",
+    "category": "不定代名詞",
+    "appearanceCount": 8,
+    "example": {
+      "english": "There is <strong>nothing</strong> in the box.",
+      "japanese": "箱の中には何もありません。"
+    }
+  },
+  {
+    "id": 9004,
+    "word": "everything",
+    "meaning": "すべてのもの、すべてのこと",
+    "partOfSpeech": "代名詞",
+    "category": "不定代名詞",
+    "appearanceCount": 12,
+    "example": {
+      "english": "<strong>Everything</strong> is ready.",
+      "japanese": "すべての準備ができています。"
+    }
+  },
+  {
+    "id": 9004,
+    "word": "everyone",
+    "meaning": "みんな、すべての人",
+    "partOfSpeech": "代名詞",
+    "category": "不定代名詞",
+    "appearanceCount": 23,
+    "example": {
+      "english": "<strong>Everyone</strong> has a book.",
+      "japanese": "みんな本を持っています。"
+    }
+  },
+  {
+    "id": 9005,
+    "word": "someone",
+    "meaning": "だれか（人）",
+    "partOfSpeech": "代名詞",
+    "category": "不定代名詞",
+    "appearanceCount": 8,
+    "example": {
+      "english": "<strong>Someone</strong> is calling you.",
+      "japanese": "だれかがあなたを呼んでいます。"
+    }
+  },
+  {
+    "id": 9006,
+    "word": "anyone",
+    "meaning": "（肯定文で）誰でも、（否定文で）誰も、（疑問文で）誰か",
+    "partOfSpeech": "代名詞",
+    "category": "不定代名詞",
+    "appearanceCount": 1,
+    "example": {
+      "english": "Can <strong>anyone</strong> help me?",
+      "japanese": "だれか手伝ってくれますか。"
+    }
+  },
+  {
+    "id": 9007,
+    "word": "everybody",
+    "meaning": "みんな、すべての人",
+    "partOfSpeech": "代名詞",
+    "category": "不定代名詞",
+    "appearanceCount": 1,
+    "example": {
+      "english": "<strong>Everybody</strong> likes music.",
+      "japanese": "みんな音楽が好きです。"
     }
   }
 ];
