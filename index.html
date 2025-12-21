@@ -131,34 +131,6 @@
                     <span>大阪府公立入試について知る</span>
                     <img src="nyushi.image.png" alt="入試" class="exam-info-btn-image">
                 </button>
-                <!-- 入試カウントダウン -->
-                <div class="exam-countdown-card" id="examCountdownCard">
-                    <div class="exam-countdown-left">
-                        <div class="exam-countdown-title">
-                            <select id="examTitleSelect" aria-label="カウントダウン対象">
-                                <option value="大阪府公立入試まで">大阪府公立入試まで</option>
-                                <option value="私立高校入試まで">私立高校入試まで</option>
-                                <option value="実力テストまで">実力テストまで</option>
-                                <option value="定期テストまで">定期テストまで</option>
-                                <option value="模擬試験まで">模擬試験まで</option>
-                            </select>
-                        </div>
-                        <div class="exam-date-input-row">
-                            <label for="examDateInput">入試日</label>
-                            <input type="date" id="examDateInput" aria-label="入試日">
-                            <button class="exam-date-save-btn" id="examDateSaveBtn">設定</button>
-                        </div>
-                    </div>
-                    <div class="exam-countdown-right">
-                        <div class="exam-calendar">
-                            <div class="calendar-mark">あと</div>
-                            <div class="calendar-tile"><span id="examDaysHundreds">0</span></div>
-                            <div class="calendar-tile"><span id="examDaysTens">0</span></div>
-                            <div class="calendar-tile"><span id="examDaysOnes">0</span></div>
-                            <div class="calendar-mark">日</div>
-                        </div>
-                    </div>
-                </div>
                 <div class="course-tabs" id="courseTabs">
                     <button class="course-tab active" data-target="courseMasterSection">英単語マスターコース</button>
                     <button class="course-tab" data-target="courseScoreSection">入試得点力アップコース</button>
@@ -192,7 +164,10 @@
                                             苦手・要復習
                                         </div>
                                     </div>
-                                    <div class="ai-word-count-large"><span id="cardAiWordCount">0</span><span class="ai-word-unit">語</span></div>
+                                    <div class="ai-word-count-large">
+                                        <span class="ai-word-number"><span id="cardAiWordCount">0</span><span class="ai-word-unit">語</span></span>
+                                        <span class="ai-analyzing" id="aiAnalyzing">— 分析中 —</span>
+                                    </div>
                                 </div>
                                 <div class="category-arrow">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -455,121 +430,93 @@
                 </div>
             </div>
 
-            <!-- 大阪府公立入試について -->
+            <!-- 大阪府公立入試について（4択クイズ） -->
             <div class="category-view hidden" id="examInfoView">
-                <div class="exam-info-container">
-                    <div class="exam-info-header">
-                        <h2 class="exam-info-title">大阪府公立高校入試 英語について</h2>
-                        <p class="exam-info-subtitle">入試問題の特色と出題傾向</p>
+                <div class="exam-quiz-container">
+                    <!-- スタート画面 -->
+                    <div class="exam-quiz-start" id="examQuizStart">
+                        <div class="exam-quiz-start-header">
+                            <h2 class="exam-quiz-start-title">大阪府公立入試クイズ</h2>
+                            <p class="exam-quiz-start-subtitle">4択クイズで入試について学ぼう</p>
+                        </div>
+                        <div class="exam-quiz-start-icon">
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.5">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                                <circle cx="12" cy="17" r="0.5" fill="#2563eb"/>
+                            </svg>
+                        </div>
+                        <p class="exam-quiz-start-desc">大阪府公立高校入試の英語について、<br>クイズ形式で楽しく学びましょう。</p>
+                        <button class="exam-quiz-start-btn" id="examQuizStartBtn">クイズを始める</button>
                     </div>
                     
-                    <div class="exam-info-overview">
-                        <h3 class="exam-info-overview-title">大阪府公立入試の英語について</h3>
-                        <div class="exam-info-overview-content">
-                            <p>大阪府公立高校入試の<mark>英語の学力検査</mark>には、以下の<mark>3種類</mark>があります。どの検査を実施するかは、各高等学校の校長が選択します。</p>
-                            <ul>
-                                <li><strong><mark>A問題（基礎的問題）</mark></strong></li>
-                                <li><strong><mark>B問題（標準的問題）</mark></strong></li>
-                                <li><strong><mark>C問題（発展的問題）</mark></strong></li>
-                            </ul>
-                            <p>各問題は、基礎的な英語力から発展的な英語力まで、段階的に評価できるよう設計されており、<mark>志望校がどの問題を採用しているかを確認し、適切な対策を行うことが重要</mark>です。</p>
+                    <!-- クイズ画面 -->
+                    <div class="exam-quiz-main hidden" id="examQuizMain">
+                        <div class="exam-quiz-progress">
+                            <div class="exam-quiz-progress-bar">
+                                <div class="exam-quiz-progress-fill" id="examQuizProgressFill"></div>
+                            </div>
+                            <div class="exam-quiz-progress-text">
+                                <span id="examQuizCurrentNum">問題1</span> / <span id="examQuizTotalNum">10</span>
+                            </div>
+                        </div>
+                        
+                        <div class="exam-quiz-question-card">
+                            <div class="exam-quiz-question" id="examQuizQuestion">
+                                問題文がここに表示されます
+                            </div>
+                        </div>
+                        
+                        <div class="exam-quiz-choices" id="examQuizChoices">
+                            <label class="exam-quiz-choice-label">
+                                <input type="radio" name="examQuizChoice" value="0" class="exam-quiz-radio">
+                                <span class="exam-quiz-choice-text">選択肢1</span>
+                            </label>
+                            <label class="exam-quiz-choice-label">
+                                <input type="radio" name="examQuizChoice" value="1" class="exam-quiz-radio">
+                                <span class="exam-quiz-choice-text">選択肢2</span>
+                            </label>
+                            <label class="exam-quiz-choice-label">
+                                <input type="radio" name="examQuizChoice" value="2" class="exam-quiz-radio">
+                                <span class="exam-quiz-choice-text">選択肢3</span>
+                            </label>
+                            <label class="exam-quiz-choice-label">
+                                <input type="radio" name="examQuizChoice" value="3" class="exam-quiz-radio">
+                                <span class="exam-quiz-choice-text">選択肢4</span>
+                            </label>
+                        </div>
+                        
+                        <div class="exam-quiz-submit-container">
+                            <button class="exam-quiz-submit-btn" id="examQuizSubmitBtn" disabled>解答する</button>
+                        </div>
+                        
+                        <div class="exam-quiz-feedback hidden" id="examQuizFeedback">
+                            <div class="exam-quiz-feedback-icon" id="examQuizFeedbackIcon"></div>
+                            <div class="exam-quiz-feedback-text" id="examQuizFeedbackText"></div>
+                            <div class="exam-quiz-explanation" id="examQuizExplanation"></div>
+                            <button class="exam-quiz-next-btn" id="examQuizNextBtn">次の問題へ</button>
                         </div>
                     </div>
                     
-                    <div class="exam-tabs">
-                        <button class="exam-tab active" data-tab="a-problem">Ａ問題</button>
-                        <button class="exam-tab" data-tab="b-problem">Ｂ問題</button>
-                        <button class="exam-tab" data-tab="c-problem">Ｃ問題</button>
-                    </div>
-                    
-                    <div class="exam-tab-content active" id="a-problem">
-                        <div class="exam-info-section">
-                            <h3 class="exam-info-section-title">Ａ問題について</h3>
-                            <div class="exam-info-content">
-                                <p>Ａ問題は、基本的な英語力を問う問題です。</p>
-                                
-                                <p><strong>Ａ問題の特徴</strong></p>
-                                <p>基本的な語彙力と文法知識を問う問題が出題されます。基本的な英単語の意味を正確に覚えることが重要です。</p>
-                                
-                                <div class="highlight-box">
-                                    <div class="highlight-box-title">Ａ問題の対策ポイント</div>
-                                    <ul>
-                                        <li>基本的な英単語の意味を正確に覚えることが重要</li>
-                                        <li>基本的な文法知識を身につけることが必要</li>
-                                        <li>頻出単語を確実に覚えることが得点アップの鍵</li>
-                                    </ul>
-                                </div>
-                            </div>
+                    <!-- 結果画面 -->
+                    <div class="exam-quiz-result hidden" id="examQuizResult">
+                        <div class="exam-quiz-result-header">
+                            <h2 class="exam-quiz-result-title">クイズ終了</h2>
                         </div>
-                    </div>
-                    
-                    <div class="exam-tab-content" id="b-problem">
-                        <div class="exam-info-section">
-                            <h3 class="exam-info-section-title">Ｂ問題について</h3>
-                            <div class="exam-info-content">
-                                <p>Ｂ問題は、より実践的な英語力を問う問題です。</p>
-                                
-                                <p><strong>Ｂ問題の特徴</strong></p>
-                                <p>整序英作文や和文英訳など、より実践的な問題が出題されます。特に整序英作文は毎年必ず出題される問題形式です。与えられた語句を並び替えて、正しい英文を作る問題です。基本的な文法知識と語順の理解が求められます。</p>
-                                
-                                <div class="exam-info-images">
-                                    <div class="exam-info-image-wrapper">
-                                        <div class="exam-info-image-label">【A面】</div>
-                                        <img src="B1.png" alt="B1問題" class="exam-info-image">
-                                    </div>
-                                    <div class="exam-info-image-wrapper">
-                                        <div class="exam-info-image-label">【B面】</div>
-                                        <img src="B2.png" alt="B2問題" class="exam-info-image">
-                                    </div>
-                                    <div class="exam-info-image-wrapper">
-                                        <div class="exam-info-image-label">【リスニング】</div>
-                                        <img src="A・BLis.png" alt="A・B問題リスニング" class="exam-info-image">
-                                    </div>
-                                </div>
-                                
-                                <div class="highlight-box">
-                                    <div class="highlight-box-title">Ｂ問題の対策ポイント</div>
-                                    <ul>
-                                        <li>整序英作文では、基本的な文法パターンを覚えることが有効</li>
-                                        <li>和文英訳では、基本的な表現を暗記することが効果的</li>
-                                        <li>基本的な語順の理解が重要</li>
-                                    </ul>
-                                </div>
+                        <div class="exam-quiz-result-score">
+                            <div class="exam-quiz-result-score-num">
+                                <span id="examQuizCorrectCount">0</span>
+                                <span class="exam-quiz-result-score-slash">/</span>
+                                <span id="examQuizTotalCount">10</span>
                             </div>
+                            <div class="exam-quiz-result-score-label">正解</div>
                         </div>
-                    </div>
-                    
-                    <div class="exam-tab-content" id="c-problem">
-                        <div class="exam-info-section">
-                            <h3 class="exam-info-section-title">Ｃ問題について</h3>
-                            <div class="exam-info-content">
-                                <p>Ｃ問題は、長文読解を中心とした応用的な問題です。</p>
-                                
-                                <p><strong>Ｃ問題の特徴</strong></p>
-                                <p>長文読解問題が中心となります。大問2から大問5まで、計4つの長文読解問題が出題されます。内容理解、語句の意味、文脈に合う表現の選択など、総合的な読解力が試されます。特に長文を素早く正確に読む力が重要です。</p>
-                                
-                                <div class="highlight-box">
-                                    <div class="highlight-box-title">大問構成（Ｃ問題）</div>
-                                    <ul>
-                                        <li><strong>大問2：</strong>長文読解（A）</li>
-                                        <li><strong>大問3：</strong>長文読解（B）</li>
-                                        <li><strong>大問4：</strong>長文読解（C）</li>
-                                        <li><strong>大問5：</strong>長文読解（D）</li>
-                                    </ul>
-                                </div>
-                                
-                                <p><strong>Ｃ問題の対策</strong></p>
-                                <p>長文を素早く読むためには、単語を瞬時に理解できることが重要です。タイムアタック形式の練習で、単語の即答力を鍛えることが効果的です。また、頻出単語が毎年繰り返し出題されるため、「大阪府必須400語」「大阪府重要300語」などの頻出単語を確実に覚えることが得点アップの鍵となります。</p>
-                                
-                                <div class="highlight-box">
-                                    <div class="highlight-box-title">Ｃ問題の対策ポイント</div>
-                                    <ul>
-                                        <li>長文を素早く読むためには、単語の即答力が必要</li>
-                                        <li>頻出単語を確実に覚えることが重要</li>
-                                        <li>タイムアタック形式の練習で速読力を鍛える</li>
-                                    </ul>
-                                </div>
-                            </div>
+                        <div class="exam-quiz-result-message" id="examQuizResultMessage">
+                            よく頑張りました
+                        </div>
+                        <div class="exam-quiz-result-buttons">
+                            <button class="exam-quiz-retry-btn" id="examQuizRetryBtn">もう一度挑戦</button>
+                            <button class="exam-quiz-back-btn" id="examQuizBackBtn">戻る</button>
                         </div>
                     </div>
                 </div>
@@ -1177,7 +1124,17 @@
                                     <span class="mode-label">インプット</span>
                                     <span class="mode-description" style="margin-bottom: 0;">まずは見て覚える</span>
                                 </div>
-                                <svg class="mode-icon-large" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" style="margin-top: 4px;"><rect x="2" y="2" width="20" height="4" rx="0.5"/><rect x="2" y="8" width="20" height="4" rx="0.5"/><rect x="2" y="14" width="20" height="4" rx="0.5"/><rect x="2" y="20" width="20" height="2" rx="0.5"/></svg>
+                                <div style="display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                                    <svg width="16" height="36" viewBox="0 0 16 36" fill="none" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <!-- 上向き矢印 -->
+                                        <polyline points="4,7 8,2 12,7"/>
+                                        <line x1="8" y1="2" x2="8" y2="16"/>
+                                        <!-- 下向き矢印 -->
+                                        <line x1="8" y1="20" x2="8" y2="34"/>
+                                        <polyline points="4,29 8,34 12,29"/>
+                                    </svg>
+                                    <svg class="mode-icon-large" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><rect x="2" y="2" width="20" height="4" rx="0.5"/><rect x="2" y="8" width="20" height="4" rx="0.5"/><rect x="2" y="14" width="20" height="4" rx="0.5"/><rect x="2" y="20" width="20" height="2" rx="0.5"/></svg>
+                                </div>
                             </div>
                         </label>
                         <label class="mode-radio">
@@ -1267,5 +1224,6 @@
     <script src="app.js"></script>
 </body>
 </html>
+
 
 

@@ -262,8 +262,11 @@ function recordWordResult(word, isCorrect, { responseMs = null, isTimeout = fals
         wrongCount: Number(existing.wrongCount) || 0,
         correctCount: Number(existing.correctCount) || 0,
         slowCount: Number(existing.slowCount) || 0,
+        consecutiveWrongCount: Number(existing.consecutiveWrongCount) || 0,
+        maxConsecutiveWrong: Number(existing.maxConsecutiveWrong) || 0,
         firstWrongAt: typeof existing.firstWrongAt === 'number' ? existing.firstWrongAt : null,
         firstCorrectAfterWrongAt: typeof existing.firstCorrectAfterWrongAt === 'number' ? existing.firstCorrectAfterWrongAt : null,
+        lastCorrectAt: typeof existing.lastCorrectAt === 'number' ? existing.lastCorrectAt : null,
         lastReviewedAt: typeof existing.lastReviewedAt === 'number' ? existing.lastReviewedAt : null,
         lastResponseMs: typeof existing.lastResponseMs === 'number' ? existing.lastResponseMs : null,
         maxResponseMs: typeof existing.maxResponseMs === 'number' ? existing.maxResponseMs : 0
@@ -274,11 +277,15 @@ function recordWordResult(word, isCorrect, { responseMs = null, isTimeout = fals
     
     if (!isCorrect) {
         normalized.wrongCount += 1;
+        normalized.consecutiveWrongCount += 1;
+        normalized.maxConsecutiveWrong = Math.max(normalized.maxConsecutiveWrong, normalized.consecutiveWrongCount);
         if (!normalized.firstWrongAt) {
             normalized.firstWrongAt = now;
         }
     } else {
         normalized.correctCount += 1;
+        normalized.consecutiveWrongCount = 0; // 正解したらリセット
+        normalized.lastCorrectAt = now;
         if (normalized.firstWrongAt && !normalized.firstCorrectAfterWrongAt) {
             normalized.firstCorrectAfterWrongAt = now;
         }
@@ -303,9 +310,13 @@ function recordWordResult(word, isCorrect, { responseMs = null, isTimeout = fals
 
 // AI分析対象の単語リストを取得
 function getAiAnalysisWords() {
+    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000; // 1週間（ミリ秒）
+    const now = Date.now();
+    
     const summary = {
-        wrong: 0,
-        unreviewedAfterCorrect: 0,
+        needsReview: 0,
+        consecutiveWrong: 0,
+        manyWrong: 0,
         slow: 0
     };
     
@@ -324,32 +335,44 @@ function getAiAnalysisWords() {
         
         const stat = {
             wrongCount: Number(statRaw.wrongCount) || 0,
-            slowCount: Number(statRaw.slowCount) || 0,
+            consecutiveWrongCount: Number(statRaw.consecutiveWrongCount) || 0,
+            maxConsecutiveWrong: Number(statRaw.maxConsecutiveWrong) || 0,
+            lastCorrectAt: typeof statRaw.lastCorrectAt === 'number' ? statRaw.lastCorrectAt : null,
             firstWrongAt: typeof statRaw.firstWrongAt === 'number' ? statRaw.firstWrongAt : null,
-            firstCorrectAfterWrongAt: typeof statRaw.firstCorrectAfterWrongAt === 'number' ? statRaw.firstCorrectAfterWrongAt : null,
-            lastReviewedAt: typeof statRaw.lastReviewedAt === 'number' ? statRaw.lastReviewedAt : null,
             maxResponseMs: typeof statRaw.maxResponseMs === 'number' ? statRaw.maxResponseMs : 0,
-            lastResponseMs: typeof statRaw.lastResponseMs === 'number' ? statRaw.lastResponseMs : null,
             totalAttempts: Number(statRaw.totalAttempts) || 0
         };
         
         const reasons = [];
         
-        if (stat.wrongCount > 0) {
-            summary.wrong += 1;
+        // ①間違えた単語で、正解してから1週間以上が経過した単語
+        if (stat.wrongCount > 0 && stat.lastCorrectAt && (now - stat.lastCorrectAt) >= ONE_WEEK_MS) {
+            summary.needsReview += 1;
+            const days = Math.floor((now - stat.lastCorrectAt) / (24 * 60 * 60 * 1000));
+            reasons.push(`${days}日前に正解`);
+        }
+        
+        // ②2回連続間違えた単語（現在または過去に）
+        if (stat.consecutiveWrongCount >= 2 || stat.maxConsecutiveWrong >= 2) {
+            summary.consecutiveWrong += 1;
+            if (stat.consecutiveWrongCount >= 2) {
+                reasons.push(`${stat.consecutiveWrongCount}回連続間違え中`);
+            } else {
+                reasons.push('2回連続間違えあり');
+            }
+        }
+        
+        // ③3回以上間違えた単語
+        if (stat.wrongCount >= 3) {
+            summary.manyWrong += 1;
             reasons.push(`間違え ${stat.wrongCount}回`);
         }
         
-        if (stat.firstWrongAt && stat.firstCorrectAfterWrongAt && stat.lastReviewedAt === stat.firstCorrectAfterWrongAt) {
-            summary.unreviewedAfterCorrect += 1;
-            reasons.push('初回ミス後に1回だけ正解');
-        }
-        
-        const slowMs = stat.maxResponseMs || stat.lastResponseMs || 0;
-        if (slowMs >= SLOW_RESPONSE_THRESHOLD_MS || stat.slowCount > 0) {
+        // ④解答時間に8秒以上かかった単語
+        if (stat.maxResponseMs >= SLOW_RESPONSE_THRESHOLD_MS) {
             summary.slow += 1;
-            const seconds = slowMs ? (slowMs / 1000).toFixed(1) : '';
-            reasons.push(seconds ? `解答 ${seconds}秒` : '解答8秒以上');
+            const seconds = (stat.maxResponseMs / 1000).toFixed(1);
+            reasons.push(`解答 ${seconds}秒`);
         }
         
         if (reasons.length > 0) {
@@ -363,6 +386,9 @@ function getAiAnalysisWords() {
         .sort((a, b) => {
             const statA = wordStats[a.id] || {};
             const statB = wordStats[b.id] || {};
+            // 優先順位: 連続間違え > 間違え回数 > 解答時間
+            const consecDiff = (statB.consecutiveWrongCount || 0) - (statA.consecutiveWrongCount || 0);
+            if (consecDiff !== 0) return consecDiff;
             const wrongDiff = (statB.wrongCount || 0) - (statA.wrongCount || 0);
             if (wrongDiff !== 0) return wrongDiff;
             const slowDiff = (statB.maxResponseMs || 0) - (statA.maxResponseMs || 0);
@@ -382,23 +408,8 @@ function openAiAnalysisMenu() {
         return;
     }
     
-    const message = `対象: ${words.length}語\nこれらの単語だけで学習を開始しますか？`;
-    
-    showModal('AI分析 苦手単語', message, [
-        { text: '開始する', type: 'confirm', onClick: () => startAiAnalysisLearning(words) },
-        { text: 'キャンセル', type: 'cancel' }
-    ]);
-}
-
-// AI分析対象の単語で学習を開始
-function startAiAnalysisLearning(words) {
-    if (!words || words.length === 0) {
-        showAlert('通知', '学習対象の単語がありません。');
-        return;
-    }
-    const mode = selectedLearningMode || 'card';
-    currentLearningMode = mode;
-    initLearning('AI分析 苦手単語', words, 0, words.length, 0);
+    // 学習フィルター画面を表示
+    showWordFilterView('AI分析 苦手単語', words, 'AI分析 苦手単語');
 }
 
 // 大阪府のすべての英単語で学習を開始
@@ -891,8 +902,20 @@ function updateCategoryStars() {
         
         // カテゴリーカードのAI分析カードに表示
         const cardAiWordCount = document.getElementById('cardAiWordCount');
+        const aiWordNumber = document.querySelector('.ai-word-number');
+        const aiAnalyzing = document.getElementById('aiAnalyzing');
         if (cardAiWordCount) {
             cardAiWordCount.textContent = aiWordCount;
+        }
+        // 0語のときは「分析中」を表示
+        if (aiWordNumber && aiAnalyzing) {
+            if (aiWordCount === 0) {
+                aiWordNumber.style.display = 'none';
+                aiAnalyzing.style.display = 'flex';
+            } else {
+                aiWordNumber.style.display = 'inline';
+                aiAnalyzing.style.display = 'none';
+            }
         }
     } catch (error) {
         console.error('AI分析単語数の更新エラー:', error);
@@ -2975,28 +2998,8 @@ function setupEventListeners() {
         });
     }
     
-    // 入試情報画面のタブ切り替え機能
-    if (examInfoView) {
-        const examTabs = examInfoView.querySelectorAll('.exam-tab');
-        const examTabContents = examInfoView.querySelectorAll('.exam-tab-content');
-        
-        examTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const targetTab = tab.getAttribute('data-tab');
-                
-                // すべてのタブとコンテンツからactiveクラスを削除
-                examTabs.forEach(t => t.classList.remove('active'));
-                examTabContents.forEach(content => content.classList.remove('active'));
-                
-                // クリックされたタブと対応するコンテンツにactiveクラスを追加
-                tab.classList.add('active');
-                const targetContent = examInfoView.querySelector(`#${targetTab}`);
-                if (targetContent) {
-                    targetContent.classList.add('active');
-                }
-            });
-        });
-    }
+    // 入試情報クイズ機能
+    initExamQuiz();
     
     const courseTabs = document.querySelectorAll('.course-tab');
     const courseSections = document.querySelectorAll('.course-section');
@@ -6521,6 +6524,10 @@ function clearLearningHistory() {
             }
             keysToRemove.forEach(key => localStorage.removeItem(key));
             
+            // AI分析データ（苦手・要復習）もリセット
+            wordStats = {};
+            localStorage.removeItem(WORD_STATS_KEY);
+            
             // 画面を更新
             if (elements.categorySelection && !elements.categorySelection.classList.contains('hidden')) {
                 loadData();
@@ -9092,6 +9099,292 @@ function saveGrammarExerciseProgress(chapterNumber, exerciseIndex, allCorrect, e
             updateGrammarChapterCheckboxes();
         }
     }
+}
+
+// 大阪府公立入試クイズ機能
+const EXAM_QUIZ_QUESTIONS = [
+    {
+        question: "大阪府公立高校入試の英語には、何種類の問題がありますか？",
+        choices: ["1種類","2種類", "3種類", "4種類"],
+        correct: 1,
+        explanation: "大阪府公立高校入試の英語には、A問題（基礎的問題）、B問題（標準的問題）、C問題（発展的問題）の3種類があります。"
+    },
+    {
+        question: "B問題（標準的問題）の筆記試験の出題傾向について、正しいものはどれですか？",
+        choices: ["文法と長文をバランスよく問う", "長文の出題がメインであり、文法問題だけの独立した大問はない。"],
+        correct: 1,
+        explanation: "どの問題を実施するかは、各高等学校の校長が選択します。志望校がどの問題を採用しているか確認しましょう。"
+    },
+    {
+        question: "A問題の特徴として正しいものはどれですか？",
+        choices: ["長文読解が中心", "基礎的な英語力を問う", "英作文が多い", "リスニングのみ"],
+        correct: 1,
+        explanation: "A問題は基礎的問題で、基本的な語彙力と文法知識を問う問題が出題されます。"
+    },
+    {
+        question: "B問題で毎年必ず出題される問題形式は何ですか？",
+        choices: ["長文読解", "整序英作文", "リスニング", "自由英作文"],
+        correct: 1,
+        explanation: "B問題では整序英作文が毎年必ず出題されます。与えられた語句を並び替えて正しい英文を作る問題です。"
+    },
+    {
+        question: "C問題の長文読解問題は何問出題されますか？",
+        choices: ["2問", "3問", "4問", "5問"],
+        correct: 2,
+        explanation: "C問題では大問2から大問5まで、計4つの長文読解問題が出題されます。"
+    },
+    {
+        question: "長文を素早く読むために最も重要なことは何ですか？",
+        choices: ["文法力", "単語の即答力", "発音力", "筆記力"],
+        correct: 1,
+        explanation: "長文を素早く読むためには、単語を瞬時に理解できる即答力が重要です。タイムアタック形式の練習が効果的です。"
+    },
+    {
+        question: "C問題で求められる力として最も適切なものはどれですか？",
+        choices: ["基礎的な文法力", "総合的な読解力", "会話力", "暗記力"],
+        correct: 1,
+        explanation: "C問題は長文読解が中心で、内容理解、語句の意味、文脈に合う表現の選択など、総合的な読解力が試されます。"
+    },
+    {
+        question: "入試対策として効果的な学習法はどれですか？",
+        choices: ["テスト前だけ勉強する", "頻出単語を確実に覚える", "難しい単語だけ覚える", "文法だけ勉強する"],
+        correct: 1,
+        explanation: "頻出単語が毎年繰り返し出題されるため、頻出単語を確実に覚えることが得点アップの鍵となります。"
+    },
+    {
+        question: "B問題の対策として効果的なものはどれですか？",
+        choices: ["長文だけ読む", "文法パターンを覚える", "リスニングだけ練習", "単語帳を眺める"],
+        correct: 1,
+        explanation: "B問題の整序英作文では、基本的な文法パターンを覚えることが有効です。語順の理解も重要です。"
+    },
+    {
+        question: "志望校を決める際に確認すべきことは何ですか？",
+        choices: ["制服のデザイン", "採用している問題の種類", "部活動の種類", "通学時間"],
+        correct: 1,
+        explanation: "志望校がA・B・C問題のどれを採用しているかを確認し、適切な対策を行うことが重要です。"
+    }
+];
+
+let examQuizState = {
+    currentIndex: 0,
+    correctCount: 0,
+    shuffledQuestions: [],
+    answered: false,
+    selectedAnswer: null
+};
+
+function initExamQuiz() {
+    const startBtn = document.getElementById('examQuizStartBtn');
+    const nextBtn = document.getElementById('examQuizNextBtn');
+    const retryBtn = document.getElementById('examQuizRetryBtn');
+    const backBtn = document.getElementById('examQuizBackBtn');
+    const submitBtn = document.getElementById('examQuizSubmitBtn');
+    const radioButtons = document.querySelectorAll('input[name="examQuizChoice"]');
+    
+    if (startBtn) {
+        startBtn.addEventListener('click', startExamQuiz);
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', showNextExamQuestion);
+    }
+    
+    if (retryBtn) {
+        retryBtn.addEventListener('click', startExamQuiz);
+    }
+    
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            resetExamQuizView();
+            showCategorySelection();
+        });
+    }
+    
+    if (submitBtn) {
+        submitBtn.addEventListener('click', handleExamQuizSubmit);
+    }
+    
+    if (radioButtons.length > 0) {
+        radioButtons.forEach((radio) => {
+            radio.addEventListener('change', handleExamQuizRadioChange);
+        });
+    }
+}
+
+function handleExamQuizRadioChange() {
+    const submitBtn = document.getElementById('examQuizSubmitBtn');
+    const selectedRadio = document.querySelector('input[name="examQuizChoice"]:checked');
+    if (selectedRadio) {
+        examQuizState.selectedAnswer = parseInt(selectedRadio.value);
+        if (submitBtn) {
+            submitBtn.disabled = false;
+        }
+    }
+}
+
+function handleExamQuizSubmit() {
+    if (examQuizState.answered || examQuizState.selectedAnswer === null) return;
+    selectExamQuizAnswer(examQuizState.selectedAnswer);
+}
+
+function startExamQuiz() {
+    examQuizState.currentIndex = 0;
+    examQuizState.correctCount = 0;
+    examQuizState.answered = false;
+    examQuizState.shuffledQuestions = [...EXAM_QUIZ_QUESTIONS];
+    
+    document.getElementById('examQuizStart').classList.add('hidden');
+    document.getElementById('examQuizResult').classList.add('hidden');
+    document.getElementById('examQuizMain').classList.remove('hidden');
+    document.getElementById('examQuizFeedback').classList.add('hidden');
+    
+    document.getElementById('examQuizTotalNum').textContent = examQuizState.shuffledQuestions.length;
+    document.getElementById('examQuizTotalCount').textContent = examQuizState.shuffledQuestions.length;
+    
+    showExamQuizQuestion();
+}
+
+function showExamQuizQuestion() {
+    const question = examQuizState.shuffledQuestions[examQuizState.currentIndex];
+    examQuizState.answered = false;
+    examQuizState.selectedAnswer = null;
+    
+    document.getElementById('examQuizCurrentNum').textContent = `問題${examQuizState.currentIndex + 1}`;
+    document.getElementById('examQuizQuestion').textContent = question.question;
+    
+    // プログレスバー更新
+    const progress = ((examQuizState.currentIndex) / examQuizState.shuffledQuestions.length) * 100;
+    document.getElementById('examQuizProgressFill').style.width = progress + '%';
+    
+    // 選択肢を更新
+    const choiceLabels = document.querySelectorAll('.exam-quiz-choice-label');
+    const choiceTexts = document.querySelectorAll('.exam-quiz-choice-text');
+    const radioButtons = document.querySelectorAll('input[name="examQuizChoice"]');
+    
+    choiceLabels.forEach((label, index) => {
+        label.classList.remove('correct', 'wrong', 'disabled');
+    });
+    
+    choiceTexts.forEach((text, index) => {
+        text.textContent = question.choices[index];
+    });
+    
+    radioButtons.forEach((radio, index) => {
+        radio.checked = false;
+        radio.disabled = false;
+    });
+    
+    // 解答ボタンを無効化
+    const submitBtn = document.getElementById('examQuizSubmitBtn');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+    }
+    
+    // フィードバックを非表示
+    document.getElementById('examQuizFeedback').classList.add('hidden');
+    document.querySelector('.exam-quiz-submit-container').classList.remove('hidden');
+}
+
+function selectExamQuizAnswer(selectedIndex) {
+    if (examQuizState.answered) return;
+    examQuizState.answered = true;
+    
+    const question = examQuizState.shuffledQuestions[examQuizState.currentIndex];
+    const isCorrect = selectedIndex === question.correct;
+    
+    if (isCorrect) {
+        examQuizState.correctCount++;
+    }
+    
+    // 選択肢のスタイルを更新
+    const choiceLabels = document.querySelectorAll('.exam-quiz-choice-label');
+    const radioButtons = document.querySelectorAll('input[name="examQuizChoice"]');
+    
+    choiceLabels.forEach((label, index) => {
+        label.classList.add('disabled');
+        if (index === question.correct) {
+            label.classList.add('correct');
+        } else if (index === selectedIndex && !isCorrect) {
+            label.classList.add('wrong');
+        }
+    });
+    
+    radioButtons.forEach((radio) => {
+        radio.disabled = true;
+    });
+    
+    // 解答ボタンを非表示
+    document.querySelector('.exam-quiz-submit-container').classList.add('hidden');
+    
+    // フィードバックを表示
+    const feedback = document.getElementById('examQuizFeedback');
+    const feedbackIcon = document.getElementById('examQuizFeedbackIcon');
+    const feedbackText = document.getElementById('examQuizFeedbackText');
+    const explanation = document.getElementById('examQuizExplanation');
+    const nextBtn = document.getElementById('examQuizNextBtn');
+    
+    if (isCorrect) {
+        feedbackIcon.innerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 3 4-6"/></svg>';
+        feedbackText.textContent = '正解！';
+        feedbackText.className = 'exam-quiz-feedback-text correct';
+    } else {
+        feedbackIcon.innerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>';
+        feedbackText.textContent = '不正解...';
+        feedbackText.className = 'exam-quiz-feedback-text wrong';
+    }
+    
+    explanation.textContent = question.explanation;
+    
+    // 最後の問題かどうか
+    if (examQuizState.currentIndex >= examQuizState.shuffledQuestions.length - 1) {
+        nextBtn.textContent = '結果を見る';
+    } else {
+        nextBtn.textContent = '次の問題へ';
+    }
+    
+    feedback.classList.remove('hidden');
+}
+
+function showNextExamQuestion() {
+    if (examQuizState.currentIndex >= examQuizState.shuffledQuestions.length - 1) {
+        showExamQuizResult();
+    } else {
+        examQuizState.currentIndex++;
+        showExamQuizQuestion();
+    }
+}
+
+function showExamQuizResult() {
+    document.getElementById('examQuizMain').classList.add('hidden');
+    document.getElementById('examQuizResult').classList.remove('hidden');
+    
+    const correctCount = examQuizState.correctCount;
+    const total = examQuizState.shuffledQuestions.length;
+    const percentage = Math.round((correctCount / total) * 100);
+    
+    document.getElementById('examQuizCorrectCount').textContent = correctCount;
+    document.getElementById('examQuizTotalCount').textContent = total;
+    
+    // プログレスバーを100%に
+    document.getElementById('examQuizProgressFill').style.width = '100%';
+    
+    // メッセージを設定
+    const messageEl = document.getElementById('examQuizResultMessage');
+    if (percentage === 100) {
+        messageEl.textContent = '完璧です！入試について詳しくなりましたね！';
+    } else if (percentage >= 80) {
+        messageEl.textContent = '素晴らしい！よく理解できています！';
+    } else if (percentage >= 60) {
+        messageEl.textContent = 'いい調子です！もう一度挑戦してみましょう！';
+    } else {
+        messageEl.textContent = 'もう一度挑戦して、入試について学びましょう！';
+    }
+}
+
+function resetExamQuizView() {
+    document.getElementById('examQuizStart').classList.remove('hidden');
+    document.getElementById('examQuizMain').classList.add('hidden');
+    document.getElementById('examQuizResult').classList.add('hidden');
 }
 
 // アプリケーションの起動

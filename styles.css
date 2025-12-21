@@ -927,6 +927,10 @@ body {
     color: #dc2626;
 }
 
+.ai-word-number {
+    display: inline;
+}
+
 .ai-word-count-large .ai-word-unit {
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-size: 18px;
@@ -938,6 +942,15 @@ body {
     font-size: 48px;
     font-weight: 700;
     color: #dc2626;
+}
+
+.ai-word-count-large .ai-analyzing {
+    display: none;
+    font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif !important;
+    font-size: 20px !important;
+    font-weight: 400 !important;
+    color: #94a3b8 !important;
+    letter-spacing: 2px;
 }
 
 /* 入試得点力アップコースのカードは英単語マスターコースと同じデザイン */
@@ -1095,6 +1108,10 @@ body {
     font-weight: 600;
     color: #374151;
     text-align: right;
+}
+
+#allWordsCardBtn {
+    padding-top: 5px;
 }
 
 #allWordsCardBtn .category-progress {
@@ -5627,6 +5644,418 @@ body.learning-mode .word-card-container {
     display: block;
 }
 
+/* 大阪府公立入試クイズ */
+.exam-quiz-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 32px;
+    min-height: calc(100vh - 120px);
+}
+
+/* スタート画面 */
+.exam-quiz-start,
+.exam-quiz-result {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 32px 24px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+}
+
+.exam-quiz-start-title,
+.exam-quiz-result-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: 0.2px;
+}
+
+.exam-quiz-start-subtitle {
+    font-size: 15px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.exam-quiz-start-icon {
+    margin: 8px 0 12px;
+    background: linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%);
+    border-radius: 999px;
+    padding: 14px;
+}
+
+.exam-quiz-start-desc {
+    font-size: 15px;
+    color: #475569;
+    line-height: 1.7;
+    margin: 4px 0 12px;
+}
+
+.exam-quiz-start-btn,
+.exam-quiz-retry-btn {
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.05s, box-shadow 0.05s;
+    box-shadow: 0 4px 0 #1d4ed8;
+    position: relative;
+    top: 0;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+}
+
+.exam-quiz-start-btn:hover,
+.exam-quiz-retry-btn:hover {
+    background: #1d4ed8;
+}
+
+.exam-quiz-start-btn:active,
+.exam-quiz-retry-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #1d4ed8;
+}
+
+/* クイズメイン画面 */
+.exam-quiz-main {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.exam-quiz-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.exam-quiz-progress-bar {
+    flex: 1;
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.exam-quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+    width: 0;
+}
+
+.exam-quiz-progress-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 6px 12px;
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+}
+
+.exam-quiz-question-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 22px 20px;
+    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+}
+
+.exam-quiz-question {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.exam-quiz-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.exam-quiz-choice-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #0f172a;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: left;
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
+}
+
+.exam-quiz-choice-label:hover:not(.disabled) {
+    border-color: #2563eb;
+    background: #eef2ff;
+    transform: translateY(-1px);
+}
+
+.exam-quiz-choice-label.correct {
+    background: #ecfdf3;
+    border-color: #16a34a;
+    color: #15803d;
+    box-shadow: 0 8px 18px rgba(22, 163, 74, 0.12);
+}
+
+.exam-quiz-choice-label.wrong {
+    background: #fef2f2;
+    border-color: #dc2626;
+    color: #b91c1c;
+    box-shadow: 0 8px 18px rgba(220, 38, 38, 0.12);
+}
+
+.exam-quiz-choice-label.disabled {
+    cursor: default;
+    opacity: 0.92;
+}
+
+.exam-quiz-radio {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #2563eb;
+    flex-shrink: 0;
+}
+
+.exam-quiz-radio:disabled {
+    cursor: default;
+}
+
+.exam-quiz-choice-text {
+    flex: 1;
+}
+
+.exam-quiz-submit-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.exam-quiz-submit-btn {
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 48px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.05s, box-shadow 0.05s;
+    box-shadow: 0 4px 0 #1d4ed8;
+    position: relative;
+    top: 0;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+}
+
+.exam-quiz-submit-btn:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+.exam-quiz-submit-btn:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #1d4ed8;
+}
+
+.exam-quiz-submit-btn:disabled {
+    background: #cbd5e1;
+    color: #64748b;
+    cursor: not-allowed;
+    box-shadow: 0 2px 0 #94a3b8;
+    transform: none;
+}
+
+/* フィードバック */
+.exam-quiz-feedback {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 18px 16px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.07);
+}
+
+.exam-quiz-feedback-text {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+}
+
+.exam-quiz-feedback-text.correct {
+    color: #16a34a;
+}
+
+.exam-quiz-feedback-text.wrong {
+    color: #dc2626;
+}
+
+.exam-quiz-explanation {
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.7;
+    text-align: left;
+    background: #f8fafc;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    width: 100%;
+}
+
+.exam-quiz-next-btn {
+    background: #0ea5e9;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.05s, box-shadow 0.05s;
+    margin-top: 4px;
+    box-shadow: 0 4px 0 #0284c7;
+    position: relative;
+    top: 0;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+}
+
+.exam-quiz-next-btn:hover {
+    background: #0284c7;
+}
+
+.exam-quiz-next-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #0284c7;
+}
+
+/* 結果画面 */
+.exam-quiz-result {
+    gap: 10px;
+}
+
+.exam-quiz-result-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.exam-quiz-result-score-num {
+    font-family: "Times New Roman", "Times", "Georgia", serif;
+    font-size: 58px;
+    font-weight: 700;
+    color: #2563eb;
+    letter-spacing: 1px;
+}
+
+.exam-quiz-result-score-slash {
+    color: #94a3b8;
+    margin: 0 4px;
+}
+
+.exam-quiz-result-score-label {
+    font-size: 15px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.exam-quiz-result-message {
+    font-size: 15px;
+    color: #475569;
+    margin: 8px 0 16px;
+    line-height: 1.6;
+}
+
+.exam-quiz-result-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.exam-quiz-back-btn {
+    background: #f8fafc;
+    color: #0f172a;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.05s, box-shadow 0.05s;
+    box-shadow: 0 4px 0 #cbd5e1;
+    position: relative;
+    top: 0;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+}
+
+.exam-quiz-back-btn:hover {
+    background: #e2e8f0;
+}
+
+.exam-quiz-back-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #cbd5e1;
+}
+
+@media (max-width: 540px) {
+    .exam-quiz-container {
+        padding: 16px 10px 24px;
+    }
+    .exam-quiz-start,
+    .exam-quiz-result {
+        padding: 24px 16px;
+    }
+    .exam-quiz-start-title,
+    .exam-quiz-result-title {
+        font-size: 22px;
+    }
+    .exam-quiz-question {
+        font-size: 16px;
+    }
+    .exam-quiz-choice-label {
+        padding: 13px 14px;
+        font-size: 14px;
+    }
+    .exam-quiz-result-score-num {
+        font-size: 46px;
+    }
+}
+
 /* 入試情報表のスタイル */
 .exam-info-table-container {
     margin: 24px 0;
@@ -7359,10 +7788,10 @@ body.learning-mode .word-card-container {
 
 .question-count-control {
     margin-top: 14px;
-    padding: 10px 14px;
-    background: #f9fafb;
-    border: none;
-    border-radius: 8px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -7372,7 +7801,7 @@ body.learning-mode .word-card-container {
 .question-count-label {
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: #1e40af;
 }
 
 .question-count-buttons {
