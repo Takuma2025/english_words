@@ -937,13 +937,14 @@ body {
     display: inline-block;
     background-color: #DC2626; /* 赤色背景 */
     color: #ffffff; /* 白字 */
-    padding: 2px 6px;
+    padding: 3px 8px;
     border-radius: 4px;
-    font-weight: 700; /* 太字 */
-    font-size: 20px; /* タイトルと同じ大きさ */
-    font-family: inherit; /* タイトルと同じフォント */
-    letter-spacing: -0.5px; /* ギュッと詰める */
-    margin-right: 2px;
+    font-weight: 600;
+    font-size: 16px;
+    font-family: inherit;
+    letter-spacing: 0;
+    margin-right: 6px;
+    vertical-align: middle;
 }
 
 .intro-badge {

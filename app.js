@@ -3065,21 +3065,11 @@ function setupEventListeners() {
             e.stopPropagation();
             handleQuestionCountChange(false);
         });
-        questionCountMinus.addEventListener('pointerdown', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleQuestionCountChange(false);
-        });
     }
     
     // プラスボタン
     if (questionCountPlus) {
         questionCountPlus.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleQuestionCountChange(true);
-        });
-        questionCountPlus.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             e.stopPropagation();
             handleQuestionCountChange(true);
@@ -5309,7 +5299,7 @@ function markAnswer(isCorrect, isTimeout = false) {
     // スワイプと同じ方向にスライドアウト（覚えた=左、覚えていない=右）
     if (!isAlreadyHidden) {
         const slideDirection = isCorrect ? -1 : 1; // 左=-1, 右=1
-        elements.wordCard.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+        elements.wordCard.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
         elements.wordCard.style.transform = `translateX(${slideDirection * 120}%) scale(0.8)`;
         elements.wordCard.style.opacity = '0.2';
     }
@@ -5401,7 +5391,7 @@ function markAnswer(isCorrect, isTimeout = false) {
                 }, 450);
             });
         }
-    }, isAlreadyHidden ? 0 : 220);
+    }, isAlreadyHidden ? 0 : 400);
 }
 
 // 完了画面を表示
