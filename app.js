@@ -1963,7 +1963,7 @@ function showCourseSelection(category, categoryWords) {
             section.className = 'course-subsection';
 
             // グループ別にクラスを付与（スタイル用）
-            if (groupTitle === '小学生で習った単語') {
+            if (groupTitle === '日常生活でよく触れる生活語彙') {
                 section.classList.add('course-subsection-elementary');
             } else if (groupTitle === '英文でよく登場する機能語') {
                 section.classList.add('course-subsection-function');
@@ -1982,11 +1982,11 @@ function showCourseSelection(category, categoryWords) {
             const body = document.createElement('div');
             body.className = 'course-subsection-body hidden';
 
-            // 「小学生で習った単語」の場合のみ、説明テキスト（注釈）を先頭に表示
-            if (groupTitle === '小学生で習った単語') {
+            // 「日常生活でよく触れる生活語彙」の場合のみ、説明テキスト（注釈）を先頭に表示
+            if (groupTitle === '日常生活でよく触れる生活語彙') {
                 const note = document.createElement('p');
                 note.className = 'course-group-note';
-                note.textContent = '小学生で習った単語のうち、基本的な名詞のみをまとめました。カテゴリー別に覚えましょう。';
+                note.textContent = '日常生活でよく触れる生活語彙のうち、基本的な名詞のみをまとめました。カテゴリー別に覚えましょう。';
                 body.appendChild(note);
             }
 
@@ -2053,8 +2053,8 @@ function showCourseSelection(category, categoryWords) {
 
                 const numberMark = circledNumbers[index] || '';
                 const badgeLabel =
-                    groupTitle === '小学生で習った単語' && numberMark
-                        ? '小学生'
+                    groupTitle === '日常生活でよく触れる生活語彙' && numberMark
+                        ? '生活語彙'
                         : groupTitle === '機能語' && numberMark
                             ? '機能語'
                             : '';
@@ -2092,7 +2092,7 @@ function showCourseSelection(category, categoryWords) {
         console.log('About to add course groups...');
         console.log('elementaryCourses:', elementaryCourses);
         console.log('functionWordCourses:', functionWordCourses);
-        addCourseGroup('小学生で習った単語', elementaryCourses);
+        addCourseGroup('日常生活でよく触れる生活語彙', elementaryCourses);
         addCourseGroup('英文でよく登場する機能語', functionWordCourses);
         console.log('Course groups added to courseList');
     } else {
@@ -4276,6 +4276,9 @@ function setupVirtualKeyboard() {
                         // カードをフリップアウト
                         const inputModeContent = document.querySelector('.input-mode-content');
                         if (inputModeContent) {
+                            // カードめくり音を再生
+                            SoundEffects.playFlip();
+                            
                             // 現在のカードを回転させて裏返す
                             inputModeContent.classList.add('flip-out');
                             
@@ -7374,18 +7377,20 @@ function insertSentenceLetter(letter) {
     // 選択中の空所を取得
     let currentBlank = sentenceBlanks.find(b => b.index === currentSelectedBlankIndex);
     
-    // 選択中の空所がない、または入力が完了している場合は次の空所を探す
-    if (!currentBlank || currentBlank.userInput.length >= currentBlank.word.length) {
+    // 選択中の空所がない場合は、最初の未入力の空所を選択（最初の入力時のみ）
+    if (!currentBlank) {
         currentBlank = sentenceBlanks.find(b => !b.userInput || b.userInput.length < b.word.length);
         if (currentBlank) {
             selectSentenceBlank(currentBlank.index);
         } else {
-            // すべての空所が埋まっている場合は最初の空所に戻る
-            if (sentenceBlanks.length > 0) {
-                currentBlank = sentenceBlanks[0];
-                selectSentenceBlank(currentBlank.index);
-            }
+            // すべての空所が埋まっている場合は何もしない
+            return;
         }
+    }
+    
+    // 選択中の空所が入力完了している場合は何もしない（ユーザーが手動で次の空所を選択する必要がある）
+    if (currentBlank.userInput.length >= currentBlank.word.length) {
+        return;
     }
     
     if (currentBlank && currentBlank.userInput.length < currentBlank.word.length) {
@@ -7407,13 +7412,7 @@ function insertSentenceLetter(letter) {
         const remainingLength = currentBlank.word.length - currentBlank.userInput.length;
         currentBlank.element.textContent = currentBlank.userInput + (remainingLength > 0 ? ' '.repeat(remainingLength) : '');
         
-        // 入力が完了したら次の空所を選択
-        if (currentBlank.userInput.length >= currentBlank.word.length) {
-            const nextBlank = sentenceBlanks.find(b => b.index > currentBlank.index && (!b.userInput || b.userInput.length < b.word.length));
-            if (nextBlank) {
-                selectSentenceBlank(nextBlank.index);
-            }
-        }
+        // 入力が完了しても自動的に次の空所には移動しない（ユーザーが手動で選択する必要がある）
     }
 }
 
