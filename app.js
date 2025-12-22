@@ -2382,8 +2382,8 @@ function updateQuestionCountSection() {
 // 出題数選択オプションを更新
 function updateQuestionCountOptions(wordCount) {
     const questionCountValue = document.getElementById('questionCountValue');
-    const questionCountMinus = document.getElementById('questionCountMinus');
-    const questionCountPlus = document.getElementById('questionCountPlus');
+    const questionCountHandle = document.getElementById('questionCountHandle');
+    const questionCountTrack = document.querySelector('.question-count-swipe-track');
     
     if (!questionCountValue) return;
     
@@ -2391,12 +2391,14 @@ function updateQuestionCountOptions(wordCount) {
     questionCountValue.textContent = 'すべて';
     questionCountValue.dataset.count = wordCount;
     
-    // ボタンの有効/無効を設定
-    if (questionCountMinus) {
-        questionCountMinus.disabled = false;
-    }
-    if (questionCountPlus) {
-        questionCountPlus.disabled = true; // 最大なので+は無効
+    // スワイプハンドルの位置を更新
+    if (questionCountTrack && questionCountHandle && wordCount >= 10) {
+        const trackWidth = questionCountTrack.offsetWidth;
+        const handleWidth = 28;
+        const minLeft = 2;
+        const maxLeft = trackWidth - handleWidth - 2;
+        // 最大値（すべて）なので右端に配置
+        questionCountHandle.style.left = maxLeft + 'px';
     }
 }
 
@@ -3527,55 +3529,217 @@ function setupEventListeners() {
     
     // プラス・マイナスボタンのイベントリスナー（直接追加で反応を改善）
     const questionCountValue = document.getElementById('questionCountValue');
-    const questionCountMinus = document.getElementById('questionCountMinus');
-    const questionCountPlus = document.getElementById('questionCountPlus');
+    const questionCountSwipe = document.getElementById('questionCountSwipe');
+    const questionCountHandle = document.getElementById('questionCountHandle');
+    const questionCountTrack = questionCountSwipe?.querySelector('.question-count-swipe-track');
     
-    function handleQuestionCountChange(isPlus) {
+    let swipeStartX = 0;
+    let swipeStartLeft = 0;
+    let isDragging = false;
+    
+    function updateQuestionCountDisplay(count, maxCount) {
         if (!questionCountValue) return;
         
-        const filteredWords = getFilteredWords();
-        const maxCount = filteredWords.length;
-        
-        if (filteredWords.length < 10) return;
-        
-        let currentCount = parseInt(questionCountValue.dataset.count) || maxCount;
-        
-        if (isPlus) {
-            currentCount = Math.min(maxCount, currentCount + 10);
-        } else {
-            currentCount = Math.max(10, currentCount - 10);
-        }
-        
-        questionCountValue.dataset.count = currentCount;
+        questionCountValue.dataset.count = count;
         
         // 最大値なら「すべて」と表示
-        if (currentCount >= maxCount) {
+        if (count >= maxCount) {
             questionCountValue.textContent = 'すべて';
         } else {
-            questionCountValue.textContent = currentCount + '問';
+            questionCountValue.textContent = count + '問';
+        }
+    }
+    
+    function updateHandlePosition(count, maxCount, trackWidth) {
+        if (!questionCountHandle || !questionCountTrack) return;
+        
+        const handleWidth = 28;
+        const minLeft = 2;
+        const maxLeft = trackWidth - handleWidth - 2;
+        
+        // カウントを0-1の範囲に正規化（すべての場合は1.0）
+        let ratio = 0;
+        if (maxCount > 10) {
+            if (count >= maxCount) {
+                ratio = 1.0; // すべての場合は右端
+            } else {
+                ratio = Math.max(0, Math.min(1, (count - 10) / (maxCount - 10)));
+            }
+        }
+        const left = minLeft + (maxLeft - minLeft) * ratio;
+        
+        questionCountHandle.style.left = left + 'px';
+    }
+    
+    function getCountFromPosition(left, trackWidth, maxCount) {
+        const handleWidth = 28;
+        const minLeft = 2;
+        const maxLeft = trackWidth - handleWidth - 2;
+        const ratio = Math.max(0, Math.min(1, (left - minLeft) / (maxLeft - minLeft)));
+        
+        if (maxCount <= 10) return maxCount;
+        
+        // 右端に近い場合（95%以上）は「すべて」を返す
+        if (ratio >= 0.95) {
+            return maxCount;
         }
         
-        // ボタンの有効/無効を更新
-        if (questionCountMinus) questionCountMinus.disabled = currentCount <= 10;
-        if (questionCountPlus) questionCountPlus.disabled = currentCount >= maxCount;
+        // 10問刻みで調整
+        const steps = Math.floor((maxCount - 10) / 10);
+        const step = Math.round(ratio * steps);
+        const count = 10 + step * 10;
+        
+        return Math.min(maxCount, Math.max(10, count));
     }
     
-    // マイナスボタン
-    if (questionCountMinus) {
-        questionCountMinus.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleQuestionCountChange(false);
+    if (questionCountTrack && questionCountHandle) {
+        // 初期化
+        function initSwipeControl() {
+            const filteredWords = getFilteredWords();
+            const maxCount = filteredWords.length;
+            
+            if (maxCount < 10) {
+                if (questionCountSwipe) questionCountSwipe.style.display = 'none';
+                return;
+            }
+            
+            if (questionCountSwipe) questionCountSwipe.style.display = 'flex';
+            
+            const trackWidth = questionCountTrack.offsetWidth;
+            let currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
+            currentCount = Math.max(10, Math.min(maxCount, currentCount));
+            
+            updateQuestionCountDisplay(currentCount, maxCount);
+            updateHandlePosition(currentCount, maxCount, trackWidth);
+        }
+        
+        // 初期化を実行
+        initSwipeControl();
+        
+        // リサイズ時にも再計算
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                const filteredWords = getFilteredWords();
+                const maxCount = filteredWords.length;
+                if (maxCount >= 10) {
+                    const trackWidth = questionCountTrack.offsetWidth;
+                    const currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
+                    updateHandlePosition(currentCount, maxCount, trackWidth);
+                }
+            }, 100);
         });
-    }
-    
-    // プラスボタン
-    if (questionCountPlus) {
-        questionCountPlus.addEventListener('click', (e) => {
+        
+        // タッチイベント
+        questionCountTrack.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            e.stopPropagation();
-            handleQuestionCountChange(true);
+            const touch = e.touches[0];
+            swipeStartX = touch.clientX;
+            swipeStartLeft = parseFloat(questionCountHandle.style.left) || 2;
+            isDragging = true;
+            questionCountHandle.classList.add('dragging');
+            
+            const filteredWords = getFilteredWords();
+            const maxCount = filteredWords.length;
+            if (maxCount < 10) return;
+        }, { passive: false });
+        
+        questionCountTrack.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - swipeStartX;
+            const trackWidth = questionCountTrack.offsetWidth;
+            const handleWidth = 28;
+            const minLeft = 2;
+            const maxLeft = trackWidth - handleWidth - 2;
+            
+            let newLeft = swipeStartLeft + deltaX;
+            newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
+            questionCountHandle.style.left = newLeft + 'px';
+            
+            const filteredWords = getFilteredWords();
+            const maxCount = filteredWords.length;
+            if (maxCount >= 10) {
+                const newCount = getCountFromPosition(newLeft, trackWidth, maxCount);
+                updateQuestionCountDisplay(newCount, maxCount);
+            }
+        }, { passive: false });
+        
+        questionCountTrack.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            questionCountHandle.classList.remove('dragging');
+            
+            const filteredWords = getFilteredWords();
+            const maxCount = filteredWords.length;
+            if (maxCount >= 10) {
+                const trackWidth = questionCountTrack.offsetWidth;
+                const currentLeft = parseFloat(questionCountHandle.style.left) || 2;
+                const finalCount = getCountFromPosition(currentLeft, trackWidth, maxCount);
+                updateQuestionCountDisplay(finalCount, maxCount);
+                updateHandlePosition(finalCount, maxCount, trackWidth);
+            }
         });
+        
+        // マウスイベント（デスクトップ対応）
+        questionCountTrack.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            swipeStartX = e.clientX;
+            swipeStartLeft = parseFloat(questionCountHandle.style.left) || 2;
+            isDragging = true;
+            questionCountHandle.classList.add('dragging');
+            
+            const filteredWords = getFilteredWords();
+            const maxCount = filteredWords.length;
+            if (maxCount < 10) return;
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging || !questionCountTrack) return;
+            
+            const deltaX = e.clientX - swipeStartX;
+            const trackWidth = questionCountTrack.offsetWidth;
+            const handleWidth = 28;
+            const minLeft = 2;
+            const maxLeft = trackWidth - handleWidth - 2;
+            
+            let newLeft = swipeStartLeft + deltaX;
+            newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
+            questionCountHandle.style.left = newLeft + 'px';
+            
+            const filteredWords = getFilteredWords();
+            const maxCount = filteredWords.length;
+            if (maxCount >= 10) {
+                const newCount = getCountFromPosition(newLeft, trackWidth, maxCount);
+                updateQuestionCountDisplay(newCount, maxCount);
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            questionCountHandle.classList.remove('dragging');
+            
+            const filteredWords = getFilteredWords();
+            const maxCount = filteredWords.length;
+            if (maxCount >= 10 && questionCountTrack) {
+                const trackWidth = questionCountTrack.offsetWidth;
+                const currentLeft = parseFloat(questionCountHandle.style.left) || 2;
+                const finalCount = getCountFromPosition(currentLeft, trackWidth, maxCount);
+                updateQuestionCountDisplay(finalCount, maxCount);
+                updateHandlePosition(finalCount, maxCount, trackWidth);
+            }
+        });
+        
+        // フィルター変更時に再初期化
+        const originalUpdateFilterInfo = updateFilterInfo;
+        updateFilterInfo = function() {
+            originalUpdateFilterInfo();
+            initSwipeControl();
+        };
     }
     
     

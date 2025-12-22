@@ -196,7 +196,12 @@
                                     </div>
                                     <div class="ai-word-count-large">
                                         <span class="ai-word-number"><span id="cardAiWordCount">0</span><span class="ai-word-unit">語</span></span>
-                                        <span class="ai-analyzing" id="aiAnalyzing">— 分析中 —</span>
+                                        <span class="ai-analyzing" id="aiAnalyzing">
+                                            <span class="analyzing-text">分析中</span>
+                                            <svg class="analyzing-zigzag" viewBox="0 0 120 16" preserveAspectRatio="none">
+                                                <polyline class="zigzag-line" points="0,8 6,5 12,11 18,2 24,14 30,6 36,10 42,1 48,15 54,5 60,11 66,3 72,13 78,6 84,10 90,2 96,14 102,5 108,11 114,4 120,8" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="category-arrow">
@@ -1185,10 +1190,11 @@
                     </div>
                     <div class="question-count-control" id="questionCountSection" style="display: none;">
                         <span class="question-count-label">出題数</span>
-                        <div class="question-count-buttons">
-                            <button type="button" class="question-count-btn" id="questionCountMinus">-</button>
+                        <div class="question-count-swipe" id="questionCountSwipe">
+                            <div class="question-count-swipe-track">
+                                <div class="question-count-swipe-handle" id="questionCountHandle"></div>
+                            </div>
                             <span class="question-count-value" id="questionCountValue">すべて</span>
-                            <button type="button" class="question-count-btn" id="questionCountPlus">+</button>
                         </div>
                     </div>
                 </div>
