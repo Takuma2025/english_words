@@ -922,7 +922,7 @@ body {
 
 /* 英単語進捗バー */
 .vocab-progress-container {
-    padding: 0 0 12px 0;
+    padding: 0 16px 12px 16px;
     margin: 0 0 8px 0;
 }
 
@@ -1030,6 +1030,21 @@ body {
     flex: 1;
 }
 
+.vocab-selected-school {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 8px;
+    padding: 6px 12px;
+    background: #eff6ff;
+    border: 1px solid #3b82f6;
+    border-radius: 8px;
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .vocab-progress-bike-container {
     position: relative;
     width: 100%;
@@ -1055,10 +1070,29 @@ body {
     background: linear-gradient(90deg, #06b6d4 0%, #22d3ee 100%);
     border-radius: 10px 0 0 10px;
     transition: width 0.5s ease, background 0.3s ease;
+    overflow: hidden;
 }
 
-.vocab-progress-fill.insufficient {
-    background: linear-gradient(90deg, #f97316 0%, #fb923c 100%);
+.vocab-progress-fill::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 10px 0 0 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+
+.vocab-progress-fill:not(.insufficient):not(.no-school) {
+    background: linear-gradient(90deg, #ec4899 0%, #f472b6 100%);
+}
+
+.vocab-progress-fill:not(.insufficient):not(.no-school)::before {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
 .vocab-progress-fill.no-school {
@@ -1118,7 +1152,7 @@ body {
     position: absolute;
     top: -18px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% + 7px));
     width: 16px;
     height: 16px;
     z-index: 4;
@@ -1267,16 +1301,6 @@ body {
 }
 
 /* 志望校設定 */
-.school-selector {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 12px;
-    box-shadow: none;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
 
 .school-selector-header {
     display: flex;
@@ -1397,6 +1421,7 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+    margin-bottom: 12px;
 }
 
 .selected-school-text {
@@ -1416,6 +1441,7 @@ body {
     cursor: pointer;
     transition: background 0.15s ease;
     align-self: flex-start;
+    margin-top: 0;
 }
 
 .school-reset-btn:hover {
