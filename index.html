@@ -114,7 +114,57 @@
                     <span>大阪府公立入試について知る</span>
                     <img src="nyushi.image.png" alt="入試" class="exam-info-btn-image">
                 </button>
-                
+
+                <!-- 志望校設定トリガー -->
+                <div class="school-trigger-row">
+                    <button type="button" class="school-gear-btn" id="openSchoolSettings" aria-label="志望校を設定する">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m4 6 8-4 8 4"/>
+                            <path d="m18 10 4 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8l4-2"/>
+                            <path d="M14 22v-4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v4"/>
+                            <path d="M18 5v17"/>
+                            <path d="M6 5v17"/>
+                            <circle cx="12" cy="9" r="2"/>
+                        </svg>
+                        <span>志望校を設定する</span>
+                    </button>
+                </div>
+
+                <!-- 志望校設定モーダル -->
+                <div class="school-modal hidden" id="schoolModal">
+                    <div class="school-modal-backdrop"></div>
+                    <div class="school-modal-content">
+                        <div class="school-modal-header">
+                            <div>
+                                <div class="school-selector-title">志望校を設定する</div>
+                                <div class="school-selector-sub">大阪府の高校（公立・私立・コース）から検索できます</div>
+                            </div>
+                            <button type="button" id="closeSchoolSettings" class="school-modal-close" aria-label="閉じる">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="school-selector">
+                            <div class="school-selector-controls">
+                                <div class="school-search-input-wrapper">
+                                    <input type="text" id="schoolSearchInput" placeholder="高校名・コース名で検索" autocomplete="off">
+                                    <button type="button" id="schoolSearchClear" aria-label="入力をクリア" class="school-search-clear">&times;</button>
+                                </div>
+                                <div class="school-search-results hidden" id="schoolSearchResults"></div>
+                            </div>
+                            <div class="school-selected hidden" id="selectedSchoolContainer">
+                                <div class="selected-school-label">現在の志望校</div>
+                                <div class="selected-school-body">
+                                    <div class="selected-school-text" id="selectedSchoolText">未設定</div>
+                                    <button type="button" id="selectedSchoolReset" class="school-reset-btn" aria-label="志望校を解除">変更</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="course-tabs" id="courseTabs">
                     <button class="course-tab active" data-target="courseMasterSection">英単語マスターコース</button>
                     <button class="course-tab" data-target="courseScoreSection">入試得点力アップコース</button>

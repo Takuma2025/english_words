@@ -226,6 +226,161 @@ let correctCount = 0;
 let wrongCount = 0;
 let selectedCategory = null;
 let reviewWords = new Set(); // 復習用チェック（★）
+// 大阪府の高校（サンプルデータ）
+const osakaSchools = [
+    { id: 'osaka_kitano_normal', name: '大阪府立北野高等学校', type: '公立', course: '普通科' },
+    { id: 'osaka_tennoji_normal', name: '大阪府立天王寺高等学校', type: '公立', course: '普通科' },
+    { id: 'osaka_shijonawate', name: '大阪府立四條畷高等学校', type: '公立', course: '普通科' },
+    { id: 'osaka_minami', name: '大阪府立三国丘高等学校', type: '公立', course: '普通科' },
+    { id: 'osaka_oitetomon', name: '追手門学院高等学校', type: '私立', course: '普通科（文理／国際）' },
+    { id: 'osaka_kansai_univ', name: '関西大学北陽高等学校', type: '私立', course: '普通科（文理／英語）' },
+    { id: 'osaka_osakatoin', name: '大阪桐蔭高等学校', type: '私立', course: 'Ⅰ類／Ⅱ類／Ⅲ類' },
+    { id: 'osaka_ryukoku', name: '京都橘高等学校（大阪近郊）', type: '私立', course: '普通科（国際／英語）' }
+];
+const SCHOOL_STORAGE_KEY = 'preferredSchoolOsaka';
+
+function normalizeSchoolText(str) {
+    return (str || '').toLowerCase();
+}
+
+function filterSchools(query) {
+    const q = normalizeSchoolText(query);
+    if (!q) return osakaSchools.slice(0, 8);
+    return osakaSchools.filter((s) => {
+        const haystack = normalizeSchoolText(`${s.name} ${s.type} ${s.course}`);
+        return haystack.includes(q);
+    }).slice(0, 12);
+}
+
+function renderSchoolResults(listEl, results) {
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    if (results.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'school-result-item';
+        empty.textContent = '該当なし';
+        listEl.appendChild(empty);
+        return;
+    }
+    results.forEach((school) => {
+        const item = document.createElement('div');
+        item.className = 'school-result-item';
+        const name = document.createElement('div');
+        name.className = 'school-result-name';
+        name.textContent = school.name;
+        const meta = document.createElement('div');
+        meta.className = 'school-result-meta';
+        meta.textContent = `${school.type}・${school.course}`;
+        item.appendChild(name);
+        item.appendChild(meta);
+        item.addEventListener('click', () => {
+            saveSelectedSchool(school);
+            updateSelectedSchoolUI(school);
+            listEl.classList.add('hidden');
+        });
+        listEl.appendChild(item);
+    });
+}
+
+function updateSelectedSchoolUI(school) {
+    const container = document.getElementById('selectedSchoolContainer');
+    const textEl = document.getElementById('selectedSchoolText');
+    if (!container || !textEl) return;
+    if (school) {
+        textEl.textContent = `${school.name}（${school.type} / ${school.course}）`;
+        container.classList.remove('hidden');
+    } else {
+        container.classList.add('hidden');
+    }
+}
+
+function saveSelectedSchool(school) {
+    try {
+        localStorage.setItem(SCHOOL_STORAGE_KEY, JSON.stringify(school));
+    } catch (e) {
+        console.warn('Failed to save school selection', e);
+    }
+}
+
+function loadSelectedSchool() {
+    try {
+        const raw = localStorage.getItem(SCHOOL_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+        console.warn('Failed to load school selection', e);
+        return null;
+    }
+}
+
+function initSchoolSelector() {
+    const input = document.getElementById('schoolSearchInput');
+    const clearBtn = document.getElementById('schoolSearchClear');
+    const resultsEl = document.getElementById('schoolSearchResults');
+    const resetBtn = document.getElementById('selectedSchoolReset');
+    const openBtn = document.getElementById('openSchoolSettings');
+    const closeBtn = document.getElementById('closeSchoolSettings');
+    const modal = document.getElementById('schoolModal');
+    const backdrop = document.querySelector('#schoolModal .school-modal-backdrop');
+
+    const saved = loadSelectedSchool();
+    if (saved) updateSelectedSchoolUI(saved);
+
+    if (input) {
+        input.addEventListener('input', () => {
+            const results = filterSchools(input.value);
+            renderSchoolResults(resultsEl, results);
+            resultsEl?.classList.remove('hidden');
+        });
+        input.addEventListener('focus', () => {
+            const results = filterSchools(input.value);
+            renderSchoolResults(resultsEl, results);
+            resultsEl?.classList.remove('hidden');
+        });
+    }
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            input.value = '';
+            renderSchoolResults(resultsEl, filterSchools(''));
+            resultsEl?.classList.remove('hidden');
+        });
+    }
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            saveSelectedSchool(null);
+            updateSelectedSchoolUI(null);
+            if (input) input.value = '';
+            if (resultsEl) resultsEl.classList.add('hidden');
+        });
+    }
+
+    const openModal = () => {
+        if (modal) modal.classList.remove('hidden');
+        const results = filterSchools(input?.value || '');
+        renderSchoolResults(resultsEl, results);
+        resultsEl?.classList.remove('hidden');
+        setTimeout(() => input?.focus(), 50);
+    };
+
+    const closeModal = () => {
+        if (modal) modal.classList.add('hidden');
+        if (resultsEl) resultsEl.classList.add('hidden');
+    };
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
+
+    document.addEventListener('click', (e) => {
+        if (!resultsEl || !input) return;
+        const target = e.target;
+        const wrapper = document.querySelector('.school-modal-content');
+        if (wrapper && !wrapper.contains(target)) {
+            resultsEl.classList.add('hidden');
+        }
+    });
+}
 let correctWords = new Set(); // 正解済み（青マーカー用）
 let wrongWords = new Set();
 let isCardRevealed = false;
@@ -1509,6 +1664,7 @@ function init() {
         loadWordStats();
         initExamCountdown();
         setupEventListeners();
+        initSchoolSelector();
         
         // スプラッシュ画面を表示
         const splashScreen = document.getElementById('splashScreen');
