@@ -994,9 +994,9 @@ body {
 }
 
 .vocab-progress-rate span#vocabProgressPercent {
-    font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif;
-    font-size: 48px;
-    font-weight: 700;
+    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 600;
     color: #06b6d4;
 }
 
@@ -1011,6 +1011,12 @@ body {
 .vocab-progress-rate.insufficient span#vocabProgressPercent,
 .vocab-progress-rate.insufficient .percent-unit {
     color: #f97316;
+}
+
+.vocab-progress-rate.no-school .progress-label,
+.vocab-progress-rate.no-school span#vocabProgressPercent,
+.vocab-progress-rate.no-school .percent-unit {
+    color: #9ca3af;
 }
 
 .vocab-progress-bar-row {
@@ -1046,6 +1052,10 @@ body {
 
 .vocab-progress-fill.insufficient {
     background: linear-gradient(90deg, #f97316 0%, #fb923c 100%);
+}
+
+.vocab-progress-fill.no-school {
+    background: linear-gradient(90deg, #9ca3af 0%, #d1d5db 100%);
 }
 
 .vocab-progress-runner {
@@ -1086,16 +1096,27 @@ body {
 }
 
 .vocab-requirement-line {
-    width: 2px;
+    width: 0;
     height: 100%;
-    background: #3b82f6;
-    border-radius: 1px;
+    border-left: 2px dashed #3b82f6;
+}
+
+.vocab-requirement-triangle {
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 6px solid #3b82f6;
 }
 
 .vocab-requirement-label {
     position: absolute;
     top: 100%;
-    margin-top: 4px;
+    margin-top: 7.5px;
     font-size: 9px;
     color: #3b82f6;
     white-space: nowrap;
@@ -1365,6 +1386,42 @@ body {
 }
 
 .school-reset-btn:hover {
+    background: #2563eb;
+}
+
+.school-confirm-wrapper {
+    margin-top: 12px;
+    padding: 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.school-confirm-wrapper.hidden {
+    display: none;
+}
+
+.school-confirm-selected {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.school-confirm-btn {
+    width: 100%;
+    padding: 10px 16px;
+    background: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.school-confirm-btn:hover {
     background: #2563eb;
 }
 
@@ -1725,7 +1782,14 @@ body {
 }
 
 #allWordsCardBtn {
-    padding-top: 5px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+#allWordsCardBtn .category-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #allWordsCardBtn .category-progress {
@@ -1733,32 +1797,9 @@ body {
     padding-bottom: 24px;
 }
 
-#allWordsCardBtn .category-progress-percent {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 18px;
-    text-align: center;
-    line-height: 1;
-}
-
 #allWordsCardBtn .category-progress-text {
     margin-top: 4px;
     text-align: right;
-}
-
-.category-progress-percent span {
-    font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif;
-    font-size: 48px;
-    font-weight: 700;
-    color: #3b82f6;
-}
-
-.category-progress-percent .percent-unit {
-    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 24px;
-    font-weight: 600;
-    color: #3b82f6;
 }
 
 /* 入試得点力アップコースの進捗バーは表示（英単語マスターコースと同じ） */

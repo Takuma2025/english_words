@@ -131,11 +131,11 @@
                                 <div class="vocab-progress-fill" id="vocabProgressFill" style="width: 0%"></div>
                                 <div class="vocab-progress-requirement hidden" id="vocabProgressRequirement">
                                     <div class="vocab-requirement-line"></div>
-                                    <div class="vocab-requirement-label" id="vocabRequirementLabel">合格必須ライン</div>
+                                    <div class="vocab-requirement-triangle"></div>
+                                    <div class="vocab-requirement-label" id="vocabRequirementLabel">志望校合格必須ライン</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="vocab-progress-rate" id="vocabProgressRate"><span class="progress-label">進捗</span><span id="vocabProgressPercent">0</span><span class="percent-unit">%</span></div>
                     </div>
                     <div class="vocab-progress-info">
                         <span class="vocab-progress-count"><span id="vocabLearnedCount">0</span> / <span id="vocabTotalCount">0</span> 語</span>
@@ -169,6 +169,10 @@
                                     <button type="button" id="schoolSearchClear" aria-label="入力をクリア" class="school-search-clear">&times;</button>
                                 </div>
                                 <div class="school-search-results hidden" id="schoolSearchResults"></div>
+                            </div>
+                            <div class="school-confirm-wrapper hidden" id="schoolConfirmWrapper">
+                                <div class="school-confirm-selected" id="schoolConfirmSelected"></div>
+                                <button type="button" id="schoolConfirmBtn" class="school-confirm-btn">決定する</button>
                             </div>
                             <div class="school-selected hidden" id="selectedSchoolContainer">
                                 <div class="selected-school-label">現在の志望校</div>
@@ -230,9 +234,7 @@
                             </button>
                             <button class="category-card" id="allWordsCardBtn">
                                 <div class="category-info">
-                                    <div class="category-header">
-                                        <div class="category-name">すべての英単語</div>
-                                    </div>
+                                    <div class="category-name">すべての英単語</div>
                                     <div class="category-meta">全単語をまとめて学習</div>
                                     <div class="category-progress">
                                         <div class="category-progress-bar">
@@ -241,9 +243,6 @@
                                         </div>
                                         <div class="category-progress-text" id="progress-text-大阪府のすべての英単語">0/0語</div>
                                     </div>
-                                </div>
-                                <div class="category-arrow">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </div>
                             </button>
                         </div>
