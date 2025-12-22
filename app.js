@@ -226,16 +226,51 @@ let correctCount = 0;
 let wrongCount = 0;
 let selectedCategory = null;
 let reviewWords = new Set(); // 復習用チェック（★）
-// 大阪府の高校（サンプルデータ）
+// 大阪府の高校（偏差値データ付き）
+// 偏差値に応じた必須単語数の目安: 偏差値50で600語、偏差値70で1200語
 const osakaSchools = [
-    { id: 'osaka_kitano_normal', name: '大阪府立北野高等学校', type: '公立', course: '普通科' },
-    { id: 'osaka_tennoji_normal', name: '大阪府立天王寺高等学校', type: '公立', course: '普通科' },
-    { id: 'osaka_shijonawate', name: '大阪府立四條畷高等学校', type: '公立', course: '普通科' },
-    { id: 'osaka_minami', name: '大阪府立三国丘高等学校', type: '公立', course: '普通科' },
-    { id: 'osaka_oitetomon', name: '追手門学院高等学校', type: '私立', course: '普通科（文理／国際）' },
-    { id: 'osaka_kansai_univ', name: '関西大学北陽高等学校', type: '私立', course: '普通科（文理／英語）' },
-    { id: 'osaka_osakatoin', name: '大阪桐蔭高等学校', type: '私立', course: 'Ⅰ類／Ⅱ類／Ⅲ類' },
-    { id: 'osaka_ryukoku', name: '京都橘高等学校（大阪近郊）', type: '私立', course: '普通科（国際／英語）' }
+    // 公立トップ校
+    { id: 'osaka_kitano', name: '大阪府立北野高等学校', type: '公立', course: '文理学科', hensachi: 76 },
+    { id: 'osaka_tennoji', name: '大阪府立天王寺高等学校', type: '公立', course: '文理学科', hensachi: 75 },
+    { id: 'osaka_otemae', name: '大阪府立大手前高等学校', type: '公立', course: '文理学科', hensachi: 74 },
+    { id: 'osaka_shijonawate', name: '大阪府立四條畷高等学校', type: '公立', course: '文理学科', hensachi: 73 },
+    { id: 'osaka_takatsuki', name: '大阪府立高津高等学校', type: '公立', course: '文理学科', hensachi: 73 },
+    { id: 'osaka_ikeda', name: '大阪府立池田高等学校', type: '公立', course: '普通科', hensachi: 67 },
+    { id: 'osaka_toyonaka', name: '大阪府立豊中高等学校', type: '公立', course: '文理学科', hensachi: 72 },
+    { id: 'osaka_mikunigaoka', name: '大阪府立三国丘高等学校', type: '公立', course: '文理学科', hensachi: 74 },
+    { id: 'osaka_kishiwada', name: '大阪府立岸和田高等学校', type: '公立', course: '文理学科', hensachi: 70 },
+    { id: 'osaka_senri', name: '大阪府立千里高等学校', type: '公立', course: '国際文化科', hensachi: 68 },
+    { id: 'osaka_suita', name: '大阪府立吹田高等学校', type: '公立', course: '普通科', hensachi: 52 },
+    { id: 'osaka_hokusetsu', name: '大阪府立北摂高等学校', type: '公立', course: '普通科', hensachi: 47 },
+    { id: 'osaka_ibaraki', name: '大阪府立茨木高等学校', type: '公立', course: '文理学科', hensachi: 73 },
+    { id: 'osaka_kasugaoka', name: '大阪府立春日丘高等学校', type: '公立', course: '普通科', hensachi: 66 },
+    { id: 'osaka_hirakata', name: '大阪府立枚方高等学校', type: '公立', course: '普通科', hensachi: 58 },
+    { id: 'osaka_neyagawa', name: '大阪府立寝屋川高等学校', type: '公立', course: '普通科', hensachi: 64 },
+    { id: 'osaka_yao', name: '大阪府立八尾高等学校', type: '公立', course: '普通科', hensachi: 62 },
+    { id: 'osaka_fujidera', name: '大阪府立藤井寺高等学校', type: '公立', course: '普通科', hensachi: 52 },
+    { id: 'osaka_sakai_izumi', name: '大阪府立泉陽高等学校', type: '公立', course: '普通科', hensachi: 64 },
+    { id: 'osaka_sakai_nishi', name: '大阪府立堺西高等学校', type: '公立', course: '普通科', hensachi: 48 },
+    // 私立校
+    { id: 'osaka_osakatoin_i', name: '大阪桐蔭高等学校', type: '私立', course: 'Ⅰ類', hensachi: 69 },
+    { id: 'osaka_osakatoin_ii', name: '大阪桐蔭高等学校', type: '私立', course: 'Ⅱ類', hensachi: 63 },
+    { id: 'osaka_osakatoin_iii', name: '大阪桐蔭高等学校', type: '私立', course: 'Ⅲ類', hensachi: 52 },
+    { id: 'osaka_seifu', name: '清風高等学校', type: '私立', course: '理Ⅲ編入', hensachi: 72 },
+    { id: 'osaka_seifu_ri6', name: '清風高等学校', type: '私立', course: '理数科', hensachi: 65 },
+    { id: 'osaka_seifunankai', name: '清風南海高等学校', type: '私立', course: '3か年特進', hensachi: 73 },
+    { id: 'osaka_meijo', name: '明星高等学校', type: '私立', course: '文理選抜', hensachi: 68 },
+    { id: 'osaka_oitetomon', name: '追手門学院高等学校', type: '私立', course: '特選SS', hensachi: 65 },
+    { id: 'osaka_oitemonte', name: '追手門学院高等学校', type: '私立', course: 'Ⅰ類', hensachi: 56 },
+    { id: 'osaka_kansai_univ_tokushin', name: '関西大学北陽高等学校', type: '私立', course: '特進', hensachi: 60 },
+    { id: 'osaka_kansai_univ_bunri', name: '関西大学北陽高等学校', type: '私立', course: '文理', hensachi: 56 },
+    { id: 'osaka_kansai1', name: '関西大学第一高等学校', type: '私立', course: '普通科', hensachi: 68 },
+    { id: 'osaka_kindai_super', name: '近畿大学附属高等学校', type: '私立', course: 'Super文理', hensachi: 70 },
+    { id: 'osaka_kindai_tokushin', name: '近畿大学附属高等学校', type: '私立', course: '特進文理Ⅰ', hensachi: 65 },
+    { id: 'osaka_ritsumeikan', name: '立命館宇治高等学校', type: '私立', course: 'IGコース', hensachi: 67 },
+    { id: 'osaka_doshisha', name: '同志社香里高等学校', type: '私立', course: '普通科', hensachi: 69 },
+    { id: 'osaka_shitennoji', name: '四天王寺高等学校', type: '私立', course: '理数', hensachi: 72 },
+    { id: 'osaka_jyogakuin', name: '大阪女学院高等学校', type: '私立', course: '理系', hensachi: 63 },
+    { id: 'osaka_shinai', name: '大阪信愛学院高等学校', type: '私立', course: '学際探究', hensachi: 51 },
+    { id: 'osaka_kaisei', name: '開成教育高等学校', type: '私立', course: '普通科', hensachi: 44 }
 ];
 const SCHOOL_STORAGE_KEY = 'preferredSchoolOsaka';
 
@@ -250,6 +285,137 @@ function filterSchools(query) {
         const haystack = normalizeSchoolText(`${s.name} ${s.type} ${s.course}`);
         return haystack.includes(q);
     }).slice(0, 12);
+}
+
+// 偏差値から必須単語数を計算（偏差値50=600語、偏差値70=1200語の線形補間）
+function calculateRequiredWords(hensachi) {
+    if (!hensachi) return 0;
+    // 偏差値40=400語、偏差値50=600語、偏差値60=800語、偏差値70=1000語、偏差値76=1180語
+    const minHensachi = 40;
+    const maxHensachi = 76;
+    const minWords = 400;
+    const maxWords = 1180;
+    
+    const clampedHensachi = Math.max(minHensachi, Math.min(maxHensachi, hensachi));
+    const ratio = (clampedHensachi - minHensachi) / (maxHensachi - minHensachi);
+    return Math.round(minWords + ratio * (maxWords - minWords));
+}
+
+// 全カテゴリの覚えた単語数を計算
+function calculateTotalLearnedWords() {
+    const categories = [
+        '小学生で習った単語とカテゴリー別に覚える単語',
+        'LEVEL1 超重要単語400',
+        'LEVEL2 重要単語300',
+        'LEVEL3 差がつく単語200',
+        'LEVEL4 私立高校入試レベル',
+        'LEVEL5 難関私立高校入試レベル'
+    ];
+    
+    let totalLearned = 0;
+    const mode = 'output'; // アウトプットモードで覚えた単語をカウント
+    
+    categories.forEach(cat => {
+        const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+        if (savedCorrect) {
+            try {
+                const parsed = JSON.parse(savedCorrect);
+                totalLearned += parsed.length;
+            } catch (e) {
+                console.error('Error parsing correctWords:', e);
+            }
+        }
+    });
+    
+    return totalLearned;
+}
+
+// 全単語数を計算
+function calculateTotalWords() {
+    // vocabulary-data.jsの単語数を合計
+    let total = 0;
+    
+    if (typeof elementaryWords !== 'undefined') {
+        total += elementaryWords.length;
+    }
+    if (typeof categoryWords !== 'undefined') {
+        Object.values(categoryWords).forEach(arr => {
+            total += arr.length;
+        });
+    }
+    if (typeof level1Words !== 'undefined') {
+        total += level1Words.length;
+    }
+    if (typeof level2Words !== 'undefined') {
+        total += level2Words.length;
+    }
+    if (typeof level3Words !== 'undefined') {
+        total += level3Words.length;
+    }
+    if (typeof level4Words !== 'undefined') {
+        total += level4Words.length;
+    }
+    if (typeof level5Words !== 'undefined') {
+        total += level5Words.length;
+    }
+    
+    return total || 1800; // デフォルト値
+}
+
+// 英単語進捗バーを更新
+function updateVocabProgressBar() {
+    const container = document.getElementById('vocabProgressContainer');
+    if (!container) return;
+    
+    const learnedWords = calculateTotalLearnedWords();
+    const totalWords = calculateTotalWords();
+    const progressPercent = Math.min(100, Math.round((learnedWords / totalWords) * 100));
+    
+    // 志望校データを取得
+    const selectedSchool = loadSelectedSchool();
+    const requiredWords = selectedSchool ? calculateRequiredWords(selectedSchool.hensachi) : 0;
+    const requiredPercent = requiredWords > 0 ? Math.min(100, Math.round((requiredWords / totalWords) * 100)) : 0;
+    
+    // 必須ラインを超えているか判定
+    const isInsufficient = requiredWords > 0 && learnedWords < requiredWords;
+    
+    // DOM要素を更新
+    const progressRate = document.getElementById('vocabProgressRate');
+    const progressFill = document.getElementById('vocabProgressFill');
+    const progressRunner = document.getElementById('vocabProgressRunner');
+    const progressRequirement = document.getElementById('vocabProgressRequirement');
+    const requirementLabel = document.getElementById('vocabRequirementLabel');
+    const learnedCountEl = document.getElementById('vocabLearnedCount');
+    const totalCountEl = document.getElementById('vocabTotalCount');
+    const progressPercentEl = document.getElementById('vocabProgressPercent');
+    
+    if (progressPercentEl) progressPercentEl.textContent = progressPercent;
+    if (learnedCountEl) learnedCountEl.textContent = learnedWords;
+    if (totalCountEl) totalCountEl.textContent = totalWords;
+    
+    // 色を設定（足りない=オレンジ、足りている=水色）
+    if (progressRate) {
+        progressRate.classList.toggle('insufficient', isInsufficient);
+    }
+    if (progressFill) {
+        progressFill.style.width = `${progressPercent}%`;
+        progressFill.classList.toggle('insufficient', isInsufficient);
+    }
+    if (progressRunner) {
+        progressRunner.style.left = `${progressPercent}%`;
+        progressRunner.classList.toggle('insufficient', isInsufficient);
+    }
+    
+    // 合格必須ラインの表示
+    if (progressRequirement && requiredWords > 0) {
+        progressRequirement.classList.remove('hidden');
+        progressRequirement.style.left = `${requiredPercent}%`;
+        if (requirementLabel) {
+            requirementLabel.textContent = `合格必須 ${requiredWords}語`;
+        }
+    } else if (progressRequirement) {
+        progressRequirement.classList.add('hidden');
+    }
 }
 
 function renderSchoolResults(listEl, results) {
@@ -270,33 +436,43 @@ function renderSchoolResults(listEl, results) {
         name.textContent = school.name;
         const meta = document.createElement('div');
         meta.className = 'school-result-meta';
-        meta.textContent = `${school.type}・${school.course}`;
+        const henText = school.hensachi ? `偏差値${school.hensachi}` : '';
+        meta.textContent = `${school.type}・${school.course}${henText ? ' / ' + henText : ''}`;
         item.appendChild(name);
         item.appendChild(meta);
         item.addEventListener('click', () => {
             saveSelectedSchool(school);
-            updateSelectedSchoolUI(school);
+            updateSelectedSchoolUI(school, false); // 志望校表示モードに切り替え
             listEl.classList.add('hidden');
         });
         listEl.appendChild(item);
     });
 }
 
-function updateSelectedSchoolUI(school) {
+function updateSelectedSchoolUI(school, showSearchMode = false) {
     const container = document.getElementById('selectedSchoolContainer');
     const textEl = document.getElementById('selectedSchoolText');
+    const controlsEl = document.getElementById('schoolSelectorControls');
     if (!container || !textEl) return;
-    if (school) {
-        textEl.textContent = `${school.name}（${school.type} / ${school.course}）`;
+    
+    if (school && !showSearchMode) {
+        // 志望校が設定されていて、検索モードでない場合は志望校のみ表示
+        const henText = school.hensachi ? ` / 偏差値${school.hensachi}` : '';
+        textEl.textContent = `${school.name}（${school.type} / ${school.course}${henText}）`;
         container.classList.remove('hidden');
-    } else {
+        if (controlsEl) controlsEl.classList.add('hidden');
+    } else if (showSearchMode || !school) {
+        // 検索モード、または志望校が未設定の場合は検索コントロールを表示
         container.classList.add('hidden');
+        if (controlsEl) controlsEl.classList.remove('hidden');
     }
 }
 
 function saveSelectedSchool(school) {
     try {
         localStorage.setItem(SCHOOL_STORAGE_KEY, JSON.stringify(school));
+        // 志望校が変わったら進捗バーを更新
+        updateVocabProgressBar();
     } catch (e) {
         console.warn('Failed to save school selection', e);
     }
@@ -348,24 +524,36 @@ function initSchoolSelector() {
 
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
-            saveSelectedSchool(null);
-            updateSelectedSchoolUI(null);
+            // 検索モードに切り替え（志望校を解除せず、検索画面を表示）
+            const currentSchool = loadSelectedSchool();
+            updateSelectedSchoolUI(currentSchool, true); // 検索モードを表示
             if (input) input.value = '';
-            if (resultsEl) resultsEl.classList.add('hidden');
+            const results = filterSchools('');
+            renderSchoolResults(resultsEl, results);
+            if (resultsEl) resultsEl.classList.remove('hidden');
+            setTimeout(() => input?.focus(), 50);
         });
     }
 
     const openModal = () => {
         if (modal) modal.classList.remove('hidden');
-        const results = filterSchools(input?.value || '');
-        renderSchoolResults(resultsEl, results);
-        resultsEl?.classList.remove('hidden');
-        setTimeout(() => input?.focus(), 50);
+        const saved = loadSelectedSchool();
+        // 志望校が設定されている場合は志望校表示、未設定なら検索モード
+        updateSelectedSchoolUI(saved, !saved);
+        if (!saved) {
+            const results = filterSchools(input?.value || '');
+            renderSchoolResults(resultsEl, results);
+            resultsEl?.classList.remove('hidden');
+            setTimeout(() => input?.focus(), 50);
+        }
     };
 
     const closeModal = () => {
         if (modal) modal.classList.add('hidden');
         if (resultsEl) resultsEl.classList.add('hidden');
+        // モーダルを閉じるときは志望校表示に戻す
+        const saved = loadSelectedSchool();
+        if (saved) updateSelectedSchoolUI(saved, false);
     };
 
     if (openBtn) openBtn.addEventListener('click', openModal);
@@ -1665,6 +1853,7 @@ function init() {
         initExamCountdown();
         setupEventListeners();
         initSchoolSelector();
+        updateVocabProgressBar();
         
         // スプラッシュ画面を表示
         const splashScreen = document.getElementById('splashScreen');
@@ -6374,6 +6563,7 @@ function markAnswer(isCorrect, isTimeout = false) {
     applyMarkers(word);
     updateStats();
     updateProgressSegments(); // 進捗バーのセグメントを更新
+    updateVocabProgressBar(); // 英単語進捗バーを更新
 
     // 画面全体のフィードバック表示（薄い色）
     elements.feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;

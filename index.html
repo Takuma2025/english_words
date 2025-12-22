@@ -115,12 +115,31 @@
                     <img src="nyushi.image.png" alt="入試" class="exam-info-btn-image">
                 </button>
 
-                <!-- 志望校設定トリガー -->
-                <div class="school-trigger-row">
-                    <button type="button" class="school-gear-btn" id="openSchoolSettings" aria-label="志望校を設定する">
-                        <img src="school.png" alt="学校" width="24" height="18" style="display: inline-block; vertical-align: middle; object-fit: contain;">
-                        <span>志望校を設定する</span>
-                    </button>
+                <!-- 英単語進捗バー -->
+                <div class="vocab-progress-container" id="vocabProgressContainer">
+                    <div class="vocab-progress-header">
+                        <button type="button" class="school-set-btn" id="openSchoolSettings" aria-label="志望校を設定する">
+                            <img src="school.png" alt="学校" width="18" height="14" style="display: inline-block; vertical-align: middle; object-fit: contain;">
+                            <span>志望校を設定する</span>
+                        </button>
+                        <div class="vocab-progress-description">志望校を設定することで、覚える単語数の目標を決めましょう。</div>
+                    </div>
+                    <div class="vocab-progress-bar-row">
+                        <div class="vocab-progress-bar-wrapper">
+                            <div class="vocab-progress-bar-label">覚えた英単語数</div>
+                            <div class="vocab-progress-bar">
+                                <div class="vocab-progress-fill" id="vocabProgressFill" style="width: 0%"></div>
+                                <div class="vocab-progress-requirement hidden" id="vocabProgressRequirement">
+                                    <div class="vocab-requirement-line"></div>
+                                    <div class="vocab-requirement-label" id="vocabRequirementLabel">合格必須ライン</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="vocab-progress-rate" id="vocabProgressRate"><span class="progress-label">進捗</span><span id="vocabProgressPercent">0</span><span class="percent-unit">%</span></div>
+                    </div>
+                    <div class="vocab-progress-info">
+                        <span class="vocab-progress-count"><span id="vocabLearnedCount">0</span> / <span id="vocabTotalCount">0</span> 語</span>
+                    </div>
                 </div>
 
                 <!-- 志望校設定モーダル -->
@@ -140,8 +159,12 @@
                             </button>
                         </div>
                         <div class="school-selector">
-                            <div class="school-selector-controls">
+                            <div class="school-selector-controls" id="schoolSelectorControls">
                                 <div class="school-search-input-wrapper">
+                                    <svg class="school-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <path d="m21 21-4.35-4.35"></path>
+                                    </svg>
                                     <input type="text" id="schoolSearchInput" placeholder="高校名・コース名で検索" autocomplete="off">
                                     <button type="button" id="schoolSearchClear" aria-label="入力をクリア" class="school-search-clear">&times;</button>
                                 </div>
@@ -216,7 +239,6 @@
                                             <div class="category-progress-correct" id="progress-correct-大阪府のすべての英単語" style="width: 0%"></div>
                                             <div class="category-progress-wrong" id="progress-wrong-大阪府のすべての英単語" style="width: 0%"></div>
                                         </div>
-                                        <div class="category-progress-percent"><span id="progress-percent-大阪府のすべての英単語">0</span><span class="percent-unit">%</span></div>
                                         <div class="category-progress-text" id="progress-text-大阪府のすべての英単語">0/0語</div>
                                     </div>
                                 </div>
