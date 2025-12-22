@@ -159,6 +159,55 @@ const SoundEffects = {
         gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.06);
         oscillator.start(this.audioContext.currentTime);
         oscillator.stop(this.audioContext.currentTime + 0.06);
+    },
+    
+    // 紙のページめくり音
+    playPageTurn() {
+        if (!this.enabled || !this.audioContext) return;
+        this.resume();
+        const now = this.audioContext.currentTime;
+        const duration = 0.15;
+        
+        // 低い周波数のオシレーター（ページがめくられる音）
+        const lowOsc = this.audioContext.createOscillator();
+        const lowGain = this.audioContext.createGain();
+        lowOsc.connect(lowGain);
+        lowGain.connect(this.audioContext.destination);
+        lowOsc.frequency.setValueAtTime(80, now);
+        lowOsc.frequency.exponentialRampToValueAtTime(120, now + duration);
+        lowOsc.type = 'sawtooth';
+        lowGain.gain.setValueAtTime(0.12, now);
+        lowGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+        lowOsc.start(now);
+        lowOsc.stop(now + duration);
+        
+        // 高い周波数のオシレーター（紙が擦れる音）
+        const highOsc = this.audioContext.createOscillator();
+        const highGain = this.audioContext.createGain();
+        highOsc.connect(highGain);
+        highGain.connect(this.audioContext.destination);
+        highOsc.frequency.setValueAtTime(2000, now);
+        highOsc.frequency.exponentialRampToValueAtTime(3000, now + duration * 0.5);
+        highOsc.frequency.exponentialRampToValueAtTime(1500, now + duration);
+        highOsc.type = 'square';
+        highGain.gain.setValueAtTime(0.06, now);
+        highGain.gain.exponentialRampToValueAtTime(0.03, now + duration * 0.5);
+        highGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+        highOsc.start(now);
+        highOsc.stop(now + duration);
+        
+        // 中間周波数のオシレーター（紙の質感）
+        const midOsc = this.audioContext.createOscillator();
+        const midGain = this.audioContext.createGain();
+        midOsc.connect(midGain);
+        midGain.connect(this.audioContext.destination);
+        midOsc.frequency.setValueAtTime(300, now);
+        midOsc.frequency.exponentialRampToValueAtTime(500, now + duration * 0.6);
+        midOsc.type = 'triangle';
+        midGain.gain.setValueAtTime(0.08, now);
+        midGain.gain.exponentialRampToValueAtTime(0.02, now + duration);
+        midOsc.start(now);
+        midOsc.stop(now + duration);
     }
 };
 let answeredWords = new Set();
@@ -5815,18 +5864,10 @@ function displayCurrentWord() {
     elements.englishWord.textContent = word.word;
     applyMarkers(word);
     
-    // 入試登場回数を表示（カードモード）
+    // 入試登場回数を表示（カードモード）- アウトプットモードでは非表示
     const appearanceCountEl = document.getElementById('wordAppearanceCount');
     if (appearanceCountEl) {
-        const count =
-            typeof word.appearanceCount === 'number' && !isNaN(word.appearanceCount)
-                ? word.appearanceCount
-                : 0;
-        const valueSpan = appearanceCountEl.querySelector('.appearance-value');
-        if (valueSpan) {
-            valueSpan.textContent = ` ${count}回`;
-        }
-        appearanceCountEl.style.display = 'flex';
+        appearanceCountEl.style.display = 'none';
     }
     
     // 裏面の意味と品詞を一緒に表示（品詞を左横に）
@@ -6108,12 +6149,8 @@ function markMastered() {
 function markAnswer(isCorrect, isTimeout = false) {
     if (currentIndex >= currentRangeEnd) return;
     
-    // 効果音を再生
-    if (isCorrect) {
-        SoundEffects.playCorrect();
-    } else {
-        SoundEffects.playWrong();
-    }
+    // 効果音を再生（紙のページめくり音）
+    SoundEffects.playPageTurn();
 
     const word = currentWords[currentIndex];
     answeredWords.add(word.id);
