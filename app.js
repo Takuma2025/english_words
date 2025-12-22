@@ -459,15 +459,12 @@ function updateVocabProgressBar() {
     }
     // 自転車アイコンの位置と画像を更新
     if (progressBike) {
+        // 進捗に応じて移動（0%から開始）
         progressBike.style.left = `${progressPercent}%`;
     }
     if (bikeImg) {
-        // 志望校未設定または合格必須ラインを超えていればbike_o.jpg、未達成ならbike_b.jpg
-        if (!hasSchool || !isInsufficient) {
-            bikeImg.src = 'bike_o.jpg';
-        } else {
-            bikeImg.src = 'bike_b.jpg';
-        }
+        // 常にbike_b.jpgを使用
+        bikeImg.src = 'bike_b.jpg';
     }
     
     // 合格必須ラインの表示
@@ -485,22 +482,58 @@ function updateVocabProgressBar() {
     updateVocabSelectedSchool(selectedSchool);
 }
 
-// 志望校を進捗バーの上に表示
+// 志望校をヘッダーに表示
 function updateVocabSelectedSchool(school) {
-    const vocabSelectedSchool = document.getElementById('vocabSelectedSchool');
-    if (!vocabSelectedSchool) return;
+    const vocabSchoolSelector = document.getElementById('vocabSchoolSelector');
+    const vocabSchoolSelected = document.getElementById('vocabSchoolSelected');
+    const vocabSchoolName = document.getElementById('vocabSchoolName');
+    const vocabSchoolChangeBtn = document.getElementById('vocabSchoolChangeBtn');
+    const openSchoolSettings = document.getElementById('openSchoolSettings');
+    
+    if (!vocabSchoolSelector || !vocabSchoolSelected || !vocabSchoolName) return;
     
     if (school) {
-        vocabSelectedSchool.textContent = `${school.name}（${school.type} / ${school.course}）`;
-        vocabSelectedSchool.style.display = 'block';
+        // 志望校が設定されている場合
+        vocabSchoolName.textContent = `${school.name}（${school.type} / ${school.course}）`;
+        vocabSchoolSelector.classList.add('hidden');
+        vocabSchoolSelected.classList.remove('hidden');
+        
+        // 変更ボタンのイベントリスナーを設定
+        if (vocabSchoolChangeBtn && openSchoolSettings) {
+            vocabSchoolChangeBtn.onclick = () => {
+                openSchoolSettings.click();
+            };
+        }
     } else {
-        vocabSelectedSchool.style.display = 'none';
+        // 志望校が未設定の場合
+        vocabSchoolSelector.classList.remove('hidden');
+        vocabSchoolSelected.classList.add('hidden');
     }
 }
 
 function renderSchoolResults(listEl, results) {
     if (!listEl) return;
     listEl.innerHTML = '';
+    
+    // 一番上に「未定」を追加
+    const undecidedItem = document.createElement('div');
+    undecidedItem.className = 'school-result-item';
+    const undecidedName = document.createElement('div');
+    undecidedName.className = 'school-result-name';
+    undecidedName.textContent = '未定';
+    undecidedItem.appendChild(undecidedName);
+    undecidedItem.addEventListener('click', () => {
+        // 未設定にする
+        localStorage.removeItem(SCHOOL_STORAGE_KEY);
+        updateVocabProgressBar(); // 進捗バーを更新（志望校表示も含む）
+        // モーダルを閉じる
+        const modal = document.getElementById('schoolModal');
+        if (modal) modal.classList.add('hidden');
+        const resultsEl = document.getElementById('schoolSearchResults');
+        if (resultsEl) resultsEl.classList.add('hidden');
+    });
+    listEl.appendChild(undecidedItem);
+    
     if (results.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'school-result-item';
@@ -656,7 +689,7 @@ function initSchoolSelector() {
             if (tempSelectedSchool) {
                 saveSelectedSchool(tempSelectedSchool);
                 updateSelectedSchoolUI(tempSelectedSchool, false);
-                updateVocabSelectedSchool(tempSelectedSchool);
+                updateVocabProgressBar(); // 進捗バーを更新（志望校表示も含む）
                 const confirmWrapper = document.getElementById('schoolConfirmWrapper');
                 if (confirmWrapper) confirmWrapper.classList.add('hidden');
                 tempSelectedSchool = null;
