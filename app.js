@@ -494,7 +494,7 @@ function updateVocabSelectedSchool(school) {
     
     if (school) {
         // 志望校が設定されている場合
-        vocabSchoolName.textContent = `${school.name}（${school.type} / ${school.course}）`;
+        vocabSchoolName.innerHTML = `${school.name}<br>（${school.type} / ${school.course}）`;
         vocabSchoolSelector.classList.add('hidden');
         vocabSchoolSelected.classList.remove('hidden');
         
