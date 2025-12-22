@@ -3010,7 +3010,7 @@ const elementaryWordData = [
   {
     "id": 10047,
     "word": "finger",
-    "meaning": "指（手の親指はthumb、足の指はtoe）",
+    "meaning": "指（手の親指はthumb）",
     "partOfSpeech": "名詞",
     "category": "体に関する単語",
     "appearanceCount": 0

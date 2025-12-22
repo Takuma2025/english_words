@@ -126,6 +126,39 @@ const SoundEffects = {
         gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.03);
         oscillator.start(this.audioContext.currentTime);
         oscillator.stop(this.audioContext.currentTime + 0.03);
+    },
+    
+    // 閉じる音（×ボタンなど）
+    playClose() {
+        if (!this.enabled || !this.audioContext) return;
+        this.resume();
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(300, this.audioContext.currentTime + 0.1);
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.1);
+    },
+    
+    // メニュー選択音（軽いクリック）
+    playMenuSelect() {
+        if (!this.enabled || !this.audioContext) return;
+        this.resume();
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.value = 600;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.08, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.06);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.06);
     }
 };
 let answeredWords = new Set();
@@ -3806,6 +3839,9 @@ function setupEventListeners() {
     
     // フィルター画面を閉じる関数（下にスライドして閉じる）
     function closeFilterSheet() {
+        // 閉じる音を再生
+        SoundEffects.playClose();
+        
         const wordFilterView = document.getElementById('wordFilterView');
         const filterOverlay = document.getElementById('filterOverlay');
         
@@ -4131,12 +4167,35 @@ function setupEventListeners() {
         });
     }
     
-    // すべてのボタンにタップ音を追加
+    // すべてのボタンに適切な効果音を追加
     document.addEventListener('click', (e) => {
         const target = e.target.closest('button, .category-card, .course-btn, .study-btn, .mode-radio, .order-radio, .filter-checkbox, .menu-item, .main-menu-btn, .start-learning-btn');
-        if (target && !target.classList.contains('correct-btn') && !target.classList.contains('wrong-btn')) {
-            SoundEffects.playTap();
+        if (!target) return;
+        
+        // ×ボタンや閉じるボタンは閉じる音
+        if (target.classList.contains('filter-close-btn') || 
+            target.id === 'filterCloseBtn' || 
+            target.id === 'filterBackBtn' ||
+            target.classList.contains('close-btn')) {
+            // closeFilterSheet内で既に再生されるのでここでは何もしない
+            return;
         }
+        
+        // 正解/不正解ボタンは効果音なし（markAnswer内で再生）
+        if (target.classList.contains('correct-btn') || target.classList.contains('wrong-btn')) {
+            return;
+        }
+        
+        // カテゴリーカードやメニュー項目はメニュー選択音
+        if (target.classList.contains('category-card') || 
+            target.classList.contains('menu-item') ||
+            target.classList.contains('main-menu-btn')) {
+            SoundEffects.playMenuSelect();
+            return;
+        }
+        
+        // その他のボタンはタップ音
+        SoundEffects.playTap();
     }, true);
     
 }
@@ -5144,6 +5203,8 @@ function handleCardTap() {
         revealCard();
         return;
     }
+    // カードを元に戻す時も効果音を再生
+    SoundEffects.playFlip();
     isCardRevealed = false;
     elements.wordCard.classList.remove('flipped');
     // カードが元に戻ったとき、ボタンを非表示
