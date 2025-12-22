@@ -161,42 +161,64 @@ const SoundEffects = {
         oscillator.stop(this.audioContext.currentTime + 0.06);
     },
     
-    // 紙のページめくり音（パラッという軽い音）
+    // 紙のページめくり音（本のページをめくるパラッという音）
     playPageTurn() {
         if (!this.enabled || !this.audioContext) return;
         this.resume();
         const now = this.audioContext.currentTime;
-        const duration = 0.08; // 短い音
-        
-        // 短いノイズバースト（パラッという音）
-        const bufferSize = Math.floor(this.audioContext.sampleRate * duration);
-        const noiseBuffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            output[i] = Math.random() * 2 - 1;
+        const duration = 0.12; // 少し長めにして「パラッ」と鳴らす
+
+        // 1st ノイズバースト（高め：紙が擦れる音）
+        const bufferSizeHi = Math.floor(this.audioContext.sampleRate * duration);
+        const noiseBufferHi = this.audioContext.createBuffer(1, bufferSizeHi, this.audioContext.sampleRate);
+        const outputHi = noiseBufferHi.getChannelData(0);
+        for (let i = 0; i < bufferSizeHi; i++) {
+            outputHi[i] = Math.random() * 2 - 1;
         }
-        
-        const noiseSource = this.audioContext.createBufferSource();
-        noiseSource.buffer = noiseBuffer;
-        
-        // バンドパスフィルター（乾いた紙の音）
-        const bandpass = this.audioContext.createBiquadFilter();
-        bandpass.type = 'bandpass';
-        bandpass.frequency.value = 3000;
-        bandpass.Q.value = 0.8;
-        
-        // ゲイン（瞬間的な音）
-        const gainNode = this.audioContext.createGain();
-        gainNode.gain.setValueAtTime(0.3, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
-        
-        // 接続
-        noiseSource.connect(bandpass);
-        bandpass.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        
-        noiseSource.start(now);
-        noiseSource.stop(now + duration);
+        const noiseSourceHi = this.audioContext.createBufferSource();
+        noiseSourceHi.buffer = noiseBufferHi;
+
+        const bandpassHi = this.audioContext.createBiquadFilter();
+        bandpassHi.type = 'bandpass';
+        bandpassHi.frequency.value = 3200;
+        bandpassHi.Q.value = 1.1;
+
+        const gainHi = this.audioContext.createGain();
+        gainHi.gain.setValueAtTime(0.22, now);
+        gainHi.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+        noiseSourceHi.connect(bandpassHi);
+        bandpassHi.connect(gainHi);
+        gainHi.connect(this.audioContext.destination);
+
+        // 2nd ノイズバースト（中低域：ページの動きの「ボワッ」）
+        const bufferSizeLo = Math.floor(this.audioContext.sampleRate * (duration * 0.8));
+        const noiseBufferLo = this.audioContext.createBuffer(1, bufferSizeLo, this.audioContext.sampleRate);
+        const outputLo = noiseBufferLo.getChannelData(0);
+        for (let i = 0; i < bufferSizeLo; i++) {
+            outputLo[i] = Math.random() * 2 - 1;
+        }
+        const noiseSourceLo = this.audioContext.createBufferSource();
+        noiseSourceLo.buffer = noiseBufferLo;
+
+        const bandpassLo = this.audioContext.createBiquadFilter();
+        bandpassLo.type = 'bandpass';
+        bandpassLo.frequency.value = 900;
+        bandpassLo.Q.value = 0.7;
+
+        const gainLo = this.audioContext.createGain();
+        gainLo.gain.setValueAtTime(0.12, now + 0.01); // 少し遅らせて重ねる
+        gainLo.gain.exponentialRampToValueAtTime(0.008, now + duration);
+
+        noiseSourceLo.connect(bandpassLo);
+        bandpassLo.connect(gainLo);
+        gainLo.connect(this.audioContext.destination);
+
+        noiseSourceHi.start(now);
+        noiseSourceHi.stop(now + duration);
+
+        noiseSourceLo.start(now + 0.01);
+        noiseSourceLo.stop(now + duration);
     }
 };
 let answeredWords = new Set();
