@@ -161,53 +161,52 @@ const SoundEffects = {
         oscillator.stop(this.audioContext.currentTime + 0.06);
     },
     
-    // 紙のページめくり音
+    // 紙のページめくり音（ホワイトノイズベース）
     playPageTurn() {
         if (!this.enabled || !this.audioContext) return;
         this.resume();
         const now = this.audioContext.currentTime;
-        const duration = 0.15;
+        const duration = 0.18;
         
-        // 低い周波数のオシレーター（ページがめくられる音）
-        const lowOsc = this.audioContext.createOscillator();
-        const lowGain = this.audioContext.createGain();
-        lowOsc.connect(lowGain);
-        lowGain.connect(this.audioContext.destination);
-        lowOsc.frequency.setValueAtTime(80, now);
-        lowOsc.frequency.exponentialRampToValueAtTime(120, now + duration);
-        lowOsc.type = 'sawtooth';
-        lowGain.gain.setValueAtTime(0.12, now);
-        lowGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
-        lowOsc.start(now);
-        lowOsc.stop(now + duration);
+        // ホワイトノイズを生成（紙が擦れる音）
+        const bufferSize = this.audioContext.sampleRate * duration;
+        const noiseBuffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            output[i] = Math.random() * 2 - 1;
+        }
         
-        // 高い周波数のオシレーター（紙が擦れる音）
-        const highOsc = this.audioContext.createOscillator();
-        const highGain = this.audioContext.createGain();
-        highOsc.connect(highGain);
-        highGain.connect(this.audioContext.destination);
-        highOsc.frequency.setValueAtTime(2000, now);
-        highOsc.frequency.exponentialRampToValueAtTime(3000, now + duration * 0.5);
-        highOsc.frequency.exponentialRampToValueAtTime(1500, now + duration);
-        highOsc.type = 'square';
-        highGain.gain.setValueAtTime(0.06, now);
-        highGain.gain.exponentialRampToValueAtTime(0.03, now + duration * 0.5);
-        highGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
-        highOsc.start(now);
-        highOsc.stop(now + duration);
+        const noiseSource = this.audioContext.createBufferSource();
+        noiseSource.buffer = noiseBuffer;
         
-        // 中間周波数のオシレーター（紙の質感）
-        const midOsc = this.audioContext.createOscillator();
-        const midGain = this.audioContext.createGain();
-        midOsc.connect(midGain);
-        midGain.connect(this.audioContext.destination);
-        midOsc.frequency.setValueAtTime(300, now);
-        midOsc.frequency.exponentialRampToValueAtTime(500, now + duration * 0.6);
-        midOsc.type = 'triangle';
-        midGain.gain.setValueAtTime(0.08, now);
-        midGain.gain.exponentialRampToValueAtTime(0.02, now + duration);
-        midOsc.start(now);
-        midOsc.stop(now + duration);
+        // ハイパスフィルター（紙のシャッという高周波成分）
+        const highpass = this.audioContext.createBiquadFilter();
+        highpass.type = 'highpass';
+        highpass.frequency.setValueAtTime(2000, now);
+        highpass.frequency.linearRampToValueAtTime(4000, now + duration * 0.3);
+        highpass.frequency.linearRampToValueAtTime(1500, now + duration);
+        
+        // ローパスフィルター（音を柔らかく）
+        const lowpass = this.audioContext.createBiquadFilter();
+        lowpass.type = 'lowpass';
+        lowpass.frequency.setValueAtTime(8000, now);
+        lowpass.frequency.linearRampToValueAtTime(3000, now + duration);
+        
+        // ゲイン（音量エンベロープ）
+        const gainNode = this.audioContext.createGain();
+        gainNode.gain.setValueAtTime(0, now);
+        gainNode.gain.linearRampToValueAtTime(0.25, now + 0.02); // 素早い立ち上がり
+        gainNode.gain.linearRampToValueAtTime(0.15, now + duration * 0.4);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
+        
+        // 接続
+        noiseSource.connect(highpass);
+        highpass.connect(lowpass);
+        lowpass.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        
+        noiseSource.start(now);
+        noiseSource.stop(now + duration);
     }
 };
 let answeredWords = new Set();
