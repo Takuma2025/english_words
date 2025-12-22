@@ -6160,8 +6160,12 @@ function markMastered() {
 function markAnswer(isCorrect, isTimeout = false) {
     if (currentIndex >= currentRangeEnd) return;
     
-    // 効果音を再生（紙のページめくり音）
-    SoundEffects.playPageTurn();
+    // 効果音を再生（正解/不正解）
+    if (isCorrect) {
+        SoundEffects.playCorrect();
+    } else {
+        SoundEffects.playWrong();
+    }
 
     const word = currentWords[currentIndex];
     answeredWords.add(word.id);
