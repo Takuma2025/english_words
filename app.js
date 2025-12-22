@@ -304,8 +304,37 @@ function calculateRequiredWords(hensachi) {
 
 // 全カテゴリの覚えた単語数を計算
 function calculateTotalLearnedWords() {
+    // 小学生で習った単語のサブカテゴリ
+    const elementarySubCategories = [
+        '家族・家に関する単語',
+        '数字に関する単語',
+        '日用品・楽器に関する単語',
+        '体に関する単語',
+        '色に関する単語',
+        '食べ物・飲み物に関する単語',
+        '町の施設に関する単語',
+        '乗り物に関する単語',
+        '職業に関する単語',
+        'スポーツに関する単語',
+        '曜日・月・季節に関する単語',
+        '動物に関する単語',
+        '自然・天気に関する単語',
+        '学校に関する単語',
+        '国名や地域に関する単語',
+        '冠詞',
+        '代名詞',
+        '不定代名詞',
+        '副詞（否定・程度・焦点）',
+        '疑問詞',
+        '限定詞（数量）',
+        '前置詞',
+        '助動詞・助動詞的表現',
+        '接続詞',
+        '関係代名詞',
+        '間投詞'
+    ];
+    
     const categories = [
-        '小学生で習った単語とカテゴリー別に覚える単語',
         'LEVEL1 超重要単語400',
         'LEVEL2 重要単語300',
         'LEVEL3 差がつく単語200',
@@ -314,18 +343,40 @@ function calculateTotalLearnedWords() {
     ];
     
     let totalLearned = 0;
-    const mode = 'output'; // アウトプットモードで覚えた単語をカウント
+    const modes = ['output', 'card']; // 両方のモードを読み込む
     
-    categories.forEach(cat => {
-        const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
-        if (savedCorrect) {
-            try {
-                const parsed = JSON.parse(savedCorrect);
-                totalLearned += parsed.length;
-            } catch (e) {
-                console.error('Error parsing correctWords:', e);
+    // 小学生で習った単語のサブカテゴリを読み込む
+    const elementaryLearnedSet = new Set();
+    elementarySubCategories.forEach(subCat => {
+        modes.forEach(mode => {
+            const savedCorrect = localStorage.getItem(`correctWords-${subCat}_${mode}`);
+            if (savedCorrect) {
+                try {
+                    const parsed = JSON.parse(savedCorrect);
+                    parsed.forEach(id => elementaryLearnedSet.add(id));
+                } catch (e) {
+                    console.error('Error parsing correctWords:', e);
+                }
             }
-        }
+        });
+    });
+    totalLearned += elementaryLearnedSet.size;
+    
+    // その他のカテゴリを読み込む
+    categories.forEach(cat => {
+        const learnedSet = new Set();
+        modes.forEach(mode => {
+            const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+            if (savedCorrect) {
+                try {
+                    const parsed = JSON.parse(savedCorrect);
+                    parsed.forEach(id => learnedSet.add(id));
+                } catch (e) {
+                    console.error('Error parsing correctWords:', e);
+                }
+            }
+        });
+        totalLearned += learnedSet.size;
     });
     
     return totalLearned;
@@ -384,7 +435,8 @@ function updateVocabProgressBar() {
     // DOM要素を更新
     const progressRate = document.getElementById('vocabProgressRate');
     const progressFill = document.getElementById('vocabProgressFill');
-    const progressRunner = document.getElementById('vocabProgressRunner');
+    const progressBike = document.getElementById('vocabProgressBike');
+    const bikeImg = document.getElementById('vocabBikeImg');
     const progressRequirement = document.getElementById('vocabProgressRequirement');
     const requirementLabel = document.getElementById('vocabRequirementLabel');
     const learnedCountEl = document.getElementById('vocabLearnedCount');
@@ -405,10 +457,17 @@ function updateVocabProgressBar() {
         progressFill.classList.toggle('insufficient', isInsufficient);
         progressFill.classList.toggle('no-school', !hasSchool);
     }
-    if (progressRunner) {
-        progressRunner.style.left = `${progressPercent}%`;
-        progressRunner.classList.toggle('insufficient', isInsufficient);
-        progressRunner.classList.toggle('no-school', !hasSchool);
+    // 自転車アイコンの位置と画像を更新
+    if (progressBike) {
+        progressBike.style.left = `${progressPercent}%`;
+    }
+    if (bikeImg) {
+        // 志望校未設定または合格必須ラインを超えていればbike_o.jpg、未達成ならbike_b.jpg
+        if (!hasSchool || !isInsufficient) {
+            bikeImg.src = 'bike_o.jpg';
+        } else {
+            bikeImg.src = 'bike_b.jpg';
+        }
     }
     
     // 合格必須ラインの表示
@@ -6461,11 +6520,13 @@ function markMastered() {
     correctWords.add(word.id);
     
     // カテゴリごとの進捗を更新
-    if (selectedCategory) {
-        const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+    // AI分析または小学生で習った単語の場合は、各単語のカテゴリー（機能語の場合は「冠詞」「代名詞」など）を使用
+    const categoryKey = (selectedCategory === 'AI分析 苦手単語' || selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') ? word.category : selectedCategory;
+    if (categoryKey) {
+        const { correctSet, wrongSet } = loadCategoryWords(categoryKey);
         correctSet.add(word.id);
         wrongSet.delete(word.id);
-        saveCategoryWords(selectedCategory, correctSet, wrongSet);
+        saveCategoryWords(categoryKey, correctSet, wrongSet);
     }
     
     saveCorrectWords();
@@ -6479,6 +6540,7 @@ function markMastered() {
     applyMarkers(word);
     updateStats();
     updateProgressSegments(); // 進捗バーのセグメントを更新
+    updateVocabProgressBar(); // 英単語進捗バーを更新
 
     // 画面全体のフィードバック表示（薄い水色）
     elements.feedbackOverlay.className = `feedback-overlay mastered active`;

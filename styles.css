@@ -1030,6 +1030,13 @@ body {
     flex: 1;
 }
 
+.vocab-progress-bike-container {
+    position: relative;
+    width: 100%;
+    height: 28px;
+    margin: 4px 0;
+}
+
 .vocab-progress-bar {
     position: relative;
     width: 100%;
@@ -1079,6 +1086,22 @@ body {
     height: 100%;
 }
 
+.vocab-progress-bike {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 28px;
+    z-index: 4;
+    transition: left 0.5s ease;
+}
+
+.vocab-progress-bike img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 .vocab-progress-requirement {
     position: absolute;
     top: -1px;
@@ -1091,6 +1114,16 @@ body {
     height: calc(100% + 2px);
 }
 
+.vocab-requirement-flag {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    z-index: 4;
+}
+
 .vocab-progress-requirement.hidden {
     display: none;
 }
@@ -1098,7 +1131,7 @@ body {
 .vocab-requirement-line {
     width: 0;
     height: 100%;
-    border-left: 2px dashed #3b82f6;
+    border-left: 1px dotted #3b82f6;
 }
 
 .vocab-requirement-triangle {

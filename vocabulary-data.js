@@ -131,7 +131,7 @@ const numberWords = [
   { id: 10144, word: "quarter", meaning: "4分の1、15分", partOfSpeech: "名詞", category: "数字に関する単語", appearanceCount: 1 },
   { id: 10145, word: "number", meaning: "数、番号", partOfSpeech: "名詞", category: "数字に関する単語", appearanceCount: 56 },
   { id: 10146, word: "twice", meaning: "2度・2回、2倍", partOfSpeech: "副詞", category: "数字に関する単語", appearanceCount: 13 },
-  { id: 10159, word: "double", meaning: "2人2倍（の）、2重（の）、2倍にする", partOfSpeech: "名詞・形容詞・動詞", category: "数字に関する単語", appearanceCount: 0 },
+  { id: 10159, word: "double", meaning: "2人、2倍（の）、2重（の）、2倍にする", partOfSpeech: "名詞・形容詞・動詞", category: "数字に関する単語", appearanceCount: 0 },
 ];
 
 // 日用品・楽器に関する単語
