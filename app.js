@@ -161,15 +161,15 @@ const SoundEffects = {
         oscillator.stop(this.audioContext.currentTime + 0.06);
     },
     
-    // 紙のページめくり音（ホワイトノイズベース）
+    // 紙のページめくり音（パラッという軽い音）
     playPageTurn() {
         if (!this.enabled || !this.audioContext) return;
         this.resume();
         const now = this.audioContext.currentTime;
-        const duration = 0.18;
+        const duration = 0.08; // 短い音
         
-        // ホワイトノイズを生成（紙が擦れる音）
-        const bufferSize = this.audioContext.sampleRate * duration;
+        // 短いノイズバースト（パラッという音）
+        const bufferSize = Math.floor(this.audioContext.sampleRate * duration);
         const noiseBuffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
         const output = noiseBuffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) {
@@ -179,30 +179,20 @@ const SoundEffects = {
         const noiseSource = this.audioContext.createBufferSource();
         noiseSource.buffer = noiseBuffer;
         
-        // ハイパスフィルター（紙のシャッという高周波成分）
-        const highpass = this.audioContext.createBiquadFilter();
-        highpass.type = 'highpass';
-        highpass.frequency.setValueAtTime(2000, now);
-        highpass.frequency.linearRampToValueAtTime(4000, now + duration * 0.3);
-        highpass.frequency.linearRampToValueAtTime(1500, now + duration);
+        // バンドパスフィルター（乾いた紙の音）
+        const bandpass = this.audioContext.createBiquadFilter();
+        bandpass.type = 'bandpass';
+        bandpass.frequency.value = 3000;
+        bandpass.Q.value = 0.8;
         
-        // ローパスフィルター（音を柔らかく）
-        const lowpass = this.audioContext.createBiquadFilter();
-        lowpass.type = 'lowpass';
-        lowpass.frequency.setValueAtTime(8000, now);
-        lowpass.frequency.linearRampToValueAtTime(3000, now + duration);
-        
-        // ゲイン（音量エンベロープ）
+        // ゲイン（瞬間的な音）
         const gainNode = this.audioContext.createGain();
-        gainNode.gain.setValueAtTime(0, now);
-        gainNode.gain.linearRampToValueAtTime(0.25, now + 0.02); // 素早い立ち上がり
-        gainNode.gain.linearRampToValueAtTime(0.15, now + duration * 0.4);
+        gainNode.gain.setValueAtTime(0.3, now);
         gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
         
         // 接続
-        noiseSource.connect(highpass);
-        highpass.connect(lowpass);
-        lowpass.connect(gainNode);
+        noiseSource.connect(bandpass);
+        bandpass.connect(gainNode);
         gainNode.connect(this.audioContext.destination);
         
         noiseSource.start(now);
