@@ -2425,7 +2425,7 @@ function updateQuestionCountOptions(wordCount) {
     questionCountValue.dataset.count = wordCount;
     
     // スワイプハンドルの位置を更新
-    if (questionCountTrack && questionCountHandle && wordCount >= 10) {
+    if (questionCountTrack && questionCountHandle && wordCount >= 1) {
         const trackWidth = questionCountTrack.offsetWidth;
         const handleWidth = 28;
         const minLeft = 2;
@@ -3592,7 +3592,15 @@ function setupEventListeners() {
         
         // カウントを0-1の範囲に正規化（すべての場合は1.0）
         let ratio = 0;
-        if (maxCount > 10) {
+        if (maxCount < 30) {
+            // 30問未満の場合は1問単位
+            if (count >= maxCount) {
+                ratio = 1.0; // すべての場合は右端
+            } else {
+                ratio = Math.max(0, Math.min(1, (count - 1) / (maxCount - 1)));
+            }
+        } else {
+            // 30問以上の場合は10問刻み
             if (count >= maxCount) {
                 ratio = 1.0; // すべての場合は右端
             } else {
@@ -3610,19 +3618,22 @@ function setupEventListeners() {
         const maxLeft = trackWidth - handleWidth - 2;
         const ratio = Math.max(0, Math.min(1, (left - minLeft) / (maxLeft - minLeft)));
         
-        if (maxCount <= 10) return maxCount;
-        
         // 右端に近い場合（95%以上）は「すべて」を返す
         if (ratio >= 0.95) {
             return maxCount;
         }
         
-        // 10問刻みで調整
-        const steps = Math.floor((maxCount - 10) / 10);
-        const step = Math.round(ratio * steps);
-        const count = 10 + step * 10;
-        
-        return Math.min(maxCount, Math.max(10, count));
+        if (maxCount < 30) {
+            // 30問未満の場合は1問単位で調整
+            const count = Math.round(1 + ratio * (maxCount - 1));
+            return Math.min(maxCount, Math.max(1, count));
+        } else {
+            // 30問以上の場合は10問刻みで調整
+            const steps = Math.floor((maxCount - 10) / 10);
+            const step = Math.round(ratio * steps);
+            const count = 10 + step * 10;
+            return Math.min(maxCount, Math.max(10, count));
+        }
     }
     
     if (questionCountTrack && questionCountHandle) {
@@ -3631,7 +3642,7 @@ function setupEventListeners() {
             const filteredWords = getFilteredWords();
             const maxCount = filteredWords.length;
             
-            if (maxCount < 10) {
+            if (maxCount < 1) {
                 if (questionCountSwipe) questionCountSwipe.style.display = 'none';
                 return;
             }
@@ -3640,7 +3651,9 @@ function setupEventListeners() {
             
             const trackWidth = questionCountTrack.offsetWidth;
             let currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
-            currentCount = Math.max(10, Math.min(maxCount, currentCount));
+            // 30問未満の場合は最小1問、30問以上の場合は最小10問
+            const minCount = maxCount < 30 ? 1 : 10;
+            currentCount = Math.max(minCount, Math.min(maxCount, currentCount));
             
             updateQuestionCountDisplay(currentCount, maxCount);
             updateHandlePosition(currentCount, maxCount, trackWidth);
@@ -3654,13 +3667,13 @@ function setupEventListeners() {
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
-                const filteredWords = getFilteredWords();
-                const maxCount = filteredWords.length;
-                if (maxCount >= 10) {
-                    const trackWidth = questionCountTrack.offsetWidth;
-                    const currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
-                    updateHandlePosition(currentCount, maxCount, trackWidth);
-                }
+            const filteredWords = getFilteredWords();
+            const maxCount = filteredWords.length;
+            if (maxCount >= 1) {
+                const trackWidth = questionCountTrack.offsetWidth;
+                const currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
+                updateHandlePosition(currentCount, maxCount, trackWidth);
+            }
             }, 100);
         });
         
@@ -3675,7 +3688,7 @@ function setupEventListeners() {
             
             const filteredWords = getFilteredWords();
             const maxCount = filteredWords.length;
-            if (maxCount < 10) return;
+            if (maxCount < 1) return;
         }, { passive: false });
         
         questionCountTrack.addEventListener('touchmove', (e) => {
@@ -3695,7 +3708,7 @@ function setupEventListeners() {
             
             const filteredWords = getFilteredWords();
             const maxCount = filteredWords.length;
-            if (maxCount >= 10) {
+            if (maxCount >= 1) {
                 const newCount = getCountFromPosition(newLeft, trackWidth, maxCount);
                 updateQuestionCountDisplay(newCount, maxCount);
             }
@@ -3708,7 +3721,7 @@ function setupEventListeners() {
             
             const filteredWords = getFilteredWords();
             const maxCount = filteredWords.length;
-            if (maxCount >= 10) {
+            if (maxCount >= 1) {
                 const trackWidth = questionCountTrack.offsetWidth;
                 const currentLeft = parseFloat(questionCountHandle.style.left) || 2;
                 const finalCount = getCountFromPosition(currentLeft, trackWidth, maxCount);
@@ -3727,7 +3740,7 @@ function setupEventListeners() {
             
             const filteredWords = getFilteredWords();
             const maxCount = filteredWords.length;
-            if (maxCount < 10) return;
+            if (maxCount < 1) return;
         });
         
         document.addEventListener('mousemove', (e) => {
@@ -3745,7 +3758,7 @@ function setupEventListeners() {
             
             const filteredWords = getFilteredWords();
             const maxCount = filteredWords.length;
-            if (maxCount >= 10) {
+            if (maxCount >= 1) {
                 const newCount = getCountFromPosition(newLeft, trackWidth, maxCount);
                 updateQuestionCountDisplay(newCount, maxCount);
             }
@@ -3758,7 +3771,7 @@ function setupEventListeners() {
             
             const filteredWords = getFilteredWords();
             const maxCount = filteredWords.length;
-            if (maxCount >= 10 && questionCountTrack) {
+            if (maxCount >= 1 && questionCountTrack) {
                 const trackWidth = questionCountTrack.offsetWidth;
                 const currentLeft = parseFloat(questionCountHandle.style.left) || 2;
                 const finalCount = getCountFromPosition(currentLeft, trackWidth, maxCount);
