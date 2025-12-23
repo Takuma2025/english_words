@@ -2237,7 +2237,7 @@ function init() {
 // ヘッダーボタンの表示/非表示を制御
 // テーマカラーを更新（即座に変更、フェードなし）
 function updateThemeColor(isLearningMode) {
-    const color = isLearningMode ? '#ffffff' : '#0055ca';
+    const color = '#ffffff';
     
     // 同期的に即座に更新（requestAnimationFrameを使わない）
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
