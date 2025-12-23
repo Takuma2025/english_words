@@ -1434,6 +1434,8 @@ body {
 .school-modal-content {
     position: relative;
     width: min(520px, 92%);
+    max-height: calc(100vh - 120px);
+    max-height: calc(100dvh - 120px);
     background: #ffffff;
     border-radius: 14px;
     padding: 16px;
@@ -1442,6 +1444,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    overflow: hidden;
 }
 
 .school-modal-header {
@@ -1600,11 +1603,12 @@ body {
 
 /* 学校一覧コンテナ */
 .school-list-container {
-    max-height: 400px;
+    max-height: 45vh;
     overflow-y: auto;
     border: 1px solid #e5e7eb;
     border-radius: 10px;
-    background: #6b7280;
+    background: #ffffff;
+    flex-shrink: 1;
 }
 
 .school-list-title-header {
@@ -1661,6 +1665,14 @@ body {
 
 .school-list-item:hover {
     background: #e5e7eb !important;
+}
+
+.school-list-item-selected {
+    background: #bfdbfe !important;
+}
+
+.school-list-item-selected:hover {
+    background: #93c5fd !important;
 }
 
 .school-list-name {

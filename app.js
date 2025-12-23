@@ -668,12 +668,12 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
         item.addEventListener('click', () => {
             // 一時的に選択した学校を保持
             tempSelectedSchool = school;
+            // 選択中のアイテムをハイライト
+            document.querySelectorAll('.school-list-item').forEach(el => el.classList.remove('school-list-item-selected'));
+            item.classList.add('school-list-item-selected');
             // 決定ボタンを表示
             const confirmWrapper = document.getElementById('schoolConfirmWrapper');
-            const confirmSelected = document.getElementById('schoolConfirmSelected');
-            if (confirmWrapper && confirmSelected) {
-                const henText = school.hensachi ? ` / 偏差値${school.hensachi}` : '';
-                confirmSelected.textContent = `${school.name}（${school.type} / ${school.course}${henText}）`;
+            if (confirmWrapper) {
                 confirmWrapper.classList.remove('hidden');
             }
         });
