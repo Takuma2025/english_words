@@ -1042,19 +1042,42 @@ body.learning-mode .app-header {
 
 .vocab-school-selected {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
     width: calc(100% + 32px);
     margin-left: -16px;
     margin-right: -16px;
     padding: 12px 16px;
-    padding-right: 16px; /* 右上の変更アイコン分の余白を最小限に */
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
     border: 2px solid #3b82f6;
     border-radius: 12px;
     box-sizing: border-box;
     position: relative;
+    overflow: visible;
+}
+
+.vocab-school-image {
+    position: absolute;
+    left: 10px; /* 左側に配置 */
+    top: -5%; /* 上に5%はみ出す */
+    bottom: 0;
+    width: auto;
+    height: 105%; /* はみ出し分を含める */
+    object-fit: contain;
+    object-position: left center; /* 左側に配置 */
+    pointer-events: none;
+    z-index: 10;
+}
+
+.vocab-school-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding-left: 130px; /* 左の画像分の余白（もっと右に） */
+    padding-right: 16px;
+    flex: 1;
 }
 
 .vocab-school-label {
@@ -1080,6 +1103,7 @@ body.learning-mode .app-header {
     letter-spacing: 0.02em;
     line-height: 1.4;
     width: 100%;
+    word-break: break-all; /* 文字を改行 */
 }
 
 .vocab-school-course {
@@ -1090,6 +1114,7 @@ body.learning-mode .app-header {
     line-height: 1.4;
     width: 100%;
     margin-bottom: 4px;
+    word-break: break-all; /* 文字を改行 */
 }
 
 .vocab-school-change-row {
@@ -2224,27 +2249,41 @@ body.learning-mode .app-header {
     }
 
     .category-seijo-girl {
-        width: 60px !important; /* スマホでも見やすいサイズに */
-        max-width: 60px !important;
-        object-fit: cover; /* デスクトップと同じ見え方に */
+        width: auto !important; /* 幅は自動 */
+        max-width: 50px !important; /* 最大幅を小さく */
+        height: 100% !important; /* 高さはコンテナに合わせる */
+        object-fit: contain !important; /* 画像全体が入るように */
         z-index: 10 !important; /* 最前面に */
     }
 
     .category-card-seijo .category-info {
-        padding-left: 75px; /* 画像のサイズに合わせて余白を調整 */
+        padding-left: 60px; /* 画像のサイズに合わせて余白を調整 */
         z-index: 1 !important;
     }
 
     .category-sentaku-boy {
-        width: 60px !important; /* スマホでも見やすいサイズに */
-        max-width: 60px !important;
-        object-fit: cover; /* デスクトップと同じ見え方に */
+        width: auto !important; /* 幅は自動 */
+        max-width: 50px !important; /* 最大幅を小さく */
+        height: 100% !important; /* 高さはコンテナに合わせる */
+        object-fit: contain !important; /* 画像全体が入るように */
         z-index: 10 !important; /* 最前面に */
     }
 
     .category-card-sentaku .category-info {
-        padding-right: 80px; /* 画像のサイズに合わせて余白を調整 */
+        padding-right: 65px; /* 画像のサイズに合わせて余白を調整 */
         z-index: 1 !important;
+    }
+
+    /* 志望校コンテナのスマホ向け調整 */
+    .vocab-school-image {
+        max-width: 60px !important;
+        height: 105% !important; /* 上にはみ出す分を含める */
+        object-fit: contain !important;
+    }
+
+    .vocab-school-content {
+        padding-left: 80px; /* スマホでは余白を調整 */
+        padding-right: 16px;
     }
 }
 
