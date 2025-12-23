@@ -1257,6 +1257,7 @@ body {
     padding: 1px 4px;
     border-radius: 3px;
     border: 1px solid #3b82f6;
+    box-sizing: border-box;
 }
 
 .vocab-progress-info {

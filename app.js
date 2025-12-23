@@ -243,18 +243,22 @@ function filterSchools(query) {
     }).slice(0, 12);
 }
 
-// 偏差値から必須単語数を計算（偏差値50=600語、偏差値70=1200語の線形補間）
+// 偏差値から必須単語数を計算（偏差値が高いほど必要語彙数が多くなる）
 function calculateRequiredWords(hensachi) {
     if (!hensachi) return 0;
-    // 偏差値40=400語、偏差値50=600語、偏差値60=800語、偏差値70=1000語、偏差値76=1180語
-    const minHensachi = 40;
-    const maxHensachi = 76;
-    const minWords = 400;
-    const maxWords = 1180;
+    // 偏差値34=300語、偏差値40=450語、偏差値50=700語、偏差値60=1000語、偏差値70=1400語、偏差値75=1700語
+    // 偏差値が高いほど急激に増えるように、二次関数を使用
+    const minHensachi = 34;
+    const maxHensachi = 75;
+    const minWords = 300;
+    const maxWords = 1700;
     
     const clampedHensachi = Math.max(minHensachi, Math.min(maxHensachi, hensachi));
-    const ratio = (clampedHensachi - minHensachi) / (maxHensachi - minHensachi);
-    return Math.round(minWords + ratio * (maxWords - minWords));
+    // 線形補間ではなく、偏差値が高いほど急激に増えるように調整
+    // 正規化された偏差値（0-1）を2乗して、より急激な増加を実現
+    const normalized = (clampedHensachi - minHensachi) / (maxHensachi - minHensachi);
+    const adjustedRatio = Math.pow(normalized, 1.5); // 1.5乗で中程度の急激さ
+    return Math.round(minWords + adjustedRatio * (maxWords - minWords));
 }
 
 // 全カテゴリの覚えた単語数を計算
@@ -426,8 +430,58 @@ function updateVocabProgressBar() {
     if (progressRequirement && requiredWords > 0) {
         progressRequirement.classList.remove('hidden');
         progressRequirement.style.left = `${requiredPercent}%`;
+        
+        // 右端に近い場合は、テキストを左側に配置するように調整
         if (requirementLabel) {
             requirementLabel.textContent = `志望校合格必須ライン ${requiredWords}語`;
+            
+            // 親要素の幅を取得して、テキストがはみ出さないように調整
+            const progressBar = progressRequirement.closest('.vocab-progress-bar');
+            if (progressBar) {
+                // テキストの幅を一時的に測定（デフォルトの中央配置で）
+                requirementLabel.style.visibility = 'hidden';
+                requirementLabel.style.transform = 'translateX(-50%)';
+                requirementLabel.style.left = '50%';
+                requirementLabel.style.right = 'auto';
+                requirementLabel.style.maxWidth = 'none';
+                const textWidth = requirementLabel.offsetWidth;
+                requirementLabel.style.visibility = 'visible';
+                
+                const containerWidth = progressBar.offsetWidth;
+                const leftPosition = (requiredPercent / 100) * containerWidth;
+                const textHalfWidth = textWidth / 2;
+                
+                // 右端を超えないように調整
+                const maxRight = containerWidth - 10; // 右端から10pxの余白
+                const textRightEdge = leftPosition + textHalfWidth;
+                
+                // 親要素の位置を取得
+                const barRect = progressBar.getBoundingClientRect();
+                const requirementRect = progressRequirement.getBoundingClientRect();
+                const requirementCenterInBar = requirementRect.left - barRect.left + requirementRect.width / 2;
+                
+                if (textRightEdge > maxRight) {
+                    // 右端を超える場合は、右端に合わせる
+                    const maxRightInBar = maxRight;
+                    const adjustedLeftInBar = maxRightInBar - textWidth;
+                    const offsetFromCenter = adjustedLeftInBar - requirementCenterInBar;
+                    requirementLabel.style.transform = 'translateX(0)';
+                    requirementLabel.style.left = `calc(50% + ${offsetFromCenter}px)`;
+                    requirementLabel.style.right = 'auto';
+                } else if (leftPosition - textHalfWidth < 10) {
+                    // 左端に近い場合は、左端に合わせる
+                    const adjustedLeftInBar = 10;
+                    const offsetFromCenter = adjustedLeftInBar - requirementCenterInBar;
+                    requirementLabel.style.transform = 'translateX(0)';
+                    requirementLabel.style.left = `calc(50% + ${offsetFromCenter}px)`;
+                    requirementLabel.style.right = 'auto';
+                } else {
+                    // 中央に配置
+                    requirementLabel.style.transform = 'translateX(-50%)';
+                    requirementLabel.style.left = '50%';
+                    requirementLabel.style.right = 'auto';
+                }
+            }
         }
     } else if (progressRequirement) {
         progressRequirement.classList.add('hidden');
@@ -4742,7 +4796,8 @@ function setupEventListeners() {
         if (!target) return;
         
         // ×ボタンや閉じるボタンは閉じる音（各close関数内で既に再生されるのでここでは何もしない）
-        if (target.classList.contains('filter-close-btn') || 
+        // ボタン内のSVG要素なども考慮して、親要素もチェック
+        const isCloseButton = target.classList.contains('filter-close-btn') || 
             target.classList.contains('school-modal-close') ||
             target.classList.contains('sidebar-close-btn') ||
             target.classList.contains('install-close-btn') ||
@@ -4751,7 +4806,11 @@ function setupEventListeners() {
             target.id === 'filterBackBtn' ||
             target.id === 'closeSchoolSettings' ||
             target.id === 'sidebarCloseBtn' ||
-            target.id === 'installCloseBtn') {
+            target.id === 'installCloseBtn' ||
+            target.closest('.filter-close-btn, .school-modal-close, .sidebar-close-btn, .install-close-btn, .close-btn') ||
+            target.closest('#filterCloseBtn, #filterBackBtn, #closeSchoolSettings, #sidebarCloseBtn, #installCloseBtn');
+        
+        if (isCloseButton) {
             return;
         }
         
