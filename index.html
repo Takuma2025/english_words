@@ -98,6 +98,20 @@
                         </svg>
                         <span>学習履歴を消す</span>
                     </button>
+                    <div class="sidebar-volume-control">
+                        <div class="sidebar-volume-label">
+                            <svg id="volumeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                <path class="volume-wave" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                <path class="volume-wave" d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                                <line class="volume-mute" x1="23" y1="9" x2="17" y2="15" style="display:none"></line>
+                                <line class="volume-mute" x1="17" y1="9" x2="23" y2="15" style="display:none"></line>
+                            </svg>
+                            <span>効果音の音量</span>
+                            <span class="volume-value" id="volumeValue">50%</span>
+                        </div>
+                        <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="50">
+                    </div>
                 </div>
             </div>
         </div>
