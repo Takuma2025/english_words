@@ -263,7 +263,7 @@ let selectedCategory = null;
 let reviewWords = new Set(); // 復習用チェック（★）
 // 志望校データは school-data.js で管理
 const SCHOOL_STORAGE_KEY = 'preferredSchoolOsaka';
-let tempSelectedSchool = null; // 一時的に選択した学校
+let tempSelectedSchool = undefined; // 一時的に選択した学校（undefined=未選択、null=未定、オブジェクト=学校選択）
 
 function normalizeSchoolText(str) {
     return (str || '').toLowerCase();
@@ -519,7 +519,8 @@ function updateVocabProgressBar() {
             
             // 親要素の幅を取得して、テキストがはみ出さないように調整
             const progressBar = progressRequirement.closest('.vocab-progress-bar');
-            if (progressBar) {
+            const progressBarWrapper = progressRequirement.closest('.vocab-progress-bar-wrapper');
+            if (progressBar && progressBarWrapper) {
                 // テキストの幅を一時的に測定（デフォルトの中央配置で）
                 requirementLabel.style.visibility = 'hidden';
                 requirementLabel.style.transform = 'translateX(-50%)';
@@ -530,28 +531,31 @@ function updateVocabProgressBar() {
                 requirementLabel.style.visibility = 'visible';
                 
                 const containerWidth = progressBar.offsetWidth;
+                const wrapperWidth = progressBarWrapper.offsetWidth;
                 const leftPosition = (requiredPercent / 100) * containerWidth;
                 const textHalfWidth = textWidth / 2;
                 
-                // 右端を超えないように調整
-                const maxRight = containerWidth - 10; // 右端から10pxの余白
+                // 右端を超えないように調整（wrapperの幅を基準にする）
+                const maxRight = wrapperWidth - 10; // 右端から10pxの余白
                 const textRightEdge = leftPosition + textHalfWidth;
                 
                 // 親要素の位置を取得
                 const barRect = progressBar.getBoundingClientRect();
+                const wrapperRect = progressBarWrapper.getBoundingClientRect();
                 const requirementRect = progressRequirement.getBoundingClientRect();
                 const requirementCenterInBar = requirementRect.left - barRect.left + requirementRect.width / 2;
                 
                 if (textRightEdge > maxRight) {
-                    // 右端を超える場合は、右端に合わせる
-                    const maxRightInBar = maxRight;
-                    const adjustedLeftInBar = maxRightInBar - textWidth;
+                    // 右端を超える場合は、右端から10pxの位置に固定（wrapper基準）
+                    const maxRightInWrapper = maxRight;
+                    const adjustedLeftInWrapper = Math.max(10, maxRightInWrapper - textWidth);
+                    const adjustedLeftInBar = adjustedLeftInWrapper - (barRect.left - wrapperRect.left);
                     const offsetFromCenter = adjustedLeftInBar - requirementCenterInBar;
                     requirementLabel.style.transform = 'translateX(0)';
                     requirementLabel.style.left = `calc(50% + ${offsetFromCenter}px)`;
                     requirementLabel.style.right = 'auto';
                 } else if (leftPosition - textHalfWidth < 10) {
-                    // 左端に近い場合は、左端に合わせる
+                    // 左端に近い場合は、左端から10pxの位置に固定
                     const adjustedLeftInBar = 10;
                     const offsetFromCenter = adjustedLeftInBar - requirementCenterInBar;
                     requirementLabel.style.transform = 'translateX(0)';
@@ -637,12 +641,16 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
     undecidedName.textContent = '未定（設定しない）';
     undecidedItem.appendChild(undecidedName);
     undecidedItem.addEventListener('click', () => {
-        // 未設定にする
-        localStorage.removeItem(SCHOOL_STORAGE_KEY);
-        updateVocabProgressBar();
-        // モーダルを閉じる
-        const modal = document.getElementById('schoolModal');
-        if (modal) modal.classList.add('hidden');
+        // 未設定を選択
+        tempSelectedSchool = null;
+        // 選択中のアイテムをハイライト
+        document.querySelectorAll('.school-list-item').forEach(el => el.classList.remove('school-list-item-selected'));
+        undecidedItem.classList.add('school-list-item-selected');
+        // 決定ボタンを表示
+        const confirmWrapper = document.getElementById('schoolConfirmWrapper');
+        if (confirmWrapper) {
+            confirmWrapper.classList.remove('hidden');
+        }
     });
     listEl.appendChild(undecidedItem);
     
@@ -750,7 +758,7 @@ function initSchoolSelector() {
         // 決定ボタンを非表示
         const confirmWrapper = document.getElementById('schoolConfirmWrapper');
         if (confirmWrapper) confirmWrapper.classList.add('hidden');
-        tempSelectedSchool = null;
+        tempSelectedSchool = undefined;
     };
 
     // タイプボタンのクリックイベント
@@ -795,7 +803,7 @@ function initSchoolSelector() {
         // 決定ボタンを非表示
         const confirmWrapper = document.getElementById('schoolConfirmWrapper');
         if (confirmWrapper) confirmWrapper.classList.add('hidden');
-        tempSelectedSchool = null;
+        tempSelectedSchool = undefined;
         if (!saved) {
             // すべてボタンをアクティブにして全学校を表示
             typeButtons.forEach(b => b.classList.remove('active'));
@@ -821,7 +829,7 @@ function initSchoolSelector() {
         // 決定ボタンを非表示
         const confirmWrapper = document.getElementById('schoolConfirmWrapper');
         if (confirmWrapper) confirmWrapper.classList.add('hidden');
-        tempSelectedSchool = null;
+        tempSelectedSchool = undefined;
         // モーダルを閉じるときは志望校表示に戻す
         const saved = loadSelectedSchool();
         if (saved) updateSelectedSchoolUI(saved, false);
@@ -835,14 +843,21 @@ function initSchoolSelector() {
     const confirmBtn = document.getElementById('schoolConfirmBtn');
     if (confirmBtn) {
         confirmBtn.addEventListener('click', () => {
-            if (tempSelectedSchool) {
+            if (tempSelectedSchool !== undefined) {
                 SoundEffects.playTap();
-                saveSelectedSchool(tempSelectedSchool);
-                updateSelectedSchoolUI(tempSelectedSchool, false);
+                if (tempSelectedSchool === null) {
+                    // 未定を選択した場合
+                    localStorage.removeItem(SCHOOL_STORAGE_KEY);
+                    updateSelectedSchoolUI(null, false);
+                } else {
+                    // 学校を選択した場合
+                    saveSelectedSchool(tempSelectedSchool);
+                    updateSelectedSchoolUI(tempSelectedSchool, false);
+                }
                 updateVocabProgressBar();
                 const confirmWrapper = document.getElementById('schoolConfirmWrapper');
                 if (confirmWrapper) confirmWrapper.classList.add('hidden');
-                tempSelectedSchool = null;
+                tempSelectedSchool = undefined;
                 // モーダルを閉じる
                 closeModal(true);
             }
