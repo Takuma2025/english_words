@@ -106,6 +106,13 @@ body {
     object-fit: contain;
 }
 
+.splash-title-logo {
+    max-width: 45%;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 12px;
+}
+
 .feedback-overlay {
     position: fixed;
     top: 0;
@@ -147,6 +154,7 @@ body {
     position: relative;
     z-index: 1;
     overflow: hidden;
+    padding-top: calc(var(--header-height) + env(safe-area-inset-top));
 }
 
 /* PWA設定の重複を削除 */
@@ -164,8 +172,11 @@ body {
     align-items: center;
     justify-content: center;
     padding: env(safe-area-inset-top) 16px 0 16px;
-    position: relative;
-    z-index: 1001;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10005;
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
@@ -269,6 +280,21 @@ body.learning-mode .app-header {
     align-items: center;
     justify-content: center;
     flex: 1;
+}
+
+.header-title-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100vw - 120px);
+}
+
+.header-title-text.hidden {
+    display: none;
 }
 
 .header-title-logo {
@@ -1740,7 +1766,7 @@ body.learning-mode .app-header {
 }
 
 .school-list-item-selected .school-list-meta {
-    color: #3b82f6 !important;
+    color: #1e40af !important;
 }
 
 .school-list-name {
@@ -4632,6 +4658,10 @@ body.reorder-mode-active .word-card-container {
 }
 
 /* 学習モード時のスタイル */
+body.learning-mode .app-container {
+    padding-top: 0;
+}
+
 body.learning-mode .app-main {
     padding-top: env(safe-area-inset-top);
 }
@@ -8831,7 +8861,10 @@ body.learning-mode .bottom-nav {
 /* フィルター画面オーバーレイ */
 .filter-overlay {
     position: fixed;
-    inset: 0;
+    top: calc(var(--header-height) + env(safe-area-inset-top));
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: rgba(0, 0, 0, 0.4);
     z-index: 10000;
     opacity: 0;

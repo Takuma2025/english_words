@@ -2288,11 +2288,13 @@ function updateFeedbackOverlayPosition() {
 }
 
 // mode: 'home' = ホーム画面、'course' = コース選択画面、'back' = その他（戻るボタン表示）、'learning' = 学習画面
-function updateHeaderButtons(mode) {
+// title: コース選択画面で表示するタイトル（オプション）
+function updateHeaderButtons(mode, title = '') {
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
     const headerBackBtn = document.getElementById('headerBackBtn');
     const homeBtn = document.getElementById('homeBtn');
     const headerTitleLogo = document.querySelector('.header-title-logo');
+    const headerTitleText = document.getElementById('headerTitleText');
     const appHeader = document.querySelector('.app-header');
     
     // ヘッダー全体の表示/非表示（ホーム画面とコース選択画面のみ表示）
@@ -2310,6 +2312,16 @@ function updateHeaderButtons(mode) {
             headerTitleLogo.classList.remove('hidden');
         } else {
             headerTitleLogo.classList.add('hidden');
+        }
+    }
+    
+    // タイトルテキストの表示/非表示（コース選択画面のみ表示）
+    if (headerTitleText) {
+        if (mode === 'course' && title) {
+            headerTitleText.textContent = title;
+            headerTitleText.classList.remove('hidden');
+        } else {
+            headerTitleText.classList.add('hidden');
         }
     }
     
@@ -2942,8 +2954,8 @@ function showCourseSelection(category, categoryWords) {
     console.log('courseSelection classes:', courseSelection.className);
     console.log('courseList children count:', courseList.children.length);
     
-    // コース選択画面：ヘッダー表示、戻るボタン表示
-    updateHeaderButtons('course');
+    // コース選択画面：ヘッダー表示、戻るボタン表示、タイトルを設定
+    updateHeaderButtons('course', displayCategory);
     console.log('showCourseSelection complete');
     
     // 「超よくでる」の場合のみ画像を表示
@@ -3010,6 +3022,13 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     currentFilterCategory = category;
     currentFilterWords = categoryWords;
     currentFilterCourseTitle = courseTitle || category;
+    
+    // ヘッダーを表示したままにする（くの字戻るボタン + タイトル）
+    let displayCategory = selectedCategory || category;
+    if (displayCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+        displayCategory = 'カテゴリー別に覚える単語';
+    }
+    updateHeaderButtons('course', displayCategory);
     
     // フィルター画面をボトムシートとして表示
     const wordFilterView = document.getElementById('wordFilterView');
@@ -3170,11 +3189,6 @@ function showWordFilterView(category, categoryWords, courseTitle) {
             modeOutput.classList.remove('mode-radio-selected');
         }
     }
-    
-    // ホーム画面からの場合はハンバーガーメニューのまま、それ以外は戻るボタンを表示
-    const categorySelectionEl = document.getElementById('categorySelection');
-    const isFromHome = categorySelectionEl && !categorySelectionEl.classList.contains('hidden');
-    updateHeaderButtons(isFromHome ? 'home' : 'back');
     
     // 出題数選択セクションを更新
     updateQuestionCountSection();
@@ -4659,6 +4673,15 @@ function setupEventListeners() {
         }
         document.body.style.overflow = '';
         
+        // 背後にコース選択画面がある場合はそのまま、ない場合はカテゴリー選択画面に戻る
+        const courseSelection = document.getElementById('courseSelection');
+        if (!courseSelection || courseSelection.classList.contains('hidden')) {
+            // コース選択画面がない場合（すべての英単語、AI分析など）はカテゴリー選択画面に戻る
+            setTimeout(() => {
+                showCategorySelection();
+            }, 400);
+        }
+        
         // アニメーション完了後にhiddenを追加してtransformをリセット
         setTimeout(() => {
             if (wordFilterView) {
@@ -4783,6 +4806,12 @@ function setupEventListeners() {
                 wordFilterView.classList.add('hidden');
                 if (courseSelection) {
                     courseSelection.classList.remove('hidden');
+                    // ヘッダーのタイトルを更新
+                    let displayCategory = selectedCategory;
+                    if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+                        displayCategory = 'カテゴリー別に覚える単語';
+                    }
+                    updateHeaderButtons('course', displayCategory);
                 }
             } else if (courseSelection && !courseSelection.classList.contains('hidden')) {
                 // コース選択画面からカテゴリー選択画面に戻る
