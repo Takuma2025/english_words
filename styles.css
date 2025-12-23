@@ -2123,6 +2123,11 @@ body {
     vertical-align: middle;
 }
 
+/* 私立高校入試用のピンクバッジ */
+.exam-type-badge-pink {
+    background-color: #e22366;
+}
+
 .intro-badge {
     display: inline-block;
     background-color: #10b981;
