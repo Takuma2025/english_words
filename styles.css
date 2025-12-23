@@ -171,6 +171,11 @@ body {
     box-sizing: border-box;
 }
 
+/* 学習モード（インプット一覧・カード学習・文法など）ではグローバルヘッダーは非表示 */
+body.learning-mode .app-header {
+    display: none !important;
+}
+
 .hamburger-menu-btn {
     position: absolute;
     left: 16px;
@@ -2598,6 +2603,23 @@ body {
 
 .input-back-btn.hidden {
     display: none;
+}
+
+/* 文法ページ用の戻るボタン（くの字） */
+.grammar-back-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    margin: -4px 8px -4px 0;
+    color: #4b5563;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grammar-back-btn:hover {
+    color: #1f2937;
 }
 
 .card-top-section {
