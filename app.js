@@ -4745,8 +4745,10 @@ function setupEventListeners() {
         if (target.classList.contains('filter-close-btn') || 
             target.id === 'filterCloseBtn' || 
             target.id === 'filterBackBtn' ||
+            target.id === 'closeSchoolSettings' ||
+            target.classList.contains('school-modal-close') ||
             target.classList.contains('close-btn')) {
-            // closeFilterSheet内で既に再生されるのでここでは何もしない
+            // closeModal内で既に再生されるのでここでは何もしない
             return;
         }
         
