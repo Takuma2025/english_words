@@ -2055,14 +2055,16 @@ body {
     position: relative;
 }
 
-/* 厳選例文暗記60 メニュー用の見出し＋画像レイアウト */
-.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-menu-header {
+/* 厳選例文暗記60 / 整序英作文100本ノック メニュー用の見出し＋画像レイアウト */
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-menu-header,
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-menu-header {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-menu-header .category-name {
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-menu-header .category-name,
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-menu-header .category-name {
     max-width: calc(100% - 90px);
 }
 
@@ -2126,6 +2128,22 @@ body {
 /* 私立高校入試用のピンクバッジ */
 .exam-type-badge-pink {
     background-color: #e22366;
+}
+
+/* 厳選例文暗記60カードのバッジは少し小さめにして1行に収める */
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-type-badge,
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-type-badge-pink {
+    font-size: 11px;
+    padding: 2px 6px;
+    margin-right: 4px;
+}
+
+/* 整序英作文100本ノックカードのバッジも同じサイズに */
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-type-badge,
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-type-badge-pink {
+    font-size: 11px;
+    padding: 2px 6px;
+    margin-right: 4px;
 }
 
 .intro-badge {
