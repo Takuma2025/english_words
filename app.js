@@ -3123,8 +3123,10 @@ function showWordFilterView(category, categoryWords, courseTitle) {
         }
     }
     
-    // ハンバーガーメニューと戻るボタンを非表示（フィルター画面はボトムシートなので不要）
-    updateHeaderButtons('home');
+    // ホーム画面からの場合はハンバーガーメニューのまま、それ以外は戻るボタンを表示
+    const categorySelectionEl = document.getElementById('categorySelection');
+    const isFromHome = categorySelectionEl && !categorySelectionEl.classList.contains('hidden');
+    updateHeaderButtons(isFromHome ? 'home' : 'back');
     
     // 出題数選択セクションを更新
     updateQuestionCountSection();
@@ -7314,14 +7316,9 @@ function returnToCourseSelection() {
 function reviewWrongWords() {
     hideCompletion();
     
-    // 今回の学習で間違えた単語を取得
-    const wrongWordsInSession = currentWords.filter(word => {
-        if (selectedCategory === 'AI分析 苦手単語') {
-            const { wrongSet } = loadCategoryWords(word.category);
-            return wrongSet.has(word.id);
-        }
-        const { wrongSet } = loadCategoryWords(selectedCategory);
-        return wrongSet.has(word.id);
+    // 今回のセッションで間違えた単語を取得（questionStatusを使用）
+    const wrongWordsInSession = currentWords.filter((word, index) => {
+        return questionStatus[index] === 'wrong';
     });
     
     if (wrongWordsInSession.length === 0) {
@@ -7330,9 +7327,9 @@ function reviewWrongWords() {
         return;
     }
     
-    // 間違えた単語で学習を開始
-    // selectedLearningMode === 'input'の場合は「眺めるだけ」のカードモードとしてinitLearningを呼ぶ
+    // 間違えた単語を「眺めるだけ」のカード一覧モードで復習開始
     setTimeout(() => {
+        currentLearningMode = 'input'; // 眺めるモードに設定
         initLearning(selectedCategory, wrongWordsInSession, 0, wrongWordsInSession.length, 0);
     }, 350);
 }

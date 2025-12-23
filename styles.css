@@ -1416,7 +1416,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1010;
+    z-index: 9999;
 }
 
 .school-modal.hidden {
