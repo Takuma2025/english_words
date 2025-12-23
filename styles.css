@@ -2113,12 +2113,12 @@ body.learning-mode .app-header {
     object-fit: cover;
     object-position: left center;
     pointer-events: none;
-    z-index: 3; /* 前面に表示 */
+    z-index: 10; /* 最前面に表示 */
 }
 
 .category-card-seijo .category-info {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     padding-left: 130px; /* 画像の右側に配置（もう少し右へ） */
     padding-right: 16px;
     text-align: left; /* 左揃え */
@@ -2135,10 +2135,12 @@ body.learning-mode .app-header {
 
 .category-card-seijo .category-name {
     text-align: left;
+    word-break: break-all; /* 文字を改行 */
 }
 
 .category-card-seijo .category-meta {
     text-align: left;
+    word-break: break-all; /* 文字を改行 */
 }
 
 .category-card-seijo .category-progress {
@@ -2168,12 +2170,12 @@ body.learning-mode .app-header {
     object-fit: cover;
     object-position: right center; /* 右側に配置 */
     pointer-events: none;
-    z-index: 3; /* 前面に表示 */
+    z-index: 10; /* 最前面に表示 */
 }
 
 .category-card-sentaku .category-info {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     padding-left: 16px;
     padding-right: 150px; /* 画像の左側に配置（余裕を持たせる） */
     text-align: left; /* 左揃え */
@@ -2190,12 +2192,14 @@ body.learning-mode .app-header {
 
 .category-card-sentaku .category-name {
     text-align: left;
+    word-break: break-all; /* 文字を改行 */
 }
 
 .category-card-sentaku .category-meta {
     text-align: left;
     line-height: 1.2; /* 行間を詰める */
     margin-top: 2px; /* マージンも小さく */
+    word-break: break-all; /* 文字を改行 */
 }
 
 .category-card-sentaku .category-progress {
@@ -2230,17 +2234,6 @@ body.learning-mode .app-header {
 
     .category-card-sentaku .category-info {
         padding-right: 80px; /* 画像のサイズに合わせて余白を調整 */
-    }
-
-    .category-card-seijo .category-name,
-    .category-card-sentaku .category-name {
-        font-size: 14px; /* スマホではフォントサイズを小さく */
-    }
-
-    .category-card-seijo .category-meta,
-    .category-card-sentaku .category-meta {
-        font-size: 11px; /* スマホではフォントサイズを小さく */
-        line-height: 1.3;
     }
 }
 
