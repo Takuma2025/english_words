@@ -2210,6 +2210,40 @@ body.learning-mode .app-header {
     text-align: left; /* 左寄せ */
 }
 
+/* スマホ向け：整序英作文と厳選例文暗記のレイアウト調整 */
+@media (max-width: 600px) {
+    .category-seijo-girl {
+        width: 35px !important; /* スマホでは画像の幅を小さく */
+        max-width: 35px !important;
+        object-fit: contain; /* 画像が切れないように */
+    }
+
+    .category-card-seijo .category-info {
+        padding-left: 45px; /* スマホでは余白を小さく */
+    }
+
+    .category-sentaku-boy {
+        width: 35px !important; /* スマホでは画像の幅を小さく */
+        max-width: 35px !important;
+        object-fit: contain; /* 画像が切れないように */
+    }
+
+    .category-card-sentaku .category-info {
+        padding-right: 50px; /* スマホでは余白を小さく */
+    }
+
+    .category-card-seijo .category-name,
+    .category-card-sentaku .category-name {
+        font-size: 14px; /* スマホではフォントサイズを小さく */
+    }
+
+    .category-card-seijo .category-meta,
+    .category-card-sentaku .category-meta {
+        font-size: 11px; /* スマホではフォントサイズを小さく */
+        line-height: 1.3;
+    }
+}
+
 .exam-menu-image {
     margin-left: auto;
     height: 80px;
