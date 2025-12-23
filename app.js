@@ -4741,14 +4741,17 @@ function setupEventListeners() {
         const target = e.target.closest('button, .category-card, .course-btn, .study-btn, .mode-radio, .order-radio, .filter-checkbox, .menu-item, .main-menu-btn, .start-learning-btn');
         if (!target) return;
         
-        // ×ボタンや閉じるボタンは閉じる音
+        // ×ボタンや閉じるボタンは閉じる音（各close関数内で既に再生されるのでここでは何もしない）
         if (target.classList.contains('filter-close-btn') || 
+            target.classList.contains('school-modal-close') ||
+            target.classList.contains('sidebar-close-btn') ||
+            target.classList.contains('install-close-btn') ||
+            target.classList.contains('close-btn') ||
             target.id === 'filterCloseBtn' || 
             target.id === 'filterBackBtn' ||
             target.id === 'closeSchoolSettings' ||
-            target.classList.contains('school-modal-close') ||
-            target.classList.contains('close-btn')) {
-            // closeModal内で既に再生されるのでここでは何もしない
+            target.id === 'sidebarCloseBtn' ||
+            target.id === 'installCloseBtn') {
             return;
         }
         

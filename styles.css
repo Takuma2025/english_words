@@ -1500,6 +1500,9 @@ body {
 .school-list-container {
     max-height: 400px;
     overflow-y: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
 }
 
 .school-list {
@@ -1522,11 +1525,11 @@ body {
 }
 
 .school-list-item-odd {
-    background: #f0f9ff;
+    background: #ffffff;
 }
 
 .school-list-item-even {
-    background: #e0f2fe;
+    background: #f8fafc;
 }
 
 .school-list-item-undecided {
@@ -1534,7 +1537,7 @@ body {
 }
 
 .school-list-item:hover {
-    background: #e2e8f0 !important;
+    background: #e5e7eb !important;
 }
 
 .school-list-name {
@@ -9256,11 +9259,10 @@ body.learning-mode .bottom-nav {
 
 .school-list {
     margin-top: 8px;
-    padding: 10px 12px;
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-    border: 1px solid #bae6fd;
+    padding: 0;
+    background: transparent;
+    border: none;
     border-radius: 0;
-    animation: schoolListFadeIn 0.2s ease;
 }
 
 .school-list.hidden {
