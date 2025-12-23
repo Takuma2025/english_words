@@ -2084,15 +2084,130 @@ body.learning-mode .app-header {
 
 /* 厳選例文暗記60 / 整序英作文100本ノック メニュー用の見出し＋画像レイアウト */
 .category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-menu-header,
-.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-menu-header {
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-menu-header,
+.category-card-seijo .exam-menu-header {
     display: flex;
     align-items: center;
     gap: 8px;
+    position: relative;
+    overflow: visible;
 }
 
 .category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-menu-header .category-name,
-.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-menu-header .category-name {
+.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-menu-header .category-name,
+.category-card-seijo .exam-menu-header .category-name {
     max-width: calc(100% - 90px);
+}
+
+.category-card-seijo {
+    position: relative;
+}
+
+.category-seijo-girl {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: auto;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+    pointer-events: none;
+    z-index: 3; /* 前面に表示 */
+}
+
+.category-card-seijo .category-info {
+    position: relative;
+    z-index: 2;
+    padding-left: 130px; /* 画像の右側に配置（もう少し右へ） */
+    padding-right: 16px;
+    text-align: left; /* 左揃え */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 子要素を左揃え */
+}
+
+.category-card-seijo .exam-menu-header {
+    justify-content: flex-start !important; /* 左側に配置 */
+    width: 100%;
+}
+
+.category-card-seijo .category-name {
+    text-align: left;
+}
+
+.category-card-seijo .category-meta {
+    text-align: left;
+}
+
+.category-card-seijo .category-progress {
+    align-self: flex-end; /* 進捗バーを右揃え */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* 進捗バーとテキストを右揃え */
+}
+
+.category-card-seijo .category-progress-text {
+    text-align: right;
+}
+
+/* 厳選例文暗記60用のスタイル（整序英作文と同じ） */
+.category-card-sentaku {
+    position: relative;
+}
+
+.category-sentaku-boy {
+    position: absolute;
+    right: 0; /* 右側に配置 */
+    top: 0;
+    bottom: 0;
+    width: auto;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center; /* 右側に配置 */
+    pointer-events: none;
+    z-index: 3; /* 前面に表示 */
+}
+
+.category-card-sentaku .category-info {
+    position: relative;
+    z-index: 2;
+    padding-left: 16px;
+    padding-right: 150px; /* 画像の左側に配置（余裕を持たせる） */
+    text-align: left; /* 左揃え */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 子要素を左揃え */
+}
+
+.category-card-sentaku .exam-menu-header {
+    justify-content: flex-start !important; /* 左側に配置 */
+    width: 100%;
+}
+
+.category-card-sentaku .category-name {
+    text-align: left;
+}
+
+.category-card-sentaku .category-meta {
+    text-align: left;
+    line-height: 1.2; /* 行間を詰める */
+    margin-top: 2px; /* マージンも小さく */
+}
+
+.category-card-sentaku .category-progress {
+    align-self: flex-start; /* 進捗バーを左寄せ */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 進捗バーとテキストを左寄せ */
+}
+
+.category-card-sentaku .category-progress-text {
+    text-align: left; /* 左寄せ */
 }
 
 .exam-menu-image {
