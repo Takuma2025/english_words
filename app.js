@@ -244,8 +244,14 @@ function filterSchools(query) {
 }
 
 // 偏差値から必須単語数を計算（偏差値が高いほど必要語彙数が多くなる）
-function calculateRequiredWords(hensachi) {
+function calculateRequiredWords(hensachi, schoolName) {
     if (!hensachi) return 0;
+    
+    // おばか高等学校の場合は10語
+    if (schoolName && schoolName.includes('おばか')) {
+        return 10;
+    }
+    
     // 偏差値34=300語、偏差値40=450語、偏差値50=700語、偏差値60=1000語、偏差値70=1400語、偏差値75=1700語
     // 偏差値が高いほど急激に増えるように、二次関数を使用
     const minHensachi = 34;
@@ -384,7 +390,7 @@ function updateVocabProgressBar() {
     
     // 志望校データを取得
     const selectedSchool = loadSelectedSchool();
-    const requiredWords = selectedSchool ? calculateRequiredWords(selectedSchool.hensachi) : 0;
+    const requiredWords = selectedSchool ? calculateRequiredWords(selectedSchool.hensachi, selectedSchool.name) : 0;
     const requiredPercent = requiredWords > 0 ? Math.min(100, Math.round((requiredWords / totalWords) * 100)) : 0;
     
     // 必須ラインを超えているか判定
@@ -399,12 +405,22 @@ function updateVocabProgressBar() {
     const progressRequirement = document.getElementById('vocabProgressRequirement');
     const requirementLabel = document.getElementById('vocabRequirementLabel');
     const learnedCountEl = document.getElementById('vocabLearnedCount');
-    const totalCountEl = document.getElementById('vocabTotalCount');
+    const requiredProgressEl = document.getElementById('vocabRequiredProgress');
     const progressPercentEl = document.getElementById('vocabProgressPercent');
+    const countBikeEl = document.querySelector('.vocab-progress-count-bike');
     
     if (progressPercentEl) progressPercentEl.textContent = progressPercent;
     if (learnedCountEl) learnedCountEl.textContent = learnedWords;
-    if (totalCountEl) totalCountEl.textContent = totalWords;
+    
+    // 必須ラインに対する進捗率を計算
+    const requiredProgress = requiredWords > 0 ? Math.min(100, Math.round((learnedWords / requiredWords) * 100)) : 0;
+    if (requiredProgressEl) requiredProgressEl.textContent = requiredProgress;
+    
+    // 必須ラインに達したかどうかを判定
+    const hasReachedRequired = requiredWords > 0 && learnedWords >= requiredWords;
+    if (countBikeEl) {
+        countBikeEl.classList.toggle('reached', hasReachedRequired);
+    }
     
     // 色を設定（志望校未設定=グレー、足りない=オレンジ、足りている=水色）
     if (progressRate) {
@@ -446,8 +462,12 @@ function updateVocabProgressBar() {
         }
     }
     if (bikeImg) {
-        // 常にbike_b.jpgを使用
-        bikeImg.src = 'bike_b.jpg';
+        // 必須ラインを超えた（同じになった）場合はbike_p.png、それ以外はbike_b.jpg
+        if (requiredWords > 0 && learnedWords >= requiredWords) {
+            bikeImg.src = 'bike_p.png';
+        } else {
+            bikeImg.src = 'bike_b.jpg';
+        }
     }
     
     // 合格必須ラインの表示

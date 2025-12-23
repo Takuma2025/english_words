@@ -523,5 +523,6 @@ const osakaSchools = [
   {"name":"香ヶ丘リベルテ高等学校","type":"私立","course":"普通科ファッションビジネスコース","hensachi":35},
   {"name":"香ヶ丘リベルテ高等学校","type":"私立","course":"普通科アンダンテコース","hensachi":35},
   {"name":"精華高等学校","type":"私立","course":"普通科環境福祉コース","hensachi":34},
-  {"name":"精華高等学校","type":"私立","course":"普通科スポーツ＆アートコース","hensachi":34}
+  {"name":"精華高等学校","type":"私立","course":"普通科スポーツ＆アートコース","hensachi":34},
+  {"name":"おばか高等学校","type":"私立","course":"おばか科","hensachi":10},
 ];

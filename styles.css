@@ -1241,6 +1241,10 @@ body {
     font-weight: 600;
 }
 
+.vocab-progress-count-bike.reached {
+    color: #ec4899; /* ピンク */
+}
+
 .vocab-progress-requirement {
     position: absolute;
     top: -1px;
