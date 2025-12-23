@@ -4799,16 +4799,18 @@ function setupEventListeners() {
         // ボタン内のSVG要素なども考慮して、親要素もチェック
         const isCloseButton = target.classList.contains('filter-close-btn') || 
             target.classList.contains('school-modal-close') ||
+            target.classList.contains('school-confirm-btn') ||
             target.classList.contains('sidebar-close-btn') ||
             target.classList.contains('install-close-btn') ||
             target.classList.contains('close-btn') ||
             target.id === 'filterCloseBtn' || 
             target.id === 'filterBackBtn' ||
             target.id === 'closeSchoolSettings' ||
+            target.id === 'schoolConfirmBtn' ||
             target.id === 'sidebarCloseBtn' ||
             target.id === 'installCloseBtn' ||
-            target.closest('.filter-close-btn, .school-modal-close, .sidebar-close-btn, .install-close-btn, .close-btn') ||
-            target.closest('#filterCloseBtn, #filterBackBtn, #closeSchoolSettings, #sidebarCloseBtn, #installCloseBtn');
+            target.closest('.filter-close-btn, .school-modal-close, .school-confirm-btn, .sidebar-close-btn, .install-close-btn, .close-btn') ||
+            target.closest('#filterCloseBtn, #filterBackBtn, #closeSchoolSettings, #schoolConfirmBtn, #sidebarCloseBtn, #installCloseBtn');
         
         if (isCloseButton) {
             return;
