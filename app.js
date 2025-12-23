@@ -582,6 +582,7 @@ function updateVocabSelectedSchool(school) {
     const vocabSchoolSelector = document.getElementById('vocabSchoolSelector');
     const vocabSchoolSelected = document.getElementById('vocabSchoolSelected');
     const vocabSchoolName = document.getElementById('vocabSchoolName');
+    const vocabSchoolCourse = document.getElementById('vocabSchoolCourse');
     const vocabSchoolChangeBtn = document.getElementById('vocabSchoolChangeBtn');
     const openSchoolSettings = document.getElementById('openSchoolSettings');
     
@@ -589,14 +590,30 @@ function updateVocabSelectedSchool(school) {
     
     if (school) {
         // 志望校が設定されている場合
-        vocabSchoolName.innerHTML = `${school.name}<br>（${school.type} / ${school.course}）`;
+        vocabSchoolName.textContent = school.name;
+        if (vocabSchoolCourse) {
+            vocabSchoolCourse.textContent = `${school.type} / ${school.course}`;
+        }
         vocabSchoolSelector.classList.add('hidden');
         vocabSchoolSelected.classList.remove('hidden');
         
-        // 変更ボタンのイベントリスナーを設定
-        if (vocabSchoolChangeBtn && openSchoolSettings) {
+        // 変更ボタンのイベントリスナーを設定（直接高校一覧を表示）
+        if (vocabSchoolChangeBtn) {
             vocabSchoolChangeBtn.onclick = () => {
-                openSchoolSettings.click();
+                const modal = document.getElementById('schoolModal');
+                if (modal) modal.classList.remove('hidden');
+                // 検索モードで表示（高校一覧を表示）
+                updateSelectedSchoolUI(school, true);
+                tempSelectedSchool = undefined;
+                // すべてボタンをアクティブにして全学校を表示
+                const typeButtons = document.querySelectorAll('.school-type-btn');
+                typeButtons.forEach(b => b.classList.remove('active'));
+                const allBtn = document.getElementById('schoolTypeAll');
+                if (allBtn) allBtn.classList.add('active');
+                // 検索入力をクリア
+                const searchInput = document.getElementById('schoolSearchInput');
+                if (searchInput) searchInput.value = '';
+                renderSchoolList('all', '');
             };
         }
     } else {
@@ -648,9 +665,7 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
         undecidedItem.classList.add('school-list-item-selected');
         // 決定ボタンを表示
         const confirmWrapper = document.getElementById('schoolConfirmWrapper');
-        if (confirmWrapper) {
-            confirmWrapper.classList.remove('hidden');
-        }
+        if (confirmWrapper) confirmWrapper.classList.remove('hidden');
     });
     listEl.appendChild(undecidedItem);
     
@@ -681,12 +696,11 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
             item.classList.add('school-list-item-selected');
             // 決定ボタンを表示
             const confirmWrapper = document.getElementById('schoolConfirmWrapper');
-            if (confirmWrapper) {
-                confirmWrapper.classList.remove('hidden');
-            }
+            if (confirmWrapper) confirmWrapper.classList.remove('hidden');
         });
         listEl.appendChild(item);
     });
+    
 }
 
 function updateSelectedSchoolUI(school, showSearchMode = false) {
@@ -755,9 +769,6 @@ function initSchoolSelector() {
         const query = searchInput ? searchInput.value : '';
         renderSchoolList(type, query);
         
-        // 決定ボタンを非表示
-        const confirmWrapper = document.getElementById('schoolConfirmWrapper');
-        if (confirmWrapper) confirmWrapper.classList.add('hidden');
         tempSelectedSchool = undefined;
     };
 
@@ -800,9 +811,6 @@ function initSchoolSelector() {
         const saved = loadSelectedSchool();
         // 志望校が設定されている場合は志望校表示、未設定なら検索モード
         updateSelectedSchoolUI(saved, !saved);
-        // 決定ボタンを非表示
-        const confirmWrapper = document.getElementById('schoolConfirmWrapper');
-        if (confirmWrapper) confirmWrapper.classList.add('hidden');
         tempSelectedSchool = undefined;
         if (!saved) {
             // すべてボタンをアクティブにして全学校を表示
@@ -826,10 +834,10 @@ function initSchoolSelector() {
             SoundEffects.playClose();
         }
         if (modal) modal.classList.add('hidden');
+        tempSelectedSchool = undefined;
         // 決定ボタンを非表示
         const confirmWrapper = document.getElementById('schoolConfirmWrapper');
         if (confirmWrapper) confirmWrapper.classList.add('hidden');
-        tempSelectedSchool = undefined;
         // モーダルを閉じるときは志望校表示に戻す
         const saved = loadSelectedSchool();
         if (saved) updateSelectedSchoolUI(saved, false);
@@ -855,8 +863,6 @@ function initSchoolSelector() {
                     updateSelectedSchoolUI(tempSelectedSchool, false);
                 }
                 updateVocabProgressBar();
-                const confirmWrapper = document.getElementById('schoolConfirmWrapper');
-                if (confirmWrapper) confirmWrapper.classList.add('hidden');
                 tempSelectedSchool = undefined;
                 // モーダルを閉じる
                 closeModal(true);
