@@ -106,13 +106,6 @@ body {
     object-fit: contain;
 }
 
-.splash-title-logo {
-    max-width: 45%;
-    height: auto;
-    object-fit: contain;
-    margin-bottom: 12px;
-}
-
 .feedback-overlay {
     position: fixed;
     top: 0;
