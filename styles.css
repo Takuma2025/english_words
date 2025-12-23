@@ -157,7 +157,7 @@ body {
 .app-header {
     min-height: calc(var(--header-height) + env(safe-area-inset-top));
     background: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5349,9 +5349,9 @@ body.learning-mode .bottom-nav {
     align-items: center;
     justify-content: space-between;
     padding: 20px 20px 16px 20px;
-    border-bottom: 1px solid #e5e7eb;
-    background: #0055ca;
-    color: #ffffff;
+    border-bottom: none;
+    background: #ffffff;
+    color: #111827;
     min-height: calc(var(--header-height) + env(safe-area-inset-top));
     padding-top: calc(env(safe-area-inset-top) + 20px);
 }
@@ -5359,14 +5359,14 @@ body.learning-mode .bottom-nav {
 .sidebar-title {
     font-size: 20px;
     font-weight: 700;
-    color: #ffffff;
+    color: #111827;
     margin: 0;
 }
 
 .sidebar-close-btn {
     background: transparent;
     border: none;
-    color: #ffffff;
+    color: #6b7280;
     cursor: pointer;
     padding: 8px;
     margin: -8px;
