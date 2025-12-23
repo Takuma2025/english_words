@@ -2101,6 +2101,7 @@ body.learning-mode .app-header {
 
 .category-card-seijo {
     position: relative;
+    overflow: visible; /* 画像がはみ出せるように */
 }
 
 .category-seijo-girl {
@@ -2158,6 +2159,7 @@ body.learning-mode .app-header {
 /* 厳選例文暗記60用のスタイル（整序英作文と同じ） */
 .category-card-sentaku {
     position: relative;
+    overflow: visible; /* 画像がはみ出せるように */
 }
 
 .category-sentaku-boy {
@@ -2216,24 +2218,33 @@ body.learning-mode .app-header {
 
 /* スマホ向け：整序英作文と厳選例文暗記のレイアウト調整 */
 @media (max-width: 600px) {
+    .category-card-seijo,
+    .category-card-sentaku {
+        overflow: visible !important; /* 画像がはみ出せるように */
+    }
+
     .category-seijo-girl {
         width: 60px !important; /* スマホでも見やすいサイズに */
         max-width: 60px !important;
         object-fit: cover; /* デスクトップと同じ見え方に */
+        z-index: 10 !important; /* 最前面に */
     }
 
     .category-card-seijo .category-info {
         padding-left: 75px; /* 画像のサイズに合わせて余白を調整 */
+        z-index: 1 !important;
     }
 
     .category-sentaku-boy {
         width: 60px !important; /* スマホでも見やすいサイズに */
         max-width: 60px !important;
         object-fit: cover; /* デスクトップと同じ見え方に */
+        z-index: 10 !important; /* 最前面に */
     }
 
     .category-card-sentaku .category-info {
         padding-right: 80px; /* 画像のサイズに合わせて余白を調整 */
+        z-index: 1 !important;
     }
 }
 
