@@ -931,7 +931,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    margin-bottom: 10px;
+    margin-bottom: 38px;
 }
 
 .vocab-progress-title-wrapper {
@@ -951,6 +951,7 @@ body {
     color: #6b7280;
     font-weight: 400;
     text-align: center;
+    margin-bottom: 1px;
 }
 
 .school-set-btn {
@@ -976,7 +977,9 @@ body {
 .vocab-school-selector {
     display: flex;
     justify-content: center;
-    width: 100%;
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    margin-right: -16px;
 }
 
 .vocab-school-selector.hidden {
@@ -987,11 +990,14 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    width: 100%;
-    padding: 10px 14px;
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    margin-right: -16px;
+    padding: 12px 16px;
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
     border: 2px solid #3b82f6;
-    border-radius: 10px;
+    border-radius: 12px;
+    box-sizing: border-box;
 }
 
 .vocab-school-selected.hidden {
@@ -1199,7 +1205,7 @@ body {
     transform: translateX(-50%);
     width: 28px;
     height: 28px;
-    z-index: 4;
+    z-index: 3;
     transition: left 0.5s ease;
 }
 
@@ -1209,16 +1215,30 @@ body {
     object-fit: contain;
 }
 
-.vocab-progress-count-bike {
+.vocab-progress-label-bike {
     position: absolute;
-    top: -20px;
+    top: -40px;
     left: 50%;
     transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    pointer-events: none;
+    white-space: nowrap;
+    padding-top: 8px;
+}
+
+.vocab-progress-label-text {
     font-size: 11px;
+    color: #6b7280;
+    font-weight: 400;
+}
+
+.vocab-progress-count-bike {
+    font-size: 12px;
     color: #06b6d4;
     font-weight: 600;
-    white-space: nowrap;
-    pointer-events: none;
 }
 
 .vocab-progress-requirement {
@@ -1227,7 +1247,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    z-index: 3;
+    z-index: 5;
     pointer-events: none;
     transform: translateX(-50%);
     height: calc(100% + 2px);
@@ -1240,7 +1260,7 @@ body {
     transform: translateX(calc(-50% + 7px));
     width: 16px;
     height: 16px;
-    z-index: 4;
+    z-index: 6;
 }
 
 .vocab-progress-requirement.hidden {
@@ -1251,6 +1271,8 @@ body {
     width: 0;
     height: 100%;
     border-left: 1px dotted #3b82f6;
+    position: relative;
+    z-index: 5;
 }
 
 .vocab-requirement-triangle {
@@ -1263,6 +1285,7 @@ body {
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-bottom: 6px solid #3b82f6;
+    z-index: 5;
 }
 
 .vocab-requirement-label {
@@ -1280,6 +1303,7 @@ body {
     border-radius: 3px;
     border: 1px solid #3b82f6;
     box-sizing: border-box;
+    z-index: 6;
 }
 
 .vocab-progress-info {
@@ -1297,7 +1321,7 @@ body {
 .course-tabs {
     display: flex;
     gap: 8px;
-    margin: 24px 0 8px 0;
+    margin: 36px 0 8px 0;
 }
 
 .school-trigger-row {

@@ -420,6 +420,30 @@ function updateVocabProgressBar() {
     if (progressBike) {
         // 進捗に応じて移動（0%から開始）
         progressBike.style.left = `${progressPercent}%`;
+        
+        // テキストが左端を超えないように調整
+        const labelBike = progressBike.querySelector('.vocab-progress-label-bike');
+        if (labelBike) {
+            const bikeContainer = progressBike.closest('.vocab-progress-bike-container');
+            if (bikeContainer) {
+                const containerWidth = bikeContainer.offsetWidth;
+                const bikeLeftPx = (progressPercent / 100) * containerWidth;
+                const textWidth = labelBike.offsetWidth || 100;
+                const textHalfWidth = textWidth / 2;
+                
+                // 左端から5pxの余白を確保
+                const minLeftPx = 5 + textHalfWidth;
+                
+                if (bikeLeftPx < minLeftPx) {
+                    // 左端に近い場合は、テキストを右にずらす
+                    const offset = minLeftPx - bikeLeftPx;
+                    labelBike.style.transform = `translateX(calc(-50% + ${offset}px))`;
+                } else {
+                    // 通常は中央配置
+                    labelBike.style.transform = 'translateX(-50%)';
+                }
+            }
+        }
     }
     if (bikeImg) {
         // 常にbike_b.jpgを使用
@@ -727,12 +751,14 @@ function initSchoolSelector() {
 
     let isClosing = false; // 閉じる処理中フラグ
     
-    const closeModal = () => {
+    const closeModal = (skipSound = false) => {
         // 既に閉じる処理中の場合は何もしない
         if (isClosing) return;
         isClosing = true;
         
-        SoundEffects.playClose();
+        if (!skipSound) {
+            SoundEffects.playClose();
+        }
         if (modal) modal.classList.add('hidden');
         // 決定ボタンを非表示
         const confirmWrapper = document.getElementById('schoolConfirmWrapper');
@@ -752,14 +778,16 @@ function initSchoolSelector() {
     if (confirmBtn) {
         confirmBtn.addEventListener('click', () => {
             if (tempSelectedSchool) {
+                // 決定音を再生
+                SoundEffects.playClick();
                 saveSelectedSchool(tempSelectedSchool);
                 updateSelectedSchoolUI(tempSelectedSchool, false);
                 updateVocabProgressBar();
                 const confirmWrapper = document.getElementById('schoolConfirmWrapper');
                 if (confirmWrapper) confirmWrapper.classList.add('hidden');
                 tempSelectedSchool = null;
-                // モーダルを閉じる（効果音はcloseModal内で再生される）
-                closeModal();
+                // モーダルを閉じる（効果音は既に再生済みなので、closeModal内では再生しない）
+                closeModal(true);
             }
         });
     }
