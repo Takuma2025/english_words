@@ -3023,12 +3023,18 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     currentFilterWords = categoryWords;
     currentFilterCourseTitle = courseTitle || category;
     
-    // ヘッダーを表示したままにする（くの字戻るボタン + タイトル）
-    let displayCategory = selectedCategory || category;
-    if (displayCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-        displayCategory = 'カテゴリー別に覚える単語';
+    // ヘッダーのモード更新：
+    // ・コース選択画面から開く場合のみ、「コース」モード（くの字＋タイトル）にする
+    // ・ホームから直接開く「すべての英単語」「AI分析」などはヘッダーを変更しない
+    const courseSelectionEl = document.getElementById('courseSelection');
+    const isCourseSelectionVisible = courseSelectionEl && !courseSelectionEl.classList.contains('hidden');
+    if (isCourseSelectionVisible) {
+        let displayCategory = selectedCategory || category;
+        if (displayCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+            displayCategory = 'カテゴリー別に覚える単語';
+        }
+        updateHeaderButtons('course', displayCategory);
     }
-    updateHeaderButtons('course', displayCategory);
     
     // フィルター画面をボトムシートとして表示
     const wordFilterView = document.getElementById('wordFilterView');
