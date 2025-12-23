@@ -1670,11 +1670,11 @@ body {
 }
 
 .school-list-item-selected {
-    background: #bfdbfe !important;
+    background: #e0e7ff !important;
 }
 
 .school-list-item-selected:hover {
-    background: #93c5fd !important;
+    background: #c7d2fe !important;
 }
 
 .school-list-name {
@@ -1740,10 +1740,6 @@ body {
 
 .school-confirm-wrapper {
     margin-top: 12px;
-    padding: 12px;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
 }
 
 .school-confirm-wrapper.hidden {

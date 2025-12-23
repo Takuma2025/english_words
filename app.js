@@ -2394,6 +2394,12 @@ function showCategorySelection() {
     
     updateCategoryStars(); // 星の表示を更新
     
+    // 進捗バーをDOMが描画された後に更新（位置計算のため）
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            updateVocabProgressBar();
+        });
+    });
 }
 
 // カテゴリーを選択してコース選択画面を表示
