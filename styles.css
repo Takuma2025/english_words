@@ -2213,23 +2213,23 @@ body.learning-mode .app-header {
 /* スマホ向け：整序英作文と厳選例文暗記のレイアウト調整 */
 @media (max-width: 600px) {
     .category-seijo-girl {
-        width: 35px !important; /* スマホでは画像の幅を小さく */
-        max-width: 35px !important;
-        object-fit: contain; /* 画像が切れないように */
+        width: 60px !important; /* スマホでも見やすいサイズに */
+        max-width: 60px !important;
+        object-fit: cover; /* デスクトップと同じ見え方に */
     }
 
     .category-card-seijo .category-info {
-        padding-left: 45px; /* スマホでは余白を小さく */
+        padding-left: 75px; /* 画像のサイズに合わせて余白を調整 */
     }
 
     .category-sentaku-boy {
-        width: 35px !important; /* スマホでは画像の幅を小さく */
-        max-width: 35px !important;
-        object-fit: contain; /* 画像が切れないように */
+        width: 60px !important; /* スマホでも見やすいサイズに */
+        max-width: 60px !important;
+        object-fit: cover; /* デスクトップと同じ見え方に */
     }
 
     .category-card-sentaku .category-info {
-        padding-right: 50px; /* スマホでは余白を小さく */
+        padding-right: 80px; /* 画像のサイズに合わせて余白を調整 */
     }
 
     .category-card-seijo .category-name,
