@@ -1723,16 +1723,19 @@ body {
 }
 
 .school-list-item-selected {
-    background: #0055ca !important;
+    background: #dbeafe !important;
 }
 
 .school-list-item-selected:hover {
-    background: #0044a0 !important;
+    background: #bfdbfe !important;
 }
 
-.school-list-item-selected .school-list-name,
+.school-list-item-selected .school-list-name {
+    color: #1e40af !important;
+}
+
 .school-list-item-selected .school-list-meta {
-    color: #ffffff !important;
+    color: #3b82f6 !important;
 }
 
 .school-list-name {
