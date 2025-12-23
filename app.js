@@ -431,6 +431,7 @@ function updateVocabProgressBar() {
         progressFill.style.width = `${progressPercent}%`;
         progressFill.classList.toggle('insufficient', isInsufficient);
         progressFill.classList.toggle('no-school', !hasSchool);
+        progressFill.classList.toggle('full', progressPercent >= 100);
     }
     // 自転車アイコンの位置と画像を更新
     if (progressBike) {
@@ -7603,6 +7604,9 @@ function clearLearningHistory() {
                 loadData();
                 updateCategoryStars();
             }
+            
+            // 進捗バーを更新
+            updateVocabProgressBar();
             
             showAlert('通知', '学習履歴を消去しました。');
         }
