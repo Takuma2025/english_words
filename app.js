@@ -2282,7 +2282,8 @@ function updateFeedbackOverlayPosition() {
         const topPosition = rect.bottom;
         
         feedbackOverlay.style.top = `${topPosition}px`;
-        feedbackOverlay.style.height = `calc(100vh - ${topPosition}px)`;
+        feedbackOverlay.style.bottom = '0';
+        feedbackOverlay.style.height = 'auto';
     }
 }
 

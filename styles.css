@@ -110,6 +110,8 @@ body {
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
@@ -1040,30 +1042,36 @@ body {
 }
 
 .vocab-school-change-btn {
-    padding: 8px 16px;
-    background: #0055ca;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    background: #ffffff;
+    color: #666666;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 400;
     cursor: pointer;
-    transition: transform 0.05s, box-shadow 0.05s;
-    box-shadow: 0 3px 0 rgba(0, 68, 160, 0.6);
-    position: relative;
-    top: 0;
+    transition: background 0.15s, border-color 0.15s;
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
 }
 
+.vocab-school-change-icon {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+}
+
 .vocab-school-change-btn:hover {
-    background: #0044a0;
+    background: #f3f4f6;
+    border-color: #9ca3af;
 }
 
 .vocab-school-change-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
+    background: #e5e7eb;
 }
 
 .vocab-progress-bar-label {
@@ -1621,6 +1629,14 @@ body {
     z-index: 2;
     margin: 0;
     border-radius: 10px 10px 0 0;
+}
+
+.school-list-hint {
+    font-size: 11px;
+    color: #9ca3af;
+    padding: 6px 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .school-list-container .school-list {
