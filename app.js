@@ -2292,24 +2292,14 @@ function updateHeaderButtons(mode) {
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
     const headerBackBtn = document.getElementById('headerBackBtn');
     const homeBtn = document.getElementById('homeBtn');
-    const appHeader = document.querySelector('.app-header');
-    const fixedBackBtn = document.getElementById('fixedBackBtn');
+    const headerTitleLogo = document.querySelector('.header-title-logo');
     
-    // ヘッダー全体の表示/非表示（ホーム画面のみ表示）
-    if (appHeader) {
+    // タイトルロゴの表示/非表示（ホーム画面のみ表示）
+    if (headerTitleLogo) {
         if (mode === 'home') {
-            appHeader.classList.remove('hidden');
+            headerTitleLogo.classList.remove('hidden');
         } else {
-            appHeader.classList.add('hidden');
-        }
-    }
-    
-    // 固定戻るボタンの表示/非表示（ホーム画面以外で表示）
-    if (fixedBackBtn) {
-        if (mode === 'home') {
-            fixedBackBtn.classList.add('hidden');
-        } else {
-            fixedBackBtn.classList.remove('hidden');
+            headerTitleLogo.classList.add('hidden');
         }
     }
     
@@ -2322,7 +2312,7 @@ function updateHeaderButtons(mode) {
     }
     
     if (headerBackBtn) {
-        if (mode === 'back') {
+        if (mode !== 'home') {
             headerBackBtn.classList.remove('hidden');
         } else {
             headerBackBtn.classList.add('hidden');

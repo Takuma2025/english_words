@@ -1666,9 +1666,8 @@ body {
 .school-list-hint {
     font-size: 11px;
     color: #9ca3af;
-    padding: 6px 16px;
-    background: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 10px 16px;
+    text-align: center;
 }
 
 .school-list-container .school-list {
@@ -1724,11 +1723,16 @@ body {
 }
 
 .school-list-item-selected {
-    background: #dbeafe !important;
+    background: #0055ca !important;
 }
 
 .school-list-item-selected:hover {
-    background: #bfdbfe !important;
+    background: #0044a0 !important;
+}
+
+.school-list-item-selected .school-list-name,
+.school-list-item-selected .school-list-meta {
+    color: #ffffff !important;
 }
 
 .school-list-name {
@@ -4561,10 +4565,6 @@ body.reorder-mode-active .word-card-container {
 }
 
 /* 学習モード時のスタイル */
-body.learning-mode .app-header {
-    display: none;
-}
-
 body.learning-mode .app-main {
     padding-top: env(safe-area-inset-top);
 }
