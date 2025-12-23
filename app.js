@@ -821,15 +821,13 @@ function initSchoolSelector() {
     if (confirmBtn) {
         confirmBtn.addEventListener('click', () => {
             if (tempSelectedSchool) {
-                // 決定音を再生
-                SoundEffects.playConfirm();
                 saveSelectedSchool(tempSelectedSchool);
                 updateSelectedSchoolUI(tempSelectedSchool, false);
                 updateVocabProgressBar();
                 const confirmWrapper = document.getElementById('schoolConfirmWrapper');
                 if (confirmWrapper) confirmWrapper.classList.add('hidden');
                 tempSelectedSchool = null;
-                // モーダルを閉じる（効果音は既に再生済みなので、closeModal内では再生しない）
+                // モーダルを閉じる（効果音はグローバルなクリックイベントリスナーで再生される）
                 closeModal(true);
             }
         });
@@ -4877,11 +4875,10 @@ function setupEventListeners() {
             target.id === 'filterCloseBtn' || 
             target.id === 'filterBackBtn' ||
             target.id === 'closeSchoolSettings' ||
-            target.id === 'schoolConfirmBtn' ||
             target.id === 'sidebarCloseBtn' ||
             target.id === 'installCloseBtn' ||
             target.closest('.filter-close-btn, .school-modal-close, .school-confirm-btn, .sidebar-close-btn, .install-close-btn, .close-btn') ||
-            target.closest('#filterCloseBtn, #filterBackBtn, #closeSchoolSettings, #schoolConfirmBtn, #sidebarCloseBtn, #installCloseBtn');
+            target.closest('#filterCloseBtn, #filterBackBtn, #closeSchoolSettings, #sidebarCloseBtn, #installCloseBtn');
         
         if (isCloseButton) {
             return;
