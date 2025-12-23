@@ -988,8 +988,9 @@ body {
 
 .vocab-school-selected {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
     width: calc(100% + 32px);
     margin-left: -16px;
     margin-right: -16px;
@@ -998,6 +999,24 @@ body {
     border: 2px solid #3b82f6;
     border-radius: 12px;
     box-sizing: border-box;
+}
+
+.vocab-school-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #ffffff;
+    background: #0055ca;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    display: inline-block;
+}
+
+.vocab-school-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
 }
 
 .vocab-school-selected.hidden {
