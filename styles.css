@@ -2055,6 +2055,25 @@ body {
     position: relative;
 }
 
+/* 厳選例文暗記60 メニュー用の見出し＋画像レイアウト */
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-menu-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-menu-header .category-name {
+    max-width: calc(100% - 90px);
+}
+
+.exam-menu-image {
+    margin-left: auto;
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
 .lock-icon {
     position: absolute;
     top: 0;
@@ -6802,7 +6821,7 @@ body.learning-mode .bottom-nav {
 .exam-quiz-container {
     max-width: 720px;
     margin: 0 auto;
-    padding: 24px 16px 32px;
+    padding: 20px 16px 32px;
     min-height: calc(100vh - 120px);
 }
 
@@ -6810,82 +6829,79 @@ body.learning-mode .bottom-nav {
 .exam-quiz-start,
 .exam-quiz-result {
     background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    padding: 32px 24px;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    border-radius: 12px;
+    padding: 28px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .exam-quiz-start-title,
 .exam-quiz-result-title {
-    font-size: 26px;
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: 0.2px;
+    font-size: clamp(20px, 5vw, 24px);
+    font-weight: 700;
+    color: #1f2937;
+    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", serif;
+    letter-spacing: 0.05em;
 }
 
 .exam-quiz-start-subtitle {
-    font-size: 15px;
-    color: #64748b;
-    font-weight: 600;
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
 }
 
 .exam-quiz-start-icon {
-    margin: 8px 0 12px;
-    background: linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%);
-    border-radius: 999px;
-    padding: 14px;
+    margin: 12px 0 16px;
+    display: none;
 }
 
 .exam-quiz-start-desc {
     font-size: 15px;
-    color: #475569;
-    line-height: 1.7;
-    margin: 4px 0 12px;
+    color: #4b5563;
+    line-height: 1.8;
+    margin: 8px 0 16px;
+    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", serif;
 }
 
 .exam-quiz-start-btn,
 .exam-quiz-retry-btn {
-    background: #2563eb;
+    background: #0055ca;
     color: #ffffff;
     border: none;
-    border-radius: 12px;
-    padding: 14px 32px;
+    border-radius: 10px;
+    padding: 14px 40px;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.05s, box-shadow 0.05s;
-    box-shadow: 0 4px 0 #1d4ed8;
+    box-shadow: 0 3px 0 rgba(0, 68, 160, 0.6);
     position: relative;
     top: 0;
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
-    will-change: transform;
 }
 
 .exam-quiz-start-btn:hover,
 .exam-quiz-retry-btn:hover {
-    background: #1d4ed8;
+    background: #0044a0;
 }
 
 .exam-quiz-start-btn:active,
 .exam-quiz-retry-btn:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #1d4ed8;
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
 }
 
 /* クイズメイン画面 */
 .exam-quiz-main {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
 }
 
 .exam-quiz-progress {
@@ -6896,7 +6912,7 @@ body.learning-mode .bottom-nav {
 
 .exam-quiz-progress-bar {
     flex: 1;
-    height: 10px;
+    height: 8px;
     background: #e5e7eb;
     border-radius: 999px;
     overflow: hidden;
@@ -6904,7 +6920,7 @@ body.learning-mode .bottom-nav {
 
 .exam-quiz-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+    background: #0055ca;
     border-radius: 999px;
     transition: width 0.3s ease;
     width: 0;
@@ -6912,84 +6928,146 @@ body.learning-mode .bottom-nav {
 
 .exam-quiz-progress-text {
     font-size: 13px;
-    font-weight: 700;
-    color: #475569;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 999px;
-    padding: 6px 12px;
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+    font-weight: 600;
+    color: #6b7280;
+    white-space: nowrap;
 }
 
 .exam-quiz-question-card {
     background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 18px;
-    padding: 22px 20px;
-    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+    border-radius: 12px;
+    padding: 24px 20px;
 }
 
 .exam-quiz-question {
-    font-size: 18px;
+    font-size: clamp(16px, 4vw, 20px);
     font-weight: 700;
-    color: #0f172a;
-    line-height: 1.6;
-    text-align: center;
+    color: #1f2937;
+    line-height: 1.7;
+    text-align: left;
+    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", serif;
+    letter-spacing: 0.03em;
+}
+
+/* 空欄補充形式 */
+.exam-quiz-fill-mode.hidden {
+    display: none;
+}
+
+.exam-quiz-choice-mode.hidden {
+    display: none;
+}
+
+.exam-quiz-fill-sentence {
+    font-size: clamp(16px, 4vw, 20px);
+    font-weight: 600;
+    color: #1f2937;
+    line-height: 2.2;
+    text-align: left;
+    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", serif;
+    letter-spacing: 0.03em;
+}
+
+.exam-quiz-fill-text {
+    display: inline;
+}
+
+.exam-quiz-fill-select {
+    display: inline-block;
+    padding: 8px 32px 8px 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    background: #ffffff;
+    border: 2px solid #0055ca;
+    border-radius: 8px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%230055ca' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    min-width: 140px;
+    vertical-align: middle;
+    margin: 0 4px;
+}
+
+.exam-quiz-fill-select:focus {
+    outline: none;
+    border-color: #0044a0;
+    box-shadow: 0 0 0 3px rgba(0, 85, 202, 0.2);
+}
+
+.exam-quiz-fill-select.correct {
+    background-color: #d1fae5;
+    border-color: #10b981;
+    color: #047857;
+}
+
+.exam-quiz-fill-select.wrong {
+    background-color: #fee2e2;
+    border-color: #ef4444;
+    color: #b91c1c;
+}
+
+.exam-quiz-fill-select:disabled {
+    cursor: default;
+    opacity: 1;
 }
 
 .exam-quiz-choices {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .exam-quiz-choice-label {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
     padding: 14px 16px;
     font-size: 15px;
     font-weight: 600;
-    color: #0f172a;
+    color: #1f2937;
     cursor: pointer;
-    transition: all 0.18s ease;
+    transition: all 0.15s ease;
     text-align: left;
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.04);
 }
 
 .exam-quiz-choice-label:hover:not(.disabled) {
-    border-color: #2563eb;
-    background: #eef2ff;
-    transform: translateY(-1px);
+    border-color: #0055ca;
+    background: #f0f7ff;
+}
+
+.exam-quiz-choice-label.selected {
+    border-color: #0055ca;
+    background: #dbeafe;
 }
 
 .exam-quiz-choice-label.correct {
-    background: #ecfdf3;
-    border-color: #16a34a;
-    color: #15803d;
-    box-shadow: 0 8px 18px rgba(22, 163, 74, 0.12);
+    background: #d1fae5;
+    border-color: #10b981;
+    color: #047857;
 }
 
 .exam-quiz-choice-label.wrong {
-    background: #fef2f2;
-    border-color: #dc2626;
+    background: #fee2e2;
+    border-color: #ef4444;
     color: #b91c1c;
-    box-shadow: 0 8px 18px rgba(220, 38, 38, 0.12);
 }
 
 .exam-quiz-choice-label.disabled {
     cursor: default;
-    opacity: 0.92;
 }
 
 .exam-quiz-radio {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    accent-color: #2563eb;
+    accent-color: #0055ca;
     flex-shrink: 0;
 }
 
@@ -7008,115 +7086,111 @@ body.learning-mode .bottom-nav {
 }
 
 .exam-quiz-submit-btn {
-    background: #2563eb;
+    background: #0055ca;
     color: #ffffff;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 14px 48px;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.05s, box-shadow 0.05s;
-    box-shadow: 0 4px 0 #1d4ed8;
+    box-shadow: 0 3px 0 rgba(0, 68, 160, 0.6);
     position: relative;
     top: 0;
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
-    will-change: transform;
 }
 
 .exam-quiz-submit-btn:hover:not(:disabled) {
-    background: #1d4ed8;
+    background: #0044a0;
 }
 
 .exam-quiz-submit-btn:active:not(:disabled) {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #1d4ed8;
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
 }
 
 .exam-quiz-submit-btn:disabled {
-    background: #cbd5e1;
-    color: #64748b;
+    background: #d1d5db;
+    color: #9ca3af;
     cursor: not-allowed;
-    box-shadow: 0 2px 0 #94a3b8;
+    box-shadow: 0 2px 0 #9ca3af;
     transform: none;
 }
 
 /* フィードバック */
 .exam-quiz-feedback {
     background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    padding: 18px 16px;
+    border-radius: 12px;
+    padding: 20px 16px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.07);
+    gap: 12px;
 }
 
 .exam-quiz-feedback-text {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 0.2px;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", serif;
 }
 
 .exam-quiz-feedback-text.correct {
-    color: #16a34a;
+    color: #10b981;
 }
 
 .exam-quiz-feedback-text.wrong {
-    color: #dc2626;
+    color: #ef4444;
 }
 
 .exam-quiz-explanation {
     font-size: 14px;
-    color: #475569;
-    line-height: 1.7;
+    color: #4b5563;
+    line-height: 1.8;
     text-align: left;
-    background: #f8fafc;
-    padding: 14px;
+    background: #f9fafb;
+    padding: 16px;
     border-radius: 10px;
-    border: 1px solid #e2e8f0;
     width: 100%;
+    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", serif;
 }
 
 .exam-quiz-next-btn {
-    background: #0ea5e9;
+    background: #0055ca;
     color: #ffffff;
     border: none;
     border-radius: 10px;
-    padding: 12px 28px;
+    padding: 12px 32px;
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.05s, box-shadow 0.05s;
     margin-top: 4px;
-    box-shadow: 0 4px 0 #0284c7;
+    box-shadow: 0 3px 0 rgba(0, 68, 160, 0.6);
     position: relative;
     top: 0;
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
-    will-change: transform;
 }
 
 .exam-quiz-next-btn:hover {
-    background: #0284c7;
+    background: #0044a0;
 }
 
 .exam-quiz-next-btn:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #0284c7;
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
 }
 
 /* 結果画面 */
 .exam-quiz-result {
-    gap: 10px;
+    gap: 12px;
 }
 
 .exam-quiz-result-score {
@@ -7127,39 +7201,40 @@ body.learning-mode .bottom-nav {
 }
 
 .exam-quiz-result-score-num {
-    font-family: "Times New Roman", "Times", "Georgia", serif;
-    font-size: 58px;
+    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", serif;
+    font-size: 52px;
     font-weight: 700;
-    color: #2563eb;
+    color: #0055ca;
     letter-spacing: 1px;
 }
 
 .exam-quiz-result-score-slash {
-    color: #94a3b8;
+    color: #9ca3af;
     margin: 0 4px;
 }
 
 .exam-quiz-result-score-label {
-    font-size: 15px;
+    font-size: 14px;
     color: #6b7280;
     font-weight: 600;
 }
 
 .exam-quiz-result-message {
     font-size: 15px;
-    color: #475569;
+    color: #4b5563;
     margin: 8px 0 16px;
-    line-height: 1.6;
+    line-height: 1.7;
+    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", serif;
 }
 
 .exam-quiz-result-buttons {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
 .exam-quiz-back-btn {
-    background: #f8fafc;
-    color: #0f172a;
+    background: #f3f4f6;
+    color: #1f2937;
     border: none;
     border-radius: 10px;
     padding: 12px 24px;
@@ -7167,14 +7242,13 @@ body.learning-mode .bottom-nav {
     font-weight: 600;
     cursor: pointer;
     transition: transform 0.05s, box-shadow 0.05s;
-    box-shadow: 0 4px 0 #cbd5e1;
+    box-shadow: 0 3px 0 #d1d5db;
     position: relative;
     top: 0;
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
-    will-change: transform;
 }
 
 .exam-quiz-back-btn:hover {

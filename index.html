@@ -408,8 +408,9 @@
                         </button>
                         <button class="category-card" data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】">
                             <div class="category-info">
-                                <div class="category-header">
+                                <div class="category-header exam-menu-header">
                                     <div class="category-name"><span class="exam-type-badge">B問題対策</span> 厳選例文暗記60</div>
+                                    <img src="nyushi.png" alt="大阪府公立入試" class="exam-menu-image">
                                 </div>
                                 <div class="category-meta">B問題に毎年出題されるが、正答率が低く差がつきやすい和文英訳問題の対策です。</div>
                                 <div class="category-progress">
@@ -552,29 +553,41 @@
                             </div>
                         </div>
                         
-                        <div class="exam-quiz-question-card">
-                            <div class="exam-quiz-question" id="examQuizQuestion">
-                                問題文がここに表示されます
+                        <!-- 4択形式 -->
+                        <div class="exam-quiz-choice-mode" id="examQuizChoiceMode">
+                            <div class="exam-quiz-question-card">
+                                <div class="exam-quiz-question" id="examQuizQuestion">
+                                    問題文がここに表示されます
+                                </div>
+                            </div>
+                            
+                            <div class="exam-quiz-choices" id="examQuizChoices">
+                                <label class="exam-quiz-choice-label">
+                                    <input type="radio" name="examQuizChoice" value="0" class="exam-quiz-radio">
+                                    <span class="exam-quiz-choice-text">選択肢1</span>
+                                </label>
+                                <label class="exam-quiz-choice-label">
+                                    <input type="radio" name="examQuizChoice" value="1" class="exam-quiz-radio">
+                                    <span class="exam-quiz-choice-text">選択肢2</span>
+                                </label>
+                                <label class="exam-quiz-choice-label">
+                                    <input type="radio" name="examQuizChoice" value="2" class="exam-quiz-radio">
+                                    <span class="exam-quiz-choice-text">選択肢3</span>
+                                </label>
+                                <label class="exam-quiz-choice-label">
+                                    <input type="radio" name="examQuizChoice" value="3" class="exam-quiz-radio">
+                                    <span class="exam-quiz-choice-text">選択肢4</span>
+                                </label>
                             </div>
                         </div>
                         
-                        <div class="exam-quiz-choices" id="examQuizChoices">
-                            <label class="exam-quiz-choice-label">
-                                <input type="radio" name="examQuizChoice" value="0" class="exam-quiz-radio">
-                                <span class="exam-quiz-choice-text">選択肢1</span>
-                            </label>
-                            <label class="exam-quiz-choice-label">
-                                <input type="radio" name="examQuizChoice" value="1" class="exam-quiz-radio">
-                                <span class="exam-quiz-choice-text">選択肢2</span>
-                            </label>
-                            <label class="exam-quiz-choice-label">
-                                <input type="radio" name="examQuizChoice" value="2" class="exam-quiz-radio">
-                                <span class="exam-quiz-choice-text">選択肢3</span>
-                            </label>
-                            <label class="exam-quiz-choice-label">
-                                <input type="radio" name="examQuizChoice" value="3" class="exam-quiz-radio">
-                                <span class="exam-quiz-choice-text">選択肢4</span>
-                            </label>
+                        <!-- 空欄補充形式 -->
+                        <div class="exam-quiz-fill-mode hidden" id="examQuizFillMode">
+                            <div class="exam-quiz-question-card">
+                                <div class="exam-quiz-fill-sentence" id="examQuizFillSentence">
+                                    <!-- 文章と空欄が動的に生成される -->
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="exam-quiz-submit-container">
