@@ -219,6 +219,26 @@ const SoundEffects = {
 
         noiseSourceLo.start(now + 0.01);
         noiseSourceLo.stop(now + duration);
+    },
+    
+    // 決定音（上昇する成功音）
+    playConfirm() {
+        if (!this.enabled || !this.audioContext) return;
+        this.resume();
+        const now = this.audioContext.currentTime;
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.setValueAtTime(523.25, now); // C5
+        oscillator.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+        oscillator.frequency.exponentialRampToValueAtTime(783.99, now + 0.3); // G5
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.12, now);
+        gainNode.gain.setValueAtTime(0.12, now + 0.25);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        oscillator.start(now);
+        oscillator.stop(now + 0.3);
     }
 };
 let answeredWords = new Set();
@@ -413,7 +433,9 @@ function updateVocabProgressBar() {
     if (learnedCountEl) learnedCountEl.textContent = learnedWords;
     
     // 必須ラインに対する進捗率を計算
-    const requiredProgress = requiredWords > 0 ? Math.min(100, Math.round((learnedWords / requiredWords) * 100)) : 0;
+    // 志望校を設定している場合は必須単語数を分母、設定していない場合は全単語数を分母にする
+    const denominator = requiredWords > 0 ? requiredWords : totalWords;
+    const requiredProgress = denominator > 0 ? Math.round((learnedWords / denominator) * 100) : 0;
     if (requiredProgressEl) requiredProgressEl.textContent = requiredProgress;
     
     // 必須ラインに達したかどうかを判定
@@ -800,7 +822,7 @@ function initSchoolSelector() {
         confirmBtn.addEventListener('click', () => {
             if (tempSelectedSchool) {
                 // 決定音を再生
-                SoundEffects.playClick();
+                SoundEffects.playConfirm();
                 saveSelectedSchool(tempSelectedSchool);
                 updateSelectedSchoolUI(tempSelectedSchool, false);
                 updateVocabProgressBar();

@@ -1230,7 +1230,7 @@ body {
 
 .vocab-progress-label-bike {
     position: absolute;
-    top: -52px;
+    top: -40px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -1239,7 +1239,7 @@ body {
     gap: 0px;
     pointer-events: none;
     white-space: nowrap;
-    padding-top: 8px;
+    padding-top: 4px;
     line-height: 1;
 }
 
