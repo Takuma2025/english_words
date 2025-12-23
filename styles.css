@@ -1414,8 +1414,9 @@ body {
     position: fixed;
     inset: 0;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    padding-top: calc(var(--header-height) + env(safe-area-inset-top) + 10px);
     z-index: 10001 !important;
 }
 
