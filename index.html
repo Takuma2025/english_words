@@ -28,6 +28,13 @@
     
     <div id="feedbackOverlay" class="feedback-overlay"></div>
     
+    <!-- 固定戻るボタン（ホーム画面以外で表示） -->
+    <button class="fixed-back-btn hidden" id="fixedBackBtn" aria-label="戻る">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+    </button>
+    
     <div class="app-container">
         <header class="app-header">
             <button class="hamburger-menu-btn" id="hamburgerMenuBtn" aria-label="メニュー">
@@ -206,9 +213,9 @@
                             </div>
                             <div class="school-list-container" id="schoolListContainer">
                                 <div class="school-list-title-header">大阪府の高校一覧</div>
-                                <div class="school-list-hint">タップして志望校を選択</div>
                                 <div class="school-list" id="schoolList"></div>
                             </div>
+                            <div class="school-list-hint">タップして志望校を選択</div>
                         </div>
                         <div class="school-confirm-wrapper hidden" id="schoolConfirmWrapper">
                             <button type="button" id="schoolConfirmBtn" class="school-confirm-btn">決定する</button>

@@ -227,6 +227,38 @@ body {
     display: none;
 }
 
+/* 固定戻るボタン（ヘッダー非表示時に表示） */
+.fixed-back-btn {
+    position: fixed;
+    top: env(safe-area-inset-top, 0);
+    left: 0;
+    z-index: 1000;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 0 0 12px 0;
+    cursor: pointer;
+    color: #1e293b;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s, transform 0.1s;
+}
+
+.fixed-back-btn:hover {
+    background: rgba(241, 245, 249, 0.98);
+}
+
+.fixed-back-btn:active {
+    transform: scale(0.95);
+}
+
+.fixed-back-btn.hidden {
+    display: none;
+}
+
 .header-content {
     display: flex;
     align-items: center;

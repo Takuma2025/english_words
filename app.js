@@ -2292,6 +2292,26 @@ function updateHeaderButtons(mode) {
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
     const headerBackBtn = document.getElementById('headerBackBtn');
     const homeBtn = document.getElementById('homeBtn');
+    const appHeader = document.querySelector('.app-header');
+    const fixedBackBtn = document.getElementById('fixedBackBtn');
+    
+    // ヘッダー全体の表示/非表示（ホーム画面のみ表示）
+    if (appHeader) {
+        if (mode === 'home') {
+            appHeader.classList.remove('hidden');
+        } else {
+            appHeader.classList.add('hidden');
+        }
+    }
+    
+    // 固定戻るボタンの表示/非表示（ホーム画面以外で表示）
+    if (fixedBackBtn) {
+        if (mode === 'home') {
+            fixedBackBtn.classList.add('hidden');
+        } else {
+            fixedBackBtn.classList.remove('hidden');
+        }
+    }
     
     if (hamburgerMenuBtn) {
         if (mode === 'home') {
@@ -4736,10 +4756,8 @@ function setupEventListeners() {
         });
     }
     
-    // ヘッダーの戻るボタン
-    const headerBackBtn = document.getElementById('headerBackBtn');
-    if (headerBackBtn) {
-        headerBackBtn.addEventListener('click', () => {
+    // 戻る処理を共通関数化
+    function handleBackButton() {
             // 現在の画面に応じて適切な画面に戻る
             const grammarChapterView = document.getElementById('grammarChapterView');
             const grammarTOCView = document.getElementById('grammarTableOfContentsView');
@@ -4806,7 +4824,18 @@ function setupEventListeners() {
                 // その他の場合はカテゴリー選択画面に戻る
                 showCategorySelection();
             }
-        });
+    }
+    
+    // ヘッダーの戻るボタン
+    const headerBackBtn = document.getElementById('headerBackBtn');
+    if (headerBackBtn) {
+        headerBackBtn.addEventListener('click', handleBackButton);
+    }
+    
+    // 固定戻るボタン
+    const fixedBackBtn = document.getElementById('fixedBackBtn');
+    if (fixedBackBtn) {
+        fixedBackBtn.addEventListener('click', handleBackButton);
     }
     
     // 学習方法ボタン
