@@ -226,52 +226,7 @@ let correctCount = 0;
 let wrongCount = 0;
 let selectedCategory = null;
 let reviewWords = new Set(); // 復習用チェック（★）
-// 大阪府の高校（偏差値データ付き）
-// 偏差値に応じた必須単語数の目安: 偏差値50で600語、偏差値70で1200語
-const osakaSchools = [
-    // 公立トップ校
-    { id: 'osaka_kitano', name: '大阪府立北野高等学校', type: '公立', course: '文理学科', hensachi: 76 },
-    { id: 'osaka_tennoji', name: '大阪府立天王寺高等学校', type: '公立', course: '文理学科', hensachi: 75 },
-    { id: 'osaka_otemae', name: '大阪府立大手前高等学校', type: '公立', course: '文理学科', hensachi: 74 },
-    { id: 'osaka_shijonawate', name: '大阪府立四條畷高等学校', type: '公立', course: '文理学科', hensachi: 73 },
-    { id: 'osaka_takatsuki', name: '大阪府立高津高等学校', type: '公立', course: '文理学科', hensachi: 73 },
-    { id: 'osaka_ikeda', name: '大阪府立池田高等学校', type: '公立', course: '普通科', hensachi: 67 },
-    { id: 'osaka_toyonaka', name: '大阪府立豊中高等学校', type: '公立', course: '文理学科', hensachi: 72 },
-    { id: 'osaka_mikunigaoka', name: '大阪府立三国丘高等学校', type: '公立', course: '文理学科', hensachi: 74 },
-    { id: 'osaka_kishiwada', name: '大阪府立岸和田高等学校', type: '公立', course: '文理学科', hensachi: 70 },
-    { id: 'osaka_senri', name: '大阪府立千里高等学校', type: '公立', course: '国際文化科', hensachi: 68 },
-    { id: 'osaka_suita', name: '大阪府立吹田高等学校', type: '公立', course: '普通科', hensachi: 52 },
-    { id: 'osaka_hokusetsu', name: '大阪府立北摂高等学校', type: '公立', course: '普通科', hensachi: 47 },
-    { id: 'osaka_ibaraki', name: '大阪府立茨木高等学校', type: '公立', course: '文理学科', hensachi: 73 },
-    { id: 'osaka_kasugaoka', name: '大阪府立春日丘高等学校', type: '公立', course: '普通科', hensachi: 66 },
-    { id: 'osaka_hirakata', name: '大阪府立枚方高等学校', type: '公立', course: '普通科', hensachi: 58 },
-    { id: 'osaka_neyagawa', name: '大阪府立寝屋川高等学校', type: '公立', course: '普通科', hensachi: 64 },
-    { id: 'osaka_yao', name: '大阪府立八尾高等学校', type: '公立', course: '普通科', hensachi: 62 },
-    { id: 'osaka_fujidera', name: '大阪府立藤井寺高等学校', type: '公立', course: '普通科', hensachi: 52 },
-    { id: 'osaka_sakai_izumi', name: '大阪府立泉陽高等学校', type: '公立', course: '普通科', hensachi: 64 },
-    { id: 'osaka_sakai_nishi', name: '大阪府立堺西高等学校', type: '公立', course: '普通科', hensachi: 48 },
-    // 私立校
-    { id: 'osaka_osakatoin_i', name: '大阪桐蔭高等学校', type: '私立', course: 'Ⅰ類', hensachi: 69 },
-    { id: 'osaka_osakatoin_ii', name: '大阪桐蔭高等学校', type: '私立', course: 'Ⅱ類', hensachi: 63 },
-    { id: 'osaka_osakatoin_iii', name: '大阪桐蔭高等学校', type: '私立', course: 'Ⅲ類', hensachi: 52 },
-    { id: 'osaka_seifu', name: '清風高等学校', type: '私立', course: '理Ⅲ編入', hensachi: 72 },
-    { id: 'osaka_seifu_ri6', name: '清風高等学校', type: '私立', course: '理数科', hensachi: 65 },
-    { id: 'osaka_seifunankai', name: '清風南海高等学校', type: '私立', course: '3か年特進', hensachi: 73 },
-    { id: 'osaka_meijo', name: '明星高等学校', type: '私立', course: '文理選抜', hensachi: 68 },
-    { id: 'osaka_oitetomon', name: '追手門学院高等学校', type: '私立', course: '特選SS', hensachi: 65 },
-    { id: 'osaka_oitemonte', name: '追手門学院高等学校', type: '私立', course: 'Ⅰ類', hensachi: 56 },
-    { id: 'osaka_kansai_univ_tokushin', name: '関西大学北陽高等学校', type: '私立', course: '特進', hensachi: 60 },
-    { id: 'osaka_kansai_univ_bunri', name: '関西大学北陽高等学校', type: '私立', course: '文理', hensachi: 56 },
-    { id: 'osaka_kansai1', name: '関西大学第一高等学校', type: '私立', course: '普通科', hensachi: 68 },
-    { id: 'osaka_kindai_super', name: '近畿大学附属高等学校', type: '私立', course: 'Super文理', hensachi: 70 },
-    { id: 'osaka_kindai_tokushin', name: '近畿大学附属高等学校', type: '私立', course: '特進文理Ⅰ', hensachi: 65 },
-    { id: 'osaka_ritsumeikan', name: '立命館宇治高等学校', type: '私立', course: 'IGコース', hensachi: 67 },
-    { id: 'osaka_doshisha', name: '同志社香里高等学校', type: '私立', course: '普通科', hensachi: 69 },
-    { id: 'osaka_shitennoji', name: '四天王寺高等学校', type: '私立', course: '理数', hensachi: 72 },
-    { id: 'osaka_jyogakuin', name: '大阪女学院高等学校', type: '私立', course: '理系', hensachi: 63 },
-    { id: 'osaka_shinai', name: '大阪信愛学院高等学校', type: '私立', course: '学際探究', hensachi: 51 },
-    { id: 'osaka_kaisei', name: '開成教育高等学校', type: '私立', course: '普通科', hensachi: 44 }
-];
+// 志望校データは school-data.js で管理
 const SCHOOL_STORAGE_KEY = 'preferredSchoolOsaka';
 let tempSelectedSchool = null; // 一時的に選択した学校
 
@@ -511,44 +466,48 @@ function updateVocabSelectedSchool(school) {
     }
 }
 
-function renderSchoolResults(listEl, results) {
+// 学校一覧を表示する関数
+function renderSchoolList(typeFilter = 'all') {
+    const listEl = document.getElementById('schoolList');
     if (!listEl) return;
+    
     listEl.innerHTML = '';
+    
+    // フィルタリング
+    let filteredSchools = osakaSchools;
+    if (typeFilter !== 'all') {
+        filteredSchools = osakaSchools.filter(school => school.type === typeFilter);
+    }
+    
+    // 偏差値でソート（高い順）
+    filteredSchools.sort((a, b) => (b.hensachi || 0) - (a.hensachi || 0));
     
     // 一番上に「未定」を追加
     const undecidedItem = document.createElement('div');
-    undecidedItem.className = 'school-result-item';
+    undecidedItem.className = 'school-list-item';
     const undecidedName = document.createElement('div');
-    undecidedName.className = 'school-result-name';
+    undecidedName.className = 'school-list-name';
     undecidedName.textContent = '未定';
     undecidedItem.appendChild(undecidedName);
     undecidedItem.addEventListener('click', () => {
         // 未設定にする
         localStorage.removeItem(SCHOOL_STORAGE_KEY);
-        updateVocabProgressBar(); // 進捗バーを更新（志望校表示も含む）
+        updateVocabProgressBar();
         // モーダルを閉じる
         const modal = document.getElementById('schoolModal');
         if (modal) modal.classList.add('hidden');
-        const resultsEl = document.getElementById('schoolSearchResults');
-        if (resultsEl) resultsEl.classList.add('hidden');
     });
     listEl.appendChild(undecidedItem);
     
-    if (results.length === 0) {
-        const empty = document.createElement('div');
-        empty.className = 'school-result-item';
-        empty.textContent = '該当なし';
-        listEl.appendChild(empty);
-        return;
-    }
-    results.forEach((school) => {
+    // 学校一覧を表示
+    filteredSchools.forEach((school) => {
         const item = document.createElement('div');
-        item.className = 'school-result-item';
+        item.className = 'school-list-item';
         const name = document.createElement('div');
-        name.className = 'school-result-name';
+        name.className = 'school-list-name';
         name.textContent = school.name;
         const meta = document.createElement('div');
-        meta.className = 'school-result-meta';
+        meta.className = 'school-list-meta';
         const henText = school.hensachi ? `偏差値${school.hensachi}` : '';
         meta.textContent = `${school.type}・${school.course}${henText ? ' / ' + henText : ''}`;
         item.appendChild(name);
@@ -564,7 +523,6 @@ function renderSchoolResults(listEl, results) {
                 confirmSelected.textContent = `${school.name}（${school.type} / ${school.course}${henText}）`;
                 confirmWrapper.classList.remove('hidden');
             }
-            listEl.classList.add('hidden');
         });
         listEl.appendChild(item);
     });
@@ -613,44 +571,44 @@ function loadSelectedSchool() {
 }
 
 function initSchoolSelector() {
-    const input = document.getElementById('schoolSearchInput');
-    const resultsEl = document.getElementById('schoolSearchResults');
     const resetBtn = document.getElementById('selectedSchoolReset');
     const openBtn = document.getElementById('openSchoolSettings');
     const closeBtn = document.getElementById('closeSchoolSettings');
     const modal = document.getElementById('schoolModal');
     const backdrop = document.querySelector('#schoolModal .school-modal-backdrop');
+    const typeButtons = document.querySelectorAll('.school-type-btn');
 
     const saved = loadSelectedSchool();
     if (saved) updateSelectedSchoolUI(saved);
 
-    if (input) {
-        input.addEventListener('input', () => {
-            const results = filterSchools(input.value);
-            renderSchoolResults(resultsEl, results);
-            resultsEl?.classList.remove('hidden');
+    // タイプボタンのクリックイベント
+    typeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // アクティブ状態を更新
+            typeButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // フィルタリングして表示
+            const type = btn.dataset.type || 'all';
+            renderSchoolList(type);
+            
             // 決定ボタンを非表示
             const confirmWrapper = document.getElementById('schoolConfirmWrapper');
             if (confirmWrapper) confirmWrapper.classList.add('hidden');
             tempSelectedSchool = null;
         });
-        input.addEventListener('focus', () => {
-            const results = filterSchools(input.value);
-            renderSchoolResults(resultsEl, results);
-            resultsEl?.classList.remove('hidden');
-        });
-    }
+    });
 
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
             // 検索モードに切り替え（志望校を解除せず、検索画面を表示）
             const currentSchool = loadSelectedSchool();
-            updateSelectedSchoolUI(currentSchool, true); // 検索モードを表示
-            if (input) input.value = '';
-            const results = filterSchools('');
-            renderSchoolResults(resultsEl, results);
-            if (resultsEl) resultsEl.classList.remove('hidden');
-            setTimeout(() => input?.focus(), 50);
+            updateSelectedSchoolUI(currentSchool, true);
+            // すべてボタンをアクティブにして全学校を表示
+            typeButtons.forEach(b => b.classList.remove('active'));
+            const allBtn = document.getElementById('schoolTypeAll');
+            if (allBtn) allBtn.classList.add('active');
+            renderSchoolList('all');
         });
     }
 
@@ -664,16 +622,17 @@ function initSchoolSelector() {
         if (confirmWrapper) confirmWrapper.classList.add('hidden');
         tempSelectedSchool = null;
         if (!saved) {
-            const results = filterSchools(input?.value || '');
-            renderSchoolResults(resultsEl, results);
-            resultsEl?.classList.remove('hidden');
-            setTimeout(() => input?.focus(), 50);
+            // すべてボタンをアクティブにして全学校を表示
+            typeButtons.forEach(b => b.classList.remove('active'));
+            const allBtn = document.getElementById('schoolTypeAll');
+            if (allBtn) allBtn.classList.add('active');
+            renderSchoolList('all');
         }
     };
 
     const closeModal = () => {
+        SoundEffects.playClose();
         if (modal) modal.classList.add('hidden');
-        if (resultsEl) resultsEl.classList.add('hidden');
         // 決定ボタンを非表示
         const confirmWrapper = document.getElementById('schoolConfirmWrapper');
         if (confirmWrapper) confirmWrapper.classList.add('hidden');
@@ -689,7 +648,7 @@ function initSchoolSelector() {
             if (tempSelectedSchool) {
                 saveSelectedSchool(tempSelectedSchool);
                 updateSelectedSchoolUI(tempSelectedSchool, false);
-                updateVocabProgressBar(); // 進捗バーを更新（志望校表示も含む）
+                updateVocabProgressBar();
                 const confirmWrapper = document.getElementById('schoolConfirmWrapper');
                 if (confirmWrapper) confirmWrapper.classList.add('hidden');
                 tempSelectedSchool = null;
@@ -702,15 +661,6 @@ function initSchoolSelector() {
     if (openBtn) openBtn.addEventListener('click', openModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (backdrop) backdrop.addEventListener('click', closeModal);
-
-    document.addEventListener('click', (e) => {
-        if (!resultsEl || !input) return;
-        const target = e.target;
-        const wrapper = document.querySelector('.school-modal-content');
-        if (wrapper && !wrapper.contains(target)) {
-            resultsEl.classList.add('hidden');
-        }
-    });
 }
 let correctWords = new Set(); // 正解済み（青マーカー用）
 let wrongWords = new Set();
@@ -4466,6 +4416,7 @@ function setupEventListeners() {
     
     // サイドバーを閉じる
     function closeSidebar() {
+        SoundEffects.playClose();
         if (sidebar && sidebarOverlay) {
             sidebar.classList.remove('sidebar-open');
             sidebarOverlay.classList.remove('sidebar-open');
@@ -7566,6 +7517,7 @@ function showInstallOverlay() {
 }
 
 function closeInstallOverlay() {
+    SoundEffects.playClose();
     const overlay = document.getElementById('installOverlay');
     if (!overlay) return;
     
