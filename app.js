@@ -467,7 +467,7 @@ function updateVocabSelectedSchool(school) {
 }
 
 // 学校一覧を表示する関数
-function renderSchoolList(typeFilter = 'all') {
+function renderSchoolList(typeFilter = 'all', searchQuery = '') {
     const listEl = document.getElementById('schoolList');
     if (!listEl) return;
     
@@ -475,8 +475,19 @@ function renderSchoolList(typeFilter = 'all') {
     
     // フィルタリング
     let filteredSchools = osakaSchools;
+    
+    // タイプでフィルタリング
     if (typeFilter !== 'all') {
-        filteredSchools = osakaSchools.filter(school => school.type === typeFilter);
+        filteredSchools = filteredSchools.filter(school => school.type === typeFilter);
+    }
+    
+    // 検索クエリでフィルタリング
+    if (searchQuery) {
+        const query = normalizeSchoolText(searchQuery);
+        filteredSchools = filteredSchools.filter(school => {
+            const haystack = normalizeSchoolText(`${school.name} ${school.type} ${school.course}`);
+            return haystack.includes(query);
+        });
     }
     
     // 偏差値でソート（高い順）
@@ -484,10 +495,10 @@ function renderSchoolList(typeFilter = 'all') {
     
     // 一番上に「未定」を追加
     const undecidedItem = document.createElement('div');
-    undecidedItem.className = 'school-list-item';
+    undecidedItem.className = 'school-list-item school-list-item-undecided';
     const undecidedName = document.createElement('div');
     undecidedName.className = 'school-list-name';
-    undecidedName.textContent = '未定';
+    undecidedName.textContent = '未定（設定しない）';
     undecidedItem.appendChild(undecidedName);
     undecidedItem.addEventListener('click', () => {
         // 未設定にする
@@ -499,10 +510,16 @@ function renderSchoolList(typeFilter = 'all') {
     });
     listEl.appendChild(undecidedItem);
     
-    // 学校一覧を表示
-    filteredSchools.forEach((school) => {
+    // 学校一覧を表示（交互の色を適用）
+    filteredSchools.forEach((school, index) => {
         const item = document.createElement('div');
         item.className = 'school-list-item';
+        // 交互の色を適用（index + 1 は未定の分を考慮）
+        if ((index + 1) % 2 === 0) {
+            item.classList.add('school-list-item-even');
+        } else {
+            item.classList.add('school-list-item-odd');
+        }
         const name = document.createElement('div');
         name.className = 'school-list-name';
         name.textContent = school.name;
@@ -577,9 +594,28 @@ function initSchoolSelector() {
     const modal = document.getElementById('schoolModal');
     const backdrop = document.querySelector('#schoolModal .school-modal-backdrop');
     const typeButtons = document.querySelectorAll('.school-type-btn');
+    const searchInput = document.getElementById('schoolSearchInput');
 
     const saved = loadSelectedSchool();
     if (saved) updateSelectedSchoolUI(saved);
+
+    // 現在のタイプフィルタと検索クエリを取得する関数
+    const getCurrentTypeFilter = () => {
+        const activeBtn = document.querySelector('.school-type-btn.active');
+        return activeBtn ? (activeBtn.dataset.type || 'all') : 'all';
+    };
+
+    // 学校一覧を更新する関数
+    const updateSchoolList = () => {
+        const type = getCurrentTypeFilter();
+        const query = searchInput ? searchInput.value : '';
+        renderSchoolList(type, query);
+        
+        // 決定ボタンを非表示
+        const confirmWrapper = document.getElementById('schoolConfirmWrapper');
+        if (confirmWrapper) confirmWrapper.classList.add('hidden');
+        tempSelectedSchool = null;
+    };
 
     // タイプボタンのクリックイベント
     typeButtons.forEach(btn => {
@@ -589,15 +625,16 @@ function initSchoolSelector() {
             btn.classList.add('active');
             
             // フィルタリングして表示
-            const type = btn.dataset.type || 'all';
-            renderSchoolList(type);
-            
-            // 決定ボタンを非表示
-            const confirmWrapper = document.getElementById('schoolConfirmWrapper');
-            if (confirmWrapper) confirmWrapper.classList.add('hidden');
-            tempSelectedSchool = null;
+            updateSchoolList();
         });
     });
+
+    // 検索入力のイベントリスナー
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            updateSchoolList();
+        });
+    }
 
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
@@ -608,7 +645,9 @@ function initSchoolSelector() {
             typeButtons.forEach(b => b.classList.remove('active'));
             const allBtn = document.getElementById('schoolTypeAll');
             if (allBtn) allBtn.classList.add('active');
-            renderSchoolList('all');
+            // 検索入力をクリア
+            if (searchInput) searchInput.value = '';
+            updateSchoolList();
         });
     }
 
@@ -626,11 +665,19 @@ function initSchoolSelector() {
             typeButtons.forEach(b => b.classList.remove('active'));
             const allBtn = document.getElementById('schoolTypeAll');
             if (allBtn) allBtn.classList.add('active');
-            renderSchoolList('all');
+            // 検索入力をクリア
+            if (searchInput) searchInput.value = '';
+            updateSchoolList();
         }
     };
 
+    let isClosing = false; // 閉じる処理中フラグ
+    
     const closeModal = () => {
+        // 既に閉じる処理中の場合は何もしない
+        if (isClosing) return;
+        isClosing = true;
+        
         SoundEffects.playClose();
         if (modal) modal.classList.add('hidden');
         // 決定ボタンを非表示
@@ -640,6 +687,11 @@ function initSchoolSelector() {
         // モーダルを閉じるときは志望校表示に戻す
         const saved = loadSelectedSchool();
         if (saved) updateSelectedSchoolUI(saved, false);
+        
+        // フラグをリセット（少し遅延させて確実に処理が完了するように）
+        setTimeout(() => {
+            isClosing = false;
+        }, 100);
     };
 
     const confirmBtn = document.getElementById('schoolConfirmBtn');
@@ -652,14 +704,19 @@ function initSchoolSelector() {
                 const confirmWrapper = document.getElementById('schoolConfirmWrapper');
                 if (confirmWrapper) confirmWrapper.classList.add('hidden');
                 tempSelectedSchool = null;
-                // モーダルを閉じる
+                // モーダルを閉じる（効果音はcloseModal内で再生される）
                 closeModal();
             }
         });
     }
 
     if (openBtn) openBtn.addEventListener('click', openModal);
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeModal();
+        });
+    }
     if (backdrop) backdrop.addEventListener('click', closeModal);
 }
 let correctWords = new Set(); // 正解済み（青マーカー用）
@@ -10306,3 +10363,4 @@ if (document.readyState === 'loading') {
     // DOMが既に読み込まれている場合は即座に実行
     init();
 }
+

@@ -1468,6 +1468,10 @@ body {
     margin-bottom: 12px;
 }
 
+.school-search-input-wrapper {
+    margin-bottom: 12px;
+}
+
 .school-type-btn {
     flex: 1;
     padding: 10px 16px;
@@ -1496,9 +1500,6 @@ body {
 .school-list-container {
     max-height: 400px;
     overflow-y: auto;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    background: #ffffff;
 }
 
 .school-list {
@@ -1520,8 +1521,20 @@ body {
     border-bottom: none;
 }
 
+.school-list-item-odd {
+    background: #f0f9ff;
+}
+
+.school-list-item-even {
+    background: #e0f2fe;
+}
+
+.school-list-item-undecided {
+    background: #efefef;
+}
+
 .school-list-item:hover {
-    background: #f8fafc;
+    background: #e2e8f0 !important;
 }
 
 .school-list-name {
