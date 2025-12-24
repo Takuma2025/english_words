@@ -658,6 +658,8 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
     undecidedName.textContent = '未定（設定しない）';
     undecidedItem.appendChild(undecidedName);
     undecidedItem.addEventListener('click', () => {
+        // 効果音を再生
+        SoundEffects.playMenuSelect();
         // 未設定を選択
         tempSelectedSchool = null;
         // 選択中のアイテムをハイライト
@@ -679,16 +681,40 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
         } else {
             item.classList.add('school-list-item-odd');
         }
+        
+        // 学校名とバッジのコンテナ
+        const nameContainer = document.createElement('div');
+        nameContainer.className = 'school-list-name-container';
+        
+        // 学校種別バッジ
+        const typeBadge = document.createElement('span');
+        typeBadge.className = 'school-type-badge';
+        if (school.type === '公立') {
+            typeBadge.classList.add('school-type-badge-public');
+        } else if (school.type === '私立') {
+            typeBadge.classList.add('school-type-badge-private');
+        } else if (school.type === '国立') {
+            typeBadge.classList.add('school-type-badge-national');
+        }
+        typeBadge.textContent = school.type;
+        
+        // 学校名
         const name = document.createElement('div');
         name.className = 'school-list-name';
         name.textContent = school.name;
+        
+        nameContainer.appendChild(typeBadge);
+        nameContainer.appendChild(name);
+        
         const meta = document.createElement('div');
         meta.className = 'school-list-meta';
         const henText = school.hensachi ? `偏差値${school.hensachi}` : '';
-        meta.textContent = `${school.type}・${school.course}${henText ? ' / ' + henText : ''}`;
-        item.appendChild(name);
+        meta.textContent = `${school.course}${henText ? ' / ' + henText : ''}`;
+        item.appendChild(nameContainer);
         item.appendChild(meta);
         item.addEventListener('click', () => {
+            // 効果音を再生
+            SoundEffects.playMenuSelect();
             // 一時的に選択した学校を保持
             tempSelectedSchool = school;
             // 選択中のアイテムをハイライト

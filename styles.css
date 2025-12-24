@@ -1790,10 +1790,42 @@ body.learning-mode .app-header {
     color: #1e40af !important;
 }
 
+.school-list-name-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.school-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.school-type-badge-public {
+    background-color: #0055ca;
+    color: #ffffff;
+}
+
+.school-type-badge-private {
+    background-color: #dc2626;
+    color: #ffffff;
+}
+
+.school-type-badge-national {
+    background-color: #16a34a;
+    color: #ffffff;
+}
+
 .school-list-name {
     font-size: 14px;
     font-weight: 700;
     color: #0f172a;
+    flex: 1;
 }
 
 .school-list-meta {
