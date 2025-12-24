@@ -460,17 +460,6 @@ function updateVocabProgressBar() {
         countBikeEl.classList.toggle('reached', hasReachedRequired);
     }
     
-    // 目標達成の演出（初めて達成した時のみ）
-    if (hasReachedRequired && !hasReachedGoalBefore) {
-        hasReachedGoalBefore = true;
-        // localStorageにも保存
-        localStorage.setItem('goalAchieved', 'true');
-        // 少し遅延させて演出を発動
-        setTimeout(() => {
-            showGoalAchievedCelebration(selectedSchool);
-        }, 300);
-    }
-    
     // 色を設定（志望校未設定=グレー、足りない=オレンジ、足りている=水色）
     if (progressRate) {
         progressRate.classList.toggle('insufficient', isInsufficient);
@@ -2489,6 +2478,25 @@ function showCategorySelection() {
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             updateVocabProgressBar();
+            
+            // 目標達成のチェック（ホーム画面に戻った時のみ）
+            const selectedSchool = loadSelectedSchool();
+            if (selectedSchool) {
+                const learnedWords = calculateTotalLearnedWords();
+                const requiredWords = calculateRequiredWords(selectedSchool.hensachi, selectedSchool.name);
+                const hasReachedRequired = requiredWords > 0 && learnedWords >= requiredWords;
+                
+                // 目標達成の演出（初めて達成した時のみ）
+                if (hasReachedRequired && !hasReachedGoalBefore) {
+                    hasReachedGoalBefore = true;
+                    // localStorageにも保存
+                    localStorage.setItem('goalAchieved', 'true');
+                    // 少し遅延させて演出を発動
+                    setTimeout(() => {
+                        showGoalAchievedCelebration(selectedSchool);
+                    }, 500);
+                }
+            }
         });
     });
 }

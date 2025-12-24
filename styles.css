@@ -1083,12 +1083,15 @@ body.learning-mode .app-header {
 .vocab-school-label {
     font-size: 11px;
     font-weight: 600;
-    color: #ffffff;
-    background: #4b5563;
-    padding: 4px 10px;
-    border-radius: 4px;
+    color: #3182ce;
+    background: none;
+    padding: 0 0 2px 0;
+    border: none;
+    border-bottom: 2px solid #3182ce;
+    border-radius: 0;
     margin-bottom: 6px;
     display: inline-block;
+    width: 20ch;
 }
 
 .vocab-school-selected.hidden {
@@ -2098,6 +2101,16 @@ body.learning-mode .app-header {
     padding: 4px 8px;
     position: relative;
     z-index: 2;
+    animation: analyzingTextBlink 1.5s ease-in-out infinite;
+}
+
+@keyframes analyzingTextBlink {
+    0%, 100% {
+        color: #94a3b8;
+    }
+    50% {
+        color: rgba(148, 163, 184, 0.3);
+    }
 }
 
 .analyzing-zigzag {
