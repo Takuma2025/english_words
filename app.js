@@ -1,6 +1,7 @@
 // アプリケーションの状態管理
 let currentWords = [];
 let currentIndex = 0;
+let hasReachedGoalBefore = false; // 目標達成済みフラグ（演出重複防止）
 
 // 効果音システム
 const SoundEffects = {
@@ -459,6 +460,17 @@ function updateVocabProgressBar() {
         countBikeEl.classList.toggle('reached', hasReachedRequired);
     }
     
+    // 目標達成の演出（初めて達成した時のみ）
+    if (hasReachedRequired && !hasReachedGoalBefore) {
+        hasReachedGoalBefore = true;
+        // localStorageにも保存
+        localStorage.setItem('goalAchieved', 'true');
+        // 少し遅延させて演出を発動
+        setTimeout(() => {
+            showGoalAchievedCelebration(selectedSchool);
+        }, 300);
+    }
+    
     // 色を設定（志望校未設定=グレー、足りない=オレンジ、足りている=水色）
     if (progressRate) {
         progressRate.classList.toggle('insufficient', isInsufficient);
@@ -754,7 +766,10 @@ function updateSelectedSchoolUI(school, showSearchMode = false) {
 function saveSelectedSchool(school) {
     try {
         localStorage.setItem(SCHOOL_STORAGE_KEY, JSON.stringify(school));
-        // 志望校が変わったら進捗バーを更新
+        // 志望校が変わったら目標達成フラグをリセット
+        hasReachedGoalBefore = false;
+        localStorage.removeItem('goalAchieved');
+        // 進捗バーを更新
         updateVocabProgressBar();
     } catch (e) {
         console.warn('Failed to save school selection', e);
@@ -882,6 +897,9 @@ function initSchoolSelector() {
                 if (tempSelectedSchool === null) {
                     // 未定を選択した場合
                     localStorage.removeItem(SCHOOL_STORAGE_KEY);
+                    // 目標達成フラグをリセット
+                    hasReachedGoalBefore = false;
+                    localStorage.removeItem('goalAchieved');
                     updateSelectedSchoolUI(null, false);
                 } else {
                     // 学校を選択した場合
@@ -2231,6 +2249,9 @@ function init() {
     try {
         // 効果音システムを初期化
         SoundEffects.init();
+        
+        // 目標達成済みフラグを読み込む
+        hasReachedGoalBefore = localStorage.getItem('goalAchieved') === 'true';
         
         preventZoom();
         assignCategories();
@@ -7370,6 +7391,158 @@ function createConfetti(container) {
                 style.remove();
             }, (duration + 0.5) * 1000);
         }, i * 25);
+    }
+}
+
+// 目標達成の演出
+function showGoalAchievedCelebration(school) {
+    const overlay = document.getElementById('goalAchievedOverlay');
+    const confettiContainer = document.getElementById('goalConfettiContainer');
+    const schoolNameEl = document.getElementById('goalAchievedSchool');
+    const closeBtn = document.getElementById('goalAchievedCloseBtn');
+    
+    if (!overlay) return;
+    
+    // 学校名を設定
+    if (schoolNameEl && school) {
+        schoolNameEl.textContent = school.name;
+    }
+    
+    // オーバーレイを表示
+    overlay.classList.remove('hidden');
+    
+    // 効果音を再生
+    SoundEffects.playComplete();
+    
+    // 少し遅延してshowクラスを追加（アニメーション用）
+    requestAnimationFrame(() => {
+        overlay.classList.add('show');
+    });
+    
+    // 紙吹雪を生成
+    if (confettiContainer) {
+        confettiContainer.innerHTML = '';
+        createGoalConfetti(confettiContainer);
+    }
+    
+    // 閉じるボタン
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            SoundEffects.playTap();
+            hideGoalAchievedCelebration();
+        };
+    }
+    
+    // 背景クリックで閉じる
+    overlay.onclick = (e) => {
+        if (e.target === overlay) {
+            SoundEffects.playClose();
+            hideGoalAchievedCelebration();
+        }
+    };
+}
+
+// 目標達成演出を閉じる
+function hideGoalAchievedCelebration() {
+    const overlay = document.getElementById('goalAchievedOverlay');
+    if (!overlay) return;
+    
+    overlay.classList.remove('show');
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+        // コンテナをクリア
+        const confettiContainer = document.getElementById('goalConfettiContainer');
+        const sparkleContainer = document.getElementById('goalSparkleContainer');
+        if (confettiContainer) confettiContainer.innerHTML = '';
+        if (sparkleContainer) sparkleContainer.innerHTML = '';
+    }, 500);
+}
+
+// 目標達成用の紙吹雪（長方形のみ、カラフル）
+function createGoalConfetti(container) {
+    const colors = [
+        '#3182ce', '#2563eb', '#1e40af', // 青系
+        '#38a169', '#16a34a', '#10b981', // 緑系
+        '#f59e0b', '#f97316', '#ea580c', // オレンジ系
+        '#8b5cf6', '#7c3aed', '#6d28d9', // 紫系
+        '#ec4899', '#f43f5e', '#e11d48', // ピンク・赤系
+        '#06b6d4', '#0891b2', '#0e7490', // シアン系
+        '#fbbf24', '#facc15', '#eab308', // イエロー系
+        '#ffffff', '#f3f4f6'  // 白・ライトグレー
+    ];
+    const confettiCount = 200;
+    
+    for (let i = 0; i < confettiCount; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.className = 'goal-confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 長方形のみ
+            const width = Math.random() * 6 + 4;
+            const height = Math.random() * 12 + 8;
+            confetti.style.width = width + 'px';
+            confetti.style.height = height + 'px';
+            confetti.style.borderRadius = '1px';
+            
+            // アニメーション時間
+            const duration = Math.random() * 2 + 3;
+            confetti.style.animationDuration = duration + 's';
+            confetti.style.animationDelay = (Math.random() * 0.3) + 's';
+            
+            // 横揺れの強さ
+            const swayDirection = Math.random() > 0.5 ? 1 : -1;
+            const swayAmount1 = (Math.random() * 30 + 15) * swayDirection;
+            const swayAmount2 = (Math.random() * 25 + 10) * -swayDirection;
+            const swayAmount3 = (Math.random() * 20 + 10) * swayDirection;
+            
+            // 回転角度
+            const rotateStart = Math.random() * 360;
+            const rotateEnd = rotateStart + (Math.random() * 720 + 360) * (Math.random() > 0.5 ? 1 : -1);
+            
+            // 個別のキーフレームアニメーション
+            const uniqueId = `goalConfetti${Date.now()}_${i}`;
+            const keyframes = `
+                @keyframes ${uniqueId} {
+                    0% {
+                        transform: translateY(0) translateX(0) rotate(${rotateStart}deg) rotateX(0deg);
+                        opacity: 1;
+                    }
+                    20% {
+                        transform: translateY(20vh) translateX(${swayAmount1}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.2}deg) rotateX(90deg);
+                    }
+                    40% {
+                        transform: translateY(40vh) translateX(${swayAmount2}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.4}deg) rotateX(180deg);
+                    }
+                    60% {
+                        transform: translateY(60vh) translateX(${swayAmount3}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.6}deg) rotateX(270deg);
+                    }
+                    80% {
+                        transform: translateY(80vh) translateX(${swayAmount1 * 0.5}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.8}deg) rotateX(360deg);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translateY(100vh) translateX(${swayAmount2 * 0.3}px) rotate(${rotateEnd}deg) rotateX(450deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            const style = document.createElement('style');
+            style.textContent = keyframes;
+            document.head.appendChild(style);
+            
+            confetti.style.animationName = uniqueId;
+            confetti.style.animationTimingFunction = 'linear';
+            confetti.style.animationFillMode = 'forwards';
+            container.appendChild(confetti);
+            
+            // アニメーション終了後に削除
+            setTimeout(() => {
+                confetti.remove();
+                style.remove();
+            }, (duration + 0.5) * 1000);
+        }, i * 10); // より高速に生成して密度を上げる
     }
 }
 

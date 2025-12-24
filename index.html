@@ -1189,6 +1189,23 @@
         </div>
     </div>
 
+    <!-- 目標達成画面 -->
+    <div class="goal-achieved-overlay hidden" id="goalAchievedOverlay">
+        <div class="goal-confetti-container" id="goalConfettiContainer"></div>
+        <div class="goal-achieved-content">
+            <div class="goal-achieved-badge">
+                <svg class="goal-check-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="9 12 11.5 14.5 16 9" stroke="#3182ce"/>
+                </svg>
+            </div>
+            <div class="goal-achieved-title">志望校合格必須ライン到達</div>
+            <div class="goal-achieved-subtitle" id="goalAchievedSchool"></div>
+            <div class="goal-achieved-message">志望校合格に必要な英単語数をクリアしました</div>
+            <button class="goal-achieved-btn" id="goalAchievedCloseBtn" type="button">閉じる</button>
+        </div>
+    </div>
+
     <!-- 学習完了画面 -->
     <div class="completion-overlay hidden" id="completionOverlay">
         <div class="confetti-container" id="confettiContainer"></div>
