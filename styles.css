@@ -1060,13 +1060,12 @@ body.learning-mode .app-header {
 .vocab-school-image {
     position: absolute;
     left: -10px; /* もっと左にはみ出す */
-    top: 50%; /* 上下中央に配置 */
-    transform: translateY(-50%);
+    bottom: -2px; /* コンテナから2pxはみ出す */
     width: auto;
     height: auto; /* 元のサイズで表示 */
     max-height: 120px; /* 最大高さを制限 */
     object-fit: contain;
-    object-position: left center; /* 左側に配置 */
+    object-position: left bottom; /* 左下に配置 */
     pointer-events: none;
     z-index: 10;
 }
@@ -2134,12 +2133,13 @@ body.learning-mode .app-header {
 .category-seijo-girl {
     position: absolute;
     left: -10px; /* 左にはみ出す */
-    top: -5%;
-    bottom: 0;
+    bottom: 0; /* コンテナの下に配置 */
     width: auto;
-    height: 105%; /* 上下幅いっぱいに */
+    height: auto; /* 元のサイズで表示 */
+    max-width: 120px; /* 最大幅を大きく */
+    max-height: 150px; /* 最大高さを大きく */
     object-fit: contain;
-    object-position: left center;
+    object-position: left bottom; /* 左下に配置 */
     pointer-events: none;
     z-index: 10; /* 最前面に表示 */
 }
@@ -2147,7 +2147,7 @@ body.learning-mode .app-header {
 .category-card-seijo .category-info {
     position: relative;
     z-index: 1;
-    padding-left: 130px; /* 画像の右側に配置 */
+    padding-left: 130px; /* 画像のすぐ横に配置 */
     padding-right: 16px;
     text-align: left; /* 左揃え */
     width: 100%;
@@ -2187,18 +2187,18 @@ body.learning-mode .app-header {
 .category-card-sentaku {
     position: relative;
     overflow: visible; /* 画像がはみ出せるように */
-    min-height: 100px; /* コンテナの最小高さを設定 */
 }
 
 .category-sentaku-boy {
     position: absolute;
     right: -10px; /* 右にはみ出す */
-    top: -5%;
-    bottom: 0;
+    bottom: 0; /* コンテナの下に配置 */
     width: auto;
-    height: 105%; /* 上下幅いっぱいに */
+    height: auto; /* 元のサイズで表示 */
+    max-width: 120px; /* 最大幅を大きく */
+    max-height: 150px; /* 最大高さを大きく */
     object-fit: contain;
-    object-position: right center; /* 右側に配置 */
+    object-position: right bottom; /* 右下に配置 */
     pointer-events: none;
     z-index: 10; /* 最前面に表示 */
 }
@@ -2207,7 +2207,7 @@ body.learning-mode .app-header {
     position: relative;
     z-index: 1;
     padding-left: 16px;
-    padding-right: 150px; /* 画像の左側に配置（余裕を持たせる） */
+    padding-right: 130px; /* 画像のすぐ横に配置 */
     text-align: left; /* 左揃え */
     width: 100%;
     display: flex;
@@ -2253,29 +2253,37 @@ body.learning-mode .app-header {
 
     .category-seijo-girl {
         width: auto !important;
-        height: calc(100% + 5px) !important; /* コンテナ高さに合わせる */
-        top: -5px !important;
+        height: auto !important; /* 元のサイズで表示 */
+        max-width: 60px !important; /* スマホでは最大幅を制限 */
+        max-height: 80px !important; /* スマホでは最大高さを制限 */
+        bottom: 0 !important;
+        top: auto !important;
         left: -15px !important; /* 横にはみ出す */
         object-fit: contain !important;
+        object-position: left bottom !important;
         z-index: 10 !important;
     }
 
     .category-card-seijo .category-info {
-        padding-left: 90px; /* 画像のサイズに合わせて余白を調整 */
+        padding-left: 70px; /* 画像のすぐ横に配置 */
         z-index: 1 !important;
     }
 
     .category-sentaku-boy {
         width: auto !important;
-        height: calc(100% + 5px) !important; /* コンテナ高さに合わせる */
-        top: -5px !important;
+        height: auto !important; /* 元のサイズで表示 */
+        max-width: 60px !important; /* スマホでは最大幅を制限 */
+        max-height: 80px !important; /* スマホでは最大高さを制限 */
+        bottom: 0 !important;
+        top: auto !important;
         right: -15px !important; /* 横にはみ出す */
         object-fit: contain !important;
+        object-position: right bottom !important;
         z-index: 10 !important;
     }
 
     .category-card-sentaku .category-info {
-        padding-right: 100px; /* 画像のサイズに合わせて余白を調整 */
+        padding-right: 70px; /* 画像のすぐ横に配置 */
         z-index: 1 !important;
     }
 
@@ -2284,8 +2292,9 @@ body.learning-mode .app-header {
         width: auto !important;
         height: auto !important; /* 元のサイズで表示 */
         max-height: 100px !important; /* スマホでは少し小さく */
-        top: 50% !important;
-        transform: translateY(-50%) !important;
+        bottom: -2px !important; /* コンテナから2pxはみ出す */
+        top: auto !important;
+        transform: none !important;
         left: -15px !important; /* もっと左に */
         object-fit: contain !important;
     }
