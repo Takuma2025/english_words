@@ -2028,6 +2028,11 @@ function speakWord(word, buttonElement) {
             // 英語音声で /ə/ に近づけるために "uh" を使用
             speakText = 'uh';
         }
+        // I は「アイ」と発音させる
+        if (word === 'I' || word === 'i') {
+            // "eye" を使用して「アイ」と発音させる
+            speakText = 'eye';
+        }
         // Ms. は「エムズ」ではなく「ミズ」と読ませたい
         if (word === 'Ms.' || word === 'Ms') {
             speakText = 'miz';
