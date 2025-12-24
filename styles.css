@@ -1060,10 +1060,11 @@ body.learning-mode .app-header {
 .vocab-school-image {
     position: absolute;
     left: -10px; /* もっと左にはみ出す */
-    top: -5%; /* 上に5%はみ出す */
-    bottom: 0;
+    top: 50%; /* 上下中央に配置 */
+    transform: translateY(-50%);
     width: auto;
-    height: 105%; /* はみ出し分を含める */
+    height: auto; /* 元のサイズで表示 */
+    max-height: 120px; /* 最大高さを制限 */
     object-fit: contain;
     object-position: left center; /* 左側に配置 */
     pointer-events: none;
@@ -2248,17 +2249,15 @@ body.learning-mode .app-header {
     .category-card-seijo,
     .category-card-sentaku {
         overflow: visible !important; /* 画像がはみ出せるように */
-        min-height: 120px; /* コンテナの最小高さを大きく */
     }
 
     .category-seijo-girl {
-        width: auto !important; /* 幅は自動 */
-        max-width: none !important; /* 幅制限なし */
-        height: 110% !important; /* 上下幅いっぱいに */
-        top: -5% !important;
+        width: auto !important;
+        height: calc(100% + 5px) !important; /* コンテナ高さに合わせる */
+        top: -5px !important;
         left: -15px !important; /* 横にはみ出す */
-        object-fit: contain !important; /* 画像全体が入るように */
-        z-index: 10 !important; /* 最前面に */
+        object-fit: contain !important;
+        z-index: 10 !important;
     }
 
     .category-card-seijo .category-info {
@@ -2267,13 +2266,12 @@ body.learning-mode .app-header {
     }
 
     .category-sentaku-boy {
-        width: auto !important; /* 幅は自動 */
-        max-width: none !important; /* 幅制限なし */
-        height: 110% !important; /* 上下幅いっぱいに */
-        top: -5% !important;
+        width: auto !important;
+        height: calc(100% + 5px) !important; /* コンテナ高さに合わせる */
+        top: -5px !important;
         right: -15px !important; /* 横にはみ出す */
-        object-fit: contain !important; /* 画像全体が入るように */
-        z-index: 10 !important; /* 最前面に */
+        object-fit: contain !important;
+        z-index: 10 !important;
     }
 
     .category-card-sentaku .category-info {
@@ -2282,21 +2280,18 @@ body.learning-mode .app-header {
     }
 
     /* 志望校コンテナのスマホ向け調整 */
-    .vocab-school-selected {
-        min-height: 110px; /* コンテナの最小高さを設定 */
-    }
-
     .vocab-school-image {
-        max-width: none !important;
         width: auto !important;
-        height: 110% !important; /* 上下幅いっぱいに */
-        top: -5% !important;
+        height: auto !important; /* 元のサイズで表示 */
+        max-height: 100px !important; /* スマホでは少し小さく */
+        top: 50% !important;
+        transform: translateY(-50%) !important;
         left: -15px !important; /* もっと左に */
         object-fit: contain !important;
     }
 
     .vocab-school-content {
-        padding-left: 100px; /* スマホでは余白を調整 */
+        padding-left: 90px; /* スマホでは余白を調整 */
         padding-right: 16px;
     }
 }
