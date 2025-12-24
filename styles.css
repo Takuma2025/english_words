@@ -2127,16 +2127,17 @@ body.learning-mode .app-header {
 .category-card-seijo {
     position: relative;
     overflow: visible; /* 画像がはみ出せるように */
+    min-height: 100px; /* コンテナの最小高さを設定 */
 }
 
 .category-seijo-girl {
     position: absolute;
-    left: 0;
-    top: 0;
+    left: -10px; /* 左にはみ出す */
+    top: -5%;
     bottom: 0;
     width: auto;
-    height: 100%;
-    object-fit: cover;
+    height: 105%; /* 上下幅いっぱいに */
+    object-fit: contain;
     object-position: left center;
     pointer-events: none;
     z-index: 10; /* 最前面に表示 */
@@ -2145,7 +2146,7 @@ body.learning-mode .app-header {
 .category-card-seijo .category-info {
     position: relative;
     z-index: 1;
-    padding-left: 130px; /* 画像の右側に配置（もう少し右へ） */
+    padding-left: 130px; /* 画像の右側に配置 */
     padding-right: 16px;
     text-align: left; /* 左揃え */
     width: 100%;
@@ -2185,16 +2186,17 @@ body.learning-mode .app-header {
 .category-card-sentaku {
     position: relative;
     overflow: visible; /* 画像がはみ出せるように */
+    min-height: 100px; /* コンテナの最小高さを設定 */
 }
 
 .category-sentaku-boy {
     position: absolute;
-    right: 0; /* 右側に配置 */
-    top: 0;
+    right: -10px; /* 右にはみ出す */
+    top: -5%;
     bottom: 0;
     width: auto;
-    height: 100%;
-    object-fit: cover;
+    height: 105%; /* 上下幅いっぱいに */
+    object-fit: contain;
     object-position: right center; /* 右側に配置 */
     pointer-events: none;
     z-index: 10; /* 最前面に表示 */
@@ -2246,31 +2248,36 @@ body.learning-mode .app-header {
     .category-card-seijo,
     .category-card-sentaku {
         overflow: visible !important; /* 画像がはみ出せるように */
+        min-height: 100px; /* コンテナの最小高さを設定 */
     }
 
     .category-seijo-girl {
         width: auto !important; /* 幅は自動 */
-        max-width: 50px !important; /* 最大幅を小さく */
-        height: 100% !important; /* 高さはコンテナに合わせる */
+        max-width: none !important; /* 幅制限なし */
+        height: 105% !important; /* 上下幅いっぱいに */
+        top: -5% !important;
+        left: -10px !important; /* 横にはみ出す */
         object-fit: contain !important; /* 画像全体が入るように */
         z-index: 10 !important; /* 最前面に */
     }
 
     .category-card-seijo .category-info {
-        padding-left: 60px; /* 画像のサイズに合わせて余白を調整 */
+        padding-left: 100px; /* 画像のサイズに合わせて余白を調整 */
         z-index: 1 !important;
     }
 
     .category-sentaku-boy {
         width: auto !important; /* 幅は自動 */
-        max-width: 50px !important; /* 最大幅を小さく */
-        height: 100% !important; /* 高さはコンテナに合わせる */
+        max-width: none !important; /* 幅制限なし */
+        height: 105% !important; /* 上下幅いっぱいに */
+        top: -5% !important;
+        right: -10px !important; /* 横にはみ出す */
         object-fit: contain !important; /* 画像全体が入るように */
         z-index: 10 !important; /* 最前面に */
     }
 
     .category-card-sentaku .category-info {
-        padding-right: 65px; /* 画像のサイズに合わせて余白を調整 */
+        padding-right: 110px; /* 画像のサイズに合わせて余白を調整 */
         z-index: 1 !important;
     }
 
