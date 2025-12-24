@@ -2133,7 +2133,7 @@ body.learning-mode .app-header {
 .category-seijo-girl {
     position: absolute;
     left: -20px; /* もっと左にはみ出す */
-    bottom: -10px; /* コンテナから下にはみ出す */
+    bottom: 0; /* コンテナの下に配置 */
     width: auto;
     height: auto; /* 元のサイズで表示 */
     max-width: 180px; /* さらに大きく */
@@ -2163,7 +2163,15 @@ body.learning-mode .app-header {
 
 .category-card-seijo .category-name {
     text-align: left;
-    word-break: break-all; /* 文字を改行 */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.category-card-seijo .category-name .category-name-main {
+    white-space: nowrap; /* 改行を防ぐ */
+    word-break: normal;
 }
 
 .category-card-seijo .category-meta {
@@ -2192,7 +2200,7 @@ body.learning-mode .app-header {
 .category-sentaku-boy {
     position: absolute;
     right: -20px; /* もっと右にはみ出す */
-    bottom: -10px; /* コンテナから下にはみ出す */
+    bottom: 0; /* コンテナの下に配置 */
     width: auto;
     height: auto; /* 元のサイズで表示 */
     max-width: 180px; /* さらに大きく */
@@ -2256,7 +2264,7 @@ body.learning-mode .app-header {
         height: auto !important; /* 元のサイズで表示 */
         max-width: 90px !important; /* スマホでも少し大きく */
         max-height: 120px !important; /* スマホでも少し大きく */
-        bottom: -10px !important; /* コンテナから下にはみ出す */
+        bottom: 0 !important; /* コンテナの下に配置 */
         top: auto !important;
         left: -20px !important; /* もっと横にはみ出す */
         object-fit: contain !important;
@@ -2274,7 +2282,7 @@ body.learning-mode .app-header {
         height: auto !important; /* 元のサイズで表示 */
         max-width: 90px !important; /* スマホでも少し大きく */
         max-height: 120px !important; /* スマホでも少し大きく */
-        bottom: -10px !important; /* コンテナから下にはみ出す */
+        bottom: 0 !important; /* コンテナの下に配置 */
         top: auto !important;
         right: -20px !important; /* もっと横にはみ出す */
         object-fit: contain !important;
@@ -2376,11 +2384,12 @@ body.learning-mode .app-header {
 }
 
 /* 整序英作文100本ノックカードのバッジも同じサイズに */
-.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-type-badge,
-.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-type-badge-pink {
+.category-card-seijo .exam-type-badge,
+.category-card-seijo .exam-type-badge-pink {
     font-size: 11px;
     padding: 2px 6px;
     margin-right: 4px;
+    white-space: nowrap; /* バッジ内の改行を防ぐ */
 }
 
 .intro-badge {
