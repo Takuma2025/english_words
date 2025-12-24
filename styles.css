@@ -2275,14 +2275,20 @@ body.learning-mode .app-header {
     }
 
     /* 志望校コンテナのスマホ向け調整 */
+    .vocab-school-selected {
+        min-height: 100px; /* コンテナの最小高さを設定 */
+    }
+
     .vocab-school-image {
-        max-width: 60px !important;
-        height: 105% !important; /* 上にはみ出す分を含める */
+        max-width: none !important;
+        width: auto !important;
+        height: calc(100% + 5px) !important; /* 上下幅いっぱいに */
+        top: -5px !important;
         object-fit: contain !important;
     }
 
     .vocab-school-content {
-        padding-left: 80px; /* スマホでは余白を調整 */
+        padding-left: 90px; /* スマホでは余白を調整 */
         padding-right: 16px;
     }
 }
