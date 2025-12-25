@@ -103,8 +103,10 @@ body {
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 20px;
 }
 
 .splash-image {
@@ -116,17 +118,13 @@ body {
 }
 
 .splash-logo {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    max-width: 45%;
+    max-height: 45%;
 }
 
-.splash-girl {
-    position: absolute;
-    right: calc(50% + 20px);
-    top: 50%;
-    transform: translateY(-50%);
+.splash-boy {
+    max-width: 35%;
+    max-height: 35%;
 }
 
 .feedback-overlay {
@@ -1353,7 +1351,7 @@ body.learning-mode .app-header {
     transform: translateX(-50%);
     width: 28px;
     height: 28px;
-    z-index: 3;
+    z-index: 6;
     transition: left 0.5s ease;
 }
 
@@ -1425,12 +1423,21 @@ body.learning-mode .app-header {
 
 .vocab-requirement-flag {
     position: absolute;
-    top: -18px;
+    top: -30px;
     left: 50%;
-    transform: translateX(calc(-50% + 7px));
-    width: 16px;
-    height: 16px;
-    z-index: 6;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 28px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vocab-requirement-flag img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .vocab-progress-requirement.hidden {
@@ -2175,193 +2182,10 @@ body.learning-mode .app-header {
     position: relative;
 }
 
-/* 厳選例文暗記60 / 整序英作文100本ノック メニュー用の見出し＋画像レイアウト */
-.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-menu-header,
-.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-menu-header,
-.category-card-seijo .exam-menu-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    position: relative;
-    overflow: visible;
-}
 
-.category-card[data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】"] .exam-menu-header .category-name,
-.category-card[data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】"] .exam-menu-header .category-name,
-.category-card-seijo .exam-menu-header .category-name {
-    max-width: calc(100% - 90px);
-}
-
-.category-card-seijo {
-    position: relative;
-    overflow: visible; /* 画像がはみ出せるように */
-    min-height: 100px; /* コンテナの最小高さを設定 */
-}
-
-.category-seijo-girl {
-    position: absolute;
-    left: -20px; /* もっと左にはみ出す */
-    bottom: 0; /* コンテナの下に配置 */
-    width: auto;
-    height: auto; /* 元のサイズで表示 */
-    max-width: 180px; /* さらに大きく */
-    max-height: 200px; /* さらに大きく */
-    object-fit: contain;
-    object-position: left bottom; /* 左下に配置 */
-    pointer-events: none;
-    z-index: 10; /* 最前面に表示 */
-}
-
-.category-card-seijo .category-info {
-    position: relative;
-    z-index: 1;
-    padding-left: 60px; /* 画像と重なってもいいので余白を減らす */
-    padding-right: 16px;
-    text-align: left; /* 左揃え */
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* 子要素を左揃え */
-}
-
-.category-card-seijo .exam-menu-header {
-    justify-content: flex-start !important; /* 左側に配置 */
-    width: 100%;
-}
-
-.category-card-seijo .category-name {
-    text-align: left;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px;
-}
-
-.category-card-seijo .category-name .category-name-main {
-    white-space: nowrap; /* 改行を防ぐ */
-    word-break: normal;
-}
-
-.category-card-seijo .category-meta {
-    text-align: left;
-    word-break: break-all; /* 文字を改行 */
-}
-
-.category-card-seijo .category-progress {
-    align-self: flex-end; /* 進捗バーを右揃え */
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* 進捗バーとテキストを右揃え */
-}
-
-.category-card-seijo .category-progress-text {
-    text-align: right;
-}
-
-/* 厳選例文暗記60用のスタイル（整序英作文と同じ） */
-.category-card-sentaku {
-    position: relative;
-    overflow: visible; /* 画像がはみ出せるように */
-}
-
-.category-sentaku-boy {
-    position: absolute;
-    right: -20px; /* もっと右にはみ出す */
-    bottom: 0; /* コンテナの下に配置 */
-    width: auto;
-    height: auto; /* 元のサイズで表示 */
-    max-width: 180px; /* さらに大きく */
-    max-height: 200px; /* さらに大きく */
-    object-fit: contain;
-    object-position: right bottom; /* 右下に配置 */
-    pointer-events: none;
-    z-index: 10; /* 最前面に表示 */
-}
-
-.category-card-sentaku .category-info {
-    position: relative;
-    z-index: 1;
-    padding-left: 16px;
-    padding-right: 60px; /* 画像と重なってもいいので余白を減らす */
-    text-align: left; /* 左揃え */
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* 子要素を左揃え */
-}
-
-.category-card-sentaku .exam-menu-header {
-    justify-content: flex-start !important; /* 左側に配置 */
-    width: 100%;
-}
-
-.category-card-sentaku .category-name {
-    text-align: left;
-    word-break: break-all; /* 文字を改行 */
-}
-
-.category-card-sentaku .category-meta {
-    text-align: left;
-    line-height: 1.2; /* 行間を詰める */
-    margin-top: 2px; /* マージンも小さく */
-    word-break: break-all; /* 文字を改行 */
-}
-
-.category-card-sentaku .category-progress {
-    align-self: flex-start; /* 進捗バーを左寄せ */
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* 進捗バーとテキストを左寄せ */
-}
-
-.category-card-sentaku .category-progress-text {
-    text-align: left; /* 左寄せ */
-}
 
 /* スマホ向け：整序英作文と厳選例文暗記のレイアウト調整 */
 @media (max-width: 600px) {
-    .category-card-seijo,
-    .category-card-sentaku {
-        overflow: visible !important; /* 画像がはみ出せるように */
-    }
-
-    .category-seijo-girl {
-        width: auto !important;
-        height: auto !important; /* 元のサイズで表示 */
-        max-width: 90px !important; /* スマホでも少し大きく */
-        max-height: 120px !important; /* スマホでも少し大きく */
-        bottom: 0 !important; /* コンテナの下に配置 */
-        top: auto !important;
-        left: -20px !important; /* もっと横にはみ出す */
-        object-fit: contain !important;
-        object-position: left bottom !important;
-        z-index: 10 !important;
-    }
-
-    .category-card-seijo .category-info {
-        padding-left: 40px; /* 画像と重なってもいいので余白を減らす */
-        z-index: 1 !important;
-    }
-
-    .category-sentaku-boy {
-        width: auto !important;
-        height: auto !important; /* 元のサイズで表示 */
-        max-width: 90px !important; /* スマホでも少し大きく */
-        max-height: 120px !important; /* スマホでも少し大きく */
-        bottom: 0 !important; /* コンテナの下に配置 */
-        top: auto !important;
-        right: -20px !important; /* もっと横にはみ出す */
-        object-fit: contain !important;
-        object-position: right bottom !important;
-        z-index: 10 !important;
-    }
-
-    .category-card-sentaku .category-info {
-        padding-right: 40px; /* 画像と重なってもいいので余白を減らす */
-        z-index: 1 !important;
-    }
 
     /* 志望校コンテナのスマホ向け調整 */
     .vocab-school-image {
@@ -9676,7 +9500,7 @@ body.learning-mode .bottom-nav {
     justify-content: flex-start;
     gap: 0;
     min-height: 140px;
-    padding-top: 10px;
+    padding-top: 4px;
 }
 
 .mode-content-vertical .mode-text {
@@ -9690,10 +9514,10 @@ body.learning-mode .bottom-nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 2px;
     flex: 1;
     width: 100%;
-    margin-top: 4px;
+    margin-top: 0;
 }
 
 .mode-text {

@@ -502,11 +502,11 @@ function updateVocabProgressBar() {
         }
     }
     if (bikeImg) {
-        // 必須ラインを超えた（同じになった）場合はbike_p.png、それ以外はbike_b.jpg
+        // 必須ラインを超えた（同じになった）場合はbike_p.png、それ以外はbike_b.png
         if (requiredWords > 0 && learnedWords >= requiredWords) {
             bikeImg.src = 'bike_p.png';
         } else {
-            bikeImg.src = 'bike_b.jpg';
+            bikeImg.src = 'bike_b.png';
         }
     }
     
