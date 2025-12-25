@@ -2,6 +2,7 @@
 let currentWords = [];
 let currentIndex = 0;
 let hasReachedGoalBefore = false; // 目標達成済みフラグ（演出重複防止）
+let pendingGoalCelebration = false; // 学習完了後に目標達成画面を表示するフラグ
 
 // 効果音システム
 const SoundEffects = {
@@ -758,6 +759,7 @@ function saveSelectedSchool(school) {
         // 志望校が変わったら目標達成フラグをリセット
         hasReachedGoalBefore = false;
         localStorage.removeItem('goalAchieved');
+        localStorage.removeItem('goalAchievedSchool');
         // 進捗バーを更新
         updateVocabProgressBar();
     } catch (e) {
@@ -2239,8 +2241,10 @@ function init() {
         // 効果音システムを初期化
         SoundEffects.init();
         
-        // 目標達成済みフラグを読み込む
-        hasReachedGoalBefore = localStorage.getItem('goalAchieved') === 'true';
+        // 目標達成済みフラグをリセット（ページロード時は常にリセット）
+        // 目標達成画面は学習完了後にホーム画面に戻った時に表示する
+        hasReachedGoalBefore = false;
+        pendingGoalCelebration = false;
         
         preventZoom();
         assignCategories();
@@ -2480,25 +2484,37 @@ function showCategorySelection() {
             updateVocabProgressBar();
             
             // 目標達成のチェック（ホーム画面に戻った時のみ）
-            const selectedSchool = loadSelectedSchool();
-            if (selectedSchool) {
-                const learnedWords = calculateTotalLearnedWords();
-                const requiredWords = calculateRequiredWords(selectedSchool.hensachi, selectedSchool.name);
-                const hasReachedRequired = requiredWords > 0 && learnedWords >= requiredWords;
-                
-                // 目標達成の演出（初めて達成した時のみ）
-                if (hasReachedRequired && !hasReachedGoalBefore) {
-                    hasReachedGoalBefore = true;
-                    // localStorageにも保存
-                    localStorage.setItem('goalAchieved', 'true');
-                    // 少し遅延させて演出を発動
-                    setTimeout(() => {
-                        showGoalAchievedCelebration(selectedSchool);
-                    }, 500);
-                }
-            }
+            // データが確実に読み込まれるように少し遅延させる
+            setTimeout(() => {
+                checkAndShowGoalAchievement();
+            }, 300);
         });
     });
+}
+
+// 目標達成チェック関数（分離して確実に実行されるように）
+function checkAndShowGoalAchievement() {
+    console.log('checkAndShowGoalAchievement 呼び出し', {
+        pendingGoalCelebration,
+        hasReachedGoalBefore
+    });
+    
+    const selectedSchool = loadSelectedSchool();
+    if (!selectedSchool) {
+        console.log('目標達成チェック: 志望校が設定されていません');
+        return;
+    }
+    
+    // 学習完了後に目標達成した場合（pendingGoalCelebrationフラグがtrue）
+    if (pendingGoalCelebration) {
+        console.log('目標達成画面を表示します！');
+        pendingGoalCelebration = false;
+        hasReachedGoalBefore = true;
+        // 少し遅延させて演出を発動
+        setTimeout(() => {
+            showGoalAchievedCelebration(selectedSchool);
+        }, 300);
+    }
 }
 
 // カテゴリーを選択してコース選択画面を表示
@@ -7323,6 +7339,26 @@ function showCompletion() {
         if (isComplete && confettiContainer) {
             createConfetti(confettiContainer);
         }
+        
+        // 目標達成チェック（学習完了時に判定して、ホーム画面に戻った時に表示）
+        const selectedSchool = loadSelectedSchool();
+        if (selectedSchool) {
+            const learnedWords = calculateTotalLearnedWords();
+            const requiredWords = calculateRequiredWords(selectedSchool.hensachi, selectedSchool.name);
+            const hasReachedRequired = requiredWords > 0 && learnedWords >= requiredWords;
+            
+            console.log('学習完了時の目標達成チェック:', {
+                learnedWords,
+                requiredWords,
+                hasReachedRequired,
+                hasReachedGoalBefore
+            });
+            
+            if (hasReachedRequired && !hasReachedGoalBefore) {
+                console.log('目標達成を検出！ホーム画面に戻った時に表示します');
+                pendingGoalCelebration = true;
+            }
+        }
     });
 }
 
@@ -7404,16 +7440,53 @@ function createConfetti(container) {
 
 // 目標達成の演出
 function showGoalAchievedCelebration(school) {
+    console.log('showGoalAchievedCelebration 呼び出されました', school);
     const overlay = document.getElementById('goalAchievedOverlay');
     const confettiContainer = document.getElementById('goalConfettiContainer');
     const schoolNameEl = document.getElementById('goalAchievedSchool');
     const closeBtn = document.getElementById('goalAchievedCloseBtn');
+    const progressBar = document.getElementById('goalAchievedProgressBar');
+    const progressCorrect = document.getElementById('goalAchievedProgressCorrect');
+    const progressWrong = document.getElementById('goalAchievedProgressWrong');
+    const progressText = document.getElementById('goalAchievedProgressText');
     
-    if (!overlay) return;
+    if (!overlay) {
+        console.error('goalAchievedOverlay が見つかりません');
+        return;
+    }
+    
+    console.log('目標達成画面を表示します');
     
     // 学校名を設定
     if (schoolNameEl && school) {
         schoolNameEl.textContent = school.name;
+    }
+    
+    // 進捗バーを更新
+    if (school) {
+        const learnedWords = calculateTotalLearnedWords();
+        const requiredWords = calculateRequiredWords(school.hensachi, school.name);
+        const correctWords = Math.min(learnedWords, requiredWords);
+        const wrongWords = Math.max(0, requiredWords - learnedWords);
+        const progressPercent = requiredWords > 0 ? Math.round((correctWords / requiredWords) * 100) : 0;
+        
+        // 進捗バーの幅を更新
+        if (progressCorrect) {
+            progressCorrect.style.width = `${progressPercent}%`;
+        }
+        if (progressWrong) {
+            progressWrong.style.width = `${100 - progressPercent}%`;
+        }
+        
+        // テキストを更新（右下に表示）
+        if (progressText) {
+            progressText.textContent = `${correctWords}/${requiredWords}語`;
+        }
+        
+        // COMPLETE!!を表示
+        if (progressBar && learnedWords >= requiredWords) {
+            progressBar.classList.add('goal-achieved-progress-complete');
+        }
     }
     
     // オーバーレイを表示

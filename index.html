@@ -23,7 +23,10 @@
 <body>
     <!-- スプラッシュ画面 -->
     <div id="splashScreen" class="splash-screen">
-        <img src="osaka_5_nashi_b.png" alt="大阪" class="splash-image">
+        <div class="splash-images-container">
+            <img src="girl2.png" alt="キャラクター" class="splash-image splash-girl">
+            <img src="logo.png" alt="ロゴ" class="splash-image splash-logo">
+        </div>
     </div>
     
     <div id="feedbackOverlay" class="feedback-overlay"></div>
@@ -1202,6 +1205,13 @@
             <div class="goal-achieved-title">志望校合格必須ライン到達</div>
             <div class="goal-achieved-subtitle" id="goalAchievedSchool"></div>
             <div class="goal-achieved-message">志望校合格に必要な英単語数をクリアしました</div>
+            <div class="goal-achieved-progress-container">
+                <div class="goal-achieved-progress-bar" id="goalAchievedProgressBar">
+                    <div class="goal-achieved-progress-correct" id="goalAchievedProgressCorrect"></div>
+                    <div class="goal-achieved-progress-wrong" id="goalAchievedProgressWrong"></div>
+                </div>
+                <div class="goal-achieved-progress-text" id="goalAchievedProgressText">0/0語</div>
+            </div>
             <button class="goal-achieved-btn" id="goalAchievedCloseBtn" type="button">閉じる</button>
         </div>
     </div>
