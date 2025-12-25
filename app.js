@@ -2259,14 +2259,14 @@ function init() {
         // スプラッシュ画面を表示
         const splashScreen = document.getElementById('splashScreen');
         if (splashScreen) {
-            // スプラッシュ画面を1.5秒表示してから非表示にする
+            // スプラッシュ画面を3秒表示してから非表示にする
             setTimeout(() => {
                 splashScreen.classList.add('hidden');
                 setTimeout(() => {
                     splashScreen.style.display = 'none';
                     showCategorySelection();
                 }, 500);
-            }, 1500);
+            }, 3000);
         } else {
             // スプラッシュ画面が見つからない場合は即座にカテゴリー選択画面を表示
             showCategorySelection();
