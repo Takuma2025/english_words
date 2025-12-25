@@ -108,8 +108,8 @@ body {
 }
 
 .splash-image {
-    max-width: 30%;
-    max-height: 30%;
+    max-width: 45%;
+    max-height: 45%;
     width: auto;
     height: auto;
     object-fit: contain;
