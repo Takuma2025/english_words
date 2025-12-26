@@ -202,6 +202,7 @@ body {
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 /* 学習モード（インプット一覧・カード学習・文法など）ではグローバルヘッダーは非表示 */
@@ -2148,20 +2149,50 @@ body.learning-mode .app-header {
     align-items: center;
     width: 100%;
     padding: 16px 16px 16px 32px;
-    background: #ffffff;
+    background: #f8fafc;
     border: none;
     border-top: 1px solid #e5e7eb;
+    border-left: 3px solid #3182ce;
     text-align: left;
     cursor: pointer;
     transition: background-color 0.1s;
+    position: relative;
 }
 
 .category-accordion-item:hover {
-    background-color: #f9fafb;
+    background-color: #f1f5f9;
 }
 
 .category-accordion-item:active {
-    background-color: #f3f4f6;
+    background-color: #e2e8f0;
+}
+
+/* 日常生活でよく使う生活語彙（薄い緑） */
+.category-accordion-item-green {
+    background: #f0fdf4;
+    border-left: 3px solid #22c55e;
+}
+
+.category-accordion-item-green:hover {
+    background-color: #dcfce7;
+}
+
+.category-accordion-item-green:active {
+    background-color: #bbf7d0;
+}
+
+/* 英文でよく登場する機能語（薄い紫） */
+.category-accordion-item-purple {
+    background: #faf5ff;
+    border-left: 3px solid #9333ea;
+}
+
+.category-accordion-item-purple:hover {
+    background-color: #f3e8ff;
+}
+
+.category-accordion-item-purple:active {
+    background-color: #e9d5ff;
 }
 
 .accordion-item-text {

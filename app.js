@@ -2920,6 +2920,14 @@ function showSubcategorySelection(parentCategory) {
         // 番号を取得（1から始まる）
         const number = index + 1;
         
+        // 親カテゴリーに応じてバッジの色を決定
+        let badgeColor = '';
+        if (parentCategory === '日常生活でよく使う生活語彙') {
+            badgeColor = '#22c55e'; // かわいい緑
+        } else if (parentCategory === '英文でよく登場する機能語') {
+            badgeColor = '#9333ea'; // 紫
+        }
+        
         const card = document.createElement('button');
         card.className = 'category-card';
         card.onclick = () => startCategory(subcat);
@@ -2927,7 +2935,7 @@ function showSubcategorySelection(parentCategory) {
         card.innerHTML = `
             <div class="category-info">
                 <div class="category-header">
-                    <div class="category-name"><span class="level-badge">${number}</span> ${subcat}</div>
+                    <div class="category-name"><span class="level-badge" style="background-color: ${badgeColor}">${number}</span> ${subcat}</div>
                 </div>
                 <div class="category-progress">
                     <div class="category-progress-bar">
@@ -2945,6 +2953,9 @@ function showSubcategorySelection(parentCategory) {
         courseList.appendChild(card);
     });
     
+    // ヘッダーの戻るボタンを表示（先に設定）
+    updateHeaderButtons('course', parentCategory);
+    
     // 画面遷移（スライドイン）
     const categorySelection = document.getElementById('categorySelection');
     
@@ -2961,9 +2972,6 @@ function showSubcategorySelection(parentCategory) {
             courseSelection.classList.remove('slide-in-right');
         }, 300);
     }
-    
-    // ヘッダーの戻るボタンを表示
-    updateHeaderButtons('course', parentCategory);
     
     // ナビゲーション状態を更新
     updateNavState('courseSelection');
