@@ -276,13 +276,13 @@ function getAppearanceStars(count) {
     if (typeof count !== 'number' || isNaN(count) || count < 0) {
         return '★';
     }
-    if (count >= 100) {
+    if (count >= 50) {
         return '★★★★★';
-    } else if (count >= 30) {
+    } else if (count >= 20) {
         return '★★★★';
-    } else if (count >= 10) {
-        return '★★★';
     } else if (count >= 5) {
+        return '★★★';
+    } else if (count >= 1) {
         return '★★';
     } else {
         return '★';
