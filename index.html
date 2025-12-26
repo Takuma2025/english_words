@@ -1033,7 +1033,7 @@
                                         <circle cx="11" cy="11" r="8"></circle>
                                         <path d="m21 21-4.35-4.35"></path>
                                     </svg>
-                                    <input type="text" id="testSearchInput" placeholder="日本語の意味を入力して検索..." autocomplete="off">
+                                    <input type="text" id="testSearchInput" placeholder="日本語の意味を入力して検索..." autocomplete="off" onkeyup="searchMeaning(this.value)" oninput="searchMeaning(this.value)">
                                     <button class="test-search-clear hidden" id="testSearchClear">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <line x1="18" y1="6" x2="6" y2="18"></line>

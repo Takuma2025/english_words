@@ -9093,9 +9093,55 @@ let testModeCorrectCount = 0;
 let testModeWrongCount = 0;
 let allMeaningsForSearch = []; // 検索用の全意味リスト
 
+// グローバル検索関数（HTMLから呼び出し）
+function searchMeaning(query) {
+    const resultsEl = document.getElementById('testSearchResults');
+    if (!resultsEl) return;
+    
+    query = query.trim();
+    
+    if (query.length === 0) {
+        resultsEl.innerHTML = '';
+        return;
+    }
+    
+    // meaningから検索
+    const matches = allMeaningsForSearch.filter(item => 
+        item.meaning.includes(query)
+    ).slice(0, 10);
+    
+    if (matches.length === 0) {
+        resultsEl.innerHTML = '<div style="padding:16px;text-align:center;color:#666;">該当する意味が見つかりません</div>';
+        return;
+    }
+    
+    // 結果を表示
+    let html = '';
+    matches.forEach(item => {
+        const escapedMeaning = item.meaning.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+        html += `<div onclick="selectTestAnswer('${escapedMeaning}')" style="padding:14px 16px;background:#fff;border-bottom:1px solid #e5e7eb;cursor:pointer;font-size:15px;">${item.meaning} <span style="color:#999;font-size:12px;">(${item.partOfSpeech})</span></div>`;
+    });
+    resultsEl.innerHTML = html;
+}
+
 // テストモードで学習を初期化
 function initTestModeLearning(category, words) {
-    console.log('initTestModeLearning called with', words.length, 'words');
+    console.log('=== initTestModeLearning called ===');
+    console.log('category:', category);
+    console.log('words:', words);
+    console.log('words.length:', words ? words.length : 'undefined');
+    console.log('typeof words:', typeof words);
+    console.log('Array.isArray(words):', Array.isArray(words));
+    
+    if (!words || words.length === 0) {
+        console.error('ERROR: No words passed to initTestModeLearning!');
+        alert('単語データがありません。');
+        return;
+    }
+    
+    // 最初の単語の内容を確認
+    console.log('First word:', words[0]);
+    console.log('First word structure:', JSON.stringify(words[0], null, 2));
     
     selectedCategory = category;
     testModeWords = words;
@@ -9105,16 +9151,25 @@ function initTestModeLearning(category, words) {
     testModeCorrectCount = 0;
     testModeWrongCount = 0;
     
-    // 検索用の全意味リストを作成（現在学習中の単語から）
-    // ※他の単語と混同しないよう、学習中の単語のみを検索対象にする
-    const meaningSet = new Set();
-    words.forEach(word => {
+    // 検索用の全意味リストを作成（すべての英単語から）
+    allMeaningsForSearch = [];
+    const allWords = getAllWordData();
+    console.log('Total words available for search:', allWords.length);
+    
+    allWords.forEach(word => {
         if (word && word.meaning) {
-            meaningSet.add(JSON.stringify({ meaning: word.meaning, partOfSpeech: word.partOfSpeech || '', id: word.id }));
+            allMeaningsForSearch.push({
+                meaning: word.meaning,
+                partOfSpeech: word.partOfSpeech || '',
+                id: word.id,
+                word: word.word
+            });
         }
     });
-    allMeaningsForSearch = Array.from(meaningSet).map(str => JSON.parse(str));
-    console.log('allMeaningsForSearch created:', allMeaningsForSearch.length, 'items from', words.length, 'words');
+    console.log('allMeaningsForSearch created:', allMeaningsForSearch.length, 'items');
+    if (allMeaningsForSearch.length > 0) {
+        console.log('Sample meaning:', allMeaningsForSearch[0]);
+    }
     
     // 画面を表示
     elements.categorySelection.classList.add('hidden');
@@ -9122,9 +9177,21 @@ function initTestModeLearning(category, words) {
     if (courseSelection) courseSelection.classList.add('hidden');
     elements.mainContent.classList.remove('hidden');
     
+    // テーマカラーを先に更新（クラス追加の前に）
+    updateThemeColor(true);
+    
     // 学習モードのフラグを設定
     document.body.classList.add('learning-mode');
     currentLearningMode = 'test';
+    
+    // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
+    updateHeaderButtons('learning');
+    
+    // インプットモード用戻るボタンと中断ボタンの制御
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    const unitInterruptBtn = document.getElementById('unitInterruptBtn');
+    if (inputBackBtn) inputBackBtn.classList.add('hidden');
+    if (unitInterruptBtn) unitInterruptBtn.classList.remove('hidden');
     
     // 他のモードを非表示
     const wordCard = document.getElementById('wordCard');
@@ -9158,23 +9225,53 @@ function initTestModeLearning(category, words) {
     
     // 単元名を設定
     if (elements.unitName) {
-        elements.unitName.textContent = category;
+        // 入試得点力アップコースの場合はカテゴリー名を直接使用
+        const scoreUpCategories = [
+            '英文法中学３年間の総復習',
+            '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
+            '条件英作文特訓コース',
+            '大阪C問題対策英単語タイムアタック',
+            '大阪C問題対策 英作写経ドリル',
+            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+        ];
+        let displayTitle;
+        if (scoreUpCategories.includes(category)) {
+            // 入試得点力アップコースの場合はカテゴリー名をそのまま使用し、【テスト】を追加
+            displayTitle = `${category}【テスト】`;
+        } else {
+            // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用し、【テスト】を追加
+            displayTitle = `${currentFilterCourseTitle || category}【テスト】`;
+        }
+        elements.unitName.textContent = displayTitle;
     }
     
     // 進捗バーを更新
     questionStatus = new Array(words.length).fill(null);
+    console.log('Progress bar setup complete');
     createProgressSegments(words.length);
-    updateProgressText();
+    console.log('Progress segments created');
+    updateProgressSegments();
+    console.log('Progress segments updated');
+    updateStats();
+    console.log('Stats updated');
     
     // 最初の問題を表示
+    console.log('About to call displayTestModeQuestion()...');
     displayTestModeQuestion();
+    console.log('displayTestModeQuestion() completed');
     
     // イベントリスナーを設定
+    console.log('Setting up test mode event listeners...');
     setupTestModeEventListeners();
+    console.log('=== initTestModeLearning complete ===');
 }
 
 // テストモードの問題を表示
 function displayTestModeQuestion() {
+    console.log('=== displayTestModeQuestion called ===');
+    console.log('testModeCurrentIndex:', testModeCurrentIndex);
+    console.log('testModeWords.length:', testModeWords.length);
+    
     if (testModeCurrentIndex >= testModeWords.length) {
         // 学習完了
         showCompletionOverlay();
@@ -9182,6 +9279,9 @@ function displayTestModeQuestion() {
     }
     
     const word = testModeWords[testModeCurrentIndex];
+    console.log('Current word object:', word);
+    console.log('word.word:', word?.word);
+    console.log('word.meaning:', word?.meaning);
     
     // 要素を取得
     const testWordNumber = document.getElementById('testWordNumber');
@@ -9194,6 +9294,8 @@ function displayTestModeQuestion() {
     const testPassBtn = document.getElementById('testPassBtn');
     const testSearchClear = document.getElementById('testSearchClear');
     
+    console.log('testEnglishWord element:', testEnglishWord);
+    
     // 問題番号を表示
     if (testWordNumber) {
         testWordNumber.textContent = `No.${testModeCurrentIndex + 1}`;
@@ -9201,7 +9303,19 @@ function displayTestModeQuestion() {
     
     // 英単語を表示
     if (testEnglishWord) {
+        if (!word || !word.word) {
+            console.error('ERROR: word object or word.word is undefined!', word);
+            testEnglishWord.textContent = '単語データエラー';
+            alert('単語データの構造が正しくありません。コンソールを確認してください。');
+            return;
+        }
+        console.log('Setting testEnglishWord.textContent to:', word.word);
         testEnglishWord.textContent = word.word;
+        console.log('testEnglishWord.textContent is now:', testEnglishWord.textContent);
+    } else {
+        console.error('testEnglishWord element not found!');
+        alert('testEnglishWord要素が見つかりません。HTMLを確認してください。');
+        return;
     }
     
     // 検索エリアを表示
@@ -9212,6 +9326,49 @@ function displayTestModeQuestion() {
     // 入力をクリア
     if (testSearchInput) {
         testSearchInput.value = '';
+        
+        // デバッグ: データ確認
+        console.log('Setting up search. allMeaningsForSearch:', allMeaningsForSearch.length);
+        
+        // 検索入力イベントを直接設定
+        testSearchInput.oninput = function(e) {
+            const query = e.target.value.trim();
+            const resultsEl = document.getElementById('testSearchResults');
+            
+            console.log('Input event fired! Query:', query, 'Data count:', allMeaningsForSearch.length);
+            
+            if (!resultsEl) {
+                console.log('Results element not found!');
+                return;
+            }
+            
+            if (query.length === 0) {
+                resultsEl.innerHTML = '';
+                return;
+            }
+            
+            // meaningから検索
+            const matches = allMeaningsForSearch.filter(item => 
+                item.meaning.includes(query)
+            ).slice(0, 10);
+            
+            console.log('Matches found:', matches.length);
+            
+            if (matches.length === 0) {
+                resultsEl.innerHTML = '<div style="padding:16px;text-align:center;color:#666;">該当なし</div>';
+                return;
+            }
+            
+            // 結果を表示（インラインスタイルで確実に表示）
+            let html = '';
+            matches.forEach((item, i) => {
+                html += `<div onclick="selectTestAnswer('${item.meaning.replace(/'/g, "\\'")}')" style="padding:14px 16px;background:#fff;border-bottom:1px solid #e5e7eb;cursor:pointer;">${item.meaning} <span style="color:#999;font-size:12px;">(${item.partOfSpeech})</span></div>`;
+            });
+            resultsEl.innerHTML = html;
+            console.log('HTML set:', html.substring(0, 100));
+        };
+    } else {
+        console.log('testSearchInput not found!');
     }
     if (testSearchResults) {
         testSearchResults.innerHTML = '';
@@ -9233,7 +9390,7 @@ function displayTestModeQuestion() {
     
     // 進捗バーを更新
     updateProgressSegments();
-    updateProgressText();
+    updateStats();
 }
 
 // テストモードのイベントリスナーを設定
@@ -9299,41 +9456,30 @@ function setupTestModeEventListeners() {
 
 // 検索入力のハンドラー
 function handleTestSearchInput(e) {
-    const query = e.target.value.trim();
+    const query = e.target.value;
     const testSearchResults = document.getElementById('testSearchResults');
     const testSearchClear = document.getElementById('testSearchClear');
     
-    console.log('handleTestSearchInput called');
-    console.log('Query:', query);
-    console.log('allMeaningsForSearch:', allMeaningsForSearch);
-    console.log('allMeaningsForSearch length:', allMeaningsForSearch.length);
-    console.log('testSearchResults element:', testSearchResults);
-    
     // クリアボタンの表示/非表示
     if (testSearchClear) {
-        if (query.length > 0) {
-            testSearchClear.classList.remove('hidden');
-        } else {
-            testSearchClear.classList.add('hidden');
-        }
+        testSearchClear.classList.toggle('hidden', query.length === 0);
     }
     
-    if (!testSearchResults) {
-        console.log('testSearchResults not found');
-        return;
-    }
+    if (!testSearchResults) return;
     
-    if (query.length === 0) {
+    // 空の場合は候補をクリア
+    if (query.trim().length === 0) {
         testSearchResults.innerHTML = '';
         return;
     }
     
-    // 検索を実行
+    // 日本語の意味から検索（部分一致）
+    const searchQuery = query.trim().toLowerCase();
     const results = allMeaningsForSearch.filter(item => 
-        item.meaning.toLowerCase().includes(query.toLowerCase())
+        item.meaning.includes(searchQuery)
     ).slice(0, 10); // 最大10件
     
-    console.log('Search results:', results.length);
+    console.log('Search:', searchQuery, '-> Found:', results.length, 'results');
     
     if (results.length === 0) {
         testSearchResults.innerHTML = '<div class="test-search-no-results">該当する意味が見つかりません</div>';
@@ -9455,7 +9601,7 @@ function handleTestSubmit() {
     
     // 進捗を更新
     updateProgressSegments();
-    updateProgressText();
+    updateStats();
 }
 
 // 次の問題へ
@@ -9508,7 +9654,7 @@ function handleTestPass() {
     
     // 進捗を更新
     updateProgressSegments();
-    updateProgressText();
+    updateStats();
 }
 
 // 整序英作文モードで学習を初期化
