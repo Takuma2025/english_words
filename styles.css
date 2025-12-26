@@ -129,7 +129,7 @@ body {
 .splash-boy {
     position: absolute;
     left: 50%;
-    top: calc(50% + 30px);
+    bottom: 40px;
     transform: translateX(-50%);
     max-width: 40%;
     max-height: 40%;
