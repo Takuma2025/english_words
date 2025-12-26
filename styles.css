@@ -129,10 +129,10 @@ body {
 .splash-boy {
     position: absolute;
     left: 50%;
-    bottom: 90px;
+    bottom: 120px;
     transform: translateX(-50%);
-    max-width: 40%;
-    max-height: 40%;
+    max-width: 50%;
+    max-height: 50%;
 }
 
 .feedback-overlay {
