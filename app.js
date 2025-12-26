@@ -2472,11 +2472,13 @@ function showCategorySelection() {
     const inputMode = document.getElementById('inputMode');
     const sentenceMode = document.getElementById('sentenceMode');
     const reorderMode = document.getElementById('reorderMode');
+    const testMode = document.getElementById('testMode');
     const cardHint = document.getElementById('cardHint');
     if (wordCard) wordCard.classList.add('hidden');
     if (inputMode) inputMode.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
+    if (testMode) testMode.classList.add('hidden');
     if (cardHint) cardHint.classList.add('hidden');
     
     // モードフラグをリセット
@@ -3488,17 +3490,21 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     // ボタンの状態とfilterLearningModeを同期（カテゴリー選択画面のトグルとは独立）
     const modeInput = document.getElementById('modeInput');
     const modeOutput = document.getElementById('modeOutput');
+    const modeTest = document.getElementById('modeTest');
     if (modeInput && modeOutput) {
         // ボタンの状態を確認してfilterLearningModeを更新
         if (modeInput.classList.contains('mode-radio-selected')) {
             filterLearningMode = 'input';
         } else if (modeOutput.classList.contains('mode-radio-selected')) {
             filterLearningMode = 'output';
+        } else if (modeTest && modeTest.classList.contains('mode-radio-selected')) {
+            filterLearningMode = 'test';
         } else {
             // どちらも選択されていない場合はデフォルトで'input'
             filterLearningMode = 'input';
             modeInput.classList.add('mode-radio-selected');
             modeOutput.classList.remove('mode-radio-selected');
+            if (modeTest) modeTest.classList.remove('mode-radio-selected');
         }
     }
     
@@ -3510,12 +3516,14 @@ function showWordFilterView(category, categoryWords, courseTitle) {
 function updateQuestionCountSection() {
     const questionCountSection = document.getElementById('questionCountSection');
     const modeOutput = document.getElementById('modeOutput');
+    const modeTest = document.getElementById('modeTest');
     
-    if (questionCountSection && modeOutput) {
+    if (questionCountSection) {
         const filteredWords = getFilteredWords();
-        const isOutputMode = modeOutput.classList.contains('mode-radio-selected');
+        const isOutputMode = modeOutput && modeOutput.classList.contains('mode-radio-selected');
+        const isTestMode = modeTest && modeTest.classList.contains('mode-radio-selected');
         
-        if (isOutputMode) {
+        if (isOutputMode || isTestMode) {
             if (filteredWords.length > 10) {
                 questionCountSection.style.display = 'flex';
                 updateQuestionCountOptions(filteredWords.length);
@@ -4690,11 +4698,13 @@ function setupEventListeners() {
     // 学習モードの変更イベント
     const modeInput = document.getElementById('modeInput');
     const modeOutput = document.getElementById('modeOutput');
+    const modeTest = document.getElementById('modeTest');
     
     if (modeInput) {
         modeInput.addEventListener('click', () => {
             modeInput.classList.add('mode-radio-selected');
             modeOutput.classList.remove('mode-radio-selected');
+            if (modeTest) modeTest.classList.remove('mode-radio-selected');
             filterLearningMode = 'input';
             updateQuestionCountSection();
         });
@@ -4704,7 +4714,18 @@ function setupEventListeners() {
         modeOutput.addEventListener('click', () => {
             modeOutput.classList.add('mode-radio-selected');
             modeInput.classList.remove('mode-radio-selected');
+            if (modeTest) modeTest.classList.remove('mode-radio-selected');
             filterLearningMode = 'output';
+            updateQuestionCountSection();
+        });
+    }
+    
+    if (modeTest) {
+        modeTest.addEventListener('click', () => {
+            modeTest.classList.add('mode-radio-selected');
+            modeInput.classList.remove('mode-radio-selected');
+            modeOutput.classList.remove('mode-radio-selected');
+            filterLearningMode = 'test';
             updateQuestionCountSection();
         });
     }
@@ -4958,8 +4979,8 @@ function setupEventListeners() {
                 wordsToLearn = wordsToLearn.sort(() => Math.random() - 0.5);
             }
             
-            // アウトプットモードの場合、出題数を制限
-            if (filterLearningMode === 'output') {
+            // アウトプットモードまたはテストモードの場合、出題数を制限
+            if (filterLearningMode === 'output' || filterLearningMode === 'test') {
                 const questionCountValue = document.getElementById('questionCountValue');
                 let questionCount = wordsToLearn.length; // デフォルトはすべて
                 if (questionCountValue && questionCountValue.dataset.count) {
@@ -4993,9 +5014,15 @@ function setupEventListeners() {
             // 学習を開始
             // filterLearningMode === 'input'の場合は「眺めるだけ」のカードモードとしてinitLearningを呼ぶ
             // filterLearningMode === 'output'または未設定の場合は通常のカードモード
+            // filterLearningMode === 'test'の場合はテストモード
             // ただし、カテゴリー選択画面のselectedLearningModeも考慮する
-            currentLearningMode = filterLearningMode === 'input' ? 'input' : (selectedLearningMode === 'input' ? 'input' : 'card');
-            initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
+            if (filterLearningMode === 'test') {
+                currentLearningMode = 'test';
+                initTestModeLearning(currentFilterCategory, wordsToLearn);
+            } else {
+                currentLearningMode = filterLearningMode === 'input' ? 'input' : (selectedLearningMode === 'input' ? 'input' : 'card');
+                initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
+            }
         });
     }
     
@@ -9052,6 +9079,436 @@ function saveSentenceProgress(sentenceId, isCorrect) {
     }
     
     saveCategoryWords(selectedCategory, correctSet, wrongSet);
+}
+
+// ============================================
+// テストモード（意味検索形式）
+// ============================================
+
+let testModeWords = [];
+let testModeCurrentIndex = 0;
+let testModeSelectedMeaning = null;
+let testModeAnswered = false;
+let testModeCorrectCount = 0;
+let testModeWrongCount = 0;
+let allMeaningsForSearch = []; // 検索用の全意味リスト
+
+// テストモードで学習を初期化
+function initTestModeLearning(category, words) {
+    console.log('initTestModeLearning called with', words.length, 'words');
+    
+    selectedCategory = category;
+    testModeWords = words;
+    testModeCurrentIndex = 0;
+    testModeSelectedMeaning = null;
+    testModeAnswered = false;
+    testModeCorrectCount = 0;
+    testModeWrongCount = 0;
+    
+    // 検索用の全意味リストを作成（現在学習中の単語から）
+    // ※他の単語と混同しないよう、学習中の単語のみを検索対象にする
+    const meaningSet = new Set();
+    words.forEach(word => {
+        if (word && word.meaning) {
+            meaningSet.add(JSON.stringify({ meaning: word.meaning, partOfSpeech: word.partOfSpeech || '', id: word.id }));
+        }
+    });
+    allMeaningsForSearch = Array.from(meaningSet).map(str => JSON.parse(str));
+    console.log('allMeaningsForSearch created:', allMeaningsForSearch.length, 'items from', words.length, 'words');
+    
+    // 画面を表示
+    elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) courseSelection.classList.add('hidden');
+    elements.mainContent.classList.remove('hidden');
+    
+    // 学習モードのフラグを設定
+    document.body.classList.add('learning-mode');
+    currentLearningMode = 'test';
+    
+    // 他のモードを非表示
+    const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
+    const inputMode = document.getElementById('inputMode');
+    const sentenceMode = document.getElementById('sentenceMode');
+    const reorderMode = document.getElementById('reorderMode');
+    const testMode = document.getElementById('testMode');
+    const cardHint = document.getElementById('cardHint');
+    const inputListView = document.getElementById('inputListView');
+    
+    console.log('Test mode elements:', {
+        wordCard: !!wordCard,
+        wordCardContainer: !!wordCardContainer,
+        testMode: !!testMode
+    });
+    
+    if (wordCard) wordCard.classList.add('hidden');
+    if (wordCardContainer) wordCardContainer.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (sentenceMode) sentenceMode.classList.add('hidden');
+    if (reorderMode) reorderMode.classList.add('hidden');
+    if (testMode) testMode.classList.remove('hidden');
+    if (cardHint) cardHint.classList.add('hidden');
+    if (inputListView) inputListView.classList.add('hidden');
+    
+    console.log('After hide/show:', {
+        wordCardContainerHidden: wordCardContainer?.classList.contains('hidden'),
+        testModeHidden: testMode?.classList.contains('hidden')
+    });
+    
+    // 単元名を設定
+    if (elements.unitName) {
+        elements.unitName.textContent = category;
+    }
+    
+    // 進捗バーを更新
+    questionStatus = new Array(words.length).fill(null);
+    createProgressSegments(words.length);
+    updateProgressText();
+    
+    // 最初の問題を表示
+    displayTestModeQuestion();
+    
+    // イベントリスナーを設定
+    setupTestModeEventListeners();
+}
+
+// テストモードの問題を表示
+function displayTestModeQuestion() {
+    if (testModeCurrentIndex >= testModeWords.length) {
+        // 学習完了
+        showCompletionOverlay();
+        return;
+    }
+    
+    const word = testModeWords[testModeCurrentIndex];
+    
+    // 要素を取得
+    const testWordNumber = document.getElementById('testWordNumber');
+    const testEnglishWord = document.getElementById('testEnglishWord');
+    const testSearchInput = document.getElementById('testSearchInput');
+    const testSearchResults = document.getElementById('testSearchResults');
+    const testSearchContainer = document.getElementById('testSearchContainer');
+    const testResult = document.getElementById('testResult');
+    const testNextBtn = document.getElementById('testNextBtn');
+    const testPassBtn = document.getElementById('testPassBtn');
+    const testSearchClear = document.getElementById('testSearchClear');
+    
+    // 問題番号を表示
+    if (testWordNumber) {
+        testWordNumber.textContent = `No.${testModeCurrentIndex + 1}`;
+    }
+    
+    // 英単語を表示
+    if (testEnglishWord) {
+        testEnglishWord.textContent = word.word;
+    }
+    
+    // 検索エリアを表示
+    if (testSearchContainer) {
+        testSearchContainer.classList.remove('hidden');
+    }
+    
+    // 入力をクリア
+    if (testSearchInput) {
+        testSearchInput.value = '';
+    }
+    if (testSearchResults) {
+        testSearchResults.innerHTML = '';
+    }
+    if (testResult) {
+        testResult.classList.add('hidden');
+    }
+    if (testSearchClear) {
+        testSearchClear.classList.add('hidden');
+    }
+    
+    // ボタンをリセット
+    if (testNextBtn) testNextBtn.classList.add('hidden');
+    if (testPassBtn) testPassBtn.classList.remove('hidden');
+    
+    // 状態をリセット
+    testModeSelectedMeaning = null;
+    testModeAnswered = false;
+    
+    // 進捗バーを更新
+    updateProgressSegments();
+    updateProgressText();
+}
+
+// テストモードのイベントリスナーを設定
+function setupTestModeEventListeners() {
+    const testSearchInput = document.getElementById('testSearchInput');
+    const testSearchClear = document.getElementById('testSearchClear');
+    const testPassBtn = document.getElementById('testPassBtn');
+    
+    console.log('setupTestModeEventListeners called, testSearchInput:', !!testSearchInput);
+    
+    // 検索入力（inputとkeyup両方でカバー）
+    if (testSearchInput) {
+        testSearchInput.removeEventListener('input', handleTestSearchInput);
+        testSearchInput.removeEventListener('keyup', handleTestSearchInput);
+        testSearchInput.addEventListener('input', handleTestSearchInput);
+        testSearchInput.addEventListener('keyup', handleTestSearchInput);
+        
+        // フォーカス時にヒントを表示
+        testSearchInput.addEventListener('focus', function() {
+            console.log('Search input focused, showing hints');
+            if (allMeaningsForSearch.length > 0) {
+                const testSearchResults = document.getElementById('testSearchResults');
+                if (testSearchResults && testSearchInput.value.trim() === '') {
+                    // 最初の5件をヒントとして表示
+                    const hints = allMeaningsForSearch.slice(0, 5);
+                    testSearchResults.innerHTML = hints.map(item => `
+                        <div class="test-search-result-item" data-meaning="${escapeHtml(item.meaning)}">
+                            <span class="test-search-result-meaning">${escapeHtml(item.meaning)}</span>
+                            <span class="test-search-result-pos">${escapeHtml(item.partOfSpeech)}</span>
+                        </div>
+                    `).join('');
+                    testSearchResults.querySelectorAll('.test-search-result-item').forEach(item => {
+                        item.addEventListener('click', () => selectTestAnswer(item.dataset.meaning));
+                    });
+                }
+            }
+        });
+        
+        console.log('Search input event listeners added');
+    } else {
+        console.error('testSearchInput not found!');
+    }
+    
+    // クリアボタン
+    if (testSearchClear) {
+        testSearchClear.removeEventListener('click', handleTestSearchClear);
+        testSearchClear.addEventListener('click', handleTestSearchClear);
+    }
+    
+    // パスボタン
+    if (testPassBtn) {
+        testPassBtn.removeEventListener('click', handleTestPass);
+        testPassBtn.addEventListener('click', handleTestPass);
+    }
+    
+    // 次へボタン
+    const testNextBtn = document.getElementById('testNextBtn');
+    if (testNextBtn) {
+        testNextBtn.removeEventListener('click', handleTestNext);
+        testNextBtn.addEventListener('click', handleTestNext);
+    }
+}
+
+// 検索入力のハンドラー
+function handleTestSearchInput(e) {
+    const query = e.target.value.trim();
+    const testSearchResults = document.getElementById('testSearchResults');
+    const testSearchClear = document.getElementById('testSearchClear');
+    
+    console.log('handleTestSearchInput called');
+    console.log('Query:', query);
+    console.log('allMeaningsForSearch:', allMeaningsForSearch);
+    console.log('allMeaningsForSearch length:', allMeaningsForSearch.length);
+    console.log('testSearchResults element:', testSearchResults);
+    
+    // クリアボタンの表示/非表示
+    if (testSearchClear) {
+        if (query.length > 0) {
+            testSearchClear.classList.remove('hidden');
+        } else {
+            testSearchClear.classList.add('hidden');
+        }
+    }
+    
+    if (!testSearchResults) {
+        console.log('testSearchResults not found');
+        return;
+    }
+    
+    if (query.length === 0) {
+        testSearchResults.innerHTML = '';
+        return;
+    }
+    
+    // 検索を実行
+    const results = allMeaningsForSearch.filter(item => 
+        item.meaning.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 10); // 最大10件
+    
+    console.log('Search results:', results.length);
+    
+    if (results.length === 0) {
+        testSearchResults.innerHTML = '<div class="test-search-no-results">該当する意味が見つかりません</div>';
+        return;
+    }
+    
+    // 結果を表示
+    testSearchResults.innerHTML = results.map(item => `
+        <div class="test-search-result-item" data-meaning="${escapeHtml(item.meaning)}">
+            <span class="test-search-result-meaning">${escapeHtml(item.meaning)}</span>
+            <span class="test-search-result-pos">${escapeHtml(item.partOfSpeech)}</span>
+        </div>
+    `).join('');
+    
+    // クリックイベントを追加
+    testSearchResults.querySelectorAll('.test-search-result-item').forEach(item => {
+        item.addEventListener('click', () => selectTestAnswer(item.dataset.meaning));
+    });
+}
+
+// HTMLエスケープ
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// クリアボタンのハンドラー
+function handleTestSearchClear() {
+    const testSearchInput = document.getElementById('testSearchInput');
+    const testSearchResults = document.getElementById('testSearchResults');
+    const testSearchClear = document.getElementById('testSearchClear');
+    
+    if (testSearchInput) testSearchInput.value = '';
+    if (testSearchResults) testSearchResults.innerHTML = '';
+    if (testSearchClear) testSearchClear.classList.add('hidden');
+}
+
+// 回答を選択（選択したらすぐに解答判定）
+function selectTestAnswer(meaning) {
+    testModeSelectedMeaning = meaning;
+    
+    const testSearchResults = document.getElementById('testSearchResults');
+    if (testSearchResults) testSearchResults.innerHTML = '';
+    
+    // 検索入力をクリア
+    const testSearchInput = document.getElementById('testSearchInput');
+    const testSearchClear = document.getElementById('testSearchClear');
+    if (testSearchInput) testSearchInput.value = '';
+    if (testSearchClear) testSearchClear.classList.add('hidden');
+    
+    // すぐに解答判定を実行
+    handleTestSubmit();
+}
+
+// 解答判定のハンドラー
+function handleTestSubmit() {
+    if (!testModeSelectedMeaning || testModeAnswered) return;
+    
+    testModeAnswered = true;
+    
+    const word = testModeWords[testModeCurrentIndex];
+    const isCorrect = word.meaning === testModeSelectedMeaning;
+    
+    // 結果を記録
+    if (isCorrect) {
+        testModeCorrectCount++;
+        questionStatus[testModeCurrentIndex] = 'correct';
+        localStorage.setItem(`word_${word.id}`, 'correct');
+        SoundEffects.playCorrect();
+    } else {
+        testModeWrongCount++;
+        questionStatus[testModeCurrentIndex] = 'wrong';
+        localStorage.setItem(`word_${word.id}`, 'wrong');
+        SoundEffects.playWrong();
+    }
+    
+    // 検索エリアを非表示
+    const testSearchContainer = document.getElementById('testSearchContainer');
+    if (testSearchContainer) testSearchContainer.classList.add('hidden');
+    
+    // 結果を表示
+    const testResult = document.getElementById('testResult');
+    const testResultIcon = document.getElementById('testResultIcon');
+    const testResultMessage = document.getElementById('testResultMessage');
+    const testResultSelected = document.getElementById('testResultSelected');
+    const testCorrectAnswer = document.getElementById('testCorrectAnswer');
+    const testNextBtn = document.getElementById('testNextBtn');
+    const testPassBtn = document.getElementById('testPassBtn');
+    
+    if (testResult) testResult.classList.remove('hidden');
+    
+    // 選択した回答を表示
+    if (testResultSelected) {
+        testResultSelected.textContent = `あなたの回答：${testModeSelectedMeaning}`;
+    }
+    
+    if (isCorrect) {
+        if (testResultIcon) testResultIcon.innerHTML = '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 3 4-6"/></svg>';
+        if (testResultMessage) {
+            testResultMessage.textContent = '正解';
+            testResultMessage.className = 'test-result-message correct';
+        }
+        if (testCorrectAnswer) testCorrectAnswer.textContent = '';
+        if (testResultSelected) testResultSelected.classList.add('hidden');
+    } else {
+        if (testResultIcon) testResultIcon.innerHTML = '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>';
+        if (testResultMessage) {
+            testResultMessage.textContent = '不正解';
+            testResultMessage.className = 'test-result-message wrong';
+        }
+        if (testCorrectAnswer) testCorrectAnswer.textContent = `正解：${word.meaning}`;
+        if (testResultSelected) testResultSelected.classList.remove('hidden');
+    }
+    
+    // 「次へ」ボタンを表示、「パス」ボタンを非表示
+    if (testNextBtn) testNextBtn.classList.remove('hidden');
+    if (testPassBtn) testPassBtn.classList.add('hidden');
+    
+    // 進捗を更新
+    updateProgressSegments();
+    updateProgressText();
+}
+
+// 次の問題へ
+function handleTestNext() {
+    testModeCurrentIndex++;
+    displayTestModeQuestion();
+}
+
+// パスボタンのハンドラー
+function handleTestPass() {
+    if (testModeAnswered) {
+        handleTestNext();
+        return;
+    }
+    
+    testModeAnswered = true;
+    
+    const word = testModeWords[testModeCurrentIndex];
+    testModeWrongCount++;
+    questionStatus[testModeCurrentIndex] = 'wrong';
+    localStorage.setItem(`word_${word.id}`, 'wrong');
+    SoundEffects.playWrong();
+    
+    // 検索エリアを非表示
+    const testSearchContainer = document.getElementById('testSearchContainer');
+    if (testSearchContainer) testSearchContainer.classList.add('hidden');
+    
+    // 結果を表示
+    const testResult = document.getElementById('testResult');
+    const testResultIcon = document.getElementById('testResultIcon');
+    const testResultMessage = document.getElementById('testResultMessage');
+    const testResultSelected = document.getElementById('testResultSelected');
+    const testCorrectAnswer = document.getElementById('testCorrectAnswer');
+    const testNextBtn = document.getElementById('testNextBtn');
+    const testPassBtn = document.getElementById('testPassBtn');
+    
+    if (testResult) testResult.classList.remove('hidden');
+    if (testResultSelected) testResultSelected.classList.add('hidden');
+    
+    if (testResultIcon) testResultIcon.innerHTML = '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 12h6"/></svg>';
+    if (testResultMessage) {
+        testResultMessage.textContent = 'パス';
+        testResultMessage.className = 'test-result-message pass';
+    }
+    if (testCorrectAnswer) testCorrectAnswer.textContent = `正解：${word.meaning}`;
+    
+    // 「次へ」ボタンを表示、「パス」ボタンを非表示
+    if (testNextBtn) testNextBtn.classList.remove('hidden');
+    if (testPassBtn) testPassBtn.classList.add('hidden');
+    
+    // 進捗を更新
+    updateProgressSegments();
+    updateProgressText();
 }
 
 // 整序英作文モードで学習を初期化

@@ -24,6 +24,11 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+/* 汎用非表示クラス */
+.hidden {
+    display: none !important;
+}
+
 html {
     overscroll-behavior: none;
     overscroll-behavior-y: none;
@@ -6735,6 +6740,202 @@ body.learning-mode .bottom-nav {
     }
 }
 
+/* テストモード（意味検索形式） */
+.test-mode {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px 100px 16px;
+}
+
+.test-mode-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.test-mode .word-number {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+.test-english-word {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 32px;
+    letter-spacing: 0.02em;
+}
+
+.test-search-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.test-search-label {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.test-search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.test-search-input-wrapper:focus-within {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.test-search-icon {
+    color: #9ca3af;
+    flex-shrink: 0;
+}
+
+.test-search-input-wrapper input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 14px 10px;
+    font-size: 16px;
+    background: transparent;
+}
+
+.test-search-clear {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.test-search-clear:hover {
+    color: #6b7280;
+}
+
+.test-search-results {
+    margin-top: 12px;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.test-search-results:empty {
+    display: none;
+}
+
+.test-search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.test-search-result-item:last-child {
+    border-bottom: none;
+}
+
+.test-search-result-item:hover {
+    background-color: #fef3c7;
+}
+
+.test-search-result-item.selected {
+    background-color: #fef3c7;
+}
+
+.test-search-result-meaning {
+    font-size: 15px;
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.test-search-result-pos {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-left: 8px;
+}
+
+.test-search-no-results {
+    padding: 20px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.test-result {
+    margin-top: 24px;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.test-result-icon {
+    margin-bottom: 12px;
+}
+
+.test-result-message {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.test-result-message.correct {
+    color: #16a34a;
+}
+
+.test-result-message.wrong {
+    color: #dc2626;
+}
+
+.test-result-message.pass {
+    color: #f59e0b;
+}
+
+.test-result-selected {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.test-correct-answer {
+    font-size: 15px;
+    color: #1f2937;
+    padding: 12px 16px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.test-mode .keyboard-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 12px;
+}
+
 /* 整序英作文モード */
 .reorder-mode {
     flex: 1;
@@ -8985,9 +9186,6 @@ body.learning-mode .bottom-nav {
     }
 }
 
-.goal-check-icon {
-}
-
 .goal-achieved-title {
     font-size: 24px;
     font-weight: 800;
@@ -9578,7 +9776,7 @@ body.learning-mode .bottom-nav {
 
 .mode-options {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
 }
 
@@ -9760,6 +9958,15 @@ body.learning-mode .bottom-nav {
     stroke: #0055ca;
     color: #0055ca;
     opacity: 1;
+}
+
+/* テストモードアイコンのデフォルト色 */
+.test-icon {
+    color: #f59e0b;
+}
+
+.mode-radio.mode-radio-selected .test-icon {
+    color: #0055ca;
 }
 
 .mode-description {
@@ -10045,7 +10252,7 @@ body.learning-mode .bottom-nav {
     }
     .mode-options,
     .order-options {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
     }
     .filter-checkbox,
