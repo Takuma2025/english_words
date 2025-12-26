@@ -118,13 +118,21 @@ body {
 }
 
 .splash-logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     max-width: 45%;
     max-height: 45%;
 }
 
 .splash-boy {
-    max-width: 80%;
-    max-height: 80%;
+    position: absolute;
+    left: 50%;
+    top: calc(50% + 30px);
+    transform: translateX(-50%);
+    max-width: 40%;
+    max-height: 40%;
 }
 
 .feedback-overlay {
