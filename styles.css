@@ -3842,16 +3842,20 @@ body.reorder-mode-active .word-card-container {
     gap: 6px;
     color: #4b5563;
     border: none;
-    background: transparent;
-    padding: 0;
+    background: #3b82f6;
+    padding: 3px 7px;
+    border-radius: 4px;
     font-size: 12px;
     font-weight: 700;
     white-space: nowrap;
 }
 
 .input-list-appearance .appearance-count {
-    color: #111827;
-    font-weight: 800;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
 }
 
 .input-list-row {
@@ -5121,7 +5125,7 @@ body.learning-mode .bottom-nav {
     top: -0.18em;
 }
 
-/* 入試登場回数表示 */
+/* 入試頻出度表示 */
 .word-appearance-count {
     display: flex;
     align-items: center;
@@ -5133,7 +5137,7 @@ body.learning-mode .bottom-nav {
 }
 
 .appearance-label {
-    background-color: #718096;
+    background-color: #3b82f6;
     color: #ffffff;
     padding: 3px 7px;
     border-radius: 4px 0 0 4px;
@@ -5142,10 +5146,14 @@ body.learning-mode .bottom-nav {
 }
 
 .appearance-value {
-    color: #1f2937;
+    color: #ffffff;
+    background-color: #3b82f6;
     padding: 3px 7px;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 14px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+    border-radius: 0 4px 4px 0;
 }
 
 /* 意味のときの品詞位置調整 */

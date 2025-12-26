@@ -271,6 +271,24 @@ function normalizeSchoolText(str) {
     return (str || '').toLowerCase();
 }
 
+// 入試頻出度を★マークに変換
+function getAppearanceStars(count) {
+    if (typeof count !== 'number' || isNaN(count) || count < 0) {
+        return '★';
+    }
+    if (count >= 100) {
+        return '★★★★★';
+    } else if (count >= 30) {
+        return '★★★★';
+    } else if (count >= 10) {
+        return '★★★';
+    } else if (count >= 5) {
+        return '★★';
+    } else {
+        return '★';
+    }
+}
+
 function filterSchools(query) {
     const q = normalizeSchoolText(query);
     if (!q) return osakaSchools.slice(0, 8);
@@ -5513,7 +5531,7 @@ function displayInputMode(skipAnimationReset = false) {
         setMeaningContent(inputMeaning, word.meaning);
     }
     
-    // 入試登場回数を表示（入力モード）
+    // 入試頻出度を表示（入力モード）
     const inputAppearanceCountEl = document.getElementById('inputWordAppearanceCount');
     if (inputAppearanceCountEl) {
         const count =
@@ -5522,7 +5540,8 @@ function displayInputMode(skipAnimationReset = false) {
                 : 0;
         const valueSpan = inputAppearanceCountEl.querySelector('.appearance-value');
         if (valueSpan) {
-            valueSpan.textContent = ` ${count}回`;
+            const stars = getAppearanceStars(count);
+            valueSpan.textContent = ` ${stars}`;
         }
         inputAppearanceCountEl.style.display = 'flex';
     }
@@ -6566,14 +6585,15 @@ function renderInputListView(words) {
         });
         starBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
         
-        // 入試登場回数とブックマークを横並びにするラッパー
+        // 入試頻出度とブックマークを横並びにするラッパー
         const appearanceWrapper = document.createElement('div');
         appearanceWrapper.className = 'input-list-appearance-wrapper';
         
         if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
             const badge = document.createElement('span');
             badge.className = 'input-list-appearance';
-            badge.innerHTML = `<span class="appearance-label">入試登場回数</span><span class="appearance-count">${word.appearanceCount}回</span>`;
+            const stars = getAppearanceStars(word.appearanceCount);
+            badge.innerHTML = `<span class="appearance-label">入試頻出度</span><span class="appearance-count">${stars}</span>`;
             appearanceWrapper.appendChild(badge);
         }
         appearanceWrapper.appendChild(starBtn);
@@ -6739,7 +6759,7 @@ function displayCurrentWord() {
     elements.englishWord.textContent = word.word;
     applyMarkers(word);
     
-    // 入試登場回数を表示（カードモード）- アウトプットモードでは非表示
+    // 入試頻出度を表示（カードモード）- アウトプットモードでは非表示
     const appearanceCountEl = document.getElementById('wordAppearanceCount');
     if (appearanceCountEl) {
         appearanceCountEl.style.display = 'none';
