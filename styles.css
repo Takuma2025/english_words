@@ -2167,32 +2167,37 @@ body.learning-mode .app-header {
     background-color: #e2e8f0;
 }
 
-/* 日常生活でよく使う生活語彙（薄い緑） */
+/* 日常生活でよく使う生活語彙（グレー） */
 .category-accordion-item-green {
-    background: #f0fdf4;
-    border-left: 3px solid #22c55e;
+    background: #f8fafc;
+    border-left: none;
 }
 
 .category-accordion-item-green:hover {
-    background-color: #dcfce7;
+    background-color: #f1f5f9;
 }
 
 .category-accordion-item-green:active {
-    background-color: #bbf7d0;
+    background-color: #e2e8f0;
 }
 
-/* 英文でよく登場する機能語（薄い紫） */
+/* 英文でよく登場する機能語（グレー） */
 .category-accordion-item-purple {
-    background: #faf5ff;
-    border-left: 3px solid #9333ea;
+    background: #f8fafc;
+    border-left: none;
 }
 
 .category-accordion-item-purple:hover {
-    background-color: #f3e8ff;
+    background-color: #f1f5f9;
 }
 
 .category-accordion-item-purple:active {
-    background-color: #e9d5ff;
+    background-color: #e2e8f0;
+}
+
+.accordion-item-icon {
+    flex-shrink: 0;
+    margin-right: 10px;
 }
 
 .accordion-item-text {
