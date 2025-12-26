@@ -46,7 +46,7 @@
                 </svg>
             </button>
             <div class="header-content">
-                <img src="title.jpg" alt="大阪府英単語コンプリート" class="header-title-logo">
+                <img src="title.png" alt="大阪府英単語コンプリート" class="header-title-logo">
                 <span class="header-title-text hidden" id="headerTitleText"></span>
             </div>
         </header>
@@ -236,24 +236,37 @@
                 </div>
                 <div class="category-list">
                     <div class="course-section" id="courseMasterSection">
-                        <button class="category-card" data-category="小学生で習った単語とカテゴリー別に覚える単語">
-                            <div class="category-info">
-                                <div class="category-header">
-                                    <div class="category-name">カテゴリー別に覚える単語</div>
-                                </div>
-                                <div class="category-meta">基礎からカテゴリー別に学習</div>
-                                <div class="category-progress">
-                                    <div class="category-progress-bar">
-                                        <div class="category-progress-correct" id="progress-correct-小学生で習った単語とカテゴリー別に覚える単語" style="width: 0%"></div>
-                                        <div class="category-progress-wrong" id="progress-wrong-小学生で習った単語とカテゴリー別に覚える単語" style="width: 0%"></div>
+                        <!-- カテゴリー別に覚える単語（アコーディオン） -->
+                        <div class="category-accordion" id="categoryAccordion">
+                            <button class="category-accordion-header" id="categoryAccordionBtn">
+                                <div class="category-info">
+                                    <div class="category-header">
+                                        <div class="category-name">カテゴリー別に覚える単語</div>
                                     </div>
-                                    <div class="category-progress-text" id="progress-text-小学生で習った単語とカテゴリー別に覚える単語">0/0語</div>
+                                    <div class="category-meta">基礎からカテゴリー別に学習</div>
+                                    <div class="category-progress">
+                                        <div class="category-progress-bar">
+                                            <div class="category-progress-correct" id="progress-correct-小学生で習った単語とカテゴリー別に覚える単語" style="width: 0%"></div>
+                                            <div class="category-progress-wrong" id="progress-wrong-小学生で習った単語とカテゴリー別に覚える単語" style="width: 0%"></div>
+                                        </div>
+                                        <div class="category-progress-text" id="progress-text-小学生で習った単語とカテゴリー別に覚える単語">0/0語</div>
+                                    </div>
                                 </div>
+                                <div class="category-accordion-arrow">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                </div>
+                            </button>
+                            <div class="category-accordion-content" id="categoryAccordionContent">
+                                <button class="category-accordion-item" id="dailyLifeVocabBtn">
+                                    <span class="accordion-item-text">日常生活でよく使う生活語彙</span>
+                                    <svg class="accordion-item-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </button>
+                                <button class="category-accordion-item" id="functionWordsBtn">
+                                    <span class="accordion-item-text">英文でよく登場する機能語</span>
+                                    <svg class="accordion-item-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </button>
                             </div>
-                            <div class="category-arrow">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </button>
+                        </div>
                         <div class="category-cards-row">
                             <button class="category-card category-card-ai" id="aiAnalysisCardBtn">
                                 <div class="category-info">
@@ -643,6 +656,7 @@
             <!-- コース選択画面（100刻み） -->
             <div class="category-view hidden" id="courseSelection">
                 <div class="section-title" id="courseSelectionTitle">コースを選んでください</div>
+                <div class="course-selection-description" id="courseSelectionDescription" style="display: none;"></div>
                 <div class="category-list" id="courseList">
                     <!-- 動的に生成 -->
                 </div>

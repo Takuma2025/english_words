@@ -320,7 +320,7 @@ body.learning-mode .app-header {
 }
 
 .header-title-logo {
-    height: 35px;
+    height: 28px;
     width: auto;
     object-fit: contain;
 }
@@ -361,6 +361,67 @@ body.learning-mode .app-header {
 .category-view {
     width: 100%;
     box-sizing: border-box;
+}
+
+/* 画面ワイプアニメーション */
+.slide-in-right {
+    animation: slideInRight 0.3s ease-out forwards;
+}
+
+.slide-out-left {
+    animation: slideOutLeft 0.3s ease-out forwards;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.3s ease-out forwards;
+}
+
+.slide-out-right {
+    animation: slideOutRight 0.3s ease-out forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutLeft {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }
 
 /* 学習グラフ（縦棒グラフ） */
@@ -746,6 +807,14 @@ body.learning-mode .app-header {
     color: #1f2937;
     margin-bottom: 16px;
     padding-left: 4px;
+}
+
+.course-selection-description {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    padding: 0 4px;
 }
 
 .category-list {
@@ -2017,6 +2086,95 @@ body.learning-mode .app-header {
     width: auto;
     height: auto;
     border-radius: 4px;
+}
+
+/* カテゴリー別アコーディオン */
+.category-accordion {
+    background: #ffffff;
+    border-bottom: 1px solid #d1d5db;
+}
+
+.category-accordion-header {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: none;
+    border-radius: 0;
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.category-accordion-header:hover {
+    background-color: #f9fafb;
+}
+
+.category-accordion-header:active {
+    background-color: #f3f4f6;
+}
+
+.category-accordion-header .category-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.category-accordion-arrow {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563eb;
+    transition: transform 0.3s ease;
+}
+
+.category-accordion.open .category-accordion-arrow {
+    transform: rotate(180deg);
+}
+
+.category-accordion-content {
+    display: none;
+    background: #ffffff;
+}
+
+.category-accordion.open .category-accordion-content {
+    display: block;
+}
+
+.category-accordion-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 16px 16px 16px 32px;
+    background: #ffffff;
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.category-accordion-item:hover {
+    background-color: #f9fafb;
+}
+
+.category-accordion-item:active {
+    background-color: #f3f4f6;
+}
+
+.accordion-item-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
+    flex: 1;
+}
+
+.accordion-item-chevron {
+    flex-shrink: 0;
+    color: #9ca3af;
+    margin-left: 8px;
 }
 
 .category-card {

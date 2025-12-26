@@ -2574,6 +2574,28 @@ function startCategory(category) {
             showAlert('エラー', '小学生で習った単語データが見つかりません。');
             return;
         }
+    } else if (category === '日常生活でよく使う生活語彙') {
+        // 生活語彙（カテゴリー別単語のみ）
+        console.log('Loading daily life vocabulary...');
+        if (typeof getDailyLifeVocabulary !== 'undefined' && typeof getDailyLifeVocabulary === 'function') {
+            categoryWords = getDailyLifeVocabulary();
+            console.log('getDailyLifeVocabulary returned:', categoryWords ? categoryWords.length : 'null/undefined', 'words');
+        } else {
+            console.error('No daily life vocabulary data available');
+            showAlert('エラー', '生活語彙データが見つかりません。');
+            return;
+        }
+    } else if (category === '英文でよく登場する機能語') {
+        // 機能語のみ
+        console.log('Loading function vocabulary...');
+        if (typeof getFunctionVocabulary !== 'undefined' && typeof getFunctionVocabulary === 'function') {
+            categoryWords = getFunctionVocabulary();
+            console.log('getFunctionVocabulary returned:', categoryWords ? categoryWords.length : 'null/undefined', 'words');
+        } else {
+            console.error('No function vocabulary data available');
+            showAlert('エラー', '機能語データが見つかりません。');
+            return;
+        }
     } else if (category === '大阪B問題対策 厳選例文暗記60【和文英訳対策】') {
         // 大阪B問題対策：厳選例文暗記モードで開始
         initSentenceModeLearning(category);
@@ -2624,6 +2646,11 @@ function startCategory(category) {
         // 英文法中学３年間の総復習：目次ページを表示
         showGrammarTableOfContents();
         return;
+    } else if (typeof getVocabularyByCategory !== 'undefined' && getVocabularyByCategory(category).length > 0) {
+        // vocabulary-data.jsのサブカテゴリー（家族・家に関する単語、冠詞など）
+        console.log('Loading vocabulary subcategory:', category);
+        categoryWords = getVocabularyByCategory(category);
+        console.log('getVocabularyByCategory returned:', categoryWords.length, 'words');
     } else {
         // マッピングがある場合はそれを使用、なければそのまま使用
         const dataCategory = categoryMapping[category] || category;
@@ -2637,14 +2664,40 @@ function startCategory(category) {
         return;
     }
 
-    console.log('Hiding category selection and showing course selection...');
-    // カテゴリー選択画面を非表示
-    elements.categorySelection.classList.add('hidden');
+    // サブカテゴリー（vocabulary-data.jsのカテゴリー）かどうかを判定
+    const vocabularySubcategories = [
+        '家族・家に関する単語', '数字に関する単語', '日用品・楽器に関する単語', '体に関する単語',
+        '色に関する単語', '食べ物・飲み物に関する単語', '町の施設に関する単語', '乗り物に関する単語',
+        '職業に関する単語', 'スポーツに関する単語', '曜日・月・季節に関する単語', '時間に関する単語',
+        '動物に関する単語', '自然・天気に関する単語', '学校に関する単語', '国名や地域に関する単語',
+        '方角・方向に関する単語', '行事・余暇に関する単語',
+        '冠詞', '代名詞', '不定代名詞', '副詞（否定・程度・焦点）', '疑問詞',
+        '限定詞（数量）', '前置詞', '助動詞・助動詞的表現', '接続詞', '関係代名詞', '間投詞'
+    ];
     
-    // コース選択画面を表示
-    console.log('Calling showCourseSelection with', categoryWords.length, 'words');
-    showCourseSelection(category, categoryWords);
-    console.log('showCourseSelection completed');
+    const isVocabularySubcategory = vocabularySubcategories.includes(category);
+    
+    if (isVocabularySubcategory) {
+        // サブカテゴリーの場合は直接フィルター画面を表示
+        console.log('Vocabulary subcategory detected, showing filter view directly');
+        currentCourseWords = categoryWords;
+        // カテゴリー選択画面を非表示、コース選択画面を表示してからフィルター画面を表示
+        elements.categorySelection.classList.add('hidden');
+        const courseSelection = document.getElementById('courseSelection');
+        if (courseSelection) {
+            courseSelection.classList.remove('hidden');
+        }
+        showWordFilterView(category, categoryWords, category);
+    } else {
+        console.log('Hiding category selection and showing course selection...');
+        // カテゴリー選択画面を非表示
+        elements.categorySelection.classList.add('hidden');
+        
+        // コース選択画面を表示
+        console.log('Calling showCourseSelection with', categoryWords.length, 'words');
+        showCourseSelection(category, categoryWords);
+        console.log('showCourseSelection completed');
+    }
 }
 
 // 日本語→英語モードで学習を初期化
@@ -2775,12 +2828,157 @@ function initInputModeLearning(category, words, startIndex = 0) {
     updateNavState('learning');
 }
 
+// サブカテゴリー選択画面を表示
+function showSubcategorySelection(parentCategory) {
+    console.log('showSubcategorySelection called with:', parentCategory);
+    const courseSelection = document.getElementById('courseSelection');
+    const courseList = document.getElementById('courseList');
+    const courseTitle = document.getElementById('courseSelectionTitle');
+    const courseSelectionImage = document.getElementById('courseSelectionImage');
+    const courseSelectionDescription = document.getElementById('courseSelectionDescription');
+    
+    // タイトルを設定
+    courseTitle.textContent = parentCategory;
+    courseList.innerHTML = '';
+    
+    // 画像を非表示
+    if (courseSelectionImage) {
+        courseSelectionImage.style.display = 'none';
+    }
+    
+    // 説明文を設定
+    if (courseSelectionDescription) {
+        if (parentCategory === '日常生活でよく使う生活語彙') {
+            courseSelectionDescription.textContent = '日常生活でよく使う生活語彙のうち、名詞を中心にカテゴリー別にまとめています。';
+            courseSelectionDescription.style.display = 'block';
+        } else if (parentCategory === '英文でよく登場する機能語') {
+            courseSelectionDescription.textContent = '機能語とは、文の中の単語同士の関係性を示し、文法構造を支えるために、英文中に何度も登場する重要な単語のことで、具体的な意味や内容を表す単語ではありません。カテゴリー別にまとめています。';
+            courseSelectionDescription.style.display = 'block';
+        } else {
+            courseSelectionDescription.style.display = 'none';
+        }
+    }
+    
+    // サブカテゴリーの定義
+    let subcategories = [];
+    if (parentCategory === '日常生活でよく使う生活語彙') {
+        subcategories = [
+            '家族・家に関する単語',
+            '数字に関する単語',
+            '日用品・楽器に関する単語',
+            '体に関する単語',
+            '色に関する単語',
+            '食べ物・飲み物に関する単語',
+            '町の施設に関する単語',
+            '乗り物に関する単語',
+            '職業に関する単語',
+            'スポーツに関する単語',
+            '曜日・月・季節に関する単語',
+            '時間に関する単語',
+            '動物に関する単語',
+            '自然・天気に関する単語',
+            '学校に関する単語',
+            '国名や地域に関する単語',
+            '方角・方向に関する単語',
+            '行事・余暇に関する単語'
+        ];
+    } else if (parentCategory === '英文でよく登場する機能語') {
+        subcategories = [
+            '冠詞',
+            '代名詞',
+            '不定代名詞',
+            '副詞（否定・程度・焦点）',
+            '疑問詞',
+            '限定詞（数量）',
+            '前置詞',
+            '助動詞・助動詞的表現',
+            '接続詞',
+            '関係代名詞',
+            '間投詞'
+        ];
+    }
+    
+    // サブカテゴリーカードを生成
+    subcategories.forEach((subcat, index) => {
+        const words = getVocabularyByCategory(subcat);
+        const wordCount = words ? words.length : 0;
+        
+        // 進捗を計算
+        let correctCount = 0;
+        let wrongCount = 0;
+        if (words && words.length > 0) {
+            words.forEach(word => {
+                const key = `word_${word.id}`;
+                const status = localStorage.getItem(key);
+                if (status === 'correct') correctCount++;
+                else if (status === 'wrong') wrongCount++;
+            });
+        }
+        const correctPercent = wordCount > 0 ? (correctCount / wordCount) * 100 : 0;
+        const wrongPercent = wordCount > 0 ? (wrongCount / wordCount) * 100 : 0;
+        
+        // 番号を取得（1から始まる）
+        const number = index + 1;
+        
+        const card = document.createElement('button');
+        card.className = 'category-card';
+        card.onclick = () => startCategory(subcat);
+        
+        card.innerHTML = `
+            <div class="category-info">
+                <div class="category-header">
+                    <div class="category-name"><span class="level-badge">${number}</span> ${subcat}</div>
+                </div>
+                <div class="category-progress">
+                    <div class="category-progress-bar">
+                        <div class="category-progress-correct" style="width: ${correctPercent}%"></div>
+                        <div class="category-progress-wrong" style="width: ${wrongPercent}%"></div>
+                    </div>
+                    <div class="category-progress-text">${correctCount}/${wordCount}語</div>
+                </div>
+            </div>
+            <div class="category-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+        `;
+        
+        courseList.appendChild(card);
+    });
+    
+    // 画面遷移（スライドイン）
+    const categorySelection = document.getElementById('categorySelection');
+    
+    if (categorySelection && courseSelection) {
+        // カテゴリー選択画面を即座に非表示
+        categorySelection.classList.add('hidden');
+        
+        // コース選択画面を右からスライドイン
+        courseSelection.classList.remove('hidden');
+        courseSelection.classList.add('slide-in-right');
+        
+        // アニメーション完了後にクラスをクリーンアップ
+        setTimeout(() => {
+            courseSelection.classList.remove('slide-in-right');
+        }, 300);
+    }
+    
+    // ヘッダーの戻るボタンを表示
+    updateHeaderButtons('course', parentCategory);
+    
+    // ナビゲーション状態を更新
+    updateNavState('courseSelection');
+    
+    // 戻るボタン用にparentCategoryを保存
+    window.currentSubcategoryParent = parentCategory;
+}
+
 // コース選択画面を表示（100刻み）
 function showCourseSelection(category, categoryWords) {
     console.log('showCourseSelection called with category:', category, 'words:', categoryWords ? categoryWords.length : 'null');
     const courseSelection = document.getElementById('courseSelection');
     const courseList = document.getElementById('courseList');
     const courseTitle = document.getElementById('courseSelectionTitle');
+    const courseSelectionDescription = document.getElementById('courseSelectionDescription');
     console.log('courseSelection element:', courseSelection);
     console.log('courseList element:', courseList);
     console.log('courseTitle element:', courseTitle);
@@ -2792,6 +2990,12 @@ function showCourseSelection(category, categoryWords) {
     }
     courseTitle.textContent = `${displayCategory} - コースを選んでください`;
     courseList.innerHTML = '';
+    
+    // 説明文を非表示（通常のコース選択画面では説明文は表示しない）
+    if (courseSelectionDescription) {
+        courseSelectionDescription.style.display = 'none';
+    }
+    
     console.log('Course title set and list cleared');
     
     // 小学生で習った単語とカテゴリー別に覚える単語の場合は、固定のサブコースを表示
@@ -4002,6 +4206,34 @@ function setupEventListeners() {
         });
     });
     
+    // カテゴリー別アコーディオン
+    const categoryAccordionBtn = document.getElementById('categoryAccordionBtn');
+    const categoryAccordion = document.getElementById('categoryAccordion');
+    if (categoryAccordionBtn && categoryAccordion) {
+        categoryAccordionBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            categoryAccordion.classList.toggle('open');
+        });
+    }
+    
+    // 日常生活でよく使う生活語彙ボタン
+    const dailyLifeVocabBtn = document.getElementById('dailyLifeVocabBtn');
+    if (dailyLifeVocabBtn) {
+        dailyLifeVocabBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showSubcategorySelection('日常生活でよく使う生活語彙');
+        });
+    }
+    
+    // 英文でよく登場する機能語ボタン
+    const functionWordsBtn = document.getElementById('functionWordsBtn');
+    if (functionWordsBtn) {
+        functionWordsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showSubcategorySelection('英文でよく登場する機能語');
+        });
+    }
+    
     // カテゴリーボタン (イベント委譲を使用)
     const categorySelectionEl = elements.categorySelection || document.getElementById('categorySelection');
     console.log('Setting up category card listeners, categorySelection:', categorySelectionEl);
@@ -4011,6 +4243,11 @@ function setupEventListeners() {
             // 学校トグルがクリックされた場合は何もしない
             if (e.target.closest('.school-toggle') || e.target.closest('.school-list')) {
                 console.log('Ignored: school toggle or list clicked');
+                return;
+            }
+            // アコーディオンがクリックされた場合は何もしない
+            if (e.target.closest('.category-accordion')) {
+                console.log('Ignored: accordion clicked');
                 return;
             }
             // クリックされた要素またはその親要素がcategory-cardか確認
@@ -4914,9 +5151,28 @@ function setupEventListeners() {
                     updateHeaderButtons('course', displayCategory);
                 }
             } else if (courseSelection && !courseSelection.classList.contains('hidden')) {
-                // コース選択画面からカテゴリー選択画面に戻る
-                courseSelection.classList.add('hidden');
-                showCategorySelection();
+                // コース選択画面からカテゴリー選択画面に戻る（スライドイン）
+                const categorySelection = elements.categorySelection;
+                
+                // サブカテゴリー画面からの戻りの場合はスライドインを使用
+                if (window.currentSubcategoryParent) {
+                    // コース選択画面を即座に非表示
+                    courseSelection.classList.add('hidden');
+                    
+                    // カテゴリー選択画面を左からスライドイン
+                    categorySelection.classList.remove('hidden');
+                    categorySelection.classList.add('slide-in-left');
+                    
+                    setTimeout(() => {
+                        categorySelection.classList.remove('slide-in-left');
+                        window.currentSubcategoryParent = null;
+                    }, 300);
+                    
+                    updateHeaderButtons('home');
+                } else {
+                    courseSelection.classList.add('hidden');
+                    showCategorySelection();
+                }
             } else if (elements.mainContent && !elements.mainContent.classList.contains('hidden')) {
                 // 学習画面からコース選択画面またはカテゴリー選択画面に戻る
                 if (selectedCategory) {
