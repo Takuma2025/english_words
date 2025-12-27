@@ -5048,6 +5048,90 @@ function setupEventListeners() {
         filterCloseBtn.addEventListener('click', closeFilterSheet);
     }
     
+    // ヘッダーバナーを下にスワイプして閉じる機能
+    const filterHeaderBanner = document.querySelector('.filter-header-banner');
+    if (filterHeaderBanner) {
+        let swipeStartY = 0;
+        let swipeStartTime = 0;
+        let isDragging = false;
+        let currentTranslateY = 0;
+        
+        const handleTouchStart = (e) => {
+            swipeStartY = e.touches ? e.touches[0].clientY : e.clientY;
+            swipeStartTime = Date.now();
+            isDragging = true;
+            currentTranslateY = 0;
+            
+            const wordFilterView = document.getElementById('wordFilterView');
+            if (wordFilterView) {
+                wordFilterView.style.transition = 'none';
+            }
+        };
+        
+        const handleTouchMove = (e) => {
+            if (!isDragging) return;
+            
+            const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+            const deltaY = currentY - swipeStartY;
+            
+            // 下方向へのスワイプのみ許可
+            if (deltaY > 0) {
+                currentTranslateY = deltaY;
+                const wordFilterView = document.getElementById('wordFilterView');
+                if (wordFilterView) {
+                    wordFilterView.style.transform = `translateX(-50%) translateY(${deltaY}px)`;
+                }
+            }
+        };
+        
+        const handleTouchEnd = (e) => {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            const swipeEndTime = Date.now();
+            const swipeDuration = swipeEndTime - swipeStartTime;
+            const currentY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+            const deltaY = currentY - swipeStartY;
+            
+            const wordFilterView = document.getElementById('wordFilterView');
+            const threshold = 80; // 80px以上下にスワイプしたら閉じる
+            const minVelocity = 0.3; // 最小速度（px/ms）
+            const velocity = Math.abs(deltaY) / swipeDuration;
+            
+            if (wordFilterView) {
+                wordFilterView.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
+                
+                // 閾値を超えた、または十分な速度で下にスワイプした場合
+                if (deltaY > threshold || (deltaY > 30 && velocity > minVelocity)) {
+                    closeFilterSheet();
+                } else {
+                    // 元の位置に戻す
+                    wordFilterView.style.transform = 'translateX(-50%) translateY(0)';
+                }
+            }
+        };
+        
+        filterHeaderBanner.addEventListener('touchstart', handleTouchStart, { passive: false });
+        filterHeaderBanner.addEventListener('touchmove', handleTouchMove, { passive: false });
+        filterHeaderBanner.addEventListener('touchend', handleTouchEnd, { passive: false });
+        
+        // マウスイベントもサポート（デスクトップ用）
+        filterHeaderBanner.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            handleTouchStart(e);
+            const handleMouseMove = (e) => {
+                handleTouchMove(e);
+            };
+            const handleMouseUp = (e) => {
+                handleTouchEnd(e);
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            };
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        });
+    }
+    
     // オーバーレイクリックで閉じる
     const filterOverlay = document.getElementById('filterOverlay');
     if (filterOverlay) {
