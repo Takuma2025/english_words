@@ -8137,16 +8137,28 @@ function createProgressSegments(total) {
 
 // 進捗バーのセグメントを更新
 function updateProgressSegments() {
-    const total = currentRangeEnd - currentRangeStart;
+    // テストモードかどうかを判定
+    const testMode = document.getElementById('testMode');
+    const isTestModeActive = testMode && !testMode.classList.contains('hidden');
+    
+    let total;
     let currentQuestionIndex;
     
-    // モードに応じて現在のインデックスを取得
-    if (isReorderModeActive) {
-        currentQuestionIndex = currentReorderIndex - currentRangeStart;
-    } else if (isSentenceModeActive) {
-        currentQuestionIndex = currentSentenceIndex - currentRangeStart;
+    if (isTestModeActive && testModeWords.length > 0) {
+        // テストモードの場合
+        total = testModeWords.length;
+        currentQuestionIndex = testModeCurrentIndex;
     } else {
-        currentQuestionIndex = currentIndex - currentRangeStart;
+        // 通常モードの場合
+        total = currentRangeEnd - currentRangeStart;
+        // モードに応じて現在のインデックスを取得
+        if (isReorderModeActive) {
+            currentQuestionIndex = currentReorderIndex - currentRangeStart;
+        } else if (isSentenceModeActive) {
+            currentQuestionIndex = currentSentenceIndex - currentRangeStart;
+        } else {
+            currentQuestionIndex = currentIndex - currentRangeStart;
+        }
     }
     
     // 共通のコンテナを使用
@@ -8264,9 +8276,26 @@ function updateCardStack() {
 
 // 統計を更新
 function updateStats() {
-    const total = currentRangeEnd - currentRangeStart;
-    // 現在見ている英単語の位置（1から始まる）
-    const currentPosition = currentIndex + 1;
+    // テストモードかどうかを判定
+    const testMode = document.getElementById('testMode');
+    const isTestModeActive = testMode && !testMode.classList.contains('hidden');
+    
+    let total;
+    let currentPosition;
+    let relativeIndex;
+    
+    if (isTestModeActive && testModeWords.length > 0) {
+        // テストモードの場合
+        total = testModeWords.length;
+        currentPosition = testModeCurrentIndex + 1;
+        relativeIndex = testModeCurrentIndex;
+    } else {
+        // 通常モードの場合
+        total = currentRangeEnd - currentRangeStart;
+        // 現在見ている英単語の位置（1から始まる）
+        currentPosition = currentIndex + 1;
+        relativeIndex = currentIndex - currentRangeStart;
+    }
     
     // 共通の進捗テキストを更新
     if (elements.progressText) {
@@ -8289,9 +8318,6 @@ function updateStats() {
     
     // totalが0より大きい場合、セグメントを生成
     if (total > 0 && container) {
-        // 現在のインデックス（相対位置）
-        const relativeIndex = currentIndex - currentRangeStart;
-        
         // 現在のインデックスが表示範囲外に出たか確認
         const displayStart = progressBarStartIndex;
         const displayEnd = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT;
@@ -9119,7 +9145,11 @@ function searchMeaning(query) {
     let html = '';
     matches.forEach(item => {
         const escapedMeaning = item.meaning.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-        html += `<div onclick="selectTestAnswer('${escapedMeaning}')" style="padding:14px 16px;background:#fff;border-bottom:1px solid #e5e7eb;cursor:pointer;font-size:15px;">${item.meaning} <span style="color:#999;font-size:12px;">(${item.partOfSpeech})</span></div>`;
+        const escapedPos = (item.partOfSpeech || '').replace(/"/g, "&quot;");
+        html += `<div class="test-search-result-item" onclick="selectTestAnswer('${escapedMeaning}')" data-meaning="${escapedMeaning}">
+            <span class="test-search-result-meaning">${item.meaning}</span>
+            <span class="test-search-result-pos">${item.partOfSpeech || ''}</span>
+        </div>`;
     });
     resultsEl.innerHTML = html;
 }
@@ -9359,10 +9389,15 @@ function displayTestModeQuestion() {
                 return;
             }
             
-            // 結果を表示（インラインスタイルで確実に表示）
+            // 結果を表示（選択肢風のボタンスタイル）
             let html = '';
             matches.forEach((item, i) => {
-                html += `<div onclick="selectTestAnswer('${item.meaning.replace(/'/g, "\\'")}')" style="padding:14px 16px;background:#fff;border-bottom:1px solid #e5e7eb;cursor:pointer;">${item.meaning} <span style="color:#999;font-size:12px;">(${item.partOfSpeech})</span></div>`;
+                const escapedMeaning = item.meaning.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                const escapedPos = (item.partOfSpeech || '').replace(/"/g, "&quot;");
+                html += `<div class="test-search-result-item" onclick="selectTestAnswer('${escapedMeaning}')" data-meaning="${escapedMeaning}">
+                    <span class="test-search-result-meaning">${item.meaning}</span>
+                    <span class="test-search-result-pos">${item.partOfSpeech || ''}</span>
+                </div>`;
             });
             resultsEl.innerHTML = html;
             console.log('HTML set:', html.substring(0, 100));
