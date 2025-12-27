@@ -4693,6 +4693,7 @@ function setupEventListeners() {
     if (modeInput) {
         modeInput.addEventListener('change', () => {
             if (modeInput.checked) {
+                SoundEffects.playTap();
                 filterLearningMode = 'input';
                 updateQuestionCountSection();
             }
@@ -4702,6 +4703,7 @@ function setupEventListeners() {
     if (modeOutput) {
         modeOutput.addEventListener('change', () => {
             if (modeOutput.checked) {
+                SoundEffects.playTap();
                 filterLearningMode = 'output';
                 updateQuestionCountSection();
             }
