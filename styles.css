@@ -136,8 +136,8 @@ body {
     left: 50%;
     bottom: 120px;
     transform: translateX(-50%);
-    max-width: 50%;
-    max-height: 50%;
+    max-width: 65%;
+    max-height: 65%;
 }
 
 .feedback-overlay {
@@ -2152,8 +2152,7 @@ body.learning-mode .app-header {
 
 .category-accordion-container {
     background: #ffffff;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
+    border: 1px solid #e5e7eb;
     overflow: hidden;
 }
 
@@ -5734,8 +5733,8 @@ body.learning-mode .bottom-nav {
 }
 
 .hint-btn.hint-left { 
-    background-color: #3b82f6;
-    box-shadow: 0 4px 0 #2563eb; /* 濃い青の影 */
+    background-color: var(--danger);
+    box-shadow: 0 4px 0 #dc2626; /* 濃い赤の影 */
 }
 .hint-btn.hint-center { 
     background-color: #0ea5e9; /* 水色 */
@@ -5743,8 +5742,8 @@ body.learning-mode .bottom-nav {
     display: none; /* デフォルトは非表示 */
 }
 .hint-btn.hint-right { 
-    background-color: var(--danger);
-    box-shadow: 0 4px 0 #dc2626; /* 濃い赤の影 */
+    background-color: #3b82f6;
+    box-shadow: 0 4px 0 #2563eb; /* 濃い青の影 */
 }
 
 /* 間違い復習モードのみ表示 */
@@ -6751,219 +6750,6 @@ body.learning-mode .bottom-nav {
     }
 }
 
-/* テストモード（意味検索形式） */
-.test-mode {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 16px 100px 16px;
-}
-
-.test-mode-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.test-mode .word-number {
-    display: none;
-}
-
-.test-english-word {
-    font-size: 36px;
-    font-weight: 700;
-    color: #1f2937;
-    text-align: center;
-    margin-bottom: 32px;
-    letter-spacing: 0.02em;
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
-}
-
-.test-search-container {
-    width: 100%;
-    max-width: 400px;
-}
-
-.test-search-label {
-    font-size: 13px;
-    color: #6b7280;
-    margin-bottom: 12px;
-    text-align: center;
-}
-
-.test-search-input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    background: #ffffff;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 0 12px;
-    margin-bottom: 16px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.test-search-input-wrapper:focus-within {
-    border-color: #f59e0b;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
-}
-
-.test-search-icon {
-    color: #9ca3af;
-    flex-shrink: 0;
-}
-
-.test-search-input-wrapper input {
-    flex: 1;
-    border: none;
-    outline: none;
-    padding: 14px 10px;
-    font-size: 16px;
-    background: transparent;
-}
-
-.test-search-clear {
-    background: none;
-    border: none;
-    padding: 4px;
-    cursor: pointer;
-    color: #9ca3af;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.test-search-clear:hover {
-    color: #6b7280;
-}
-
-.test-search-results {
-    margin-top: 12px;
-    max-height: 240px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 2px;
-}
-
-.test-search-results:empty {
-    display: none;
-}
-
-.test-search-result-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    background: #ffffff;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.test-search-result-item:first-child {
-    padding-top: 18px;
-}
-
-.test-search-result-item:hover {
-    background-color: #f9fafb;
-    border-color: #3182ce;
-    box-shadow: 0 2px 4px rgba(49, 130, 206, 0.15);
-    transform: translateY(-1px);
-}
-
-.test-search-result-item:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(49, 130, 206, 0.2);
-}
-
-.test-search-result-item.selected {
-    background-color: #eff6ff;
-    border-color: #3182ce;
-}
-
-.test-search-result-meaning {
-    font-size: 15px;
-    color: #1f2937;
-    font-weight: 500;
-    flex: 1;
-}
-
-.test-search-result-pos {
-    font-size: 12px;
-    color: #6b7280;
-    margin-left: 12px;
-    padding: 4px 8px;
-    background: #f3f4f6;
-    border-radius: 4px;
-}
-
-.test-search-no-results {
-    padding: 20px;
-    text-align: center;
-    color: #9ca3af;
-    font-size: 14px;
-}
-
-.test-result {
-    margin-top: 24px;
-    text-align: center;
-    width: 100%;
-    max-width: 400px;
-}
-
-.test-result-icon {
-    margin-bottom: 12px;
-}
-
-.test-result-message {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-.test-result-message.correct {
-    color: #16a34a;
-}
-
-.test-result-message.wrong {
-    color: #dc2626;
-}
-
-.test-result-message.pass {
-    color: #f59e0b;
-}
-
-.test-result-selected {
-    font-size: 14px;
-    color: #6b7280;
-    margin-bottom: 8px;
-}
-
-.test-correct-answer {
-    font-size: 15px;
-    color: #1f2937;
-    padding: 12px 16px;
-    background: #f3f4f6;
-    border-radius: 8px;
-    font-weight: 500;
-}
-
-.test-mode .keyboard-actions {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 16px;
-    background: #ffffff;
-    border-top: 1px solid #e5e7eb;
-    display: flex;
-    gap: 12px;
-}
 
 /* 整序英作文モード */
 .reorder-mode {
@@ -10154,13 +9940,6 @@ body.learning-mode .bottom-nav {
 }
 
 /* テストモードアイコンのデフォルト色 */
-.test-icon {
-    color: #f59e0b;
-}
-
-.mode-radio.mode-radio-selected .test-icon {
-    color: #0055ca;
-}
 
 .mode-description {
     font-size: 14px;

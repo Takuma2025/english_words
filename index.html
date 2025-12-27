@@ -1020,60 +1020,17 @@
                         </div>
                     </div>
                     
-                    <!-- テストモード（意味検索形式） -->
-                    <div class="test-mode hidden" id="testMode">
-                        <div class="test-mode-content">
-                            <!-- No. -->
-                            <div class="word-number" id="testWordNumber">No.1</div>
-                            <!-- 英単語表示 -->
-                            <div class="test-english-word" id="testEnglishWord">example</div>
-                            <!-- 検索エリア -->
-                            <div class="test-search-container" id="testSearchContainer">
-                                <div class="test-search-label">この英単語の意味を検索して選んでください</div>
-                                <div class="test-search-input-wrapper">
-                                    <svg class="test-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="11" cy="11" r="8"></circle>
-                                        <path d="m21 21-4.35-4.35"></path>
-                                    </svg>
-                                    <input type="text" id="testSearchInput" placeholder="日本語の意味を入力して検索..." autocomplete="off" onkeyup="searchMeaning(this.value)" oninput="searchMeaning(this.value)">
-                                    <button class="test-search-clear hidden" id="testSearchClear">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                                        </svg>
-                                    </button>
-                                </div>
-                                <!-- 検索結果リスト -->
-                                <div class="test-search-results" id="testSearchResults">
-                                    <!-- 動的に生成 -->
-                                </div>
-                            </div>
-                            <!-- 結果表示 -->
-                            <div class="test-result hidden" id="testResult">
-                                <div class="test-result-icon" id="testResultIcon"></div>
-                                <div class="test-result-message" id="testResultMessage"></div>
-                                <div class="test-result-selected" id="testResultSelected"></div>
-                                <div class="test-correct-answer" id="testCorrectAnswer"></div>
-                            </div>
-                        </div>
-                        <!-- ボタンエリア -->
-                        <div class="keyboard-actions" id="testActions">
-                            <button class="keyboard-action-btn" id="testPassBtn">パス</button>
-                            <button class="keyboard-action-btn keyboard-action-btn-primary hidden" id="testNextBtn">次へ</button>
-                        </div>
-                    </div>
-                    
                     <div class="action-hint" id="cardHint">
-                        <button class="hint-btn hint-left" id="correctBtn">
+                        <button class="hint-btn hint-left" id="wrongBtn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-                            覚えた
+                            覚えていない
                         </button>
                         <button class="hint-btn hint-center" id="masteredBtn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
                             もうOK！
                         </button>
-                        <button class="hint-btn hint-right" id="wrongBtn">
-                            覚えていない
+                        <button class="hint-btn hint-right" id="correctBtn">
+                            覚えた
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                         </button>
                     </div>
@@ -1343,13 +1300,6 @@
                             <div class="mode-radio-content">
                                 <span class="mode-radio-label">アウトプット</span>
                                 <span class="mode-radio-description">解いて確認する</span>
-                            </div>
-                        </label>
-                        <label class="mode-radio-option">
-                            <input type="radio" name="learningMode" id="modeTest" value="test">
-                            <div class="mode-radio-content">
-                                <span class="mode-radio-label">テスト</span>
-                                <span class="mode-radio-description">意味を検索して答える</span>
                             </div>
                         </label>
                     </div>
