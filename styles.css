@@ -2161,7 +2161,7 @@ body.learning-mode .app-header {
     align-items: center;
     width: 100%;
     padding: 16px;
-    background: #f8fafc;
+    background: #ffffff;
     border: none;
     border-top: 1px solid #e5e7eb;
     text-align: left;
@@ -2175,39 +2175,39 @@ body.learning-mode .app-header {
 }
 
 .category-accordion-item:hover {
-    background-color: #f1f5f9;
+    background-color: #f9fafb;
 }
 
 .category-accordion-item:active {
-    background-color: #e2e8f0;
+    background-color: #f3f4f6;
 }
 
-/* 日常生活でよく使う生活語彙（グレー） */
+/* 日常生活でよく使う生活語彙（白） */
 .category-accordion-item-green {
-    background: #f8fafc;
+    background: #ffffff;
     border-left: none;
 }
 
 .category-accordion-item-green:hover {
-    background-color: #f1f5f9;
+    background-color: #f9fafb;
 }
 
 .category-accordion-item-green:active {
-    background-color: #e2e8f0;
+    background-color: #f3f4f6;
 }
 
-/* 英文でよく登場する機能語（グレー） */
+/* 英文でよく登場する機能語（白） */
 .category-accordion-item-purple {
-    background: #f8fafc;
+    background: #ffffff;
     border-left: none;
 }
 
 .category-accordion-item-purple:hover {
-    background-color: #f1f5f9;
+    background-color: #f9fafb;
 }
 
 .category-accordion-item-purple:active {
-    background-color: #e2e8f0;
+    background-color: #f3f4f6;
 }
 
 .accordion-item-icon {
@@ -10283,17 +10283,25 @@ body.learning-mode .bottom-nav {
     .filter-checkbox,
     .order-radio,
     .mode-radio {
-        padding: 10px 12px;
+        padding: 12px 16px;
     }
     .checkbox-label,
     .radio-label {
         font-size: 13px;
     }
     .order-radio .radio-option-label {
-        font-size: 14px;
+        font-size: 15px;
     }
     .order-radio .radio-option-description {
         font-size: 12px;
+    }
+    .order-radio {
+        gap: 12px;
+    }
+    .order-radio input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
     }
     .filter-actions {
         max-width: 100%;
