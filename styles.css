@@ -10119,29 +10119,7 @@ body.learning-mode .bottom-nav {
     cursor: pointer;
     flex-shrink: 0;
     accent-color: #0055ca;
-    border: 2px solid #cbd5e1;
-    border-radius: 50%;
-    background: #ffffff;
-    transition: all 0.15s ease;
-    position: relative;
     align-self: center;
-}
-
-.order-radio input[type="radio"]:checked {
-    border-color: #0055ca;
-    background: #ffffff;
-}
-
-.order-radio input[type="radio"]:checked::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #0055ca;
 }
 
 .order-radio input[type="radio"]:disabled {
