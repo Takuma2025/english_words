@@ -10277,7 +10277,7 @@ body.learning-mode .bottom-nav {
     }
     
     .order-options {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: 1fr;
         gap: 8px;
     }
     .filter-checkbox,
@@ -10288,6 +10288,12 @@ body.learning-mode .bottom-nav {
     .checkbox-label,
     .radio-label {
         font-size: 13px;
+    }
+    .order-radio .radio-option-label {
+        font-size: 14px;
+    }
+    .order-radio .radio-option-description {
+        font-size: 12px;
     }
     .filter-actions {
         max-width: 100%;
