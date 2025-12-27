@@ -2143,25 +2143,36 @@ body.learning-mode .app-header {
 .category-accordion-content {
     display: none;
     background: #ffffff;
+    padding: 12px;
 }
 
 .category-accordion.open .category-accordion-content {
     display: block;
 }
 
+.category-accordion-container {
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
 .category-accordion-item {
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 16px 16px 16px 32px;
+    padding: 16px;
     background: #f8fafc;
     border: none;
     border-top: 1px solid #e5e7eb;
-    border-left: 3px solid #3182ce;
     text-align: left;
     cursor: pointer;
     transition: background-color 0.1s;
     position: relative;
+}
+
+.category-accordion-item:first-child {
+    border-top: none;
 }
 
 .category-accordion-item:hover {
@@ -5795,7 +5806,7 @@ body.learning-mode .bottom-nav {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 2000;
+    z-index: 10006;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.6s ease, visibility 0.6s ease;
@@ -5816,7 +5827,7 @@ body.learning-mode .bottom-nav {
     max-width: 85vw;
     height: 100%;
     background: #ffffff;
-    z-index: 2001;
+    z-index: 10007;
     transform: translateX(-100%);
     transition: transform 0.6s ease;
     display: flex;
@@ -9610,8 +9621,8 @@ body.learning-mode .bottom-nav {
     top: 0;
     left: 0;
     right: 0;
-    height: 56px;
-    background: #ffffff;
+    height: 64px;
+    background: #0055ca;
     z-index: 4;
     pointer-events: none;
 }
@@ -9620,22 +9631,42 @@ body.learning-mode .bottom-nav {
     transform: translateX(-50%) translateY(0);
 }
 
+.filter-header-banner {
+    position: relative;
+    background: #0055ca;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.filter-header-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    text-align: center;
+    flex: 1;
+}
+
 .filter-close-btn {
     position: absolute;
-    top: 16px;
-    left: 16px;
-    width: 40px;
-    height: 40px;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
     border: none;
-    background: #f3f4f6;
+    background: transparent;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #374151;
+    color: #ffffff;
     transition: all 0.2s ease;
-    z-index: 10;
+    z-index: 11;
 }
 
 .filter-close-btn:hover {
@@ -9653,8 +9684,7 @@ body.learning-mode .bottom-nav {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
-    padding: 0;
-    padding-top: 72px;
+    padding: 20px 16px;
     padding-bottom: calc(100px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
@@ -9663,6 +9693,7 @@ body.learning-mode .bottom-nav {
     overscroll-behavior: contain;
     scroll-behavior: smooth;
     position: relative;
+    background: #ffffff;
 }
 
 #wordFilterView .section-title {
@@ -9775,21 +9806,145 @@ body.learning-mode .bottom-nav {
 }
 
 .filter-section-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0055ca;
-    margin-bottom: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 12px;
     text-align: left;
     letter-spacing: 0.02em;
-    padding-left: 2px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #0055ca;
+}
+
+.mode-radio-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mode-radio-option {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 16px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    gap: 12px;
+}
+
+.mode-radio-option:hover {
+    border-color: #93c5fd;
+    background: #f0f7ff;
+}
+
+.mode-radio-option input[type="radio"] {
+    margin: 0;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: #0055ca;
+    align-self: center;
+}
+
+.mode-radio-option:has(input[type="radio"]:checked) {
+    border-color: #0055ca;
+    background: #eff6ff;
+}
+
+.mode-radio-icon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.mode-radio-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.mode-radio-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.mode-radio-description {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+
+.filter-radio-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-radio-option {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 16px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    gap: 12px;
+}
+
+.filter-radio-option:hover {
+    border-color: #93c5fd;
+    background: #f0f7ff;
+}
+
+.filter-radio-option input[type="radio"] {
+    margin: 0;
+    margin-top: 2px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: #0055ca;
+}
+
+.filter-radio-option input[type="radio"]:checked {
+    accent-color: #0055ca;
+}
+
+.filter-radio-option:has(input[type="radio"]:checked) {
+    border-color: #0055ca;
+    background: #eff6ff;
+}
+
+.radio-option-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.radio-option-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.radio-option-description {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
 }
 
 .filter-options {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .mode-options {
@@ -10014,24 +10169,23 @@ body.learning-mode .bottom-nav {
 }
 
 .order-options {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 150px;
 }
 
 .filter-checkbox,
 .order-radio {
     display: flex;
-    align-items: center;
-    padding: 12px 14px;
+    align-items: flex-start;
+    padding: 12px 16px;
     background: #ffffff;
     border: 2px solid #e5e7eb;
-    border-radius: 12px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.15s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-    overflow: hidden;
+    gap: 12px;
 }
 
 .filter-checkbox:hover,
@@ -10049,7 +10203,6 @@ body.learning-mode .bottom-nav {
 
 .filter-checkbox-all {
     font-weight: 700;
-    grid-column: span 2;
 }
 
 .filter-checkbox-all::before {
@@ -10117,8 +10270,8 @@ body.learning-mode .bottom-nav {
 }
 
 .filter-checkbox:has(input:checked) .checkbox-label {
-    color: #0055ca;
-    font-weight: 600;
+    color: #1f2937;
+    font-weight: 500;
 }
 
 .filter-icon {
@@ -10163,11 +10316,13 @@ body.learning-mode .bottom-nav {
 }
 
 .order-radio input[type="radio"] {
-    appearance: none;
-    -webkit-appearance: none;
+    margin: 0;
+    margin-top: 2px;
     width: 20px;
     height: 20px;
-    margin-right: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: #0055ca;
     cursor: pointer;
     border: 2px solid #cbd5e1;
     border-radius: 50%;
@@ -10225,6 +10380,25 @@ body.learning-mode .bottom-nav {
     font-weight: 600;
 }
 
+.order-radio .radio-option-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.order-radio .radio-option-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.order-radio .radio-option-description {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
 .filter-actions {
     position: fixed;
     bottom: 0;
@@ -10254,7 +10428,7 @@ body.learning-mode .bottom-nav {
         gap: 8px;
     }
     .filter-checkbox-all {
-        grid-column: span 2;
+        font-weight: 700;
     }
     .mode-options {
         grid-template-columns: 1fr;
