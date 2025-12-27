@@ -257,22 +257,24 @@
                                 </div>
                             </button>
                             <div class="category-accordion-content" id="categoryAccordionContent">
-                                <button class="category-accordion-item category-accordion-item-green" id="dailyLifeVocabBtn">
-                                    <svg class="accordion-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                    </svg>
-                                    <span class="accordion-item-text">日常生活でよく使う生活語彙</span>
-                                    <svg class="accordion-item-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                                </button>
-                                <button class="category-accordion-item category-accordion-item-purple" id="functionWordsBtn">
-                                    <svg class="accordion-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                                    </svg>
-                                    <span class="accordion-item-text">英文でよく登場する機能語</span>
-                                    <svg class="accordion-item-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                                </button>
+                                <div class="category-accordion-container">
+                                    <button class="category-accordion-item category-accordion-item-green" id="dailyLifeVocabBtn">
+                                        <svg class="accordion-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                        </svg>
+                                        <span class="accordion-item-text">日常生活でよく使う生活語彙</span>
+                                        <svg class="accordion-item-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                    </button>
+                                    <button class="category-accordion-item category-accordion-item-purple" id="functionWordsBtn">
+                                        <svg class="accordion-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                        </svg>
+                                        <span class="accordion-item-text">英文でよく登場する機能語</span>
+                                        <svg class="accordion-item-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="category-cards-row">
@@ -1313,66 +1315,43 @@
     <!-- 学習フィルター画面（ボトムシート） - body直下に配置 -->
     <div class="filter-overlay hidden" id="filterOverlay"></div>
     <div class="filter-sheet hidden" id="wordFilterView">
-        <button class="filter-close-btn" id="filterCloseBtn" aria-label="閉じる">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
+        <div class="filter-header-banner">
+            <h2 class="filter-header-title">学習の設定をしましょう</h2>
+            <button class="filter-close-btn" id="filterCloseBtn" aria-label="閉じる">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
         <div class="filter-sheet-content">
-            <div class="filter-category-header">
-                <div class="filter-category-title" id="filterCategoryTitle">カテゴリー名</div>
-                <div class="filter-category-progress">
-                    <div class="filter-category-progress-bar">
-                        <div class="filter-category-progress-correct" id="filterProgressCorrect" style="width: 0%"></div>
-                        <div class="filter-category-progress-wrong" id="filterProgressWrong" style="width: 0%"></div>
-                    </div>
-                    <div class="filter-category-progress-text" id="filterProgressText">0/0語</div>
-                </div>
-            </div>
             <div class="filter-card-container">
                 <div class="filter-section">
                     <div class="filter-section-title">学習モード</div>
-                    <div class="mode-options">
-                        <button type="button" class="mode-radio mode-radio-selected" data-mode="input" id="modeInput">
-                            <div class="mode-content mode-content-vertical">
-                                <div class="mode-text">
-                                    <span class="mode-label">インプット</span>
-                                    <span class="mode-description">まずは見て覚える</span>
-                                </div>
-                                <div class="mode-icon-wrapper">
-                                    <img src="input.png" alt="インプット" class="mode-icon-large">
-                                </div>
+                    <div class="mode-radio-options">
+                        <label class="mode-radio-option">
+                            <input type="radio" name="learningMode" id="modeInput" value="input" checked>
+                            <img src="input.png" alt="インプット" class="mode-radio-icon">
+                            <div class="mode-radio-content">
+                                <span class="mode-radio-label">インプット</span>
+                                <span class="mode-radio-description">まずは見て覚える</span>
                             </div>
-                        </button>
-                        <button type="button" class="mode-radio" data-mode="output" id="modeOutput">
-                            <div class="mode-content mode-content-vertical">
-                                <div class="mode-text">
-                                    <span class="mode-label">アウトプット</span>
-                                    <span class="mode-description">解いて確認する</span>
-                                </div>
-                                <div class="mode-icon-wrapper">
-                                    <img src="output.png" alt="アウトプット" class="mode-icon-large">
-                                </div>
+                        </label>
+                        <label class="mode-radio-option">
+                            <input type="radio" name="learningMode" id="modeOutput" value="output">
+                            <img src="output.png" alt="アウトプット" class="mode-radio-icon">
+                            <div class="mode-radio-content">
+                                <span class="mode-radio-label">アウトプット</span>
+                                <span class="mode-radio-description">解いて確認する</span>
                             </div>
-                        </button>
-                    </div>
-                    <div class="mode-options mode-options-test">
-                        <button type="button" class="mode-radio" data-mode="test" id="modeTest">
-                            <div class="mode-content mode-content-vertical">
-                                <div class="mode-text">
-                                    <span class="mode-label">テスト</span>
-                                    <span class="mode-description">意味を検索して答える</span>
-                                </div>
-                                <div class="mode-icon-wrapper">
-                                    <svg class="mode-icon-large test-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <circle cx="11" cy="11" r="8"></circle>
-                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                        <path d="M11 8v6M8 11h6" stroke="currentColor" stroke-width="1.5"/>
-                                    </svg>
-                                </div>
+                        </label>
+                        <label class="mode-radio-option">
+                            <input type="radio" name="learningMode" id="modeTest" value="test">
+                            <div class="mode-radio-content">
+                                <span class="mode-radio-label">テスト</span>
+                                <span class="mode-radio-description">意味を検索して答える</span>
                             </div>
-                        </button>
+                        </label>
                     </div>
                     <div class="question-count-control" id="questionCountSection" style="display: none;">
                         <span class="question-count-label">出題数</span>
@@ -1419,11 +1398,17 @@
                     <div class="order-options">
                         <label class="order-radio">
                             <input type="radio" name="wordOrder" id="orderSequential" value="sequential" checked>
-                            <span class="radio-label">番号順</span>
+                            <div class="radio-option-content">
+                                <span class="radio-option-label">標準</span>
+                                <span class="radio-option-description">問題が単語番号順に出題されます</span>
+                            </div>
                         </label>
                         <label class="order-radio">
                             <input type="radio" name="wordOrder" id="orderRandom" value="random">
-                            <span class="radio-label">ランダム</span>
+                            <div class="radio-option-content">
+                                <span class="radio-option-label">ランダム</span>
+                                <span class="radio-option-description">問題がランダムな順番で出題されます</span>
+                            </div>
                         </label>
                     </div>
                 </div>

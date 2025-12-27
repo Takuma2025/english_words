@@ -3492,19 +3492,19 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     const modeOutput = document.getElementById('modeOutput');
     const modeTest = document.getElementById('modeTest');
     if (modeInput && modeOutput) {
-        // ボタンの状態を確認してfilterLearningModeを更新
-        if (modeInput.classList.contains('mode-radio-selected')) {
+        // ラジオボタンの状態を確認してfilterLearningModeを更新
+        if (modeInput.checked) {
             filterLearningMode = 'input';
-        } else if (modeOutput.classList.contains('mode-radio-selected')) {
+        } else if (modeOutput.checked) {
             filterLearningMode = 'output';
-        } else if (modeTest && modeTest.classList.contains('mode-radio-selected')) {
+        } else if (modeTest && modeTest.checked) {
             filterLearningMode = 'test';
         } else {
             // どちらも選択されていない場合はデフォルトで'input'
             filterLearningMode = 'input';
-            modeInput.classList.add('mode-radio-selected');
-            modeOutput.classList.remove('mode-radio-selected');
-            if (modeTest) modeTest.classList.remove('mode-radio-selected');
+            modeInput.checked = true;
+            if (modeOutput) modeOutput.checked = false;
+            if (modeTest) modeTest.checked = false;
         }
     }
     
@@ -3520,8 +3520,8 @@ function updateQuestionCountSection() {
     
     if (questionCountSection) {
         const filteredWords = getFilteredWords();
-        const isOutputMode = modeOutput && modeOutput.classList.contains('mode-radio-selected');
-        const isTestMode = modeTest && modeTest.classList.contains('mode-radio-selected');
+        const isOutputMode = modeOutput && modeOutput.checked;
+        const isTestMode = modeTest && modeTest.checked;
         
         if (isOutputMode || isTestMode) {
             if (filteredWords.length > 10) {
@@ -3570,7 +3570,7 @@ function updateFilterInfo() {
     // アウトプットモードの場合、出題数選択を更新
     const questionCountSection = document.getElementById('questionCountSection');
     const modeOutput = document.getElementById('modeOutput');
-    if (questionCountSection && modeOutput && modeOutput.classList.contains('mode-radio-selected') && questionCountSection.style.display !== 'none') {
+    if (questionCountSection && modeOutput && modeOutput.checked && questionCountSection.style.display !== 'none') {
         updateQuestionCountOptions(filteredWords.length);
     }
 }
@@ -4701,32 +4701,29 @@ function setupEventListeners() {
     const modeTest = document.getElementById('modeTest');
     
     if (modeInput) {
-        modeInput.addEventListener('click', () => {
-            modeInput.classList.add('mode-radio-selected');
-            modeOutput.classList.remove('mode-radio-selected');
-            if (modeTest) modeTest.classList.remove('mode-radio-selected');
-            filterLearningMode = 'input';
-            updateQuestionCountSection();
+        modeInput.addEventListener('change', () => {
+            if (modeInput.checked) {
+                filterLearningMode = 'input';
+                updateQuestionCountSection();
+            }
         });
     }
     
     if (modeOutput) {
-        modeOutput.addEventListener('click', () => {
-            modeOutput.classList.add('mode-radio-selected');
-            modeInput.classList.remove('mode-radio-selected');
-            if (modeTest) modeTest.classList.remove('mode-radio-selected');
-            filterLearningMode = 'output';
-            updateQuestionCountSection();
+        modeOutput.addEventListener('change', () => {
+            if (modeOutput.checked) {
+                filterLearningMode = 'output';
+                updateQuestionCountSection();
+            }
         });
     }
     
     if (modeTest) {
-        modeTest.addEventListener('click', () => {
-            modeTest.classList.add('mode-radio-selected');
-            modeInput.classList.remove('mode-radio-selected');
-            modeOutput.classList.remove('mode-radio-selected');
-            filterLearningMode = 'test';
-            updateQuestionCountSection();
+        modeTest.addEventListener('change', () => {
+            if (modeTest.checked) {
+                filterLearningMode = 'test';
+                updateQuestionCountSection();
+            }
         });
     }
     
