@@ -9794,7 +9794,14 @@ body.learning-mode .bottom-nav {
 
 .mode-options {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.mode-options-test {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 10px;
 }
 
@@ -9966,6 +9973,9 @@ body.learning-mode .bottom-nav {
     opacity: 0.5;
     stroke: #64748b;
     color: #64748b;
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
 }
 
 .mode-radio.mode-radio-selected .mode-label {
@@ -9976,6 +9986,16 @@ body.learning-mode .bottom-nav {
     stroke: #0055ca;
     color: #0055ca;
     opacity: 1;
+}
+
+.mode-radio.mode-radio-selected .mode-icon-large img {
+    opacity: 1;
+}
+
+.mode-icon-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 /* テストモードアイコンのデフォルト色 */
@@ -10236,7 +10256,16 @@ body.learning-mode .bottom-nav {
     .filter-checkbox-all {
         grid-column: span 2;
     }
-    .mode-options,
+    .mode-options {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .mode-options-test {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
     .order-options {
         grid-template-columns: 1fr;
         gap: 8px;
@@ -10268,7 +10297,16 @@ body.learning-mode .bottom-nav {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
     }
-    .mode-options,
+    .mode-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+    
+    .mode-options-test {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
     .order-options {
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
