@@ -156,7 +156,7 @@ textarea,
 
 .splash-girl {
     position: absolute;
-    left: calc(50% - 35%);
+    left: calc(50% - 45%);
     top: 50%;
     transform: translateY(-50%);
     max-width: 30%;
@@ -854,6 +854,25 @@ body.learning-mode .app-header {
     margin-bottom: 24px;
     width: 100%;
     box-sizing: border-box;
+}
+
+.course-section {
+    position: relative;
+}
+
+.osaka-image-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.osaka-image {
+    max-width: 120px;
+    width: auto;
+    height: auto;
+    display: block;
 }
 
 .category-cards-row {
@@ -1620,19 +1639,6 @@ body.learning-mode .app-header {
     margin: 36px 0 8px 0;
 }
 
-.boy-word-image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 8px 0;
-}
-
-.boy-word-image {
-    max-width: 200px;
-    max-height: 150px;
-    object-fit: contain;
-}
-
 .school-trigger-row {
     display: flex;
     justify-content: flex-end;
@@ -2341,6 +2347,27 @@ body.learning-mode .app-header {
     align-items: center;
 }
 
+.weakness-text {
+    position: relative;
+    display: inline-block;
+}
+
+.weakness-text span {
+    position: relative;
+    z-index: 1;
+}
+
+.lock-on-icon-small {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 0;
+}
 
 .category-card-ai .category-name .ai-badge {
     display: block;
@@ -9741,20 +9768,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     object-fit: contain;
     flex-shrink: 0;
     align-self: center;
-}
-
-.output-sub-options {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 8px;
-    margin-left: 20px;
-    padding-left: 16px;
-    border-left: 2px solid #e5e7eb;
-}
-
-.output-sub-options.hidden {
-    display: none;
 }
 
 .mode-radio-content {
