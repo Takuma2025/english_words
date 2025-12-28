@@ -1893,10 +1893,10 @@ function updateCategoryStars() {
         // 0語のときは「分析中」を表示
         if (aiWordNumber && aiAnalyzing) {
             if (aiWordCount === 0) {
-                aiWordNumber.style.display = 'none';
+                aiWordNumber.classList.remove('show');
                 aiAnalyzing.style.display = 'flex';
             } else {
-                aiWordNumber.style.display = 'inline';
+                aiWordNumber.classList.add('show');
                 aiAnalyzing.style.display = 'none';
             }
         }

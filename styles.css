@@ -2343,17 +2343,12 @@ body.learning-mode .app-header {
     align-items: center;
 }
 
-.weakness-review-text {
-    font-size: 20px;
-    line-height: 1.2;
-}
-
 .lockon-image {
     display: block;
-    width: 130px;
+    width: 140px;
     height: auto;
     object-fit: contain;
-    margin: 0px auto -20px;
+    margin: 4px auto 0;
 }
 
 .weakness-text {
@@ -2400,25 +2395,38 @@ body.learning-mode .app-header {
 
 .ai-word-count-large {
     text-align: center;
-    margin-top: 2px;
+    margin-top: 0;
     line-height: 1;
 }
 
-/* 語数が表示されている時は上の画像と重ならないようにマージンを追加 */
-.ai-word-count-large:has(.ai-word-number:not([style*="display: none"])) {
-    margin-top: 20px;
-}
-
-/* 〇語表示：大きい赤字 */
+/* 〇語表示：横並びで左にラベル、右に数字 */
 .ai-word-number {
     display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.ai-word-number.show {
+    display: flex;
+}
+
+.weakness-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    line-height: 1.3;
+    text-align: right;
+}
+
+.ai-word-count-value {
     font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif;
     font-size: 48px;
     font-weight: 700;
     color: #dc2626;
 }
 
-.ai-word-number span {
+.ai-word-count-value span {
     font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif;
     font-size: 48px;
     font-weight: 700;
