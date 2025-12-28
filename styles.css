@@ -9244,11 +9244,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     box-shadow: 0 2px 0 #0044a0, inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.goal-confetti {
+/* 花火キャンバス */
+.fireworks-canvas {
     position: absolute;
-    top: -20px;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }
 
 /* 学習完了画面 */
