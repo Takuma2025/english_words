@@ -2178,6 +2178,16 @@ body.learning-mode .app-header {
     min-width: 0;
 }
 
+.category-accordion-header .category-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.category-icon {
+    flex-shrink: 0;
+}
+
 .category-accordion-arrow {
     flex-shrink: 0;
     display: flex;
