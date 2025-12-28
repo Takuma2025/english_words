@@ -2404,6 +2404,11 @@ body.learning-mode .app-header {
     line-height: 1;
 }
 
+/* 語数が表示されている時は上の画像と重ならないようにマージンを追加 */
+.ai-word-count-large:has(.ai-word-number:not([style*="display: none"])) {
+    margin-top: 20px;
+}
+
 /* 〇語表示：大きい赤字 */
 .ai-word-number {
     display: none;
