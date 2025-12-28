@@ -1620,6 +1620,19 @@ body.learning-mode .app-header {
     margin: 36px 0 8px 0;
 }
 
+.boy-word-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.boy-word-image {
+    max-width: 200px;
+    max-height: 150px;
+    object-fit: contain;
+}
+
 .school-trigger-row {
     display: flex;
     justify-content: flex-end;
@@ -2331,6 +2344,10 @@ body.learning-mode .app-header {
 .weakness-text {
     position: relative;
     display: inline-block;
+}
+
+.weakness-text span {
+    position: relative;
     z-index: 1;
 }
 
@@ -2344,7 +2361,6 @@ body.learning-mode .app-header {
     object-fit: contain;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.6;
 }
 
 .category-card-ai .category-name .ai-badge {
@@ -5239,6 +5255,11 @@ body.learning-mode .bottom-nav {
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
     letter-spacing: 0.1em;
     z-index: 10;
+}
+
+/* アウトプットモードのときは単語No.を非表示 */
+body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
+    display: none;
 }
 
 .word-number::after {
