@@ -868,6 +868,7 @@ body.learning-mode .app-header {
     padding: 10px 12px;
     border-bottom: none;
     border-right: 1px solid #d1d5db;
+    align-items: center;
 }
 
 .category-cards-row .category-card:last-child {
@@ -2236,6 +2237,7 @@ body.learning-mode .app-header {
 .category-accordion-item-purple {
     background: #ffffff;
     border-left: none;
+    border-top: 0.5px solid #e5e7eb;
 }
 
 .category-accordion-item-purple:hover {
@@ -2293,6 +2295,13 @@ body.learning-mode .app-header {
 }
 
 /* AI分析カード */
+.category-card-ai {
+    background-image: url('lock-on.png');
+    background-repeat: no-repeat;
+    background-position: calc(100% - 20px) center;
+    background-size: 90px 90px;
+}
+
 .ai-sparkle {
     margin-right: 6px;
 }
@@ -2640,11 +2649,25 @@ body.learning-mode .app-header {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: flex-start;
+    height: 100%;
+}
+
+#allWordsCardBtn .category-name,
+#allWordsCardBtn .category-meta,
+#allWordsCardBtn .category-progress {
+    margin: 0;
 }
 
 #allWordsCardBtn .category-progress {
     position: relative;
-    padding-bottom: 24px;
+    padding-bottom: 0;
+    margin-top: 0;
+    width: 100%;
+}
+
+#allWordsCardBtn .category-progress-bar {
+    width: 100%;
 }
 
 #allWordsCardBtn .category-progress-text {
@@ -10437,9 +10460,8 @@ body.learning-mode .bottom-nav {
 .category-meta .school-list {
     margin-top: 8px;
     padding: 10px 12px;
-    background: #f8fafc;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    background: #e0f2fe;
+    border-radius: 0;
 }
 
 .category-meta .school-list.hidden {
