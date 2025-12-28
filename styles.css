@@ -2365,7 +2365,7 @@ body.learning-mode .app-header {
     width: 140px;
     height: auto;
     object-fit: contain;
-    margin: 2px auto 0;
+    margin: 0px auto 0;
 }
 
 .weakness-text {
