@@ -1137,13 +1137,22 @@ body.learning-mode .app-header {
     margin-bottom: 1px;
 }
 
+.vocab-school-selected:not(.hidden) ~ .vocab-progress-description,
+.vocab-school-selected:not(.hidden) + * .vocab-progress-description {
+    display: none;
+}
+
+.vocab-progress-header:has(.vocab-school-selected:not(.hidden)) .vocab-progress-description {
+    display: none;
+}
+
 .school-set-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
     width: 100%;
-    padding: 8px 14px;
+    padding: 14px 14px;
     background: #f9fafb;
     color: #374151;
     border: 1px solid #d1d5db;
@@ -2297,13 +2306,6 @@ body.learning-mode .app-header {
 }
 
 /* AI分析カード */
-.category-card-ai {
-    background-image: url('lock-on.png');
-    background-repeat: no-repeat;
-    background-position: calc(100% - 20px) center;
-    background-size: 90px 90px;
-}
-
 .ai-sparkle {
     margin-right: 6px;
 }
@@ -2324,6 +2326,25 @@ body.learning-mode .app-header {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.weakness-text {
+    position: relative;
+    display: inline-block;
+    z-index: 1;
+}
+
+.lock-on-icon-small {
+    position: absolute;
+    right: -35px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
 }
 
 .category-card-ai .category-name .ai-badge {
@@ -9425,11 +9446,13 @@ body.learning-mode .bottom-nav {
 /* フィルター画面オーバーレイ */
 .filter-overlay {
     position: fixed;
-    top: calc(var(--header-height) + env(safe-area-inset-top));
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 10000;
     opacity: 0;
     transition: opacity 0.3s ease;
