@@ -2341,27 +2341,6 @@ body.learning-mode .app-header {
     align-items: center;
 }
 
-.weakness-text {
-    position: relative;
-    display: inline-block;
-}
-
-.weakness-text span {
-    position: relative;
-    z-index: 1;
-}
-
-.lock-on-icon-small {
-    position: absolute;
-    right: -20px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    pointer-events: none;
-    z-index: 0;
-}
 
 .category-card-ai .category-name .ai-badge {
     display: block;
@@ -9762,6 +9741,20 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     object-fit: contain;
     flex-shrink: 0;
     align-self: center;
+}
+
+.output-sub-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    margin-left: 20px;
+    padding-left: 16px;
+    border-left: 2px solid #e5e7eb;
+}
+
+.output-sub-options.hidden {
+    display: none;
 }
 
 .mode-radio-content {

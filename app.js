@@ -1017,7 +1017,7 @@ let isReorderModeActive = false; // 整序英作文モードかどうか
 let reorderData = []; // 整序英作文データ
 let currentReorderIndex = 0;
 let selectedLearningMode = 'card'; // 学習モード: 'card' (英語→日本語) または 'input' (日本語→英語) // 現在の整序英作文のインデックス
-let filterLearningMode = 'output'; // フィルター画面の学習モード: 'input' または 'output'
+let filterLearningMode = 'output-en-to-ja'; // フィルター画面の学習モード: 'input', 'output-en-to-ja', 'output-ja-to-en'
 let currentLearningMode = 'card'; // 現在学習中のモード: 'card' または 'input'
 let reorderAnswerSubmitted = false; // 回答が送信済みかどうか
 let reorderSelectedWords = []; // 選択された単語の配列
@@ -3500,17 +3500,32 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     // ボタンの状態とfilterLearningModeを同期（カテゴリー選択画面のトグルとは独立）
     const modeInput = document.getElementById('modeInput');
     const modeOutput = document.getElementById('modeOutput');
-    if (modeInput && modeOutput) {
+    const outputSubOptions = document.getElementById('outputSubOptions');
+    const modeOutputEnToJa = document.getElementById('modeOutputEnToJa');
+    const modeOutputJaToEn = document.getElementById('modeOutputJaToEn');
+    if (modeInput && modeOutput && modeOutputEnToJa && modeOutputJaToEn) {
         // ラジオボタンの状態を確認してfilterLearningModeを更新
         if (modeInput.checked) {
             filterLearningMode = 'input';
+            if (outputSubOptions) outputSubOptions.classList.add('hidden');
         } else if (modeOutput.checked) {
-            filterLearningMode = 'output';
+            if (outputSubOptions) outputSubOptions.classList.remove('hidden');
+            if (modeOutputEnToJa.checked) {
+                filterLearningMode = 'output-en-to-ja';
+            } else if (modeOutputJaToEn.checked) {
+                filterLearningMode = 'output-ja-to-en';
+            } else {
+                // アウトプットが選択されているがサブオプションが未選択の場合はデフォルトで英語→日本語
+                modeOutputEnToJa.checked = true;
+                filterLearningMode = 'output-en-to-ja';
+            }
         } else {
             // どちらも選択されていない場合はデフォルトで'input'
             filterLearningMode = 'input';
             modeInput.checked = true;
-            if (modeOutput) modeOutput.checked = false;
+            if (outputSubOptions) outputSubOptions.classList.add('hidden');
+            if (modeOutputEnToJa) modeOutputEnToJa.checked = false;
+            if (modeOutputJaToEn) modeOutputJaToEn.checked = false;
         }
     }
     
@@ -3521,11 +3536,12 @@ function showWordFilterView(category, categoryWords, courseTitle) {
 // 出題数選択セクションを更新
 function updateQuestionCountSection() {
     const questionCountSection = document.getElementById('questionCountSection');
-    const modeOutput = document.getElementById('modeOutput');
+    const modeOutputEnToJa = document.getElementById('modeOutputEnToJa');
+    const modeOutputJaToEn = document.getElementById('modeOutputJaToEn');
     
     if (questionCountSection) {
         const filteredWords = getFilteredWords();
-        const isOutputMode = modeOutput && modeOutput.checked;
+        const isOutputMode = (modeOutputEnToJa && modeOutputEnToJa.checked) || (modeOutputJaToEn && modeOutputJaToEn.checked);
         
         if (isOutputMode) {
             if (filteredWords.length > 10) {
@@ -3573,8 +3589,10 @@ function updateFilterInfo() {
     
     // アウトプットモードの場合、出題数選択を更新
     const questionCountSection = document.getElementById('questionCountSection');
-    const modeOutput = document.getElementById('modeOutput');
-    if (questionCountSection && modeOutput && modeOutput.checked && questionCountSection.style.display !== 'none') {
+    const modeOutputEnToJa = document.getElementById('modeOutputEnToJa');
+    const modeOutputJaToEn = document.getElementById('modeOutputJaToEn');
+    const isOutputMode = (modeOutputEnToJa && modeOutputEnToJa.checked) || (modeOutputJaToEn && modeOutputJaToEn.checked);
+    if (questionCountSection && isOutputMode && questionCountSection.style.display !== 'none') {
         updateQuestionCountOptions(filteredWords.length);
     }
 }
@@ -4702,11 +4720,18 @@ function setupEventListeners() {
     // 学習モードの変更イベント
     const modeInput = document.getElementById('modeInput');
     const modeOutput = document.getElementById('modeOutput');
+    const outputSubOptions = document.getElementById('outputSubOptions');
+    const modeOutputEnToJa = document.getElementById('modeOutputEnToJa');
+    const modeOutputJaToEn = document.getElementById('modeOutputJaToEn');
+    
     if (modeInput) {
         modeInput.addEventListener('change', () => {
             if (modeInput.checked) {
                 SoundEffects.playTap();
                 filterLearningMode = 'input';
+                if (outputSubOptions) outputSubOptions.classList.add('hidden');
+                if (modeOutputEnToJa) modeOutputEnToJa.checked = false;
+                if (modeOutputJaToEn) modeOutputJaToEn.checked = false;
                 updateQuestionCountSection();
             }
         });
@@ -4716,7 +4741,34 @@ function setupEventListeners() {
         modeOutput.addEventListener('change', () => {
             if (modeOutput.checked) {
                 SoundEffects.playTap();
-                filterLearningMode = 'output';
+                if (outputSubOptions) outputSubOptions.classList.remove('hidden');
+                // デフォルトで英語→日本語を選択
+                if (modeOutputEnToJa && !modeOutputEnToJa.checked && !modeOutputJaToEn?.checked) {
+                    modeOutputEnToJa.checked = true;
+                    filterLearningMode = 'output-en-to-ja';
+                }
+                updateQuestionCountSection();
+            }
+        });
+    }
+    
+    if (modeOutputEnToJa) {
+        modeOutputEnToJa.addEventListener('change', () => {
+            if (modeOutputEnToJa.checked) {
+                SoundEffects.playTap();
+                filterLearningMode = 'output-en-to-ja';
+                if (modeOutput) modeOutput.checked = true;
+                updateQuestionCountSection();
+            }
+        });
+    }
+    
+    if (modeOutputJaToEn) {
+        modeOutputJaToEn.addEventListener('change', () => {
+            if (modeOutputJaToEn.checked) {
+                SoundEffects.playTap();
+                filterLearningMode = 'output-ja-to-en';
+                if (modeOutput) modeOutput.checked = true;
                 updateQuestionCountSection();
             }
         });
@@ -4973,7 +5025,7 @@ function setupEventListeners() {
             }
             
             // アウトプットモードまたはテストモードの場合、出題数を制限
-            if (filterLearningMode === 'output' || filterLearningMode === 'test') {
+            if (filterLearningMode === 'output-en-to-ja' || filterLearningMode === 'output-ja-to-en' || filterLearningMode === 'test') {
                 const questionCountValue = document.getElementById('questionCountValue');
                 let questionCount = wordsToLearn.length; // デフォルトはすべて
                 if (questionCountValue && questionCountValue.dataset.count) {
@@ -5006,8 +5058,16 @@ function setupEventListeners() {
             
             // 学習を開始
             // filterLearningMode === 'input'の場合は「眺めるだけ」のカードモードとしてinitLearningを呼ぶ
-            // filterLearningMode === 'output'または未設定の場合は通常のカードモード
-            currentLearningMode = filterLearningMode === 'input' ? 'input' : (selectedLearningMode === 'input' ? 'input' : 'card');
+            // filterLearningModeに応じてcurrentLearningModeを設定
+            if (filterLearningMode === 'input') {
+                currentLearningMode = 'input';
+            } else if (filterLearningMode === 'output-en-to-ja') {
+                currentLearningMode = 'card'; // 英語→日本語はカードモード
+            } else if (filterLearningMode === 'output-ja-to-en') {
+                currentLearningMode = 'input'; // 日本語→英語は入力モード
+            } else {
+                currentLearningMode = selectedLearningMode === 'input' ? 'input' : 'card';
+            }
             initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
         });
     }
