@@ -617,6 +617,12 @@ function updateVocabSelectedSchool(school) {
         vocabSchoolSelector.classList.add('hidden');
         vocabSchoolSelected.classList.remove('hidden');
         
+        // 説明文を非表示にする
+        const vocabProgressDescription = document.querySelector('.vocab-progress-description');
+        if (vocabProgressDescription) {
+            vocabProgressDescription.classList.add('hidden');
+        }
+        
         // 変更ボタンのイベントリスナーを設定（直接高校一覧を表示）
         if (vocabSchoolChangeBtn) {
             vocabSchoolChangeBtn.onclick = () => {
@@ -640,6 +646,12 @@ function updateVocabSelectedSchool(school) {
         // 志望校が未設定の場合
         vocabSchoolSelector.classList.remove('hidden');
         vocabSchoolSelected.classList.add('hidden');
+        
+        // 説明文を表示する
+        const vocabProgressDescription = document.querySelector('.vocab-progress-description');
+        if (vocabProgressDescription) {
+            vocabProgressDescription.classList.remove('hidden');
+        }
     }
 }
 

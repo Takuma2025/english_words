@@ -2336,7 +2336,7 @@ body.learning-mode .app-header {
 
 .lock-on-icon-small {
     position: absolute;
-    right: -35px;
+    right: -20px;
     top: 50%;
     transform: translateY(-50%);
     width: 60px;
