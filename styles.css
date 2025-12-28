@@ -2343,6 +2343,19 @@ body.learning-mode .app-header {
     align-items: center;
 }
 
+.weakness-review-text {
+    font-size: 20px;
+    line-height: 1.2;
+}
+
+.lockon-image {
+    display: block;
+    width: 130px;
+    height: auto;
+    object-fit: contain;
+    margin: 0px auto -20px;
+}
+
 .weakness-text {
     position: relative;
     display: inline-block;
@@ -2421,6 +2434,7 @@ body.learning-mode .app-header {
     justify-content: center;
     position: relative;
     height: 24px;
+    margin-top: 15px;
 }
 
 .ai-analyzing .analyzing-text {
