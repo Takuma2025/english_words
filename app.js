@@ -7927,19 +7927,19 @@ function createFireworks(container) {
     const H = rect.height;
     
     const colorSets = [
-        ['#ff6b6b', '#ff8787', '#ffa8a8'], // 赤
-        ['#ffd43b', '#ffe066', '#ffec99'], // 金
-        ['#69db7c', '#8ce99a', '#b2f2bb'], // 緑
-        ['#74c0fc', '#a5d8ff', '#d0ebff'], // 青
-        ['#da77f2', '#e599f7', '#eebefa'], // 紫
-        ['#fcc2d7', '#faa2c1', '#f783ac'], // ピンク
-        ['#99e9f2', '#66d9e8', '#3bc9db'], // シアン
-        ['#ffe8cc', '#ffd8a8', '#ffc078'], // オレンジ
+        ['#ff4757', '#ff6b81', '#ff8a9b'], // 赤
+        ['#ffa502', '#ffbe4d', '#ffd580'], // オレンジ
+        ['#2ed573', '#5ce08a', '#8beba6'], // 緑
+        ['#1e90ff', '#54a9ff', '#8ac4ff'], // 青
+        ['#a55eea', '#bb7ff0', '#d4a5f5'], // 紫
+        ['#fd79a8', '#fe9bb8', '#ffbdd0'], // ピンク
+        ['#00d2d3', '#4de0e1', '#80e9ea'], // シアン
+        ['#fdcb6e', '#fed990', '#fee6b3'], // 黄
     ];
     
     // 打ち上げ花火を1つ作成
     function launchFirework(startX) {
-        const targetY = H * (0.18 + Math.random() * 0.18);
+        const targetY = H * (0.2 + Math.random() * 0.15);
         const colors = colorSets[Math.floor(Math.random() * colorSets.length)];
         
         // ロケット
@@ -7949,125 +7949,166 @@ function createFireworks(container) {
         rocket.style.top = H + 'px';
         container.appendChild(rocket);
         
-        const launchDuration = 900 + Math.random() * 300;
+        // 打ち上げ時間（ゆっくり）
+        const launchDuration = 1200 + Math.random() * 400;
         
+        // 打ち上げアニメーション
         const launchAnim = rocket.animate([
             { top: H + 'px' },
             { top: targetY + 'px' }
         ], {
             duration: launchDuration,
-            easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            easing: 'ease-out',
             fill: 'forwards'
         });
         
-        // 打ち上げ軌跡
+        // 軌跡を追加
+        const trailElements = [];
         let trailInterval = setInterval(() => {
-            const progress = launchAnim.currentTime / launchDuration;
-            if (progress >= 1) return;
-            const yPos = H - (H - targetY) * progress;
-            
             const t = document.createElement('div');
             t.className = 'fw-trail';
-            t.style.left = (startX + (Math.random() - 0.5) * 3) + 'px';
+            t.style.left = (startX + (Math.random() - 0.5) * 6) + 'px';
+            const progress = launchAnim.currentTime / launchDuration;
+            const yPos = H - (H - targetY) * progress;
             t.style.top = yPos + 'px';
-            t.style.background = `rgba(255, 250, 230, ${0.8})`;
+            t.style.background = `rgba(255, 240, 200, ${0.9 - progress * 0.5})`;
             container.appendChild(t);
+            trailElements.push(t);
             
             t.animate([
-                { opacity: 0.8 },
-                { opacity: 0 }
-            ], { duration: 300, fill: 'forwards' }).onfinish = () => t.remove();
-        }, 25);
+                { opacity: 0.9, transform: 'scale(1.2)' },
+                { opacity: 0, transform: 'scale(0.3)' }
+            ], { duration: 500, fill: 'forwards' }).onfinish = () => t.remove();
+        }, 50);
         
         launchAnim.onfinish = () => {
             clearInterval(trailInterval);
             rocket.remove();
+            trailElements.forEach(t => t.remove());
+            
+            // 爆発
             explode(startX, targetY, colors);
         };
     }
     
-    // 爆発（しだれ花火風）
+    // 爆発
     function explode(cx, cy, colors) {
-        const streakCount = 60;
+        const mainCount = 40;
+        const innerCount = 20;
         
-        // メインのしだれ
-        for (let i = 0; i < streakCount; i++) {
-            const angle = (Math.PI * 2 / streakCount) * i + (Math.random() - 0.5) * 0.15;
-            const speed = 120 + Math.random() * 60;
+        // メインの爆発（外側・大きく）
+        for (let i = 0; i < mainCount; i++) {
+            const angle = (Math.PI * 2 / mainCount) * i + (Math.random() - 0.5) * 0.2;
+            const speed = 180 + Math.random() * 80;
             const color = colors[Math.floor(Math.random() * colors.length)];
-            const duration = 1800 + Math.random() * 600;
             
-            createStreak(cx, cy, angle, speed, color, duration);
+            createParticle(cx, cy, angle, speed, color, 8 + Math.random() * 4, 2000);
         }
         
-        // 中心の白い閃光
-        for (let i = 0; i < 15; i++) {
+        // 内側の爆発
+        for (let i = 0; i < innerCount; i++) {
+            const angle = (Math.PI * 2 / innerCount) * i + Math.random() * 0.3;
+            const speed = 80 + Math.random() * 50;
+            const color = colors[0];
+            
+            createParticle(cx, cy, angle, speed, color, 6 + Math.random() * 3, 1600);
+        }
+        
+        // 白いスパーク（大きめ）
+        for (let i = 0; i < 25; i++) {
             const spark = document.createElement('div');
             spark.className = 'fw-spark';
+            spark.style.width = '4px';
+            spark.style.height = '4px';
             spark.style.left = cx + 'px';
             spark.style.top = cy + 'px';
             container.appendChild(spark);
             
             const angle = Math.random() * Math.PI * 2;
-            const dist = 15 + Math.random() * 25;
+            const dist = 40 + Math.random() * 60;
+            const endX = Math.cos(angle) * dist;
+            const endY = Math.sin(angle) * dist;
             
             spark.animate([
-                { transform: 'translate(-50%, -50%)', opacity: 1 },
-                { transform: `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`, opacity: 0 }
-            ], { duration: 400, fill: 'forwards' }).onfinish = () => spark.remove();
+                { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                { transform: `translate(${endX}px, ${endY}px) scale(0)`, opacity: 0 }
+            ], { duration: 700, easing: 'ease-out', fill: 'forwards' }).onfinish = () => spark.remove();
         }
     }
     
-    // しだれ軌跡（線状に尾を引く）
-    function createStreak(cx, cy, angle, speed, color, duration) {
-        const gravity = 50;
-        const friction = 0.97;
-        let vx = Math.cos(angle) * speed;
-        let vy = Math.sin(angle) * speed;
-        let x = cx;
-        let y = cy;
+    // パーティクル（重力で落下）
+    function createParticle(cx, cy, angle, speed, color, size, duration) {
+        const p = document.createElement('div');
+        p.className = 'fw-particle';
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.background = color;
+        p.style.left = cx + 'px';
+        p.style.top = cy + 'px';
+        container.appendChild(p);
         
-        const trailCount = 18;
-        let count = 0;
+        const vx = Math.cos(angle) * speed;
+        const vy = Math.sin(angle) * speed;
+        const gravity = 60;
         
-        const interval = setInterval(() => {
-            count++;
-            if (count > trailCount) {
-                clearInterval(interval);
+        // 物理演算でキーフレーム生成
+        const frames = [];
+        const steps = 25;
+        for (let i = 0; i <= steps; i++) {
+            const t = i / steps;
+            const time = t * (duration / 1000);
+            const x = vx * time * 0.7;
+            const y = vy * time * 0.7 + 0.5 * gravity * time * time;
+            const scale = 1 - t * 0.6;
+            const opacity = 1 - t * 0.9;
+            frames.push({
+                transform: `translate(${x}px, ${y}px) scale(${scale})`,
+                opacity: opacity
+            });
+        }
+        
+        p.animate(frames, {
+            duration: duration,
+            easing: 'ease-out',
+            fill: 'forwards'
+        }).onfinish = () => p.remove();
+        
+        // 尾を引く
+        let tailCount = 0;
+        const tailInterval = setInterval(() => {
+            tailCount++;
+            if (tailCount > 10) {
+                clearInterval(tailInterval);
                 return;
             }
             
-            const progress = count / trailCount;
-            const dt = 0.05;
+            const progress = tailCount / 10;
+            const time = progress * (duration / 1000) * 0.4;
+            const tx = cx + vx * time * 0.7;
+            const ty = cy + vy * time * 0.7 + 0.5 * gravity * time * time;
             
-            vx *= friction;
-            vy *= friction;
-            vy += gravity * dt;
-            x += vx * dt;
-            y += vy * dt;
+            const tail = document.createElement('div');
+            tail.className = 'fw-particle';
+            tail.style.width = (size * 0.5) + 'px';
+            tail.style.height = (size * 0.5) + 'px';
+            tail.style.background = color;
+            tail.style.left = tx + 'px';
+            tail.style.top = ty + 'px';
+            container.appendChild(tail);
             
-            const p = document.createElement('div');
-            p.className = 'fw-particle';
-            p.style.left = x + 'px';
-            p.style.top = y + 'px';
-            p.style.background = color;
-            container.appendChild(p);
-            
-            const fadeTime = 600 + Math.random() * 300;
-            p.animate([
-                { opacity: 1 - progress * 0.3 },
-                { opacity: 0 }
-            ], { duration: fadeTime, fill: 'forwards' }).onfinish = () => p.remove();
-            
-        }, duration / trailCount);
+            tail.animate([
+                { opacity: 0.7, transform: 'scale(1)' },
+                { opacity: 0, transform: 'scale(0.3)' }
+            ], { duration: 400, fill: 'forwards' }).onfinish = () => tail.remove();
+        }, 80);
     }
     
-    // 8発の花火
-    const launchPositions = [0.28, 0.72, 0.5, 0.35, 0.65, 0.42, 0.58, 0.5];
+    // 8発の花火を打ち上げ（ゆっくり間隔）
+    const launchPositions = [0.3, 0.7, 0.5, 0.25, 0.75, 0.4, 0.6, 0.5];
     launchPositions.forEach((xRatio, i) => {
-        setTimeout(() => {
-            launchFirework(W * xRatio + (Math.random() - 0.5) * 20);
-        }, i * 650);
+            setTimeout(() => {
+            launchFirework(W * xRatio + (Math.random() - 0.5) * 30);
+        }, i * 700);
     });
 }
 
