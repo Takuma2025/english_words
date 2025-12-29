@@ -2222,10 +2222,6 @@ body.learning-mode .app-header {
 .category-accordion-container {
     background: #ffffff;
     border: none;
-    border-top: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
-    border-left: none;
-    border-right: none;
     overflow: hidden;
 }
 
@@ -2236,22 +2232,14 @@ body.learning-mode .app-header {
     padding: 16px;
     background: #ffffff;
     border: none;
-    border-top: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
-    border-left: none;
-    border-right: none;
     text-align: left;
     cursor: pointer;
     transition: background-color 0.1s;
     position: relative;
 }
 
-.category-accordion-item:first-child {
-    border-top: none;
-}
-
-.category-accordion-item:last-child {
-    border-bottom: none;
+.category-accordion-item + .category-accordion-item {
+    border-top: 1px solid #e5e7eb;
 }
 
 .category-accordion-item:hover {
@@ -2265,7 +2253,6 @@ body.learning-mode .app-header {
 /* 日常生活でよく使う生活語彙（白） */
 .category-accordion-item-green {
     background: #ffffff;
-    border-left: none;
 }
 
 .category-accordion-item-green:hover {
@@ -2279,8 +2266,6 @@ body.learning-mode .app-header {
 /* 英文でよく登場する機能語（白） */
 .category-accordion-item-purple {
     background: #ffffff;
-    border-left: none;
-    border-top: 0.5px solid #e5e7eb;
 }
 
 .category-accordion-item-purple:hover {
