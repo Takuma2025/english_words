@@ -7920,208 +7920,155 @@ function hideGoalAchievedCelebration() {
     }, 500);
 }
 
-// 目標達成用の花火アニメーション（Canvas版・軽量化）
+// 目標達成用の花火アニメーション（リアル版）
 function createFireworks(container) {
-    // キャンバスを作成
-    const canvas = document.createElement('canvas');
-    canvas.className = 'fireworks-canvas';
     const rect = container.getBoundingClientRect();
-    canvas.width = rect.width || window.innerWidth;
-    canvas.height = rect.height || window.innerHeight;
-    container.appendChild(canvas);
+    const W = rect.width;
+    const H = rect.height;
     
-    const ctx = canvas.getContext('2d');
-    const particles = [];
-    const rockets = [];
-    const gravity = 0.08;
-    const friction = 0.98;
-    
-    // 花火の色（RGB形式で保持）
-    const colors = [
-        [255, 51, 102],   // ピンク
-        [0, 212, 255],    // シアン
-        [255, 215, 0],    // ゴールド
-        [255, 107, 53],   // オレンジ
-        [124, 77, 255],   // 紫
-        [0, 230, 118],    // エメラルド
-        [255, 23, 68],    // 赤
-        [41, 121, 255],   // 青
+    const colorSets = [
+        ['#ff6b6b', '#ff8787', '#ffa8a8'], // 赤
+        ['#ffd43b', '#ffe066', '#ffec99'], // 金
+        ['#69db7c', '#8ce99a', '#b2f2bb'], // 緑
+        ['#74c0fc', '#a5d8ff', '#d0ebff'], // 青
+        ['#da77f2', '#e599f7', '#eebefa'], // 紫
+        ['#fcc2d7', '#faa2c1', '#f783ac'], // ピンク
+        ['#99e9f2', '#66d9e8', '#3bc9db'], // シアン
+        ['#ffe8cc', '#ffd8a8', '#ffc078'], // オレンジ
     ];
     
-    // 花火を打ち上げる
-    function launchRocket() {
-        const x = canvas.width * (0.2 + Math.random() * 0.6);
-        const targetY = canvas.height * (0.2 + Math.random() * 0.25);
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        rockets.push({
-            x: x,
-            y: canvas.height,
-            targetY: targetY,
-            vy: -(8 + Math.random() * 3),
-            vx: (Math.random() - 0.5) * 1.5,
-            color: color,
-            trail: []
+    // 打ち上げ花火を1つ作成
+    function launchFirework(startX) {
+        const targetY = H * (0.18 + Math.random() * 0.18);
+        const colors = colorSets[Math.floor(Math.random() * colorSets.length)];
+        
+        // ロケット
+        const rocket = document.createElement('div');
+        rocket.className = 'fw-rocket';
+        rocket.style.left = startX + 'px';
+        rocket.style.top = H + 'px';
+        container.appendChild(rocket);
+        
+        const launchDuration = 900 + Math.random() * 300;
+        
+        const launchAnim = rocket.animate([
+            { top: H + 'px' },
+            { top: targetY + 'px' }
+        ], {
+            duration: launchDuration,
+            easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            fill: 'forwards'
         });
+        
+        // 打ち上げ軌跡
+        let trailInterval = setInterval(() => {
+            const progress = launchAnim.currentTime / launchDuration;
+            if (progress >= 1) return;
+            const yPos = H - (H - targetY) * progress;
+            
+            const t = document.createElement('div');
+            t.className = 'fw-trail';
+            t.style.left = (startX + (Math.random() - 0.5) * 3) + 'px';
+            t.style.top = yPos + 'px';
+            t.style.background = `rgba(255, 250, 230, ${0.8})`;
+            container.appendChild(t);
+            
+            t.animate([
+                { opacity: 0.8 },
+                { opacity: 0 }
+            ], { duration: 300, fill: 'forwards' }).onfinish = () => t.remove();
+        }, 25);
+        
+        launchAnim.onfinish = () => {
+            clearInterval(trailInterval);
+            rocket.remove();
+            explode(startX, targetY, colors);
+        };
     }
     
-    // 爆発を作成
-    function explode(rocket) {
-        const particleCount = 50; // パーティクル数を削減
-        const baseColor = rocket.color;
+    // 爆発（しだれ花火風）
+    function explode(cx, cy, colors) {
+        const streakCount = 60;
         
-        for (let i = 0; i < particleCount; i++) {
-            const angle = (Math.PI * 2 / particleCount) * i + Math.random() * 0.3;
-            const speed = 2 + Math.random() * 4;
+        // メインのしだれ
+        for (let i = 0; i < streakCount; i++) {
+            const angle = (Math.PI * 2 / streakCount) * i + (Math.random() - 0.5) * 0.15;
+            const speed = 120 + Math.random() * 60;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const duration = 1800 + Math.random() * 600;
             
-            // 色にバリエーションを追加
-            const colorVariation = 0.7 + Math.random() * 0.3;
-            const r = Math.min(255, Math.floor(baseColor[0] * colorVariation));
-            const g = Math.min(255, Math.floor(baseColor[1] * colorVariation));
-            const b = Math.min(255, Math.floor(baseColor[2] * colorVariation));
-            
-            particles.push({
-                x: rocket.x,
-                y: rocket.y,
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
-                r: r, g: g, b: b,
-                life: 60 + Math.random() * 30,
-                maxLife: 90,
-                size: 2 + Math.random() * 2
-            });
+            createStreak(cx, cy, angle, speed, color, duration);
         }
         
-        // 白いスパーク（少量）
-        for (let i = 0; i < 10; i++) {
+        // 中心の白い閃光
+        for (let i = 0; i < 15; i++) {
+            const spark = document.createElement('div');
+            spark.className = 'fw-spark';
+            spark.style.left = cx + 'px';
+            spark.style.top = cy + 'px';
+            container.appendChild(spark);
+            
             const angle = Math.random() * Math.PI * 2;
-            const speed = 3 + Math.random() * 5;
-            particles.push({
-                x: rocket.x,
-                y: rocket.y,
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
-                r: 255, g: 255, b: 255,
-                life: 20 + Math.random() * 15,
-                maxLife: 35,
-                size: 1.5
-            });
+            const dist = 15 + Math.random() * 25;
+            
+            spark.animate([
+                { transform: 'translate(-50%, -50%)', opacity: 1 },
+                { transform: `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px)`, opacity: 0 }
+            ], { duration: 400, fill: 'forwards' }).onfinish = () => spark.remove();
         }
     }
     
-    // アニメーションループ
-    let animationId;
-    let launchCount = 0;
-    const maxLaunches = 10;
-    let lastLaunchTime = 0;
-    const launchInterval = 500;
-    let startTime = Date.now();
-    let isRunning = true;
-    
-    function animate() {
-        if (!isRunning) return;
+    // しだれ軌跡（線状に尾を引く）
+    function createStreak(cx, cy, angle, speed, color, duration) {
+        const gravity = 50;
+        const friction = 0.97;
+        let vx = Math.cos(angle) * speed;
+        let vy = Math.sin(angle) * speed;
+        let x = cx;
+        let y = cy;
         
-        const currentTime = Date.now();
+        const trailCount = 18;
+        let count = 0;
         
-        // 背景をクリア（軌跡効果）
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // 新しい花火を打ち上げ
-        if (launchCount < maxLaunches && currentTime - lastLaunchTime > launchInterval) {
-            launchRocket();
-            launchCount++;
-            lastLaunchTime = currentTime;
-        }
-        
-        // ロケットを更新・描画
-        for (let i = rockets.length - 1; i >= 0; i--) {
-            const r = rockets[i];
-            
-            // 軌跡を保存
-            r.trail.push({ x: r.x, y: r.y });
-            if (r.trail.length > 8) r.trail.shift();
-            
-            r.vy += gravity * 0.4;
-            r.x += r.vx;
-            r.y += r.vy;
-            
-            // 軌跡を描画
-            for (let j = 0; j < r.trail.length; j++) {
-                const alpha = j / r.trail.length;
-                ctx.beginPath();
-                ctx.arc(r.trail[j].x, r.trail[j].y, 2 * alpha, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 220, 150, ${alpha * 0.6})`;
-                ctx.fill();
+        const interval = setInterval(() => {
+            count++;
+            if (count > trailCount) {
+                clearInterval(interval);
+                return;
             }
             
-            // ロケット本体
-            ctx.beginPath();
-            ctx.arc(r.x, r.y, 3, 0, Math.PI * 2);
-            ctx.fillStyle = '#fff';
-            ctx.fill();
+            const progress = count / trailCount;
+            const dt = 0.05;
             
-            // 爆発条件
-            if (r.vy >= -1 || r.y <= r.targetY) {
-                explode(r);
-                rockets.splice(i, 1);
-            }
-        }
-        
-        // パーティクルを更新・描画
-        for (let i = particles.length - 1; i >= 0; i--) {
-            const p = particles[i];
+            vx *= friction;
+            vy *= friction;
+            vy += gravity * dt;
+            x += vx * dt;
+            y += vy * dt;
             
-            p.vx *= friction;
-            p.vy *= friction;
-            p.vy += gravity;
-            p.x += p.vx;
-            p.y += p.vy;
-            p.life--;
+            const p = document.createElement('div');
+            p.className = 'fw-particle';
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            p.style.background = color;
+            container.appendChild(p);
             
-            const alpha = p.life / p.maxLife;
-            const size = p.size * alpha;
+            const fadeTime = 600 + Math.random() * 300;
+            p.animate([
+                { opacity: 1 - progress * 0.3 },
+                { opacity: 0 }
+            ], { duration: fadeTime, fill: 'forwards' }).onfinish = () => p.remove();
             
-            // パーティクル描画
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${p.r}, ${p.g}, ${p.b}, ${alpha})`;
-            ctx.fill();
-            
-            // 軽い輝き効果
-            if (alpha > 0.5) {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, size * 1.5, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${p.r}, ${p.g}, ${p.b}, ${alpha * 0.3})`;
-                ctx.fill();
-            }
-            
-            if (p.life <= 0) {
-                particles.splice(i, 1);
-            }
-        }
-        
-        // 終了判定
-        const elapsed = currentTime - startTime;
-        if (elapsed > 8000 && rockets.length === 0 && particles.length === 0) {
-            isRunning = false;
-            cancelAnimationFrame(animationId);
-            return;
-        }
-        
-        animationId = requestAnimationFrame(animate);
+        }, duration / trailCount);
     }
     
-    // 開始
-    launchRocket();
-    lastLaunchTime = Date.now();
-    launchCount = 1;
-    animate();
-    
-    // クリーンアップ用
-    canvas._stopFireworks = () => {
-        isRunning = false;
-        cancelAnimationFrame(animationId);
-    };
+    // 8発の花火
+    const launchPositions = [0.28, 0.72, 0.5, 0.35, 0.65, 0.42, 0.58, 0.5];
+    launchPositions.forEach((xRatio, i) => {
+        setTimeout(() => {
+            launchFirework(W * xRatio + (Math.random() - 0.5) * 20);
+        }, i * 650);
+    });
 }
 
 // 完了画面を閉じる
