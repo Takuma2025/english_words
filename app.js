@@ -7610,10 +7610,10 @@ function displayCurrentWord() {
     const posShort = getPartOfSpeechShort(word.partOfSpeech || '');
     const posClass = getPartOfSpeechClass(word.partOfSpeech || '');
     
-    // 英単語と品詞を一緒に表示（品詞を左横に）
+    // 英単語と品詞を一緒に表示（品詞を左横に）- アウトプットモードでは非表示
     const englishWordWrapper = elements.englishWord.parentElement;
     let posElementFront = document.getElementById('posInlineFront');
-    if (posShort) {
+    if (posShort && currentLearningMode === 'input') {
         if (!posElementFront) {
             posElementFront = document.createElement('span');
             posElementFront.id = 'posInlineFront';

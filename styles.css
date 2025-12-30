@@ -4580,7 +4580,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-expand-meaning-pos {
-    margin-top: 2px !important;
+    margin-top: 6px !important;
     font-size: 12px !important;
     padding: 2px 3px !important;
     border-radius: 2px;
@@ -9461,7 +9461,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .goal-achieved-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(59, 130, 246, 0.4);
+    background: rgba(59, 130, 246, 0.15);
     z-index: 10003;
     display: flex;
     align-items: center;
@@ -9491,7 +9491,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .goal-achieved-content {
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 16px;
     overflow: hidden;
     max-width: 340px;
