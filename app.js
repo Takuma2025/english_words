@@ -1037,7 +1037,7 @@ let currentReorderIndex = 0;
 let selectedLearningMode = 'card'; // 学習モード: 'card' (英語→日本語) または 'input' (日本語→英語) // 現在の整序英作文のインデックス
 let filterLearningMode = 'output'; // フィルター画面の学習モード: 'input' または 'output'
 let currentLearningMode = 'card'; // 現在学習中のモード: 'card' または 'input'
-let inputListViewMode = 'flip'; // 単語一覧の表示モード: 'flip' (フリップ) または 'expand' (展開)
+let inputListViewMode = 'expand'; // 単語一覧の表示モード: 'flip' (フリップ) または 'expand' (展開)
 let reorderAnswerSubmitted = false; // 回答が送信済みかどうか
 let reorderSelectedWords = []; // 選択された単語の配列
 let reorderTouchData = { // タッチドラッグ用のデータ
@@ -7390,20 +7390,11 @@ function renderInputListView(words) {
             
             if (word.example && (word.example.english || word.example.japanese)) {
                 const exampleBox = document.createElement('div');
-                exampleBox.className = 'example-container input-list-example';
-                
-                const exampleLabel = document.createElement('span');
-                exampleLabel.className = 'example-label';
-                exampleLabel.textContent = '用例';
-                exampleBox.appendChild(exampleLabel);
-                
-                const exampleText = document.createElement('div');
-                exampleText.className = 'example-text';
+                exampleBox.className = 'input-list-example';
                 
                 if (word.example.english) {
                     const exEn = document.createElement('div');
-                    exEn.className = 'example-english';
-                    // 単語を太字にする
+                    exEn.className = 'input-list-example-en';
                     const exampleEn = word.example.english;
                     if (exampleEn && word.word) {
                         const escaped = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -7417,17 +7408,16 @@ function renderInputListView(words) {
                     } else {
                         exEn.textContent = exampleEn;
                     }
-                    exampleText.appendChild(exEn);
+                    exampleBox.appendChild(exEn);
                 }
                 
                 if (word.example.japanese) {
                     const exJa = document.createElement('div');
-                    exJa.className = 'example-japanese';
+                    exJa.className = 'input-list-example-ja';
                     exJa.textContent = word.example.japanese;
-                    exampleText.appendChild(exJa);
+                    exampleBox.appendChild(exJa);
                 }
                 
-                exampleBox.appendChild(exampleText);
                 back.appendChild(exampleBox);
             }
             

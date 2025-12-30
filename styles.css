@@ -4136,13 +4136,16 @@ body.reorder-mode-active .word-card-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
+    padding: 5px 10px;
     height: 28px;
     border: none;
     background: transparent;
     border-radius: 6px;
     cursor: pointer;
     color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
     transition: all 0.2s ease;
 }
 
@@ -4155,11 +4158,6 @@ body.reorder-mode-active .word-card-container {
     background: #ffffff;
     color: #0055ca;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.input-list-mode-btn svg {
-    width: 18px;
-    height: 18px;
 }
 
 .input-list-scroll {
@@ -4256,6 +4254,14 @@ body.reorder-mode-active .word-card-container {
     padding: 5px;
 }
 
+.input-list-star-btn.active {
+    color: #4b5563;
+}
+
+.input-list-star-btn.active svg {
+    fill: #4b5563;
+}
+
 .input-list-row {
     width: 100%;
 }
@@ -4281,10 +4287,6 @@ body.reorder-mode-active .word-card-container {
     font-size: 12px;
 }
 
-.input-list-example {
-    margin-top: 0;
-}
-
 .input-list-back {
     position: absolute;
     top: 0;
@@ -4295,7 +4297,7 @@ body.reorder-mode-active .word-card-container {
     flex-direction: column;
     justify-content: center;
     gap: 4px;
-    background: #f8fafc;
+    background: #ffffff;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
@@ -4345,7 +4347,7 @@ body.reorder-mode-active .word-card-container {
 .input-list-appearance {
     display: inline-flex;
     align-items: center;
-    color: #4b5563;
+    color: var(--warning);
     border: none;
     background: transparent;
     padding: 0;
@@ -4355,7 +4357,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-appearance .appearance-count {
-    color: #4b5563;
+    color: var(--warning);
     font-weight: 600;
     font-size: 14px;
     letter-spacing: 2px;
@@ -4407,25 +4409,31 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-example {
-    margin-top: 2px;
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-top: 6px;
 }
 
-.input-list-example .example-text {
-    position: static;
-    background: transparent;
-    padding: 0;
-    margin-top: 0;
+.input-list-example-en {
+    font-size: 13px;
+    color: #1f2937;
+    font-family: "Times New Roman", Times, serif;
+    line-height: 1.4;
+    margin-bottom: 2px;
     word-break: break-word;
     overflow-wrap: break-word;
 }
 
-.input-list-example .example-english {
-    font-size: 18px;
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+.input-list-example-en strong {
+    color: #0055ca;
+    font-weight: 700;
 }
 
-.input-list-example .example-japanese {
-    font-size: 17px;
+.input-list-example-ja {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.4;
 }
 
 /* 展開モード（英単語の下に意味と用例を表示） */
@@ -4461,8 +4469,8 @@ body.reorder-mode-active .word-card-container {
 
 .input-list-expand-number {
     position: absolute;
-    top: 8px;
-    left: 10px;
+    top: 0;
+    left: 0;
     font-size: 10px;
     font-weight: 700;
     color: #ffffff;
@@ -4535,7 +4543,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-expand-star-btn.active svg {
-    fill: #3b82f6;
+    fill: #4b5563;
 }
 
 .input-list-expand-star-btn svg {
@@ -4545,7 +4553,8 @@ body.reorder-mode-active .word-card-container {
 
 .input-list-expand-meaning {
     font-size: 14px;
-    color: #374151;
+    color: #dc2626;
+    font-weight: 600;
     line-height: 1.5;
     margin-top: 6px;
     margin-bottom: 6px;
@@ -4590,8 +4599,8 @@ body.reorder-mode-active .word-card-container {
     .input-list-expand-number {
         font-size: 9px;
         padding: 2px 6px;
-        top: 6px;
-        left: 8px;
+        top: 0;
+        left: 0;
     }
     
     .input-list-expand-word {
@@ -4645,11 +4654,16 @@ body.reorder-mode-active .word-card-container {
     .input-list-meaning {
         font-size: 18px;
     }
-    .input-list-example .example-english {
-        font-size: 16px;
+    .input-list-example {
+        padding: 6px 8px;
     }
-    .input-list-example .example-japanese {
-        font-size: 15px;
+    
+    .input-list-example-en {
+        font-size: 12px;
+    }
+    
+    .input-list-example-ja {
+        font-size: 11px;
     }
 }
 
