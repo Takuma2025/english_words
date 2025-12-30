@@ -2567,6 +2567,9 @@ function updateHeaderButtons(mode, title = '') {
 
 // カテゴリー選択画面を表示
 function showCategorySelection() {
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    
     // タイマーを停止
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -2656,13 +2659,67 @@ function showCategorySelection() {
         requestAnimationFrame(() => {
             updateVocabProgressBar();
             
-            // 目標達成のチェック（ホーム画面に戻った時のみ）
+            // 目標達成のチェック（ホーム画面に戻った時）
             // データが確実に読み込まれるように少し遅延させる
             setTimeout(() => {
-                checkAndShowGoalAchievement();
+                // 学習中断時も目標達成をチェック
+                checkGoalAchievementOnReturn();
             }, 300);
         });
     });
+}
+
+// ホーム画面に戻った時の目標達成チェック（学習完了・中断問わず）
+function checkGoalAchievementOnReturn() {
+    console.log('checkGoalAchievementOnReturn 呼び出し', {
+        pendingGoalCelebration,
+        hasReachedGoalBefore
+    });
+    
+    // 既に表示待ちの場合はそのまま表示
+    if (pendingGoalCelebration) {
+        pendingGoalCelebration = false;
+        hasReachedGoalBefore = true;
+        const selectedSchool = loadSelectedSchool();
+        if (selectedSchool) {
+            setTimeout(() => {
+                showGoalAchievedCelebration(selectedSchool);
+            }, 300);
+        }
+        return;
+    }
+    
+    // 既に達成済みの場合は何もしない
+    if (hasReachedGoalBefore) {
+        console.log('既に目標達成済みです');
+        return;
+    }
+    
+    // 目標達成をチェック
+    const selectedSchool = loadSelectedSchool();
+    if (!selectedSchool) {
+        console.log('目標達成チェック: 志望校が設定されていません');
+        return;
+    }
+    
+    const learnedWords = calculateTotalLearnedWords();
+    const requiredWords = calculateRequiredWords(selectedSchool.hensachi, selectedSchool.name);
+    const hasReachedRequired = requiredWords > 0 && learnedWords >= requiredWords;
+    
+    console.log('ホーム画面戻り時の目標達成チェック:', {
+        learnedWords,
+        requiredWords,
+        hasReachedRequired,
+        hasReachedGoalBefore
+    });
+    
+    if (hasReachedRequired) {
+        console.log('目標達成を検出！花火を表示します');
+        hasReachedGoalBefore = true;
+        setTimeout(() => {
+            showGoalAchievedCelebration(selectedSchool);
+        }, 300);
+    }
 }
 
 // 目標達成チェック関数（分離して確実に実行されるように）
@@ -2998,7 +3055,10 @@ function initInputModeLearning(category, words, startIndex = 0) {
 }
 
 // サブカテゴリー選択画面を表示
-function showSubcategorySelection(parentCategory) {
+function showSubcategorySelection(parentCategory, skipAnimation = false) {
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    
     console.log('showSubcategorySelection called with:', parentCategory);
     const courseSelection = document.getElementById('courseSelection');
     const courseList = document.getElementById('courseList');
@@ -3156,21 +3216,23 @@ function showSubcategorySelection(parentCategory) {
     // ヘッダーの戻るボタンを表示（先に設定）
     updateHeaderButtons('course', parentCategory);
     
-    // 画面遷移（スライドイン）
+    // 画面遷移
     const categorySelection = document.getElementById('categorySelection');
     
     if (categorySelection && courseSelection) {
         // カテゴリー選択画面を即座に非表示
         categorySelection.classList.add('hidden');
         
-        // コース選択画面を右からスライドイン
+        // コース選択画面を表示
         courseSelection.classList.remove('hidden');
-        courseSelection.classList.add('slide-in-right');
         
-        // アニメーション完了後にクラスをクリーンアップ
-        setTimeout(() => {
-            courseSelection.classList.remove('slide-in-right');
-        }, 300);
+        // アニメーションが必要な場合のみスライドイン
+        if (!skipAnimation) {
+            courseSelection.classList.add('slide-in-right');
+            setTimeout(() => {
+                courseSelection.classList.remove('slide-in-right');
+            }, 300);
+        }
     }
     
     // ナビゲーション状態を更新
@@ -3182,6 +3244,9 @@ function showSubcategorySelection(parentCategory) {
 
 // コース選択画面を表示（100刻み）
 function showCourseSelection(category, categoryWords) {
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    
     console.log('showCourseSelection called with category:', category, 'words:', categoryWords ? categoryWords.length : 'null');
     const courseSelection = document.getElementById('courseSelection');
     const courseList = document.getElementById('courseList');
@@ -3545,6 +3610,9 @@ let currentFilterCategory = '';
 let currentFilterCourseTitle = '';
 
 function showWordFilterView(category, categoryWords, courseTitle) {
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    
     currentFilterCategory = category;
     currentFilterWords = categoryWords;
     currentFilterCourseTitle = courseTitle || category;
@@ -4748,6 +4816,31 @@ function setupEventListeners() {
             
             if (elements.mainContent) {
                 elements.mainContent.classList.add('hidden');
+            }
+            
+            // 日常生活でよく使う生活語彙のサブカテゴリー
+            const dailyLifeSubcategories = [
+                '家族・家に関する単語', '数字に関する単語', '日用品・楽器に関する単語', '体に関する単語',
+                '色に関する単語', '食べ物・飲み物に関する単語', '町の施設に関する単語', '乗り物に関する単語',
+                '職業に関する単語', 'スポーツに関する単語', '曜日・月・季節に関する単語', '時間に関する単語',
+                '動物に関する単語', '自然・天気に関する単語', '学校に関する単語', '国名や地域に関する単語',
+                '方角・方向に関する単語', '行事・余暇に関する単語'
+            ];
+            
+            // 英文でよく登場する機能語のサブカテゴリー
+            const functionWordSubcategories = [
+                '冠詞', '代名詞', '不定代名詞', '副詞（否定・程度・焦点）', '疑問詞',
+                '限定詞（数量）', '前置詞', '助動詞・助動詞的表現', '接続詞', '関係代名詞', '間投詞'
+            ];
+            
+            // カテゴリー別に覚える単語のサブカテゴリーの場合は親カテゴリーの細分化メニューに戻る（アニメーションなし）
+            if (selectedCategory && dailyLifeSubcategories.includes(selectedCategory)) {
+                showSubcategorySelection('日常生活でよく使う生活語彙', true);
+                return;
+            }
+            if (selectedCategory && functionWordSubcategories.includes(selectedCategory)) {
+                showSubcategorySelection('英文でよく登場する機能語', true);
+                return;
             }
             
             // コース選択画面に戻る
@@ -7098,6 +7191,14 @@ function renderInputListView(words) {
     
     if (!listView || !container) return;
     
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    container.scrollTop = 0;
+    listView.scrollTop = 0;
+    if (elements.mainContent) {
+        elements.mainContent.scrollTop = 0;
+    }
+    
     container.innerHTML = '';
     
     if (!Array.isArray(words) || words.length === 0) {
@@ -7440,6 +7541,16 @@ function renderInputListView(words) {
             container.appendChild(item);
         }
     });
+    
+    // 描画完了後にスクロール位置を一番上にリセット
+    setTimeout(() => {
+        window.scrollTo(0, 0);
+        listView.scrollTop = 0;
+        container.scrollTop = 0;
+        if (elements.mainContent) {
+            elements.mainContent.scrollTop = 0;
+        }
+    }, 0);
 }
 
 // 単語一覧のモード切り替えイベントを設定
