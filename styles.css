@@ -1495,7 +1495,7 @@ body.learning-mode .app-header {
 
 
 .vocab-progress-fill:not(.insufficient):not(.no-school) {
-    background: linear-gradient(90deg, #ec4899 0%, #f472b6 100%);
+    background: linear-gradient(90deg, #1e3a8a 0%, #1e40af 100%);
 }
 
 .vocab-progress-fill:not(.insufficient):not(.no-school)::before {
@@ -1588,7 +1588,7 @@ body.learning-mode .app-header {
 }
 
 .vocab-progress-count-bike.reached .vocab-count-number {
-    color: #ec4899; /* ピンク */
+    color: #1e3a8a; /* 紺色 */
 }
 
 .vocab-progress-requirement {
@@ -2350,7 +2350,7 @@ body.learning-mode .app-header {
     height: 6px;
     background: #e5e7eb;
     border-radius: 3px;
-    overflow: hidden;
+    overflow: visible;
     position: relative;
 }
 
@@ -2384,16 +2384,20 @@ body.learning-mode .app-header {
 }
 
 .accordion-progress-bar.accordion-progress-complete::after {
-    content: 'COMPLETE!!';
+    content: "COMPLETE!!";
     position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 8px;
-    font-weight: bold;
-    color: white;
-    letter-spacing: 0.5px;
-    z-index: 3;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 1px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    text-transform: uppercase;
+    z-index: 10;
+    pointer-events: none;
 }
 
 .category-card {
@@ -4278,6 +4282,15 @@ body.reorder-mode-active .word-card-container {
 
 .input-list-number.marker-wrong::after {
     display: none;
+}
+
+/* 進捗に応じた単語番号の背景色 */
+.input-list-number.marker-correct {
+    background: #3b82f6;
+}
+
+.input-list-number.marker-wrong {
+    background: #ef4444;
 }
 
 .input-list-appearance {
