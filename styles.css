@@ -1445,6 +1445,41 @@ body.learning-mode .app-header {
     border-radius: 10px;
 }
 
+/* 進捗バーの300語ごとの区切りマーカー */
+.vocab-progress-markers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.vocab-progress-marker {
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background-color: #9ca3af;
+    z-index: 4;
+}
+
+.vocab-progress-marker-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8px;
+    color: #9ca3af;
+    font-weight: 500;
+    white-space: nowrap;
+    line-height: 1;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 1px 2px;
+    border-radius: 2px;
+}
+
 .vocab-progress-fill::before {
     content: '';
     position: absolute;
@@ -1594,7 +1629,7 @@ body.learning-mode .app-header {
 .vocab-requirement-line {
     width: 0;
     height: 100%;
-    border-left: 1px dotted #3b82f6;
+    border-left: 2px dotted #3b82f6;
     position: relative;
     z-index: 5;
 }
@@ -6004,7 +6039,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(59, 130, 246, 0.3);
     z-index: 10006;
     opacity: 0;
     visibility: hidden;
@@ -6223,7 +6258,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(15, 23, 42, 0.4);
+    background: rgba(59, 130, 246, 0.3);
     backdrop-filter: blur(4px);
     z-index: 2000;
     display: flex;
@@ -6641,7 +6676,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(15, 23, 42, 0.6);
+    background: rgba(59, 130, 246, 0.35);
     backdrop-filter: blur(4px);
     z-index: 3000;
     display: flex;
@@ -9134,7 +9169,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .goal-achieved-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(59, 130, 246, 0.4);
     z-index: 10003;
     display: flex;
     align-items: center;
@@ -9330,7 +9365,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .completion-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(59, 130, 246, 0.4);
     z-index: 10002;
     display: flex;
     align-items: center;
@@ -9592,7 +9627,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(59, 130, 246, 0.3);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     z-index: 10000;

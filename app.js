@@ -443,6 +443,28 @@ function updateVocabProgressBar() {
     const totalWords = calculateTotalWords();
     const progressPercent = Math.min(100, Math.round((learnedWords / totalWords) * 100));
     
+    // 300語ごとのマーカーを生成
+    const markersContainer = document.getElementById('vocabProgressMarkers');
+    if (markersContainer) {
+        markersContainer.innerHTML = '';
+        // 300語ごとにマーカーを配置
+        for (let i = 300; i < totalWords; i += 300) {
+            const markerPercent = (i / totalWords) * 100;
+            if (markerPercent > 100) break;
+            
+            const marker = document.createElement('div');
+            marker.className = 'vocab-progress-marker';
+            marker.style.left = `${markerPercent}%`;
+            
+            const label = document.createElement('div');
+            label.className = 'vocab-progress-marker-label';
+            label.textContent = `${i}`;
+            marker.appendChild(label);
+            
+            markersContainer.appendChild(marker);
+        }
+    }
+    
     // 志望校データを取得
     const selectedSchool = loadSelectedSchool();
     const requiredWords = selectedSchool ? calculateRequiredWords(selectedSchool.hensachi, selectedSchool.name) : 0;
