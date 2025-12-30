@@ -4051,6 +4051,10 @@ body.reorder-mode-active .word-card-container {
     transform: rotateY(180deg);
 }
 
+.input-list-item.flipped .input-list-number {
+    display: none;
+}
+
 .input-list-front,
 .input-list-back {
     width: 100%;
@@ -4177,21 +4181,20 @@ body.reorder-mode-active .word-card-container {
 .input-list-appearance {
     display: inline-flex;
     align-items: center;
-    color: #ffffff;
+    color: #3b82f6;
     border: none;
-    background: #6b7280;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 13px;
+    background: transparent;
+    padding: 0;
+    font-size: 14px;
     font-weight: 600;
     white-space: nowrap;
 }
 
 .input-list-appearance .appearance-count {
-    color: #ffffff;
+    color: #3b82f6;
     font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 1px;
+    font-size: 14px;
+    letter-spacing: 2px;
 }
 
 .input-list-row {
@@ -4236,6 +4239,7 @@ body.reorder-mode-active .word-card-container {
     line-height: 1.6;
     word-break: break-word;
     overflow-wrap: break-word;
+    color: #e43030;
 }
 
 .input-list-example {

@@ -6910,7 +6910,7 @@ function renderInputListView(words) {
         
         const number = document.createElement('span');
         number.className = 'input-list-number';
-        number.textContent = word.id;
+        number.textContent = String(word.id).padStart(5, '0');
         
         // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
         let isCorrect, isWrong;
