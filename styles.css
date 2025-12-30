@@ -4123,6 +4123,45 @@ body.reorder-mode-active .word-card-container {
     font-weight: 400;
 }
 
+/* 単語一覧モード切り替えボタン */
+.input-list-mode-toggle {
+    display: flex;
+    gap: 4px;
+    background: #f3f4f6;
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.input-list-mode-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #6b7280;
+    transition: all 0.2s ease;
+}
+
+.input-list-mode-btn:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.input-list-mode-btn.active {
+    background: #ffffff;
+    color: #0055ca;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input-list-mode-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
 .input-list-scroll {
     display: flex;
     flex-direction: column;
@@ -4138,6 +4177,16 @@ body.reorder-mode-active .word-card-container {
     padding: 0;
     perspective: 1000px;
     cursor: pointer;
+}
+
+.input-list-item.marker-correct {
+    background: linear-gradient(to right, rgba(59, 130, 246, 0.08), transparent 50%);
+    border-left: 3px solid #3b82f6;
+}
+
+.input-list-item.marker-wrong {
+    background: linear-gradient(to right, rgba(239, 68, 68, 0.08), transparent 50%);
+    border-left: 3px solid #ef4444;
 }
 
 .input-list-item:last-child {
@@ -4377,6 +4426,193 @@ body.reorder-mode-active .word-card-container {
 
 .input-list-example .example-japanese {
     font-size: 17px;
+}
+
+/* 展開モード（英単語の下に意味と用例を表示） */
+.input-list-item-expand {
+    position: relative;
+    background: #ffffff;
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 10px 12px;
+    padding-top: 32px;
+    transition: background 0.15s ease;
+}
+
+.input-list-item-expand:last-child {
+    border-bottom: none;
+}
+
+.input-list-item-expand.marker-correct {
+    background: linear-gradient(to right, rgba(59, 130, 246, 0.08), transparent 50%);
+    border-left: 3px solid #3b82f6;
+}
+
+.input-list-item-expand.marker-wrong {
+    background: linear-gradient(to right, rgba(239, 68, 68, 0.08), transparent 50%);
+    border-left: 3px solid #ef4444;
+}
+
+.input-list-expand-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-list-expand-number {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #ffffff;
+    padding: 3px 7px;
+    background: #6b7280;
+    border-radius: 0;
+    font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
+    letter-spacing: 0.08em;
+}
+
+.input-list-expand-number.marker-correct {
+    background: #3b82f6;
+}
+
+.input-list-expand-number.marker-wrong {
+    background: #ef4444;
+}
+
+.input-list-expand-word-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.input-list-expand-pos {
+    font-size: 10px;
+    padding: 2px 5px;
+    background: #f3f4f6;
+    border-radius: 3px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.input-list-expand-word {
+    font-size: 21px;
+    font-weight: 700;
+    color: #111827;
+    font-family: "Times New Roman", Times, serif;
+    letter-spacing: 0.02em;
+}
+
+.input-list-expand-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.input-list-expand-appearance {
+    font-size: 11px;
+    color: #f59e0b;
+}
+
+.input-list-expand-star-btn {
+    padding: 2px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #d1d5db;
+    transition: color 0.2s ease;
+}
+
+.input-list-expand-star-btn:hover {
+    color: #9ca3af;
+}
+
+.input-list-expand-star-btn.active {
+    color: #3b82f6;
+}
+
+.input-list-expand-star-btn.active svg {
+    fill: #3b82f6;
+}
+
+.input-list-expand-star-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.input-list-expand-meaning {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.5;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+.input-list-expand-example {
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-top: 6px;
+}
+
+.input-list-expand-example-en {
+    font-size: 13px;
+    color: #1f2937;
+    font-family: "Times New Roman", Times, serif;
+    line-height: 1.4;
+    margin-bottom: 2px;
+}
+
+.input-list-expand-example-en strong {
+    color: #0055ca;
+    font-weight: 700;
+}
+
+.input-list-expand-example-ja {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+@media (max-width: 640px) {
+    .input-list-item-expand {
+        padding: 8px 10px;
+        padding-top: 28px;
+    }
+    
+    .input-list-expand-header {
+        gap: 6px;
+    }
+    
+    .input-list-expand-number {
+        font-size: 9px;
+        padding: 2px 6px;
+        top: 6px;
+        left: 8px;
+    }
+    
+    .input-list-expand-word {
+        font-size: 19px;
+    }
+    
+    .input-list-expand-meaning {
+        font-size: 13px;
+    }
+    
+    .input-list-expand-example {
+        padding: 6px 8px;
+    }
+    
+    .input-list-expand-example-en {
+        font-size: 12px;
+    }
+    
+    .input-list-expand-example-ja {
+        font-size: 11px;
+    }
 }
 
 @media (max-width: 640px) {

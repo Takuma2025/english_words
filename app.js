@@ -1037,6 +1037,7 @@ let currentReorderIndex = 0;
 let selectedLearningMode = 'card'; // 学習モード: 'card' (英語→日本語) または 'input' (日本語→英語) // 現在の整序英作文のインデックス
 let filterLearningMode = 'output'; // フィルター画面の学習モード: 'input' または 'output'
 let currentLearningMode = 'card'; // 現在学習中のモード: 'card' または 'input'
+let inputListViewMode = 'flip'; // 単語一覧の表示モード: 'flip' (フリップ) または 'expand' (展開)
 let reorderAnswerSubmitted = false; // 回答が送信済みかどうか
 let reorderSelectedWords = []; // 選択された単語の配列
 let reorderTouchData = { // タッチドラッグ用のデータ
@@ -2425,6 +2426,7 @@ function init() {
         setupEventListeners();
         initSchoolSelector();
         setupVolumeControl();
+        setupInputListModeToggle();
         updateVocabProgressBar();
         
         // スプラッシュ画面を表示
@@ -3488,6 +3490,9 @@ function showCourseSelection(category, categoryWords) {
         // LEVEL1の画像は非表示
         courseSelectionImage.style.display = 'none';
     }
+    
+    // 戻るボタン用にcategoryを保存（スライドアニメーション用）
+    window.currentSubcategoryParent = category;
     
     // ハンバーガーメニューボタンは常に表示（変更不要）
 }
@@ -5484,14 +5489,16 @@ function setupEventListeners() {
                 
                 // サブカテゴリー画面からの戻りの場合はスライドインを使用
                 if (window.currentSubcategoryParent) {
-                    // コース選択画面を即座に非表示
-                    courseSelection.classList.add('hidden');
+                    // コース選択画面を右へスライドアウト
+                    courseSelection.classList.add('slide-out-right');
                     
                     // カテゴリー選択画面を左からスライドイン
                     categorySelection.classList.remove('hidden');
                     categorySelection.classList.add('slide-in-left');
                     
                     setTimeout(() => {
+                        courseSelection.classList.remove('slide-out-right');
+                        courseSelection.classList.add('hidden');
                         categorySelection.classList.remove('slide-in-left');
                         window.currentSubcategoryParent = null;
                     }, 300);
@@ -7100,6 +7107,15 @@ function renderInputListView(words) {
     
     listView.classList.remove('hidden');
     
+    // モードに応じてコンテナにクラスを追加
+    if (inputListViewMode === 'expand') {
+        container.classList.add('expand-mode');
+        container.classList.remove('flip-mode');
+    } else {
+        container.classList.add('flip-mode');
+        container.classList.remove('expand-mode');
+    }
+    
     // 進捗マーカー用のセットを取得（小学生で習った単語の場合は各単語のカテゴリーから読み込む）
     let progressCache = {};
     if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
@@ -7127,178 +7143,342 @@ function renderInputListView(words) {
     }
     
     words.forEach((word) => {
-        const item = document.createElement('div');
-        item.className = 'input-list-item';
-        
-        const inner = document.createElement('div');
-        inner.className = 'input-list-inner';
-        
-        // 表面
-        const front = document.createElement('div');
-        front.className = 'input-list-front';
-        
-        const meta = document.createElement('div');
-        meta.className = 'input-list-meta';
-        
-        const number = document.createElement('span');
-        number.className = 'input-list-number';
-        number.textContent = String(word.id).padStart(5, '0');
-        
-        // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
-        let isCorrect, isWrong;
-        if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-            const cache = progressCache[word.category];
-            isCorrect = cache && cache.correct.has(word.id);
-            isWrong = cache && cache.wrong.has(word.id);
-        } else {
-            isCorrect = categoryCorrectSet.has(word.id);
-            isWrong = categoryWrongSet.has(word.id);
-        }
-        
-        if (isWrong) {
-            number.classList.add('marker-wrong');
-            item.classList.add('marker-wrong');
-        } else if (isCorrect) {
-            number.classList.add('marker-correct');
-            item.classList.add('marker-correct');
-        }
-        meta.appendChild(number);
-        
-        // ブックマークボタンを作成
-        const starBtn = document.createElement('button');
-        starBtn.className = 'star-btn input-list-star-btn';
-        starBtn.setAttribute('type', 'button');
-        if (reviewWords.has(word.id)) {
-            starBtn.classList.add('active');
-        }
-        starBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4h10a1 1 0 0 1 1 1v14l-6-4-6 4V5a1 1 0 0 1 1-1z"></path></svg>';
-        starBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleReviewById(word.id, starBtn);
-        });
-        starBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
-        
-        // 入試頻出度とブックマークを横並びにするラッパー
-        const appearanceWrapper = document.createElement('div');
-        appearanceWrapper.className = 'input-list-appearance-wrapper';
-        
-        if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
-            const badge = document.createElement('span');
-            badge.className = 'input-list-appearance';
-            const stars = getAppearanceStars(word.appearanceCount);
-            badge.innerHTML = `<span class="appearance-count">${stars}</span>`;
-            appearanceWrapper.appendChild(badge);
-        }
-        appearanceWrapper.appendChild(starBtn);
-        meta.appendChild(appearanceWrapper);
-        
-        const row = document.createElement('div');
-        row.className = 'input-list-row';
-        
-        const pos = document.createElement('span');
-        pos.className = 'pos-inline part-of-speech input-list-pos';
-        pos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
-        row.appendChild(pos);
-        
-        const wordEl = document.createElement('span');
-        wordEl.className = 'input-list-word';
-        wordEl.textContent = word.word;
-        row.appendChild(wordEl);
-        
-        const audioBtn = document.createElement('button');
-        audioBtn.className = 'audio-btn';
-        audioBtn.setAttribute('type', 'button');
-        audioBtn.setAttribute('aria-label', `${word.word}の音声を再生`);
-        audioBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
-        audioBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            speakWord(word.word, audioBtn);
-        });
-        row.appendChild(audioBtn);
-        
-        front.appendChild(meta);
-        front.appendChild(row);
-        
-        // 裏面
-        const back = document.createElement('div');
-        back.className = 'input-list-back';
-        
-        const meaningEl = document.createElement('div');
-        meaningEl.className = 'input-list-meaning';
-        
-        // 品詞と意味を横並びで表示
-        const meaningWrapper = document.createElement('div');
-        meaningWrapper.className = 'input-list-meaning-wrapper';
-        const meaningPos = document.createElement('span');
-        meaningPos.className = 'pos-inline part-of-speech input-list-meaning-pos';
-        meaningPos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
-        meaningWrapper.appendChild(meaningPos);
-        const meaningText = document.createElement('span');
-        meaningText.textContent = word.meaning || '';
-        meaningWrapper.appendChild(meaningText);
-        meaningEl.appendChild(meaningWrapper);
-        back.appendChild(meaningEl);
-        
-        if (word.example && (word.example.english || word.example.japanese)) {
-            const exampleBox = document.createElement('div');
-            exampleBox.className = 'example-container input-list-example';
+        // 展開モードの場合
+        if (inputListViewMode === 'expand') {
+            const item = document.createElement('div');
+            item.className = 'input-list-item-expand';
             
-            const exampleLabel = document.createElement('span');
-            exampleLabel.className = 'example-label';
-            exampleLabel.textContent = '用例';
-            exampleBox.appendChild(exampleLabel);
+            // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
+            let isCorrect, isWrong;
+            if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+                const cache = progressCache[word.category];
+                isCorrect = cache && cache.correct.has(word.id);
+                isWrong = cache && cache.wrong.has(word.id);
+            } else {
+                isCorrect = categoryCorrectSet.has(word.id);
+                isWrong = categoryWrongSet.has(word.id);
+            }
             
-            const exampleText = document.createElement('div');
-            exampleText.className = 'example-text';
+            if (isWrong) {
+                item.classList.add('marker-wrong');
+            } else if (isCorrect) {
+                item.classList.add('marker-correct');
+            }
             
-            if (word.example.english) {
-                const exEn = document.createElement('div');
-                exEn.className = 'example-english';
-                // 単語を太字にする
-                const exampleEn = word.example.english;
-                if (exampleEn && word.word) {
-                    const escaped = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
-                    const highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
-                    let finalText = highlighted;
-                    if (/[.!?]\s*$/.test(exampleEn)) {
-                        finalText = highlighted.replace(/^(\s*(?:<[^>]+>\s*)*)([a-z])/, (_m, prefix, first) => `${prefix}${first.toUpperCase()}`);
+            // ヘッダー部分（番号、英単語、音声、ブックマーク）
+            const header = document.createElement('div');
+            header.className = 'input-list-expand-header';
+            
+            const number = document.createElement('span');
+            number.className = 'input-list-expand-number';
+            number.textContent = String(word.id).padStart(5, '0');
+            if (isWrong) {
+                number.classList.add('marker-wrong');
+            } else if (isCorrect) {
+                number.classList.add('marker-correct');
+            }
+            header.appendChild(number);
+            
+            const wordRow = document.createElement('div');
+            wordRow.className = 'input-list-expand-word-row';
+            
+            const pos = document.createElement('span');
+            pos.className = 'pos-inline part-of-speech input-list-expand-pos';
+            pos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
+            wordRow.appendChild(pos);
+            
+            const wordEl = document.createElement('span');
+            wordEl.className = 'input-list-expand-word';
+            wordEl.textContent = word.word;
+            wordRow.appendChild(wordEl);
+            
+            const audioBtn = document.createElement('button');
+            audioBtn.className = 'audio-btn';
+            audioBtn.setAttribute('type', 'button');
+            audioBtn.setAttribute('aria-label', `${word.word}の音声を再生`);
+            audioBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+            audioBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                speakWord(word.word, audioBtn);
+            });
+            wordRow.appendChild(audioBtn);
+            
+            header.appendChild(wordRow);
+            
+            // 右側のアクション（頻出度、ブックマーク）
+            const actions = document.createElement('div');
+            actions.className = 'input-list-expand-actions';
+            
+            if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
+                const badge = document.createElement('span');
+                badge.className = 'input-list-expand-appearance';
+                const stars = getAppearanceStars(word.appearanceCount);
+                badge.innerHTML = `<span class="appearance-count">${stars}</span>`;
+                actions.appendChild(badge);
+            }
+            
+            const starBtn = document.createElement('button');
+            starBtn.className = 'star-btn input-list-expand-star-btn';
+            starBtn.setAttribute('type', 'button');
+            if (reviewWords.has(word.id)) {
+                starBtn.classList.add('active');
+            }
+            starBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4h10a1 1 0 0 1 1 1v14l-6-4-6 4V5a1 1 0 0 1 1-1z"></path></svg>';
+            starBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleReviewById(word.id, starBtn);
+            });
+            actions.appendChild(starBtn);
+            
+            header.appendChild(actions);
+            item.appendChild(header);
+            
+            // 意味
+            const meaningEl = document.createElement('div');
+            meaningEl.className = 'input-list-expand-meaning';
+            meaningEl.textContent = word.meaning || '';
+            item.appendChild(meaningEl);
+            
+            // 用例
+            if (word.example && (word.example.english || word.example.japanese)) {
+                const exampleBox = document.createElement('div');
+                exampleBox.className = 'input-list-expand-example';
+                
+                if (word.example.english) {
+                    const exEn = document.createElement('div');
+                    exEn.className = 'input-list-expand-example-en';
+                    const exampleEn = word.example.english;
+                    if (exampleEn && word.word) {
+                        const escaped = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
+                        const highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
+                        let finalText = highlighted;
+                        if (/[.!?]\s*$/.test(exampleEn)) {
+                            finalText = highlighted.replace(/^(\s*(?:<[^>]+>\s*)*)([a-z])/, (_m, prefix, first) => `${prefix}${first.toUpperCase()}`);
+                        }
+                        exEn.innerHTML = finalText;
+                    } else {
+                        exEn.textContent = exampleEn;
                     }
-                    exEn.innerHTML = finalText;
-                } else {
-                    exEn.textContent = exampleEn;
+                    exampleBox.appendChild(exEn);
                 }
-                exampleText.appendChild(exEn);
+                
+                if (word.example.japanese) {
+                    const exJa = document.createElement('div');
+                    exJa.className = 'input-list-expand-example-ja';
+                    exJa.textContent = word.example.japanese;
+                    exampleBox.appendChild(exJa);
+                }
+                
+                item.appendChild(exampleBox);
             }
             
-            if (word.example.japanese) {
-                const exJa = document.createElement('div');
-                exJa.className = 'example-japanese';
-                exJa.textContent = word.example.japanese;
-                exampleText.appendChild(exJa);
+            container.appendChild(item);
+        } else {
+            // フリップモード（従来のカード表示）
+            const item = document.createElement('div');
+            item.className = 'input-list-item';
+            
+            const inner = document.createElement('div');
+            inner.className = 'input-list-inner';
+            
+            // 表面
+            const front = document.createElement('div');
+            front.className = 'input-list-front';
+            
+            const meta = document.createElement('div');
+            meta.className = 'input-list-meta';
+            
+            const number = document.createElement('span');
+            number.className = 'input-list-number';
+            number.textContent = String(word.id).padStart(5, '0');
+            
+            // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
+            let isCorrect, isWrong;
+            if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+                const cache = progressCache[word.category];
+                isCorrect = cache && cache.correct.has(word.id);
+                isWrong = cache && cache.wrong.has(word.id);
+            } else {
+                isCorrect = categoryCorrectSet.has(word.id);
+                isWrong = categoryWrongSet.has(word.id);
             }
             
-            exampleBox.appendChild(exampleText);
-            back.appendChild(exampleBox);
+            if (isWrong) {
+                number.classList.add('marker-wrong');
+                item.classList.add('marker-wrong');
+            } else if (isCorrect) {
+                number.classList.add('marker-correct');
+                item.classList.add('marker-correct');
+            }
+            meta.appendChild(number);
+            
+            // ブックマークボタンを作成
+            const starBtn = document.createElement('button');
+            starBtn.className = 'star-btn input-list-star-btn';
+            starBtn.setAttribute('type', 'button');
+            if (reviewWords.has(word.id)) {
+                starBtn.classList.add('active');
+            }
+            starBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4h10a1 1 0 0 1 1 1v14l-6-4-6 4V5a1 1 0 0 1 1-1z"></path></svg>';
+            starBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleReviewById(word.id, starBtn);
+            });
+            starBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+            
+            // 入試頻出度とブックマークを横並びにするラッパー
+            const appearanceWrapper = document.createElement('div');
+            appearanceWrapper.className = 'input-list-appearance-wrapper';
+            
+            if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
+                const badge = document.createElement('span');
+                badge.className = 'input-list-appearance';
+                const stars = getAppearanceStars(word.appearanceCount);
+                badge.innerHTML = `<span class="appearance-count">${stars}</span>`;
+                appearanceWrapper.appendChild(badge);
+            }
+            appearanceWrapper.appendChild(starBtn);
+            meta.appendChild(appearanceWrapper);
+            
+            const row = document.createElement('div');
+            row.className = 'input-list-row';
+            
+            const pos = document.createElement('span');
+            pos.className = 'pos-inline part-of-speech input-list-pos';
+            pos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
+            row.appendChild(pos);
+            
+            const wordEl = document.createElement('span');
+            wordEl.className = 'input-list-word';
+            wordEl.textContent = word.word;
+            row.appendChild(wordEl);
+            
+            const audioBtn = document.createElement('button');
+            audioBtn.className = 'audio-btn';
+            audioBtn.setAttribute('type', 'button');
+            audioBtn.setAttribute('aria-label', `${word.word}の音声を再生`);
+            audioBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+            audioBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                speakWord(word.word, audioBtn);
+            });
+            row.appendChild(audioBtn);
+            
+            front.appendChild(meta);
+            front.appendChild(row);
+            
+            // 裏面
+            const back = document.createElement('div');
+            back.className = 'input-list-back';
+            
+            const meaningEl = document.createElement('div');
+            meaningEl.className = 'input-list-meaning';
+            
+            // 品詞と意味を横並びで表示
+            const meaningWrapper = document.createElement('div');
+            meaningWrapper.className = 'input-list-meaning-wrapper';
+            const meaningPos = document.createElement('span');
+            meaningPos.className = 'pos-inline part-of-speech input-list-meaning-pos';
+            meaningPos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
+            meaningWrapper.appendChild(meaningPos);
+            const meaningText = document.createElement('span');
+            meaningText.textContent = word.meaning || '';
+            meaningWrapper.appendChild(meaningText);
+            meaningEl.appendChild(meaningWrapper);
+            back.appendChild(meaningEl);
+            
+            if (word.example && (word.example.english || word.example.japanese)) {
+                const exampleBox = document.createElement('div');
+                exampleBox.className = 'example-container input-list-example';
+                
+                const exampleLabel = document.createElement('span');
+                exampleLabel.className = 'example-label';
+                exampleLabel.textContent = '用例';
+                exampleBox.appendChild(exampleLabel);
+                
+                const exampleText = document.createElement('div');
+                exampleText.className = 'example-text';
+                
+                if (word.example.english) {
+                    const exEn = document.createElement('div');
+                    exEn.className = 'example-english';
+                    // 単語を太字にする
+                    const exampleEn = word.example.english;
+                    if (exampleEn && word.word) {
+                        const escaped = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
+                        const highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
+                        let finalText = highlighted;
+                        if (/[.!?]\s*$/.test(exampleEn)) {
+                            finalText = highlighted.replace(/^(\s*(?:<[^>]+>\s*)*)([a-z])/, (_m, prefix, first) => `${prefix}${first.toUpperCase()}`);
+                        }
+                        exEn.innerHTML = finalText;
+                    } else {
+                        exEn.textContent = exampleEn;
+                    }
+                    exampleText.appendChild(exEn);
+                }
+                
+                if (word.example.japanese) {
+                    const exJa = document.createElement('div');
+                    exJa.className = 'example-japanese';
+                    exJa.textContent = word.example.japanese;
+                    exampleText.appendChild(exJa);
+                }
+                
+                exampleBox.appendChild(exampleText);
+                back.appendChild(exampleBox);
+            }
+            
+            inner.appendChild(front);
+            inner.appendChild(back);
+            
+            item.addEventListener('click', () => {
+                // 音声再生中は停止してからカードをめくる
+                if (currentSpeech) {
+                    window.speechSynthesis.cancel();
+                    currentSpeech = null;
+                    // 再生中のボタンのスタイルをリセット
+                    const playingButtons = document.querySelectorAll('.audio-btn.playing');
+                    playingButtons.forEach(btn => btn.classList.remove('playing'));
+                }
+                item.classList.toggle('flipped');
+            });
+            
+            item.appendChild(inner);
+            container.appendChild(item);
         }
-        
-        inner.appendChild(front);
-        inner.appendChild(back);
-        
-        item.addEventListener('click', () => {
-            // 音声再生中は停止してからカードをめくる
-            if (currentSpeech) {
-                window.speechSynthesis.cancel();
-                currentSpeech = null;
-                // 再生中のボタンのスタイルをリセット
-                const playingButtons = document.querySelectorAll('.audio-btn.playing');
-                playingButtons.forEach(btn => btn.classList.remove('playing'));
-            }
-            item.classList.toggle('flipped');
-        });
-        
-        item.appendChild(inner);
-        container.appendChild(item);
+    });
+}
+
+// 単語一覧のモード切り替えイベントを設定
+function setupInputListModeToggle() {
+    const flipBtn = document.getElementById('inputListModeFlip');
+    const expandBtn = document.getElementById('inputListModeExpand');
+    
+    if (!flipBtn || !expandBtn) return;
+    
+    flipBtn.addEventListener('click', () => {
+        if (inputListViewMode === 'flip') return;
+        inputListViewMode = 'flip';
+        flipBtn.classList.add('active');
+        expandBtn.classList.remove('active');
+        // 現在の単語リストを再描画
+        if (currentCourseWords && currentCourseWords.length > 0) {
+            renderInputListView(currentCourseWords);
+        }
+    });
+    
+    expandBtn.addEventListener('click', () => {
+        if (inputListViewMode === 'expand') return;
+        inputListViewMode = 'expand';
+        expandBtn.classList.add('active');
+        flipBtn.classList.remove('active');
+        // 現在の単語リストを再描画
+        if (currentCourseWords && currentCourseWords.length > 0) {
+            renderInputListView(currentCourseWords);
+        }
     });
 }
 

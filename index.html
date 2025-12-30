@@ -791,7 +791,22 @@
                     <div class="input-list-view hidden" id="inputListView">
                         <div class="input-list-header">
                             <div class="input-list-title">単語一覧</div>
-                            <div class="input-list-hint">タップして意味と用例を確認</div>
+                            <div class="input-list-mode-toggle">
+                                <button class="input-list-mode-btn active" id="inputListModeFlip" data-mode="flip" title="フリップモード">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <path d="M12 8v8"></path>
+                                        <path d="M8 12h8"></path>
+                                    </svg>
+                                </button>
+                                <button class="input-list-mode-btn" id="inputListModeExpand" data-mode="expand" title="展開モード">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                         <div class="input-list-scroll" id="inputListContainer">
                             <!-- 動的に生成 -->
