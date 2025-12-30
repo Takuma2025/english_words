@@ -1616,7 +1616,7 @@ body.learning-mode .app-header {
     position: absolute;
     top: 100%;
     margin-top: 7.5px;
-    font-size: 9px;
+    font-size: 12px;
     color: #3b82f6;
     white-space: nowrap;
     font-weight: 700;
@@ -4181,7 +4181,7 @@ body.reorder-mode-active .word-card-container {
 .input-list-appearance {
     display: inline-flex;
     align-items: center;
-    color: #3b82f6;
+    color: #4b5563;
     border: none;
     background: transparent;
     padding: 0;
@@ -4191,7 +4191,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-appearance .appearance-count {
-    color: #3b82f6;
+    color: #4b5563;
     font-weight: 600;
     font-size: 14px;
     letter-spacing: 2px;
