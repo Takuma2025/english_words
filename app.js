@@ -1872,6 +1872,9 @@ function updateCategoryStars() {
         }
     });
     
+    // 細分化メニュー（日常生活でよく使う生活語彙、英文でよく登場する機能語）の進捗バーを更新
+    updateSubcategoryProgressBars();
+    
     // AI分析の苦手単語数を更新
     try {
         const { words } = getAiAnalysisWords();
@@ -1908,6 +1911,117 @@ function updateCategoryStars() {
         if (sidebarAiWordCount) sidebarAiWordCount.textContent = '0';
         if (cardAiWordCount) cardAiWordCount.textContent = '0';
     }
+}
+
+// 細分化メニューの進捗バーを更新
+function updateSubcategoryProgressBars() {
+    // 日常生活でよく使う生活語彙のサブカテゴリー
+    const dailyLifeSubcategories = [
+        '家族・家に関する単語', '数字に関する単語', '日用品・楽器に関する単語', '体に関する単語',
+        '色に関する単語', '食べ物・飲み物に関する単語', '町の施設に関する単語', '乗り物に関する単語',
+        '職業に関する単語', 'スポーツに関する単語', '曜日・月・季節に関する単語', '時間に関する単語',
+        '動物に関する単語', '自然・天気に関する単語', '学校に関する単語', '国名や地域に関する単語',
+        '方角・方向に関する単語', '行事・余暇に関する単語'
+    ];
+    
+    // 英文でよく登場する機能語のサブカテゴリー
+    const functionWordSubcategories = [
+        '冠詞', '代名詞', '不定代名詞', '副詞（否定・程度・焦点）', '疑問詞',
+        '限定詞（数量）', '前置詞', '助動詞・助動詞的表現', '接続詞'
+    ];
+    
+    // 共通の進捗バー更新関数
+    function updateProgressBar(categoryName, subcategories) {
+        let totalWords = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        
+        const modes = ['card', 'input'];
+        const allCorrectSet = new Set();
+        const allWrongSet = new Set();
+        
+        // 各サブカテゴリーの単語を取得して進捗を計算
+        subcategories.forEach(subcat => {
+            let words = [];
+            if (typeof getVocabularyByCategory !== 'undefined') {
+                words = getVocabularyByCategory(subcat) || [];
+            }
+            
+            totalWords += words.length;
+            
+            // 各モードの進捗を合算
+            modes.forEach(mode => {
+                const savedCorrectWords = localStorage.getItem(`correctWords-${subcat}_${mode}`);
+                const savedWrongWords = localStorage.getItem(`wrongWords-${subcat}_${mode}`);
+                
+                if (savedCorrectWords) {
+                    JSON.parse(savedCorrectWords).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        if (!allWrongSet.has(numId)) {
+                            allCorrectSet.add(numId);
+                        }
+                    });
+                }
+                
+                if (savedWrongWords) {
+                    JSON.parse(savedWrongWords).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        allWrongSet.add(numId);
+                        allCorrectSet.delete(numId);
+                    });
+                }
+            });
+        });
+        
+        // 各サブカテゴリーの単語をチェック
+        subcategories.forEach(subcat => {
+            let words = [];
+            if (typeof getVocabularyByCategory !== 'undefined') {
+                words = getVocabularyByCategory(subcat) || [];
+            }
+            
+            words.forEach(word => {
+                if (allWrongSet.has(word.id)) {
+                    wrongCount++;
+                } else if (allCorrectSet.has(word.id)) {
+                    correctCount++;
+                }
+            });
+        });
+        
+        const correctPercent = totalWords === 0 ? 0 : (correctCount / totalWords) * 100;
+        const wrongPercent = totalWords === 0 ? 0 : (wrongCount / totalWords) * 100;
+        const completedCount = correctCount + wrongCount;
+        const isComplete = totalWords > 0 && wrongCount === 0 && correctCount === totalWords;
+        
+        // DOM要素を更新
+        const correctBar = document.getElementById(`progress-correct-${categoryName}`);
+        const wrongBar = document.getElementById(`progress-wrong-${categoryName}`);
+        const text = document.getElementById(`progress-text-${categoryName}`);
+        const barContainer = correctBar ? correctBar.parentElement : null;
+        
+        if (correctBar) {
+            correctBar.style.width = `${correctPercent}%`;
+        }
+        if (wrongBar) {
+            wrongBar.style.left = `${correctPercent}%`;
+            wrongBar.style.width = `${wrongPercent}%`;
+        }
+        if (barContainer) {
+            if (isComplete) {
+                barContainer.classList.add('accordion-progress-complete');
+            } else {
+                barContainer.classList.remove('accordion-progress-complete');
+            }
+        }
+        if (text) {
+            text.textContent = `${completedCount}/${totalWords}語`;
+        }
+    }
+    
+    // 各カテゴリーの進捗バーを更新
+    updateProgressBar('日常生活でよく使う生活語彙', dailyLifeSubcategories);
+    updateProgressBar('英文でよく登場する機能語', functionWordSubcategories);
 }
 
 // 復習チェックを保存
@@ -2915,15 +3029,42 @@ function showSubcategorySelection(parentCategory) {
         const words = getVocabularyByCategory(subcat);
         const wordCount = words ? words.length : 0;
         
-        // 進捗を計算
+        // 進捗を計算（全モードの進捗を合算）
         let correctCount = 0;
         let wrongCount = 0;
         if (words && words.length > 0) {
+            const modes = ['card', 'input'];
+            const allCorrectSet = new Set();
+            const allWrongSet = new Set();
+            
+            modes.forEach(mode => {
+                const savedCorrectWords = localStorage.getItem(`correctWords-${subcat}_${mode}`);
+                const savedWrongWords = localStorage.getItem(`wrongWords-${subcat}_${mode}`);
+                
+                if (savedCorrectWords) {
+                    JSON.parse(savedCorrectWords).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        if (!allWrongSet.has(numId)) {
+                            allCorrectSet.add(numId);
+                        }
+                    });
+                }
+                
+                if (savedWrongWords) {
+                    JSON.parse(savedWrongWords).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        allWrongSet.add(numId);
+                        allCorrectSet.delete(numId);
+                    });
+                }
+            });
+            
             words.forEach(word => {
-                const key = `word_${word.id}`;
-                const status = localStorage.getItem(key);
-                if (status === 'correct') correctCount++;
-                else if (status === 'wrong') wrongCount++;
+                if (allWrongSet.has(word.id)) {
+                    wrongCount++;
+                } else if (allCorrectSet.has(word.id)) {
+                    correctCount++;
+                }
             });
         }
         const correctPercent = wordCount > 0 ? (correctCount / wordCount) * 100 : 0;

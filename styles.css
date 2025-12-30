@@ -1231,7 +1231,7 @@ body.learning-mode .app-header {
     bottom: -2px; /* コンテナから2pxはみ出す */
     width: auto;
     height: auto; /* 元のサイズで表示 */
-    max-height: 120px; /* 最大高さを制限 */
+    max-height: 90px; /* 最大高さを制限 */
     object-fit: contain;
     object-position: left bottom; /* 左下に配置 */
     pointer-events: none;
@@ -2227,15 +2227,21 @@ body.learning-mode .app-header {
 
 .category-accordion-item {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     width: 100%;
-    padding: 16px;
+    padding: 12px 16px;
     background: #ffffff;
     border: none;
     text-align: left;
     cursor: pointer;
     transition: background-color 0.1s;
     position: relative;
+}
+
+.accordion-item-main {
+    display: flex;
+    align-items: center;
+    width: 100%;
 }
 
 .category-accordion-item + .category-accordion-item {
@@ -2292,6 +2298,67 @@ body.learning-mode .app-header {
     flex-shrink: 0;
     color: #9ca3af;
     margin-left: 8px;
+}
+
+/* 細分化メニューの進捗バー */
+.accordion-item-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 8px;
+    padding-left: 30px;
+}
+
+.accordion-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.accordion-progress-correct {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+    border-radius: 3px 0 0 3px;
+    transition: width 0.3s ease;
+    z-index: 2;
+}
+
+.accordion-progress-wrong {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #f87171 0%, #fca5a5 100%);
+    border-radius: 0;
+    transition: width 0.3s ease, left 0.3s ease;
+    z-index: 1;
+}
+
+.accordion-progress-text {
+    font-size: 11px;
+    color: #6b7280;
+    white-space: nowrap;
+    min-width: 50px;
+    text-align: right;
+}
+
+.accordion-progress-bar.accordion-progress-complete::after {
+    content: 'COMPLETE!!';
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 8px;
+    font-weight: bold;
+    color: white;
+    letter-spacing: 0.5px;
+    z-index: 3;
 }
 
 .category-card {
