@@ -4519,7 +4519,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-expand-word {
-    font-size: 21px;
+    font-size: 26px;
     font-weight: 700;
     color: #111827;
     font-family: "Times New Roman", Times, serif;
@@ -4568,12 +4568,25 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-expand-meaning {
-    font-size: 14px;
+    font-size: 18px;
     color: #dc2626;
     font-weight: 600;
     line-height: 1.5;
     margin-top: 6px;
     margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.input-list-expand-meaning-pos {
+    margin-top: 2px !important;
+    font-size: 12px !important;
+    padding: 2px 3px !important;
+    border-radius: 2px;
+    color: #6b7280;
+    font-weight: 500;
+    flex-shrink: 0;
 }
 
 .input-list-expand-example {
@@ -4620,11 +4633,11 @@ body.reorder-mode-active .word-card-container {
     }
     
     .input-list-expand-word {
-        font-size: 19px;
+        font-size: 24px;
     }
     
     .input-list-expand-meaning {
-        font-size: 13px;
+        font-size: 16px;
     }
     
     .input-list-expand-example {

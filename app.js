@@ -7283,11 +7283,6 @@ function renderInputListView(words) {
             const wordRow = document.createElement('div');
             wordRow.className = 'input-list-expand-word-row';
             
-            const pos = document.createElement('span');
-            pos.className = 'pos-inline part-of-speech input-list-expand-pos';
-            pos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
-            wordRow.appendChild(pos);
-            
             const wordEl = document.createElement('span');
             wordEl.className = 'input-list-expand-word';
             wordEl.textContent = word.word;
@@ -7334,10 +7329,19 @@ function renderInputListView(words) {
             header.appendChild(actions);
             item.appendChild(header);
             
-            // 意味
+            // 意味（品詞付き）
             const meaningEl = document.createElement('div');
             meaningEl.className = 'input-list-expand-meaning';
-            meaningEl.textContent = word.meaning || '';
+            
+            const meaningPos = document.createElement('span');
+            meaningPos.className = 'pos-inline part-of-speech input-list-expand-meaning-pos';
+            meaningPos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
+            meaningEl.appendChild(meaningPos);
+            
+            const meaningText = document.createElement('span');
+            meaningText.textContent = word.meaning || '';
+            meaningEl.appendChild(meaningText);
+            
             item.appendChild(meaningEl);
             
             // 用例
@@ -7444,11 +7448,6 @@ function renderInputListView(words) {
             
             const row = document.createElement('div');
             row.className = 'input-list-row';
-            
-            const pos = document.createElement('span');
-            pos.className = 'pos-inline part-of-speech input-list-pos';
-            pos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
-            row.appendChild(pos);
             
             const wordEl = document.createElement('span');
             wordEl.className = 'input-list-word';
