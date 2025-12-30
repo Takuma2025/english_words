@@ -1231,7 +1231,7 @@ body.learning-mode .app-header {
     bottom: -2px; /* コンテナから2pxはみ出す */
     width: auto;
     height: auto; /* 元のサイズで表示 */
-    max-height: 80px; /* 最大高さを制限 */
+    max-height: 120px; /* 最大高さを制限 */
     object-fit: contain;
     object-position: left bottom; /* 左下に配置 */
     pointer-events: none;
@@ -2523,7 +2523,7 @@ body.learning-mode .app-header {
     .vocab-school-image {
         width: auto !important;
         height: auto !important; /* 元のサイズで表示 */
-        max-height: 70px !important; /* スマホでは少し小さく */
+        max-height: 100px !important; /* スマホでは少し小さく */
         bottom: -2px !important; /* コンテナから2pxはみ出す */
         top: auto !important;
         transform: none !important;
@@ -3886,6 +3886,7 @@ body.reorder-mode-active .word-card-container {
     padding: 16px 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 100%;
+    position: relative;
     max-width: 100%;
     margin: 0 auto 12px auto; /* キーボードとの適切な間隔 */
     display: flex;
@@ -4067,28 +4068,33 @@ body.reorder-mode-active .word-card-container {
     justify-content: center;
     align-items: center;
     position: relative;
+    overflow: hidden;
 }
 
 .input-list-meta {
     position: absolute;
-    top: 16px;
-    left: 16px;
-    right: 16px;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
 .input-list-appearance-wrapper {
+    position: absolute;
+    top: 12px;
+    right: 12px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-top: 6px;
+    gap: 6px;
 }
 
 .input-list-star-btn {
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
-    padding: 6px;
-    margin-top: -4px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    padding: 5px;
 }
 
 .input-list-row {
@@ -4146,52 +4152,45 @@ body.reorder-mode-active .word-card-container {
 .input-list-number {
     font-size: 12px;
     font-weight: 700;
-    color: #64748b;
+    color: #ffffff;
     position: relative;
-    padding: 3px 6px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 5px;
+    padding: 5px 10px;
+    background: #6b7280;
+    border-radius: 0;
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
     letter-spacing: 0.08em;
+    z-index: 5;
 }
 
 .input-list-number::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 5px;
-    background: transparent;
-    border-radius: 0;
+    display: none;
 }
 
 .input-list-number.marker-correct::after {
-    background: #3b82f6;
+    display: none;
 }
 
 .input-list-number.marker-wrong::after {
-    background: #ef4444;
+    display: none;
 }
 
 .input-list-appearance {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    color: #4b5563;
+    color: #ffffff;
     border: none;
-    background: #3b82f6;
-    padding: 3px 7px;
+    background: #6b7280;
+    padding: 4px 8px;
     border-radius: 4px;
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 600;
     white-space: nowrap;
 }
 
 .input-list-appearance .appearance-count {
     color: #ffffff;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
     letter-spacing: 1px;
 }
 
@@ -4278,7 +4277,12 @@ body.reorder-mode-active .word-card-container {
         gap: 10px;
     }
     .input-list-number {
-        padding-bottom: 5px;
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+    .input-list-appearance-wrapper {
+        top: 10px;
+        right: 10px;
     }
     .input-list-word {
         font-size: 32px;
@@ -5313,42 +5317,33 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     background: #ef4444;
 }
 
-/* インプットモードの単語番号にも同じ立体感のあるマーカーを適用 */
+/* インプットモードの単語番号 */
 #inputWordNumber {
-    position: relative;
-    font-size: 10px !important;
-    padding: 2px 5px !important;
-    line-height: 1.2;
-    letter-spacing: 0.08em;
-    background: linear-gradient(180deg, #ffffff, #e2e8f0);
-    border-radius: 5px;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    padding: 5px 10px !important;
+    background: #52525b !important;
+    border-radius: 16px 0 0 0 !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.1em !important;
+    font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif !important;
+    z-index: 10 !important;
 }
 
 #inputWordNumber::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 3px;
-    background: transparent;
-    border-radius: 0 0 6px 6px;
+    display: none !important;
 }
 
 #inputWordNumber.marker-correct {
-    box-shadow: 0 8px 0 #3b82f6;
-}
-
-#inputWordNumber.marker-correct::after {
-    background: #3b82f6;
+    box-shadow: none !important;
 }
 
 #inputWordNumber.marker-wrong {
-    box-shadow: 0 8px 0 #ef4444;
-}
-
-#inputWordNumber.marker-wrong::after {
-    background: #ef4444;
+    box-shadow: none !important;
 }
 
 .word-card.flipped .word-number {
@@ -10593,4 +10588,30 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     color: #334155;
     line-height: 1.5;
     font-weight: 400;
+}
+
+/* タッチデバイスでのスティッキーホバーを解消 */
+@media (hover: none) {
+    .category-card:hover,
+    .category-accordion-header:hover,
+    .category-accordion-item:hover,
+    .course-tab:hover,
+    .start-btn:hover,
+    .star-btn:hover,
+    .audio-btn:hover,
+    .input-list-item:hover,
+    .letter-input:hover,
+    .submit-btn:hover,
+    .next-btn:hover,
+    .back-btn:hover,
+    .nav-btn:hover,
+    .close-btn:hover,
+    .modal-close:hover,
+    .settings-btn:hover,
+    .install-btn:hover,
+    button:hover {
+        background-color: inherit;
+        transform: none;
+        box-shadow: inherit;
+    }
 }

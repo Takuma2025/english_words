@@ -6910,7 +6910,7 @@ function renderInputListView(words) {
         
         const number = document.createElement('span');
         number.className = 'input-list-number';
-        number.textContent = `No.${word.id}`;
+        number.textContent = word.id;
         
         // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
         let isCorrect, isWrong;
@@ -6954,7 +6954,7 @@ function renderInputListView(words) {
             const badge = document.createElement('span');
             badge.className = 'input-list-appearance';
             const stars = getAppearanceStars(word.appearanceCount);
-            badge.innerHTML = `<span class="appearance-label">入試頻出度</span><span class="appearance-count">${stars}</span>`;
+            badge.innerHTML = `<span class="appearance-count">${stars}</span>`;
             appearanceWrapper.appendChild(badge);
         }
         appearanceWrapper.appendChild(starBtn);
