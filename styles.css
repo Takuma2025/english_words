@@ -1231,7 +1231,7 @@ body.learning-mode .app-header {
     bottom: -2px; /* コンテナから2pxはみ出す */
     width: auto;
     height: auto; /* 元のサイズで表示 */
-    max-height: 120px; /* 最大高さを制限 */
+    max-height: 80px; /* 最大高さを制限 */
     object-fit: contain;
     object-position: left bottom; /* 左下に配置 */
     pointer-events: none;
@@ -2523,7 +2523,7 @@ body.learning-mode .app-header {
     .vocab-school-image {
         width: auto !important;
         height: auto !important; /* 元のサイズで表示 */
-        max-height: 100px !important; /* スマホでは少し小さく */
+        max-height: 70px !important; /* スマホでは少し小さく */
         bottom: -2px !important; /* コンテナから2pxはみ出す */
         top: auto !important;
         transform: none !important;
