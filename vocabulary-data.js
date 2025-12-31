@@ -14,59 +14,22 @@
 
 // 家族・家に関する単語
 const familyHomeWords = [
-  // 家族関係
-  { id: 10001, word: "family", meaning: "家族", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 48 },
-  { id: 10002, word: "parent", meaning: "親（複数形: parents 両親）", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 1 },
+  // 家族
   { id: 10003, word: "father", meaning: "父、父親", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 4 },
   { id: 10004, word: "mother", meaning: "母、母親、お母さん", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 1 },
-  { id: 10005, word: "dad", meaning: "お父さん、パパ", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  { id: 10006, word: "mom", meaning: "お母さん、ママ", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  { id: 10012, word: "brother", meaning: "兄弟、兄、弟", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 23 },
+    { id: 10012, word: "brother", meaning: "兄弟、兄、弟", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 23 },
   { id: 10013, word: "sister", meaning: "姉妹、姉、妹", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 52 }, 
   { id: 10007, word: "grandfather", meaning: "祖父、おじいさん", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 16 },
   { id: 10008, word: "grandmother", meaning: "祖母、おばあさん", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 13 },
-  { id: 10044, word: "grandpa", meaning: "おじいさん、おじいちゃん", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 2 },
-  { id: 10045, word: "grandma", meaning: "おばあさん、おばあちゃん", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 2 },
-  { id: 10009, word: "grandparent", meaning: "祖父母", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 7 },
-  { id: 10010, word: "uncle", meaning: "おじ", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 13 },
-  { id: 10011, word: "aunt", meaning: "おば", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 7 },
-  { id: 10014, word: "cousin", meaning: "いとこ", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  { id: 10015, word: "son", meaning: "息子", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 1 },
-  { id: 10016, word: "daughter", meaning: "娘", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 4 },
-  { id: 10017, word: "child", meaning: "子ども（複数形: children）", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 21 },
-  { id: 10018, word: "baby", meaning: "赤ちゃん", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 7 },
-  { id: 10019, word: "husband", meaning: "夫", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  { id: 10020, word: "wife", meaning: "妻", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  // 家全体
+  // 家の中
   { id: 10021, word: "house", meaning: "家", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 42 },
-  { id: 10022, word: "home", meaning: "家、家庭、故郷、在宅の、家に(へ)", partOfSpeech: "名詞・形容詞・副詞", category: "家族・家に関する単語", appearanceCount: 36 },
-  { id: 10023, word: "garden", meaning: "庭、庭園", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 11 },
-  { id: 10024, word: "roof", meaning: "屋根、屋上", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  // 部屋
-  { id: 10025, word: "room", meaning: "部屋、室", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 34 },
-  { id: 10026, word: "bedroom", meaning: "寝室", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  { id: 10027, word: "bathroom", meaning: "浴室、トイレ", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  { id: 10028, word: "kitchen", meaning: "台所、キッチン", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 3 },
   { id: 10029, word: "bath", meaning: "入浴、浴室、風呂場", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 3 },
-  { id: 10030, word: "toilet", meaning: "トイレ", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  // 家具・設備
   { id: 10031, word: "table", meaning: "テーブル、食卓、表/一覧表", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 27 },
   { id: 10032, word: "desk", meaning: "机", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 8 },
   { id: 10033, word: "chair", meaning: "いす", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 1 },
-  { id: 10034, word: "sofa", meaning: "ソファ", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
   { id: 10035, word: "bed", meaning: "ベッド", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  { id: 10036, word: "light", meaning: "光、明るさ、明かり、照明、電灯", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 17 },
-  { id: 10037, word: "lamp", meaning: "ランプ、明かり、電気スタンド", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  { id: 10038, word: "shower", meaning: "シャワー", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  { id: 10039, word: "sink", meaning: "洗面台、流し", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  { id: 10046, word: "air conditioner", meaning: "エアコン、空調設備", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  { id: 10047, word: "shelf", meaning: "棚、本棚", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 0 },
-  // 建物の構造
-  { id: 10040, word: "wall", meaning: "壁、へい", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 7 },
   { id: 10041, word: "window", meaning: "窓", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 6 },
-  { id: 10042, word: "door", meaning: "ドア、扉", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 1 },
-  { id: 10043, word: "floor", meaning: "ゆか、階", partOfSpeech: "名詞", category: "家族・家に関する単語", appearanceCount: 18 },
-];
+  ];
 
 // 数字に関する単語
 const numberWords = [
@@ -126,60 +89,49 @@ const numberWords = [
   { id: 10156, word: "nineteenth", meaning: "19番目（の）", partOfSpeech: "名詞・形容詞", category: "数字に関する単語", appearanceCount: 1 },
   { id: 10157, word: "twentieth", meaning: "20番目（の）", partOfSpeech: "名詞・形容詞", category: "数字に関する単語", appearanceCount: 0 },
   { id: 10158, word: "thirtieth", meaning: "30番目（の）", partOfSpeech: "名詞・形容詞", category: "数字に関する単語", appearanceCount: 0 },
-  // その他
-  { id: 10143, word: "half", meaning: "半分（の）", partOfSpeech: "名詞・形容詞", category: "数字に関する単語", appearanceCount: 11 },
-  { id: 10144, word: "quarter", meaning: "4分の1、15分", partOfSpeech: "名詞", category: "数字に関する単語", appearanceCount: 1 },
-  { id: 10145, word: "number", meaning: "数、番号", partOfSpeech: "名詞", category: "数字に関する単語", appearanceCount: 56 },
-  { id: 10146, word: "twice", meaning: "2度・2回、2倍", partOfSpeech: "副詞", category: "数字に関する単語", appearanceCount: 13 },
-  { id: 10159, word: "double", meaning: "2人、2倍（の）、2重（の）、2倍にする", partOfSpeech: "名詞・形容詞・動詞", category: "数字に関する単語", appearanceCount: 0 },
-];
+ ];
 
 // 日用品・楽器に関する単語
 const dailyItemsInstrumentsWords = [
-  // { id: 10201, word: "pen", meaning: "ペン", partOfSpeech: "名詞", category: "日用品・楽器に関する単語" },
-];
-
-// 体に関する単語
-const bodyWords = [
-  // 体全体
-  { id: 10301, word: "body", meaning: "からだ", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 42 },
-  // 頭部
-  { id: 10302, word: "head", meaning: "頭", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 5 },
-  { id: 10303, word: "face", meaning: "顔、面", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 2 },
-  { id: 10304, word: "hair", meaning: "髪、毛", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  { id: 10305, word: "brain", meaning: "脳", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  // 顔の部位
-  { id: 10306, word: "eye", meaning: "目", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 4 },
-  { id: 10307, word: "ear", meaning: "耳", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 1 },
-  { id: 10308, word: "nose", meaning: "鼻", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  { id: 10309, word: "mouth", meaning: "口", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 3 },
-  { id: 10310, word: "tooth", meaning: "歯（複数形: teeth）", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  // 首・肩
-  { id: 10311, word: "neck", meaning: "首", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  { id: 10312, word: "shoulder", meaning: "肩", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  { id: 10313, word: "throat", meaning: "のど", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  // 上半身
-  { id: 10314, word: "back", meaning: "背中", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 28 },
-  { id: 10315, word: "arm", meaning: "腕", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 4 },
-  { id: 10316, word: "hand", meaning: "手", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 9 },
-  { id: 10317, word: "finger", meaning: "指（手の親指はthumb）", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  // 胴体
-  { id: 10318, word: "heart", meaning: "心臓、心", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  { id: 10319, word: "stomach", meaning: "胃、おなか", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  // 下半身
-  { id: 10320, word: "leg", meaning: "脚", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 5 },
-  { id: 10321, word: "knee", meaning: "ひざ", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  { id: 10322, word: "foot", meaning: "足（足首から下）（複数形: feet）", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  { id: 10324, word: "toe", meaning: "足の指", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-  // その他
-  { id: 10323, word: "skin", meaning: "皮膚、皮", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
-];
+// 衣類
+  { id: 10202, word: "shirt", meaning: "シャツ", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10203, word: "T-shirt", meaning: "Tシャツ", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10203, word: "pants", meaning: "ズボン", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10205, word: "dress", meaning: "ドレス、服装", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10206, word: "coat", meaning: "コート、上着", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10207, word: "jacket", meaning: "ジャケット", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10208, word: "sweater", meaning: "スウェーター", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10209, word: "sock", meaning: "(通例～s)靴下", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10210, word: "shoe", meaning: "(通例～s)靴", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 5 },
+  { id: 10211, word: "glove", meaning: "手袋", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10212, word: "hat", meaning: "(ふちのある)帽子", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10213, word: "cap", meaning: "(ふちのない）帽子、キャップ", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 1 },
+// 日用品
+  { id: 10214, word: "ball", meaning: "ボール", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10215, word: "racket", meaning: "ラケット", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 4},
+  { id: 10216, word: "bag", meaning: "かばん", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 28 },
+  { id: 10217, word: "book", meaning: "本", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 92 },
+  { id: 10218, word: "box", meaning: "箱", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 9 },
+  { id: 10219, word: "picture", meaning: "写真", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 72 },
+  { id: 10220, word: "umbrealla", meaning: "傘（かさ）", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10221, word: "computer", meaning: "コンピューター", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 32 },
+  { id: 10222, word: "TV", meaning: "テレビ", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 19 },
+  { id: 10223, word: "radio", meaning: "ラジオ", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 4 },
+  { id: 10223, word: "CD", meaning: "CD", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10223, word: "DVD", meaning: "DVD", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10223, word: "clock", meaning: "置き[掛け]時計", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 21 },
+  { id: 10224, word: "watch", meaning: "腕時計、見る（watch TV：テレビを見る）", partOfSpeech: "名詞・動詞", category: "日用品・楽器に関する単語", appearanceCount: 57 },
+//楽器
+  { id: 10225, word: "guitar", meaning: "ギター", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10226, word: "piano", meaning: "ピアノ", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 10 },
+  { id: 10227, word: "violin", meaning: "バイオリン", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10228, word: "drum", meaning: "ドラム、太鼓", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10229, word: "flute", meaning: "フルート", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10230, word: "trunmpet", meaning: "トランペット", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 1 },
+ ];
 
 // 色に関する単語
 const colorWords = [
-  // 基本概念
-  { id: 10400, word: "color", meaning: "色、色彩", partOfSpeech: "名詞", category: "色に関する単語", appearanceCount: 7 },
-  // 基本色
   { id: 10401, word: "red", meaning: "赤（の）", partOfSpeech: "名詞・形容詞", category: "色に関する単語", appearanceCount: 1 },
   { id: 10402, word: "blue", meaning: "青（の）", partOfSpeech: "名詞・形容詞", category: "色に関する単語", appearanceCount: 2 },
   { id: 10403, word: "yellow", meaning: "黄色（の）", partOfSpeech: "名詞・形容詞", category: "色に関する単語", appearanceCount: 2 },
@@ -187,7 +139,6 @@ const colorWords = [
   { id: 10405, word: "black", meaning: "黒（の）", partOfSpeech: "名詞・形容詞", category: "色に関する単語", appearanceCount: 5 },
   { id: 10406, word: "white", meaning: "白（の）", partOfSpeech: "名詞・形容詞", category: "色に関する単語", appearanceCount: 12 },
   { id: 10407, word: "brown", meaning: "茶色（の）", partOfSpeech: "名詞・形容詞", category: "色に関する単語", appearanceCount: 5 },
-  // 特殊色
   { id: 10408, word: "orange", meaning: "オレンジ色（の）", partOfSpeech: "名詞・形容詞", category: "色に関する単語", appearanceCount: 0 },
   { id: 10409, word: "pink", meaning: "ピンク（の）", partOfSpeech: "名詞・形容詞", category: "色に関する単語", appearanceCount: 0 },
   { id: 10410, word: "purple", meaning: "紫（の）", partOfSpeech: "名詞・形容詞", category: "色に関する単語", appearanceCount: 0 },
@@ -196,42 +147,20 @@ const colorWords = [
 
 // 食べ物・飲み物に関する単語
 const foodDrinkWords = [
-  // 基本概念
   { id: 10501, word: "food", meaning: "食べ物、食物", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 138 },
-  { id: 10502, word: "drink", meaning: "飲み物、飲む", partOfSpeech: "名詞・動詞", category: "食べ物・飲み物に関する単語", appearanceCount: 30 },
-  { id: 10503, word: "dish", meaning: "皿、料理", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 4},
   { id: 10551, word: "fruit", meaning: "果物", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 3 },
-  { id: 10552, word: "vegetable", meaning: "野菜", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 15 },
-  { id: 10553, word: "cooking", meaning: "料理、調理", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 10 },
-  { id: 10554, word: "snack", meaning: "おやつ、軽食", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10555, word: "seafood", meaning: "魚介類", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  // 飲み物
-  { id: 10504, word: "water", meaning: "水", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 64 },
-  { id: 10505, word: "tea", meaning: "お茶", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 24 },
-  { id: 10506, word: "coffee", meaning: "コーヒー", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 10 },
-  { id: 10507, word: "milk", meaning: "牛乳", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 4 },
-  { id: 10508, word: "juice", meaning: "ジュース", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10509, word: "soda", meaning: "ソーダ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10556, word: "ice", meaning: "氷", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 3 },
-  { id: 10557, word: "yogurt", meaning: "ヨーグルト", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  // 容器・食器
-  { id: 10510, word: "cup", meaning: "カップ、コップ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 25 },
-  { id: 10511, word: "glass", meaning: "グラス、コップ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10512, word: "bowl", meaning: "どんぶり、茶碗、ボウル", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10513, word: "plate", meaning: "皿", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10514, word: "knife", meaning: "ナイフ（複数形： knives)", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  // 主食・穀物
   { id: 10515, word: "rice", meaning: "ご飯、米", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 2 },
   { id: 10516, word: "bread", meaning: "パン", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10517, word: "noodle", meaning: "めん類、ヌードル", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
+  { id: 10538, word: "egg", meaning: "卵", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 7 },
   { id: 10558, word: "spaghetti", meaning: "スパゲッティ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10559, word: "rice ball", meaning: "おにぎり", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  // 肉類
-  { id: 10518, word: "meat", meaning: "肉", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 3 },
   { id: 10519, word: "chicken", meaning: "鶏肉、にわとり", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 1 },
-  { id: 10520, word: "beef", meaning: "牛肉", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10521, word: "pork", meaning: "豚肉", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10522, word: "fish", meaning: "魚", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 10 },
+  { id: 10546, word: "hamburger", meaning: "ハンバーガー", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
+  { id: 10547, word: "ice cream", meaning: "アイスクリーム", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
+  { id: 10548, word: "pizza", meaning: "ピザ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
+  { id: 10549, word: "salad", meaning: "サラダ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
+  { id: 10550, word: "sandwich", meaning: "サンドイッチ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
+  { id: 10541, word: "cake", meaning: "ケーキ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 6 },
+  { id: 10540, word: "chocolate", meaning: "チョコレート", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 7 },
   // 野菜
   { id: 10523, word: "cabbage", meaning: "キャベツ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
   { id: 10524, word: "carrot", meaning: "にんじん", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
@@ -241,6 +170,7 @@ const foodDrinkWords = [
   { id: 10528, word: "potato", meaning: "じゃがいも", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
   { id: 10529, word: "tomato", meaning: "トマト", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
   { id: 10560, word: "pumpkin", meaning: "かぼちゃ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
+  { id: 10545, word: "corn", meaning: "とうもろこし", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
   // 果物
   { id: 10530, word: "apple", meaning: "りんご", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 2 },
   { id: 10531, word: "banana", meaning: "バナナ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 1 },
@@ -251,139 +181,72 @@ const foodDrinkWords = [
   { id: 10536, word: "pineapple", meaning: "パイナップル", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
   { id: 10537, word: "strawberry", meaning: "いちご", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
   { id: 10561, word: "cherry", meaning: "さくらんぼ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 3 },
-  // その他の食べ物
-  { id: 10538, word: "egg", meaning: "卵", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 7 },
-  { id: 10539, word: "salt", meaning: "塩", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 7 },
-  { id: 10540, word: "chocolate", meaning: "チョコレート", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 7 },
-  { id: 10541, word: "cake", meaning: "ケーキ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 6 },
-  { id: 10542, word: "cookie", meaning: "クッキー", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10543, word: "soup", meaning: "スープ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 1 },
-  { id: 10544, word: "bean", meaning: "豆", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10545, word: "corn", meaning: "とうもろこし", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10546, word: "hamburger", meaning: "ハンバーガー", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10547, word: "ice cream", meaning: "アイスクリーム", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10548, word: "pizza", meaning: "ピザ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10549, word: "salad", meaning: "サラダ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10550, word: "sandwich", meaning: "サンドイッチ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10562, word: "curry", meaning: "カレー", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 10 },
-  { id: 10563, word: "curry and rice", meaning: "カレーライス", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10564, word: "pudding", meaning: "プリン", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
-  { id: 10565, word: "candy", meaning: "キャンディー", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
+  // 飲み物
+  { id: 10504, word: "water", meaning: "水", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 64 },
+  { id: 10505, word: "tea", meaning: "紅茶", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 24 },
+  { id: 10506, word: "coffee", meaning: "コーヒー", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 10 },
+  { id: 10507, word: "milk", meaning: "牛乳", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 4 },
+  { id: 10508, word: "juice", meaning: "ジュース", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
+  { id: 10509, word: "soda", meaning: "ソーダ", partOfSpeech: "名詞", category: "食べ物・飲み物に関する単語", appearanceCount: 0 },
 ];
 
 // 町の施設に関する単語
 const townFacilityWords = [
-  // 交通施設
   { id: 10601, word: "station", meaning: "駅、署［局・所］", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 35 },
-  { id: 10602, word: "road", meaning: "道路、道", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 18 },
-  { id: 10603, word: "street", meaning: "通り、道、街路", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 4 },
-  { id: 10604, word: "bridge", meaning: "橋", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 1 },
-  { id: 10626, word: "airport", meaning: "空港", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 2 },
-  // 公共施設
+　{ id: 10604, word: "bridge", meaning: "橋", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 1 },
   { id: 10605, word: "library", meaning: "図書館、図書室", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 15 },
   { id: 10606, word: "museum", meaning: "博物館、美術館", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 49 },
   { id: 10607, word: "park", meaning: "公園、遊園地", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 44 },
   { id: 10608, word: "post office", meaning: "郵便局", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 3 },
-  { id: 10609, word: "police station(/office)", meaning: "警察署", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 0 },
+  { id: 10609, word: "police station", meaning: "警察署", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 0 },
   { id: 10610, word: "hospital", meaning: "病院", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 1 },
   { id: 10627, word: "fire station", meaning: "消防署", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 0 },
-  { id: 10628, word: "city hall", meaning: "市役所、市庁舎", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 4 },
-  { id: 10629, word: "hall", meaning: "ホール、集会所、大広間、講堂", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 5 },
-  // 商業施設
-  { id: 10611, word: "shop", meaning: "店、買い物をする", partOfSpeech: "名詞・動詞", category: "町の施設に関する単語", appearanceCount: 14 },
-  { id: 10612, word: "store", meaning: "店、商店、～を蓄える", partOfSpeech: "名詞・動詞", category: "町の施設に関する単語", appearanceCount: 10 },
   { id: 10613, word: "supermarket", meaning: "スーパーマーケット", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 8 },
   { id: 10636, word: "department store", meaning: "デパート、百貨店", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 7 },
   { id: 10614, word: "convenience store", meaning: "コンビニエンスストア", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 0 },
-  { id: 10615, word: "market", meaning: "市場", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 0 },
   { id: 10616, word: "restaurant", meaning: "レストラン、料理店", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 11 },
-  { id: 10617, word: "cafe", meaning: "カフェ、喫茶店", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 1 },
-  { id: 10618, word: "hotel", meaning: "ホテル", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 1 },
-  { id: 10619, word: "bank", meaning: "銀行", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 0 },
-  { id: 10634, word: "company", meaning: "会社、企業", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 7 },
-  { id: 10635, word: "office", meaning: "事務所、会社、オフィス", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 3 },
   { id: 10637, word: "bookstore", meaning: "本屋、書店", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 1 },
-  { id: 10638, word: "cafeteria", meaning: "カフェテリア、食堂", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 3 },
-  { id: 10639, word: "factory", meaning: "工場", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 2 },
   { id: 10640, word: "gas station", meaning: "ガソリンスタンド", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 0 },
-  // 娯楽施設
-  { id: 10620, word: "movie", meaning: "映画", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 19 },
-  { id: 10621, word: "theater", meaning: "劇場、映画館", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 19 },
   { id: 10622, word: "amusement park", meaning: "遊園地", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 1 },
-  { id: 10623, word: "aquarium", meaning: "水族館", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 0 },
   { id: 10630, word: "stadium", meaning: "スタジアム、競技場", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 5 },
   { id: 10631, word: "zoo", meaning: "動物園", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 3 },
-  { id: 10632, word: "castle", meaning: "城、お城", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 1 },
-  { id: 10633, word: "tower", meaning: "塔、タワー", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 0 },
-  { id: 10641, word: "hot spring", meaning: "温泉", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 0 },
-  // 宗教施設
   { id: 10624, word: "temple", meaning: "寺、寺院、神殿", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 5 },
   { id: 10625, word: "shrine", meaning: "神社", partOfSpeech: "名詞", category: "町の施設に関する単語", appearanceCount: 0 },
 ];
 
 // 乗り物に関する単語
 const vehicleWords = [
-  // 陸上交通
-  { id: 10701, word: "bicycle", meaning: "自転車", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 54 },
-  { id: 10702, word: "bike", meaning: "自転車、バイク", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 12 },
-  { id: 10703, word: "car", meaning: "自動車、車", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 20 },
+  { id: 10702, word: "bike", meaning: "自転車", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 12 },
+  { id: 10703, word: "car", meaning: "車", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 20 },
   { id: 10704, word: "taxi", meaning: "タクシー", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 0 },
   { id: 10705, word: "bus", meaning: "バス", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 6 },
   { id: 10706, word: "train", meaning: "電車、列車、（～を）訓練する", partOfSpeech: "名詞・動詞", category: "乗り物に関する単語", appearanceCount: 46 },
-  { id: 10707, word: "subway", meaning: "地下鉄", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 0 },
-  // 航空交通
   { id: 10708, word: "plane", meaning: "飛行機", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 4 },
-  // 水上交通
   { id: 10709, word: "boat", meaning: "ボート、小船", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 3 },
   { id: 10710, word: "ship", meaning: "船", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 3 },
 ];
 
 // 職業に関する単語
 const occupationWords = [
-  // 専門職・技術職
   { id: 10801, word: "scientist", meaning: "科学者", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 47 },
-  { id: 10802, word: "engineer", meaning: "技術者、エンジニア", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 7 },
   { id: 10803, word: "doctor", meaning: "医者、博士", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 4 },
+  { id: 10814, word: "nurse", meaning: "看護師", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
   { id: 10821, word: "dentist", meaning: "歯科医、歯医者", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
   { id: 10822, word: "vet", meaning: "獣医", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
   { id: 10823, word: "astronaut", meaning: "宇宙飛行士", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 6 },
-  { id: 10824, word: "photographer", meaning: "写真家、カメラマン", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 1 },
-  { id: 10804, word: "lawyer", meaning: "弁護士", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
-  { id: 10805, word: "judge", meaning: "審判、裁判官、～を判断する", partOfSpeech: "名詞・動詞", category: "職業に関する単語", appearanceCount: 7 },
-  { id: 10806, word: "pilot", meaning: "パイロット、操縦士", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
-  // 教育・芸術
   { id: 10807, word: "teacher", meaning: "先生、教師", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 23 },
   { id: 10808, word: "artist", meaning: "芸術家、画家", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 21 },
-  { id: 10809, word: "writer", meaning: "作家、筆者", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 3 },
   { id: 10810, word: "singer", meaning: "歌手", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 7 },
-  { id: 10811, word: "actor", meaning: "俳優、男優", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 3 },
-  { id: 10825, word: "pianist", meaning: "ピアニスト", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 2 },
   { id: 10826, word: "musician", meaning: "音楽家、ミュージシャン、演奏家", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 4 },
-  { id: 10827, word: "dancer", meaning: "ダンサー、踊り手", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
   { id: 10828, word: "comedian", meaning: "コメディアン、お笑い芸人", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
-  // サービス業
-  { id: 10812, word: "cook", meaning: "料理人、コック、料理する", partOfSpeech: "名詞・動詞", category: "職業に関する単語", appearanceCount: 10 },
-  { id: 10813, word: "driver", meaning: "運転手", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 4 },
-  { id: 10814, word: "nurse", meaning: "看護師", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
-  { id: 10815, word: "clerk", meaning: "店員、係員、事務員", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
-  { id: 10816, word: "manager", meaning: "マネージャー、管理者、園長、監督", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
+  { id: 10829, word:"cook", meaning: "料理人、コック、料理する", partOfSpeech: "名詞・動詞", category: "職業に関する単語", appearanceCount: 10 },
   { id: 10829, word: "flight attendant", meaning: "客室乗務員", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
   { id: 10830, word: "florist", meaning: "花屋、花屋の店主（店員）", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
-  // 公務・法執行
-  { id: 10817, word: "police", meaning: "警察", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
-  { id: 10818, word: "officer", meaning: "事務員、係員、警察官、公務員", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 1 },
   { id: 10831, word: "police officer", meaning: "警察官", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 0 },
-  // その他
-  { id: 10819, word: "farmer", meaning: "農業をする人、農家", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 22 },
-  { id: 10820, word: "worker", meaning: "労働者、作業員", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 4 },
-  { id: 10832, word: "staff", meaning: "スタッフ、職員", partOfSpeech: "名詞", category: "職業に関する単語", appearanceCount: 2 },
-];
+  ];
 
 // スポーツに関する単語
 const sportsWords = [
-  // 基本概念
-  { id: 10901, word: "sport", meaning: "スポーツ、運動競技（sports day 運動会)", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 5 },
-  // 球技
   { id: 10902, word: "soccer", meaning: "サッカー", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 9 },
   { id: 10903, word: "football", meaning: "アメリカンフットボール、サッカー", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 0 },
   { id: 10904, word: "basketball", meaning: "バスケットボール", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 5 },
@@ -393,34 +256,11 @@ const sportsWords = [
   { id: 10908, word: "rugby", meaning: "ラグビー", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 5 },
   { id: 10909, word: "badminton", meaning: "バドミントン", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 0 },
   { id: 10918, word: "table tennis", meaning: "卓球", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 0 },
-  // その他のスポーツ
   { id: 10910, word: "swimming", meaning: "水泳", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 11 },
-  { id: 10911, word: "dance", meaning: "ダンス、踊り、踊る", partOfSpeech: "名詞・動詞", category: "スポーツに関する単語", appearanceCount: 3 },
-  { id: 10919, word: "dancing", meaning: "ダンス、踊ること", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 0 },
-  { id: 10920, word: "cycling", meaning: "サイクリング、自転車競技", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 4 },
-  { id: 10921, word: "surfing", meaning: "サーフィン", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 0 },
-  { id: 10922, word: "relay", meaning: "リレー、中継", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 0 },
-  { id: 10912, word: "marathon", meaning: "マラソン", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 0 },
-  { id: 10913, word: "skate", meaning: "スケート、スケートをする", partOfSpeech: "名詞・動詞", category: "スポーツに関する単語", appearanceCount: 0 },
-  { id: 10914, word: "skiing", meaning: "スキー", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 0 },
-  // ゲーム・試合・競技
-  { id: 10915, word: "game", meaning: "ゲーム、試合、競技", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 17 },
-  { id: 10916, word: "match", meaning: "試合、マッチ", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 4 },
-  { id: 10917, word: "athlete", meaning: "運動選手、アスリート", partOfSpeech: "名詞", category: "スポーツに関する単語", appearanceCount: 0 },
 ];
 
 // 曜日・月・季節に関する単語
 const calendarWords = [
-  // 基本概念
-  { id: 11001, word: "year", meaning: "年", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 135 },
-  { id: 11028, word: "century", meaning: "世紀、100年", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 16 },
-  { id: 11002, word: "season", meaning: "季節", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 25 },
-  { id: 11003, word: "month", meaning: "（暦）月", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 20 },
-  { id: 11029, word: "week", meaning: "週、1週間", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 35 },
-  { id: 11030, word: "weekend", meaning: "週末", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 17 },
-  { id: 11031, word: "day", meaning: "日、1日", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 96 },
-  { id: 11032, word: "date", meaning: "日付、デート", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 1 },
-  { id: 11033, word: "calendar", meaning: "カレンダー、暦", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 0 },
   // 曜日
   { id: 11004, word: "Sunday", meaning: "日曜日", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 23 },
   { id: 11005, word: "Monday", meaning: "月曜日", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 4 },
@@ -450,62 +290,31 @@ const calendarWords = [
   { id: 11027, word: "winter", meaning: "冬", partOfSpeech: "名詞", category: "曜日・月・季節に関する単語", appearanceCount: 18 },
 ];
 
-// 時間に関する単語
-const timeWords = [
-  // 時間帯
-  { id: 11034, word: "morning", meaning: "朝、午前", partOfSpeech: "名詞", category: "時間に関する単語", appearanceCount: 29 },
-  { id: 11044, word: "a.m.", meaning: "午前（ante meridiem）", partOfSpeech: "名詞", category: "時間に関する単語", appearanceCount: 0 },
-  { id: 11035, word: "noon", meaning: "正午、昼", partOfSpeech: "名詞", category: "時間に関する単語", appearanceCount: 6 },
-  { id: 11036, word: "afternoon", meaning: "午後", partOfSpeech: "名詞", category: "時間に関する単語", appearanceCount: 13 },
-  { id: 11045, word: "p.m.", meaning: "午後（post meridiem）", partOfSpeech: "名詞", category: "時間に関する単語", appearanceCount: 1 },
-  { id: 11037, word: "evening", meaning: "夕方、晩", partOfSpeech: "名詞", category: "時間に関する単語", appearanceCount: 27 },
-  { id: 11038, word: "night", meaning: "夜", partOfSpeech: "名詞", category: "時間に関する単語", appearanceCount: 12 },
-  { id: 11039, word: "midnight", meaning: "真夜中、午前0時", partOfSpeech: "名詞", category: "時間に関する単語", appearanceCount: 0 },
-  { id: 11040, word: "tonight", meaning: "今夜、今晩", partOfSpeech: "名詞・副詞", category: "時間に関する単語", appearanceCount: 1 },
-  // 時間の単位
-  { id: 11049, word: "minute", meaning: "（時間の単位）分、（a minute：ちょっとの間）", partOfSpeech: "名詞", category: "時間に関する単語", appearanceCount: 17 },
-  { id: 11050, word: "hour", meaning: "時間、1時間、60分", partOfSpeech: "名詞", category: "時間に関する単語", appearanceCount: 23 },
-  { id: 11051, word: "time", meaning: "①時間・時刻　②～回、～度　③(複数形で)時代", partOfSpeech: "名詞", category: "時間に関する単語", appearanceCount: 196 },
-  // 相対的な時間
-  { id: 11041, word: "yesterday", meaning: "昨日、きのう", partOfSpeech: "名詞・副詞", category: "時間に関する単語", appearanceCount: 15 },
-  { id: 11042, word: "today", meaning: "今日、きょう", partOfSpeech: "名詞・副詞", category: "時間に関する単語", appearanceCount: 64 },
-  { id: 11043, word: "tomorrow", meaning: "明日、あした", partOfSpeech: "名詞・副詞", category: "時間に関する単語", appearanceCount: 20 },
-  { id: 11046, word: "now", meaning: "今、現在", partOfSpeech: "副詞", category: "時間に関する単語", appearanceCount: 161 },
-  { id: 11047, word: "then", meaning: "その時、それから、それでは", partOfSpeech: "副詞", category: "時間に関する単語", appearanceCount: 66 },
-  { id: 11048, word: "at that time", meaning: "その時、当時", partOfSpeech: "副詞句", category: "時間に関する単語", appearanceCount: 0 },
-];
-
 // 動物に関する単語
 const animalWords = [
-  // 基本概念
-  { id: 11101, word: "animal", meaning: "動物", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 18 },
-  { id: 11122, word: "pet", meaning: "ペット、愛玩動物", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 1 },
-  // ペット・家畜
   { id: 11102, word: "dog", meaning: "犬", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 14 },
   { id: 11103, word: "cat", meaning: "猫", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 2 },
+  { id: 11105, word: "fish", meaning: "魚 （複数形： fish)、釣りをする", partOfSpeech: "名詞・動詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11104, word: "rabbit", meaning: "うさぎ", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11105, word: "horse", meaning: "馬", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11106, word: "cow", meaning: "牛", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11107, word: "pig", meaning: "豚", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
-  { id: 11108, word: "sheep", meaning: "羊（複数形: sheep）", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 11 },
-  { id: 11123, word: "mouse", meaning: "ネズミ（複数形: mice）", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
+  { id: 11108, word: "sheep", meaning: "羊（複数形: sheep)", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 11 },
+  { id: 11123, word: "mouse", meaning: "ネズミ（複数形: mice)", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11124, word: "turtle", meaning: "カメ", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
-  // 野生動物
   { id: 11109, word: "lion", meaning: "ライオン", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 2 },
   { id: 11110, word: "tiger", meaning: "トラ", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11111, word: "bear", meaning: "クマ、～を産む", partOfSpeech: "名詞・動詞", category: "動物に関する単語", appearanceCount: 1 },
   { id: 11112, word: "elephant", meaning: "ゾウ", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 1 },
   { id: 11113, word: "monkey", meaning: "サル", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11114, word: "giraffe", meaning: "キリン", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
-  { id: 11125, word: "deer", meaning: "シカ（複数形: deer）", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
+  { id: 11125, word: "deer", meaning: "シカ（複数形: deer)", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11126, word: "fox", meaning: "キツネ", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11127, word: "koala", meaning: "コアラ", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11128, word: "panda", meaning: "パンダ", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
-  // 鳥類
   { id: 11115, word: "bird", meaning: "鳥", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 28 },
   { id: 11116, word: "crane", meaning: "ツル", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11129, word: "penguin", meaning: "ペンギン", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 18 },
-  // その他
   { id: 11117, word: "snake", meaning: "ヘビ", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11118, word: "frog", meaning: "カエル", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
   { id: 11119, word: "bee", meaning: "ミツバチ", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
@@ -515,84 +324,66 @@ const animalWords = [
   { id: 11131, word: "octopus", meaning: "タコ（複数形: octuses/octopi）", partOfSpeech: "名詞", category: "動物に関する単語", appearanceCount: 0 },
 ];
 
-// 自然・天気に関する単語
+// 自然・天気、方角に関する単語
 const natureWeatherWords = [
+    // 自然
+    { id: 11220, word: "mountain", meaning: "山［Mt.～ ～山］", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 19 },
+    { id: 11231, word: "rainbow", meaning: "虹", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 0 },
+    { id: 11221, word: "river", meaning: "川、河川", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 38 },
+    { id: 11222, word: "lake", meaning: "湖、湖水", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 44 },
+    { id: 11223, word: "sea", meaning: "海、海の", partOfSpeech: "名詞、形容詞", category: "自然・天気に関する単語", appearanceCount: 24 },
+    { id: 11226, word: "tree", meaning: "木", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 115 },
+    { id: 11228, word: "flower", meaning: "花", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 5 },
   // 天気・気候
-   { id: 11207, word: "sunny", meaning: "晴れた", partOfSpeech: "形容詞", category: "自然・天気に関する単語", appearanceCount: 4 },
+  { id: 11207, word: "sunny", meaning: "晴れた", partOfSpeech: "形容詞", category: "自然・天気に関する単語", appearanceCount: 4 },
   { id: 11208, word: "cloudy", meaning: "曇った", partOfSpeech: "形容詞", category: "自然・天気に関する単語", appearanceCount: 4 },
   { id: 11209, word: "rainy", meaning: "雨の", partOfSpeech: "形容詞", category: "自然・天気に関する単語", appearanceCount: 1 },
   { id: 11210, word: "snowy", meaning: "雪の", partOfSpeech: "形容詞", category: "自然・天気に関する単語", appearanceCount: 0 },
   { id: 11229, word: "windy", meaning: "風の強い、風のある", partOfSpeech: "形容詞", category: "自然・天気に関する単語", appearanceCount: 1 },
-  { id: 11211, word: "rain", meaning: "雨、雨が降る", partOfSpeech: "名詞・動詞", category: "自然・天気に関する単語", appearanceCount: 8 },
-  { id: 11212, word: "snow", meaning: "雪、雪が降る", partOfSpeech: "名詞・動詞", category: "自然・天気に関する単語", appearanceCount: 83 },
-  { id: 11213, word: "cloud", meaning: "雲", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 3 },
-  { id: 11214, word: "wind", meaning: "風", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 9 },
-  { id: 11215, word: "typhoon", meaning: "台風", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 0 },
-  // 自然（地形）
-  { id: 11217, word: "sky", meaning: "空", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 11 },
-  { id: 11231, word: "rainbow", meaning: "虹", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 0 },
-  { id: 11220, word: "mountain", meaning: "山［Mt.～ ～山］", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 19 },
-  { id: 11232, word: "hill", meaning: "丘", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 1 },
-  { id: 11221, word: "river", meaning: "川、河川", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 38 },
-  { id: 11222, word: "lake", meaning: "湖、湖水", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 44 },
-  { id: 11233, word: "pond", meaning: "池", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 0 },
-  { id: 11223, word: "sea", meaning: "海、海の", partOfSpeech: "名詞、形容詞", category: "自然・天気に関する単語", appearanceCount: 24 },
-  { id: 11224, word: "ocean", meaning: "海、海洋、大洋", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 4 },
-  { id: 11234, word: "beach", meaning: "砂浜、浜辺、海岸", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 5 },
-  // 自然（植物）
-  { id: 11225, word: "forest", meaning: "森、森林", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 9 },
-  { id: 11226, word: "tree", meaning: "木", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 115 },
-  { id: 11227, word: "plant", meaning: "植物、草花を植える", partOfSpeech: "名詞・動詞", category: "自然・天気に関する単語", appearanceCount: 19 },
-  { id: 11228, word: "flower", meaning: "花", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 5 },
-  { id: 11235, word: "leaf", meaning: "葉（複数形: leaves）", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 12 },
-];
+  // 方角
+  { id: 11232, word: "north", meaning: "北", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 0 },
+  { id: 11233, word: "south", meaning: "南", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 2 },
+  { id: 11234, word: "east", meaning: "東", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 4 },
+  { id: 11235, word: "west", meaning: "西", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 3 },
+  ];
 
 // 学校に関する単語
 const schoolWords = [
-  // 基本概念
+  // 学校
   { id: 11301, word: "school", meaning: "学校", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 144 },
-  { id: 11316, word: "student", meaning: "生徒、学生", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 122 },
-  { id: 11317, word: "teacher", meaning: "先生、教師", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 23 },
-  { id: 11337, word: "classmate", meaning: "クラスメート、同級生", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 3 },
-  { id: 11302, word: "class", meaning: "クラス・学級、授業、", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 43 },
-  { id: 11303, word: "lesson", meaning: "授業、レッスン、課、習い事", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 25 },
-  { id: 11307, word: "homework", meaning: "宿題", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 9 },
-  { id: 11305, word: "test", meaning: "試験、テスト、検査、～を試す", partOfSpeech: "名詞・動詞", category: "学校に関する単語", appearanceCount: 18 },
-  { id: 11306, word: "exam", meaning: "試験、テスト", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
-  // 科目
-  { id: 11304, word: "subject", meaning: "科目、教科", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 1 },
-  { id: 11308, word: "English", meaning: "英語", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 82 },
-  { id: 11309, word: "math", meaning: "数学", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 7 },
-  { id: 11310, word: "science", meaning: "理科、科学", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 22 },
-  { id: 11311, word: "history", meaning: "歴史", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 28 },
-  { id: 11312, word: "music", meaning: "音楽", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 26 },
-  { id: 11313, word: "art", meaning: "美術、芸術", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 12 },
-  { id: 11324, word: "Japanese", meaning: "国語、日本語", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 77 },
-  { id: 11325, word: "social studies", meaning: "社会（社会科）", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
-  { id: 11326, word: "moral education", meaning: "道徳", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
-  { id: 11327, word: "home economics", meaning: "家庭科", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
-  { id: 11328, word: "P.E.", meaning: "体育（Physical Education）", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 1 },
-  { id: 11342, word: "calligraphy", meaning: "書道、習字", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
-  // 教材
-  { id: 11340, word: "textbook", meaning: "教科書", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 4 },
-  // 場所
   { id: 11323, word: "classroom", meaning: "教室", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 13 },
   { id: 11341, word: "blackboard", meaning: "黒板", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
   { id: 11338, word: "gym", meaning: "体育館、ジム", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 10 },
   { id: 11339, word: "swimming pool", meaning: "プール", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
   { id: 11343, word: "playground", meaning: "運動場", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
-  { id: 11344, word: "library", meaning: "図書室", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 15 },
+  // 科目
+  { id: 11308, word: "English", meaning: "英語", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 82 },
+  { id: 11309, word: "math", meaning: "数学、算数", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 7 },
+  { id: 11310, word: "science", meaning: "理科、科学", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 22 },
+  { id: 11312, word: "music", meaning: "音楽", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 26 },
+  { id: 11313, word: "arts and crafts", meaning: "図画工作", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 12 },
+  { id: 11324, word: "Japanese", meaning: "国語、日本語", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 77 },
+  { id: 11325, word: "social studies", meaning: "社会（社会科）", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
+  { id: 11326, word: "moral education", meaning: "道徳", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
+  { id: 11327, word: "home economics", meaning: "家庭科", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
+  { id: 11328, word: "P.E.", meaning: "体育（Physical Education）", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 1 },
+  { id: 11342, word: "calligraphy", meaning: "書道、書写、習字", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
+  // 文房具
+  { id: 11344, word: "pen", meaning: "ペン", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 1 },
+  { id: 11345, word: "pencil", meaning: "鉛筆", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 1 },
+  { id: 11346, word: "eraser", meaning: "消しゴム", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
+  { id: 11347, word: "notebook", meaning: "ノート", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 5 },
+  { id: 11348, word: "ruler", meaning: "定規", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 1 },
+  { id: 11349, word: "scissors", meaning: "はさみ", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
+  { id: 11350, word: "stapler", meaning: "ホチキス", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
   // 学校の種類・段階
-   { id: 11330, word: "elementary school", meaning: "小学校", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 15 },
+  { id: 11330, word: "elementary school", meaning: "小学校", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 15 },
   { id: 11331, word: "junior high school", meaning: "中学校", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 4 },
   { id: 11329, word: "high school", meaning: "高校、高等学校", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 26 },
   { id: 11332, word: "university", meaning: "大学", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 5 },
   { id: 11333, word: "college", meaning: "大学、短大、専門学校", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 3 },
-  // 活動・部活動
-  { id: 11334, word: "club", meaning: "クラブ、部活動、同好会", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 58 },
-  { id: 11335, word: "brass band", meaning: "吹奏楽部、ブラスバンド", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 3 },
-  { id: 11336, word: "chorus", meaning: "合唱部、合唱、合唱団", partOfSpeech: "名詞", category: "学校に関する単語", appearanceCount: 0 },
 ];
+
 
 // 国名や地域に関する単語
 const countryWords = [
@@ -600,7 +391,7 @@ const countryWords = [
   { id: 11402, word: "Asia", meaning: "アジア", partOfSpeech: "名詞", category: "国名や地域に関する単語", appearanceCount: 16 },
   { id: 11403, word: "Europe", meaning: "ヨーロッパ", partOfSpeech: "名詞", category: "国名や地域に関する単語", appearanceCount: 11 },
   { id: 11404, word: "Africa", meaning: "アフリカ", partOfSpeech: "名詞", category: "国名や地域に関する単語", appearanceCount: 7 },
-  // 国名（入試登場回数の多い順）
+  // 国名
   { id: 11405, word: "Japan", meaning: "日本", partOfSpeech: "名詞", category: "国名や地域に関する単語", appearanceCount: 140 },
   { id: 11406, word: "America", meaning: "アメリカ（合衆国）", partOfSpeech: "名詞", category: "国名や地域に関する単語", appearanceCount: 32 },
   { id: 11407, word: "U.S.", meaning: "（theを付けて）アメリカ合衆国", partOfSpeech: "名詞", category: "国名や地域に関する単語", appearanceCount: 0 },
@@ -626,7 +417,7 @@ const countryWords = [
   // 都市
   { id: 11424, word: "New York", meaning: "ニューヨーク", partOfSpeech: "名詞", category: "国名や地域に関する単語", appearanceCount: 1 },
   { id: 11421, word: "London", meaning: "ロンドン", partOfSpeech: "名詞", category: "国名や地域に関する単語", appearanceCount: 10 },
-  // 形容詞・国籍（入試登場回数の多い順）
+  // 国籍
   { id: 11429, word: "Japanese", meaning: "日本人（の）、日本の、日本語", partOfSpeech: "名形", category: "国名や地域に関する単語", appearanceCount: 77 },
   { id: 11430, word: "Korean", meaning: "韓国人（の）、韓国の、韓国語", partOfSpeech: "名形", category: "国名や地域に関する単語", appearanceCount: 7 },
   { id: 11431, word: "French", meaning: "フランス人（の）、フランスの、フランス語", partOfSpeech: "名形", category: "国名や地域に関する単語", appearanceCount: 6 },
@@ -638,53 +429,18 @@ const countryWords = [
   { id: 11437, word: "German", meaning: "①ドイツ人（の）、ドイツの、ドイツ語", partOfSpeech: "名形", category: "国名や地域に関する単語", appearanceCount: 0 },
 ];
 
-// 方角・方向に関する単語
-const directionWords = [
-  // 基本方角
-  { id: 11501, word: "north", meaning: "北", partOfSpeech: "名詞", category: "方角・方向に関する単語", appearanceCount: 0 },
-  { id: 11502, word: "south", meaning: "南", partOfSpeech: "名詞", category: "方角・方向に関する単語", appearanceCount: 2 },
-  { id: 11503, word: "east", meaning: "東", partOfSpeech: "名詞", category: "方角・方向に関する単語", appearanceCount: 4 },
-  { id: 11504, word: "west", meaning: "西", partOfSpeech: "名詞", category: "方角・方向に関する単語", appearanceCount: 3 },
-  // 方角の形容詞形
-  { id: 11505, word: "northern", meaning: "北の、北にある、北部の", partOfSpeech: "形容詞", category: "方角・方向に関する単語", appearanceCount: 1 },
-  { id: 11506, word: "southern", meaning: "南の、南にある、南部の", partOfSpeech: "形容詞", category: "方角・方向に関する単語", appearanceCount: 1 },
-  { id: 11507, word: "eastern", meaning: "東の、東にある、東部の", partOfSpeech: "形容詞", category: "方角・方向に関する単語", appearanceCount: 1 },
-  { id: 11508, word: "western", meaning: "西の、西にある、西部の", partOfSpeech: "形容詞", category: "方角・方向に関する単語", appearanceCount: 5 },
-  // 方向
-  { id: 11509, word: "straight", meaning: "まっすぐな、まっすぐに", partOfSpeech: "形容詞・副詞", category: "方角・方向に関する単語", appearanceCount: 5 },
-  { id: 11510, word: "right", meaning: "右（の）、右に、右側", partOfSpeech: "名詞・形容詞・副詞", category: "方角・方向に関する単語", appearanceCount: 116 },
-  { id: 11511, word: "left", meaning: "左（の）、左に、左側", partOfSpeech: "名詞・形容詞・副詞", category: "方角・方向に関する単語", appearanceCount: 33 },
-];
-
 // 行事・余暇に関する単語
 const eventLeisureWords = [
-  // 基本概念
-  { id: 11601, word: "event", meaning: "行事、イベント、出来事", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 54 },
-  { id: 11602, word: "travel", meaning: "旅行、旅行する", partOfSpeech: "名詞・動詞", category: "行事・余暇に関する単語", appearanceCount: 10 },
-  { id: 11603, word: "trip", meaning: "旅行、旅", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 4 },
-  // 行事・祝日
   { id: 11604, word: "birthday", meaning: "誕生日", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 17 },
-  { id: 11605, word: "party", meaning: "パーティー、会、政党", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 13 },
-  { id: 11606, word: "festival", meaning: "祭り、お祭り（school festival：文化祭）", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 12 },
-  { id: 11607, word: "ceremony", meaning: "式典、儀式", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 10 },
   { id: 11608, word: "New Year", meaning: "新年、正月（New Year's Day：元日、１月１日、New Year's Eve：大みそか）", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 7 },
   { id: 11609, word: "Christmas", meaning: "クリスマス", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
   { id: 11622, word: "field trip", meaning: "遠足、校外学習", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
   { id: 11623, word: "school trip", meaning: "修学旅行、学校旅行", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
-  // 余暇活動
-  { id: 11610, word: "tour", meaning: "ツアー、見学、旅行", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 21 },
-  { id: 11611, word: "concert", meaning: "コンサート、演奏会", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 18 },
   { id: 11612, word: "shopping", meaning: "買い物、ショッピング", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 7 },
-  { id: 11613, word: "sightseeing", meaning: "観光、見物", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 1 },
-  { id: 11614, word: "tournament", meaning: "トーナメント、選手権大会", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 1 },
-  { id: 11615, word: "camping", meaning: "キャンプ", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
-  { id: 11616, word: "camp", meaning: "キャンプ、野営地、キャンプをする", partOfSpeech: "名詞・動詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
   { id: 11617, word: "firework", meaning: "花火", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
   { id: 11618, word: "hiking", meaning: "ハイキング、登山", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
-  { id: 11619, word: "parade", meaning: "パレード、行列", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
   { id: 11620, word: "picnic", meaning: "ピクニック、遠足", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0 },
-  { id: 11621, word: "fishing", meaning: "釣り、魚釣り", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 10 },
-];
+  ];
 
 // ============================================
 // 機能語（英文でよく登場する重要語）
@@ -14270,7 +14026,6 @@ function getAllVocabulary() {
     ...familyHomeWords,
     ...numberWords,
     ...dailyItemsInstrumentsWords,
-    ...bodyWords,
     ...colorWords,
     ...foodDrinkWords,
     ...townFacilityWords,
@@ -14278,12 +14033,10 @@ function getAllVocabulary() {
     ...occupationWords,
     ...sportsWords,
     ...calendarWords,
-    ...timeWords,
     ...animalWords,
     ...natureWeatherWords,
     ...schoolWords,
     ...countryWords,
-    ...directionWords,
     ...eventLeisureWords,
     // 機能語
     ...articleWords,
@@ -14317,7 +14070,6 @@ function getVocabularyByCategory(categoryName) {
     '家族・家に関する単語': familyHomeWords,
     '数字に関する単語': numberWords,
     '日用品・楽器に関する単語': dailyItemsInstrumentsWords,
-    '体に関する単語': bodyWords,
     '色に関する単語': colorWords,
     '食べ物・飲み物に関する単語': foodDrinkWords,
     '町の施設に関する単語': townFacilityWords,
@@ -14325,13 +14077,10 @@ function getVocabularyByCategory(categoryName) {
     '職業に関する単語': occupationWords,
     'スポーツに関する単語': sportsWords,
     '曜日・月・季節に関する単語': calendarWords,
-    '時間に関する単語': timeWords,
-    '曜日・月・季節に関する単語': calendarWords, // 後方互換性のため残す
     '動物に関する単語': animalWords,
     '自然・天気に関する単語': natureWeatherWords,
     '学校に関する単語': schoolWords,
     '国名や地域に関する単語': countryWords,
-    '方角・方向に関する単語': directionWords,
     '行事・余暇に関する単語': eventLeisureWords,
     // 機能語
     '冠詞': articleWords,
@@ -14360,7 +14109,6 @@ function getElementaryVocabulary() {
     ...familyHomeWords,
     ...numberWords,
     ...dailyItemsInstrumentsWords,
-    ...bodyWords,
     ...colorWords,
     ...foodDrinkWords,
     ...townFacilityWords,
@@ -14372,7 +14120,6 @@ function getElementaryVocabulary() {
     ...natureWeatherWords,
     ...schoolWords,
     ...countryWords,
-    ...directionWords,
     ...eventLeisureWords,
     // 機能語
     ...articleWords,
@@ -14418,7 +14165,6 @@ function getDailyLifeVocabulary() {
     ...familyHomeWords,
     ...numberWords,
     ...dailyItemsInstrumentsWords,
-    ...bodyWords,
     ...colorWords,
     ...foodDrinkWords,
     ...townFacilityWords,
@@ -14426,12 +14172,10 @@ function getDailyLifeVocabulary() {
     ...occupationWords,
     ...sportsWords,
     ...calendarWords,
-    ...timeWords,
     ...animalWords,
     ...natureWeatherWords,
     ...schoolWords,
     ...countryWords,
-    ...directionWords,
     ...eventLeisureWords,
   ];
 }

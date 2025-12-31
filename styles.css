@@ -4186,7 +4186,7 @@ body.reorder-mode-active .word-card-container {
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 200px;
+    min-height: 150px;
     transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     transform-style: preserve-3d;
 }
@@ -4203,7 +4203,7 @@ body.reorder-mode-active .word-card-container {
 .input-list-back {
     width: 100%;
     height: 100%;
-    min-height: 200px;
+    min-height: 150px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     padding: 16px;
@@ -4312,11 +4312,11 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-number {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 700;
     color: #ffffff;
     position: relative;
-    padding: 5px 10px;
+    padding: 3px 7px;
     background: #6b7280;
     border-radius: 0;
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
@@ -4443,8 +4443,9 @@ body.reorder-mode-active .word-card-container {
     background: #ffffff;
     border: none;
     border-bottom: 1px solid #e5e7eb;
-    padding: 10px 12px;
-    padding-top: 32px;
+    padding: 20px 16px;
+    padding-top: 40px;
+    padding-bottom: 24px;
     transition: background 0.15s ease;
 }
 
@@ -4519,7 +4520,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-expand-word {
-    font-size: 26px;
+    font-size: 32px;
     font-weight: 700;
     color: #111827;
     font-family: "Times New Roman", Times, serif;
@@ -4617,8 +4618,9 @@ body.reorder-mode-active .word-card-container {
 
 @media (max-width: 640px) {
     .input-list-item-expand {
-        padding: 8px 10px;
-        padding-top: 28px;
+        padding: 16px 12px;
+        padding-top: 36px;
+        padding-bottom: 20px;
     }
     
     .input-list-expand-header {
@@ -4633,7 +4635,7 @@ body.reorder-mode-active .word-card-container {
     }
     
     .input-list-expand-word {
-        font-size: 24px;
+        font-size: 28px;
     }
     
     .input-list-expand-meaning {
@@ -4670,8 +4672,8 @@ body.reorder-mode-active .word-card-container {
         gap: 10px;
     }
     .input-list-number {
-        padding: 4px 8px;
-        font-size: 11px;
+        padding: 2px 6px;
+        font-size: 9px;
     }
     .input-list-appearance-wrapper {
         top: 10px;
