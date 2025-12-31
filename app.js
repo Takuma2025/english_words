@@ -3208,11 +3208,17 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
             <div class="course-card-actions">
                 <button type="button" class="course-action-btn input-btn">
                     <img src="input.png" alt="" class="action-btn-icon">
-                    <span>インプット</span>
+                    <div class="action-btn-text">
+                        <span class="action-btn-title">インプット</span>
+                        <span class="action-btn-desc">一覧を見て学習する</span>
+                    </div>
                 </button>
                 <button type="button" class="course-action-btn output-btn">
                     <img src="output.png" alt="" class="action-btn-icon">
-                    <span>アウトプット</span>
+                    <div class="action-btn-text">
+                        <span class="action-btn-title">アウトプット</span>
+                        <span class="action-btn-desc">覚えたか確認する</span>
+                    </div>
                 </button>
             </div>
         `;
@@ -3634,11 +3640,17 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
         <div class="course-card-actions">
             <button type="button" class="course-action-btn input-btn">
                 <img src="input.png" alt="" class="action-btn-icon">
-                <span>インプット</span>
+                <div class="action-btn-text">
+                    <span class="action-btn-title">インプット</span>
+                    <span class="action-btn-desc">一覧を見て学習する</span>
+                </div>
             </button>
             <button type="button" class="course-action-btn output-btn">
                 <img src="output.png" alt="" class="action-btn-icon">
-                <span>アウトプット</span>
+                <div class="action-btn-text">
+                    <span class="action-btn-title">アウトプット</span>
+                    <span class="action-btn-desc">覚えたか確認する</span>
+                </div>
             </button>
         </div>
     `;
