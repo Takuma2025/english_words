@@ -7375,34 +7375,52 @@ function renderInputListView(words) {
             wordRow.appendChild(audioBtn);
             
             header.appendChild(wordRow);
+            item.appendChild(header);
             
-            // 右側のアクション（頻出度、ブックマーク）
-            const actions = document.createElement('div');
-            actions.className = 'input-list-expand-actions';
+            // 右上のアクションエリア（でた度 + ブックマーク）
+            const topActions = document.createElement('div');
+            topActions.className = 'input-list-expand-top-actions';
             
+            // でた度表示
             if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
-                const badge = document.createElement('span');
-                badge.className = 'input-list-expand-appearance';
+                const appearanceBox = document.createElement('div');
+                appearanceBox.className = 'input-list-expand-appearance-box';
+                
+                const osakaImg = document.createElement('img');
+                osakaImg.src = 'osaka.png';
+                osakaImg.alt = '大阪府';
+                osakaImg.className = 'appearance-osaka-icon';
+                appearanceBox.appendChild(osakaImg);
+                
+                const label = document.createElement('span');
+                label.className = 'appearance-label';
+                label.textContent = 'でた度';
+                appearanceBox.appendChild(label);
+                
                 const stars = getAppearanceStars(word.appearanceCount);
-                badge.innerHTML = `<span class="appearance-count">${stars}</span>`;
-                actions.appendChild(badge);
+                const starsSpan = document.createElement('span');
+                starsSpan.className = 'appearance-stars';
+                starsSpan.textContent = stars;
+                appearanceBox.appendChild(starsSpan);
+                
+                topActions.appendChild(appearanceBox);
             }
             
+            // ブックマークボタン（リボン型）
             const starBtn = document.createElement('button');
             starBtn.className = 'star-btn input-list-expand-star-btn';
             starBtn.setAttribute('type', 'button');
             if (reviewWords.has(word.id)) {
                 starBtn.classList.add('active');
             }
-            starBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4h10a1 1 0 0 1 1 1v14l-6-4-6 4V5a1 1 0 0 1 1-1z"></path></svg>';
+            starBtn.innerHTML = '<svg width="24" height="32" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="0" aria-hidden="true" focusable="false"><path d="M4 0h16v32l-8-6-8 6V0z" fill="currentColor"/></svg>';
             starBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 toggleReviewById(word.id, starBtn);
             });
-            actions.appendChild(starBtn);
+            topActions.appendChild(starBtn);
             
-            header.appendChild(actions);
-            item.appendChild(header);
+            item.appendChild(topActions);
             
             // 意味（品詞付き）
             const meaningEl = document.createElement('div');
@@ -7493,34 +7511,6 @@ function renderInputListView(words) {
             }
             meta.appendChild(number);
             
-            // ブックマークボタンを作成
-            const starBtn = document.createElement('button');
-            starBtn.className = 'star-btn input-list-star-btn';
-            starBtn.setAttribute('type', 'button');
-            if (reviewWords.has(word.id)) {
-                starBtn.classList.add('active');
-            }
-            starBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4h10a1 1 0 0 1 1 1v14l-6-4-6 4V5a1 1 0 0 1 1-1z"></path></svg>';
-            starBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleReviewById(word.id, starBtn);
-            });
-            starBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
-            
-            // 入試頻出度とブックマークを横並びにするラッパー
-            const appearanceWrapper = document.createElement('div');
-            appearanceWrapper.className = 'input-list-appearance-wrapper';
-            
-            if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
-                const badge = document.createElement('span');
-                badge.className = 'input-list-appearance';
-                const stars = getAppearanceStars(word.appearanceCount);
-                badge.innerHTML = `<span class="appearance-count">${stars}</span>`;
-                appearanceWrapper.appendChild(badge);
-            }
-            appearanceWrapper.appendChild(starBtn);
-            meta.appendChild(appearanceWrapper);
-            
             const row = document.createElement('div');
             row.className = 'input-list-row';
             
@@ -7599,6 +7589,52 @@ function renderInputListView(words) {
             inner.appendChild(front);
             inner.appendChild(back);
             
+            // 右上のアクションエリア（でた度 + ブックマーク）
+            const topActions = document.createElement('div');
+            topActions.className = 'input-list-top-actions';
+            
+            // でた度表示
+            if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
+                const appearanceBox = document.createElement('div');
+                appearanceBox.className = 'input-list-appearance-box';
+                
+                const osakaImg = document.createElement('img');
+                osakaImg.src = 'osaka.png';
+                osakaImg.alt = '大阪府';
+                osakaImg.className = 'appearance-osaka-icon';
+                appearanceBox.appendChild(osakaImg);
+                
+                const label = document.createElement('span');
+                label.className = 'appearance-label';
+                label.textContent = 'でた度';
+                appearanceBox.appendChild(label);
+                
+                const stars = getAppearanceStars(word.appearanceCount);
+                const starsSpan = document.createElement('span');
+                starsSpan.className = 'appearance-stars';
+                starsSpan.textContent = stars;
+                appearanceBox.appendChild(starsSpan);
+                
+                topActions.appendChild(appearanceBox);
+            }
+            
+            // ブックマークボタン（リボン型）
+            const starBtn = document.createElement('button');
+            starBtn.className = 'star-btn input-list-star-btn';
+            starBtn.setAttribute('type', 'button');
+            if (reviewWords.has(word.id)) {
+                starBtn.classList.add('active');
+            }
+            starBtn.innerHTML = '<svg width="24" height="32" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="0" aria-hidden="true" focusable="false"><path d="M4 0h16v32l-8-6-8 6V0z" fill="currentColor"/></svg>';
+            starBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleReviewById(word.id, starBtn);
+            });
+            starBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+            topActions.appendChild(starBtn);
+            
+            inner.appendChild(topActions);
+            
             item.addEventListener('click', () => {
                 // 音声再生中は停止してからカードをめくる
                 if (currentSpeech) {
@@ -7612,6 +7648,7 @@ function renderInputListView(words) {
             });
             
             item.appendChild(inner);
+            
             container.appendChild(item);
         }
     });

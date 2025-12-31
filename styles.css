@@ -3315,6 +3315,10 @@ body.learning-mode .app-header {
     justify-content: center;
     position: relative;
     vertical-align: top;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .grammar-back-btn:hover {
@@ -3322,8 +3326,9 @@ body.learning-mode .app-header {
 }
 
 .grammar-back-btn:active {
-    transform: none;
-    margin: -4px 8px -4px 0;
+    transform: none !important;
+    margin: -4px 8px -4px 0 !important;
+    top: 0 !important;
 }
 
 .card-top-section {
@@ -4255,6 +4260,7 @@ body.reorder-mode-active .word-card-container {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 4px;
     padding: 5px 10px;
     height: 28px;
     border: none;
@@ -4266,6 +4272,12 @@ body.reorder-mode-active .word-card-container {
     font-weight: 600;
     white-space: nowrap;
     transition: all 0.2s ease;
+}
+
+.input-list-mode-btn .mode-btn-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
 }
 
 .input-list-mode-btn:hover {
@@ -4286,6 +4298,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-item {
+    position: relative;
     background: #ffffff;
     border: none;
     border-bottom: 1px solid #d1d5db;
@@ -4358,28 +4371,79 @@ body.reorder-mode-active .word-card-container {
     align-items: flex-start;
 }
 
-.input-list-appearance-wrapper {
+/* フリップモード右上のアクションエリア */
+.input-list-top-actions {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 0;
+    right: 0;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 6px;
+    z-index: 100;
+    backface-visibility: hidden;
 }
 
+.input-list-appearance-box {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #6b7a8f !important;
+    padding: 4px 8px;
+    border-radius: 0 0 6px 6px;
+    font-size: 10px;
+    color: #ffffff;
+}
+
+.input-list-appearance-box .appearance-osaka-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.input-list-appearance-box .appearance-label {
+    font-weight: 600;
+    color: #ffffff;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+.input-list-appearance-box .appearance-stars {
+    color: #ffffff;
+    font-size: 11px;
+    letter-spacing: 1px;
+    display: inline-block;
+    min-width: 4.5em;
+    text-align: left;
+}
+
+
 .input-list-star-btn {
-    width: 32px;
+    position: relative;
+    top: 0;
+    width: 24px;
     height: 32px;
-    min-width: 32px;
-    padding: 5px;
+    min-width: 24px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #d1d5db;
+    z-index: 100;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.input-list-star-btn:hover {
+    color: #9ca3af;
 }
 
 .input-list-star-btn.active {
-    color: #4b5563;
+    color: #5eead4;
 }
 
 .input-list-star-btn.active svg {
-    fill: #4b5563;
+    fill: #5eead4;
 }
 
 .input-list-row {
@@ -4647,27 +4711,61 @@ body.reorder-mode-active .word-card-container {
     margin-top: -3px;
 }
 
-.input-list-expand-actions {
+/* 展開モード右上のアクションエリア */
+.input-list-expand-top-actions {
     position: absolute;
-    top: 8px;
-    right: 10px;
+    top: 0;
+    right: 0;
     display: flex;
-    align-items: center;
-    gap: 6px;
+    align-items: flex-start;
+    gap: 8px;
 }
 
-.input-list-expand-appearance {
+.input-list-expand-appearance-box {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #6b7a8f !important;
+    padding: 5px 10px;
+    border-radius: 0 0 8px 8px;
     font-size: 11px;
-    color: #6b7280;
+    color: #ffffff;
+}
+
+.input-list-expand-appearance-box .appearance-osaka-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.input-list-expand-appearance-box .appearance-label {
+    font-weight: 600;
+    color: #ffffff;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+.input-list-expand-appearance-box .appearance-stars {
+    color: #ffffff;
+    font-size: 13px;
+    letter-spacing: 1px;
+    display: inline-block;
+    min-width: 4.5em;
+    text-align: left;
 }
 
 .input-list-expand-star-btn {
-    padding: 2px;
+    position: relative;
+    top: 0;
+    padding: 0;
     background: transparent;
     border: none;
     cursor: pointer;
     color: #d1d5db;
     transition: color 0.2s ease;
+    z-index: 100;
+    flex-shrink: 0;
 }
 
 .input-list-expand-star-btn:hover {
@@ -4675,16 +4773,17 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-expand-star-btn.active {
-    color: #3b82f6;
+    color: #5eead4;
 }
 
 .input-list-expand-star-btn.active svg {
-    fill: #4b5563;
+    fill: #5eead4;
+    stroke: #5eead4;
 }
 
 .input-list-expand-star-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 32px;
 }
 
 .input-list-expand-meaning {
@@ -4753,6 +4852,25 @@ body.reorder-mode-active .word-card-container {
         left: 0;
     }
     
+    .input-list-expand-top-actions {
+        gap: 4px;
+    }
+    
+    .input-list-expand-appearance-box {
+        padding: 4px 7px;
+        font-size: 10px;
+    }
+    
+    .input-list-expand-appearance-box .appearance-osaka-icon {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .input-list-expand-appearance-box .appearance-stars {
+        font-size: 11px;
+        min-width: 4em;
+    }
+    
     .input-list-expand-word {
         font-size: 28px;
     }
@@ -4794,9 +4912,23 @@ body.reorder-mode-active .word-card-container {
         padding: 2px 6px;
         font-size: 9px;
     }
-    .input-list-appearance-wrapper {
-        top: 10px;
-        right: 10px;
+    .input-list-top-actions {
+        gap: 4px;
+    }
+    
+    .input-list-appearance-box {
+        padding: 3px 6px;
+        font-size: 9px;
+    }
+    
+    .input-list-appearance-box .appearance-osaka-icon {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .input-list-appearance-box .appearance-stars {
+        font-size: 10px;
+        min-width: 3.5em;
     }
     .input-list-word {
         font-size: 32px;
@@ -5786,6 +5918,7 @@ body.learning-mode .bottom-nav {
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .card-top-info {
@@ -5903,6 +6036,42 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     color: var(--warning);
 }
 
+/* アウトプットモードのカード用ブックマーク（リボン型、右上配置） */
+.card-star-btn {
+    position: absolute;
+    top: 0;
+    right: 16px;
+    padding: 0;
+    margin: 0;
+    width: 28px;
+    height: 38px;
+    color: #d1d5db;
+    z-index: 100;
+    transition: color 0.2s ease;
+    backface-visibility: hidden;
+}
+
+.card-star-btn:hover {
+    color: #9ca3af;
+}
+
+.card-star-btn.active {
+    color: #fbbf24;
+}
+
+.card-star-btn.active svg {
+    fill: #fbbf24;
+}
+
+/* 入試頻出度を単語番号の右側に配置 */
+.card-appearance-left {
+    position: absolute;
+    top: 16px;
+    left: 75px;
+    right: auto;
+    margin: 0;
+}
+
 /* ブックマークアイコンの塗りつぶし */
 .star-btn svg {
     fill: none;
@@ -5918,7 +6087,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     justify-content: center;
     gap: 8px;
     margin-top: auto;
-    margin-bottom: 8px;
+    margin-bottom: auto;
     flex-wrap: wrap;
     position: relative;
 }
@@ -6032,7 +6201,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     justify-content: center;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: auto;
 }
 
 /* 裏面の品詞コンテナ用スタイル */
@@ -6166,11 +6334,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .tap-hint {
-    margin-top: auto;
     text-align: center;
     font-size: 12px;
     color: #94a3b8;
     opacity: 0.7;
+    margin-top: 8px;
 }
 
 /* Back Face */
@@ -10907,7 +11075,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 @media (max-width: 600px) {
     .filter-sheet-content {
-        padding: 12px 10px 16px;
+        padding: 15px 10px 16px;
     }
     .filter-card-container {
         max-width: 100%;
