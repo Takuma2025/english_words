@@ -2978,8 +2978,8 @@ body.learning-mode .app-header {
 
 .category-header {
     display: flex;
-    align-items: flex-start;
-    gap: 4px;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 2px;
     position: relative;
 }
@@ -3036,7 +3036,6 @@ body.learning-mode .app-header {
     font-weight: 700;
     color: #1f2937;
     margin-bottom: 0;
-    flex: 1;
 }
 
 .level-badge {
@@ -3130,21 +3129,8 @@ body.learning-mode .app-header {
 .category-source {
     font-size: 10px;
     color: #9ca3af;
+    margin-top: 2px;
     line-height: 1.3;
-    margin-left: auto;
-    text-align: right;
-    flex-shrink: 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 4px;
-    margin-right: 10px;
-}
-
-.category-source-icon {
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
-    object-fit: contain;
 }
 
 .category-progress {
