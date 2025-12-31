@@ -10867,7 +10867,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 @media (max-width: 460px) {
     .filter-sheet-content {
-        padding: 70px 8px 16px;
+        padding: 12px 8px 16px;
     }
     .filter-card-container {
         padding: 0;
@@ -10907,7 +10907,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 @media (max-width: 600px) {
     .filter-sheet-content {
-        padding: 70px 10px 16px;
+        padding: 12px 10px 16px;
     }
     .filter-card-container {
         max-width: 100%;
