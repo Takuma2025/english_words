@@ -4001,19 +4001,9 @@ function showInputModeDirectly(category, words, courseTitle) {
     // フィルターをリセット
     resetInputFilter();
     
-    // 単語一覧を描画（大量の単語の場合は非同期で処理）
-    if (words.length > 1000) {
-        // ローディング表示
-        const inputListView = document.getElementById('inputListView');
-        const container = document.getElementById('inputListContainer');
-        if (inputListView && container) {
-            inputListView.classList.remove('hidden');
-            container.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">読み込み中...</div>';
-        }
-        // 非同期でレンダリング
-        setTimeout(() => {
-            renderInputListViewAsync(words);
-        }, 50);
+    // 単語一覧を描画（大量の単語の場合はページネーションで処理）
+    if (words.length > 500) {
+        renderInputListViewPaginated(words);
     } else {
         renderInputListView(words);
     }
@@ -7352,6 +7342,130 @@ function resetReviewWrongWordsTitle() {
     const inputListHeader = document.querySelector('.input-list-header');
     if (inputListHeader) {
         inputListHeader.classList.remove('review-wrong-words');
+    }
+}
+
+// ページネーション用の状態管理
+let paginatedWordsData = [];
+let paginatedCurrentPage = 0;
+const WORDS_PER_PAGE = 100;
+let paginatedProgressCache = {};
+let paginatedCategoryCorrectSet = new Set();
+let paginatedCategoryWrongSet = new Set();
+
+// インプットモード（眺める用）の一覧をページネーションで描画（大量データ用）
+function renderInputListViewPaginated(words) {
+    const listView = document.getElementById('inputListView');
+    const container = document.getElementById('inputListContainer');
+    
+    if (!listView || !container) return;
+    
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    container.scrollTop = 0;
+    listView.scrollTop = 0;
+    if (elements.mainContent) {
+        elements.mainContent.scrollTop = 0;
+    }
+    
+    container.innerHTML = '';
+    
+    if (!Array.isArray(words) || words.length === 0) {
+        listView.classList.add('hidden');
+        return;
+    }
+    
+    listView.classList.remove('hidden');
+    
+    // モードに応じてコンテナにクラスを追加
+    if (inputListViewMode === 'expand') {
+        container.classList.add('expand-mode');
+        container.classList.remove('flip-mode');
+    } else {
+        container.classList.add('flip-mode');
+        container.classList.remove('expand-mode');
+    }
+    
+    // ページネーション用のデータを初期化
+    paginatedWordsData = words;
+    paginatedCurrentPage = 0;
+    paginatedProgressCache = {};
+    
+    // 進捗マーカー用のセットを取得
+    if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+        const mode = selectedLearningMode || 'card';
+        words.forEach(word => {
+            const cat = word.category;
+            if (!paginatedProgressCache[cat]) {
+                const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+                paginatedProgressCache[cat] = {
+                    correct: savedCorrect ? new Set(JSON.parse(savedCorrect).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set(),
+                    wrong: savedWrong ? new Set(JSON.parse(savedWrong).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set()
+                };
+            }
+        });
+    }
+    
+    paginatedCategoryCorrectSet = correctWords;
+    paginatedCategoryWrongSet = wrongWords;
+    if (selectedCategory && selectedCategory !== '小学生で習った単語とカテゴリー別に覚える単語') {
+        const sets = loadCategoryWords(selectedCategory);
+        paginatedCategoryCorrectSet = sets.correctSet;
+        paginatedCategoryWrongSet = sets.wrongSet;
+    }
+    
+    // 最初のページを描画
+    loadMoreWords();
+}
+
+// 次のページを読み込む
+function loadMoreWords() {
+    const container = document.getElementById('inputListContainer');
+    if (!container) return;
+    
+    const startIdx = paginatedCurrentPage * WORDS_PER_PAGE;
+    const endIdx = Math.min(startIdx + WORDS_PER_PAGE, paginatedWordsData.length);
+    
+    if (startIdx >= paginatedWordsData.length) return;
+    
+    // 既存の「もっと見る」ボタンを削除
+    const existingLoadMore = container.querySelector('.load-more-btn');
+    if (existingLoadMore) {
+        existingLoadMore.remove();
+    }
+    
+    // 単語を描画
+    const fragment = document.createDocumentFragment();
+    for (let i = startIdx; i < endIdx; i++) {
+        const word = paginatedWordsData[i];
+        const item = createInputListItem(word, paginatedProgressCache, paginatedCategoryCorrectSet, paginatedCategoryWrongSet);
+        if (item) {
+            fragment.appendChild(item);
+        }
+    }
+    container.appendChild(fragment);
+    
+    paginatedCurrentPage++;
+    
+    // まだ単語がある場合は「もっと見る」ボタンを追加
+    if (endIdx < paginatedWordsData.length) {
+        const loadMoreBtn = document.createElement('button');
+        loadMoreBtn.className = 'load-more-btn';
+        loadMoreBtn.innerHTML = `
+            <span>次の${Math.min(WORDS_PER_PAGE, paginatedWordsData.length - endIdx)}語を読み込む</span>
+            <span class="load-more-count">(${endIdx}/${paginatedWordsData.length}語表示中)</span>
+        `;
+        loadMoreBtn.addEventListener('click', () => {
+            loadMoreWords();
+        });
+        container.appendChild(loadMoreBtn);
+    } else {
+        // 全部読み込み完了
+        const completeMsg = document.createElement('div');
+        completeMsg.className = 'load-complete-msg';
+        completeMsg.textContent = `全${paginatedWordsData.length}語を表示しました`;
+        container.appendChild(completeMsg);
     }
 }
 
