@@ -4392,6 +4392,8 @@ body.reorder-mode-active .word-card-container {
     border-radius: 0 0 6px 6px;
     font-size: 10px;
     color: #ffffff;
+    width: 140px;
+    box-sizing: border-box;
 }
 
 .input-list-appearance-box .appearance-osaka-icon {
@@ -4412,8 +4414,6 @@ body.reorder-mode-active .word-card-container {
     color: #ffffff;
     font-size: 11px;
     letter-spacing: 1px;
-    display: inline-block;
-    min-width: 4.5em;
     text-align: left;
 }
 
@@ -4730,6 +4730,8 @@ body.reorder-mode-active .word-card-container {
     border-radius: 0 0 8px 8px;
     font-size: 11px;
     color: #ffffff;
+    width: 160px;
+    box-sizing: border-box;
 }
 
 .input-list-expand-appearance-box .appearance-osaka-icon {
@@ -4750,8 +4752,6 @@ body.reorder-mode-active .word-card-container {
     color: #ffffff;
     font-size: 13px;
     letter-spacing: 1px;
-    display: inline-block;
-    min-width: 4.5em;
     text-align: left;
 }
 
@@ -4859,6 +4859,7 @@ body.reorder-mode-active .word-card-container {
     .input-list-expand-appearance-box {
         padding: 4px 7px;
         font-size: 10px;
+        width: 130px;
     }
     
     .input-list-expand-appearance-box .appearance-osaka-icon {
@@ -4868,7 +4869,6 @@ body.reorder-mode-active .word-card-container {
     
     .input-list-expand-appearance-box .appearance-stars {
         font-size: 11px;
-        min-width: 4em;
     }
     
     .input-list-expand-word {
@@ -4914,12 +4914,13 @@ body.reorder-mode-active .word-card-container {
     }
     .input-list-top-actions {
         gap: 4px;
-        right: 4px;
+        right: 20px;
     }
     
     .input-list-appearance-box {
         padding: 3px 6px;
         font-size: 9px;
+        width: 120px;
     }
     
     .input-list-appearance-box .appearance-osaka-icon {
@@ -4929,7 +4930,6 @@ body.reorder-mode-active .word-card-container {
     
     .input-list-appearance-box .appearance-stars {
         font-size: 10px;
-        min-width: 3.5em;
     }
     .input-list-word {
         font-size: 32px;
