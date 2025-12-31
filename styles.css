@@ -4235,6 +4235,17 @@ body.reorder-mode-active .word-card-container {
     justify-content: space-between;
 }
 
+.input-list-header.review-wrong-words {
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.input-list-header.review-wrong-words .input-list-title {
+    color: #991b1b;
+}
+
 .input-list-title {
     font-size: 14px;
     font-weight: 700;

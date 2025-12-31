@@ -4406,6 +4406,10 @@ function handleTimeUp() {
 function initLearning(category, words, startIndex = 0, rangeEnd = undefined, rangeStartOverride = undefined) {
     selectedCategory = category;
     currentWords = words;
+    // インプットモード（眺めるモード）の場合は、currentCourseWordsも設定
+    if (currentLearningMode === 'input') {
+        currentCourseWords = words;
+    }
     isInputModeActive = false; // 通常のカードモードにリセット
     
     const start = Math.max(0, startIndex || 0);
@@ -7677,8 +7681,9 @@ function setupInputListModeToggle() {
         flipBtn.classList.add('active');
         expandBtn.classList.remove('active');
         // 現在の単語リストを再描画
-        if (currentCourseWords && currentCourseWords.length > 0) {
-            renderInputListView(currentCourseWords);
+        const wordsToRender = currentCourseWords && currentCourseWords.length > 0 ? currentCourseWords : currentWords;
+        if (wordsToRender && wordsToRender.length > 0) {
+            renderInputListView(wordsToRender);
         }
     });
     
@@ -7688,8 +7693,9 @@ function setupInputListModeToggle() {
         expandBtn.classList.add('active');
         flipBtn.classList.remove('active');
         // 現在の単語リストを再描画
-        if (currentCourseWords && currentCourseWords.length > 0) {
-            renderInputListView(currentCourseWords);
+        const wordsToRender = currentCourseWords && currentCourseWords.length > 0 ? currentCourseWords : currentWords;
+        if (wordsToRender && wordsToRender.length > 0) {
+            renderInputListView(wordsToRender);
         }
     });
 }
@@ -8826,6 +8832,21 @@ function reviewWrongWords() {
     setTimeout(() => {
         currentLearningMode = 'input'; // 眺めるモードに設定
         initLearning(selectedCategory, wrongWordsInSession, 0, wrongWordsInSession.length, 0);
+        
+        // renderInputListViewが呼び出された後にタイトルを変更
+        setTimeout(() => {
+            // タイトルを変更
+            const inputListTitle = document.querySelector('.input-list-title');
+            if (inputListTitle) {
+                inputListTitle.textContent = '覚えていない単語の復習';
+            }
+            
+            // ヘッダーの背景を赤に
+            const inputListHeader = document.querySelector('.input-list-header');
+            if (inputListHeader) {
+                inputListHeader.classList.add('review-wrong-words');
+            }
+        }, 100);
     }, 350);
 }
 
