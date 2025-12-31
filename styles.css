@@ -173,7 +173,7 @@ textarea,
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 0;
     opacity: 0;
     transition: opacity 0.3s ease;
     background-color: transparent;
@@ -2658,11 +2658,22 @@ body.learning-mode .app-header {
     color: white;
 }
 
-.study-mode-choice-title {
-    font-size: 14px;
-    font-weight: 600;
+.study-mode-choice-btn {
+    flex-direction: column;
+}
+
+.study-mode-choice-main {
+    font-size: 18px;
+    font-weight: 700;
     text-align: center;
-    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.study-mode-choice-sub {
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    opacity: 0.9;
 }
 
 .study-mode-cancel-btn {
@@ -4049,6 +4060,7 @@ body.learning-mode .app-header {
     padding: 0 16px 20px 16px; /* 上のパディングを削除（進捗バーを上揃え） */
     overflow-y: auto;
     min-height: 0;
+    z-index: 10001;
 }
 
 /* 入力モードの場合は下のパディングを調整 */
@@ -6043,6 +6055,7 @@ body.reorder-mode-active .word-card-container {
     margin-top: 4px;
     user-select: none;
     -webkit-user-select: none;
+    z-index: 10000;
 }
 
 .word-card {
@@ -6054,6 +6067,7 @@ body.reorder-mode-active .word-card-container {
     perspective: 1200px;
     user-select: none;
     -webkit-user-select: none;
+    z-index: 10000;
 }
 
 /* カードアニメーション - 下からふわっと浮いてくる */

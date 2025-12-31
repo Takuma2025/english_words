@@ -4036,10 +4036,12 @@ function showStudyModeOverlay(onInput, onOutput) {
             <div class="study-mode-title">学習方法を選択</div>
             <div class="study-mode-buttons">
                 <button type="button" class="study-mode-choice-btn study-mode-input-btn">
-                    <span class="study-mode-choice-title">単語一覧を見て学習する</span>
+                    <span class="study-mode-choice-main">学習</span>
+                    <span class="study-mode-choice-sub">単語一覧を見て学習する</span>
                 </button>
                 <button type="button" class="study-mode-choice-btn study-mode-output-btn">
-                    <span class="study-mode-choice-title">テストで覚えたか確認する</span>
+                    <span class="study-mode-choice-main">テスト</span>
+                    <span class="study-mode-choice-sub">覚えたかどうか確認する</span>
                 </button>
             </div>
             <button type="button" class="study-mode-cancel-btn">キャンセル</button>
