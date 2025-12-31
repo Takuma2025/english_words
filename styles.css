@@ -4914,6 +4914,7 @@ body.reorder-mode-active .word-card-container {
     }
     .input-list-top-actions {
         gap: 4px;
+        right: 4px;
     }
     
     .input-list-appearance-box {
