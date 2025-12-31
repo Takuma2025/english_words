@@ -322,7 +322,6 @@
                                     </div>
                                     <div class="ai-word-count-large">
                                         <div class="ai-word-number">
-                                            <span class="weakness-label">弱点<br>要復習</span>
                                             <span class="ai-word-count-value"><span id="cardAiWordCount">0</span><span class="ai-word-unit">語</span></span>
                                         </div>
                                         <span class="ai-analyzing" id="aiAnalyzing">
@@ -793,10 +792,17 @@
                         <div class="input-list-filter">
                             <button class="input-filter-btn active" id="inputFilterAll" data-filter="all">すべて</button>
                             <button class="input-filter-btn" id="inputFilterWrong" data-filter="wrong">覚えていない</button>
+                            <button class="input-filter-btn" id="inputFilterBookmark" data-filter="bookmark">ブックマーク</button>
                             <button class="input-filter-btn" id="inputFilterUnlearned" data-filter="unlearned">未学習</button>
-                            <button class="input-filter-btn" id="inputFilterBookmark" data-filter="bookmark">チェック済</button>
                             <button class="input-filter-btn" id="inputFilterCorrect" data-filter="correct">覚えた</button>
+                            <label class="red-sheet-toggle" id="redSheetToggle">
+                                <input type="checkbox" class="red-sheet-checkbox">
+                                <span class="red-sheet-slider"></span>
+                                <span class="red-sheet-label">赤シート</span>
+                            </label>
                         </div>
+                        <!-- 赤シートオーバーレイ -->
+                        <div class="red-sheet-overlay hidden" id="redSheetOverlay"></div>
                         <div class="input-list-scroll" id="inputListContainer">
                             <!-- 動的に生成 -->
                         </div>

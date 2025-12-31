@@ -560,7 +560,7 @@ function updateVocabProgressBar() {
             // 位置調整（画面からはみ出さないように）
             // requestAnimationFrameで確実にDOM更新後に計算
             requestAnimationFrame(() => {
-                const progressBarWrapper = progressRequirement.closest('.vocab-progress-bar-wrapper');
+            const progressBarWrapper = progressRequirement.closest('.vocab-progress-bar-wrapper');
                 if (!progressBarWrapper) return;
                 
                 const wrapperRect = progressBarWrapper.getBoundingClientRect();
@@ -579,9 +579,9 @@ function updateVocabProgressBar() {
                         requirementLabel.style.transform = `translateX(calc(-50% + ${leftOverflow + 10}px))`;
                     } else {
                         // 通常の中央配置
-                        requirementLabel.style.transform = 'translateX(-50%)';
-                    }
+                    requirementLabel.style.transform = 'translateX(-50%)';
                 }
+            }
             });
         }
     } else if (progressRequirement) {
@@ -2551,6 +2551,9 @@ function showCategorySelection() {
     // 復習モードのタイトルとクラスをリセット
     resetReviewWrongWordsTitle();
     
+    // 赤シートをリセット
+    resetRedSheet();
+    
     // タイマーを停止
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -3657,7 +3660,7 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
     }
     
     return card;
-}
+    }
 
 // 学習フィルター画面を表示
 let currentFilterWords = [];
@@ -3829,7 +3832,7 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     }
     
     // フィルター画面はアウトプットモード専用
-    filterLearningMode = 'output';
+            filterLearningMode = 'output';
     
     // 出題数選択セクションを更新
     updateQuestionCountSection();
@@ -3844,8 +3847,8 @@ function updateQuestionCountSection() {
         
         // 常に表示（1語以上あれば）
         if (filteredWords.length >= 1) {
-            questionCountSection.style.display = 'flex';
-            updateQuestionCountOptions(filteredWords.length);
+                questionCountSection.style.display = 'flex';
+                updateQuestionCountOptions(filteredWords.length);
         } else {
             questionCountSection.style.display = 'none';
         }
@@ -4010,7 +4013,7 @@ function showInputModeMethodSelectionModal(category, categoryWords, hasProgress,
         showInputModeDirectly(category, categoryWords, courseTitle);
     } else {
         // アウトプットモード：フィルター画面を表示
-        showWordFilterView(category, categoryWords, courseTitle);
+    showWordFilterView(category, categoryWords, courseTitle);
     }
 }
 
@@ -4022,7 +4025,7 @@ function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex
         showInputModeDirectly(category, courseWords, courseTitle);
     } else {
         // アウトプットモード：フィルター画面を表示
-        showWordFilterView(category, courseWords, courseTitle);
+    showWordFilterView(category, courseWords, courseTitle);
     }
 }
 
@@ -5163,10 +5166,10 @@ function setupEventListeners() {
         // カウントを0-1の範囲に正規化（すべての場合は1.0）
         let ratio = 0;
         // 常に1語単位で調整
-        if (count >= maxCount) {
-            ratio = 1.0; // すべての場合は右端
-        } else {
-            ratio = Math.max(0, Math.min(1, (count - 1) / (maxCount - 1)));
+            if (count >= maxCount) {
+                ratio = 1.0; // すべての場合は右端
+            } else {
+                ratio = Math.max(0, Math.min(1, (count - 1) / (maxCount - 1)));
         }
         const left = minLeft + (maxLeft - minLeft) * ratio;
         
@@ -5185,8 +5188,8 @@ function setupEventListeners() {
         }
         
         // 常に1語単位で調整
-        const count = Math.round(1 + ratio * (maxCount - 1));
-        return Math.min(maxCount, Math.max(1, count));
+            const count = Math.round(1 + ratio * (maxCount - 1));
+            return Math.min(maxCount, Math.max(1, count));
     }
     
     if (questionCountTrack && questionCountHandle) {
@@ -7682,6 +7685,7 @@ function setupInputListModeToggle() {
         inputListViewMode = 'flip';
         flipBtn.classList.add('active');
         expandBtn.classList.remove('active');
+        updateRedSheetToggleVisibility();
         // 現在の単語リストを再描画
         const wordsToRender = currentCourseWords && currentCourseWords.length > 0 ? currentCourseWords : currentWords;
         if (wordsToRender && wordsToRender.length > 0) {
@@ -7694,6 +7698,7 @@ function setupInputListModeToggle() {
         inputListViewMode = 'expand';
         expandBtn.classList.add('active');
         flipBtn.classList.remove('active');
+        updateRedSheetToggleVisibility();
         // 現在の単語リストを再描画（フィルターを適用）
         applyInputFilter();
     });
@@ -7701,12 +7706,12 @@ function setupInputListModeToggle() {
 
 // インプットモード用フィルターのセットアップ
 function setupInputListFilter() {
-    const filterBtns = document.querySelectorAll('.input-filter-btn');
+    const filterBtns = document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn)');
     if (!filterBtns.length) return;
     
     filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // アクティブ状態を更新
+            // アクティブ状態を更新（赤シートボタン以外）
             filterBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
@@ -7715,6 +7720,110 @@ function setupInputListFilter() {
             applyInputFilter();
         });
     });
+    
+    // 赤シートボタンのセットアップ
+    setupRedSheet();
+    updateRedSheetToggleVisibility();
+}
+
+// 赤シートモードのセットアップ
+function setupRedSheet() {
+    const redSheetToggle = document.getElementById('redSheetToggle');
+    const redSheetCheckbox = redSheetToggle?.querySelector('.red-sheet-checkbox');
+    const redSheetOverlay = document.getElementById('redSheetOverlay');
+    const inputListView = document.getElementById('inputListView');
+    
+    if (!redSheetCheckbox || !redSheetOverlay) return;
+    
+    redSheetCheckbox.addEventListener('change', () => {
+        const isActive = redSheetCheckbox.checked;
+        
+        if (isActive) {
+            // 1つ目の単語の意味の位置を取得して初期位置を設定
+            const firstMeaning = document.querySelector('.input-list-expand-meaning');
+            if (firstMeaning) {
+                const rect = firstMeaning.getBoundingClientRect();
+                redSheetOverlay.style.top = rect.top + 'px';
+            } else {
+                redSheetOverlay.style.top = '200px';
+            }
+            
+            redSheetOverlay.classList.remove('hidden');
+            inputListView.classList.add('red-sheet-mode');
+            setupRedSheetDrag(redSheetOverlay);
+        } else {
+            redSheetOverlay.classList.add('hidden');
+            inputListView.classList.remove('red-sheet-mode');
+        }
+    });
+}
+
+// 赤シートトグルの表示/非表示を切り替え
+function updateRedSheetToggleVisibility() {
+    const redSheetToggle = document.getElementById('redSheetToggle');
+    if (!redSheetToggle) return;
+    
+    // 展開モードのときだけ表示
+    if (inputListViewMode === 'expand') {
+        redSheetToggle.classList.add('visible');
+    } else {
+        redSheetToggle.classList.remove('visible');
+        // フリップモードに切り替えたときは赤シートをリセット
+        resetRedSheet();
+    }
+}
+
+// 赤シートドラッグ機能
+function setupRedSheetDrag(overlay) {
+    let isDragging = false;
+    let startY = 0;
+    let startTop = 0;
+    
+    const onPointerDown = (e) => {
+        isDragging = true;
+        startY = e.clientY;
+        startTop = overlay.offsetTop;
+        overlay.style.cursor = 'grabbing';
+        overlay.setPointerCapture(e.pointerId);
+    };
+    
+    const onPointerMove = (e) => {
+        if (!isDragging) return;
+        const deltaY = e.clientY - startY;
+        const newTop = Math.max(0, startTop + deltaY);
+        overlay.style.top = newTop + 'px';
+    };
+    
+    const onPointerUp = (e) => {
+        isDragging = false;
+        overlay.style.cursor = 'grab';
+        overlay.releasePointerCapture(e.pointerId);
+    };
+    
+    // 既存のリスナーを削除してから追加
+    overlay.removeEventListener('pointerdown', overlay._onPointerDown);
+    overlay.removeEventListener('pointermove', overlay._onPointerMove);
+    overlay.removeEventListener('pointerup', overlay._onPointerUp);
+    
+    overlay._onPointerDown = onPointerDown;
+    overlay._onPointerMove = onPointerMove;
+    overlay._onPointerUp = onPointerUp;
+    
+    overlay.addEventListener('pointerdown', onPointerDown);
+    overlay.addEventListener('pointermove', onPointerMove);
+    overlay.addEventListener('pointerup', onPointerUp);
+}
+
+// 赤シートをリセット
+function resetRedSheet() {
+    const redSheetToggle = document.getElementById('redSheetToggle');
+    const redSheetCheckbox = redSheetToggle?.querySelector('.red-sheet-checkbox');
+    const redSheetOverlay = document.getElementById('redSheetOverlay');
+    const inputListView = document.getElementById('inputListView');
+    
+    if (redSheetCheckbox) redSheetCheckbox.checked = false;
+    if (redSheetOverlay) redSheetOverlay.classList.add('hidden');
+    if (inputListView) inputListView.classList.remove('red-sheet-mode');
 }
 
 // フィルターを適用して単語リストを再描画
@@ -7820,7 +7929,7 @@ function updateFilterCount(filtered, total) {
         const filterNames = {
             'wrong': '覚えていない',
             'unlearned': '未学習',
-            'bookmark': 'チェック済',
+            'bookmark': 'ブックマーク',
             'correct': '覚えた'
         };
         titleEl.textContent = `${filterNames[currentInputFilter]}（${filtered}語）`;

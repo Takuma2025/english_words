@@ -2360,13 +2360,14 @@ body.learning-mode .app-header {
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding: 12px 16px;
+    padding: 18px 16px;
     background: #ffffff;
     border: none;
     text-align: left;
     cursor: pointer;
     transition: background-color 0.1s;
     position: relative;
+    min-height: 60px;
 }
 
 .accordion-item-main {
@@ -2415,12 +2416,14 @@ body.learning-mode .app-header {
 
 .accordion-item-icon {
     flex-shrink: 0;
-    margin-right: 10px;
+    margin-right: 12px;
+    width: 24px;
+    height: 24px;
 }
 
 .accordion-item-text {
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 17px;
+    font-weight: 600;
     color: #1f2937;
     flex: 1;
 }
@@ -4327,9 +4330,134 @@ body.reorder-mode-active .word-card-container {
     border-color: #2563eb;
 }
 
+/* 覚えていない - 赤 */
+.input-filter-btn[data-filter="wrong"].active {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+
+.input-filter-btn[data-filter="wrong"].active:hover {
+    background: #b91c1c;
+    border-color: #b91c1c;
+}
+
+/* ブックマーク - 黄色 */
+.input-filter-btn[data-filter="bookmark"].active {
+    background: #f59e0b;
+    border-color: #f59e0b;
+}
+
+.input-filter-btn[data-filter="bookmark"].active:hover {
+    background: #d97706;
+    border-color: #d97706;
+}
+
+/* 未学習 - グレー */
+.input-filter-btn[data-filter="unlearned"].active {
+    background: #6b7280;
+    border-color: #6b7280;
+}
+
+.input-filter-btn[data-filter="unlearned"].active:hover {
+    background: #4b5563;
+    border-color: #4b5563;
+}
+
+/* 覚えた - 青 */
+.input-filter-btn[data-filter="correct"].active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.input-filter-btn[data-filter="correct"].active:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
 .input-filter-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* 赤シートトグルスイッチ */
+.red-sheet-toggle {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    cursor: pointer;
+    user-select: none;
+}
+
+.red-sheet-toggle.visible {
+    display: flex;
+}
+
+.red-sheet-checkbox {
+    display: none;
+}
+
+.red-sheet-slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: #d1d5db;
+    border-radius: 12px;
+    transition: background 0.2s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.red-sheet-slider::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.red-sheet-checkbox:checked + .red-sheet-slider {
+    background: #dc2626;
+}
+
+.red-sheet-checkbox:checked + .red-sheet-slider::before {
+    transform: translateX(20px);
+}
+
+.red-sheet-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+}
+
+/* 赤シートオーバーレイ */
+.red-sheet-overlay {
+    position: fixed;
+    top: 200px;
+    right: 0;
+    left: 15%;
+    bottom: 0;
+    background: rgb(200, 30, 30);
+    z-index: 500;
+    cursor: grab;
+    user-select: none;
+    border-radius: 8px 0 0 0;
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+    pointer-events: auto;
+    touch-action: none;
+    mix-blend-mode: multiply;
+}
+
+.red-sheet-overlay:active {
+    cursor: grabbing;
+}
+
+.red-sheet-overlay.hidden {
+    display: none;
 }
 
 .input-filter-empty {
@@ -4880,7 +5008,7 @@ body.reorder-mode-active .word-card-container {
 
 .input-list-expand-meaning {
     font-size: 18px;
-    color: #dc2626;
+    color: #ff9933;
     font-weight: 600;
     line-height: 1.5;
     margin-top: 6px;
