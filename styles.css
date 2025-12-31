@@ -4297,6 +4297,7 @@ body.reorder-mode-active .word-card-container {
     flex-wrap: wrap;
     gap: 6px;
     padding: 8px 6px;
+    margin-bottom: 16px;
 }
 
 .input-filter-btn {
@@ -4460,6 +4461,14 @@ body.reorder-mode-active .word-card-container {
 
 .red-sheet-overlay.hidden {
     display: none;
+}
+
+/* スマホ用の赤シートスタイル */
+@media (max-width: 640px) {
+    .red-sheet-overlay {
+        left: 15%;
+        width: 90%;
+    }
 }
 
 .input-filter-empty {
@@ -4831,7 +4840,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-example-en strong {
-    color: #dc2626;
+    color: #1f2937;
     font-weight: 700;
 }
 
@@ -5046,7 +5055,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-expand-example-en strong {
-    color: #dc2626;
+    color: #1f2937;
     font-weight: 700;
 }
 
@@ -6676,7 +6685,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .example-english strong {
-    color: #dc2626;
+    color: #1f2937;
     font-weight: 700;
 }
 
