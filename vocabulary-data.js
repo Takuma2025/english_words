@@ -100,7 +100,7 @@ const dailyItemsInstrumentsWords = [
   { id: 10205, word: "dress", meaning: "ドレス、服装", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
   { id: 10206, word: "coat", meaning: "コート、上着", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
   { id: 10207, word: "jacket", meaning: "ジャケット", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
-  { id: 10208, word: "sweater", meaning: "スウェーター", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
+  { id: 10208, word: "sweater", meaning: "セーター", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
   { id: 10209, word: "sock", meaning: "(通例～s)靴下", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
   { id: 10210, word: "shoe", meaning: "(通例～s)靴", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 5 },
   { id: 10211, word: "glove", meaning: "手袋", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
@@ -129,6 +129,25 @@ const dailyItemsInstrumentsWords = [
   { id: 10229, word: "flute", meaning: "フルート", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 0 },
   { id: 10230, word: "trunmpet", meaning: "トランペット", partOfSpeech: "名詞", category: "日用品・楽器に関する単語", appearanceCount: 1 },
  ];
+
+// 体に関する単語
+const bodyWords = [
+  { id: 10301, word: "head", meaning: "頭", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 5 },
+  { id: 10302, word: "face", meaning: "顔", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 2 },
+  { id: 10303, word: "eye", meaning: "目", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 4 },
+  { id: 10304, word: "ear", meaning: "耳", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 1 },
+  { id: 10305, word: "nose", meaning: "鼻", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
+  { id: 10306, word: "mouth", meaning: "口", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 3 },
+  { id: 10307, word: "tooth", meaning: "歯（複数形：teeth）", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
+  { id: 10309, word: "neck", meaning: "首", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
+  { id: 10310, word: "shoulder", meaning: "肩", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
+  { id: 10311, word: "arm", meaning: "腕", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 4 },
+  { id: 10312, word: "hand", meaning: "手", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 9 },
+  { id: 10313, word: "finger", meaning: "指", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
+  { id: 10317, word: "leg", meaning: "足、脚", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
+  { id: 10318, word: "foot", meaning: "足（くるぶし以下の部分）", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
+  { id: 10319, word: "toe", meaning: "つま先、足の指", partOfSpeech: "名詞", category: "体に関する単語", appearanceCount: 0 },
+];
 
 // 色に関する単語
 const colorWords = [
@@ -221,6 +240,7 @@ const vehicleWords = [
   { id: 10704, word: "taxi", meaning: "タクシー", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 0 },
   { id: 10705, word: "bus", meaning: "バス", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 6 },
   { id: 10706, word: "train", meaning: "電車、列車、（～を）訓練する", partOfSpeech: "名詞・動詞", category: "乗り物に関する単語", appearanceCount: 46 },
+  { id: 10707, word: "subway", meaning: "地下鉄", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 0 },
   { id: 10708, word: "plane", meaning: "飛行機", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 4 },
   { id: 10709, word: "boat", meaning: "ボート、小船", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 3 },
   { id: 10710, word: "ship", meaning: "船", partOfSpeech: "名詞", category: "乗り物に関する単語", appearanceCount: 3 },
@@ -327,24 +347,24 @@ const animalWords = [
 // 自然・天気、方角に関する単語
 const natureWeatherWords = [
     // 自然
-    { id: 11220, word: "mountain", meaning: "山［Mt.～ ～山］", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 19 },
-    { id: 11231, word: "rainbow", meaning: "虹", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 0 },
-    { id: 11221, word: "river", meaning: "川、河川", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 38 },
-    { id: 11222, word: "lake", meaning: "湖、湖水", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 44 },
-    { id: 11223, word: "sea", meaning: "海、海の", partOfSpeech: "名詞、形容詞", category: "自然・天気に関する単語", appearanceCount: 24 },
-    { id: 11226, word: "tree", meaning: "木", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 115 },
-    { id: 11228, word: "flower", meaning: "花", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 5 },
+    { id: 11220, word: "mountain", meaning: "山［Mt.～ ～山］", partOfSpeech: "名詞", category: "自然・天気、方角に関する単語", appearanceCount: 19 },
+    { id: 11231, word: "rainbow", meaning: "虹", partOfSpeech: "名詞", category: "自然・天気、方角に関する単語", appearanceCount: 0 },
+    { id: 11221, word: "river", meaning: "川、河川", partOfSpeech: "名詞", category: "自然・天気、方角に関する単語", appearanceCount: 38 },
+    { id: 11222, word: "lake", meaning: "湖、湖水", partOfSpeech: "名詞", category: "自然・天気、方角に関する単語", appearanceCount: 44 },
+    { id: 11223, word: "sea", meaning: "海、海の", partOfSpeech: "名詞、形容詞", category: "自然・天気、方角に関する単語", appearanceCount: 24 },
+    { id: 11226, word: "tree", meaning: "木", partOfSpeech: "名詞", category: "自然・天気、方角に関する単語", appearanceCount: 115 },
+    { id: 11228, word: "flower", meaning: "花", partOfSpeech: "名詞", category: "自然・天気、方角に関する単語", appearanceCount: 5 },
   // 天気・気候
-  { id: 11207, word: "sunny", meaning: "晴れた", partOfSpeech: "形容詞", category: "自然・天気に関する単語", appearanceCount: 4 },
-  { id: 11208, word: "cloudy", meaning: "曇った", partOfSpeech: "形容詞", category: "自然・天気に関する単語", appearanceCount: 4 },
-  { id: 11209, word: "rainy", meaning: "雨の", partOfSpeech: "形容詞", category: "自然・天気に関する単語", appearanceCount: 1 },
-  { id: 11210, word: "snowy", meaning: "雪の", partOfSpeech: "形容詞", category: "自然・天気に関する単語", appearanceCount: 0 },
-  { id: 11229, word: "windy", meaning: "風の強い、風のある", partOfSpeech: "形容詞", category: "自然・天気に関する単語", appearanceCount: 1 },
+  { id: 11207, word: "sunny", meaning: "晴れた", partOfSpeech: "形容詞", category: "自然・天気、方角に関する単語", appearanceCount: 4 },
+  { id: 11208, word: "cloudy", meaning: "曇った", partOfSpeech: "形容詞", category: "自然・天気、方角に関する単語", appearanceCount: 4 },
+  { id: 11209, word: "rainy", meaning: "雨の", partOfSpeech: "形容詞", category: "自然・天気、方角に関する単語", appearanceCount: 1 },
+  { id: 11210, word: "snowy", meaning: "雪の", partOfSpeech: "形容詞", category: "自然・天気、方角に関する単語", appearanceCount: 0 },
+  { id: 11229, word: "windy", meaning: "風の強い、風のある", partOfSpeech: "形容詞", category: "自然・天気、方角に関する単語", appearanceCount: 1 },
   // 方角
-  { id: 11232, word: "north", meaning: "北", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 0 },
-  { id: 11233, word: "south", meaning: "南", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 2 },
-  { id: 11234, word: "east", meaning: "東", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 4 },
-  { id: 11235, word: "west", meaning: "西", partOfSpeech: "名詞", category: "自然・天気に関する単語", appearanceCount: 3 },
+  { id: 11232, word: "north", meaning: "北", partOfSpeech: "名詞", category: "自然・天気、方角に関する単語", appearanceCount: 0 },
+  { id: 11233, word: "south", meaning: "南", partOfSpeech: "名詞", category: "自然・天気、方角に関する単語", appearanceCount: 2 },
+  { id: 11234, word: "east", meaning: "東", partOfSpeech: "名詞", category: "自然・天気、方角に関する単語", appearanceCount: 4 },
+  { id: 11235, word: "west", meaning: "西", partOfSpeech: "名詞", category: "自然・天気、方角に関する単語", appearanceCount: 3 },
   ];
 
 // 学校に関する単語
@@ -508,7 +528,7 @@ const indefinitePronounWords = [
   { id: 20208, word: "everybody", meaning: "みんな、すべての人", partOfSpeech: "代名詞", category: "不定代名詞", appearanceCount: 1, example: { english: "<strong>Everybody</strong> likes music.", japanese: "みんな音楽が好きです。" } },
 ];
 
-// 副詞（否定・程度・焦点）
+// 否定・程度・焦点を表す副詞
 const adverbWords = [
   { id: 20301, word: "not", meaning: "（否定）〜でない", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 127, example: { english: "I do <strong>not</strong> like math.", japanese: "私は数学が好きではありません。" } },
   { id: 20302, word: "never", meaning: "決して〜ない、これまで一度も〜ない", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 18, example: { english: "I <strong>never</strong> study at home on Sunday.", japanese: "私は日曜日に決して家で勉強しません。" } },
@@ -541,7 +561,7 @@ const questionWords = [
   { id: 20413, word: "how far", meaning: "どのくらいの距離（距離をたずねる）", partOfSpeech: "疑問詞", category: "疑問詞", appearanceCount: 1, example: { english: "<strong>How far</strong> is it from here to the station?", japanese: "ここから駅までどのくらいの距離がありますか。" } },
 ];
 
-// 限定詞（数量）
+// 数量を表す限定詞
 const quantifierWords = [
   { id: 20501, word: "all", meaning: "すべての、すべてのもの", partOfSpeech: "限定詞・形容詞・代名詞", category: "限定詞（数量）", appearanceCount: 40, example: { english: "<strong>All</strong> boys in this class play soccer.", japanese: "このクラスの男の子はすべてサッカーをします。" } },
   { id: 20502, word: "each", meaning: "それぞれの、各々の", partOfSpeech: "限定詞・形容詞", category: "限定詞（数量）", appearanceCount: 101, example: { english: "<strong>Each</strong> student has a book.", japanese: "それぞれの学生が本を持っています。" } },
@@ -611,10 +631,13 @@ const auxiliaryWords = [
   { id: 20708, word: "be able to", meaning: "〜することができる", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 8, example: { english: "I <strong>am able to</strong> play the piano.", japanese: "私はピアノを弾けます。" } },
   { id: 20709, word: "be going to", meaning: "〜するつもり", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 14, example: { english: "I <strong>am going to</strong> go to the park next week.", japanese: "私は来週公園に行くつもりです。" } },
   { id: 20710, word: "have to", meaning: "〜しなければならない、（don't have to～：～する必要はない）", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 22, example: { english: "I <strong>have to</strong> do my homework.", japanese: "私は宿題をしなければなりません。" } },
-  { id: 20711, word: "Will you～?(Can you～?)", meaning: "〜してくれませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 31, example: { english: "<strong>Can you</strong> open the door?", japanese: "ドアを開けてくれませんか。" } },
-  { id: 20712, word: "Would you～?(Could you〜?)", meaning: "〜していただけませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 2, example: { english: "<strong>Would you</strong> close the window?", japanese: "窓を閉めていただけませんか。" } },
+  { id: 20711, word: "Will you～?", meaning: "〜してくれませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 15, example: { english: "<strong>Can you</strong> open the door?", japanese: "ドアを開けてくれませんか。" } },
+  { id: 20711, word: "Can you～?", meaning: "〜してくれませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 16, example: { english: "<strong>Can you</strong> open the door?", japanese: "ドアを開けてくれませんか。" } },
+  { id: 20712, word: "Would you～?", meaning: "〜していただけませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 2, example: { english: "<strong>Would you</strong> close the window?", japanese: "窓を閉めていただけませんか。" } },
+  { id: 20712, word: "Could you～?", meaning: "〜していただけませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 1, example: { english: "<strong>Would you</strong> close the window?", japanese: "窓を閉めていただけませんか。" } },
   { id: 20713, word: "Would you like 〜 ?", meaning: "〜はいかがですか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 1, example: { english: "<strong>Would you like</strong> some cake?", japanese: "ケーキはいかがですか。" } },
-  { id: 20714, word: "Can I～?(May I〜?)", meaning: "〜してもいいですか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 10, example: { english: "<strong>May I</strong> use the phone?", japanese: "電話を使ってもいいですか。" } },
+  { id: 20714, word: "Can I～?", meaning: "〜してもいいですか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 10, example: { english: "<strong>May I</strong> use the phone?", japanese: "電話を使ってもいいですか。" } },
+  { id: 20714, word: "May I～?", meaning: "〜してもいいですか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 0, example: { english: "<strong>May I</strong> use the phone?", japanese: "電話を使ってもいいですか。" } },
   { id: 20715, word: "Shall I 〜 ?", meaning: "（私が）〜しましょうか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 2, example: { english: "<strong>Shall I</strong> open the window?", japanese: "窓を開けましょうか。" } },
   { id: 20716, word: "Shall we 〜 ?", meaning: "（いっしょに）〜しませんか", partOfSpeech: "助動詞", category: "助動詞・助動詞的表現", appearanceCount: 10, example: { english: "<strong>Shall we</strong> play tennis?", japanese: "（いっしょに）テニスをしませんか。" } },
 ];
@@ -648,23 +671,24 @@ const relativeWords = [
   { id: 20903, word: "that", meaning: "〈人/物〉について、後ろから説明する働きを持つ", partOfSpeech: "関係代名詞", category: "関係代名詞", appearanceCount: 628, example: { english: "He is the teacher <strong>that</strong> I respect.", japanese: "彼は私が尊敬している先生です。" } },
 ];
 
-// 間投詞
-const interjectionWords = [
-  { id: 21001, word: "hi", meaning: "やあ、こんにちは", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 176, example: { english: "<strong>Hi</strong>! How are you?", japanese: "やあ! お元気ですか。" } },
-  { id: 21002, word: "hello", meaning: "やあ、こんにちは", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 50, example: { english: "<strong>Hello</strong>, nice to meet you.", japanese: "こんにちは、はじめまして。" } },
-  { id: 21003, word: "hey", meaning: "やあ、おい、ちょっと", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 0, example: { english: "<strong>Hey</strong>, wait for me!", japanese: "おい、待って！" } },
-  { id: 21004, word: "bye", meaning: "さようなら", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 70, example: { english: "<strong>Bye</strong>, see you later.", japanese: "さようなら、またお会いしましょう。" } },
-  { id: 21005, word: "goodbye", meaning: "さようなら", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 2, example: { english: "<strong>Goodbye</strong>, see you later.", japanese: "さようなら、またお会いしましょう。" } },
-  { id: 21006, word: "oh", meaning: "ああ！、おお！", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 161, example: { english: "<strong>Oh</strong>, I see!", japanese: "ああ、わかりました！" } },
-  { id: 21007, word: "wow", meaning: "わあ、おお（驚きや喜び）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 15, example: { english: "<strong>Wow</strong>, that's nice!", japanese: "わあ、それはいいですね！" } },
-  { id: 21008, word: "yes", meaning: "はい", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 191, example: { english: "<strong>Yes</strong>, I am.", japanese: "はい、そうです。" } },
-  { id: 21009, word: "no", meaning: "いいえ、いや、だめだ", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 73, example: { english: "<strong>No</strong>, I don't.", japanese: "いいえ、違います。" } },
-  { id: 21010, word: "OK", meaning: "わかりました、それでは、大丈夫な", partOfSpeech: "間投詞・形容詞", category: "間投詞", appearanceCount: 70, example: { english: "<strong>OK</strong>, let's go.", japanese: "わかりました、行きましょう。" } },
-  { id: 21011, word: "well", meaning: "ええっと…（考え中）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 151, example: { english: "<strong>Well</strong>, I'm not sure.", japanese: "ええっと…、わかりません。" } },
-  { id: 21012, word: "please", meaning: "どうぞ、どうか（お願いします）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 84, example: { english: "<strong>Please</strong> help me.", japanese: "どうか、助けてください。" } },
-  { id: 21013, word: "welcome", meaning: "ようこそ、いらっしゃい（歓迎）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 11, example: { english: "<strong>Welcome</strong> to our party.", japanese: "パーティーへようこそ。" } },
-  { id: 21014, word: "yeah", meaning: "うん、ああ（yesのくだけた表現）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 5, example: { english: "<strong>Yeah</strong>, I think so.", japanese: "うん、そう思う。" } },
-];
+  // 間投詞
+  const interjectionWords = [
+    { id: 21001, word: "hi", meaning: "やあ、こんにちは", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 176, example: { english: "<strong>Hi</strong>! How are you?", japanese: "やあ! お元気ですか。" } },
+    { id: 21002, word: "hello", meaning: "やあ、こんにちは", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 50, example: { english: "<strong>Hello</strong>, nice to meet you.", japanese: "こんにちは、はじめまして。" } },
+    { id: 21003, word: "hey", meaning: "やあ、おい、ちょっと", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 0, example: { english: "<strong>Hey</strong>, wait for me!", japanese: "おい、待って！" } },
+    { id: 21004, word: "bye", meaning: "さようなら", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 70, example: { english: "<strong>Bye</strong>, see you later.", japanese: "さようなら、またお会いしましょう。" } },
+    { id: 21005, word: "goodbye", meaning: "さようなら", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 2, example: { english: "<strong>Goodbye</strong>, see you later.", japanese: "さようなら、またお会いしましょう。" } },
+    { id: 21006, word: "oh", meaning: "ああ！、おお！", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 161, example: { english: "<strong>Oh</strong>, I see!", japanese: "ああ、わかりました！" } },
+    { id: 21007, word: "wow", meaning: "わあ、おお（驚きや喜び）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 15, example: { english: "<strong>Wow</strong>, that's nice!", japanese: "わあ、それはいいですね！" } },
+    { id: 21008, word: "yes", meaning: "はい", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 191, example: { english: "<strong>Yes</strong>, I am.", japanese: "はい、そうです。" } },
+    { id: 21009, word: "no", meaning: "いいえ、いや、だめだ", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 73, example: { english: "<strong>No</strong>, I don't.", japanese: "いいえ、違います。" } },
+    { id: 21010, word: "OK", meaning: "わかりました、それでは、大丈夫な", partOfSpeech: "間投詞・形容詞", category: "間投詞", appearanceCount: 70, example: { english: "<strong>OK</strong>, let's go.", japanese: "わかりました、行きましょう。" } },
+    { id: 21011, word: "well", meaning: "ええっと…（考え中）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 151, example: { english: "<strong>Well</strong>, I'm not sure.", japanese: "ええっと…、わかりません。" } },
+    { id: 21012, word: "please", meaning: "どうぞ、どうか（お願いします）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 84, example: { english: "<strong>Please</strong> help me.", japanese: "どうか、助けてください。" } },
+    { id: 21013, word: "welcome", meaning: "ようこそ、いらっしゃい（歓迎）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 11, example: { english: "<strong>Welcome</strong> to our party.", japanese: "パーティーへようこそ。" } },
+    { id: 21014, word: "yeah", meaning: "うん、ああ（yesのくだけた表現）", partOfSpeech: "間投詞", category: "間投詞", appearanceCount: 5, example: { english: "<strong>Yeah</strong>, I think so.", japanese: "うん、そう思う。" } },
+  ];
+
 
 // ============================================
 // レベル別単語（入試対策）
@@ -14026,6 +14050,7 @@ function getAllVocabulary() {
     ...familyHomeWords,
     ...numberWords,
     ...dailyItemsInstrumentsWords,
+    ...bodyWords,
     ...colorWords,
     ...foodDrinkWords,
     ...townFacilityWords,
@@ -14070,6 +14095,7 @@ function getVocabularyByCategory(categoryName) {
     '家族・家に関する単語': familyHomeWords,
     '数字に関する単語': numberWords,
     '日用品・楽器に関する単語': dailyItemsInstrumentsWords,
+    '体に関する単語': bodyWords,
     '色に関する単語': colorWords,
     '食べ物・飲み物に関する単語': foodDrinkWords,
     '町の施設に関する単語': townFacilityWords,
@@ -14078,7 +14104,7 @@ function getVocabularyByCategory(categoryName) {
     'スポーツに関する単語': sportsWords,
     '曜日・月・季節に関する単語': calendarWords,
     '動物に関する単語': animalWords,
-    '自然・天気に関する単語': natureWeatherWords,
+    '自然・天気、方角に関する単語': natureWeatherWords,
     '学校に関する単語': schoolWords,
     '国名や地域に関する単語': countryWords,
     '行事・余暇に関する単語': eventLeisureWords,
@@ -14109,6 +14135,7 @@ function getElementaryVocabulary() {
     ...familyHomeWords,
     ...numberWords,
     ...dailyItemsInstrumentsWords,
+    ...bodyWords,
     ...colorWords,
     ...foodDrinkWords,
     ...townFacilityWords,
@@ -14165,6 +14192,7 @@ function getDailyLifeVocabulary() {
     ...familyHomeWords,
     ...numberWords,
     ...dailyItemsInstrumentsWords,
+    ...bodyWords,
     ...colorWords,
     ...foodDrinkWords,
     ...townFacilityWords,
@@ -14229,7 +14257,7 @@ ID番号の割り当てルール：
 - 10901-10999: スポーツに関する単語
 - 11001-11099: 曜日・月・季節に関する単語
 - 11101-11199: 動物に関する単語
-- 11201-11299: 自然・天気に関する単語
+- 11201-11299: 自然・天気、方角に関する単語
 - 11301-11399: 学校に関する単語
 - 11401-11499: 国名や地域に関する単語
 - 11501-11599: 方角・方向に関する単語

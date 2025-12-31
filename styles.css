@@ -2711,6 +2711,13 @@ body.learning-mode .app-header {
     margin-right: 6px;
 }
 
+.ai-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
 .ai-badge {
     display: inline-block;
     background-color: #3182ce;
