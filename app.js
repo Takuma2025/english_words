@@ -2530,7 +2530,16 @@ function updateHeaderButtons(mode, title = '') {
     // タイトルテキストの表示/非表示（コース選択画面のみ表示）
     if (headerTitleText) {
         if (mode === 'course' && title) {
-            headerTitleText.textContent = title;
+            // レベル別にバッジ付きタイトルを設定
+            if (title === 'レベル１ 超重要700語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-red">レベル１</span> 超重要700語';
+            } else if (title === 'レベル２ 重要500語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-orange">レベル２</span> 重要500語';
+            } else if (title === 'レベル３ 差がつく300語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-blue">レベル３</span> 差がつく300語';
+            } else {
+                headerTitleText.textContent = title;
+            }
             headerTitleText.classList.remove('hidden');
         } else {
             headerTitleText.classList.add('hidden');
@@ -3311,8 +3320,16 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     const courseSelectionImage = document.getElementById('courseSelectionImage');
     const courseSelectionDescription = document.getElementById('courseSelectionDescription');
     
-    // タイトルを設定
-    courseTitle.textContent = parentCategory;
+    // タイトルを設定（バッジ付き）
+    if (parentCategory === 'レベル１ 超重要700語') {
+        courseTitle.innerHTML = '<span class="level-badge level-badge-red">レベル１</span> 超重要700語';
+    } else if (parentCategory === 'レベル２ 重要500語') {
+        courseTitle.innerHTML = '<span class="level-badge level-badge-orange">レベル２</span> 重要500語';
+    } else if (parentCategory === 'レベル３ 差がつく300語') {
+        courseTitle.innerHTML = '<span class="level-badge level-badge-blue">レベル３</span> 差がつく300語';
+    } else {
+        courseTitle.textContent = parentCategory;
+    }
     courseList.innerHTML = '';
     
     // 画像を非表示
