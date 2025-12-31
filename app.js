@@ -3299,6 +3299,248 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
     window.currentSubcategoryParent = parentCategory;
 }
 
+// レベル別細分化メニューを表示
+function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    
+    console.log('showLevelSubcategorySelection called with:', parentCategory);
+    const courseSelection = document.getElementById('courseSelection');
+    const courseList = document.getElementById('courseList');
+    const courseTitle = document.getElementById('courseSelectionTitle');
+    const courseSelectionImage = document.getElementById('courseSelectionImage');
+    const courseSelectionDescription = document.getElementById('courseSelectionDescription');
+    
+    // タイトルを設定
+    courseTitle.textContent = parentCategory;
+    courseList.innerHTML = '';
+    
+    // 画像を非表示
+    if (courseSelectionImage) {
+        courseSelectionImage.style.display = 'none';
+    }
+    
+    // 説明文を設定
+    if (courseSelectionDescription) {
+        if (parentCategory === 'レベル１ 超重要700語') {
+            courseSelectionDescription.textContent = '大阪府公立高入試A問題50点突破・B問題40点突破必須レベルの超重要単語です。';
+            courseSelectionDescription.style.display = 'block';
+        } else if (parentCategory === 'レベル２ 重要500語') {
+            courseSelectionDescription.textContent = '大阪府公立高入試A問題70点突破・B問題60点突破必須レベルの重要単語です。';
+            courseSelectionDescription.style.display = 'block';
+        } else if (parentCategory === 'レベル３ 差がつく300語') {
+            courseSelectionDescription.textContent = '大阪府公立高入試C問題50点突破必須レベルの差がつく単語です。';
+            courseSelectionDescription.style.display = 'block';
+        } else {
+            courseSelectionDescription.style.display = 'none';
+        }
+    }
+    
+    // サブカテゴリーの定義
+    let subcategories = [];
+    let levelCategory = '';
+    let badgeColor = '';
+    
+    if (parentCategory === 'レベル１ 超重要700語') {
+        subcategories = [
+            'カテゴリ別に覚える基本単語',
+            '冠詞',
+            '代名詞',
+            '名詞',
+            '動詞',
+            '形容詞',
+            '副詞',
+            '前置詞',
+            '疑問詞',
+            '間投詞'
+        ];
+        levelCategory = 'LEVEL1 超重要単語400';
+        badgeColor = '#ef4444'; // 赤
+    } else if (parentCategory === 'レベル２ 重要500語') {
+        subcategories = [
+            '名詞',
+            '動詞',
+            '形容詞',
+            '副詞',
+            '前置詞',
+            '助動詞',
+            '接続詞',
+            '限定詞',
+            '不定代名詞'
+        ];
+        levelCategory = 'LEVEL2 重要単語300';
+        badgeColor = '#f97316'; // オレンジ
+    } else if (parentCategory === 'レベル３ 差がつく300語') {
+        subcategories = [
+            '名詞',
+            '動詞',
+            '形容詞',
+            '副詞',
+            '前置詞',
+            '接続詞',
+            '関係代名詞'
+        ];
+        levelCategory = 'LEVEL3 差がつく単語200';
+        badgeColor = '#3b82f6'; // 青
+    }
+    
+    // サブカテゴリーカードを生成
+    subcategories.forEach((subcat, index) => {
+        // 単語を取得
+        let words = [];
+        if (subcat === 'カテゴリ別に覚える基本単語') {
+            // 小学生で習った単語を取得
+            if (typeof getElementaryVocabulary !== 'undefined' && typeof getElementaryVocabulary === 'function') {
+                words = getElementaryVocabulary();
+            }
+        } else {
+            // 品詞でフィルタリング
+            const allWords = typeof getAllVocabulary !== 'undefined' ? getAllVocabulary() : [];
+            const levelWords = allWords.filter(word => word.category === levelCategory);
+            words = levelWords.filter(word => {
+                const partOfSpeech = word.partOfSpeech || '';
+                if (subcat === '冠詞') return partOfSpeech.includes('冠詞');
+                if (subcat === '代名詞') return partOfSpeech.includes('代名詞') && !partOfSpeech.includes('不定') && !partOfSpeech.includes('関係');
+                if (subcat === '名詞') return partOfSpeech.includes('名詞') && !partOfSpeech.includes('代名詞');
+                if (subcat === '動詞') return partOfSpeech.includes('動詞');
+                if (subcat === '形容詞') return partOfSpeech.includes('形容詞');
+                if (subcat === '副詞') return partOfSpeech.includes('副詞');
+                if (subcat === '前置詞') return partOfSpeech.includes('前置詞');
+                if (subcat === '疑問詞') return partOfSpeech.includes('疑問詞');
+                if (subcat === '間投詞') return partOfSpeech.includes('間投詞');
+                if (subcat === '助動詞') return partOfSpeech.includes('助動詞');
+                if (subcat === '接続詞') return partOfSpeech.includes('接続詞');
+                if (subcat === '限定詞') return partOfSpeech.includes('限定詞');
+                if (subcat === '不定代名詞') return partOfSpeech.includes('不定代名詞');
+                if (subcat === '関係代名詞') return partOfSpeech.includes('関係代名詞');
+                return false;
+            });
+        }
+        
+        const wordCount = words ? words.length : 0;
+        const categoryKey = `${parentCategory}-${subcat}`;
+        
+        // 進捗を計算
+        let correctCount = 0;
+        let wrongCount = 0;
+        if (words && words.length > 0) {
+            const modes = ['card', 'input'];
+            const allCorrectSet = new Set();
+            const allWrongSet = new Set();
+            
+            modes.forEach(mode => {
+                const savedCorrectWords = localStorage.getItem(`correctWords-${categoryKey}_${mode}`);
+                const savedWrongWords = localStorage.getItem(`wrongWords-${categoryKey}_${mode}`);
+                
+                if (savedCorrectWords) {
+                    JSON.parse(savedCorrectWords).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        if (!allWrongSet.has(numId)) {
+                            allCorrectSet.add(numId);
+                        }
+                    });
+                }
+                
+                if (savedWrongWords) {
+                    JSON.parse(savedWrongWords).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        allWrongSet.add(numId);
+                        allCorrectSet.delete(numId);
+                    });
+                }
+            });
+            
+            words.forEach(word => {
+                if (allWrongSet.has(word.id)) {
+                    wrongCount++;
+                } else if (allCorrectSet.has(word.id)) {
+                    correctCount++;
+                }
+            });
+        }
+        const correctPercent = wordCount > 0 ? (correctCount / wordCount) * 100 : 0;
+        const wrongPercent = wordCount > 0 ? (wrongCount / wordCount) * 100 : 0;
+        
+        // 番号を取得（1から始まる）
+        const number = index + 1;
+        
+        const card = document.createElement('div');
+        card.className = 'category-card category-card-with-actions';
+        
+        card.innerHTML = `
+            <div class="category-info">
+                <div class="category-header">
+                    <div class="category-name"><span class="level-badge" style="background-color: ${badgeColor}">${number}</span> ${subcat}</div>
+                </div>
+                <div class="category-progress">
+                    <div class="category-progress-bar">
+                        <div class="category-progress-correct" style="width: ${correctPercent}%"></div>
+                        <div class="category-progress-wrong" style="width: ${wrongPercent}%"></div>
+                    </div>
+                    <div class="category-progress-text">${correctCount}/${wordCount}語</div>
+                </div>
+            </div>
+            <div class="course-card-side-actions">
+                <button type="button" class="course-side-btn input-btn">学習</button>
+                <button type="button" class="course-side-btn output-btn">テスト</button>
+            </div>
+        `;
+        
+        // ボタンにイベントリスナーを追加
+        const inputBtn = card.querySelector('.input-btn');
+        const outputBtn = card.querySelector('.output-btn');
+        const categoryInfo = card.querySelector('.category-info');
+        
+        if (inputBtn) {
+            inputBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showInputModeDirectly(categoryKey, words, categoryKey);
+            });
+        }
+        
+        if (outputBtn) {
+            outputBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showWordFilterView(categoryKey, words, categoryKey);
+            });
+        }
+        
+        // 左側の情報部分をクリックした時にモード選択モーダルを表示
+        if (categoryInfo) {
+            categoryInfo.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showCourseActionModal(categoryKey, words, categoryKey);
+            });
+        }
+        
+        courseList.appendChild(card);
+    });
+    
+    // ヘッダーの戻るボタンを表示
+    updateHeaderButtons('course', parentCategory);
+    
+    // 画面遷移
+    const categorySelection = document.getElementById('categorySelection');
+    
+    if (categorySelection && courseSelection) {
+        categorySelection.classList.add('hidden');
+        courseSelection.classList.remove('hidden');
+        
+        if (!skipAnimation) {
+            courseSelection.classList.add('slide-in-right');
+            setTimeout(() => {
+                courseSelection.classList.remove('slide-in-right');
+            }, 300);
+        }
+    }
+    
+    // ナビゲーション状態を更新
+    updateNavState('courseSelection');
+    
+    // 戻るボタン用にparentCategoryを保存
+    window.currentSubcategoryParent = parentCategory;
+}
+
 // コース選択画面を表示（100刻み）
 function showCourseSelection(category, categoryWords) {
     // スクロール位置を一番上にリセット
@@ -4043,7 +4285,7 @@ function showInputModeDirectly(category, words, courseTitle) {
     if (words.length > 500) {
         renderInputListViewPaginated(words);
     } else {
-        renderInputListView(words);
+    renderInputListView(words);
     }
 }
 
@@ -4058,6 +4300,226 @@ function showCourseActionModal(category, words, courseTitle) {
 // コースカード左側クリック時のモード選択モーダル（コールバック版）
 function showCourseActionModalWithCallbacks(onInput, onOutput, title) {
     showStudyModeOverlay(onInput, onOutput);
+}
+
+// 学習メニュー選択画面を表示
+function showLearningMenuSelection() {
+    // 既存のオーバーレイがあれば削除
+    const existingOverlay = document.getElementById('learningMenuOverlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+    
+    // オーバーレイを作成
+    const overlay = document.createElement('div');
+    overlay.id = 'learningMenuOverlay';
+    overlay.className = 'study-mode-overlay';
+    
+    overlay.innerHTML = `
+        <div class="study-mode-container">
+            <div class="study-mode-title">学習メニュー</div>
+            <div class="learning-menu-categories">
+                <button type="button" class="learning-menu-category-btn" data-category="超重要700語">
+                    <span class="learning-menu-category-title">超重要700語</span>
+                </button>
+                <button type="button" class="learning-menu-category-btn" data-category="重要500語">
+                    <span class="learning-menu-category-title">重要500語</span>
+                </button>
+                <button type="button" class="learning-menu-category-btn" data-category="差がつく300語">
+                    <span class="learning-menu-category-title">差がつく300語</span>
+                </button>
+            </div>
+            <button type="button" class="study-mode-cancel-btn">キャンセル</button>
+        </div>
+    `;
+    
+    // オーバーレイをクリックで閉じる
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+    
+    // カテゴリーボタンにイベントリスナーを追加
+    const categoryBtns = overlay.querySelectorAll('.learning-menu-category-btn');
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const category = btn.dataset.category;
+            overlay.remove();
+            showLearningSubcategoryMenu(category);
+        });
+    });
+    
+    // キャンセルボタン
+    const cancelBtn = overlay.querySelector('.study-mode-cancel-btn');
+    cancelBtn.addEventListener('click', () => {
+        overlay.remove();
+    });
+    
+    document.body.appendChild(overlay);
+}
+
+// 学習サブカテゴリーメニューを表示
+function showLearningSubcategoryMenu(category) {
+    // 既存のオーバーレイがあれば削除
+    const existingOverlay = document.getElementById('learningMenuOverlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+    
+    // サブカテゴリーを定義
+    let subcategories = [];
+    if (category === '超重要700語') {
+        subcategories = [
+            'カテゴリ別に覚える基本単語',
+            '冠詞',
+            '代名詞',
+            '名詞',
+            '動詞',
+            '形容詞',
+            '副詞',
+            '前置詞',
+            '疑問詞',
+            '間投詞'
+        ];
+    } else if (category === '重要500語') {
+        subcategories = [
+            '名詞',
+            '動詞',
+            '形容詞',
+            '副詞',
+            '前置詞',
+            '助動詞',
+            '接続詞',
+            '限定詞',
+            '不定代名詞'
+        ];
+    } else if (category === '差がつく300語') {
+        subcategories = [
+            '名詞',
+            '動詞',
+            '形容詞',
+            '副詞',
+            '前置詞',
+            '接続詞',
+            '関係代名詞'
+        ];
+    }
+    
+    // オーバーレイを作成
+    const overlay = document.createElement('div');
+    overlay.id = 'learningMenuOverlay';
+    overlay.className = 'study-mode-overlay';
+    
+    const subcategoryButtons = subcategories.map(subcat => 
+        `<button type="button" class="learning-menu-subcategory-btn" data-subcategory="${subcat}">
+            <span class="learning-menu-subcategory-title">${subcat}</span>
+        </button>`
+    ).join('');
+    
+    overlay.innerHTML = `
+        <div class="study-mode-container">
+            <div class="study-mode-title">${category}</div>
+            <div class="learning-menu-subcategories">
+                ${subcategoryButtons}
+            </div>
+            <button type="button" class="study-mode-cancel-btn">キャンセル</button>
+        </div>
+    `;
+    
+    // オーバーレイをクリックで閉じる
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+    
+    // サブカテゴリーボタンにイベントリスナーを追加
+    const subcategoryBtns = overlay.querySelectorAll('.learning-menu-subcategory-btn');
+    subcategoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const subcategory = btn.dataset.subcategory;
+            overlay.remove();
+            startLearningFromMenu(category, subcategory);
+        });
+    });
+    
+    // キャンセルボタン
+    const cancelBtn = overlay.querySelector('.study-mode-cancel-btn');
+    cancelBtn.addEventListener('click', () => {
+        overlay.remove();
+        showLearningMenuSelection();
+    });
+    
+    document.body.appendChild(overlay);
+}
+
+// 学習メニューから学習を開始
+function startLearningFromMenu(category, subcategory) {
+    let words = [];
+    
+    // カテゴリーに応じてレベルを決定
+    let levelCategory = '';
+    if (category === '超重要700語') {
+        levelCategory = 'LEVEL1 超重要単語400';
+    } else if (category === '重要500語') {
+        levelCategory = 'LEVEL2 重要単語300';
+    } else if (category === '差がつく300語') {
+        levelCategory = 'LEVEL3 差がつく単語200';
+    }
+    
+    // 単語を取得
+    if (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function') {
+        const allWords = getAllVocabulary();
+        
+        // まずレベルでフィルタリング
+        let levelWords = [];
+        if (levelCategory) {
+            levelWords = allWords.filter(word => word.category === levelCategory);
+        }
+        
+        // サブカテゴリーでフィルタリング
+        if (subcategory === 'カテゴリ別に覚える基本単語') {
+            // 小学生で習った単語を取得
+            if (typeof getElementaryVocabulary !== 'undefined' && typeof getElementaryVocabulary === 'function') {
+                words = getElementaryVocabulary();
+            } else if (typeof elementaryWordData !== 'undefined') {
+                words = elementaryWordData;
+            }
+        } else {
+            // 品詞でフィルタリング
+            words = levelWords.filter(word => {
+                const partOfSpeech = word.partOfSpeech || '';
+                if (subcategory === '冠詞') return partOfSpeech.includes('冠詞');
+                if (subcategory === '代名詞') return partOfSpeech.includes('代名詞') && !partOfSpeech.includes('不定') && !partOfSpeech.includes('関係');
+                if (subcategory === '名詞') return partOfSpeech.includes('名詞') && !partOfSpeech.includes('代名詞');
+                if (subcategory === '動詞') return partOfSpeech.includes('動詞');
+                if (subcategory === '形容詞') return partOfSpeech.includes('形容詞');
+                if (subcategory === '副詞') return partOfSpeech.includes('副詞');
+                if (subcategory === '前置詞') return partOfSpeech.includes('前置詞');
+                if (subcategory === '疑問詞') return partOfSpeech.includes('疑問詞');
+                if (subcategory === '間投詞') return partOfSpeech.includes('間投詞');
+                if (subcategory === '助動詞') return partOfSpeech.includes('助動詞');
+                if (subcategory === '接続詞') return partOfSpeech.includes('接続詞');
+                if (subcategory === '限定詞') return partOfSpeech.includes('限定詞');
+                if (subcategory === '不定代名詞') return partOfSpeech.includes('不定代名詞');
+                if (subcategory === '関係代名詞') return partOfSpeech.includes('関係代名詞');
+                return false;
+            });
+        }
+    }
+    
+    if (words.length === 0) {
+        showAlert('エラー', '選択したカテゴリーに単語がありません。');
+        return;
+    }
+    
+    // 学習方法を選択するオーバーレイを表示
+    const categoryName = `${category} - ${subcategory}`;
+    showStudyModeOverlay(
+        () => showInputModeDirectly(categoryName, words, categoryName),
+        () => showWordFilterView(categoryName, words, categoryName)
+    );
 }
 
 // 学習モード選択オーバーレイを表示
@@ -4730,31 +5192,30 @@ function setupEventListeners() {
         });
     });
     
-    // カテゴリー別アコーディオン
-    const categoryAccordionBtn = document.getElementById('categoryAccordionBtn');
-    const categoryAccordion = document.getElementById('categoryAccordion');
-    if (categoryAccordionBtn && categoryAccordion) {
-        categoryAccordionBtn.addEventListener('click', (e) => {
+    // レベル１ 超重要700語カード
+    const level1CardBtn = document.getElementById('level1CardBtn');
+    if (level1CardBtn) {
+        level1CardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            categoryAccordion.classList.toggle('open');
+            showLevelSubcategorySelection('レベル１ 超重要700語');
         });
     }
     
-    // 日常生活でよく使う生活語彙ボタン
-    const dailyLifeVocabBtn = document.getElementById('dailyLifeVocabBtn');
-    if (dailyLifeVocabBtn) {
-        dailyLifeVocabBtn.addEventListener('click', (e) => {
+    // レベル２ 重要500語カード
+    const level2CardBtn = document.getElementById('level2CardBtn');
+    if (level2CardBtn) {
+        level2CardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            showSubcategorySelection('日常生活でよく使う生活語彙');
+            showLevelSubcategorySelection('レベル２ 重要500語');
         });
     }
     
-    // 英文でよく登場する機能語ボタン
-    const functionWordsBtn = document.getElementById('functionWordsBtn');
-    if (functionWordsBtn) {
-        functionWordsBtn.addEventListener('click', (e) => {
+    // レベル３ 差がつく300語カード
+    const level3CardBtn = document.getElementById('level3CardBtn');
+    if (level3CardBtn) {
+        level3CardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            showSubcategorySelection('英文でよく登場する機能語');
+            showLevelSubcategorySelection('レベル３ 差がつく300語');
         });
     }
     
@@ -4834,6 +5295,7 @@ function setupEventListeners() {
     
     const courseTabs = document.querySelectorAll('.course-tab');
     const courseSections = document.querySelectorAll('.course-section');
+    const courseTabsContainer = document.getElementById('courseTabs');
     if (courseTabs.length && courseSections.length) {
         // 初期状態でアクティブなタブに対応するセクションを表示
         const activeTab = document.querySelector('.course-tab.active');
@@ -4846,6 +5308,14 @@ function setupEventListeners() {
                     section.classList.add('hidden');
                 }
             });
+            // 初期状態のボーダー色を設定
+            if (courseTabsContainer) {
+                if (targetId === 'courseScoreSection') {
+                    courseTabsContainer.classList.add('score-active');
+                } else {
+                    courseTabsContainer.classList.remove('score-active');
+                }
+            }
         }
         
         courseTabs.forEach(tab => {
@@ -4860,6 +5330,14 @@ function setupEventListeners() {
                         section.classList.add('hidden');
                     }
                 });
+                // ボーダー色を切り替え
+                if (courseTabsContainer) {
+                    if (targetId === 'courseScoreSection') {
+                        courseTabsContainer.classList.add('score-active');
+                    } else {
+                        courseTabsContainer.classList.remove('score-active');
+                    }
+                }
             });
         });
     }
@@ -5101,7 +5579,7 @@ function setupEventListeners() {
                     } else if (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function') {
                         const allWords = getAllVocabulary();
                         categoryWords = allWords.filter(word => word.category === selectedCategory);
-                    } else {
+                } else {
                         categoryWords = wordData.filter(word => word.category === selectedCategory);
                     }
                 } else {
@@ -5863,50 +6341,7 @@ function setupEventListeners() {
     if (learningMethodBtn) {
         learningMethodBtn.addEventListener('click', () => {
             closeSidebar();
-            
-            // 現在のカテゴリーに応じて学習方法選択モーダルを表示
-            if (selectedCategory) {
-                // カテゴリーが選択されている場合
-                let categoryWords;
-                if (selectedCategory === '基本語彙500') {
-                    // 基本語彙500コースは削除されました
-                    showAlert('エラー', 'このコースは利用できません。');
-                    return;
-                } else if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-                    // vocabulary-data.jsから取得（優先）
-                    if (typeof getElementaryVocabulary !== 'undefined' && typeof getElementaryVocabulary === 'function') {
-                        categoryWords = getElementaryVocabulary();
-                    } else if (typeof elementaryWordData !== 'undefined') {
-                        // 既存のelementaryWordDataとの互換性
-                        categoryWords = elementaryWordData;
-                    } else {
-                        showAlert('エラー', '小学生で習った単語データが見つかりません。');
-                        return;
-                    }
-                } else {
-                    categoryWords = wordData.filter(word => word.category === selectedCategory);
-                }
-                
-                if (categoryWords.length === 0) {
-                    showAlert('エラー', '選択したカテゴリーに単語がありません。');
-                    return;
-                }
-                
-                // 小学生で習った単語の場合は入力モード用のモーダルを表示
-                if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-                    const { wrongSet } = loadCategoryWords(selectedCategory);
-                    const wrongWordsInCategory = categoryWords.filter(word => wrongSet.has(word.id));
-                    const savedIndex = loadProgress(selectedCategory);
-                    const hasProgress = savedIndex > 0;
-                    showInputModeMethodSelectionModal(selectedCategory, categoryWords, hasProgress, savedIndex, wrongWordsInCategory);
-                } else {
-                    // 通常のカードモードの場合、コース選択画面を表示
-                    showCourseSelection(selectedCategory, categoryWords);
-                }
-            } else {
-                // カテゴリーが選択されていない場合はカテゴリー選択画面に戻る
-                showCategorySelection();
-            }
+            showLearningMenuSelection();
         });
     }
     
@@ -7670,11 +8105,11 @@ function renderInputListViewAsync(words) {
 
 // 単一のリストアイテムを作成（renderInputListViewAsync用）
 function createInputListItem(word, progressCache, categoryCorrectSet, categoryWrongSet, skipProgress = false) {
-    // 展開モードの場合
-    if (inputListViewMode === 'expand') {
-        const item = document.createElement('div');
-        item.className = 'input-list-item-expand';
-        
+        // 展開モードの場合
+        if (inputListViewMode === 'expand') {
+            const item = document.createElement('div');
+            item.className = 'input-list-item-expand';
+            
         let isCorrect = false, isWrong = false;
         
         // 進捗マーカーをスキップしない場合のみ計算
@@ -7685,7 +8120,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
                 isCorrect = cache && cache.correct.has(word.id);
                 isWrong = cache && cache.wrong.has(word.id);
             } else if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-                // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
+            // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
                 const cache = progressCache[word.category];
                 isCorrect = cache && cache.correct.has(word.id);
                 isWrong = cache && cache.wrong.has(word.id);
@@ -8380,7 +8815,7 @@ function setupInputListModeToggle() {
             if (wordsToRender.length > 500) {
                 renderInputListViewPaginated(wordsToRender);
             } else {
-                renderInputListView(wordsToRender);
+            renderInputListView(wordsToRender);
             }
         }
     });
@@ -8558,41 +8993,41 @@ function applyInputFilter() {
         }
     } else {
         // 通常のカテゴリーの場合
-        const modes = ['card', 'input'];
-        const categoryCache = {};
-        
-        baseWords.forEach(word => {
-            const cat = word.category;
-            if (!categoryCache[cat]) {
-                const correctSet = new Set();
-                const wrongSet = new Set();
+    const modes = ['card', 'input'];
+    const categoryCache = {};
+    
+    baseWords.forEach(word => {
+        const cat = word.category;
+        if (!categoryCache[cat]) {
+            const correctSet = new Set();
+            const wrongSet = new Set();
+            
+            modes.forEach(mode => {
+                const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
                 
-                modes.forEach(mode => {
-                    const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
-                    const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
-                    
-                    if (savedCorrect) {
-                        try {
-                            JSON.parse(savedCorrect).forEach(id => {
-                                const numId = typeof id === 'string' ? parseInt(id, 10) : id;
-                                correctSet.add(numId);
-                            });
-                        } catch (e) {}
-                    }
-                    
-                    if (savedWrong) {
-                        try {
-                            JSON.parse(savedWrong).forEach(id => {
-                                const numId = typeof id === 'string' ? parseInt(id, 10) : id;
-                                wrongSet.add(numId);
-                            });
-                        } catch (e) {}
-                    }
-                });
+                if (savedCorrect) {
+                    try {
+                        JSON.parse(savedCorrect).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            correctSet.add(numId);
+                        });
+                    } catch (e) {}
+                }
                 
-                categoryCache[cat] = { correctSet, wrongSet };
-            }
-        });
+                if (savedWrong) {
+                    try {
+                        JSON.parse(savedWrong).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            wrongSet.add(numId);
+                        });
+                    } catch (e) {}
+                }
+            });
+            
+            categoryCache[cat] = { correctSet, wrongSet };
+        }
+    });
         
         // カテゴリーキャッシュから全IDを収集
         Object.values(categoryCache).forEach(cache => {
@@ -8631,7 +9066,7 @@ function applyInputFilter() {
         if (filteredWords.length > 500) {
             renderInputListViewPaginated(filteredWords);
         } else {
-            renderInputListView(filteredWords);
+        renderInputListView(filteredWords);
         }
     } else {
         // フィルター結果が0件の場合

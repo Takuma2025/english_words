@@ -1790,6 +1790,11 @@ body.learning-mode .app-header {
     display: flex;
     gap: 8px;
     margin: 36px 0 8px 0;
+    border-bottom: 5px solid #3182ce; /* デフォルトは青 */
+}
+
+.course-tabs.score-active {
+    border-bottom: 5px solid #dc2626; /* 赤 */
 }
 
 .school-trigger-row {
@@ -2612,7 +2617,7 @@ body.learning-mode .app-header {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(59, 130, 246, 0.5);
+    background: rgba(59, 130, 246, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2704,6 +2709,67 @@ body.learning-mode .app-header {
 
 .study-mode-cancel-btn:hover {
     background: #d1d5db;
+}
+
+/* 学習メニュー */
+.learning-menu-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.learning-menu-category-btn {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.learning-menu-category-btn:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.learning-menu-category-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.learning-menu-subcategories {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.learning-menu-subcategory-btn {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.learning-menu-subcategory-btn:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.learning-menu-subcategory-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1f2937;
 }
 
 /* AI分析カード */
@@ -2981,6 +3047,18 @@ body.learning-mode .app-header {
     margin-right: 6px;
     font-size: 0.85em;
     vertical-align: baseline;
+}
+
+.level-badge-red {
+    background-color: #ef4444;
+}
+
+.level-badge-orange {
+    background-color: #f97316;
+}
+
+.level-badge-blue {
+    background-color: #3b82f6;
 }
 
 .exam-type-badge {
@@ -7287,7 +7365,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(59, 130, 246, 0.3);
+    background: rgba(59, 130, 246, 0.7);
     backdrop-filter: blur(4px);
     z-index: 2000;
     display: flex;
