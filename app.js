@@ -1387,8 +1387,11 @@ function openAiAnalysisMenu() {
         return;
     }
     
-    // 学習フィルター画面を表示
-    showWordFilterView('AI分析 苦手単語', words, 'AI分析 苦手単語');
+    // オーバーレイで学習方法を選択
+    showStudyModeOverlay(
+        () => showInputModeDirectly('AI分析 苦手単語', words, 'AI分析 苦手単語'),
+        () => showWordFilterView('AI分析 苦手単語', words, 'AI分析 苦手単語')
+    );
 }
 
 // 大阪府のすべての英単語で学習を開始
@@ -1400,8 +1403,11 @@ function startAllWordsLearning() {
         return;
     }
     
-    // 学習フィルター画面を表示
-    showWordFilterView('大阪府のすべての英単語', allWords, '大阪府のすべての英単語');
+    // オーバーレイで学習方法を選択
+    showStudyModeOverlay(
+        () => showInputModeDirectly('大阪府のすべての英単語', allWords, '大阪府のすべての英単語'),
+        () => showWordFilterView('大阪府のすべての英単語', allWords, '大阪府のすべての英単語')
+    );
 }
 
 // 入試日関連 ------------------------------
@@ -3197,6 +3203,7 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
         // ボタンにイベントリスナーを追加
         const inputBtn = card.querySelector('.input-btn');
         const outputBtn = card.querySelector('.output-btn');
+        const categoryInfo = card.querySelector('.category-info');
         
         if (inputBtn) {
             inputBtn.addEventListener('click', (e) => {
@@ -3211,6 +3218,14 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                 e.stopPropagation();
                 // アウトプット：フィルター画面を表示
                 showWordFilterView(subcat, words, subcat);
+            });
+        }
+        
+        // 左側の情報部分をクリックした時にモード選択モーダルを表示
+        if (categoryInfo) {
+            categoryInfo.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showCourseActionModal(subcat, words, subcat);
             });
         }
         
@@ -3620,6 +3635,7 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
     // ボタンにイベントリスナーを追加
     const inputBtn = card.querySelector('.input-btn');
     const outputBtn = card.querySelector('.output-btn');
+    const categoryInfo = card.querySelector('.category-info');
     
     if (inputBtn && onInput) {
         inputBtn.addEventListener('click', (e) => {
@@ -3632,6 +3648,14 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
         outputBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             onOutput();
+        });
+    }
+    
+    // 左側の情報部分をクリックした時にモード選択モーダルを表示
+    if (categoryInfo && onInput && onOutput) {
+        categoryInfo.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showCourseActionModalWithCallbacks(onInput, onOutput, title);
         });
     }
     
@@ -3979,6 +4003,77 @@ function showInputModeDirectly(category, words, courseTitle) {
     
     // 単語一覧を描画
     renderInputListView(words);
+}
+
+// コースカード左側クリック時のモード選択モーダル（直接関数版）
+function showCourseActionModal(category, words, courseTitle) {
+    showStudyModeOverlay(
+        () => showInputModeDirectly(category, words, courseTitle),
+        () => showWordFilterView(category, words, courseTitle)
+    );
+}
+
+// コースカード左側クリック時のモード選択モーダル（コールバック版）
+function showCourseActionModalWithCallbacks(onInput, onOutput, title) {
+    showStudyModeOverlay(onInput, onOutput);
+}
+
+// 学習モード選択オーバーレイを表示
+function showStudyModeOverlay(onInput, onOutput) {
+    // 既存のオーバーレイがあれば削除
+    const existingOverlay = document.getElementById('studyModeOverlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+    
+    // オーバーレイを作成
+    const overlay = document.createElement('div');
+    overlay.id = 'studyModeOverlay';
+    overlay.className = 'study-mode-overlay';
+    
+    overlay.innerHTML = `
+        <div class="study-mode-container">
+            <div class="study-mode-title">学習方法を選択</div>
+            <div class="study-mode-buttons">
+                <button type="button" class="study-mode-choice-btn study-mode-input-btn">
+                    <span class="study-mode-choice-title">単語一覧を見て学習する</span>
+                </button>
+                <button type="button" class="study-mode-choice-btn study-mode-output-btn">
+                    <span class="study-mode-choice-title">テストで覚えたか確認する</span>
+                </button>
+            </div>
+            <button type="button" class="study-mode-cancel-btn">キャンセル</button>
+        </div>
+    `;
+    
+    // オーバーレイをクリックで閉じる
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+    
+    // 学習ボタン
+    const inputBtn = overlay.querySelector('.study-mode-input-btn');
+    inputBtn.addEventListener('click', () => {
+        overlay.remove();
+        if (onInput) onInput();
+    });
+    
+    // テストボタン
+    const outputBtn = overlay.querySelector('.study-mode-output-btn');
+    outputBtn.addEventListener('click', () => {
+        overlay.remove();
+        if (onOutput) onOutput();
+    });
+    
+    // キャンセルボタン
+    const cancelBtn = overlay.querySelector('.study-mode-cancel-btn');
+    cancelBtn.addEventListener('click', () => {
+        overlay.remove();
+    });
+    
+    document.body.appendChild(overlay);
 }
 
 // 入力モード用の学習方法選択モーダルを表示（後方互換性のため残す）

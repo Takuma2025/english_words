@@ -2587,6 +2587,101 @@ body.learning-mode .app-header {
     display: none;
 }
 
+/* 左側の情報部分をクリック可能に */
+.category-card.category-card-with-actions .category-info {
+    cursor: pointer;
+}
+
+/* 学習モード選択オーバーレイ */
+.study-mode-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.study-mode-container {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.study-mode-title {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #1f2937;
+}
+
+.study-mode-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.study-mode-choice-btn {
+    flex: 1;
+    padding: 20px 12px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.study-mode-choice-btn:hover {
+    opacity: 0.9;
+}
+
+.study-mode-choice-btn:active {
+    transform: translateY(0);
+}
+
+.study-mode-input-btn {
+    background: #3b82f6;
+    color: white;
+}
+
+.study-mode-output-btn {
+    background: #f9b916;
+    color: white;
+}
+
+.study-mode-choice-title {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.study-mode-cancel-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #e5e7eb;
+    color: #4b5563;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.study-mode-cancel-btn:hover {
+    background: #d1d5db;
+}
+
 /* AI分析カード */
 .ai-sparkle {
     margin-right: 6px;
@@ -11447,6 +11542,19 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .filter-start-btn:active {
     transform: translateY(4px);
     box-shadow: 0 0 0 #0044a0;
+}
+
+.filter-start-btn-orange {
+    background: #f9b916;
+    box-shadow: 0 4px 0 #d49b00;
+}
+
+.filter-start-btn-orange:hover {
+    background: #e5a800;
+}
+
+.filter-start-btn-orange:active {
+    box-shadow: 0 0 0 #d49b00;
 }
 
 .filter-back-btn {
