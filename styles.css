@@ -4297,8 +4297,6 @@ body.reorder-mode-active .word-card-container {
     flex-wrap: wrap;
     gap: 6px;
     padding: 8px 6px;
-    background: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
 }
 
 .input-filter-btn {
@@ -4428,6 +4426,10 @@ body.reorder-mode-active .word-card-container {
     transform: translateX(20px);
 }
 
+.red-sheet-icon {
+    flex-shrink: 0;
+}
+
 .red-sheet-label {
     font-size: 13px;
     font-weight: 500;
@@ -4438,14 +4440,14 @@ body.reorder-mode-active .word-card-container {
 .red-sheet-overlay {
     position: fixed;
     top: 200px;
-    right: 0;
-    left: 15%;
+    left: 40%;
+    width: 55%;
     bottom: 0;
     background: rgb(200, 30, 30);
     z-index: 500;
     cursor: grab;
     user-select: none;
-    border-radius: 8px 0 0 0;
+    border-radius: 12px;
     box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
     pointer-events: auto;
     touch-action: none;

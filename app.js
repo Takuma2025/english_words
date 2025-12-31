@@ -7776,12 +7776,16 @@ function updateRedSheetToggleVisibility() {
 // 赤シートドラッグ機能
 function setupRedSheetDrag(overlay) {
     let isDragging = false;
+    let startX = 0;
     let startY = 0;
+    let startLeft = 0;
     let startTop = 0;
     
     const onPointerDown = (e) => {
         isDragging = true;
+        startX = e.clientX;
         startY = e.clientY;
+        startLeft = overlay.offsetLeft;
         startTop = overlay.offsetTop;
         overlay.style.cursor = 'grabbing';
         overlay.setPointerCapture(e.pointerId);
@@ -7789,8 +7793,11 @@ function setupRedSheetDrag(overlay) {
     
     const onPointerMove = (e) => {
         if (!isDragging) return;
+        const deltaX = e.clientX - startX;
         const deltaY = e.clientY - startY;
+        const newLeft = Math.max(0, startLeft + deltaX);
         const newTop = Math.max(0, startTop + deltaY);
+        overlay.style.left = newLeft + 'px';
         overlay.style.top = newTop + 'px';
     };
     
