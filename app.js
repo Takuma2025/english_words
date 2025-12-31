@@ -7795,7 +7795,9 @@ function setupRedSheetDrag(overlay) {
         if (!isDragging) return;
         const deltaX = e.clientX - startX;
         const deltaY = e.clientY - startY;
-        const newLeft = Math.max(0, startLeft + deltaX);
+        // 左側は画面の左端まで動かせるように（負の値も許可）
+        const minLeft = -overlay.offsetWidth * 0.8;
+        const newLeft = Math.max(minLeft, startLeft + deltaX);
         const newTop = Math.max(0, startTop + deltaY);
         overlay.style.left = newLeft + 'px';
         overlay.style.top = newTop + 'px';
