@@ -3188,21 +3188,9 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                     <div class="category-progress-text">${correctCount}/${wordCount}語</div>
                 </div>
             </div>
-            <div class="course-card-actions">
-                <button type="button" class="course-action-btn input-btn">
-                    <img src="input.png" alt="" class="action-btn-icon">
-                    <div class="action-btn-text">
-                        <span class="action-btn-title">インプット</span>
-                        <span class="action-btn-desc">一覧を見て学習する</span>
-                    </div>
-                </button>
-                <button type="button" class="course-action-btn output-btn">
-                    <img src="output.png" alt="" class="action-btn-icon">
-                    <div class="action-btn-text">
-                        <span class="action-btn-title">アウトプット</span>
-                        <span class="action-btn-desc">覚えたか確認する</span>
-                    </div>
-                </button>
+            <div class="course-card-side-actions">
+                <button type="button" class="course-side-btn input-btn">学習</button>
+                <button type="button" class="course-side-btn output-btn">テスト</button>
             </div>
         `;
         
@@ -3623,21 +3611,9 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
                 <div class="category-progress-text">${progressText}</div>
             </div>
         </div>
-        <div class="course-card-actions">
-            <button type="button" class="course-action-btn input-btn">
-                <img src="input.png" alt="" class="action-btn-icon">
-                <div class="action-btn-text">
-                    <span class="action-btn-title">インプット</span>
-                    <span class="action-btn-desc">一覧を見て学習する</span>
-                </div>
-            </button>
-            <button type="button" class="course-action-btn output-btn">
-                <img src="output.png" alt="" class="action-btn-icon">
-                <div class="action-btn-text">
-                    <span class="action-btn-title">アウトプット</span>
-                    <span class="action-btn-desc">覚えたか確認する</span>
-                </div>
-            </button>
+        <div class="course-card-side-actions">
+            <button type="button" class="course-side-btn input-btn">学習</button>
+            <button type="button" class="course-side-btn output-btn">テスト</button>
         </div>
     `;
     

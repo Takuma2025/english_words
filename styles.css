@@ -2529,9 +2529,11 @@ body.learning-mode .app-header {
 
 /* アクションボタン付きコースカード */
 .category-card.category-card-with-actions {
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
     cursor: default;
+    padding: 0;
+    overflow: hidden;
 }
 
 .category-card.category-card-with-actions:hover {
@@ -2539,7 +2541,46 @@ body.learning-mode .app-header {
 }
 
 .category-card.category-card-with-actions .category-info {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
+    padding: 12px 16px;
+}
+
+/* 右側の縦並びボタン */
+.course-card-side-actions {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 70px;
+}
+
+.course-side-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.15s ease;
+    color: #ffffff;
+}
+
+.course-side-btn:hover {
+    filter: brightness(0.9);
+}
+
+.course-side-btn:active {
+    filter: brightness(0.8);
+}
+
+.course-side-btn.input-btn {
+    background: #3b82f6;
+}
+
+.course-side-btn.output-btn {
+    background: #f9b916;
 }
 
 .category-card.category-card-with-actions .category-arrow {
