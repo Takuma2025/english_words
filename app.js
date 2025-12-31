@@ -2499,6 +2499,23 @@ function updateFeedbackOverlayPosition() {
     }
 }
 
+// タイトルにレベルバッジを追加するヘルパー関数
+function formatTitleWithLevelBadge(title) {
+    if (!title) return title;
+    if (title.includes('LEVEL1') || title.includes('超重要')) {
+        return '<span class="level-badge level-badge-red">レベル１</span> ' + (title.replace(/LEVEL1\s*超重要単語400|超重要700語/g, '超重要700語').replace(/LEVEL1\s*/g, ''));
+    } else if (title.includes('LEVEL2') || title.includes('重要500語')) {
+        return '<span class="level-badge level-badge-orange">レベル２</span> ' + (title.replace(/LEVEL2\s*重要単語300|重要500語/g, '重要500語').replace(/LEVEL2\s*/g, ''));
+    } else if (title.includes('LEVEL3') || title.includes('差がつく')) {
+        return '<span class="level-badge level-badge-blue">レベル３</span> ' + (title.replace(/LEVEL3\s*差がつく単語200|差がつく300語/g, '差がつく300語').replace(/LEVEL3\s*/g, ''));
+    } else if (title.includes('LEVEL4') || title.includes('私立高校入試レベル')) {
+        return '<span class="level-badge level-badge-purple">レベル４</span> ' + (title.replace(/LEVEL4\s*/g, ''));
+    } else if (title.includes('LEVEL5') || title.includes('難関私立高校入試レベル')) {
+        return '<span class="level-badge level-badge-dark">レベル５</span> ' + (title.replace(/LEVEL5\s*/g, ''));
+    }
+    return title;
+}
+
 // mode: 'home' = ホーム画面、'course' = コース選択画面、'back' = その他（戻るボタン表示）、'learning' = 学習画面
 // title: コース選択画面で表示するタイトル（オプション）
 function updateHeaderButtons(mode, title = '') {
@@ -2538,7 +2555,7 @@ function updateHeaderButtons(mode, title = '') {
             } else if (title === 'レベル３ 差がつく300語') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-blue">レベル３</span> 差がつく300語';
             } else {
-                headerTitleText.textContent = title;
+            headerTitleText.textContent = title;
             }
             headerTitleText.classList.remove('hidden');
         } else {
@@ -3031,7 +3048,12 @@ function initInputModeLearning(category, words, startIndex = 0) {
             // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
             displayTitle = currentFilterCourseTitle || category;
         }
+        const formattedTitle = formatTitleWithLevelBadge(displayTitle);
+        if (formattedTitle !== displayTitle) {
+            elements.unitName.innerHTML = formattedTitle;
+        } else {
         elements.unitName.textContent = displayTitle;
+        }
     }
     
     // テーマカラーを先に更新（クラス追加の前に）
@@ -3125,6 +3147,8 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
     
     // サブカテゴリーの定義
     let subcategories = [];
+    let accordionContainer = null;
+    
     if (parentCategory === '日常生活でよく使う生活語彙') {
         subcategories = [
             '家族・家に関する単語',
@@ -3144,6 +3168,49 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
             '国名や地域に関する単語',
             '行事・余暇に関する単語'
         ];
+        
+        // アコーディオンを作成
+        const accordion = document.createElement('div');
+        accordion.className = 'category-accordion';
+        accordion.id = 'elementarySubcategoryAccordion';
+        
+        const accordionHeader = document.createElement('button');
+        accordionHeader.className = 'category-accordion-header';
+        accordionHeader.id = 'elementarySubcategoryAccordionBtn';
+        
+        const accordionContent = document.createElement('div');
+        accordionContent.className = 'category-accordion-content';
+        accordionContent.id = 'elementarySubcategoryAccordionContent';
+        
+        accordionContainer = document.createElement('div');
+        accordionContainer.className = 'category-accordion-container';
+        
+        accordionHeader.innerHTML = `
+            <div class="category-info">
+                <div class="category-header">
+                    <div class="category-name">
+                        <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="#3182ce" stroke="#3182ce" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        カテゴリ別に覚える基本単語
+                    </div>
+                </div>
+                <div class="category-meta">基礎からカテゴリー別に学習</div>
+            </div>
+            <div class="category-accordion-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+        `;
+        
+        accordionHeader.addEventListener('click', (e) => {
+            e.stopPropagation();
+            accordion.classList.toggle('open');
+        });
+        
+        accordion.appendChild(accordionHeader);
+        accordionContent.appendChild(accordionContainer);
+        accordion.appendChild(accordionContent);
+        courseList.appendChild(accordion);
     } else if (parentCategory === '英文でよく登場する機能語') {
         subcategories = [
             '冠詞',
@@ -3160,7 +3227,7 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
         ];
     }
     
-    // サブカテゴリーカードを生成
+    // サブカテゴリーを生成
     subcategories.forEach((subcat, index) => {
         const words = getVocabularyByCategory(subcat);
         const wordCount = words ? words.length : 0;
@@ -3224,6 +3291,29 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
         // 説明文を取得
         const description = functionWordDescriptions[subcat] || '';
         
+        if (parentCategory === '日常生活でよく使う生活語彙' && accordionContainer) {
+            // アコーディオンアイテムを作成
+            const accordionItem = document.createElement('button');
+            accordionItem.className = 'category-accordion-item category-accordion-item-green';
+            
+            accordionItem.innerHTML = `
+                <div class="accordion-item-main">
+                    <svg class="accordion-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${badgeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span class="accordion-item-text">${subcat}</span>
+                    <svg class="accordion-item-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+            `;
+            
+            accordionItem.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showCourseActionModal(subcat, words, subcat);
+            });
+            
+            accordionContainer.appendChild(accordionItem);
+        } else {
+            // カードを作成（機能語の場合）
         const card = document.createElement('div');
         card.className = 'category-card category-card-with-actions';
         
@@ -3232,7 +3322,7 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                 <div class="category-header">
                     <div class="category-name"><span class="level-badge" style="background-color: ${badgeColor}">${number}</span> ${subcat}</div>
                 </div>
-                ${description ? `<div class="category-meta">${description}</div>` : ''}
+                    ${description ? `<div class="category-meta">${description}</div>` : ''}
                 <div class="category-progress">
                     <div class="${progressBarClass}">
                         <div class="category-progress-correct" style="width: ${correctPercent}%"></div>
@@ -3241,16 +3331,16 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                     <div class="category-progress-text">${correctCount}/${wordCount}語</div>
                 </div>
             </div>
-            <div class="course-card-side-actions">
-                <button type="button" class="course-side-btn input-btn">学習</button>
-                <button type="button" class="course-side-btn output-btn">テスト</button>
+                <div class="course-card-side-actions">
+                    <button type="button" class="course-side-btn input-btn">学習</button>
+                    <button type="button" class="course-side-btn output-btn">テスト</button>
             </div>
         `;
         
         // ボタンにイベントリスナーを追加
         const inputBtn = card.querySelector('.input-btn');
         const outputBtn = card.querySelector('.output-btn');
-        const categoryInfo = card.querySelector('.category-info');
+            const categoryInfo = card.querySelector('.category-info');
         
         if (inputBtn) {
             inputBtn.addEventListener('click', (e) => {
@@ -3267,16 +3357,17 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                 showWordFilterView(subcat, words, subcat);
             });
         }
-        
-        // 左側の情報部分をクリックした時にモード選択モーダルを表示
-        if (categoryInfo) {
-            categoryInfo.addEventListener('click', (e) => {
-                e.stopPropagation();
-                showCourseActionModal(subcat, words, subcat);
-            });
-        }
+            
+            // 左側の情報部分をクリックした時にモード選択モーダルを表示
+            if (categoryInfo) {
+                categoryInfo.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showCourseActionModal(subcat, words, subcat);
+                });
+            }
         
         courseList.appendChild(card);
+        }
     });
     
     // ヘッダーの戻るボタンを表示（先に設定）
@@ -3440,7 +3531,63 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         // 進捗を計算
         let correctCount = 0;
         let wrongCount = 0;
-        if (words && words.length > 0) {
+        if (subcat === 'カテゴリ別に覚える基本単語') {
+            // カテゴリ別に覚える基本単語の場合は、すべてのサブカテゴリーの進捗を合計
+            const elementarySubcategories = [
+                '家族・家に関する単語',
+                '数字に関する単語',
+                '日用品・楽器に関する単語',
+                '体に関する単語',
+                '色に関する単語',
+                '食べ物・飲み物に関する単語',
+                '町の施設に関する単語',
+                '乗り物に関する単語',
+                '職業に関する単語',
+                'スポーツに関する単語',
+                '曜日・月・季節に関する単語',
+                '動物に関する単語',
+                '自然・天気、方角に関する単語',
+                '学校に関する単語',
+                '国名や地域に関する単語',
+                '行事・余暇に関する単語'
+            ];
+            
+            const modes = ['card', 'input'];
+            const allCorrectSet = new Set();
+            const allWrongSet = new Set();
+            
+            elementarySubcategories.forEach(elementarySubcat => {
+                modes.forEach(mode => {
+                    const savedCorrectWords = localStorage.getItem(`correctWords-${elementarySubcat}_${mode}`);
+                    const savedWrongWords = localStorage.getItem(`wrongWords-${elementarySubcat}_${mode}`);
+                    
+                    if (savedCorrectWords) {
+                        JSON.parse(savedCorrectWords).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            if (!allWrongSet.has(numId)) {
+                                allCorrectSet.add(numId);
+                            }
+                        });
+                    }
+                    
+                    if (savedWrongWords) {
+                        JSON.parse(savedWrongWords).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            allWrongSet.add(numId);
+                            allCorrectSet.delete(numId);
+                        });
+                    }
+                });
+            });
+            
+            words.forEach(word => {
+                if (allWrongSet.has(word.id)) {
+                    wrongCount++;
+                } else if (allCorrectSet.has(word.id)) {
+                    correctCount++;
+                }
+            });
+        } else if (words && words.length > 0) {
             const modes = ['card', 'input'];
             const allCorrectSet = new Set();
             const allWrongSet = new Set();
@@ -3482,7 +3629,12 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         const number = index + 1;
         
         const card = document.createElement('div');
-        card.className = 'category-card category-card-with-actions';
+        // カテゴリ別に覚える基本単語の場合は右側のボタンを表示しない
+        if (subcat === 'カテゴリ別に覚える基本単語') {
+            card.className = 'category-card';
+        } else {
+            card.className = 'category-card category-card-with-actions';
+        }
         
         card.innerHTML = `
             <div class="category-info">
@@ -3497,37 +3649,177 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
                     <div class="category-progress-text">${correctCount}/${wordCount}語</div>
                 </div>
             </div>
+            ${subcat !== 'カテゴリ別に覚える基本単語' ? `
             <div class="course-card-side-actions">
                 <button type="button" class="course-side-btn input-btn">学習</button>
                 <button type="button" class="course-side-btn output-btn">テスト</button>
             </div>
+            ` : `
+            <div class="course-card-side-actions">
+                <div class="accordion-indicator">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(90deg);">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+            `}
         `;
         
-        // ボタンにイベントリスナーを追加
-        const inputBtn = card.querySelector('.input-btn');
-        const outputBtn = card.querySelector('.output-btn');
-        const categoryInfo = card.querySelector('.category-info');
-        
-        if (inputBtn) {
-            inputBtn.addEventListener('click', (e) => {
+        // カテゴリ別に覚える基本単語の場合はアコーディオンをその場で開く
+        if (subcat === 'カテゴリ別に覚える基本単語') {
+            card.style.cursor = 'pointer';
+            const accordionIndicator = card.querySelector('.accordion-indicator svg');
+            card.addEventListener('click', (e) => {
                 e.stopPropagation();
-                showInputModeDirectly(categoryKey, words, categoryKey);
+                // 既にアコーディオンが存在する場合は削除
+                const existingAccordion = card.nextElementSibling;
+                if (existingAccordion && existingAccordion.classList.contains('category-accordion')) {
+                    existingAccordion.remove();
+                    // 矢印を下向きに戻す
+                    if (accordionIndicator) {
+                        accordionIndicator.style.transform = 'rotate(90deg)';
+                    }
+                    return;
+                }
+                
+                // アコーディオンを作成
+                const accordion = document.createElement('div');
+                accordion.className = 'category-accordion open';
+                // 矢印を上向きに回転させる（-90度、つまり270度）
+                if (accordionIndicator) {
+                    accordionIndicator.style.transform = 'rotate(-90deg)';
+                }
+                
+                const accordionContent = document.createElement('div');
+                accordionContent.className = 'category-accordion-content';
+                
+                const accordionContainer = document.createElement('div');
+                accordionContainer.className = 'category-accordion-container';
+                
+                // 細分化メニューのサブカテゴリー
+                const elementarySubcategories = [
+                    '家族・家に関する単語',
+                    '数字に関する単語',
+                    '日用品・楽器に関する単語',
+                    '体に関する単語',
+                    '色に関する単語',
+                    '食べ物・飲み物に関する単語',
+                    '町の施設に関する単語',
+                    '乗り物に関する単語',
+                    '職業に関する単語',
+                    'スポーツに関する単語',
+                    '曜日・月・季節に関する単語',
+                    '動物に関する単語',
+                    '自然・天気、方角に関する単語',
+                    '学校に関する単語',
+                    '国名や地域に関する単語',
+                    '行事・余暇に関する単語'
+                ];
+                
+                elementarySubcategories.forEach((elementarySubcat) => {
+                    const elementaryWords = getVocabularyByCategory(elementarySubcat);
+                    const elementaryWordCount = elementaryWords ? elementaryWords.length : 0;
+                    
+                    // 進捗を計算
+                    let elementaryCorrectCount = 0;
+                    let elementaryWrongCount = 0;
+                    if (elementaryWords && elementaryWords.length > 0) {
+                        const modes = ['card', 'input'];
+                        const allCorrectSet = new Set();
+                        const allWrongSet = new Set();
+                        
+                        modes.forEach(mode => {
+                            const savedCorrectWords = localStorage.getItem(`correctWords-${elementarySubcat}_${mode}`);
+                            const savedWrongWords = localStorage.getItem(`wrongWords-${elementarySubcat}_${mode}`);
+                            
+                            if (savedCorrectWords) {
+                                JSON.parse(savedCorrectWords).forEach(id => {
+                                    const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                                    if (!allWrongSet.has(numId)) {
+                                        allCorrectSet.add(numId);
+                                    }
+                                });
+                            }
+                            
+                            if (savedWrongWords) {
+                                JSON.parse(savedWrongWords).forEach(id => {
+                                    const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                                    allWrongSet.add(numId);
+                                    allCorrectSet.delete(numId);
+                                });
+                            }
+                        });
+                        
+                        elementaryWords.forEach(word => {
+                            if (allWrongSet.has(word.id)) {
+                                elementaryWrongCount++;
+                            } else if (allCorrectSet.has(word.id)) {
+                                elementaryCorrectCount++;
+                            }
+                        });
+                    }
+                    
+                    const accordionItem = document.createElement('button');
+                    accordionItem.className = 'category-accordion-item category-accordion-item-green';
+                    
+                    const elementaryCorrectPercent = elementaryWordCount > 0 ? (elementaryCorrectCount / elementaryWordCount) * 100 : 0;
+                    const elementaryWrongPercent = elementaryWordCount > 0 ? (elementaryWrongCount / elementaryWordCount) * 100 : 0;
+                    
+                    accordionItem.innerHTML = `
+                        <div class="accordion-item-main">
+                            <svg class="accordion-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            <span class="accordion-item-text">${elementarySubcat}</span>
+                            <svg class="accordion-item-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                        <div class="accordion-item-progress">
+                            <div class="accordion-progress-bar">
+                                <div class="category-progress-correct" style="width: ${elementaryCorrectPercent}%"></div>
+                                <div class="category-progress-wrong" style="width: ${elementaryWrongPercent}%"></div>
+                            </div>
+                            <div class="category-progress-text">${elementaryCorrectCount}/${elementaryWordCount}語</div>
+                        </div>
+                    `;
+                    
+                    accordionItem.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showCourseActionModal(elementarySubcat, elementaryWords, elementarySubcat);
+                    });
+                    
+                    accordionContainer.appendChild(accordionItem);
+                });
+                
+                accordionContent.appendChild(accordionContainer);
+                accordion.appendChild(accordionContent);
+                card.after(accordion);
             });
-        }
-        
-        if (outputBtn) {
-            outputBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                showWordFilterView(categoryKey, words, categoryKey);
-            });
-        }
-        
-        // 左側の情報部分をクリックした時にモード選択モーダルを表示
-        if (categoryInfo) {
-            categoryInfo.addEventListener('click', (e) => {
-                e.stopPropagation();
-                showCourseActionModal(categoryKey, words, categoryKey);
-            });
+        } else {
+            // 通常のカードの場合
+            const inputBtn = card.querySelector('.input-btn');
+            const outputBtn = card.querySelector('.output-btn');
+            const categoryInfo = card.querySelector('.category-info');
+            
+            if (inputBtn) {
+                inputBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showInputModeDirectly(categoryKey, words, categoryKey);
+                });
+            }
+            
+            if (outputBtn) {
+                outputBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showWordFilterView(categoryKey, words, categoryKey);
+                });
+            }
+            
+            if (categoryInfo) {
+                categoryInfo.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showCourseActionModal(categoryKey, words, categoryKey);
+                });
+            }
         }
         
         courseList.appendChild(card);
@@ -3972,19 +4264,6 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     currentFilterWords = categoryWords;
     currentFilterCourseTitle = courseTitle || category;
     
-    // ヘッダーのモード更新：
-    // ・コース選択画面から開く場合のみ、「コース」モード（くの字＋タイトル）にする
-    // ・ホームから直接開く「すべての英単語」「AI分析」などはヘッダーを変更しない
-    const courseSelectionEl = document.getElementById('courseSelection');
-    const isCourseSelectionVisible = courseSelectionEl && !courseSelectionEl.classList.contains('hidden');
-    if (isCourseSelectionVisible) {
-        let displayCategory = selectedCategory || category;
-        if (displayCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-            displayCategory = 'カテゴリー別に覚える単語';
-        }
-        updateHeaderButtons('course', displayCategory);
-    }
-    
     // フィルター画面をボトムシートとして表示
     const wordFilterView = document.getElementById('wordFilterView');
     const filterOverlay = document.getElementById('filterOverlay');
@@ -4269,7 +4548,13 @@ function showInputModeDirectly(category, words, courseTitle) {
     // ヘッダー更新
     updateHeaderButtons('learning');
     if (elements.unitName) {
-        elements.unitName.textContent = courseTitle || category;
+        const title = courseTitle || category;
+        const formattedTitle = formatTitleWithLevelBadge(title);
+        if (formattedTitle !== title) {
+            elements.unitName.innerHTML = formattedTitle;
+        } else {
+            elements.unitName.textContent = title;
+        }
     }
     
     // テーマカラーを更新
@@ -4723,7 +5008,12 @@ function initTimeAttackLearning(category, words) {
             // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
             displayTitle = currentFilterCourseTitle || category;
         }
+        const formattedTitle = formatTitleWithLevelBadge(displayTitle);
+        if (formattedTitle !== displayTitle) {
+            elements.unitName.innerHTML = formattedTitle;
+        } else {
         elements.unitName.textContent = displayTitle;
+        }
     }
     
     // テーマカラーを先に更新（クラス追加の前に）
@@ -5089,7 +5379,12 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
             // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
             displayTitle = currentFilterCourseTitle || category;
         }
+        const formattedTitle = formatTitleWithLevelBadge(displayTitle);
+        if (formattedTitle !== displayTitle) {
+            elements.unitName.innerHTML = formattedTitle;
+        } else {
         elements.unitName.textContent = displayTitle;
+        }
     }
     
     // テーマカラーを先に更新（クラス追加の前に）
@@ -5557,8 +5852,18 @@ function setupEventListeners() {
             ];
             
             // カテゴリー別に覚える単語のサブカテゴリーの場合は親カテゴリーの細分化メニューに戻る（アニメーションなし）
+            // ただし、レベル別の細分化メニューから来た場合は、レベル別の細分化メニューに戻る
             if (selectedCategory && dailyLifeSubcategories.includes(selectedCategory)) {
-                showSubcategorySelection('日常生活でよく使う生活語彙', true);
+                // レベル別の細分化メニューから来た場合は、レベル別の細分化メニューに戻る
+                if (window.currentSubcategoryParent && (window.currentSubcategoryParent === 'レベル１ 超重要700語' || 
+                    window.currentSubcategoryParent === 'レベル２ 重要500語' || 
+                    window.currentSubcategoryParent === 'レベル３ 差がつく300語')) {
+                    showLevelSubcategorySelection(window.currentSubcategoryParent, true);
+                    return;
+                }
+                // それ以外の場合も、レベル別の細分化メニューに戻る（日常生活でよく使う生活語彙の画面は使用しない）
+                // デフォルトで「レベル１ 超重要700語」に戻る
+                showLevelSubcategorySelection('レベル１ 超重要700語', true);
                 return;
             }
             if (selectedCategory && functionWordSubcategories.includes(selectedCategory)) {
@@ -10775,7 +11080,12 @@ function initSentenceModeLearning(category) {
             // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
             displayTitle = currentFilterCourseTitle || category;
         }
+        const formattedTitle = formatTitleWithLevelBadge(displayTitle);
+        if (formattedTitle !== displayTitle) {
+            elements.unitName.innerHTML = formattedTitle;
+        } else {
         elements.unitName.textContent = displayTitle;
+        }
     }
     
     // テーマカラーを先に更新（クラス追加の前に）

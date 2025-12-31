@@ -2609,6 +2609,19 @@ body.learning-mode .app-header {
     background: #f9b916;
 }
 
+.accordion-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 16px 0;
+}
+
+.accordion-indicator svg {
+    transition: transform 0.3s ease;
+}
+
 .category-card.category-card-with-actions .category-arrow {
     display: none;
 }
@@ -2640,6 +2653,7 @@ body.learning-mode .app-header {
     padding: 24px;
     max-width: 500px;
     width: 100%;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
 }
 
 .study-mode-title {
@@ -3068,6 +3082,14 @@ body.learning-mode .app-header {
 
 .level-badge-blue {
     background-color: #3b82f6;
+}
+
+.level-badge-purple {
+    background-color: #9333ea;
+}
+
+.level-badge-dark {
+    background-color: #1f2937;
 }
 
 .exam-type-badge {
