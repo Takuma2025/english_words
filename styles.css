@@ -4375,7 +4375,7 @@ body.reorder-mode-active .word-card-container {
 .input-list-top-actions {
     position: absolute;
     top: 0;
-    right: 0;
+    right: 40px;
     display: flex;
     align-items: flex-start;
     gap: 6px;
