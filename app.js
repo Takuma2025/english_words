@@ -4001,8 +4001,22 @@ function showInputModeDirectly(category, words, courseTitle) {
     // フィルターをリセット
     resetInputFilter();
     
-    // 単語一覧を描画
-    renderInputListView(words);
+    // 単語一覧を描画（大量の単語の場合は非同期で処理）
+    if (words.length > 1000) {
+        // ローディング表示
+        const inputListView = document.getElementById('inputListView');
+        const container = document.getElementById('inputListContainer');
+        if (inputListView && container) {
+            inputListView.classList.remove('hidden');
+            container.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">読み込み中...</div>';
+        }
+        // 非同期でレンダリング
+        setTimeout(() => {
+            renderInputListViewAsync(words);
+        }, 50);
+    } else {
+        renderInputListView(words);
+    }
 }
 
 // コースカード左側クリック時のモード選択モーダル（直接関数版）
@@ -4037,11 +4051,11 @@ function showStudyModeOverlay(onInput, onOutput) {
             <div class="study-mode-buttons">
                 <button type="button" class="study-mode-choice-btn study-mode-input-btn">
                     <span class="study-mode-choice-main">学習</span>
-                    <span class="study-mode-choice-sub">単語一覧を見て学習する</span>
+                    <span class="study-mode-choice-sub">単語一覧を見て<br>学習する</span>
                 </button>
                 <button type="button" class="study-mode-choice-btn study-mode-output-btn">
                     <span class="study-mode-choice-main">テスト</span>
-                    <span class="study-mode-choice-sub">覚えたかどうか確認する</span>
+                    <span class="study-mode-choice-sub">覚えたかどうか<br>確認する</span>
                 </button>
             </div>
             <button type="button" class="study-mode-cancel-btn">キャンセル</button>
@@ -7338,6 +7352,278 @@ function resetReviewWrongWordsTitle() {
     const inputListHeader = document.querySelector('.input-list-header');
     if (inputListHeader) {
         inputListHeader.classList.remove('review-wrong-words');
+    }
+}
+
+// インプットモード（眺める用）の一覧を非同期で描画（大量データ用）
+function renderInputListViewAsync(words) {
+    const listView = document.getElementById('inputListView');
+    const container = document.getElementById('inputListContainer');
+    
+    if (!listView || !container) return;
+    
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    container.scrollTop = 0;
+    listView.scrollTop = 0;
+    if (elements.mainContent) {
+        elements.mainContent.scrollTop = 0;
+    }
+    
+    container.innerHTML = '';
+    
+    if (!Array.isArray(words) || words.length === 0) {
+        listView.classList.add('hidden');
+        return;
+    }
+    
+    listView.classList.remove('hidden');
+    
+    // モードに応じてコンテナにクラスを追加
+    if (inputListViewMode === 'expand') {
+        container.classList.add('expand-mode');
+        container.classList.remove('flip-mode');
+    } else {
+        container.classList.add('flip-mode');
+        container.classList.remove('expand-mode');
+    }
+    
+    // 進捗マーカー用のセットを取得（小学生で習った単語の場合は各単語のカテゴリーから読み込む）
+    let progressCache = {};
+    if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+        // 各カテゴリーの進捗をキャッシュ
+        const mode = selectedLearningMode || 'card';
+        words.forEach(word => {
+            const cat = word.category;
+            if (!progressCache[cat]) {
+                const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+                progressCache[cat] = {
+                    correct: savedCorrect ? new Set(JSON.parse(savedCorrect).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set(),
+                    wrong: savedWrong ? new Set(JSON.parse(savedWrong).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set()
+                };
+            }
+        });
+    }
+    
+    let categoryCorrectSet = correctWords;
+    let categoryWrongSet = wrongWords;
+    if (selectedCategory && selectedCategory !== '小学生で習った単語とカテゴリー別に覚える単語') {
+        const sets = loadCategoryWords(selectedCategory);
+        categoryCorrectSet = sets.correctSet;
+        categoryWrongSet = sets.wrongSet;
+    }
+    
+    // バッチサイズ（一度に処理する単語数）
+    const BATCH_SIZE = 100;
+    let currentIndex = 0;
+    
+    // バッチ処理関数
+    function processBatch() {
+        const endIndex = Math.min(currentIndex + BATCH_SIZE, words.length);
+        const fragment = document.createDocumentFragment();
+        
+        for (let i = currentIndex; i < endIndex; i++) {
+            const word = words[i];
+            const item = createInputListItem(word, progressCache, categoryCorrectSet, categoryWrongSet);
+            if (item) {
+                fragment.appendChild(item);
+            }
+        }
+        
+        container.appendChild(fragment);
+        currentIndex = endIndex;
+        
+        // 進捗表示を更新
+        if (currentIndex < words.length) {
+            const progress = Math.round((currentIndex / words.length) * 100);
+            // 次のバッチを処理
+            requestAnimationFrame(() => {
+                setTimeout(processBatch, 0);
+            });
+        }
+    }
+    
+    // 最初のバッチを開始
+    processBatch();
+}
+
+// 単一のリストアイテムを作成（renderInputListViewAsync用）
+function createInputListItem(word, progressCache, categoryCorrectSet, categoryWrongSet) {
+    // 展開モードの場合
+    if (inputListViewMode === 'expand') {
+        const item = document.createElement('div');
+        item.className = 'input-list-item-expand';
+        
+        // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
+        let isCorrect, isWrong;
+        if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+            const cache = progressCache[word.category];
+            isCorrect = cache && cache.correct.has(word.id);
+            isWrong = cache && cache.wrong.has(word.id);
+        } else {
+            isCorrect = categoryCorrectSet.has(word.id);
+            isWrong = categoryWrongSet.has(word.id);
+        }
+        
+        if (isWrong) {
+            item.classList.add('marker-wrong');
+        } else if (isCorrect) {
+            item.classList.add('marker-correct');
+        }
+        
+        // ヘッダー部分（番号、英単語、音声、ブックマーク）
+        const header = document.createElement('div');
+        header.className = 'input-list-expand-header';
+        
+        const number = document.createElement('span');
+        number.className = 'input-list-expand-number';
+        number.textContent = String(word.id).padStart(5, '0');
+        if (isWrong) {
+            number.classList.add('marker-wrong');
+        } else if (isCorrect) {
+            number.classList.add('marker-correct');
+        }
+        header.appendChild(number);
+        
+        const wordRow = document.createElement('div');
+        wordRow.className = 'input-list-expand-word-row';
+        
+        const wordEl = document.createElement('span');
+        wordEl.className = 'input-list-expand-word';
+        wordEl.textContent = word.word;
+        wordRow.appendChild(wordEl);
+        
+        const audioBtn = document.createElement('button');
+        audioBtn.className = 'audio-btn';
+        audioBtn.setAttribute('type', 'button');
+        audioBtn.setAttribute('aria-label', `${word.word}の音声を再生`);
+        audioBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+        audioBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            speakWord(word.word, audioBtn);
+        });
+        wordRow.appendChild(audioBtn);
+        
+        header.appendChild(wordRow);
+        item.appendChild(header);
+        
+        // 右上のアクションエリア（でた度 + ブックマーク）
+        const topActions = document.createElement('div');
+        topActions.className = 'input-list-expand-top-actions';
+        
+        // でた度表示
+        if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
+            const appearanceBox = document.createElement('div');
+            appearanceBox.className = 'input-list-expand-appearance-box';
+            
+            const osakaImg = document.createElement('img');
+            osakaImg.src = 'osaka.png';
+            osakaImg.alt = '大阪府';
+            osakaImg.className = 'appearance-osaka-icon';
+            appearanceBox.appendChild(osakaImg);
+            
+            const label = document.createElement('span');
+            label.className = 'appearance-label';
+            label.textContent = 'でた度';
+            appearanceBox.appendChild(label);
+            
+            const stars = getAppearanceStars(word.appearanceCount);
+            const starsSpan = document.createElement('span');
+            starsSpan.className = 'appearance-stars';
+            starsSpan.textContent = stars;
+            appearanceBox.appendChild(starsSpan);
+            
+            topActions.appendChild(appearanceBox);
+        }
+        
+        // ブックマークボタン（リボン型）
+        const starBtn = document.createElement('button');
+        starBtn.className = 'star-btn input-list-expand-star-btn';
+        starBtn.setAttribute('type', 'button');
+        if (reviewWords.has(word.id)) {
+            starBtn.classList.add('active');
+        }
+        starBtn.innerHTML = '<svg width="24" height="32" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="0" aria-hidden="true" focusable="false"><path d="M4 0h16v32l-8-6-8 6V0z" fill="currentColor"/></svg>';
+        starBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleReviewById(word.id, starBtn);
+        });
+        topActions.appendChild(starBtn);
+        
+        item.appendChild(topActions);
+        
+        // 意味（品詞付き）
+        const meaningEl = document.createElement('div');
+        meaningEl.className = 'input-list-expand-meaning';
+        
+        const meaningPos = document.createElement('span');
+        meaningPos.className = 'pos-inline part-of-speech input-list-expand-meaning-pos';
+        meaningPos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
+        meaningEl.appendChild(meaningPos);
+        
+        const meaningText = document.createElement('span');
+        meaningText.textContent = word.meaning || '';
+        meaningEl.appendChild(meaningText);
+        
+        item.appendChild(meaningEl);
+        
+        // 用例
+        if (word.example && (word.example.english || word.example.japanese)) {
+            const exampleBox = document.createElement('div');
+            exampleBox.className = 'input-list-expand-example';
+            
+            if (word.example.english) {
+                const exEn = document.createElement('div');
+                exEn.className = 'input-list-expand-example-en';
+                exEn.textContent = word.example.english;
+                exampleBox.appendChild(exEn);
+            }
+            
+            if (word.example.japanese) {
+                const exJa = document.createElement('div');
+                exJa.className = 'input-list-expand-example-ja';
+                exJa.textContent = word.example.japanese;
+                exampleBox.appendChild(exJa);
+            }
+            
+            item.appendChild(exampleBox);
+        }
+        
+        return item;
+    } else {
+        // フリップモードの場合（簡略化版）
+        const item = document.createElement('div');
+        item.className = 'input-list-item-flip';
+        
+        // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
+        let isCorrect, isWrong;
+        if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+            const cache = progressCache[word.category];
+            isCorrect = cache && cache.correct.has(word.id);
+            isWrong = cache && cache.wrong.has(word.id);
+        } else {
+            isCorrect = categoryCorrectSet.has(word.id);
+            isWrong = categoryWrongSet.has(word.id);
+        }
+        
+        if (isWrong) {
+            item.classList.add('marker-wrong');
+        } else if (isCorrect) {
+            item.classList.add('marker-correct');
+        }
+        
+        const front = document.createElement('div');
+        front.className = 'input-list-flip-front';
+        front.textContent = word.word;
+        item.appendChild(front);
+        
+        const back = document.createElement('div');
+        back.className = 'input-list-flip-back';
+        back.textContent = word.meaning || '';
+        item.appendChild(back);
+        
+        return item;
     }
 }
 

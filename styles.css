@@ -216,7 +216,9 @@ textarea,
 }
 
 .app-header {
+    height: calc(var(--header-height) + env(safe-area-inset-top));
     min-height: calc(var(--header-height) + env(safe-area-inset-top));
+    max-height: calc(var(--header-height) + env(safe-area-inset-top));
     background: #ffffff;
     border-bottom: none;
     display: flex;
@@ -232,6 +234,7 @@ textarea,
     width: 100%;
     box-sizing: border-box;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
 }
 
 /* 学習モード（インプット一覧・カード学習・文法など）ではグローバルヘッダーは非表示 */
@@ -837,6 +840,10 @@ body.learning-mode .app-header {
     color: #1f2937;
     margin-bottom: 16px;
     padding-left: 4px;
+}
+
+#courseSelectionTitle {
+    display: none;
 }
 
 .course-selection-description {
@@ -2599,7 +2606,7 @@ body.learning-mode .app-header {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(59, 130, 246, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
