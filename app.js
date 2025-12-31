@@ -7718,15 +7718,28 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         
         return item;
     } else {
-        // フリップモードの場合（簡略化版）
+        // フリップモード（従来のカード表示）
         const item = document.createElement('div');
-        item.className = 'input-list-item-flip';
+        item.className = 'input-list-item';
+        
+        const inner = document.createElement('div');
+        inner.className = 'input-list-inner';
+        
+        // 表面
+        const front = document.createElement('div');
+        front.className = 'input-list-front';
+        
+        const meta = document.createElement('div');
+        meta.className = 'input-list-meta';
+        
+        const number = document.createElement('span');
+        number.className = 'input-list-number';
+        number.textContent = String(word.id).padStart(5, '0');
         
         let isCorrect = false, isWrong = false;
         
         // 進捗マーカーをスキップしない場合のみ計算
         if (!skipProgress) {
-            // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
             if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
                 const cache = progressCache[word.category];
                 isCorrect = cache && cache.correct.has(word.id);
@@ -7737,21 +7750,64 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             }
             
             if (isWrong) {
+                number.classList.add('marker-wrong');
                 item.classList.add('marker-wrong');
             } else if (isCorrect) {
+                number.classList.add('marker-correct');
                 item.classList.add('marker-correct');
             }
         }
+        meta.appendChild(number);
         
-        const front = document.createElement('div');
-        front.className = 'input-list-flip-front';
-        front.textContent = word.word;
-        item.appendChild(front);
+        const row = document.createElement('div');
+        row.className = 'input-list-row';
         
+        const wordEl = document.createElement('span');
+        wordEl.className = 'input-list-word';
+        wordEl.textContent = word.word;
+        row.appendChild(wordEl);
+        
+        const audioBtn = document.createElement('button');
+        audioBtn.className = 'audio-btn';
+        audioBtn.setAttribute('type', 'button');
+        audioBtn.setAttribute('aria-label', `${word.word}の音声を再生`);
+        audioBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+        audioBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            speakWord(word.word, audioBtn);
+        });
+        row.appendChild(audioBtn);
+        
+        front.appendChild(meta);
+        front.appendChild(row);
+        
+        // 裏面
         const back = document.createElement('div');
-        back.className = 'input-list-flip-back';
-        back.textContent = word.meaning || '';
-        item.appendChild(back);
+        back.className = 'input-list-back';
+        
+        const meaningEl = document.createElement('div');
+        meaningEl.className = 'input-list-meaning';
+        
+        const meaningWrapper = document.createElement('div');
+        meaningWrapper.className = 'input-list-meaning-wrapper';
+        const meaningPos = document.createElement('span');
+        meaningPos.className = 'pos-inline part-of-speech input-list-meaning-pos';
+        meaningPos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
+        meaningWrapper.appendChild(meaningPos);
+        const meaningText = document.createElement('span');
+        meaningText.textContent = word.meaning || '';
+        meaningWrapper.appendChild(meaningText);
+        meaningEl.appendChild(meaningWrapper);
+        back.appendChild(meaningEl);
+        
+        inner.appendChild(front);
+        inner.appendChild(back);
+        item.appendChild(inner);
+        
+        // クリックでフリップ
+        item.addEventListener('click', () => {
+            item.classList.toggle('flipped');
+        });
         
         return item;
     }
@@ -8178,7 +8234,12 @@ function setupInputListModeToggle() {
         // 現在の単語リストを再描画
         const wordsToRender = currentCourseWords && currentCourseWords.length > 0 ? currentCourseWords : currentWords;
         if (wordsToRender && wordsToRender.length > 0) {
-            renderInputListView(wordsToRender);
+            // 大量データの場合はページネーションを使用
+            if (wordsToRender.length > 500) {
+                renderInputListViewPaginated(wordsToRender);
+            } else {
+                renderInputListView(wordsToRender);
+            }
         }
     });
     
@@ -8403,7 +8464,12 @@ function applyInputFilter() {
     
     // フィルター結果を表示
     if (filteredWords.length > 0) {
-        renderInputListView(filteredWords);
+        // 大量データの場合はページネーションを使用
+        if (filteredWords.length > 500) {
+            renderInputListViewPaginated(filteredWords);
+        } else {
+            renderInputListView(filteredWords);
+        }
     } else {
         // フィルター結果が0件の場合
         const container = document.getElementById('inputListContainer');
