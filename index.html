@@ -1314,14 +1314,22 @@
         <div class="filter-sheet-content">
             <div class="filter-card-container">
                 <div class="filter-section">
-                    <div class="filter-section-title">出題数</div>
-                    <div class="question-count-control" id="questionCountSection">
-                        <div class="question-count-swipe" id="questionCountSwipe">
-                            <div class="question-count-swipe-track">
-                                <div class="question-count-swipe-handle" id="questionCountHandle"></div>
+                    <div class="filter-section-title">出題順</div>
+                    <div class="order-options">
+                        <label class="order-radio">
+                            <input type="radio" name="wordOrder" id="orderSequential" value="sequential" checked>
+                            <div class="radio-option-content">
+                                <span class="radio-option-label">標準</span>
+                                <span class="radio-option-description">問題が単語番号順に出題されます</span>
                             </div>
-                            <span class="question-count-value" id="questionCountValue">すべて</span>
-                        </div>
+                        </label>
+                        <label class="order-radio">
+                            <input type="radio" name="wordOrder" id="orderRandom" value="random">
+                            <div class="radio-option-content">
+                                <span class="radio-option-label">ランダム</span>
+                                <span class="radio-option-description">問題がランダムな順番で出題されます</span>
+                            </div>
+                        </label>
                     </div>
                 </div>
 
@@ -1355,22 +1363,14 @@
                 </div>
 
                 <div class="filter-section">
-                    <div class="filter-section-title">出題順</div>
-                    <div class="order-options">
-                        <label class="order-radio">
-                            <input type="radio" name="wordOrder" id="orderSequential" value="sequential" checked>
-                            <div class="radio-option-content">
-                                <span class="radio-option-label">標準</span>
-                                <span class="radio-option-description">問題が単語番号順に出題されます</span>
+                    <div class="filter-section-title">出題数</div>
+                    <div class="question-count-control" id="questionCountSection">
+                        <div class="question-count-swipe" id="questionCountSwipe">
+                            <div class="question-count-swipe-track">
+                                <div class="question-count-swipe-handle" id="questionCountHandle"></div>
                             </div>
-                        </label>
-                        <label class="order-radio">
-                            <input type="radio" name="wordOrder" id="orderRandom" value="random">
-                            <div class="radio-option-content">
-                                <span class="radio-option-label">ランダム</span>
-                                <span class="radio-option-description">問題がランダムな順番で出題されます</span>
-                            </div>
-                        </label>
+                            <span class="question-count-value" id="questionCountValue">すべて</span>
+                        </div>
                     </div>
                 </div>
 

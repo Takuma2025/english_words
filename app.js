@@ -3847,8 +3847,8 @@ function updateQuestionCountSection() {
     if (questionCountSection) {
         const filteredWords = getFilteredWords();
         
-        // フィルター画面はアウトプットモード専用なので常に表示
-        if (filteredWords.length > 10) {
+        // 常に表示（1語以上あれば）
+        if (filteredWords.length >= 1) {
             questionCountSection.style.display = 'flex';
             updateQuestionCountOptions(filteredWords.length);
         } else {

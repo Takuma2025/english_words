@@ -850,7 +850,7 @@ body.learning-mode .app-header {
 /* コースカード用インプット/アウトプットボタン */
 .course-card-actions {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     margin-top: 10px;
     padding-top: 10px;
     border-top: 1px solid #e5e7eb;
@@ -861,38 +861,62 @@ body.learning-mode .app-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 8px 12px;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
+    gap: 6px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
     background: #ffffff;
-    color: #6b7280;
-    font-size: 12px;
+    color: #374151;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.1s ease;
+    box-shadow: 0 2px 0 #d1d5db, 0 2px 6px rgba(0, 0, 0, 0.08);
+    position: relative;
+    top: 0;
 }
 
 .course-action-btn:hover {
-    background: #f3f4f6;
+    background: #f9fafb;
+}
+
+.course-action-btn:active {
+    top: 2px;
+    box-shadow: 0 0 0 #d1d5db, 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.course-action-btn.input-btn {
+    background: #ffffff;
+    box-shadow: 0 2px 0 #93c5fd, 0 2px 6px rgba(59, 130, 246, 0.15);
 }
 
 .course-action-btn.input-btn:hover {
-    border-color: #3b82f6;
     background: #eff6ff;
-    color: #2563eb;
+}
+
+.course-action-btn.input-btn:active {
+    top: 2px;
+    box-shadow: 0 0 0 #93c5fd, 0 1px 2px rgba(59, 130, 246, 0.1);
+}
+
+.course-action-btn.output-btn {
+    background: #ffffff;
+    box-shadow: 0 2px 0 #86efac, 0 2px 6px rgba(16, 185, 129, 0.15);
 }
 
 .course-action-btn.output-btn:hover {
-    border-color: #10b981;
     background: #ecfdf5;
-    color: #059669;
+}
+
+.course-action-btn.output-btn:active {
+    top: 2px;
+    box-shadow: 0 0 0 #86efac, 0 1px 2px rgba(16, 185, 129, 0.1);
 }
 
 .course-action-btn svg,
 .course-action-btn .action-btn-icon {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
     object-fit: contain;
 }
@@ -10393,7 +10417,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .question-count-control {
-    margin-top: 14px;
+    margin-top: 4px;
+    margin-bottom: 60px;
     padding: 14px 16px;
     background: #ffffff;
     border: 2px solid #e5e7eb;
@@ -10597,7 +10622,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 150px;
 }
 
 .filter-checkbox,
