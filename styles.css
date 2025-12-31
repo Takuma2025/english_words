@@ -4228,7 +4228,7 @@ body.reorder-mode-active .word-card-container {
 .input-list-header {
     padding: 8px 6px;
     color: #1f2937;
-    border-bottom: 1px solid #d1d5db;
+    border-bottom: none;
     margin-bottom: 0;
     display: flex;
     align-items: center;
@@ -4301,7 +4301,7 @@ body.reorder-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
-    border-bottom: 1px solid #d1d5db;
+    border-bottom: none;
     border-radius: 0;
     box-shadow: none;
     padding: 0;
@@ -4309,9 +4309,8 @@ body.reorder-mode-active .word-card-container {
     cursor: pointer;
 }
 
-
-.input-list-item:last-child {
-    border-bottom: none;
+.input-list-item .input-list-inner {
+    border-top: 1px solid #d1d5db;
 }
 
 .input-list-inner {
@@ -4610,7 +4609,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-example-en strong {
-    color: #0055ca;
+    color: #dc2626;
     font-weight: 700;
 }
 
@@ -4625,6 +4624,7 @@ body.reorder-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
+    border-top: 1px solid #e5e7eb;
     border-bottom: 1px solid #e5e7eb;
     padding: 20px 16px;
     padding-top: 40px;
@@ -4824,7 +4824,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-expand-example-en strong {
-    color: #0055ca;
+    color: #dc2626;
     font-weight: 700;
 }
 
@@ -4859,7 +4859,7 @@ body.reorder-mode-active .word-card-container {
     .input-list-expand-appearance-box {
         padding: 4px 7px;
         font-size: 10px;
-        width: 130px;
+        width: 150px;
     }
     
     .input-list-expand-appearance-box .appearance-osaka-icon {
@@ -4920,7 +4920,7 @@ body.reorder-mode-active .word-card-container {
     .input-list-appearance-box {
         padding: 3px 6px;
         font-size: 9px;
-        width: 120px;
+        width: 140px;
     }
     
     .input-list-appearance-box .appearance-osaka-icon {
@@ -6451,6 +6451,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     margin-bottom: 0;
     font-size: 16px;
     font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif; /* 単語カードと同じ系統 */
+}
+
+.example-english strong {
+    color: #dc2626;
+    font-weight: 700;
 }
 
 .example-japanese {
