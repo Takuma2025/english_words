@@ -1756,6 +1756,9 @@ body.learning-mode .app-header {
     border: 1px solid #3b82f6;
     box-sizing: border-box;
     z-index: 6;
+    max-width: calc(100vw - 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .vocab-progress-info {
@@ -2563,12 +2566,24 @@ body.learning-mode .app-header {
     align-items: center;
 }
 
+.weakness-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f2937;
+    align-self: flex-start;
+    margin-bottom: -16px !important;
+    position: relative;
+    z-index: 1;
+}
+
 .lockon-image {
     display: block;
     width: 140px;
     height: auto;
     object-fit: contain;
     margin: 0px auto 0;
+    position: relative;
+    z-index: 0;
 }
 
 .weakness-text {
@@ -4236,14 +4251,29 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-header.review-wrong-words {
-    background: #fee2e2;
+    background: transparent;
     color: #991b1b;
-    border-radius: 8px;
-    margin-bottom: 8px;
+    border-radius: 0;
+    margin-bottom: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    position: relative;
 }
 
 .input-list-header.review-wrong-words .input-list-title {
     color: #991b1b;
+    width: 100%;
+    background: #fee2e2;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 0;
+}
+
+.input-list-header.review-wrong-words .input-list-mode-toggle {
+    align-self: flex-end;
+    position: relative;
+    z-index: 1;
 }
 
 .input-list-title {
@@ -4256,6 +4286,57 @@ body.reorder-mode-active .word-card-container {
     font-size: 11px;
     color: #6b7280;
     font-weight: 400;
+}
+
+/* インプットモード用フィルター */
+.input-list-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 6px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.input-filter-btn {
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.input-filter-btn:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.input-filter-btn.active {
+    background: #3b82f6;
+    color: #ffffff;
+    border-color: #3b82f6;
+}
+
+.input-filter-btn.active:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+.input-filter-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.input-filter-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 14px;
 }
 
 /* 単語一覧モード切り替えボタン */

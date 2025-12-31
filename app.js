@@ -4,6 +4,7 @@ let currentIndex = 0;
 let hasReachedGoalBefore = false; // 目標達成済みフラグ（演出重複防止）
 let pendingGoalCelebration = false; // 学習完了後に目標達成画面を表示するフラグ
 let selectedStudyMode = 'input'; // 'input' or 'output' - インプット/アウトプットモード選択
+let currentInputFilter = 'all'; // インプットモードのフィルター状態: 'all', 'wrong', 'unlearned', 'bookmark', 'correct'
 
 // 効果音システム
 const SoundEffects = {
@@ -552,61 +553,36 @@ function updateVocabProgressBar() {
         progressRequirement.classList.remove('hidden');
         progressRequirement.style.left = `${requiredPercent}%`;
         
-        // 右端に近い場合は、テキストを左側に配置するように調整
+        // ラベルのテキストを設定
         if (requirementLabel) {
             requirementLabel.textContent = `志望校合格必須ライン ${requiredWords}語`;
             
-            // 親要素の幅を取得して、テキストがはみ出さないように調整
-            const progressBar = progressRequirement.closest('.vocab-progress-bar');
-            const progressBarWrapper = progressRequirement.closest('.vocab-progress-bar-wrapper');
-            if (progressBar && progressBarWrapper) {
-                // テキストの幅を一時的に測定（デフォルトの中央配置で）
-                requirementLabel.style.visibility = 'hidden';
-                requirementLabel.style.transform = 'translateX(-50%)';
-                requirementLabel.style.left = '50%';
-                requirementLabel.style.right = 'auto';
-                requirementLabel.style.maxWidth = 'none';
-                const textWidth = requirementLabel.offsetWidth;
-                requirementLabel.style.visibility = 'visible';
+            // 位置調整（画面からはみ出さないように）
+            // requestAnimationFrameで確実にDOM更新後に計算
+            requestAnimationFrame(() => {
+                const progressBarWrapper = progressRequirement.closest('.vocab-progress-bar-wrapper');
+                if (!progressBarWrapper) return;
                 
-                const containerWidth = progressBar.offsetWidth;
-                const wrapperWidth = progressBarWrapper.offsetWidth;
-                const leftPosition = (requiredPercent / 100) * containerWidth;
-                const textHalfWidth = textWidth / 2;
-                
-                // 右端を超えないように調整（wrapperの幅を基準にする）
-                const maxRight = wrapperWidth - 10; // 右端から10pxの余白
-                const textRightEdge = leftPosition + textHalfWidth;
-                
-                // 親要素の位置を取得
-                const barRect = progressBar.getBoundingClientRect();
                 const wrapperRect = progressBarWrapper.getBoundingClientRect();
-                const requirementRect = progressRequirement.getBoundingClientRect();
-                const requirementCenterInBar = requirementRect.left - barRect.left + requirementRect.width / 2;
+                const labelRect = requirementLabel.getBoundingClientRect();
                 
-                if (textRightEdge > maxRight) {
-                    // 右端を超える場合は、右端から10pxの位置に固定（wrapper基準）
-                    const maxRightInWrapper = maxRight;
-                    const adjustedLeftInWrapper = Math.max(10, maxRightInWrapper - textWidth);
-                    const adjustedLeftInBar = adjustedLeftInWrapper - (barRect.left - wrapperRect.left);
-                    const offsetFromCenter = adjustedLeftInBar - requirementCenterInBar;
-                    requirementLabel.style.transform = 'translateX(0)';
-                    requirementLabel.style.left = `calc(50% + ${offsetFromCenter}px)`;
-                    requirementLabel.style.right = 'auto';
-                } else if (leftPosition - textHalfWidth < 10) {
-                    // 左端に近い場合は、左端から10pxの位置に固定
-                    const adjustedLeftInBar = 10;
-                    const offsetFromCenter = adjustedLeftInBar - requirementCenterInBar;
-                    requirementLabel.style.transform = 'translateX(0)';
-                    requirementLabel.style.left = `calc(50% + ${offsetFromCenter}px)`;
-                    requirementLabel.style.right = 'auto';
+                // ラベルが右端からはみ出ている場合
+                const rightOverflow = labelRect.right - wrapperRect.right;
+                if (rightOverflow > 0) {
+                    // はみ出した分だけ左に移動
+                    const currentTransform = window.getComputedStyle(requirementLabel).transform;
+                    requirementLabel.style.transform = `translateX(calc(-50% - ${rightOverflow + 10}px))`;
                 } else {
-                    // 中央に配置
-                    requirementLabel.style.transform = 'translateX(-50%)';
-                    requirementLabel.style.left = '50%';
-                    requirementLabel.style.right = 'auto';
+                    // 左端からはみ出ている場合
+                    const leftOverflow = wrapperRect.left - labelRect.left;
+                    if (leftOverflow > 0) {
+                        requirementLabel.style.transform = `translateX(calc(-50% + ${leftOverflow + 10}px))`;
+                    } else {
+                        // 通常の中央配置
+                        requirementLabel.style.transform = 'translateX(-50%)';
+                    }
                 }
-            }
+            });
         }
     } else if (progressRequirement) {
         progressRequirement.classList.add('hidden');
@@ -2428,6 +2404,7 @@ function init() {
         initSchoolSelector();
         setupVolumeControl();
         setupInputListModeToggle();
+        setupInputListFilter();
         updateVocabProgressBar();
         
         // スプラッシュ画面を表示
@@ -2570,6 +2547,9 @@ function updateHeaderButtons(mode, title = '') {
 function showCategorySelection() {
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
+    
+    // 復習モードのタイトルとクラスをリセット
+    resetReviewWrongWordsTitle();
     
     // タイマーを停止
     if (timerInterval) {
@@ -3279,6 +3259,9 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
 function showCourseSelection(category, categoryWords) {
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
+    
+    // 復習モードのタイトルとクラスをリセット
+    resetReviewWrongWordsTitle();
     
     console.log('showCourseSelection called with category:', category, 'words:', categoryWords ? categoryWords.length : 'null');
     const courseSelection = document.getElementById('courseSelection');
@@ -4008,6 +3991,12 @@ function showInputModeDirectly(category, words, courseTitle) {
     const unitInterruptBtn = document.getElementById('unitInterruptBtn');
     if (inputBackBtn) inputBackBtn.classList.remove('hidden');
     if (unitInterruptBtn) unitInterruptBtn.classList.add('hidden');
+    
+    // 復習モードのタイトルとクラスをリセット
+    resetReviewWrongWordsTitle();
+    
+    // フィルターをリセット
+    resetInputFilter();
     
     // 単語一覧を描画
     renderInputListView(words);
@@ -7263,6 +7252,19 @@ function getPartOfSpeechClass(pos) {
     return 'other';
 }
 
+// 復習モードのタイトルとクラスをリセット
+function resetReviewWrongWordsTitle() {
+    const inputListTitle = document.querySelector('.input-list-title');
+    if (inputListTitle) {
+        inputListTitle.textContent = '単語一覧';
+    }
+    
+    const inputListHeader = document.querySelector('.input-list-header');
+    if (inputListHeader) {
+        inputListHeader.classList.remove('review-wrong-words');
+    }
+}
+
 // インプットモード（眺める用）の一覧を描画
 function renderInputListView(words) {
     const listView = document.getElementById('inputListView');
@@ -7692,10 +7694,148 @@ function setupInputListModeToggle() {
         inputListViewMode = 'expand';
         expandBtn.classList.add('active');
         flipBtn.classList.remove('active');
-        // 現在の単語リストを再描画
-        const wordsToRender = currentCourseWords && currentCourseWords.length > 0 ? currentCourseWords : currentWords;
-        if (wordsToRender && wordsToRender.length > 0) {
-            renderInputListView(wordsToRender);
+        // 現在の単語リストを再描画（フィルターを適用）
+        applyInputFilter();
+    });
+}
+
+// インプットモード用フィルターのセットアップ
+function setupInputListFilter() {
+    const filterBtns = document.querySelectorAll('.input-filter-btn');
+    if (!filterBtns.length) return;
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // アクティブ状態を更新
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // フィルターを適用
+            currentInputFilter = btn.dataset.filter;
+            applyInputFilter();
+        });
+    });
+}
+
+// フィルターを適用して単語リストを再描画
+function applyInputFilter() {
+    const baseWords = currentCourseWords && currentCourseWords.length > 0 ? currentCourseWords : currentWords;
+    if (!baseWords || baseWords.length === 0) return;
+    
+    // 単語の状態を取得するためのキャッシュを作成
+    const modes = ['card', 'input'];
+    const categoryCache = {};
+    
+    // 各単語のカテゴリーから正解・不正解状態を読み込む
+    baseWords.forEach(word => {
+        const cat = word.category;
+        if (!categoryCache[cat]) {
+            const correctSet = new Set();
+            const wrongSet = new Set();
+            
+            modes.forEach(mode => {
+                const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+                
+                if (savedCorrect) {
+                    try {
+                        JSON.parse(savedCorrect).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            correctSet.add(numId);
+                        });
+                    } catch (e) {}
+                }
+                
+                if (savedWrong) {
+                    try {
+                        JSON.parse(savedWrong).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            wrongSet.add(numId);
+                        });
+                    } catch (e) {}
+                }
+            });
+            
+            categoryCache[cat] = { correctSet, wrongSet };
+        }
+    });
+    
+    let filteredWords = baseWords;
+    
+    switch (currentInputFilter) {
+        case 'wrong':
+            // 覚えていない単語（間違えた）
+            filteredWords = baseWords.filter(word => {
+                const cache = categoryCache[word.category];
+                return cache && cache.wrongSet.has(word.id);
+            });
+            break;
+        case 'unlearned':
+            // 未学習の単語（正解も不正解もない）
+            filteredWords = baseWords.filter(word => {
+                const cache = categoryCache[word.category];
+                if (!cache) return true;
+                return !cache.correctSet.has(word.id) && !cache.wrongSet.has(word.id);
+            });
+            break;
+        case 'bookmark':
+            // チェック済み（ブックマーク）の単語
+            filteredWords = baseWords.filter(word => reviewWords.has(word.id));
+            break;
+        case 'correct':
+            // 覚えた単語（正解して、かつ間違えていない）
+            filteredWords = baseWords.filter(word => {
+                const cache = categoryCache[word.category];
+                return cache && cache.correctSet.has(word.id) && !cache.wrongSet.has(word.id);
+            });
+            break;
+        default:
+            // すべて
+            filteredWords = baseWords;
+    }
+    
+    // フィルター結果を表示
+    if (filteredWords.length > 0) {
+        renderInputListView(filteredWords);
+    } else {
+        // フィルター結果が0件の場合
+        const container = document.getElementById('inputListContainer');
+        if (container) {
+            container.innerHTML = '<div class="input-filter-empty">該当する単語がありません</div>';
+        }
+    }
+    
+    // フィルター結果の件数を更新
+    updateFilterCount(filteredWords.length, baseWords.length);
+}
+
+// フィルター結果の件数を表示
+function updateFilterCount(filtered, total) {
+    const titleEl = document.querySelector('.input-list-title');
+    if (!titleEl) return;
+    
+    if (currentInputFilter === 'all') {
+        titleEl.textContent = '単語一覧';
+    } else {
+        const filterNames = {
+            'wrong': '覚えていない',
+            'unlearned': '未学習',
+            'bookmark': 'チェック済',
+            'correct': '覚えた'
+        };
+        titleEl.textContent = `${filterNames[currentInputFilter]}（${filtered}語）`;
+    }
+}
+
+// フィルターをリセット
+function resetInputFilter() {
+    currentInputFilter = 'all';
+    const filterBtns = document.querySelectorAll('.input-filter-btn');
+    filterBtns.forEach(btn => {
+        if (btn.dataset.filter === 'all') {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
         }
     });
 }
@@ -8832,21 +8972,6 @@ function reviewWrongWords() {
     setTimeout(() => {
         currentLearningMode = 'input'; // 眺めるモードに設定
         initLearning(selectedCategory, wrongWordsInSession, 0, wrongWordsInSession.length, 0);
-        
-        // renderInputListViewが呼び出された後にタイトルを変更
-        setTimeout(() => {
-            // タイトルを変更
-            const inputListTitle = document.querySelector('.input-list-title');
-            if (inputListTitle) {
-                inputListTitle.textContent = '覚えていない単語の復習';
-            }
-            
-            // ヘッダーの背景を赤に
-            const inputListHeader = document.querySelector('.input-list-header');
-            if (inputListHeader) {
-                inputListHeader.classList.add('review-wrong-words');
-            }
-        }, 100);
     }, 350);
 }
 

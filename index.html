@@ -316,6 +316,7 @@
                                     <div class="category-header">
                                         <div class="category-name">
                                             <div class="ai-badge"><span class="ai-sparkle">✧</span>AI分析</div>
+                                            <div class="weakness-title">弱点・要復習</div>
                                             <img src="lockon.png" alt="ロックオン" class="lockon-image">
                                         </div>
                                     </div>
@@ -787,6 +788,14 @@
                                     <span>単語カード</span>
                                 </button>
                             </div>
+                        </div>
+                        <!-- 単語絞り込みフィルター -->
+                        <div class="input-list-filter">
+                            <button class="input-filter-btn active" id="inputFilterAll" data-filter="all">すべて</button>
+                            <button class="input-filter-btn" id="inputFilterWrong" data-filter="wrong">覚えていない</button>
+                            <button class="input-filter-btn" id="inputFilterUnlearned" data-filter="unlearned">未学習</button>
+                            <button class="input-filter-btn" id="inputFilterBookmark" data-filter="bookmark">チェック済</button>
+                            <button class="input-filter-btn" id="inputFilterCorrect" data-filter="correct">覚えた</button>
                         </div>
                         <div class="input-list-scroll" id="inputListContainer">
                             <!-- 動的に生成 -->
