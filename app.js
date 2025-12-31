@@ -7352,6 +7352,7 @@ const WORDS_PER_PAGE = 100;
 let paginatedProgressCache = {};
 let paginatedCategoryCorrectSet = new Set();
 let paginatedCategoryWrongSet = new Set();
+let paginatedSkipProgress = false; // 進捗マーカーをスキップするかどうか
 
 // インプットモード（眺める用）の一覧をページネーションで描画（大量データ用）
 function renderInputListViewPaginated(words) {
@@ -7391,28 +7392,33 @@ function renderInputListViewPaginated(words) {
     paginatedCurrentPage = 0;
     paginatedProgressCache = {};
     
-    // 進捗マーカー用のセットを取得
-    if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-        const mode = selectedLearningMode || 'card';
-        words.forEach(word => {
-            const cat = word.category;
-            if (!paginatedProgressCache[cat]) {
-                const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
-                const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
-                paginatedProgressCache[cat] = {
-                    correct: savedCorrect ? new Set(JSON.parse(savedCorrect).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set(),
-                    wrong: savedWrong ? new Set(JSON.parse(savedWrong).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set()
-                };
-            }
-        });
-    }
+    // 「すべての単語」の場合は進捗マーカーをスキップして高速化
+    paginatedSkipProgress = (selectedCategory === '大阪府のすべての英単語');
     
-    paginatedCategoryCorrectSet = correctWords;
-    paginatedCategoryWrongSet = wrongWords;
-    if (selectedCategory && selectedCategory !== '小学生で習った単語とカテゴリー別に覚える単語') {
-        const sets = loadCategoryWords(selectedCategory);
-        paginatedCategoryCorrectSet = sets.correctSet;
-        paginatedCategoryWrongSet = sets.wrongSet;
+    if (!paginatedSkipProgress) {
+        // 進捗マーカー用のセットを取得
+        if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+            const mode = selectedLearningMode || 'card';
+            words.forEach(word => {
+                const cat = word.category;
+                if (!paginatedProgressCache[cat]) {
+                    const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                    const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+                    paginatedProgressCache[cat] = {
+                        correct: savedCorrect ? new Set(JSON.parse(savedCorrect).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set(),
+                        wrong: savedWrong ? new Set(JSON.parse(savedWrong).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set()
+                    };
+                }
+            });
+        }
+        
+        paginatedCategoryCorrectSet = correctWords;
+        paginatedCategoryWrongSet = wrongWords;
+        if (selectedCategory && selectedCategory !== '小学生で習った単語とカテゴリー別に覚える単語') {
+            const sets = loadCategoryWords(selectedCategory);
+            paginatedCategoryCorrectSet = sets.correctSet;
+            paginatedCategoryWrongSet = sets.wrongSet;
+        }
     }
     
     // 最初のページを描画
@@ -7439,7 +7445,7 @@ function loadMoreWords() {
     const fragment = document.createDocumentFragment();
     for (let i = startIdx; i < endIdx; i++) {
         const word = paginatedWordsData[i];
-        const item = createInputListItem(word, paginatedProgressCache, paginatedCategoryCorrectSet, paginatedCategoryWrongSet);
+        const item = createInputListItem(word, paginatedProgressCache, paginatedCategoryCorrectSet, paginatedCategoryWrongSet, paginatedSkipProgress);
         if (item) {
             fragment.appendChild(item);
         }
@@ -7563,27 +7569,31 @@ function renderInputListViewAsync(words) {
 }
 
 // 単一のリストアイテムを作成（renderInputListViewAsync用）
-function createInputListItem(word, progressCache, categoryCorrectSet, categoryWrongSet) {
+function createInputListItem(word, progressCache, categoryCorrectSet, categoryWrongSet, skipProgress = false) {
     // 展開モードの場合
     if (inputListViewMode === 'expand') {
         const item = document.createElement('div');
         item.className = 'input-list-item-expand';
         
-        // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
-        let isCorrect, isWrong;
-        if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-            const cache = progressCache[word.category];
-            isCorrect = cache && cache.correct.has(word.id);
-            isWrong = cache && cache.wrong.has(word.id);
-        } else {
-            isCorrect = categoryCorrectSet.has(word.id);
-            isWrong = categoryWrongSet.has(word.id);
-        }
+        let isCorrect = false, isWrong = false;
         
-        if (isWrong) {
-            item.classList.add('marker-wrong');
-        } else if (isCorrect) {
-            item.classList.add('marker-correct');
+        // 進捗マーカーをスキップしない場合のみ計算
+        if (!skipProgress) {
+            // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
+            if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+                const cache = progressCache[word.category];
+                isCorrect = cache && cache.correct.has(word.id);
+                isWrong = cache && cache.wrong.has(word.id);
+            } else {
+                isCorrect = categoryCorrectSet.has(word.id);
+                isWrong = categoryWrongSet.has(word.id);
+            }
+            
+            if (isWrong) {
+                item.classList.add('marker-wrong');
+            } else if (isCorrect) {
+                item.classList.add('marker-correct');
+            }
         }
         
         // ヘッダー部分（番号、英単語、音声、ブックマーク）
@@ -7593,10 +7603,12 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         const number = document.createElement('span');
         number.className = 'input-list-expand-number';
         number.textContent = String(word.id).padStart(5, '0');
-        if (isWrong) {
-            number.classList.add('marker-wrong');
-        } else if (isCorrect) {
-            number.classList.add('marker-correct');
+        if (!skipProgress) {
+            if (isWrong) {
+                number.classList.add('marker-wrong');
+            } else if (isCorrect) {
+                number.classList.add('marker-correct');
+            }
         }
         header.appendChild(number);
         
@@ -7710,21 +7722,25 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         const item = document.createElement('div');
         item.className = 'input-list-item-flip';
         
-        // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
-        let isCorrect, isWrong;
-        if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-            const cache = progressCache[word.category];
-            isCorrect = cache && cache.correct.has(word.id);
-            isWrong = cache && cache.wrong.has(word.id);
-        } else {
-            isCorrect = categoryCorrectSet.has(word.id);
-            isWrong = categoryWrongSet.has(word.id);
-        }
+        let isCorrect = false, isWrong = false;
         
-        if (isWrong) {
-            item.classList.add('marker-wrong');
-        } else if (isCorrect) {
-            item.classList.add('marker-correct');
+        // 進捗マーカーをスキップしない場合のみ計算
+        if (!skipProgress) {
+            // 小学生で習った単語の場合は各単語のカテゴリーから進捗を取得
+            if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+                const cache = progressCache[word.category];
+                isCorrect = cache && cache.correct.has(word.id);
+                isWrong = cache && cache.wrong.has(word.id);
+            } else {
+                isCorrect = categoryCorrectSet.has(word.id);
+                isWrong = categoryWrongSet.has(word.id);
+            }
+            
+            if (isWrong) {
+                item.classList.add('marker-wrong');
+            } else if (isCorrect) {
+                item.classList.add('marker-correct');
+            }
         }
         
         const front = document.createElement('div');
