@@ -3287,6 +3287,16 @@ function showCourseSelection(category, categoryWords) {
     let displayCategory = category;
     if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
         displayCategory = 'カテゴリー別に覚える単語';
+    } else if (category === 'LEVEL1 超重要単語400') {
+        displayCategory = 'レベル１ 超重要単語400';
+    } else if (category === 'LEVEL2 重要単語300') {
+        displayCategory = 'レベル２ 重要単語300';
+    } else if (category === 'LEVEL3 差がつく単語200') {
+        displayCategory = 'レベル３ 差がつく単語200';
+    } else if (category === 'LEVEL4 私立高校入試レベル') {
+        displayCategory = 'レベル４ 私立高校入試レベル';
+    } else if (category === 'LEVEL5 難関私立高校入試レベル') {
+        displayCategory = 'レベル５ 難関私立高校入試レベル';
     }
     courseTitle.textContent = `${displayCategory} - コースを選んでください`;
     courseList.innerHTML = '';
@@ -3525,7 +3535,7 @@ function showCourseSelection(category, categoryWords) {
             const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
             const completedCount = correctCountInCourse + wrongCountInCourse;
             
-            const courseTitle = `No.${start + 1} - No.${end}`;
+            const courseTitle = `${start + 1}～${end}語`;
             const courseCard = createCourseCard(
                 courseTitle,
                 '',
@@ -3823,22 +3833,8 @@ function showWordFilterView(category, categoryWords, courseTitle) {
         }
     }
     
-    // ボタンの状態とfilterLearningModeを同期（カテゴリー選択画面のトグルとは独立）
-    const modeInput = document.getElementById('modeInput');
-    const modeOutput = document.getElementById('modeOutput');
-    if (modeInput && modeOutput) {
-        // ラジオボタンの状態を確認してfilterLearningModeを更新
-        if (modeInput.checked) {
-            filterLearningMode = 'input';
-        } else if (modeOutput.checked) {
-            filterLearningMode = 'output';
-        } else {
-            // どちらも選択されていない場合はデフォルトで'input'
-            filterLearningMode = 'input';
-            modeInput.checked = true;
-            if (modeOutput) modeOutput.checked = false;
-        }
-    }
+    // フィルター画面はアウトプットモード専用
+    filterLearningMode = 'output';
     
     // 出題数選択セクションを更新
     updateQuestionCountSection();
@@ -3847,19 +3843,14 @@ function showWordFilterView(category, categoryWords, courseTitle) {
 // 出題数選択セクションを更新
 function updateQuestionCountSection() {
     const questionCountSection = document.getElementById('questionCountSection');
-    const modeOutput = document.getElementById('modeOutput');
     
     if (questionCountSection) {
         const filteredWords = getFilteredWords();
-        const isOutputMode = modeOutput && modeOutput.checked;
         
-        if (isOutputMode) {
-            if (filteredWords.length > 10) {
-                questionCountSection.style.display = 'flex';
-                updateQuestionCountOptions(filteredWords.length);
-            } else {
-                questionCountSection.style.display = 'none';
-            }
+        // フィルター画面はアウトプットモード専用なので常に表示
+        if (filteredWords.length > 10) {
+            questionCountSection.style.display = 'flex';
+            updateQuestionCountOptions(filteredWords.length);
         } else {
             questionCountSection.style.display = 'none';
         }
@@ -3897,10 +3888,9 @@ function updateFilterInfo() {
         filteredWordCount.textContent = `${filteredWords.length}語`;
     }
     
-    // アウトプットモードの場合、出題数選択を更新
+    // フィルター画面はアウトプット専用なので常に出題数選択を更新
     const questionCountSection = document.getElementById('questionCountSection');
-    const modeOutput = document.getElementById('modeOutput');
-    if (questionCountSection && modeOutput && modeOutput.checked && questionCountSection.style.display !== 'none') {
+    if (questionCountSection && questionCountSection.style.display !== 'none') {
         updateQuestionCountOptions(filteredWords.length);
     }
 }
@@ -5135,31 +5125,7 @@ function setupEventListeners() {
         }
     });
     
-    // 学習モードの変更イベント
-    const modeInput = document.getElementById('modeInput');
-    const modeOutput = document.getElementById('modeOutput');
-    if (modeInput) {
-        modeInput.addEventListener('change', () => {
-            if (modeInput.checked) {
-                SoundEffects.playTap();
-                filterLearningMode = 'input';
-                updateQuestionCountSection();
-            }
-        });
-    }
-    
-    if (modeOutput) {
-        modeOutput.addEventListener('change', () => {
-            if (modeOutput.checked) {
-                SoundEffects.playTap();
-                filterLearningMode = 'output';
-                updateQuestionCountSection();
-            }
-        });
-    }
-    
-    
-    // プラス・マイナスボタンのイベントリスナー（直接追加で反応を改善）
+    // 出題数スライダーのイベントリスナー
     const questionCountValue = document.getElementById('questionCountValue');
     const questionCountSwipe = document.getElementById('questionCountSwipe');
     const questionCountHandle = document.getElementById('questionCountHandle');
@@ -5178,7 +5144,7 @@ function setupEventListeners() {
         if (count >= maxCount) {
             questionCountValue.textContent = 'すべて';
         } else {
-            questionCountValue.textContent = count + '問';
+            questionCountValue.textContent = count + '語';
         }
     }
     
@@ -5191,20 +5157,11 @@ function setupEventListeners() {
         
         // カウントを0-1の範囲に正規化（すべての場合は1.0）
         let ratio = 0;
-        if (maxCount < 30) {
-            // 30問未満の場合は1問単位
-            if (count >= maxCount) {
-                ratio = 1.0; // すべての場合は右端
-            } else {
-                ratio = Math.max(0, Math.min(1, (count - 1) / (maxCount - 1)));
-            }
+        // 常に1語単位で調整
+        if (count >= maxCount) {
+            ratio = 1.0; // すべての場合は右端
         } else {
-            // 30問以上の場合は10問刻み
-            if (count >= maxCount) {
-                ratio = 1.0; // すべての場合は右端
-            } else {
-                ratio = Math.max(0, Math.min(1, (count - 10) / (maxCount - 10)));
-            }
+            ratio = Math.max(0, Math.min(1, (count - 1) / (maxCount - 1)));
         }
         const left = minLeft + (maxLeft - minLeft) * ratio;
         
@@ -5222,17 +5179,9 @@ function setupEventListeners() {
             return maxCount;
         }
         
-        if (maxCount < 30) {
-            // 30問未満の場合は1問単位で調整
-            const count = Math.round(1 + ratio * (maxCount - 1));
-            return Math.min(maxCount, Math.max(1, count));
-        } else {
-            // 30問以上の場合は10問刻みで調整
-            const steps = Math.floor((maxCount - 10) / 10);
-            const step = Math.round(ratio * steps);
-            const count = 10 + step * 10;
-            return Math.min(maxCount, Math.max(10, count));
-        }
+        // 常に1語単位で調整
+        const count = Math.round(1 + ratio * (maxCount - 1));
+        return Math.min(maxCount, Math.max(1, count));
     }
     
     if (questionCountTrack && questionCountHandle) {
@@ -5250,9 +5199,8 @@ function setupEventListeners() {
             
             const trackWidth = questionCountTrack.offsetWidth;
             let currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
-            // 30問未満の場合は最小1問、30問以上の場合は最小10問
-            const minCount = maxCount < 30 ? 1 : 10;
-            currentCount = Math.max(minCount, Math.min(maxCount, currentCount));
+            // 常に最小1語
+            currentCount = Math.max(1, Math.min(maxCount, currentCount));
             
             updateQuestionCountDisplay(currentCount, maxCount);
             updateHandlePosition(currentCount, maxCount, trackWidth);

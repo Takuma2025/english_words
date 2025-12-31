@@ -10017,7 +10017,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 50%;
     transform: translateX(-50%) translateY(100%);
     bottom: 0;
-    top: 8%;
+    top: auto;
+    height: auto;
+    max-height: 70vh;
     width: 100%;
     max-width: 540px;
     background: #ffffff;
