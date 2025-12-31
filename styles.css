@@ -970,10 +970,18 @@ body.learning-mode .app-header {
 
 .osaka-image-container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: flex-end;
     padding: 16px 0;
     margin-top: 24px;
     pointer-events: none;
+}
+
+.boy-word-image {
+    max-width: 200px;
+    width: auto;
+    height: auto;
+    display: block;
 }
 
 .osaka-image {
@@ -2787,7 +2795,7 @@ body.learning-mode .app-header {
 
 .ai-badge {
     display: inline-block;
-    background-color: #3182ce;
+    background-color: #315bce;
     color: #ffffff;
     padding: 1px 6px;
     border-radius: 4px;
@@ -2804,7 +2812,7 @@ body.learning-mode .app-header {
 }
 
 .weakness-title {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 700;
     color: #1f2937;
     align-self: flex-start;
@@ -3137,9 +3145,6 @@ body.learning-mode .app-header {
     margin-top: 8px;
 }
 
-#allWordsCardBtn .category-progress {
-    position: relative;
-}
 
 .category-progress-bar {
     height: 18px;
@@ -3221,7 +3226,7 @@ body.learning-mode .app-header {
 #allWordsCardBtn .category-progress {
     position: relative;
     padding-bottom: 0;
-    margin-top: 0;
+    margin-top: 8px;
     width: 100%;
 }
 
