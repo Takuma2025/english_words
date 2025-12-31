@@ -185,7 +185,7 @@ textarea,
 }
 
 .feedback-overlay.correct {
-    background-color: rgba(59, 130, 246, 0.4); /* 青 */
+    background-color: rgba(37, 99, 235, 0.5); /* 青（暗め） */
 }
 
 .feedback-overlay.wrong {
@@ -845,6 +845,56 @@ body.learning-mode .app-header {
     line-height: 1.6;
     margin-bottom: 20px;
     padding: 0 4px;
+}
+
+/* コースカード用インプット/アウトプットボタン */
+.course-card-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.course-action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.course-action-btn:hover {
+    background: #f3f4f6;
+}
+
+.course-action-btn.input-btn:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.course-action-btn.output-btn:hover {
+    border-color: #10b981;
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.course-action-btn svg,
+.course-action-btn .action-btn-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    object-fit: contain;
 }
 
 .category-list {
@@ -2428,6 +2478,25 @@ body.learning-mode .app-header {
     border-bottom: none;
 }
 
+/* アクションボタン付きコースカード */
+.category-card.category-card-with-actions {
+    flex-direction: column;
+    align-items: stretch;
+    cursor: default;
+}
+
+.category-card.category-card-with-actions:hover {
+    background-color: #ffffff;
+}
+
+.category-card.category-card-with-actions .category-info {
+    width: 100%;
+}
+
+.category-card.category-card-with-actions .category-arrow {
+    display: none;
+}
+
 /* AI分析カード */
 .ai-sparkle {
     margin-right: 6px;
@@ -3201,10 +3270,17 @@ body.learning-mode .app-header {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    vertical-align: top;
 }
 
 .grammar-back-btn:hover {
     color: #1f2937;
+}
+
+.grammar-back-btn:active {
+    transform: none;
+    margin: -4px 8px -4px 0;
 }
 
 .card-top-section {

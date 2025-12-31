@@ -3,6 +3,7 @@ let currentWords = [];
 let currentIndex = 0;
 let hasReachedGoalBefore = false; // 目標達成済みフラグ（演出重複防止）
 let pendingGoalCelebration = false; // 学習完了後に目標達成画面を表示するフラグ
+let selectedStudyMode = 'input'; // 'input' or 'output' - インプット/アウトプットモード選択
 
 // 効果音システム
 const SoundEffects = {
@@ -3188,9 +3189,8 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
             badgeColor = '#9333ea'; // 紫
         }
         
-        const card = document.createElement('button');
-        card.className = 'category-card';
-        card.onclick = () => startCategory(subcat);
+        const card = document.createElement('div');
+        card.className = 'category-card category-card-with-actions';
         
         card.innerHTML = `
             <div class="category-info">
@@ -3205,10 +3205,37 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                     <div class="category-progress-text">${correctCount}/${wordCount}語</div>
                 </div>
             </div>
-            <div class="category-arrow">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <div class="course-card-actions">
+                <button type="button" class="course-action-btn input-btn">
+                    <img src="input.png" alt="" class="action-btn-icon">
+                    <span>インプット</span>
+                </button>
+                <button type="button" class="course-action-btn output-btn">
+                    <img src="output.png" alt="" class="action-btn-icon">
+                    <span>アウトプット</span>
+                </button>
             </div>
         `;
+        
+        // ボタンにイベントリスナーを追加
+        const inputBtn = card.querySelector('.input-btn');
+        const outputBtn = card.querySelector('.output-btn');
+        
+        if (inputBtn) {
+            inputBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // インプット：直接単語一覧を表示
+                showInputModeDirectly(subcat, words, subcat);
+            });
+        }
+        
+        if (outputBtn) {
+            outputBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // アウトプット：フィルター画面を表示
+                showWordFilterView(subcat, words, subcat);
+            });
+        }
         
         courseList.appendChild(card);
     });
@@ -3443,12 +3470,12 @@ function showCourseSelection(category, categoryWords) {
                     completedCount,
                     total,
                     () => {
-                        // コースを選択したら、そのコースの単語で学習方法選択モーダルを表示
-                        const wrongWordsInCourse = courseWords.filter(word => courseProgress.wrong.has(word.id));
-                        const savedIndex = loadProgress(category);
-                        const hasProgress = savedIndex > 0;
-
-                        showInputModeMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, courseName);
+                        // インプット：直接単語一覧を表示
+                        showInputModeDirectly(courseName, courseWords, courseName);
+                    },
+                    () => {
+                        // アウトプット：フィルター画面を表示
+                        showWordFilterView(courseName, courseWords, courseName);
                     },
                     badgeLabel,
                     numberMark
@@ -3507,13 +3534,12 @@ function showCourseSelection(category, categoryWords) {
                 completedCount,
                 total,
                 () => {
-                    // コースを選択したら、そのコースの単語範囲で学習方法選択モーダルを表示
-                    const { wrongSet } = loadCategoryWords(category);
-                    const wrongWordsInCourse = courseWords.filter(word => wrongSet.has(word.id));
-                    const savedIndex = loadProgress(category);
-                    const hasProgress = savedIndex > start && savedIndex < end;
-                    
-                    showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, start, end, courseTitle);
+                    // インプット：直接単語一覧を表示
+                    showInputModeDirectly(category, courseWords, courseTitle);
+                },
+                () => {
+                    // アウトプット：フィルター画面を表示
+                    showWordFilterView(category, courseWords, courseTitle);
                 }
             );
             courseList.appendChild(courseCard);
@@ -3563,10 +3589,9 @@ function showCourseSelection(category, categoryWords) {
 }
 
 // コースカードを作成
-function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, onClick, badgeLabel = '', badgeNumber = '') {
-    const card = document.createElement('button');
-    card.className = 'category-card';
-    card.onclick = onClick;
+function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, onInput, onOutput, badgeLabel = '', badgeNumber = '') {
+    const card = document.createElement('div');
+    card.className = 'category-card category-card-with-actions';
     
     const cardId = `course-${title.replace(/\s+/g, '-')}`;
     
@@ -3596,13 +3621,38 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
                 <div class="category-progress-text">${progressText}</div>
             </div>
         </div>
-        <div class="category-arrow">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        <div class="course-card-actions">
+            <button type="button" class="course-action-btn input-btn">
+                <img src="input.png" alt="" class="action-btn-icon">
+                <span>インプット</span>
+            </button>
+            <button type="button" class="course-action-btn output-btn">
+                <img src="output.png" alt="" class="action-btn-icon">
+                <span>アウトプット</span>
+            </button>
         </div>
     `;
     
-    return card;
+    // ボタンにイベントリスナーを追加
+    const inputBtn = card.querySelector('.input-btn');
+    const outputBtn = card.querySelector('.output-btn');
+    
+    if (inputBtn && onInput) {
+        inputBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            onInput();
+        });
     }
+    
+    if (outputBtn && onOutput) {
+        outputBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            onOutput();
+        });
+    }
+    
+    return card;
+}
 
 // 学習フィルター画面を表示
 let currentFilterWords = [];
@@ -3908,16 +3958,81 @@ function getFilteredWords() {
     return filtered;
 }
 
+// インプットモードで直接単語一覧を表示
+function showInputModeDirectly(category, words, courseTitle) {
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    
+    selectedCategory = category;
+    currentCourseWords = words;
+    currentFilterCourseTitle = courseTitle;
+    currentFilterWords = words;
+    currentFilterCategory = category;
+    
+    // コース選択画面を非表示
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
+    
+    // カテゴリー選択画面を非表示
+    elements.categorySelection.classList.add('hidden');
+    
+    // メインコンテンツを表示
+    elements.mainContent.classList.remove('hidden');
+    
+    // ヘッダー更新
+    updateHeaderButtons('learning');
+    if (elements.unitName) {
+        elements.unitName.textContent = courseTitle || category;
+    }
+    
+    // テーマカラーを更新
+    updateThemeColor(true);
+    document.body.classList.add('learning-mode');
+    
+    // カード関連を非表示
+    const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
+    const cardTopSection = document.querySelector('.card-top-section');
+    const inputListView = document.getElementById('inputListView');
+    
+    if (wordCard) wordCard.classList.add('hidden');
+    if (wordCardContainer) wordCardContainer.classList.add('hidden');
+    if (cardTopSection) cardTopSection.classList.add('hidden');
+    
+    // インプットモード用戻るボタンと中断ボタンの制御
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    const unitInterruptBtn = document.getElementById('unitInterruptBtn');
+    if (inputBackBtn) inputBackBtn.classList.remove('hidden');
+    if (unitInterruptBtn) unitInterruptBtn.classList.add('hidden');
+    
+    // 単語一覧を描画
+    renderInputListView(words);
+}
+
 // 入力モード用の学習方法選択モーダルを表示（後方互換性のため残す）
 function showInputModeMethodSelectionModal(category, categoryWords, hasProgress, savedIndex, wrongWordsInCategory, courseTitle) {
-    // フィルター画面を表示
-    showWordFilterView(category, categoryWords, courseTitle);
+    // モードに応じて分岐
+    if (selectedStudyMode === 'input') {
+        // インプットモード：直接単語一覧を表示
+        showInputModeDirectly(category, categoryWords, courseTitle);
+    } else {
+        // アウトプットモード：フィルター画面を表示
+        showWordFilterView(category, categoryWords, courseTitle);
+    }
 }
 
 // 学習方法選択モーダルを表示（後方互換性のため残す）
 function showMethodSelectionModal(category, courseWords, hasProgress, savedIndex, wrongWordsInCourse, courseStart, courseEnd, courseTitle) {
-    // フィルター画面を表示
-    showWordFilterView(category, courseWords, courseTitle);
+    // モードに応じて分岐
+    if (selectedStudyMode === 'input') {
+        // インプットモード：直接単語一覧を表示
+        showInputModeDirectly(category, courseWords, courseTitle);
+    } else {
+        // アウトプットモード：フィルター画面を表示
+        showWordFilterView(category, courseWords, courseTitle);
+    }
 }
 
 // 学習方法ボタンを作成
