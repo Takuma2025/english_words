@@ -2428,6 +2428,7 @@ function init() {
         setupVolumeControl();
         setupInputListModeToggle();
         setupInputListFilter();
+        setupRedSheetStickyScroll();
         updateVocabProgressBar();
         
         // スプラッシュ画面を表示
@@ -3527,6 +3528,10 @@ function showElementaryCategorySelection(skipAnimation = false) {
         const correctPercent = wordCount > 0 ? (correctCount / wordCount) * 100 : 0;
         const wrongPercent = wordCount > 0 ? (wrongCount / wordCount) * 100 : 0;
         
+        // COMPLETE!!の判定（間違いが0で正解数が総数と等しい場合）
+        const isComplete = wordCount > 0 && wrongCount === 0 && correctCount === wordCount;
+        const progressBarClass = isComplete ? 'category-progress-bar category-progress-complete' : 'category-progress-bar';
+        
         // 番号を取得（1から始まる）
         const number = index + 1;
         
@@ -3545,7 +3550,7 @@ function showElementaryCategorySelection(skipAnimation = false) {
                     </div>
                 </div>
                 <div class="category-progress">
-                    <div class="category-progress-bar">
+                    <div class="${progressBarClass}">
                         <div class="category-progress-correct" style="width: ${correctPercent}%"></div>
                         <div class="category-progress-wrong" style="width: ${wrongPercent}%"></div>
                     </div>
@@ -3772,6 +3777,10 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         const correctPercent = wordCount > 0 ? (correctCount / wordCount) * 100 : 0;
         const wrongPercent = wordCount > 0 ? (wrongCount / wordCount) * 100 : 0;
         
+        // COMPLETE!!の判定（間違いが0で正解数が総数と等しい場合）
+        const isComplete = wordCount > 0 && wrongCount === 0 && correctCount === wordCount;
+        const progressBarClass = isComplete ? 'category-progress-bar category-progress-complete' : 'category-progress-bar';
+        
         // 番号を取得（1から始まる）
         const number = index + 1;
         
@@ -3790,7 +3799,7 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
                     </div>
                 </div>
                 <div class="category-progress">
-                    <div class="category-progress-bar">
+                    <div class="${progressBarClass}">
                         <div class="category-progress-correct" style="width: ${correctPercent}%"></div>
                         <div class="category-progress-wrong" style="width: ${wrongPercent}%"></div>
                     </div>
@@ -9343,6 +9352,31 @@ function updateRedSheetToggleVisibility() {
     }
 }
 
+// 赤シートトグルのスティッキー動作をセットアップ
+function setupRedSheetStickyScroll() {
+    const inputListView = document.getElementById('inputListView');
+    const redSheetToggle = document.getElementById('redSheetToggle');
+    const inputListHeaderRow = document.querySelector('.input-list-header-row');
+    
+    if (!inputListView || !redSheetToggle) return;
+    
+    // スクロール位置を監視（inputListViewがスクロールコンテナ）
+    inputListView.addEventListener('scroll', () => {
+        if (!redSheetToggle.classList.contains('visible')) return;
+        
+        // ヘッダー行の位置を取得
+        if (inputListHeaderRow) {
+            const headerRect = inputListHeaderRow.getBoundingClientRect();
+            // ヘッダーが画面上部より上に出たらスティッキーにする
+            if (headerRect.bottom < 60) {
+                redSheetToggle.classList.add('sticky');
+            } else {
+                redSheetToggle.classList.remove('sticky');
+            }
+        }
+    });
+}
+
 // 赤シートドラッグ機能
 function setupRedSheetDrag(overlay) {
     let isDragging = false;
@@ -9403,6 +9437,7 @@ function resetRedSheet() {
     if (redSheetCheckbox) redSheetCheckbox.checked = false;
     if (redSheetOverlay) redSheetOverlay.classList.add('hidden');
     if (inputListView) inputListView.classList.remove('red-sheet-mode');
+    if (redSheetToggle) redSheetToggle.classList.remove('sticky');
 }
 
 // フィルターを適用して単語リストを再描画
@@ -9942,6 +9977,47 @@ function markMastered() {
     }, 180);
 }
 
+// キラキラエフェクトを表示
+function showSparkleEffect() {
+    // コンテナを作成
+    const container = document.createElement('div');
+    container.className = 'sparkle-container';
+    document.body.appendChild(container);
+    
+    // キラキラを複数生成
+    const sparkleCount = 15;
+    for (let i = 0; i < sparkleCount; i++) {
+        setTimeout(() => {
+            // ランダムな位置
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            
+            // 星型キラキラ
+            const star = document.createElement('div');
+            star.className = 'sparkle-star';
+            star.style.left = x + 'px';
+            star.style.top = y + 'px';
+            star.style.animationDelay = (Math.random() * 0.2) + 's';
+            container.appendChild(star);
+            
+            // 丸型キラキラ
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = (x + (Math.random() - 0.5) * 50) + 'px';
+            sparkle.style.top = (y + (Math.random() - 0.5) * 50) + 'px';
+            sparkle.style.animationDelay = (Math.random() * 0.3) + 's';
+            sparkle.style.width = (8 + Math.random() * 10) + 'px';
+            sparkle.style.height = sparkle.style.width;
+            container.appendChild(sparkle);
+        }, i * 30);
+    }
+    
+    // コンテナを削除
+    setTimeout(() => {
+        container.remove();
+    }, 1200);
+}
+
 // スワイプまたはボタンで正解/不正解をマーク
 function markAnswer(isCorrect, isTimeout = false) {
     if (currentIndex >= currentRangeEnd) return;
@@ -10011,6 +10087,11 @@ function markAnswer(isCorrect, isTimeout = false) {
     setTimeout(() => {
         elements.feedbackOverlay.classList.remove('active');
     }, 400);
+    
+    // 正解時にキラキラエフェクトを表示
+    if (isCorrect) {
+        showSparkleEffect();
+    }
 
     // 入力モードの場合はカードアニメーションをスキップ
     if (isInputModeActive) {
@@ -10425,17 +10506,25 @@ function showGoalAchievedCelebration(school) {
         createFireworks(confettiContainer);
     }
     
-    // 閉じるボタン
+    // 閉じるボタン（最初は非表示）
     if (closeBtn) {
+        closeBtn.classList.add('hidden');
         closeBtn.onclick = () => {
             SoundEffects.playTap();
             hideGoalAchievedCelebration();
         };
+        
+        // 花火終了後（約8.5秒後）にボタンをフェードイン表示
+        // 8発 × 700ms間隔 + 打ち上げ1600ms + 爆発2000ms ≒ 8500ms
+        setTimeout(() => {
+            closeBtn.classList.remove('hidden');
+            closeBtn.classList.add('fade-in');
+        }, 8500);
     }
     
-    // 背景クリックで閉じる
+    // 背景クリックで閉じる（ボタン表示後のみ）
     overlay.onclick = (e) => {
-        if (e.target === overlay) {
+        if (e.target === overlay && closeBtn && !closeBtn.classList.contains('hidden')) {
             SoundEffects.playClose();
             hideGoalAchievedCelebration();
         }
