@@ -9318,14 +9318,10 @@ function setupRedSheet() {
         const isActive = redSheetCheckbox.checked;
         
         if (isActive) {
-            // 1つ目の単語の意味の位置を取得して初期位置を設定
-            const firstMeaning = document.querySelector('.input-list-expand-meaning');
-            if (firstMeaning) {
-                const rect = firstMeaning.getBoundingClientRect();
-                redSheetOverlay.style.top = rect.top + 'px';
-            } else {
-                redSheetOverlay.style.top = '200px';
-            }
+            // 画面の上80%を隠す位置（画面の20%の位置から開始）
+            const viewportHeight = window.innerHeight;
+            const topPosition = Math.round(viewportHeight * 0.2);
+            redSheetOverlay.style.top = topPosition + 'px';
             
             redSheetOverlay.classList.remove('hidden');
             inputListView.classList.add('red-sheet-mode');

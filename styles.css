@@ -4889,10 +4889,10 @@ body.reorder-mode-active .word-card-container {
     display: flex;
 }
 
-/* スクロール時に右上に固定 */
+/* スクロール時に右上に固定（ヘッダーより下） */
 .red-sheet-toggle.sticky {
     position: fixed;
-    top: 20px;
+    top: 70px;
     right: 20px;
     z-index: 1000;
     padding: 10px 16px;
@@ -4989,7 +4989,7 @@ body.reorder-mode-active .word-card-container {
     }
     
     .red-sheet-toggle.sticky {
-        top: 12px;
+        top: 60px;
         right: 12px;
         padding: 8px 14px;
     }
