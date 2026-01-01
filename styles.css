@@ -4696,6 +4696,7 @@ body.reorder-mode-active .word-card-container {
     gap: 0;
     padding: 0 12px 20px 12px;
     overflow-y: auto;
+    overflow-x: hidden;
     flex: 1;
     min-height: 0;
 }
