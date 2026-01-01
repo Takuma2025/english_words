@@ -2447,6 +2447,11 @@ body.learning-mode .app-header {
     height: 24px;
 }
 
+.file-icon-with-number {
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
 .accordion-item-text {
     font-size: 17px;
     font-weight: 600;
