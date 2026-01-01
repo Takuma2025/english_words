@@ -4719,9 +4719,10 @@ body.reorder-mode-active .word-card-container {
 .input-list-controls-row {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 8px;
     margin-bottom: 12px;
+    padding: 0 12px;
 }
 
 .input-list-options-row {
@@ -5120,6 +5121,7 @@ body.reorder-mode-active .word-card-container {
 /* コントロール行内の赤シートトグルは単語帳モードの時だけ表示 */
 .input-list-controls-row .red-sheet-toggle {
     display: flex;
+    margin-left: auto; /* 右揃え */
 }
 
 /* 単語カードモードの時は非表示 */
@@ -11415,7 +11417,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     transform: translateX(-50%) translateY(100%);
     bottom: 0;
     top: auto;
-    height: auto;
+    height: 80vh;
     max-height: 80vh;
     width: 100%;
     max-width: 540px;
@@ -11512,11 +11514,12 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
     padding: 16px 20px;
-    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    padding-bottom: calc(120px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     align-items: stretch;
     min-height: 0;
+    max-height: 100%;
     overscroll-behavior: contain;
     scroll-behavior: smooth;
     position: relative;
@@ -12209,12 +12212,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .filter-actions {
-    position: fixed;
+    position: absolute;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
     width: 100%;
-    max-width: 540px;
     display: flex;
     flex-direction: row;
     gap: 10px;
@@ -12227,8 +12229,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 @media (max-width: 460px) {
+    #wordFilterView {
+        height: 85vh;
+        max-height: 85vh;
+    }
+    
     .filter-sheet-content {
         padding: 12px 8px 16px;
+        padding-bottom: calc(120px + env(safe-area-inset-bottom));
     }
     .filter-card-container {
         padding: 0;
@@ -12270,8 +12278,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 @media (max-width: 600px) {
+    #wordFilterView {
+        height: 85vh;
+        max-height: 85vh;
+    }
+    
     .filter-sheet-content {
         padding: 15px 10px 16px;
+        padding-bottom: calc(120px + env(safe-area-inset-bottom));
     }
     .filter-card-container {
         max-width: 100%;
