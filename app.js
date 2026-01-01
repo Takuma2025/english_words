@@ -2051,6 +2051,108 @@ function updateSubcategoryProgressBars() {
     updateProgressBar('カテゴリ別に覚える基本単語', elementarySubcategories);
     updateProgressBar('日常生活でよく使う生活語彙', dailyLifeSubcategories);
     updateProgressBar('英文でよく登場する機能語', functionWordSubcategories);
+    
+    // レベル別進捗バー更新関数（LEVEL1〜3用）
+    function updateLevelProgressBar(categoryName, level, subcategories) {
+        let totalWords = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        
+        const modes = ['card', 'input'];
+        const allCorrectSet = new Set();
+        const allWrongSet = new Set();
+        
+        // サブカテゴリ名をLEVEL形式に変換（例：'冠詞' → 'LEVEL1 冠詞'）
+        const levelSubcategories = subcategories.map(subcat => `LEVEL${level} ${subcat}`);
+        
+        // 各サブカテゴリーの単語を取得して進捗を計算
+        levelSubcategories.forEach(subcat => {
+            let words = [];
+            if (typeof getVocabularyByCategory !== 'undefined') {
+                words = getVocabularyByCategory(subcat) || [];
+            }
+            
+            totalWords += words.length;
+            
+            // 各モードの進捗を合算
+            modes.forEach(mode => {
+                const savedCorrectWords = localStorage.getItem(`correctWords-${subcat}_${mode}`);
+                const savedWrongWords = localStorage.getItem(`wrongWords-${subcat}_${mode}`);
+                
+                if (savedCorrectWords) {
+                    JSON.parse(savedCorrectWords).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        if (!allWrongSet.has(numId)) {
+                            allCorrectSet.add(numId);
+                        }
+                    });
+                }
+                
+                if (savedWrongWords) {
+                    JSON.parse(savedWrongWords).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        allWrongSet.add(numId);
+                        allCorrectSet.delete(numId);
+                    });
+                }
+            });
+        });
+        
+        // 各サブカテゴリーの単語をチェック
+        levelSubcategories.forEach(subcat => {
+            let words = [];
+            if (typeof getVocabularyByCategory !== 'undefined') {
+                words = getVocabularyByCategory(subcat) || [];
+            }
+            
+            words.forEach(word => {
+                if (allWrongSet.has(word.id)) {
+                    wrongCount++;
+                } else if (allCorrectSet.has(word.id)) {
+                    correctCount++;
+                }
+            });
+        });
+        
+        const correctPercent = totalWords === 0 ? 0 : (correctCount / totalWords) * 100;
+        const wrongPercent = totalWords === 0 ? 0 : (wrongCount / totalWords) * 100;
+        const completedCount = correctCount + wrongCount;
+        const isComplete = totalWords > 0 && wrongCount === 0 && correctCount === totalWords;
+        
+        // DOM要素を更新
+        const correctBar = document.getElementById(`progress-correct-${categoryName}`);
+        const wrongBar = document.getElementById(`progress-wrong-${categoryName}`);
+        const text = document.getElementById(`progress-text-${categoryName}`);
+        const barContainer = correctBar ? correctBar.closest('.accordion-progress-bar') : null;
+        
+        if (correctBar) {
+            correctBar.style.width = `${correctPercent}%`;
+        }
+        if (wrongBar) {
+            wrongBar.style.left = `${correctPercent}%`;
+            wrongBar.style.width = `${wrongPercent}%`;
+        }
+        if (barContainer) {
+            if (isComplete) {
+                barContainer.classList.add('accordion-progress-complete');
+            } else {
+                barContainer.classList.remove('accordion-progress-complete');
+            }
+        }
+        if (text) {
+            text.textContent = `${completedCount}/${totalWords}語`;
+        }
+    }
+    
+    // レベル1〜3のサブカテゴリ
+    const level1Subcategories = ['冠詞', '代名詞', '名詞', '動詞', '形容詞', '副詞', '前置詞', '疑問詞', '間投詞'];
+    const level2Subcategories = ['名詞', '動詞', '形容詞', '副詞', '前置詞', '助動詞', '接続詞', '限定詞', '不定代名詞'];
+    const level3Subcategories = ['名詞', '動詞', '形容詞', '副詞', '前置詞', '接続詞', '関係代名詞', '再帰代名詞'];
+    
+    // レベル1〜3の進捗バーを更新
+    updateLevelProgressBar('レベル１ 超重要700語', 1, level1Subcategories);
+    updateLevelProgressBar('レベル２ 重要500語', 2, level2Subcategories);
+    updateLevelProgressBar('レベル３ 差がつく300語', 3, level3Subcategories);
 }
 
 // 復習チェックを保存
@@ -3827,7 +3929,7 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         // カテゴリ名を保存（startCategory関数で使用）
         const actualCategoryName = categoryName || categoryKey;
         
-        // 進捗を計算
+        // 進捗を計算（actualCategoryNameで保存されているので、それで取得）
         let correctCount = 0;
         let wrongCount = 0;
         if (words && words.length > 0) {
@@ -3836,8 +3938,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
             const allWrongSet = new Set();
             
             modes.forEach(mode => {
-                const savedCorrectWords = localStorage.getItem(`correctWords-${categoryKey}_${mode}`);
-                const savedWrongWords = localStorage.getItem(`wrongWords-${categoryKey}_${mode}`);
+                const savedCorrectWords = localStorage.getItem(`correctWords-${actualCategoryName}_${mode}`);
+                const savedWrongWords = localStorage.getItem(`wrongWords-${actualCategoryName}_${mode}`);
                 
                 if (savedCorrectWords) {
                     JSON.parse(savedCorrectWords).forEach(id => {
@@ -9851,6 +9953,17 @@ function displayCurrentWord() {
     elements.wordNumber.style.backgroundColor = '';
     elements.wordNumber.style.color = '';
 
+    // 裏面に英単語を表示（アウトプットモードのみ）
+    const englishWordBack = document.getElementById('englishWordBack');
+    if (englishWordBack) {
+        if (currentLearningMode !== 'input') {
+            englishWordBack.textContent = word.word;
+            englishWordBack.style.display = '';
+        } else {
+            englishWordBack.style.display = 'none';
+        }
+    }
+
     // 意味を表示（①②③があれば行ごとに整形）
     setMeaningContent(elements.meaning, word.meaning);
     
@@ -10505,40 +10618,47 @@ function createConfetti(container) {
             // アニメーション時間
             const duration = Math.random() * 2 + 3;
             confetti.style.animationDuration = duration + 's';
-            confetti.style.animationDelay = (Math.random() * 0.3) + 's';
+            confetti.style.animationDelay = (Math.random() * 0.5) + 's';
             
             // 横揺れの強さ（左右ランダム）
             const swayDirection = Math.random() > 0.5 ? 1 : -1;
-            const swayAmount1 = (Math.random() * 30 + 15) * swayDirection;
-            const swayAmount2 = (Math.random() * 25 + 10) * -swayDirection;
-            const swayAmount3 = (Math.random() * 20 + 10) * swayDirection;
+            const swayAmount1 = (Math.random() * 40 + 20) * swayDirection;
+            const swayAmount2 = (Math.random() * 35 + 15) * -swayDirection;
+            const swayAmount3 = (Math.random() * 30 + 15) * swayDirection;
+            const swayAmount4 = (Math.random() * 25 + 10) * -swayDirection;
             
             // 回転角度
             const rotateStart = Math.random() * 360;
             const rotateEnd = rotateStart + (Math.random() * 720 + 360) * (Math.random() > 0.5 ? 1 : -1);
             
-            // 個別のキーフレームアニメーション
+            // ランダムなキーフレームポイント（各紙吹雪で異なる高さで揺れる）
+            const p1 = 15 + Math.random() * 10;  // 15-25%
+            const p2 = 35 + Math.random() * 10;  // 35-45%
+            const p3 = 55 + Math.random() * 10;  // 55-65%
+            const p4 = 75 + Math.random() * 10;  // 75-85%
+            
+            // 個別のキーフレームアニメーション（linearでスムーズに）
             const keyframes = `
                 @keyframes confettiFall${i} {
                     0% {
                         transform: translateY(0) translateX(0) rotate(${rotateStart}deg) rotateX(0deg);
                         opacity: 1;
                     }
-                    20% {
-                        transform: translateY(20vh) translateX(${swayAmount1}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.2}deg) rotateX(90deg);
+                    ${p1}% {
+                        transform: translateY(${p1}vh) translateX(${swayAmount1}px) rotate(${rotateStart + (rotateEnd - rotateStart) * (p1/100)}deg) rotateX(${90 * (p1/25)}deg);
                     }
-                    40% {
-                        transform: translateY(40vh) translateX(${swayAmount2}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.4}deg) rotateX(180deg);
+                    ${p2}% {
+                        transform: translateY(${p2}vh) translateX(${swayAmount2}px) rotate(${rotateStart + (rotateEnd - rotateStart) * (p2/100)}deg) rotateX(${180 * (p2/45)}deg);
                     }
-                    60% {
-                        transform: translateY(60vh) translateX(${swayAmount3}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.6}deg) rotateX(270deg);
+                    ${p3}% {
+                        transform: translateY(${p3}vh) translateX(${swayAmount3}px) rotate(${rotateStart + (rotateEnd - rotateStart) * (p3/100)}deg) rotateX(${270 * (p3/65)}deg);
                     }
-                    80% {
-                        transform: translateY(80vh) translateX(${swayAmount1 * 0.5}px) rotate(${rotateStart + (rotateEnd - rotateStart) * 0.8}deg) rotateX(360deg);
+                    ${p4}% {
+                        transform: translateY(${p4}vh) translateX(${swayAmount4}px) rotate(${rotateStart + (rotateEnd - rotateStart) * (p4/100)}deg) rotateX(${360 * (p4/85)}deg);
                         opacity: 1;
                     }
                     100% {
-                        transform: translateY(100vh) translateX(${swayAmount2 * 0.3}px) rotate(${rotateEnd}deg) rotateX(450deg);
+                        transform: translateY(105vh) translateX(${swayAmount1 * 0.3}px) rotate(${rotateEnd}deg) rotateX(450deg);
                         opacity: 0;
                     }
                 }
@@ -10548,6 +10668,7 @@ function createConfetti(container) {
             document.head.appendChild(style);
             
             confetti.style.animationName = `confettiFall${i}`;
+            confetti.style.animationTimingFunction = 'linear';
             container.appendChild(confetti);
             
             // アニメーション終了後に削除

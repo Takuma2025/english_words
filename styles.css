@@ -6764,6 +6764,16 @@ body.learning-mode .bottom-nav {
     transition: border-color 0.3s ease;
 }
 
+/* 裏面の英単語表示（小さく上部に） */
+.english-word-back {
+    font-size: 14px;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
 /* Front Face */
 .word-display {
     height: 100%;
@@ -10931,7 +10941,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     top: -20px;
     opacity: 0;
     transform-style: preserve-3d;
-    animation: confettiFall 4s ease-in-out forwards;
+    animation: confettiFall 4s linear forwards;
 }
 
 .completion-course-title {
