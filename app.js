@@ -4626,8 +4626,11 @@ function showWordFilterView(category, categoryWords, courseTitle) {
         }
     }
     
-    // フィルター画面はアウトプットモード専用
-            filterLearningMode = 'output';
+    // フィルター画面の学習モードを初期化（デフォルトはoutput）
+    // 既存のモードが設定されていない場合のみ'output'に設定
+    if (!filterLearningMode || filterLearningMode === 'output') {
+        filterLearningMode = 'output';
+    }
     
     // 出題数選択セクションを更新
     updateQuestionCountSection();
@@ -4640,10 +4643,12 @@ function updateQuestionCountSection() {
     if (questionCountSection) {
         const filteredWords = getFilteredWords();
         
-        // 常に表示（1語以上あれば）
-        if (filteredWords.length >= 1) {
-                questionCountSection.style.display = 'flex';
-                updateQuestionCountOptions(filteredWords.length);
+        // 親要素（filter-section）を取得して非表示にする
+        const parentSection = questionCountSection.closest('.filter-section');
+        
+        // 常に非表示（出題数セクションは表示しない）
+        if (parentSection) {
+            parentSection.style.display = 'none';
         } else {
             questionCountSection.style.display = 'none';
         }
@@ -4681,10 +4686,15 @@ function updateFilterInfo() {
         filteredWordCount.textContent = `${filteredWords.length}語`;
     }
     
-    // フィルター画面はアウトプット専用なので常に出題数選択を更新
+    // 出題数選択セクションは常に非表示
     const questionCountSection = document.getElementById('questionCountSection');
-    if (questionCountSection && questionCountSection.style.display !== 'none') {
-        updateQuestionCountOptions(filteredWords.length);
+    if (questionCountSection) {
+        const parentSection = questionCountSection.closest('.filter-section');
+        if (parentSection) {
+            parentSection.style.display = 'none';
+        } else {
+            questionCountSection.style.display = 'none';
+        }
     }
 }
 
@@ -6538,7 +6548,6 @@ function setupEventListeners() {
         };
     }
     
-    
     // 学習開始ボタン
     if (filterStartBtn) {
         filterStartBtn.addEventListener('click', () => {
@@ -6592,10 +6601,16 @@ function setupEventListeners() {
             document.body.style.overflow = '';
             
             // 学習を開始
-            // filterLearningMode === 'input'の場合は「眺めるだけ」のカードモードとしてinitLearningを呼ぶ
-            // filterLearningMode === 'output'または未設定の場合は通常のカードモード
-            currentLearningMode = filterLearningMode === 'input' ? 'input' : (selectedLearningMode === 'input' ? 'input' : 'card');
-            initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
+            // filterLearningMode === 'input'の場合は単語帳（展開）モード
+            // filterLearningMode === 'output'または'test'の場合は単語カードモード
+            if (filterLearningMode === 'input') {
+                // 単語帳（展開）モードで開始
+                showInputModeDirectly(currentFilterCategory, wordsToLearn, currentFilterCourseTitle);
+            } else {
+                // 単語カードモードで開始
+                currentLearningMode = selectedLearningMode === 'input' ? 'input' : 'card';
+                initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
+            }
         });
     }
     

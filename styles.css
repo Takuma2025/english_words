@@ -11426,6 +11426,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 
@@ -11437,7 +11438,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 0;
     right: 0;
     height: 56px;
-    background: #1e293b;
+    background: #0055ca;
     z-index: 4;
     pointer-events: none;
 }
@@ -11448,7 +11449,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .filter-header-banner {
     position: relative;
-    background: #1e293b;
+    background: #0055ca;
     padding: 14px 20px;
     display: flex;
     align-items: center;
@@ -11479,23 +11480,25 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     top: 50%;
     right: 16px;
     transform: translateY(-50%);
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border: none;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #94a3b8;
+    color: #ffffff;
     transition: all 0.15s ease;
     z-index: 11;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .filter-close-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.35);
     color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .filter-close-btn:active {
@@ -11518,6 +11521,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     scroll-behavior: smooth;
     position: relative;
     background: #f8fafc;
+    box-sizing: border-box;
 }
 
 #wordFilterView .section-title {
@@ -11617,6 +11621,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    box-sizing: border-box;
 }
 
 .filter-section:first-child {
@@ -11632,6 +11637,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     padding: 0;
     box-shadow: none;
     position: relative;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .filter-section-title {
@@ -11775,6 +11783,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .mode-options {
@@ -11990,6 +12001,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .filter-checkbox,
@@ -12003,6 +12017,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     cursor: pointer;
     transition: all 0.15s ease;
     gap: 10px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
 }
 
 .filter-checkbox:hover,
@@ -12206,6 +12223,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     background: #ffffff;
     z-index: 10003;
     border-top: 1px solid #e2e8f0;
+    box-sizing: border-box;
 }
 
 @media (max-width: 460px) {
@@ -12245,6 +12263,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     .filter-actions {
         max-width: 100%;
         gap: 10px;
+        padding-left: 12px;
+        padding-right: 12px;
+        box-sizing: border-box;
     }
 }
 
@@ -12258,6 +12279,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     }
     .filter-actions {
         max-width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+        box-sizing: border-box;
     }
     .filter-options {
         grid-template-columns: repeat(2, minmax(0, 1fr));
