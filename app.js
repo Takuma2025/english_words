@@ -9600,8 +9600,10 @@ function updateRedSheetToggleVisibility() {
     // 展開モードのときだけ表示
     if (inputListViewMode === 'expand') {
         redSheetToggle.classList.add('visible');
+        redSheetToggle.classList.remove('hidden');
     } else {
         redSheetToggle.classList.remove('visible');
+        redSheetToggle.classList.add('hidden');
         // フリップモードに切り替えたときは赤シートをリセット
         resetRedSheet();
     }

@@ -4839,7 +4839,7 @@ body.reorder-mode-active .word-card-container {
     align-items: flex-end;
     gap: 6px;
     padding: 8px 6px 12px 6px;
-    margin-bottom: 0;
+    margin-bottom: 16px;
 }
 
 .input-filter-btn {
@@ -4933,16 +4933,21 @@ body.reorder-mode-active .word-card-container {
     display: flex;
 }
 
-/* コントロール行内の赤シートトグルは常に表示 */
+/* コントロール行内の赤シートトグルは単語帳モードの時だけ表示 */
 .input-list-controls-row .red-sheet-toggle {
     display: flex;
+}
+
+/* 単語カードモードの時は非表示 */
+.input-list-controls-row .red-sheet-toggle.hidden {
+    display: none !important;
 }
 
 /* スクロール時に右上に固定（ヘッダーより下） */
 .red-sheet-toggle.sticky {
     position: fixed;
     top: calc(var(--header-height) + env(safe-area-inset-top) + 8px);
-    right: 16px;
+    right: 32px;
     left: auto;
     z-index: 1000;
     padding: 4px 8px;
@@ -5051,7 +5056,7 @@ body.reorder-mode-active .word-card-container {
     /* スマホでもsticky状態で右上に固定（ヘッダーより下、画面内に収まる） */
     .red-sheet-toggle.sticky {
         top: calc(var(--header-height) + env(safe-area-inset-top) + 8px);
-        right: 16px;
+        right: 20px;
         left: auto;
         padding: 4px 6px;
         gap: 4px;
