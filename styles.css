@@ -2491,6 +2491,10 @@ body.learning-mode .app-header {
     background-color: #f3f4f6;
 }
 
+.category-accordion-item.touch-hover {
+    background-color: #f9fafb;
+}
+
 /* 日常生活でよく使う生活語彙（白） */
 .category-accordion-item-green {
     background: #ffffff;
@@ -2504,6 +2508,10 @@ body.learning-mode .app-header {
     background-color: #f3f4f6;
 }
 
+.category-accordion-item-green.touch-hover {
+    background-color: #f9fafb;
+}
+
 /* 英文でよく登場する機能語（白） */
 .category-accordion-item-purple {
     background: #ffffff;
@@ -2515,6 +2523,10 @@ body.learning-mode .app-header {
 
 .category-accordion-item-purple:active {
     background-color: #f3f4f6;
+}
+
+.category-accordion-item-purple.touch-hover {
+    background-color: #f9fafb;
 }
 
 .accordion-item-icon {
@@ -2630,6 +2642,10 @@ body.learning-mode .app-header {
 
 .category-card:active {
     background-color: #f3f4f6;
+}
+
+.category-card.touch-hover {
+    background-color: #f9fafb;
 }
 
 .category-card:last-child {
@@ -2868,6 +2884,11 @@ body.learning-mode .app-header {
 }
 
 .learning-menu-subcategory-btn:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.learning-menu-subcategory-btn.touch-hover {
     border-color: #3b82f6;
     background: #eff6ff;
 }
@@ -4944,6 +4965,8 @@ body.reorder-mode-active .word-card-container {
     font-size: 13px;
     font-weight: 500;
     color: #374151;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 /* 赤シートオーバーレイ */
@@ -4979,12 +5002,21 @@ body.reorder-mode-active .word-card-container {
         width: 90%;
     }
     
+    .red-sheet-toggle {
+        gap: 4px;
+        padding: 4px 6px;
+    }
+    
     .red-sheet-toggle.sticky {
         top: 65px;
         right: 25px;
         left: auto;
-        padding: 6px 10px;
-        font-size: 12px;
+        padding: 6px 8px;
+        gap: 4px;
+    }
+    
+    .red-sheet-label {
+        font-size: 11px;
     }
     
     .red-sheet-toggle.sticky .red-sheet-slider {
@@ -4999,6 +5031,11 @@ body.reorder-mode-active .word-card-container {
     
     .red-sheet-toggle.sticky .red-sheet-checkbox:checked + .red-sheet-slider::before {
         transform: translateX(16px);
+    }
+    
+    .red-sheet-icon {
+        width: 12px;
+        height: 16px;
     }
 }
 
@@ -7175,7 +7212,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     font-size: 20px;
     color: #64748b;
     margin-bottom: 8px;
-    font-weight: 500;
+    font-weight: 700;
     letter-spacing: 0.5px;
 }
 
@@ -7567,6 +7604,10 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .sidebar-menu-item:active {
     background-color: #e5e7eb;
+}
+
+.sidebar-menu-item.touch-hover {
+    background-color: #f3f4f6;
 }
 
 .sidebar-menu-item svg {

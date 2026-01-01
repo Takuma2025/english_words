@@ -331,6 +331,7 @@ function calculateTotalLearnedWords() {
     const elementarySubCategories = [
         '家族',
         '曜日・月・季節',
+        '時間・時間帯',
         '数字',
         '色',
         '体',
@@ -1943,7 +1944,7 @@ function updateCategoryStars() {
 function updateSubcategoryProgressBars() {
     // 日常生活でよく使う生活語彙のサブカテゴリー（指定順）
     const dailyLifeSubcategories = [
-        '家族', '曜日・月・季節', '数字', '色', '体', '文房具', '楽器',
+        '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器',
         '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
         '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
     ];
@@ -2515,7 +2516,7 @@ function formatTitleWithLevelBadge(title) {
     
     // カテゴリ別に覚える基本単語のサブカテゴリ一覧（指定順）
     const elementarySubcategories = [
-        '家族', '曜日・月・季節', '数字', '色', '体', '文房具', '楽器',
+        '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器',
         '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
         '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
     ];
@@ -2962,7 +2963,7 @@ function startCategory(category) {
 
     // サブカテゴリー（vocabulary-data.jsのカテゴリー）かどうかを判定
     const vocabularySubcategories = [
-        '家族', '曜日・月・季節', '数字', '色', '体', '文房具', '楽器',
+        '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器',
         '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
         '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向',
         '冠詞', '代名詞', '不定代名詞', '副詞（否定・程度・焦点）', '疑問詞',
@@ -3183,6 +3184,7 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
         subcategories = [
             '家族',
             '曜日・月・季節',
+            '時間・時間帯',
             '数字',
             '色',
             '体',
@@ -3344,6 +3346,17 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                 showCourseActionModal(subcat, words, subcat);
             });
             
+            // タッチ時に一時的にホバー効果を表示
+            accordionItem.addEventListener('touchstart', () => {
+                accordionItem.classList.add('touch-hover');
+            });
+            
+            accordionItem.addEventListener('touchend', () => {
+                setTimeout(() => {
+                    accordionItem.classList.remove('touch-hover');
+                }, 150);
+            });
+            
             accordionContainer.appendChild(accordionItem);
         } else {
             // カードを作成（機能語の場合）
@@ -3397,6 +3410,17 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                     e.stopPropagation();
                     showCourseActionModal(subcat, words, subcat);
             });
+            
+            // タッチ時に一時的にホバー効果を表示
+            categoryInfo.addEventListener('touchstart', () => {
+                card.classList.add('touch-hover');
+            });
+            
+            categoryInfo.addEventListener('touchend', () => {
+                setTimeout(() => {
+                    card.classList.remove('touch-hover');
+                }, 150);
+            });
         }
         
         courseList.appendChild(card);
@@ -3437,6 +3461,16 @@ function showElementaryCategorySelection(skipAnimation = false) {
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
     
+    // 学習画面から戻る場合、mainContentを非表示にする
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent) {
+        mainContent.classList.add('hidden');
+    }
+    
+    // 学習モードをリセット
+    document.body.classList.remove('learning-mode');
+    updateThemeColor(false);
+    
     const courseSelection = document.getElementById('courseSelection');
     const courseList = document.getElementById('courseList');
     const courseTitle = document.getElementById('courseSelectionTitle');
@@ -3463,6 +3497,7 @@ function showElementaryCategorySelection(skipAnimation = false) {
     const elementarySubcategories = [
         '家族',
         '曜日・月・季節',
+        '時間・時間帯',
         '数字',
         '色',
         '体',
@@ -3622,10 +3657,22 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
     
-    console.log('showLevelSubcategorySelection called with:', parentCategory);
+    console.log('showLevelSubcategorySelection called with:', parentCategory, 'skipAnimation:', skipAnimation);
+    
+    // 学習画面から戻る場合、mainContentを非表示にする
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent) {
+        mainContent.classList.add('hidden');
+    }
+    
+    // 学習モードをリセット
+    document.body.classList.remove('learning-mode');
+    updateThemeColor(false);
+    
     const courseSelection = document.getElementById('courseSelection');
     const courseList = document.getElementById('courseList');
     const courseTitle = document.getElementById('courseSelectionTitle');
+    console.log('courseSelection:', courseSelection, 'courseList:', courseList, 'courseTitle:', courseTitle);
     const courseSelectionImage = document.getElementById('courseSelectionImage');
     const courseSelectionDescription = document.getElementById('courseSelectionDescription');
     
@@ -3711,30 +3758,74 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     
     // サブカテゴリーカードを生成
     subcategories.forEach((subcat, index) => {
-        // 単語を取得（品詞でフィルタリング）
-        const allWords = typeof getAllVocabulary !== 'undefined' ? getAllVocabulary() : [];
-        const levelWords = allWords.filter(word => word.category === levelCategory);
+        // 単語を取得（レベル別に取得）
+        let levelWords = [];
+        if (parentCategory === 'レベル１ 超重要700語') {
+            const level = 1;
+            if (typeof getVocabularyByLevel !== 'undefined' && typeof getVocabularyByLevel === 'function') {
+                levelWords = getVocabularyByLevel(level);
+            } else if (typeof getAllVocabulary !== 'undefined') {
+                const allWords = getAllVocabulary();
+                levelWords = allWords.filter(word => word.category && word.category.startsWith('LEVEL1 '));
+            }
+        } else if (parentCategory === 'レベル２ 重要500語') {
+            const level = 2;
+            if (typeof getVocabularyByLevel !== 'undefined' && typeof getVocabularyByLevel === 'function') {
+                levelWords = getVocabularyByLevel(level);
+            } else if (typeof getAllVocabulary !== 'undefined') {
+                const allWords = getAllVocabulary();
+                levelWords = allWords.filter(word => word.category && word.category.startsWith('LEVEL2 '));
+            }
+        } else if (parentCategory === 'レベル３ 差がつく300語') {
+            const level = 3;
+            if (typeof getVocabularyByLevel !== 'undefined' && typeof getVocabularyByLevel === 'function') {
+                levelWords = getVocabularyByLevel(level);
+            } else if (typeof getAllVocabulary !== 'undefined') {
+                const allWords = getAllVocabulary();
+                levelWords = allWords.filter(word => word.category && word.category.startsWith('LEVEL3 '));
+            }
+        }
+        // サブカテゴリ名からカテゴリ名にマッピング
+        let categoryName = '';
+        if (parentCategory === 'レベル１ 超重要700語') {
+            if (subcat === '冠詞') categoryName = 'LEVEL1 冠詞';
+            else if (subcat === '代名詞') categoryName = 'LEVEL1 代名詞';
+            else if (subcat === '名詞') categoryName = 'LEVEL1 名詞';
+            else if (subcat === '動詞') categoryName = 'LEVEL1 動詞';
+            else if (subcat === '形容詞') categoryName = 'LEVEL1 形容詞';
+            else if (subcat === '副詞') categoryName = 'LEVEL1 副詞';
+            else if (subcat === '前置詞') categoryName = 'LEVEL1 前置詞';
+            else if (subcat === '疑問詞') categoryName = 'LEVEL1 疑問詞';
+            else if (subcat === '間投詞') categoryName = 'LEVEL1 間投詞';
+        } else if (parentCategory === 'レベル２ 重要500語') {
+            if (subcat === '名詞') categoryName = 'LEVEL2 名詞';
+            else if (subcat === '動詞') categoryName = 'LEVEL2 動詞';
+            else if (subcat === '形容詞') categoryName = 'LEVEL2 形容詞';
+            else if (subcat === '副詞') categoryName = 'LEVEL2 副詞';
+            else if (subcat === '前置詞') categoryName = 'LEVEL2 前置詞';
+            else if (subcat === '助動詞') categoryName = 'LEVEL2 助動詞';
+            else if (subcat === '接続詞') categoryName = 'LEVEL2 接続詞';
+            else if (subcat === '限定詞') categoryName = 'LEVEL2 限定詞（数量）';
+            else if (subcat === '不定代名詞') categoryName = 'LEVEL2 不定代名詞';
+        } else if (parentCategory === 'レベル３ 差がつく300語') {
+            if (subcat === '名詞') categoryName = 'LEVEL3 名詞';
+            else if (subcat === '動詞') categoryName = 'LEVEL3 動詞';
+            else if (subcat === '形容詞') categoryName = 'LEVEL3 形容詞';
+            else if (subcat === '副詞') categoryName = 'LEVEL3 副詞';
+            else if (subcat === '前置詞') categoryName = 'LEVEL3 前置詞';
+            else if (subcat === '接続詞') categoryName = 'LEVEL3 接続詞';
+            else if (subcat === '関係代名詞') categoryName = 'LEVEL3 関係代名詞';
+        }
+        
+        // カテゴリ名でフィルタリング
         const words = levelWords.filter(word => {
-            const partOfSpeech = word.partOfSpeech || '';
-            if (subcat === '冠詞') return partOfSpeech.includes('冠詞');
-            if (subcat === '代名詞') return partOfSpeech.includes('代名詞') && !partOfSpeech.includes('不定') && !partOfSpeech.includes('関係');
-            if (subcat === '名詞') return partOfSpeech.includes('名詞') && !partOfSpeech.includes('代名詞');
-            if (subcat === '動詞') return partOfSpeech.includes('動詞');
-            if (subcat === '形容詞') return partOfSpeech.includes('形容詞');
-            if (subcat === '副詞') return partOfSpeech.includes('副詞');
-            if (subcat === '前置詞') return partOfSpeech.includes('前置詞');
-            if (subcat === '疑問詞') return partOfSpeech.includes('疑問詞');
-            if (subcat === '間投詞') return partOfSpeech.includes('間投詞');
-            if (subcat === '助動詞') return partOfSpeech.includes('助動詞');
-            if (subcat === '接続詞') return partOfSpeech.includes('接続詞');
-            if (subcat === '限定詞') return partOfSpeech.includes('限定詞');
-            if (subcat === '不定代名詞') return partOfSpeech.includes('不定代名詞');
-            if (subcat === '関係代名詞') return partOfSpeech.includes('関係代名詞');
-            return false;
+            return word.category === categoryName;
         });
         
         const wordCount = words ? words.length : 0;
         const categoryKey = `${parentCategory}-${subcat}`;
+        // カテゴリ名を保存（startCategory関数で使用）
+        const actualCategoryName = categoryName || categoryKey;
         
         // 進捗を計算
         let correctCount = 0;
@@ -3820,21 +3911,21 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         if (inputBtn) {
             inputBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                showInputModeDirectly(categoryKey, words, categoryKey);
+                showInputModeDirectly(actualCategoryName, words, categoryKey);
             });
         }
         
         if (outputBtn) {
             outputBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                showWordFilterView(categoryKey, words, categoryKey);
+                showWordFilterView(actualCategoryName, words, categoryKey);
             });
         }
         
         if (categoryInfo) {
             categoryInfo.addEventListener('click', (e) => {
                 e.stopPropagation();
-                showCourseActionModal(categoryKey, words, categoryKey);
+                showCourseActionModal(actualCategoryName, words, categoryKey);
             });
         }
         
@@ -4763,6 +4854,17 @@ function showLearningSubcategoryMenu(category) {
             const subcategory = btn.dataset.subcategory;
             overlay.remove();
             startLearningFromMenu(category, subcategory);
+        });
+        
+        // タッチ時に一時的にホバー効果を表示
+        btn.addEventListener('touchstart', () => {
+            btn.classList.add('touch-hover');
+        });
+        
+        btn.addEventListener('touchend', () => {
+            setTimeout(() => {
+                btn.classList.remove('touch-hover');
+            }, 150);
         });
     });
     
@@ -5874,7 +5976,7 @@ function setupEventListeners() {
             
             // 日常生活でよく使う生活語彙のサブカテゴリー（指定順）
             const dailyLifeSubcategories = [
-                '家族', '曜日・月・季節', '数字', '色', '体', '文房具', '楽器',
+                '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器',
                 '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
                 '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
             ];
@@ -5885,21 +5987,24 @@ function setupEventListeners() {
                 '限定詞（数量）', '前置詞', '助動詞・助動詞的表現', '接続詞', '関係代名詞', '間投詞'
             ];
             
+            // レベル別の細分化メニューから来た場合は、レベル別の細分化メニューに戻る
+            console.log('inputBackBtn clicked, currentSubcategoryParent:', window.currentSubcategoryParent);
+            if (window.currentSubcategoryParent && (window.currentSubcategoryParent === 'レベル１ 超重要700語' || 
+                window.currentSubcategoryParent === 'レベル２ 重要500語' || 
+                window.currentSubcategoryParent === 'レベル３ 差がつく300語')) {
+                console.log('Returning to level subcategory selection:', window.currentSubcategoryParent);
+                showLevelSubcategorySelection(window.currentSubcategoryParent, true);
+                return;
+            }
+            
+            // カテゴリ別に覚える基本単語から来た場合は、その画面に戻る
+            if (window.currentSubcategoryParent === 'カテゴリ別に覚える基本単語') {
+                showElementaryCategorySelection(true);
+                return;
+            }
+            
             // カテゴリー別に覚える単語のサブカテゴリーの場合は親カテゴリーの細分化メニューに戻る（アニメーションなし）
-            // ただし、レベル別の細分化メニューから来た場合は、レベル別の細分化メニューに戻る
             if (selectedCategory && dailyLifeSubcategories.includes(selectedCategory)) {
-                // カテゴリ別に覚える基本単語から来た場合は、その画面に戻る
-                if (window.currentSubcategoryParent === 'カテゴリ別に覚える基本単語') {
-                    showElementaryCategorySelection(true);
-                    return;
-                }
-                // レベル別の細分化メニューから来た場合は、レベル別の細分化メニューに戻る
-                if (window.currentSubcategoryParent && (window.currentSubcategoryParent === 'レベル１ 超重要700語' || 
-                    window.currentSubcategoryParent === 'レベル２ 重要500語' || 
-                    window.currentSubcategoryParent === 'レベル３ 差がつく300語')) {
-                    showLevelSubcategorySelection(window.currentSubcategoryParent, true);
-                    return;
-                }
                 // それ以外の場合は、カテゴリ別に覚える基本単語の画面に戻る
                 showElementaryCategorySelection(true);
                 return;
@@ -6638,6 +6743,22 @@ function setupEventListeners() {
             } else if (elements.mainContent && !elements.mainContent.classList.contains('hidden')) {
                 // 学習画面からコース選択画面またはカテゴリー選択画面に戻る
                 if (selectedCategory) {
+                    // レベル別の細分化メニューから来た場合は、細分化メニューに戻る
+                    if (window.currentSubcategoryParent && (window.currentSubcategoryParent === 'レベル１ 超重要700語' || 
+                        window.currentSubcategoryParent === 'レベル２ 重要500語' || 
+                        window.currentSubcategoryParent === 'レベル３ 差がつく300語')) {
+                        elements.mainContent.classList.add('hidden');
+                        showLevelSubcategorySelection(window.currentSubcategoryParent, true);
+                        return;
+                    }
+                    
+                    // カテゴリ別に覚える基本単語から来た場合は、細分化メニューに戻る
+                    if (window.currentSubcategoryParent && window.currentSubcategoryParent === 'カテゴリ別に覚える基本単語') {
+                        elements.mainContent.classList.add('hidden');
+                        showElementaryCategorySelection(true);
+                        return;
+                    }
+                    
                     // コース選択画面に戻る
                     let categoryWords;
                     if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
@@ -6702,6 +6823,17 @@ function setupEventListeners() {
         learningMethodBtn.addEventListener('click', () => {
             closeSidebar();
             showLearningMenuSelection();
+        });
+        
+        // タッチ時に一時的にホバー効果を表示
+        learningMethodBtn.addEventListener('touchstart', () => {
+            learningMethodBtn.classList.add('touch-hover');
+        });
+        
+        learningMethodBtn.addEventListener('touchend', () => {
+            setTimeout(() => {
+                learningMethodBtn.classList.remove('touch-hover');
+            }, 150);
         });
     }
     
@@ -9688,12 +9820,6 @@ function displayCurrentWord() {
     
     elements.englishWord.textContent = word.word;
     applyMarkers(word);
-    
-    // カード裏面にも英語を表示
-    const englishWordBack = document.getElementById('englishWordBack');
-    if (englishWordBack) {
-        englishWordBack.textContent = word.word;
-    }
     
     // 入試頻出度を表示（カードモード）- アウトプットモードでは非表示
     const appearanceCountEl = document.getElementById('wordAppearanceCount');
