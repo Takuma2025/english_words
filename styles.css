@@ -4883,8 +4883,8 @@ body.reorder-mode-active .word-card-container {
 /* スクロール時に右上に固定（ヘッダーより下） */
 .red-sheet-toggle.sticky {
     position: fixed;
-    top: 120px;
-    right: 140px;
+    top: 95px;
+    right: 120px;
     z-index: 1000;
     padding: 10px 16px;
     background: #ffffff;
@@ -4980,8 +4980,8 @@ body.reorder-mode-active .word-card-container {
     }
     
     .red-sheet-toggle.sticky {
-        top: 100px;
-        right: 8px;
+        top: 80px;
+        right: 15px;
         left: auto;
         padding: 6px 10px;
         font-size: 12px;
