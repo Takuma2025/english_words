@@ -2506,16 +2506,32 @@ function updateFeedbackOverlayPosition() {
 // タイトルにレベルバッジを追加するヘルパー関数
 function formatTitleWithLevelBadge(title) {
     if (!title) return title;
-    if (title.includes('LEVEL1') || title.includes('超重要')) {
-        return '<span class="level-badge level-badge-red">レベル１</span> ' + (title.replace(/LEVEL1\s*超重要単語400|超重要700語/g, '超重要700語').replace(/LEVEL1\s*/g, ''));
-    } else if (title.includes('LEVEL2') || title.includes('重要500語')) {
-        return '<span class="level-badge level-badge-orange">レベル２</span> ' + (title.replace(/LEVEL2\s*重要単語300|重要500語/g, '重要500語').replace(/LEVEL2\s*/g, ''));
-    } else if (title.includes('LEVEL3') || title.includes('差がつく')) {
-        return '<span class="level-badge level-badge-blue">レベル３</span> ' + (title.replace(/LEVEL3\s*差がつく単語200|差がつく300語/g, '差がつく300語').replace(/LEVEL3\s*/g, ''));
-    } else if (title.includes('LEVEL4') || title.includes('私立高校入試レベル')) {
-        return '<span class="level-badge level-badge-purple">レベル４</span> ' + (title.replace(/LEVEL4\s*/g, ''));
-    } else if (title.includes('LEVEL5') || title.includes('難関私立高校入試レベル')) {
-        return '<span class="level-badge level-badge-dark">レベル５</span> ' + (title.replace(/LEVEL5\s*/g, ''));
+    // タイトルからレベル表記を削除する共通処理
+    const cleanTitle = title.replace(/レベル[０-９0-9１-９]+\s*/g, '').replace(/LEVEL[0-9]+\s*/g, '');
+    
+    // カテゴリ別に覚える基本単語のサブカテゴリ一覧
+    const elementarySubcategories = [
+        '家族・家に関する単語', '数字に関する単語', '日用品・楽器に関する単語', '体に関する単語',
+        '色に関する単語', '食べ物・飲み物に関する単語', '町の施設に関する単語', '乗り物に関する単語',
+        '職業に関する単語', 'スポーツに関する単語', '曜日・月・季節に関する単語', '動物に関する単語',
+        '自然・天気、方角に関する単語', '学校に関する単語', '国名や地域に関する単語', '行事・余暇に関する単語'
+    ];
+    
+    // カテゴリ別のサブカテゴリかどうかチェック
+    const isElementarySubcategory = elementarySubcategories.some(sub => title.includes(sub));
+    
+    if (title.includes('LEVEL1') || title.includes('超重要') || title.includes('レベル１') || title.includes('レベル1')) {
+        return '<span class="level-badge level-badge-red">レベル１</span> ' + cleanTitle.replace(/超重要単語400/g, '超重要700語');
+    } else if (title.includes('LEVEL2') || title.includes('重要500語') || title.includes('レベル２') || title.includes('レベル2')) {
+        return '<span class="level-badge level-badge-orange">レベル２</span> ' + cleanTitle.replace(/重要単語300/g, '重要500語');
+    } else if (title.includes('LEVEL3') || title.includes('差がつく') || title.includes('レベル３') || title.includes('レベル3')) {
+        return '<span class="level-badge level-badge-blue">レベル３</span> ' + cleanTitle.replace(/差がつく単語200/g, '差がつく300語');
+    } else if (title.includes('LEVEL4') || title.includes('私立高校入試レベル') || title.includes('レベル４') || title.includes('レベル4')) {
+        return '<span class="level-badge level-badge-purple">レベル４</span> ' + cleanTitle;
+    } else if (title.includes('LEVEL5') || title.includes('難関私立高校入試レベル') || title.includes('レベル５') || title.includes('レベル5')) {
+        return '<span class="level-badge level-badge-dark">レベル５</span> ' + cleanTitle;
+    } else if (title.includes('カテゴリ別') || title.includes('レベル０') || title.includes('レベル0') || isElementarySubcategory) {
+        return '<span class="level-badge level-badge-green">レベル０</span> ' + cleanTitle;
     }
     return title;
 }
@@ -2552,14 +2568,16 @@ function updateHeaderButtons(mode, title = '') {
     if (headerTitleText) {
         if (mode === 'course' && title) {
             // レベル別にバッジ付きタイトルを設定
-            if (title === 'レベル１ 超重要700語') {
+            if (title === 'カテゴリ別に覚える基本単語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-green">レベル０</span> カテゴリ別に覚える基本単語';
+            } else if (title === 'レベル１ 超重要700語') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-red">レベル１</span> 超重要700語';
             } else if (title === 'レベル２ 重要500語') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-orange">レベル２</span> 重要500語';
             } else if (title === 'レベル３ 差がつく300語') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-blue">レベル３</span> 差がつく300語';
             } else {
-            headerTitleText.textContent = title;
+                headerTitleText.textContent = title;
             }
             headerTitleText.classList.remove('hidden');
         } else {
@@ -3414,8 +3432,9 @@ function showElementaryCategorySelection(skipAnimation = false) {
     const courseSelectionImage = document.getElementById('courseSelectionImage');
     const courseSelectionDescription = document.getElementById('courseSelectionDescription');
     
-    // タイトルを設定
-    courseTitle.textContent = 'カテゴリ別に覚える基本単語';
+    // タイトルを設定（バッジ付き）
+    const formattedTitle = formatTitleWithLevelBadge('カテゴリ別に覚える基本単語');
+    courseTitle.innerHTML = formattedTitle;
     courseList.innerHTML = '';
     
     // 画像を非表示
@@ -3505,9 +3524,9 @@ function showElementaryCategorySelection(skipAnimation = false) {
             <div class="category-info">
                 <div class="category-header">
                     <div class="category-name">
-                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#22c55e" stroke="#22c55e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                            <text x="12" y="12" text-anchor="middle" fill="white" font-size="15" font-weight="900" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; dominant-baseline: central; letter-spacing: -0.5px;">${number}</text>
+                            <text x="12" y="13" text-anchor="middle" fill="white" font-size="11" font-weight="bold" stroke="white" stroke-width="0.5" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
                         </svg>
                         ${subcat}
                     </div>
@@ -3752,7 +3771,7 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
                     <div class="category-name">
                         <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="${badgeColor}" stroke="${badgeColor}" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                            <text x="12" y="12" text-anchor="middle" fill="white" font-size="15" font-weight="900" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; dominant-baseline: central; letter-spacing: -0.5px;">${number}</text>
+                            <text x="12" y="13" text-anchor="middle" fill="white" font-size="11" font-weight="bold" stroke="white" stroke-width="0.5" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
                         </svg>
                         ${subcat}
                     </div>
