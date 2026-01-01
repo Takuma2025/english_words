@@ -5316,19 +5316,20 @@ body.reorder-mode-active .word-card-container {
 .input-list-expand-appearance-box {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     background: #6b7a8f !important;
-    padding: 5px 10px;
+    padding: 4px 8px;
     border-radius: 0 0 8px 8px;
-    font-size: 11px;
+    font-size: 10px;
     color: #ffffff;
-    width: 160px;
+    width: auto;
+    min-width: 120px;
     box-sizing: border-box;
 }
 
 .input-list-expand-appearance-box .appearance-osaka-icon {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     object-fit: contain;
 }
 
@@ -5338,14 +5339,16 @@ body.reorder-mode-active .word-card-container {
     background: none;
     padding: 0;
     border-radius: 0;
-    font-size: 9px;
 }
 
 .input-list-expand-appearance-box .appearance-stars {
     color: #ffffff;
-    font-size: 13px;
-    letter-spacing: 1px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
     text-align: left;
+    margin-right: 0;
+    min-width: 65px;
+    display: inline-block;
 }
 
 .input-list-expand-star-btn {
@@ -5450,22 +5453,22 @@ body.reorder-mode-active .word-card-container {
     }
     
     .input-list-expand-appearance-box {
-        padding: 4px 7px;
-        font-size: 10px;
-        width: 150px;
+        padding: 3px 6px;
+        font-size: 9px;
+        width: auto;
+        min-width: 110px;
+        gap: 3px;
     }
     
     .input-list-expand-appearance-box .appearance-osaka-icon {
-        width: 16px;
-        height: 16px;
-    }
-    
-    .input-list-expand-appearance-box .appearance-label {
-        font-size: 8px;
+        width: 15px;
+        height: 15px;
     }
     
     .input-list-expand-appearance-box .appearance-stars {
-        font-size: 11px;
+        font-size: 10px;
+        min-width: 55px;
+        display: inline-block;
     }
     
     .input-list-expand-word {
