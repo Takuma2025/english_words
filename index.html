@@ -550,7 +550,6 @@
                     </div>
                 </div>
                 <div class="osaka-image-container">
-                    <img src="boy_word.png" alt="学習中の学生" class="boy-word-image">
                     <img src="osaka_5_nashi_b.png" alt="大阪府" class="osaka-image">
                 </div>
             </div>
@@ -745,16 +744,38 @@
                     <!-- インプットモード一覧表示（眺める用） -->
                     <div class="input-list-view hidden" id="inputListView">
                         <div class="input-list-header">
-                            <div class="input-list-title">単語一覧</div>
-                            <div class="input-list-mode-toggle">
-                                <button class="input-list-mode-btn active" id="inputListModeExpand" data-mode="expand" title="単語帳モード">
-                                    <svg class="mode-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                                    <span>単語帳</span>
-                                </button>
-                                <button class="input-list-mode-btn" id="inputListModeFlip" data-mode="flip" title="単語カードモード">
-                                    <svg class="mode-btn-icon" width="22" height="16" viewBox="0 0 26 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="19" height="12" rx="2"></rect><line x1="6" y1="9" x2="25" y2="9"></line><circle cx="4" cy="6" r="3"></circle><path d="M6 6h2"></path></svg>
-                                    <span>単語カード</span>
-                                </button>
+                            <div class="input-list-header-row">
+                                <div class="input-list-mode-toggle">
+                                    <button class="input-list-mode-btn active" id="inputListModeExpand" data-mode="expand" title="単語帳モード">
+                                        <svg class="mode-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                                        <span>単語帳</span>
+                                    </button>
+                                    <button class="input-list-mode-btn" id="inputListModeFlip" data-mode="flip" title="単語カードモード">
+                                        <svg class="mode-btn-icon" width="22" height="16" viewBox="0 0 26 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="19" height="12" rx="2"></rect><line x1="6" y1="9" x2="25" y2="9"></line><circle cx="4" cy="6" r="3"></circle><path d="M6 6h2"></path></svg>
+                                        <span>単語カード</span>
+                                    </button>
+                                </div>
+                                <div class="input-list-options">
+                                    <button class="input-shuffle-btn" id="inputShuffleBtn" title="ランダム表示">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="16 3 21 3 21 8"></polyline>
+                                            <line x1="4" y1="20" x2="21" y2="3"></line>
+                                            <polyline points="21 16 21 21 16 21"></polyline>
+                                            <line x1="15" y1="15" x2="21" y2="21"></line>
+                                            <line x1="4" y1="4" x2="9" y2="9"></line>
+                                        </svg>
+                                        <span>ランダム</span>
+                                    </button>
+                                    <label class="red-sheet-toggle" id="redSheetToggle">
+                                        <input type="checkbox" class="red-sheet-checkbox">
+                                        <span class="red-sheet-slider"></span>
+                                        <svg class="red-sheet-icon" width="15" height="20" viewBox="0 0 12 20" fill="none">
+                                            <rect x="1" y="2" width="10" height="16" rx="1.5" fill="#dc2626" opacity="0.8"/>
+                                            <rect x="2" y="3" width="8" height="14" rx="1" fill="#ef4444"/>
+                                        </svg>
+                                        <span class="red-sheet-label">赤シート</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <!-- 単語絞り込みフィルター -->
@@ -779,15 +800,6 @@
                                 覚えた
                                 <span class="filter-close-icon">×</span>
                             </button>
-                            <label class="red-sheet-toggle" id="redSheetToggle">
-                                <input type="checkbox" class="red-sheet-checkbox">
-                                <span class="red-sheet-slider"></span>
-                                <svg class="red-sheet-icon" width="15" height="20" viewBox="0 0 12 20" fill="none">
-                                    <rect x="1" y="2" width="10" height="16" rx="1.5" fill="#dc2626" opacity="0.8"/>
-                                    <rect x="2" y="3" width="8" height="14" rx="1" fill="#ef4444"/>
-                                </svg>
-                                <span class="red-sheet-label">赤シート</span>
-                            </label>
                         </div>
                         <!-- 赤シートオーバーレイ -->
                         <div class="red-sheet-overlay hidden" id="redSheetOverlay"></div>

@@ -4569,13 +4569,86 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-header {
-    padding: 8px 6px;
+    padding: 8px 10px;
     color: #1f2937;
     border-bottom: none;
     margin-bottom: 0;
+}
+
+.input-list-header-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
+}
+
+.input-list-options {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-shuffle-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.input-shuffle-btn:active {
+    background: #e5e7eb;
+}
+
+.input-shuffle-btn.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+}
+
+.input-shuffle-btn svg {
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+/* シャッフルアニメーション */
+.input-shuffle-btn.shuffling {
+    pointer-events: none;
+}
+
+.input-shuffle-btn.shuffling svg {
+    animation: shuffle-spin 0.4s ease-in-out;
+}
+
+@keyframes shuffle-spin {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(90deg) scale(1.1); }
+    50% { transform: rotate(180deg) scale(1); }
+    75% { transform: rotate(270deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+/* リストのシャッフルアニメーション */
+#inputListContainer.shuffle-animating {
+    opacity: 0.3;
+    transform: scale(0.98);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#inputListContainer.shuffle-fade-in {
+    animation: shuffle-fade-in 0.3s ease-out;
+}
+
+@keyframes shuffle-fade-in {
+    0% { opacity: 0.3; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
 .input-list-header.review-wrong-words {
