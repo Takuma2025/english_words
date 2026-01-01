@@ -4578,14 +4578,17 @@ body.reorder-mode-active .word-card-container {
 .input-list-header-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 8px;
+    margin-bottom: 8px;
 }
 
-.input-list-options {
+.input-list-options-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 6px 0;
 }
 
 .input-shuffle-btn {
