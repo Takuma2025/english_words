@@ -9533,27 +9533,19 @@ function setupInputListFilter() {
         });
     }
     
-    // バッジ更新関数
-    function updateFilterBadge() {
+    // バッジ更新関数（グローバルに公開）
+    window.updateFilterBadge = function(filteredCount) {
         if (!filterActiveBadge) return;
         
         const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
-        const otherCheckboxes = Array.from(filterCheckboxes).filter(cb => cb.dataset.filter !== 'all');
-        const checkedCount = otherCheckboxes.filter(cb => cb.checked).length;
-        const totalCount = otherCheckboxes.length;
         
         if (allCheckbox && allCheckbox.checked) {
             // すべて選択時はバッジ非表示
             filterActiveBadge.classList.add('hidden');
             filterTrigger.classList.remove('active');
-        } else if (checkedCount === 0) {
-            // 何も選択されていない場合
-            filterActiveBadge.textContent = '0';
-            filterActiveBadge.classList.remove('hidden');
-            filterTrigger.classList.add('active');
-        } else if (checkedCount < totalCount) {
-            // 一部選択時
-            filterActiveBadge.textContent = checkedCount;
+        } else if (typeof filteredCount === 'number') {
+            // 絞り込んだ単語数を表示
+            filterActiveBadge.textContent = filteredCount;
             filterActiveBadge.classList.remove('hidden');
             filterTrigger.classList.add('active');
         } else {
@@ -9926,6 +9918,16 @@ function applyInputFilter() {
     
     // フィルター結果の件数を更新
     updateFilterCount(filteredWords.length, baseWords.length);
+    
+    // バッジに絞り込んだ単語数を表示
+    if (window.updateFilterBadge) {
+        const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
+        if (allCheckbox && allCheckbox.checked) {
+            window.updateFilterBadge(null);
+        } else {
+            window.updateFilterBadge(filteredWords.length);
+        }
+    }
 }
 
 // フィルター結果の件数を表示

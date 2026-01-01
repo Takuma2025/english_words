@@ -5139,8 +5139,8 @@ body.reorder-mode-active .word-card-container {
 /* スクロール時に右上に固定（ヘッダーより下） */
 .red-sheet-toggle.sticky {
     position: fixed;
-    top: calc(var(--header-height) + env(safe-area-inset-top) + 8px);
-    right: 16px;
+    top: calc(var(--header-height) + env(safe-area-inset-top) + 16px);
+    right: 32px;
     left: auto;
     z-index: 1000;
     padding: 6px 10px;
@@ -5246,8 +5246,8 @@ body.reorder-mode-active .word-card-container {
     
     /* スマホでもsticky状態で右上に固定（ヘッダーより下、画面内に収まる） */
     .red-sheet-toggle.sticky {
-        top: calc(var(--header-height) + env(safe-area-inset-top) + 8px);
-        right: 12px;
+        top: calc(var(--header-height) + env(safe-area-inset-top) + 12px);
+        right: 20px;
         left: auto;
         padding: 5px 8px;
         gap: 5px;
