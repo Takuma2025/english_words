@@ -4477,6 +4477,12 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     currentFilterWords = categoryWords;
     currentFilterCourseTitle = courseTitle || category;
     
+    // テストへボタンを非表示（テストモードでは不要）
+    const unitTestBtn = document.getElementById('unitTestBtn');
+    if (unitTestBtn) {
+        unitTestBtn.classList.add('hidden');
+    }
+    
     // フィルター画面をボトムシートとして表示
     const wordFilterView = document.getElementById('wordFilterView');
     const filterOverlay = document.getElementById('filterOverlay');
@@ -4757,6 +4763,12 @@ function showInputModeDirectly(category, words, courseTitle) {
     
     // メインコンテンツを表示
     elements.mainContent.classList.remove('hidden');
+    
+    // テストへボタンを表示（学習モードでは表示）
+    const unitTestBtn = document.getElementById('unitTestBtn');
+    if (unitTestBtn) {
+        unitTestBtn.classList.remove('hidden');
+    }
     
     // ヘッダー更新
     updateHeaderButtons('learning');
@@ -6044,6 +6056,19 @@ function setupEventListeners() {
         elements.homeBtn.addEventListener('click', async () => {
             if (await showConfirm('学習を中断してホームに戻りますか？')) {
                 showCategorySelection();
+            }
+        });
+    }
+    
+    // 上部コンテナのテストへボタン
+    const unitTestBtn = document.getElementById('unitTestBtn');
+    if (unitTestBtn) {
+        unitTestBtn.addEventListener('click', () => {
+            // 現在のカテゴリと単語を使用してテストモードに切り替え
+            if (currentFilterCategory && currentFilterWords && currentFilterWords.length > 0) {
+                showWordFilterView(currentFilterCategory, currentFilterWords, currentFilterCourseTitle || currentFilterCategory);
+            } else if (selectedCategory && currentCourseWords && currentCourseWords.length > 0) {
+                showWordFilterView(selectedCategory, currentCourseWords, currentFilterCourseTitle || selectedCategory);
             }
         });
     }

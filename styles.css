@@ -3703,6 +3703,35 @@ body.learning-mode .app-header {
     font-weight: 700;
 }
 
+.unit-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.unit-test-btn {
+    background: #f9b916;
+    color: #ffffff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.2s, opacity 0.2s;
+    white-space: nowrap;
+}
+
+.unit-test-btn:hover {
+    background: #f5a500;
+}
+
+.unit-test-btn:active {
+    opacity: 0.8;
+}
+
 .unit-interrupt-btn {
     color: #dc2626;
     text-align: right;
@@ -4912,8 +4941,9 @@ body.reorder-mode-active .word-card-container {
 /* スクロール時に右上に固定（ヘッダーより下） */
 .red-sheet-toggle.sticky {
     position: fixed;
-    top: 65px;
-    right: 120px;
+    top: calc(var(--header-height) + env(safe-area-inset-top) + 8px);
+    right: 16px;
+    left: auto;
     z-index: 1000;
     padding: 4px 8px;
     background: #f9fafb;
@@ -5018,9 +5048,10 @@ body.reorder-mode-active .word-card-container {
         padding: 4px 6px;
     }
     
+    /* スマホでもsticky状態で右上に固定（ヘッダーより下、画面内に収まる） */
     .red-sheet-toggle.sticky {
-        top: 65px;
-        right: 25px;
+        top: calc(var(--header-height) + env(safe-area-inset-top) + 8px);
+        right: 16px;
         left: auto;
         padding: 4px 6px;
         gap: 4px;
