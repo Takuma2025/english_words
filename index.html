@@ -312,7 +312,7 @@
                         <button class="category-card" id="elementaryCategoryCardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-green">レベル0</span> カテゴリ別に覚える基本単語</div>
+                                    <div class="category-name">カテゴリー別に覚える単語</div>
                                 </div>
                                 <div class="category-meta">基礎からカテゴリー別に学習</div>
                                 <div class="category-progress">
@@ -759,11 +759,26 @@
                         </div>
                         <!-- 単語絞り込みフィルター -->
                         <div class="input-list-filter">
-                            <button class="input-filter-btn active" id="inputFilterAll" data-filter="all">すべて</button>
-                            <button class="input-filter-btn" id="inputFilterWrong" data-filter="wrong">覚えていない</button>
-                            <button class="input-filter-btn" id="inputFilterBookmark" data-filter="bookmark">ブックマーク</button>
-                            <button class="input-filter-btn" id="inputFilterUnlearned" data-filter="unlearned">未学習</button>
-                            <button class="input-filter-btn" id="inputFilterCorrect" data-filter="correct">覚えた</button>
+                            <button class="input-filter-btn active" id="inputFilterAll" data-filter="all">
+                                すべて
+                                <span class="filter-close-icon">×</span>
+                            </button>
+                            <button class="input-filter-btn" id="inputFilterWrong" data-filter="wrong">
+                                覚えていない
+                                <span class="filter-close-icon">×</span>
+                            </button>
+                            <button class="input-filter-btn" id="inputFilterBookmark" data-filter="bookmark">
+                                ブックマーク
+                                <span class="filter-close-icon">×</span>
+                            </button>
+                            <button class="input-filter-btn" id="inputFilterUnlearned" data-filter="unlearned">
+                                未学習
+                                <span class="filter-close-icon">×</span>
+                            </button>
+                            <button class="input-filter-btn" id="inputFilterCorrect" data-filter="correct">
+                                覚えた
+                                <span class="filter-close-icon">×</span>
+                            </button>
                             <label class="red-sheet-toggle" id="redSheetToggle">
                                 <input type="checkbox" class="red-sheet-checkbox">
                                 <span class="red-sheet-slider"></span>

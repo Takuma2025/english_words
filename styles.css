@@ -2350,6 +2350,8 @@ body.learning-mode .app-header {
 
 .category-icon {
     flex-shrink: 0;
+    margin-top: -2px;
+    vertical-align: top;
 }
 
 .category-accordion-arrow {
@@ -2449,7 +2451,8 @@ body.learning-mode .app-header {
 
 .file-icon-with-number {
     flex-shrink: 0;
-    vertical-align: middle;
+    vertical-align: top;
+    margin-top: -2px;
 }
 
 .accordion-item-text {
@@ -3099,6 +3102,27 @@ body.learning-mode .app-header {
 
 .level-badge-green {
     background-color: #22c55e;
+}
+
+.category-word-count {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    margin-left: 4px;
+}
+
+.category-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.category-badge-green {
+    background-color: #22c55e;
+    color: #ffffff;
 }
 
 /* レベルカードの高さを揃える */
@@ -4618,11 +4642,28 @@ body.reorder-mode-active .word-card-container {
     cursor: pointer;
     transition: all 0.15s ease;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
 }
 
-.input-filter-btn:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
+.filter-close-icon {
+    display: none;
+    font-size: 16px;
+    line-height: 1;
+    font-weight: bold;
+    opacity: 0.8;
+    transition: opacity 0.15s ease;
+    margin-left: 2px;
+}
+
+.input-filter-btn.active .filter-close-icon {
+    display: inline-block;
+}
+
+.filter-close-icon:hover {
+    opacity: 1;
 }
 
 .input-filter-btn.active {
@@ -4631,20 +4672,10 @@ body.reorder-mode-active .word-card-container {
     border-color: #3b82f6;
 }
 
-.input-filter-btn.active:hover {
-    background: #2563eb;
-    border-color: #2563eb;
-}
-
 /* すべて - 緑 */
 .input-filter-btn[data-filter="all"].active {
-    background: #22c55e;
-    border-color: #22c55e;
-}
-
-.input-filter-btn[data-filter="all"].active:hover {
-    background: #16a34a;
-    border-color: #16a34a;
+    background: #275384;
+    border-color: #275384;
 }
 
 /* 覚えていない - 赤 */
@@ -4653,20 +4684,10 @@ body.reorder-mode-active .word-card-container {
     border-color: #dc2626;
 }
 
-.input-filter-btn[data-filter="wrong"].active:hover {
-    background: #b91c1c;
-    border-color: #b91c1c;
-}
-
 /* ブックマーク - 黄色 */
 .input-filter-btn[data-filter="bookmark"].active {
     background: #f59e0b;
     border-color: #f59e0b;
-}
-
-.input-filter-btn[data-filter="bookmark"].active:hover {
-    background: #d97706;
-    border-color: #d97706;
 }
 
 /* 未学習 - グレー */
@@ -4675,20 +4696,10 @@ body.reorder-mode-active .word-card-container {
     border-color: #6b7280;
 }
 
-.input-filter-btn[data-filter="unlearned"].active:hover {
-    background: #4b5563;
-    border-color: #4b5563;
-}
-
 /* 覚えた - 青 */
 .input-filter-btn[data-filter="correct"].active {
     background: #3b82f6;
     border-color: #3b82f6;
-}
-
-.input-filter-btn[data-filter="correct"].active:hover {
-    background: #2563eb;
-    border-color: #2563eb;
 }
 
 .input-filter-btn:disabled {
@@ -5336,6 +5347,7 @@ body.reorder-mode-active .word-card-container {
     background: none;
     padding: 0;
     border-radius: 0;
+    font-size: 9px;
 }
 
 .input-list-expand-appearance-box .appearance-stars {
@@ -5455,6 +5467,10 @@ body.reorder-mode-active .word-card-container {
     .input-list-expand-appearance-box .appearance-osaka-icon {
         width: 16px;
         height: 16px;
+    }
+    
+    .input-list-expand-appearance-box .appearance-label {
+        font-size: 8px;
     }
     
     .input-list-expand-appearance-box .appearance-stars {

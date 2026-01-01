@@ -2530,8 +2530,15 @@ function formatTitleWithLevelBadge(title) {
         return '<span class="level-badge level-badge-purple">レベル４</span> ' + cleanTitle;
     } else if (title.includes('LEVEL5') || title.includes('難関私立高校入試レベル') || title.includes('レベル５') || title.includes('レベル5')) {
         return '<span class="level-badge level-badge-dark">レベル５</span> ' + cleanTitle;
-    } else if (title.includes('カテゴリ別') || title.includes('レベル０') || title.includes('レベル0') || isElementarySubcategory) {
-        return '<span class="level-badge level-badge-green">レベル０</span> ' + cleanTitle;
+    } else if (title.includes('カテゴリ別') || title.includes('レベル０') || title.includes('レベル0')) {
+        // カテゴリ別に覚える基本単語のメインカテゴリ
+        if (title.includes('カテゴリ別に覚える基本単語') || title.includes('カテゴリー別に覚える単語')) {
+            return 'カテゴリー別に覚える単語';
+        } else {
+            return cleanTitle;
+        }
+    } else if (isElementarySubcategory) {
+        return cleanTitle;
     }
     return title;
 }
@@ -2569,7 +2576,7 @@ function updateHeaderButtons(mode, title = '') {
         if (mode === 'course' && title) {
             // レベル別にバッジ付きタイトルを設定
             if (title === 'カテゴリ別に覚える基本単語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-green">レベル０</span> カテゴリ別に覚える基本単語';
+                headerTitleText.innerHTML = 'カテゴリー別に覚える単語';
             } else if (title === 'レベル１ 超重要700語') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-red">レベル１</span> 超重要700語';
             } else if (title === 'レベル２ 重要500語') {
@@ -3214,7 +3221,7 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                         <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="#3182ce" stroke="#3182ce" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                         </svg>
-                        カテゴリ別に覚える基本単語
+                        カテゴリー別に覚える単語
                     </div>
                 </div>
                 <div class="category-meta">基礎からカテゴリー別に学習</div>
@@ -3432,7 +3439,7 @@ function showElementaryCategorySelection(skipAnimation = false) {
     const courseSelectionImage = document.getElementById('courseSelectionImage');
     const courseSelectionDescription = document.getElementById('courseSelectionDescription');
     
-    // タイトルを設定（バッジ付き）
+    // タイトルを設定
     const formattedTitle = formatTitleWithLevelBadge('カテゴリ別に覚える基本単語');
     courseTitle.innerHTML = formattedTitle;
     courseList.innerHTML = '';
@@ -9166,13 +9173,60 @@ function setupInputListFilter() {
     if (!filterBtns.length) return;
     
     filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // アクティブ状態を更新（赤シートボタン以外）
-            filterBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+        // ×アイコンのクリックイベント
+        const closeIcon = btn.querySelector('.filter-close-icon');
+        if (closeIcon) {
+            closeIcon.addEventListener('click', (e) => {
+                e.stopPropagation(); // ボタンのクリックイベントを防ぐ
+                
+                const filterType = btn.dataset.filter;
+                
+                // 「すべて」ボタンの場合
+                if (filterType === 'all') {
+                    // すべてのボタンのactiveを削除してから「すべて」をアクティブにする
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                } else {
+                    // 選択を解除
+                    btn.classList.remove('active');
+                    
+                    // アクティブなボタンがなくなった場合は「すべて」をアクティブにする
+                    const activeBtns = document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn).active');
+                    if (activeBtns.length === 0) {
+                        const allBtn = document.querySelector('.input-filter-btn[data-filter="all"]');
+                        if (allBtn) allBtn.classList.add('active');
+                    }
+                }
+                
+                // フィルターを適用
+                applyInputFilter();
+            });
+        }
+        
+        // ボタン全体のクリックイベント
+        btn.addEventListener('click', (e) => {
+            // ×アイコンをクリックした場合は処理しない
+            if (e.target.classList.contains('filter-close-icon')) {
+                return;
+            }
+            
+            const filterType = btn.dataset.filter;
+            
+            // 「すべて」ボタンの場合の特別処理
+            if (filterType === 'all') {
+                // すべてのボタンのactiveを削除してから「すべて」をアクティブにする
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            } else {
+                // 「すべて」ボタンのactiveを削除
+                const allBtn = document.querySelector('.input-filter-btn[data-filter="all"]');
+                if (allBtn) allBtn.classList.remove('active');
+                
+                // クリックしたボタンのactiveをトグル
+                btn.classList.toggle('active');
+            }
             
             // フィルターを適用
-            currentInputFilter = btn.dataset.filter;
             applyInputFilter();
         });
     });
@@ -9365,28 +9419,72 @@ function applyInputFilter() {
         });
     }
     
+    // アクティブなフィルターボタンからフィルターを取得
+    const activeFilters = Array.from(document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn).active'))
+        .map(btn => btn.dataset.filter);
+    
     let filteredWords = baseWords;
     
-    switch (currentInputFilter) {
-        case 'wrong':
-            // 覚えていない単語（間違えた）
-            filteredWords = baseWords.filter(word => allWrongIds.has(word.id));
-            break;
-        case 'unlearned':
-            // 未学習の単語（正解も不正解もない）
-            filteredWords = baseWords.filter(word => !allCorrectIds.has(word.id) && !allWrongIds.has(word.id));
-            break;
-        case 'bookmark':
-            // チェック済み（ブックマーク）の単語
-            filteredWords = baseWords.filter(word => reviewWords.has(word.id));
-            break;
-        case 'correct':
-            // 覚えた単語（正解して、かつ間違えていない）
-            filteredWords = baseWords.filter(word => allCorrectIds.has(word.id) && !allWrongIds.has(word.id));
-            break;
-        default:
-            // すべて
-            filteredWords = baseWords;
+    // 「すべて」が選択されている場合は全単語を表示
+    if (activeFilters.includes('all') || activeFilters.length === 0) {
+        filteredWords = baseWords;
+    } else {
+        // 複数のフィルターの和集合を取る
+        const filteredSets = [];
+        
+        activeFilters.forEach(filter => {
+            let filteredSet = new Set();
+            
+            switch (filter) {
+                case 'wrong':
+                    // 覚えていない単語（間違えた）
+                    baseWords.forEach(word => {
+                        if (allWrongIds.has(word.id)) {
+                            filteredSet.add(word.id);
+                        }
+                    });
+                    break;
+                case 'unlearned':
+                    // 未学習の単語（正解も不正解もない）
+                    baseWords.forEach(word => {
+                        if (!allCorrectIds.has(word.id) && !allWrongIds.has(word.id)) {
+                            filteredSet.add(word.id);
+                        }
+                    });
+                    break;
+                case 'bookmark':
+                    // チェック済み（ブックマーク）の単語
+                    baseWords.forEach(word => {
+                        if (reviewWords.has(word.id)) {
+                            filteredSet.add(word.id);
+                        }
+                    });
+                    break;
+                case 'correct':
+                    // 覚えた単語（正解して、かつ間違えていない）
+                    baseWords.forEach(word => {
+                        if (allCorrectIds.has(word.id) && !allWrongIds.has(word.id)) {
+                            filteredSet.add(word.id);
+                        }
+                    });
+                    break;
+            }
+            
+            if (filteredSet.size > 0) {
+                filteredSets.push(filteredSet);
+            }
+        });
+        
+        // すべてのフィルターセットの和集合を取る
+        if (filteredSets.length > 0) {
+            const unionSet = new Set();
+            filteredSets.forEach(set => {
+                set.forEach(id => unionSet.add(id));
+            });
+            filteredWords = baseWords.filter(word => unionSet.has(word.id));
+        } else {
+            filteredWords = [];
+        }
     }
     
     // フィルター結果を表示
@@ -9414,7 +9512,11 @@ function updateFilterCount(filtered, total) {
     const titleEl = document.querySelector('.input-list-title');
     if (!titleEl) return;
     
-    if (currentInputFilter === 'all') {
+    // アクティブなフィルターボタンからフィルターを取得
+    const activeFilters = Array.from(document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn).active'))
+        .map(btn => btn.dataset.filter);
+    
+    if (activeFilters.includes('all') || activeFilters.length === 0) {
         titleEl.textContent = '単語一覧';
     } else {
         const filterNames = {
@@ -9423,7 +9525,13 @@ function updateFilterCount(filtered, total) {
             'bookmark': 'ブックマーク',
             'correct': '覚えた'
         };
-        titleEl.textContent = `${filterNames[currentInputFilter]}（${filtered}語）`;
+        
+        if (activeFilters.length === 1) {
+            titleEl.textContent = `${filterNames[activeFilters[0]]}（${filtered}語）`;
+        } else {
+            const filterLabels = activeFilters.map(f => filterNames[f]).join('・');
+            titleEl.textContent = `${filterLabels}（${filtered}語）`;
+        }
     }
 }
 
