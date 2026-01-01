@@ -4681,6 +4681,14 @@ body.reorder-mode-active .word-card-container {
 .input-list-header-row {
     display: flex;
     align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.input-list-controls-row {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
     gap: 8px;
     margin-bottom: 8px;
@@ -4692,11 +4700,6 @@ body.reorder-mode-active .word-card-container {
     justify-content: flex-start;
     gap: 12px;
     padding: 6px 0;
-}
-
-/* フィルター内のランダムボタン（右端に配置） */
-.input-list-filter .input-shuffle-btn {
-    margin-left: auto;
 }
 
 .input-shuffle-btn {
@@ -4901,25 +4904,32 @@ body.reorder-mode-active .word-card-container {
     display: flex;
 }
 
+/* コントロール行内の赤シートトグルは常に表示 */
+.input-list-controls-row .red-sheet-toggle {
+    display: flex;
+}
+
 /* スクロール時に右上に固定（ヘッダーより下） */
 .red-sheet-toggle.sticky {
     position: fixed;
     top: 65px;
     right: 120px;
     z-index: 1000;
-    padding: 10px 16px;
-    background: #ffffff;
-    border-radius: 24px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+    padding: 4px 8px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    box-shadow: none;
 }
 
 .red-sheet-toggle.sticky:hover {
-    background: #f9fafb;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
+    background: #f3f4f6;
+    border-color: #d1d5db;
 }
 
 .red-sheet-toggle.sticky:active {
     transform: scale(0.98);
+    background: #f3f4f6;
 }
 
 .red-sheet-checkbox {
@@ -5011,8 +5021,12 @@ body.reorder-mode-active .word-card-container {
         top: 65px;
         right: 25px;
         left: auto;
-        padding: 6px 8px;
+        padding: 4px 6px;
         gap: 4px;
+        background: #f9fafb;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        box-shadow: none;
     }
     
     .red-sheet-label {
@@ -5053,6 +5067,24 @@ body.reorder-mode-active .word-card-container {
     background: #f3f4f6;
     padding: 3px;
     border-radius: 8px;
+}
+
+/* 大きなトグル（中央配置用） */
+.input-list-mode-toggle-large {
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.input-list-mode-toggle-large .input-list-mode-btn {
+    padding: 8px 16px;
+    height: 40px;
+    font-size: 14px;
+    gap: 6px;
+}
+
+.input-list-mode-toggle-large .input-list-mode-btn .mode-btn-icon {
+    width: 18px;
+    height: 18px;
 }
 
 .input-list-mode-btn {
