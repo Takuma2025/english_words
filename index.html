@@ -745,7 +745,7 @@
                     <div class="input-list-view hidden" id="inputListView">
                         <div class="input-list-header">
                             <div class="input-list-header-row">
-                                <div class="input-list-mode-toggle">
+                                <div class="input-list-mode-toggle input-list-mode-toggle-large">
                                     <button class="input-list-mode-btn active" id="inputListModeExpand" data-mode="expand" title="単語帳モード">
                                         <svg class="mode-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
                                         <span>単語帳</span>
@@ -755,6 +755,18 @@
                                         <span>単語カード</span>
                                     </button>
                                 </div>
+                            </div>
+                            <div class="input-list-controls-row">
+                                <button class="input-shuffle-btn" id="inputShuffleBtn" title="ランダム表示">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="16 3 21 3 21 8"></polyline>
+                                        <line x1="4" y1="20" x2="21" y2="3"></line>
+                                        <polyline points="21 16 21 21 16 21"></polyline>
+                                        <line x1="15" y1="15" x2="21" y2="21"></line>
+                                        <line x1="4" y1="4" x2="9" y2="9"></line>
+                                    </svg>
+                                    <span>ランダム</span>
+                                </button>
                                 <label class="red-sheet-toggle" id="redSheetToggle">
                                     <input type="checkbox" class="red-sheet-checkbox">
                                     <span class="red-sheet-slider"></span>
@@ -787,16 +799,6 @@
                             <button class="input-filter-btn" id="inputFilterCorrect" data-filter="correct">
                                 覚えた
                                 <span class="filter-close-icon">×</span>
-                            </button>
-                            <button class="input-shuffle-btn" id="inputShuffleBtn" title="ランダム表示">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="16 3 21 3 21 8"></polyline>
-                                    <line x1="4" y1="20" x2="21" y2="3"></line>
-                                    <polyline points="21 16 21 21 16 21"></polyline>
-                                    <line x1="15" y1="15" x2="21" y2="21"></line>
-                                    <line x1="4" y1="4" x2="9" y2="9"></line>
-                                </svg>
-                                <span>ランダム</span>
                             </button>
                         </div>
                         <!-- 赤シートオーバーレイ -->

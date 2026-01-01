@@ -304,7 +304,7 @@ const timeWords = [
   { id: 11043, word: "night", meaning: "夜、晩", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 12 },
   { id: 11044, word: "midnight", meaning: "深夜、真夜中", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 0 },
   { id: 11045, word: "tonight", meaning: "今夜、今晩", partOfSpeech: "名詞・副詞", category: "時間・時間帯", appearanceCount: 1 },
-  { id: 11046, word: "breakfast", meaning: "朝食", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 1 },
+　{ id: 11046, word: "breakfast", meaning: "朝食", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 1 },
   { id: 11047, word: "lunch", meaning: "昼食、ランチ", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 15 },
   { id: 11048, word: "dinner", meaning: "夕食、ディナー", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 16 },
 ];  
