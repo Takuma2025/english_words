@@ -9689,6 +9689,12 @@ function displayCurrentWord() {
     elements.englishWord.textContent = word.word;
     applyMarkers(word);
     
+    // カード裏面にも英語を表示
+    const englishWordBack = document.getElementById('englishWordBack');
+    if (englishWordBack) {
+        englishWordBack.textContent = word.word;
+    }
+    
     // 入試頻出度を表示（カードモード）- アウトプットモードでは非表示
     const appearanceCountEl = document.getElementById('wordAppearanceCount');
     if (appearanceCountEl) {
