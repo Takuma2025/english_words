@@ -9318,9 +9318,9 @@ function setupRedSheet() {
         const isActive = redSheetCheckbox.checked;
         
         if (isActive) {
-            // 画面の上から70%の位置から開始
+            // 下から65%の位置（上から35%の位置）から開始
             const viewportHeight = window.innerHeight;
-            const topPosition = Math.round(viewportHeight * 0.7);
+            const topPosition = Math.round(viewportHeight * 0.35);
             redSheetOverlay.style.top = topPosition + 'px';
             
             redSheetOverlay.classList.remove('hidden');
@@ -9980,8 +9980,8 @@ function showSparkleEffect() {
     container.className = 'sparkle-container';
     document.body.appendChild(container);
     
-    // キラキラを複数生成
-    const sparkleCount = 15;
+    // 星型キラキラを複数生成（少なめに）
+    const sparkleCount = 10;
     for (let i = 0; i < sparkleCount; i++) {
         setTimeout(() => {
             // ランダムな位置
@@ -9994,18 +9994,11 @@ function showSparkleEffect() {
             star.style.left = x + 'px';
             star.style.top = y + 'px';
             star.style.animationDelay = (Math.random() * 0.2) + 's';
+            // ランダムなサイズ（バラバラに）
+            const size = 0.5 + Math.random() * 1.2;
+            star.style.setProperty('--star-scale', size);
             container.appendChild(star);
-            
-            // 丸型キラキラ
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle';
-            sparkle.style.left = (x + (Math.random() - 0.5) * 50) + 'px';
-            sparkle.style.top = (y + (Math.random() - 0.5) * 50) + 'px';
-            sparkle.style.animationDelay = (Math.random() * 0.3) + 's';
-            sparkle.style.width = (8 + Math.random() * 10) + 'px';
-            sparkle.style.height = sparkle.style.width;
-            container.appendChild(sparkle);
-        }, i * 30);
+        }, i * 40);
     }
     
     // コンテナを削除
