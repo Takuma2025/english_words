@@ -4883,7 +4883,7 @@ body.reorder-mode-active .word-card-container {
 /* スクロール時に右上に固定（ヘッダーより下） */
 .red-sheet-toggle.sticky {
     position: fixed;
-    top: 70px;
+    top: 120px;
     right: 140px;
     z-index: 1000;
     padding: 10px 16px;
@@ -4980,9 +4980,25 @@ body.reorder-mode-active .word-card-container {
     }
     
     .red-sheet-toggle.sticky {
-        top: 60px;
-        right: 12px;
-        padding: 8px 14px;
+        top: 100px;
+        right: 8px;
+        left: auto;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .red-sheet-toggle.sticky .red-sheet-slider {
+        width: 36px;
+        height: 20px;
+    }
+    
+    .red-sheet-toggle.sticky .red-sheet-slider::before {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .red-sheet-toggle.sticky .red-sheet-checkbox:checked + .red-sheet-slider::before {
+        transform: translateX(16px);
     }
 }
 
