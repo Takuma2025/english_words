@@ -262,9 +262,6 @@ body.learning-mode .app-header {
     z-index: 1002;
 }
 
-.hamburger-menu-btn:hover {
-    opacity: 0.8;
-}
 
 .hamburger-menu-btn:active {
     opacity: 0.6;
@@ -291,9 +288,6 @@ body.learning-mode .app-header {
     z-index: 1002;
 }
 
-.header-back-btn:hover {
-    opacity: 0.8;
-}
 
 .header-back-btn:active {
     opacity: 0.6;
@@ -2452,7 +2446,7 @@ body.learning-mode .app-header {
 .file-icon-with-number {
     flex-shrink: 0;
     vertical-align: top;
-    margin-top: -2px;
+    margin-top: -1.5px;
 }
 
 .accordion-item-text {
@@ -4662,9 +4656,6 @@ body.reorder-mode-active .word-card-container {
     display: inline-block;
 }
 
-.filter-close-icon:hover {
-    opacity: 1;
-}
 
 .input-filter-btn.active {
     background: #3b82f6;
@@ -10921,10 +10912,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     z-index: 11;
 }
 
-.filter-close-btn:hover {
-    background: #e5e7eb;
-    color: #1f2937;
-}
 
 .filter-close-btn:active {
     transform: scale(0.95);

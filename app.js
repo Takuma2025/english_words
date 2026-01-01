@@ -2533,7 +2533,7 @@ function formatTitleWithLevelBadge(title) {
     } else if (title.includes('カテゴリ別') || title.includes('レベル０') || title.includes('レベル0')) {
         // カテゴリ別に覚える基本単語のメインカテゴリ
         if (title.includes('カテゴリ別に覚える基本単語') || title.includes('カテゴリー別に覚える単語')) {
-            return 'カテゴリー別に覚える単語';
+            return '<svg class="category-drawer-icon" width="24" height="24" viewBox="0 0 24 24" fill="#22c55e" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle;"><rect x="2" y="4" width="20" height="4" rx="1"></rect><rect x="2" y="10" width="20" height="4" rx="1"></rect><rect x="2" y="16" width="20" height="4" rx="1"></rect></svg>カテゴリー別に覚える単語';
         } else {
             return cleanTitle;
         }
@@ -2576,7 +2576,7 @@ function updateHeaderButtons(mode, title = '') {
         if (mode === 'course' && title) {
             // レベル別にバッジ付きタイトルを設定
             if (title === 'カテゴリ別に覚える基本単語') {
-                headerTitleText.innerHTML = 'カテゴリー別に覚える単語';
+                headerTitleText.innerHTML = '<svg class="category-drawer-icon" width="24" height="24" viewBox="0 0 24 24" fill="#22c55e" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle;"><rect x="2" y="4" width="20" height="4" rx="1"></rect><rect x="2" y="10" width="20" height="4" rx="1"></rect><rect x="2" y="16" width="20" height="4" rx="1"></rect></svg>カテゴリー別に覚える単語';
             } else if (title === 'レベル１ 超重要700語') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-red">レベル１</span> 超重要700語';
             } else if (title === 'レベル２ 重要500語') {
