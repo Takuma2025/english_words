@@ -9318,9 +9318,9 @@ function setupRedSheet() {
         const isActive = redSheetCheckbox.checked;
         
         if (isActive) {
-            // 画面の上80%を隠す位置（画面の20%の位置から開始）
+            // 画面の上から70%の位置から開始
             const viewportHeight = window.innerHeight;
-            const topPosition = Math.round(viewportHeight * 0.2);
+            const topPosition = Math.round(viewportHeight * 0.7);
             redSheetOverlay.style.top = topPosition + 'px';
             
             redSheetOverlay.classList.remove('hidden');
