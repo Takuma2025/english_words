@@ -761,48 +761,64 @@
                             </div>
                             <div class="input-list-controls-row">
                                 <button class="input-shuffle-btn" id="inputShuffleBtn" title="ランダム表示">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="16 3 21 3 21 8"></polyline>
                                         <line x1="4" y1="20" x2="21" y2="3"></line>
                                         <polyline points="21 16 21 21 16 21"></polyline>
                                         <line x1="15" y1="15" x2="21" y2="21"></line>
                                         <line x1="4" y1="4" x2="9" y2="9"></line>
                                     </svg>
-                                    <span>ランダム</span>
+                                    <span class="btn-label">ランダム</span>
                                 </button>
+                                <div class="input-filter-dropdown-wrapper">
+                                    <button class="input-filter-trigger" id="inputFilterTrigger">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                                        </svg>
+                                        <span class="btn-label">絞り込み</span>
+                                        <span class="filter-active-badge hidden" id="filterActiveBadge"></span>
+                                    </button>
+                                    <div class="input-filter-dropdown hidden" id="inputFilterDropdown">
+                                        <div class="filter-dropdown-section">
+                                            <div class="filter-dropdown-title">表示する単語</div>
+                                            <label class="filter-dropdown-item">
+                                                <input type="checkbox" id="inputFilterAll" data-filter="all" checked>
+                                                <span class="filter-dropdown-checkbox"></span>
+                                                <span class="filter-dropdown-label">すべて</span>
+                                            </label>
+                                            <label class="filter-dropdown-item">
+                                                <input type="checkbox" id="inputFilterUnlearned" data-filter="unlearned" checked>
+                                                <span class="filter-dropdown-checkbox"></span>
+                                                <span class="filter-dropdown-label">未学習</span>
+                                                <span class="filter-dropdown-icon filter-icon-gray"></span>
+                                            </label>
+                                            <label class="filter-dropdown-item">
+                                                <input type="checkbox" id="inputFilterWrong" data-filter="wrong" checked>
+                                                <span class="filter-dropdown-checkbox"></span>
+                                                <span class="filter-dropdown-label">覚えていない</span>
+                                                <span class="filter-dropdown-icon filter-icon-red"></span>
+                                            </label>
+                                            <label class="filter-dropdown-item">
+                                                <input type="checkbox" id="inputFilterCorrect" data-filter="correct" checked>
+                                                <span class="filter-dropdown-checkbox"></span>
+                                                <span class="filter-dropdown-label">覚えた</span>
+                                                <span class="filter-dropdown-icon filter-icon-blue"></span>
+                                            </label>
+                                            <label class="filter-dropdown-item">
+                                                <input type="checkbox" id="inputFilterBookmark" data-filter="bookmark" checked>
+                                                <span class="filter-dropdown-checkbox"></span>
+                                                <span class="filter-dropdown-label">ブックマーク</span>
+                                                <svg class="filter-dropdown-bookmark" width="14" height="16" viewBox="0 0 14 16" fill="#fbbf24" stroke="#fbbf24" stroke-width="1.5"><path d="M1 1h12v14l-6-4-6 4V1z"/></svg>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                                 <label class="red-sheet-toggle" id="redSheetToggle">
                                     <input type="checkbox" class="red-sheet-checkbox">
                                     <span class="red-sheet-slider"></span>
-                                    <svg class="red-sheet-icon" width="15" height="20" viewBox="0 0 12 20" fill="none">
-                                        <rect x="1" y="2" width="10" height="16" rx="1.5" fill="#dc2626" opacity="0.8"/>
-                                        <rect x="2" y="3" width="8" height="14" rx="1" fill="#ef4444"/>
-                                    </svg>
                                     <span class="red-sheet-label">赤シート</span>
                                 </label>
                             </div>
-                        </div>
-                        <!-- 単語絞り込みフィルター -->
-                        <div class="input-list-filter">
-                            <button class="input-filter-btn active" id="inputFilterAll" data-filter="all">
-                                すべて
-                                <span class="filter-close-icon">×</span>
-                            </button>
-                            <button class="input-filter-btn" id="inputFilterWrong" data-filter="wrong">
-                                覚えていない
-                                <span class="filter-close-icon">×</span>
-                            </button>
-                            <button class="input-filter-btn" id="inputFilterBookmark" data-filter="bookmark">
-                                ブックマーク
-                                <span class="filter-close-icon">×</span>
-                            </button>
-                            <button class="input-filter-btn" id="inputFilterUnlearned" data-filter="unlearned">
-                                未学習
-                                <span class="filter-close-icon">×</span>
-                            </button>
-                            <button class="input-filter-btn" id="inputFilterCorrect" data-filter="correct">
-                                覚えた
-                                <span class="filter-close-icon">×</span>
-                            </button>
                         </div>
                         <!-- 赤シートオーバーレイ -->
                         <div class="red-sheet-overlay hidden" id="redSheetOverlay"></div>

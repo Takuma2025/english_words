@@ -9462,64 +9462,120 @@ function setupInputListModeToggle() {
 
 // インプットモード用フィルターのセットアップ
 function setupInputListFilter() {
-    const filterBtns = document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn)');
-    if (!filterBtns.length) return;
+    // 新しいドロップダウン形式のフィルター
+    const filterTrigger = document.getElementById('inputFilterTrigger');
+    const filterDropdown = document.getElementById('inputFilterDropdown');
+    const filterCheckboxes = document.querySelectorAll('.filter-dropdown-item input[type="checkbox"]');
+    const filterActiveBadge = document.getElementById('filterActiveBadge');
     
-    filterBtns.forEach(btn => {
-        // ×アイコンのクリックイベント
-        const closeIcon = btn.querySelector('.filter-close-icon');
-        if (closeIcon) {
-            closeIcon.addEventListener('click', (e) => {
-                e.stopPropagation(); // ボタンのクリックイベントを防ぐ
+    if (filterTrigger && filterDropdown) {
+        // トリガーボタンのクリックでドロップダウン開閉
+        filterTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = filterDropdown.classList.contains('show');
+            if (isOpen) {
+                filterDropdown.classList.remove('show');
+                filterTrigger.classList.remove('active');
+            } else {
+                filterDropdown.classList.remove('hidden');
+                // 少し遅延してアニメーションを適用
+                requestAnimationFrame(() => {
+                    filterDropdown.classList.add('show');
+                    filterTrigger.classList.add('active');
+                });
+            }
+        });
+        
+        // ドロップダウン外クリックで閉じる
+        document.addEventListener('click', (e) => {
+            if (!filterDropdown.contains(e.target) && !filterTrigger.contains(e.target)) {
+                filterDropdown.classList.remove('show');
+                filterTrigger.classList.remove('active');
+            }
+        });
+        
+        // チェックボックスの変更イベント
+        filterCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const filterType = checkbox.dataset.filter;
+                const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
+                const otherCheckboxes = Array.from(filterCheckboxes).filter(cb => cb.dataset.filter !== 'all');
                 
-                const filterType = btn.dataset.filter;
-                
-                // 「すべて」ボタンの場合
                 if (filterType === 'all') {
-                    // すべてのボタンのactiveを削除してから「すべて」をアクティブにする
-                    filterBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
+                    // 「すべて」をクリックした場合
+                    if (checkbox.checked) {
+                        // すべてをチェック
+                        otherCheckboxes.forEach(cb => cb.checked = true);
+                    } else {
+                        // すべてのチェックを外す
+                        otherCheckboxes.forEach(cb => cb.checked = false);
+                    }
                 } else {
-                    // 選択を解除
-                    btn.classList.remove('active');
+                    // 個別のチェックボックスの場合
+                    const allChecked = otherCheckboxes.every(cb => cb.checked);
+                    const noneChecked = otherCheckboxes.every(cb => !cb.checked);
                     
-                    // アクティブなボタンがなくなった場合は「すべて」をアクティブにする
-                    const activeBtns = document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn).active');
-                    if (activeBtns.length === 0) {
-                        const allBtn = document.querySelector('.input-filter-btn[data-filter="all"]');
-                        if (allBtn) allBtn.classList.add('active');
+                    if (allChecked) {
+                        // すべてチェックされている場合は「すべて」もチェック
+                        if (allCheckbox) allCheckbox.checked = true;
+                    } else {
+                        // そうでない場合は「すべて」のチェックを外す
+                        if (allCheckbox) allCheckbox.checked = false;
                     }
                 }
+                
+                // バッジを更新
+                updateFilterBadge();
                 
                 // フィルターを適用
                 applyInputFilter();
             });
-        }
+        });
+    }
+    
+    // バッジ更新関数
+    function updateFilterBadge() {
+        if (!filterActiveBadge) return;
         
-        // ボタン全体のクリックイベント
+        const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
+        const otherCheckboxes = Array.from(filterCheckboxes).filter(cb => cb.dataset.filter !== 'all');
+        const checkedCount = otherCheckboxes.filter(cb => cb.checked).length;
+        const totalCount = otherCheckboxes.length;
+        
+        if (allCheckbox && allCheckbox.checked) {
+            // すべて選択時はバッジ非表示
+            filterActiveBadge.classList.add('hidden');
+            filterTrigger.classList.remove('active');
+        } else if (checkedCount === 0) {
+            // 何も選択されていない場合
+            filterActiveBadge.textContent = '0';
+            filterActiveBadge.classList.remove('hidden');
+            filterTrigger.classList.add('active');
+        } else if (checkedCount < totalCount) {
+            // 一部選択時
+            filterActiveBadge.textContent = checkedCount;
+            filterActiveBadge.classList.remove('hidden');
+            filterTrigger.classList.add('active');
+        } else {
+            filterActiveBadge.classList.add('hidden');
+            filterTrigger.classList.remove('active');
+        }
+    }
+    
+    // 旧フィルターボタン対応（互換性用）
+    const filterBtns = document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn)');
+    filterBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
-            // ×アイコンをクリックした場合は処理しない
-            if (e.target.classList.contains('filter-close-icon')) {
-                return;
-            }
-            
+            if (e.target.classList.contains('filter-close-icon')) return;
             const filterType = btn.dataset.filter;
-            
-            // 「すべて」ボタンの場合の特別処理
             if (filterType === 'all') {
-                // すべてのボタンのactiveを削除してから「すべて」をアクティブにする
                 filterBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
             } else {
-                // 「すべて」ボタンのactiveを削除
                 const allBtn = document.querySelector('.input-filter-btn[data-filter="all"]');
                 if (allBtn) allBtn.classList.remove('active');
-                
-                // クリックしたボタンのactiveをトグル
                 btn.classList.toggle('active');
             }
-            
-            // フィルターを適用
             applyInputFilter();
         });
     });
@@ -9771,14 +9827,27 @@ function applyInputFilter() {
         });
     }
     
-    // アクティブなフィルターボタンからフィルターを取得
-    const activeFilters = Array.from(document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn).active'))
-        .map(btn => btn.dataset.filter);
+    // アクティブなフィルターを取得（新しいドロップダウン形式を優先）
+    let activeFilters = [];
+    const filterCheckboxes = document.querySelectorAll('.filter-dropdown-item input[type="checkbox"]:checked');
+    
+    if (filterCheckboxes.length > 0) {
+        // 新しいドロップダウン形式
+        activeFilters = Array.from(filterCheckboxes).map(cb => cb.dataset.filter);
+    } else {
+        // 旧ボタン形式（互換性用）
+        activeFilters = Array.from(document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn).active'))
+            .map(btn => btn.dataset.filter);
+    }
     
     let filteredWords = baseWords;
     
+    // 何もチェックされていない場合は空の結果
+    if (activeFilters.length === 0) {
+        filteredWords = [];
+    }
     // 「すべて」が選択されている場合は全単語を表示
-    if (activeFilters.includes('all') || activeFilters.length === 0) {
+    else if (activeFilters.includes('all')) {
         filteredWords = baseWords;
     } else {
         // 複数のフィルターの和集合を取る
