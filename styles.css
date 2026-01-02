@@ -5288,17 +5288,16 @@ body.reorder-mode-active .word-card-container {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
+    gap: 0;
 }
 
 /* フリップモード右上のアクションエリア */
 .input-list-top-actions {
     position: absolute;
     top: 0;
-    right: 40px;
+    right: 8px;
     display: flex;
     align-items: flex-start;
     gap: 6px;
@@ -5423,7 +5422,8 @@ body.reorder-mode-active .word-card-container {
     font-weight: 700;
     color: #ffffff;
     position: relative;
-    padding: 3px 7px;
+    padding: 3px 7px 3px 7px;
+    margin-right: 0;
     background: #6b7280;
     border-radius: 0;
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
@@ -5452,6 +5452,50 @@ body.reorder-mode-active .word-card-container {
 
 .input-list-number.marker-wrong {
     background: #ef4444;
+}
+
+/* フリップモードのチェックボックス（単語番号の右） */
+.input-list-checkbox {
+    position: absolute;
+    top: 0;
+    left: 48px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 5px;
+    background: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    z-index: 10;
+}
+
+.input-list-checkbox::after {
+    content: '';
+    width: 5px;
+    height: 9px;
+    border: solid #d1d5db;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-top: -2px;
+}
+
+.input-list-checkbox:hover {
+    border-color: #9ca3af;
+}
+
+.input-list-checkbox.checked {
+    background: #fbbf24;
+    border-color: #f59e0b;
+}
+
+.input-list-checkbox.checked::after {
+    border-color: #ffffff;
 }
 
 .input-list-appearance {
@@ -5619,6 +5663,46 @@ body.reorder-mode-active .word-card-container {
     background: #ef4444;
 }
 
+/* 展開モードのチェックボックス（単語番号の右） */
+.input-list-expand-checkbox {
+    position: absolute;
+    top: 0;
+    left: 48px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.input-list-expand-checkbox::after {
+    content: '';
+    width: 6px;
+    height: 10px;
+    border: solid #d1d5db;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+    margin-top: -2px;
+}
+
+.input-list-expand-checkbox:hover {
+    border-color: #9ca3af;
+}
+
+.input-list-expand-checkbox.checked {
+    background: #fbbf24;
+    border-color: #f59e0b;
+}
+
+.input-list-expand-checkbox.checked::after {
+    border-color: #ffffff;
+}
+
 .input-list-expand-word-row {
     display: flex;
     align-items: center;
@@ -5680,7 +5764,7 @@ body.reorder-mode-active .word-card-container {
 .input-list-expand-top-actions {
     position: absolute;
     top: 0;
-    right: 0;
+    right: 8px;
     display: flex;
     align-items: flex-start;
     gap: 8px;
@@ -6955,6 +7039,56 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     background: #ef4444;
 }
 
+/* アウトプットモードのチェックボックス（単語番号の右） */
+.word-checkbox {
+    position: absolute;
+    top: 14px;
+    left: 75px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 5px;
+    background: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.word-checkbox::after {
+    content: '';
+    width: 5px;
+    height: 9px;
+    border: solid #d1d5db;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-top: -2px;
+}
+
+.word-checkbox:hover {
+    border-color: #9ca3af;
+}
+
+.word-checkbox.checked {
+    background: #fbbf24;
+    border-color: #f59e0b;
+}
+
+.word-checkbox.checked::after {
+    border-color: #ffffff;
+}
+
+/* アウトプットモードのときはチェックボックスも非表示 */
+body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-checkbox {
+    display: none;
+}
+
+.word-card.flipped .word-checkbox {
+    display: none;
+}
+
 /* インプットモードの単語番号 */
 #inputWordNumber {
     position: absolute !important;
@@ -6984,6 +7118,48 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 #inputWordNumber.marker-wrong {
     box-shadow: none !important;
+}
+
+/* インプットモードのチェックボックス */
+#inputWordCheckbox {
+    position: absolute !important;
+    top: 0 !important;
+    left: 70px !important;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 5px;
+    background: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+    margin-top: 3px;
+}
+
+#inputWordCheckbox::after {
+    content: '';
+    width: 5px;
+    height: 9px;
+    border: solid #d1d5db;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-top: -2px;
+}
+
+#inputWordCheckbox:hover {
+    border-color: #9ca3af;
+}
+
+#inputWordCheckbox.checked {
+    background: #fbbf24;
+    border-color: #f59e0b;
+}
+
+#inputWordCheckbox.checked::after {
+    border-color: #ffffff;
 }
 
 .word-card.flipped .word-number {

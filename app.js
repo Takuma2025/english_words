@@ -2156,6 +2156,7 @@ const elements = {
     wordCard: document.getElementById('wordCard'),
     cardInner: document.getElementById('cardInner'),
     wordNumber: document.getElementById('wordNumber'),
+    wordCheckbox: document.getElementById('wordCheckbox'),
     englishWord: document.getElementById('englishWord'),
     posContainer: document.getElementById('posContainer'),
     // partOfSpeech: document.getElementById('partOfSpeech'), // 削除（動的生成に変更）
@@ -5922,6 +5923,25 @@ function setupEventListeners() {
     });
     elements.starBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
 
+    // チェックボックス（アウトプットモード用）
+    if (elements.wordCheckbox) {
+        elements.wordCheckbox.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleReview();
+        });
+        elements.wordCheckbox.addEventListener('pointerdown', (e) => e.stopPropagation());
+    }
+    
+    // チェックボックス（インプットモード用）
+    const inputWordCheckbox = document.getElementById('inputWordCheckbox');
+    if (inputWordCheckbox) {
+        inputWordCheckbox.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleReview();
+        });
+        inputWordCheckbox.addEventListener('pointerdown', (e) => e.stopPropagation());
+    }
+
     // 音声ボタン（カードモード）
     if (elements.audioBtn) {
         elements.audioBtn.addEventListener('click', (e) => {
@@ -7405,6 +7425,23 @@ function displayInputMode(skipAnimationReset = false) {
         inputWordNumber.textContent = `No.${word.id}`;
     }
     
+    // チェックボックスの状態を更新
+    if (elements.wordCheckbox) {
+        if (reviewWords.has(word.id)) {
+            elements.wordCheckbox.classList.add('checked');
+        } else {
+            elements.wordCheckbox.classList.remove('checked');
+        }
+    }
+    const inputWordCheckbox = document.getElementById('inputWordCheckbox');
+    if (inputWordCheckbox) {
+        if (reviewWords.has(word.id)) {
+            inputWordCheckbox.classList.add('checked');
+        } else {
+            inputWordCheckbox.classList.remove('checked');
+        }
+    }
+    
     const inputMeaning = document.getElementById('inputMeaning');
     const letterInputs = document.getElementById('letterInputs');
     const submitBtn = document.getElementById('submitBtn');
@@ -8119,6 +8156,23 @@ function toggleReview() {
     updateStarButton();
     applyMarkers(word);
     
+    // チェックボックスの状態を更新
+    if (elements.wordCheckbox) {
+        if (reviewWords.has(word.id)) {
+            elements.wordCheckbox.classList.add('checked');
+        } else {
+            elements.wordCheckbox.classList.remove('checked');
+        }
+    }
+    const inputWordCheckbox = document.getElementById('inputWordCheckbox');
+    if (inputWordCheckbox) {
+        if (reviewWords.has(word.id)) {
+            inputWordCheckbox.classList.add('checked');
+        } else {
+            inputWordCheckbox.classList.remove('checked');
+        }
+    }
+    
     // 入力モードの場合もチェックボタンの状態を更新
     if (isInputModeActive) {
         const inputStarBtn = document.getElementById('inputStarBtn');
@@ -8739,7 +8793,26 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
                 number.classList.add('marker-correct');
             }
         }
-        header.appendChild(number);
+        item.appendChild(number);
+        
+        // チェックボックス（単語番号の右）
+        const checkbox = document.createElement('div');
+        checkbox.className = 'input-list-expand-checkbox';
+        if (reviewWords.has(word.id)) {
+            checkbox.classList.add('checked');
+        }
+        checkbox.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (reviewWords.has(word.id)) {
+                reviewWords.delete(word.id);
+                checkbox.classList.remove('checked');
+            } else {
+                reviewWords.add(word.id);
+                checkbox.classList.add('checked');
+            }
+            saveReviewWords();
+        });
+        item.appendChild(checkbox);
         
         const wordRow = document.createElement('div');
         wordRow.className = 'input-list-expand-word-row';
@@ -8763,7 +8836,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         header.appendChild(wordRow);
         item.appendChild(header);
         
-        // 右上のアクションエリア（でた度 + ブックマーク）
+        // 右上のアクションエリア（でた度）
         const topActions = document.createElement('div');
         topActions.className = 'input-list-expand-top-actions';
         
@@ -8791,20 +8864,6 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             
             topActions.appendChild(appearanceBox);
         }
-        
-        // ブックマークボタン（リボン型）
-        const starBtn = document.createElement('button');
-        starBtn.className = 'star-btn input-list-expand-star-btn';
-        starBtn.setAttribute('type', 'button');
-        if (reviewWords.has(word.id)) {
-            starBtn.classList.add('active');
-        }
-        starBtn.innerHTML = '<svg width="24" height="32" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="0" aria-hidden="true" focusable="false"><path d="M4 0h16v32l-8-6-8 6V0z" fill="currentColor"/></svg>';
-        starBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleReviewById(word.id, starBtn);
-        });
-        topActions.appendChild(starBtn);
         
         item.appendChild(topActions);
         
@@ -8893,6 +8952,25 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             }
         }
         meta.appendChild(number);
+        
+        // チェックボックス（単語番号の右）
+        const checkbox = document.createElement('div');
+        checkbox.className = 'input-list-checkbox';
+        if (reviewWords.has(word.id)) {
+            checkbox.classList.add('checked');
+        }
+        checkbox.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (reviewWords.has(word.id)) {
+                reviewWords.delete(word.id);
+                checkbox.classList.remove('checked');
+            } else {
+                reviewWords.add(word.id);
+                checkbox.classList.add('checked');
+            }
+            saveReviewWords();
+        });
+        meta.appendChild(checkbox);
         
         const row = document.createElement('div');
         row.className = 'input-list-row';
@@ -9075,7 +9153,7 @@ function renderInputListView(words) {
                 item.classList.add('marker-correct');
             }
             
-            // ヘッダー部分（番号、英単語、音声、ブックマーク）
+            // ヘッダー部分（番号、英単語、音声）
             const header = document.createElement('div');
             header.className = 'input-list-expand-header';
             
@@ -9087,7 +9165,26 @@ function renderInputListView(words) {
             } else if (isCorrect) {
                 number.classList.add('marker-correct');
             }
-            header.appendChild(number);
+            item.appendChild(number);
+            
+            // チェックボックス（単語番号の右）
+            const checkbox = document.createElement('div');
+            checkbox.className = 'input-list-expand-checkbox';
+            if (reviewWords.has(word.id)) {
+                checkbox.classList.add('checked');
+            }
+            checkbox.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (reviewWords.has(word.id)) {
+                    reviewWords.delete(word.id);
+                    checkbox.classList.remove('checked');
+                } else {
+                    reviewWords.add(word.id);
+                    checkbox.classList.add('checked');
+                }
+                saveReviewWords();
+            });
+            item.appendChild(checkbox);
             
             const wordRow = document.createElement('div');
             wordRow.className = 'input-list-expand-word-row';
@@ -9124,7 +9221,7 @@ function renderInputListView(words) {
             header.appendChild(wordRow);
             item.appendChild(header);
             
-            // 右上のアクションエリア（でた度 + ブックマーク）
+            // 右上のアクションエリア（でた度）
             const topActions = document.createElement('div');
             topActions.className = 'input-list-expand-top-actions';
             
@@ -9152,20 +9249,6 @@ function renderInputListView(words) {
                 
                 topActions.appendChild(appearanceBox);
             }
-            
-            // ブックマークボタン（リボン型）
-            const starBtn = document.createElement('button');
-            starBtn.className = 'star-btn input-list-expand-star-btn';
-            starBtn.setAttribute('type', 'button');
-            if (reviewWords.has(word.id)) {
-                starBtn.classList.add('active');
-            }
-            starBtn.innerHTML = '<svg width="24" height="32" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="0" aria-hidden="true" focusable="false"><path d="M4 0h16v32l-8-6-8 6V0z" fill="currentColor"/></svg>';
-            starBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleReviewById(word.id, starBtn);
-            });
-            topActions.appendChild(starBtn);
             
             item.appendChild(topActions);
             
@@ -9262,6 +9345,25 @@ function renderInputListView(words) {
             }
             meta.appendChild(number);
             
+            // チェックボックス（単語番号の右）
+            const checkbox = document.createElement('div');
+            checkbox.className = 'input-list-checkbox';
+            if (reviewWords.has(word.id)) {
+                checkbox.classList.add('checked');
+            }
+            checkbox.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (reviewWords.has(word.id)) {
+                    reviewWords.delete(word.id);
+                    checkbox.classList.remove('checked');
+                } else {
+                    reviewWords.add(word.id);
+                    checkbox.classList.add('checked');
+                }
+                saveReviewWords();
+            });
+            meta.appendChild(checkbox);
+            
             const row = document.createElement('div');
             row.className = 'input-list-row';
             
@@ -9320,7 +9422,7 @@ function renderInputListView(words) {
             inner.appendChild(front);
             inner.appendChild(back);
             
-            // 右上のアクションエリア（でた度 + ブックマーク）
+            // 右上のアクションエリア（でた度）
             const topActions = document.createElement('div');
             topActions.className = 'input-list-top-actions';
             
@@ -9348,21 +9450,6 @@ function renderInputListView(words) {
                 
                 topActions.appendChild(appearanceBox);
             }
-            
-            // ブックマークボタン（リボン型）
-            const starBtn = document.createElement('button');
-            starBtn.className = 'star-btn input-list-star-btn';
-            starBtn.setAttribute('type', 'button');
-            if (reviewWords.has(word.id)) {
-                starBtn.classList.add('active');
-            }
-            starBtn.innerHTML = '<svg width="24" height="32" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="0" aria-hidden="true" focusable="false"><path d="M4 0h16v32l-8-6-8 6V0z" fill="currentColor"/></svg>';
-            starBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleReviewById(word.id, starBtn);
-            });
-            starBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
-            topActions.appendChild(starBtn);
             
             inner.appendChild(topActions);
             
