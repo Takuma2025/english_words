@@ -185,11 +185,11 @@ textarea,
 }
 
 .feedback-overlay.correct {
-    background-color: rgba(0, 0, 0, 0.45);
+    background-color: rgba(59, 130, 246, 0.3);
 }
 
 .feedback-overlay.wrong {
-    background-color: rgba(0, 0, 0, 0.45);
+    background-color: rgba(239, 68, 68, 0.3);
 }
 
 /* キラキラエフェクト */
