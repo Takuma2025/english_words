@@ -185,11 +185,11 @@ textarea,
 }
 
 .feedback-overlay.correct {
-    background-color: rgba(96, 165, 250, 0.45); /* 明るい青 */
+    background-color: rgba(0, 0, 0, 0.45);
 }
 
 .feedback-overlay.wrong {
-    background-color: rgba(251, 146, 146, 0.45); /* 明るい赤 */
+    background-color: rgba(0, 0, 0, 0.45);
 }
 
 /* キラキラエフェクト */
@@ -274,7 +274,7 @@ textarea,
 }
 
 .feedback-overlay.mastered {
-    background-color: rgba(14, 165, 233, 0.25); /* 薄い水色 */
+    background-color: rgba(0, 0, 0, 0.25);
 }
 
 /* App Structure */
@@ -1929,7 +1929,7 @@ body.learning-mode .app-header {
 .school-modal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(15, 23, 42, 0.35);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
     z-index: 10001;
 }
@@ -2737,7 +2737,7 @@ body.learning-mode .app-header {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(59, 130, 246, 0.5);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -5443,7 +5443,7 @@ body.reorder-mode-active .word-card-container {
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 150px;
+    min-height: 100px;
     transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     transform-style: preserve-3d;
 }
@@ -5460,10 +5460,10 @@ body.reorder-mode-active .word-card-container {
 .input-list-back {
     width: 100%;
     height: 100%;
-    min-height: 150px;
+    min-height: 100px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    padding: 16px;
+    padding: 12px;
     box-sizing: border-box;
 }
 
@@ -6033,8 +6033,8 @@ body.reorder-mode-active .word-card-container {
     }
     .input-list-front,
     .input-list-back {
-        padding: 14px;
-        min-height: 200px;
+        padding: 12px;
+        min-height: 120px;
     }
     .input-list-meta {
         flex-direction: row;
@@ -7782,7 +7782,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(59, 130, 246, 0.3);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 10006;
     opacity: 0;
     visibility: hidden;
@@ -8005,7 +8005,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(59, 130, 246, 0.5);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
     z-index: 2000;
     display: flex;
@@ -8423,7 +8423,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(59, 130, 246, 0.5);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
     z-index: 3000;
     display: flex;
@@ -10916,7 +10916,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .goal-achieved-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(59, 130, 246, 0.15);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 10003;
     display: flex;
     align-items: center;
@@ -11133,7 +11133,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .completion-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(59, 130, 246, 0.4);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 10002;
     display: flex;
     align-items: center;
@@ -11389,277 +11389,125 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     box-shadow: 0 2px 0 #1d4ed8;
 }
 
-/* フィルター画面オーバーレイ */
+/* =============================================
+   学習フィルター画面（モーダル）
+   ============================================= */
+
+/* オーバーレイ（背景暗転） */
 .filter-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(59, 130, 246, 0.3);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    z-index: 10000;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
     opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .filter-overlay.show {
     opacity: 1;
-    pointer-events: auto;
+    visibility: visible;
 }
 
-/* フィルター画面（ボトムシート） */
+/* モーダル本体 */
 #wordFilterView {
     position: fixed;
     left: 50%;
-    transform: translateX(-50%) translateY(100%);
     bottom: 0;
-    top: auto;
-    height: 80vh;
-    max-height: 80vh;
+    transform: translateX(-50%) translateY(100%);
     width: 100%;
     max-width: 540px;
+    height: 85vh;
+    max-height: 85vh;
     background: #f8fafc;
-    z-index: 10001;
     border-radius: 16px 16px 0 0;
-    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-    overflow: hidden;
+    z-index: 10000;
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
-}
-
-
-/* フィルター画面の上部固定ヘッダー（×ボタンの高さの横部分を白にする） */
-#wordFilterView::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 56px;
-    background: #0055ca;
-    z-index: 4;
-    pointer-events: none;
+    overflow: hidden;
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 #wordFilterView.show {
     transform: translateX(-50%) translateY(0);
 }
 
+/* ヘッダー（固定） */
 .filter-header-banner {
-    position: relative;
+    flex-shrink: 0;
     background: #0055ca;
-    padding: 14px 20px;
+    padding: 16px 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
-    cursor: grab;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: pan-y;
-}
-
-.filter-header-banner:active {
-    cursor: grabbing;
+    position: relative;
 }
 
 .filter-header-title {
     font-size: 16px;
     font-weight: 600;
-    color: #ffffff;
+    color: #fff;
     margin: 0;
-    text-align: center;
-    flex: 1;
-    letter-spacing: 0.02em;
 }
 
+/* 閉じるボタン */
 .filter-close-btn {
     position: absolute;
-    top: 50%;
     right: 16px;
+    top: 50%;
     transform: translateY(-50%);
     width: 32px;
     height: 32px;
     border: none;
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
-    transition: all 0.15s ease;
-    z-index: 11;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    transition: background 0.15s;
 }
 
 .filter-close-btn:hover {
-    background: rgba(255, 255, 255, 0.35);
-    color: #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .filter-close-btn:active {
     transform: translateY(-50%) scale(0.95);
 }
 
+/* コンテンツエリア（スクロール可能） */
 .filter-sheet-content {
     flex: 1;
     overflow-y: auto;
-    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
-    padding: 16px 20px;
-    padding-bottom: calc(120px + env(safe-area-inset-bottom));
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    min-height: 0;
-    max-height: 100%;
-    overscroll-behavior: contain;
-    scroll-behavior: smooth;
-    position: relative;
+    padding: 20px;
+    padding-bottom: calc(20px + 80px); /* ボタン分の余白を確保 */
     background: #f8fafc;
-    box-sizing: border-box;
-}
-
-#wordFilterView .section-title {
-    text-align: center;
-    margin-bottom: 20px;
-    letter-spacing: 0.02em;
-}
-
-.filter-category-header {
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 16px;
-    margin-top: 0;
-    padding: 8px 12px 24px;
-    padding-top: 8px;
-    background: transparent;
-    text-align: center;
-}
-
-/* スクロール時の隙間を防ぐ */
-.filter-category-header::before {
-    content: '';
-    position: absolute;
-    top: -100px;
-    left: 0;
-    right: 0;
-    height: 100px;
-    background: #ffffff;
-    z-index: -1;
-}
-
-.filter-category-title {
-    font-size: 17px;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 10px;
-}
-
-.filter-category-progress {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.filter-category-progress-bar {
-    flex: 1;
-    height: 16px;
-    background: #e2e8f0;
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    position: relative;
-}
-
-.filter-category-progress-bar.filter-progress-complete::after {
-    content: "COMPLETE";
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.5px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    text-transform: uppercase;
-    z-index: 1;
-}
-
-.filter-category-progress-correct {
-    height: 100%;
-    background: #3b82f6;
-    transition: width 0.3s ease;
-}
-
-.filter-category-progress-wrong {
-    height: 100%;
-    background: #ef4444;
-    transition: width 0.3s ease;
-}
-
-.filter-category-progress-text {
-    font-size: 13px;
-    font-weight: 600;
-    color: #64748b;
-    white-space: nowrap;
 }
 
 .filter-card-container {
-    width: 100%;
-    max-width: 100%;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    padding: 0 0 24px;
     display: flex;
     flex-direction: column;
     gap: 24px;
-    box-sizing: border-box;
 }
 
-.filter-section:first-child {
-    margin-top: 0;
-    padding-top: 0;
-}
-
+/* セクション */
 .filter-section {
-    margin-bottom: 0;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    box-shadow: none;
-    position: relative;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .filter-section-title {
     font-size: 13px;
     font-weight: 700;
     color: #64748b;
-    margin-bottom: 10px;
-    text-align: left;
-    letter-spacing: 0.05em;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.mode-radio-options {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
 
 .mode-radio-option {
     display: flex;
@@ -12211,227 +12059,67 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     line-height: 1.4;
 }
 
+/* フッター（固定ボタン） */
 .filter-actions {
-    position: absolute;
+    flex-shrink: 0;
+    position: sticky;
     bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
     display: flex;
-    flex-direction: row;
-    gap: 10px;
+    gap: 12px;
     padding: 16px 20px;
     padding-bottom: calc(16px + env(safe-area-inset-bottom));
-    background: #ffffff;
-    z-index: 10003;
+    background: #fff;
     border-top: 1px solid #e2e8f0;
-    box-sizing: border-box;
+    z-index: 10;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
-@media (max-width: 460px) {
-    #wordFilterView {
-        height: 85vh;
-        max-height: 85vh;
-    }
-    
+/* モバイル対応 */
+@media (max-width: 600px) {
     .filter-sheet-content {
-        padding: 12px 8px 16px;
-        padding-bottom: calc(120px + env(safe-area-inset-bottom));
-    }
-    .filter-card-container {
-        padding: 0;
-    }
-    .filter-options {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-    .filter-checkbox-all {
-        font-weight: 700;
-    }
-    .mode-options {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-    
-    .mode-options-test {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-    
-    .order-options {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-    .filter-checkbox,
-    .order-radio,
-    .mode-radio {
-        padding: 10px 12px;
-        border-radius: 10px;
-    }
-    .filter-actions {
-        max-width: 100%;
-        gap: 10px;
-        padding-left: 12px;
-        padding-right: 12px;
-        box-sizing: border-box;
+        padding: 16px;
     }
 }
 
 @media (max-width: 600px) {
-    #wordFilterView {
-        height: 85vh;
-        max-height: 85vh;
-    }
-    
-    .filter-sheet-content {
-        padding: 15px 10px 16px;
-        padding-bottom: calc(120px + env(safe-area-inset-bottom));
-    }
-    .filter-card-container {
-        max-width: 100%;
-        padding: 0;
-    }
-    .filter-actions {
-        max-width: 100%;
-        padding-left: 15px;
-        padding-right: 15px;
-        box-sizing: border-box;
-    }
-    .filter-options {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-    }
-    .mode-options {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-    }
-    
-    .mode-options-test {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-    
-    .order-options {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-    .filter-checkbox,
-    .order-radio,
-    .mode-radio {
-        padding: 12px 16px;
-    }
-    .checkbox-label,
-    .radio-label {
-        font-size: 13px;
-    }
-    .order-radio .radio-option-label {
-        font-size: 15px;
-    }
-    .order-radio .radio-option-description {
-        font-size: 12px;
-    }
-    .order-radio {
-        gap: 12px;
-    }
-    .order-radio input[type="radio"] {
-        width: 20px;
-        height: 20px;
-        flex-shrink: 0;
-    }
-    .filter-actions {
-        max-width: 100%;
-        margin-top: 8px;
-        gap: 10px;
-    }
-    .filter-start-btn,
-    .filter-back-btn {
-        font-size: 14px;
-        padding: 12px 14px;
-    }
 }
 
-@media (min-width: 640px) {
-    .filter-actions {
-        flex-direction: row;
-    }
-    .filter-start-btn,
-    .filter-back-btn {
-        width: 50%;
-    }
-}
-
+/* 開始ボタン */
 .filter-start-btn {
-    flex: 1 1 0;
-    width: auto;
+    flex: 1;
     padding: 14px 20px;
-    background: #1e40af;
-    color: #ffffff;
+    background: #f59e0b;
+    color: #fff;
     border: none;
     border-radius: 10px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background 0.15s;
 }
 
 .filter-start-btn:hover {
-    background: #1e3a8a;
+    background: #d97706;
 }
 
 .filter-start-btn:active {
     transform: scale(0.98);
 }
 
-.filter-start-btn-orange {
-    background: #f59e0b;
-}
-
-.filter-start-btn-orange:hover {
-    background: #d97706;
-}
-
-.filter-start-btn-orange:active {
-    transform: scale(0.98);
-}
-
-.filter-back-btn {
-    flex: 1 1 0;
-    width: auto;
-    padding: 12px 14px;
-    background: #ffffff;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.filter-back-btn:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-}
-
-.filter-back-btn:active {
-    transform: scale(0.98);
-}
-
+/* 選択状態の表示 */
 .filter-info {
-    margin-top: 14px;
-    padding: 14px 16px;
-    background: #ffffff;
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: #fff;
     border: 2px solid #e5e7eb;
-    border-radius: 12px;
+    border-radius: 10px;
     text-align: center;
     font-size: 14px;
     color: #374151;
-    font-weight: 500;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .filter-info #filteredWordCount {
-    font-weight: 800;
+    font-weight: 700;
     color: #0055ca;
     font-size: 16px;
 }

@@ -4838,15 +4838,18 @@ function updateQuestionCountSection() {
     
     if (questionCountSection) {
         const filteredWords = getFilteredWords();
-        
-        // 親要素（filter-section）を取得して非表示にする
         const parentSection = questionCountSection.closest('.filter-section');
         
-        // 常に非表示（出題数セクションは表示しない）
+        const hasWords = filteredWords.length > 0;
         if (parentSection) {
-            parentSection.style.display = 'none';
+            parentSection.style.display = hasWords ? '' : 'none';
         } else {
-            questionCountSection.style.display = 'none';
+            questionCountSection.style.display = hasWords ? '' : 'none';
+        }
+        
+        // 出題数オプションのスライダーを更新
+        if (hasWords) {
+            updateQuestionCountOptions(filteredWords.length);
         }
     }
 }
@@ -4881,17 +4884,8 @@ function updateFilterInfo() {
     if (filteredWordCount) {
         filteredWordCount.textContent = `${filteredWords.length}語`;
     }
-    
-    // 出題数選択セクションは常に非表示
-    const questionCountSection = document.getElementById('questionCountSection');
-    if (questionCountSection) {
-        const parentSection = questionCountSection.closest('.filter-section');
-        if (parentSection) {
-            parentSection.style.display = 'none';
-        } else {
-            questionCountSection.style.display = 'none';
-        }
-    }
+    // 出題数選択セクションを表示/非表示に反映
+    updateQuestionCountSection();
 }
 
 // フィルター条件に基づいて単語を取得
@@ -9527,39 +9521,6 @@ function renderInputListView(words) {
             meaningWrapper.appendChild(meaningText);
             meaningEl.appendChild(meaningWrapper);
             back.appendChild(meaningEl);
-            
-            if (word.example && (word.example.english || word.example.japanese)) {
-                const exampleBox = document.createElement('div');
-                exampleBox.className = 'input-list-example';
-                
-                if (word.example.english) {
-                    const exEn = document.createElement('div');
-                    exEn.className = 'input-list-example-en';
-                    const exampleEn = word.example.english;
-                    if (exampleEn && word.word) {
-                        const escaped = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                        const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
-                        const highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
-                        let finalText = highlighted;
-                        if (/[.!?]\s*$/.test(exampleEn)) {
-                            finalText = highlighted.replace(/^(\s*(?:<[^>]+>\s*)*)([a-z])/, (_m, prefix, first) => `${prefix}${first.toUpperCase()}`);
-                        }
-                        exEn.innerHTML = finalText;
-                    } else {
-                        exEn.textContent = exampleEn;
-                    }
-                    exampleBox.appendChild(exEn);
-                }
-                
-                if (word.example.japanese) {
-                    const exJa = document.createElement('div');
-                    exJa.className = 'input-list-example-ja';
-                    exJa.textContent = word.example.japanese;
-                    exampleBox.appendChild(exJa);
-                }
-                
-                back.appendChild(exampleBox);
-            }
             
             inner.appendChild(front);
             inner.appendChild(back);
