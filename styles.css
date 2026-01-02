@@ -463,11 +463,11 @@ body.learning-mode .app-header {
     }
     
     .category-view {
-        padding: 0 16px; /* カテゴリービュー内でパディングを設定 */
+        padding: 0 8px; /* カテゴリービュー内でパディングを設定 */
     }
     
     .category-list {
-        padding: 12px; /* カテゴリーリストのパディングを維持 */
+        padding: 0; /* カテゴリーリストのパディングなし */
     }
 }
 
@@ -1031,18 +1031,18 @@ body.learning-mode .app-header {
 .category-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0;
     margin-bottom: 24px;
     width: 100%;
     box-sizing: border-box;
     background: #ffffff;
-    padding: 12px;
+    padding: 0;
 }
 
 .course-section {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0;
 }
 
 .osaka-image-container {
