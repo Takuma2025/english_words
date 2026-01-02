@@ -5242,7 +5242,7 @@ body.reorder-mode-active .word-card-container {
     transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     transform-style: preserve-3d;
     border-radius: 4px;
-    border: 1px solid #d1d5db;
+    border: 0.5px solid #000000;
     background: #ffffff;
 }
 
@@ -5571,8 +5571,8 @@ body.reorder-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
-    border-top: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
+    border-top: 0.5px solid #000000;
+    border-bottom: 0.5px solid #000000;
     padding: 20px 16px;
     padding-top: 40px;
     padding-bottom: 24px;
@@ -6972,6 +6972,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     letter-spacing: 0.1em !important;
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif !important;
     z-index: 10 !important;
+    backface-visibility: visible !important;
+    -webkit-backface-visibility: visible !important;
 }
 
 #inputWordNumber::after {
