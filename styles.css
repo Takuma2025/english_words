@@ -5498,6 +5498,11 @@ body.reorder-mode-active .word-card-container {
     border-color: #ffffff;
 }
 
+/* フリップモードでカードが裏返ったときはチェックボックスを非表示 */
+.input-list-item.flipped .input-list-checkbox {
+    display: none;
+}
+
 .input-list-appearance {
     display: inline-flex;
     align-items: center;
@@ -7055,6 +7060,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     justify-content: center;
     transition: all 0.2s ease;
     z-index: 10;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .word-checkbox::after {
@@ -7080,6 +7087,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     border-color: #ffffff;
 }
 
+/* カードが裏返ったときは表面のチェックボックスを非表示 */
+.word-card.flipped .word-checkbox {
+    display: none;
+}
+
 /* 裏面のチェックボックス */
 .word-checkbox-back {
     position: absolute;
@@ -7096,6 +7108,13 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     justify-content: center;
     transition: all 0.2s ease;
     z-index: 10;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* カードが裏返っていないときは裏面のチェックボックスを非表示 */
+.word-card:not(.flipped) .word-checkbox-back {
+    display: none;
 }
 
 .word-checkbox-back::after {
