@@ -2979,7 +2979,7 @@ body.learning-mode .app-header {
 }
 
 .category-name {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 700;
     color: #1f2937;
     margin-bottom: 0;
@@ -4481,7 +4481,7 @@ body.reorder-mode-active .word-card-container {
     display: flex;
     flex-direction: column;
     gap: 0;
-    padding: 0 12px 20px 12px;
+    padding: 0 0 20px 0;
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1;
@@ -4509,7 +4509,7 @@ body.reorder-mode-active .word-card-container {
     justify-content: flex-start;
     gap: 8px;
     margin-bottom: 12px;
-    padding: 0 12px;
+    padding: 0 8px;
 }
 
 .input-list-options-row {
@@ -5815,7 +5815,7 @@ body.reorder-mode-active .word-card-container {
 
 @media (max-width: 640px) {
     .input-list-view {
-        padding: 0 8px 16px 8px;
+        padding: 0 0 16px 0;
         gap: 0;
     }
     .input-list-front,
