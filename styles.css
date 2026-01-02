@@ -6793,7 +6793,7 @@ body.reorder-mode-active .word-card-container {
     background: #ffffff;
     border-radius: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    border: 1px solid #e5e7eb;
+    border: 1px solid #000000;
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease;
 }
@@ -6956,7 +6956,7 @@ body.learning-mode .bottom-nav {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #000000;
     transition: border-color 0.3s ease;
 }
 
@@ -6973,7 +6973,7 @@ body.learning-mode .bottom-nav {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #000000;
     transform: rotateY(180deg);
     transition: border-color 0.3s ease;
 }
