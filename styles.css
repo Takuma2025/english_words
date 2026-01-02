@@ -5360,6 +5360,7 @@ body.reorder-mode-active .word-card-container {
 
 .input-list-row {
     width: 100%;
+    padding-top: 16px;
 }
 
 .input-list-meaning {
@@ -5471,6 +5472,26 @@ body.reorder-mode-active .word-card-container {
     padding: 2px 5px 1px 5px;
     border-radius: 4px;
     font-size: 12px;
+}
+
+.input-list-word-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+}
+
+.input-list-kana {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 400;
+    margin-bottom: -4px;
+    line-height: 1;
+}
+
+.input-list-kana b {
+    font-weight: 700;
+    color: #1e293b;
 }
 
 .input-list-word {
@@ -5615,13 +5636,33 @@ body.reorder-mode-active .word-card-container {
     font-weight: 500;
 }
 
+.input-list-expand-word-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+}
+
+.input-list-expand-kana {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: -3px;
+}
+
+.input-list-expand-kana b {
+    font-weight: 700;
+    color: #1e293b;
+}
+
 .input-list-expand-word {
     font-size: 32px;
     font-weight: 700;
     color: #111827;
     font-family: "Times New Roman", Times, serif;
     letter-spacing: 0.02em;
-    margin-top: -3px;
+    margin-top: 0;
 }
 
 /* 展開モード右上のアクションエリア */

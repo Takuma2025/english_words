@@ -8897,10 +8897,23 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         const row = document.createElement('div');
         row.className = 'input-list-row';
         
+        const wordContainer = document.createElement('div');
+        wordContainer.className = 'input-list-word-container';
+        
+        // カタカナ発音を上に表示（*で囲まれた部分を太字に）
+        if (word.kana) {
+            const kanaEl = document.createElement('span');
+            kanaEl.className = 'input-list-kana';
+            kanaEl.innerHTML = word.kana.replace(/\*([^*]+)\*/g, '<b>$1</b>');
+            wordContainer.appendChild(kanaEl);
+        }
+        
         const wordEl = document.createElement('span');
         wordEl.className = 'input-list-word';
         wordEl.textContent = word.word;
-        row.appendChild(wordEl);
+        wordContainer.appendChild(wordEl);
+        
+        row.appendChild(wordContainer);
         
         const audioBtn = document.createElement('button');
         audioBtn.className = 'audio-btn';
@@ -9079,10 +9092,23 @@ function renderInputListView(words) {
             const wordRow = document.createElement('div');
             wordRow.className = 'input-list-expand-word-row';
             
+            const wordTextContainer = document.createElement('div');
+            wordTextContainer.className = 'input-list-expand-word-container';
+            
+            // カタカナ発音を上に表示（*で囲まれた部分を太字に）
+            if (word.kana) {
+                const kanaEl = document.createElement('span');
+                kanaEl.className = 'input-list-expand-kana';
+                kanaEl.innerHTML = word.kana.replace(/\*([^*]+)\*/g, '<b>$1</b>');
+                wordTextContainer.appendChild(kanaEl);
+            }
+            
             const wordEl = document.createElement('span');
             wordEl.className = 'input-list-expand-word';
             wordEl.textContent = word.word;
-            wordRow.appendChild(wordEl);
+            wordTextContainer.appendChild(wordEl);
+            
+            wordRow.appendChild(wordTextContainer);
             
             const audioBtn = document.createElement('button');
             audioBtn.className = 'audio-btn';
@@ -9239,10 +9265,23 @@ function renderInputListView(words) {
             const row = document.createElement('div');
             row.className = 'input-list-row';
             
+            const wordContainer = document.createElement('div');
+            wordContainer.className = 'input-list-word-container';
+            
+            // カタカナ発音を上に表示（*で囲まれた部分を太字に）
+            if (word.kana) {
+                const kanaEl = document.createElement('span');
+                kanaEl.className = 'input-list-kana';
+                kanaEl.innerHTML = word.kana.replace(/\*([^*]+)\*/g, '<b>$1</b>');
+                wordContainer.appendChild(kanaEl);
+            }
+            
             const wordEl = document.createElement('span');
             wordEl.className = 'input-list-word';
             wordEl.textContent = word.word;
-            row.appendChild(wordEl);
+            wordContainer.appendChild(wordEl);
+            
+            row.appendChild(wordContainer);
             
             const audioBtn = document.createElement('button');
             audioBtn.className = 'audio-btn';

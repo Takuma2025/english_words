@@ -14,21 +14,21 @@
 
 // 家族に関する単語
 const familyWords = [
-  { id: 10003, word: "father", meaning: "父、父親", partOfSpeech: "名詞", category: "家族", appearanceCount: 4 },
-  { id: 10004, word: "mother", meaning: "母、母親、お母さん", partOfSpeech: "名詞", category: "家族", appearanceCount: 1 },
-  { id: 10005, word: "parent", meaning: "親　（parents:両親）", partOfSpeech: "名詞", category: "家族", appearanceCount: 1 },
-  { id: 10012, word: "brother", meaning: "兄弟、兄、弟", partOfSpeech: "名詞", category: "家族", appearanceCount: 23 },
-  { id: 10013, word: "sister", meaning: "姉妹、姉、妹", partOfSpeech: "名詞", category: "家族", appearanceCount: 52 },
-  { id: 10015, word: "son", meaning: "息子", partOfSpeech: "名詞", category: "家族", appearanceCount: 1 },
-  { id: 10014, word: "daughter", meaning: "娘", partOfSpeech: "名詞", category: "家族", appearanceCount: 4 },
-  { id: 10007, word: "grandfather", meaning: "祖父、おじいさん", partOfSpeech: "名詞", category: "家族", appearanceCount: 16 },
-  { id: 10008, word: "grandmother", meaning: "祖母、おばあさん", partOfSpeech: "名詞", category: "家族", appearanceCount: 13 },
-  { id: 10023, word: "uncle", meaning: "おじ", partOfSpeech: "名詞", category: "家族", appearanceCount: 13 },
-  { id: 10026, word: "aunt", meaning: "おば", partOfSpeech: "名詞", category: "家族", appearanceCount: 7 },
-  { id: 10027, word: "grandpa", meaning: "おじいちゃん、祖父", partOfSpeech: "名詞", category: "家族", appearanceCount: 2 },
-  { id: 10028, word: "grandma", meaning: "おばあちゃん、祖母", partOfSpeech: "名詞", category: "家族", appearanceCount: 2 },
-  { id: 10029, word: "grandparent", meaning: "祖父母", partOfSpeech: "名詞", category: "家族", appearanceCount: 7 },
-  { id: 10030, word: "cousin", meaning: "いとこ", partOfSpeech: "名詞", category: "家族", appearanceCount: 0 },
+  { id: 10003, word: "father", meaning: "父、父親", partOfSpeech: "名詞", category: "家族", appearanceCount: 4, kana: "*ファ*ーザー" },
+  { id: 10004, word: "mother", meaning: "母、母親、お母さん", partOfSpeech: "名詞", category: "家族", appearanceCount: 1, kana: "*マ*ザー" },
+  { id: 10005, word: "parent", meaning: "親　（parents:両親）", partOfSpeech: "名詞", category: "家族", appearanceCount: 1, kana: "*ペア*レント" },
+  { id: 10012, word: "brother", meaning: "兄弟、兄、弟", partOfSpeech: "名詞", category: "家族", appearanceCount: 23, kana: "*ブラ*ザー" },
+  { id: 10013, word: "sister", meaning: "姉妹、姉、妹", partOfSpeech: "名詞", category: "家族", appearanceCount: 52, kana: "*スィ*スター" },
+  { id: 10015, word: "son", meaning: "息子", partOfSpeech: "名詞", category: "家族", appearanceCount: 1, kana: "*サ*ン" },
+  { id: 10014, word: "daughter", meaning: "娘", partOfSpeech: "名詞", category: "家族", appearanceCount: 4, kana: "*ドー*ター" },
+  { id: 10007, word: "grandfather", meaning: "祖父、おじいさん", partOfSpeech: "名詞", category: "家族", appearanceCount: 16, kana: "*グラ*ンドファーザー" },
+  { id: 10008, word: "grandmother", meaning: "祖母、おばあさん", partOfSpeech: "名詞", category: "家族", appearanceCount: 13, kana: "*グラ*ンドマザー" },
+  { id: 10023, word: "uncle", meaning: "おじ", partOfSpeech: "名詞", category: "家族", appearanceCount: 13, kana: "*ア*ンクル" },
+  { id: 10026, word: "aunt", meaning: "おば", partOfSpeech: "名詞", category: "家族", appearanceCount: 7, kana: "*ア*ーント" },
+  { id: 10027, word: "grandpa", meaning: "おじいちゃん、祖父", partOfSpeech: "名詞", category: "家族", appearanceCount: 2, kana: "*グラ*ンパ" },
+  { id: 10028, word: "grandma", meaning: "おばあちゃん、祖母", partOfSpeech: "名詞", category: "家族", appearanceCount: 2, kana: "*グラ*ンマ" },
+  { id: 10029, word: "grandparent", meaning: "祖父母", partOfSpeech: "名詞", category: "家族", appearanceCount: 7, kana: "*グラ*ンドペアレント" },
+  { id: 10030, word: "cousin", meaning: "いとこ", partOfSpeech: "名詞", category: "家族", appearanceCount: 0, kana: "*カ*ズン" },
   ];
 
 // 数字に関する単語
