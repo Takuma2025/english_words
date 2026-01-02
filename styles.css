@@ -1031,7 +1031,7 @@ body.learning-mode .app-header {
 .category-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     margin-bottom: 24px;
     width: 100%;
     box-sizing: border-box;
@@ -1071,7 +1071,7 @@ body.learning-mode .app-header {
 .category-cards-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 8px;
     margin-bottom: 0;
     border-bottom: none;
 }
@@ -1081,6 +1081,7 @@ body.learning-mode .app-header {
     border-bottom: none;
     border-right: none;
     align-items: center;
+    border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
@@ -1093,7 +1094,7 @@ body.learning-mode .app-header {
 }
 
 .category-cards-row .category-name {
-    font-size: 22px;
+    font-size: 18px;
     line-height: 1.3;
     display: flex;
     align-items: center;
@@ -1111,7 +1112,7 @@ body.learning-mode .app-header {
 }
 
 .category-cards-row .category-meta {
-    font-size: 12px;
+    font-size: 10px;
     margin-top: 2px;
 }
 
@@ -2632,8 +2633,8 @@ body.learning-mode .app-header {
     align-items: center;
     background: #ffffff;
     border: none;
-    border-radius: 0;
-    padding: 16px;
+    border-radius: 8px;
+    padding: 12px;
     width: 100%;
     box-sizing: border-box;
     text-align: left;
@@ -2648,7 +2649,7 @@ body.learning-mode .app-header {
 }
 
 .category-card:active {
-    background-color: #f9fafb;
+    background-color: #f5f5f5;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
@@ -2668,6 +2669,7 @@ body.learning-mode .app-header {
     cursor: default;
     padding: 0;
     overflow: hidden;
+    border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
@@ -2679,7 +2681,7 @@ body.learning-mode .app-header {
 .category-card.category-card-with-actions .category-info {
     flex: 1;
     min-width: 0;
-    padding: 12px 16px;
+    padding: 10px 12px;
 }
 
 /* 右側の縦並びボタン */
@@ -2910,202 +2912,6 @@ body.learning-mode .app-header {
     color: #1f2937;
 }
 
-/* AI分析カード */
-.ai-sparkle {
-    margin-right: 6px;
-}
-
-.ai-icon {
-    width: 16px;
-    height: 16px;
-    margin-right: 6px;
-    vertical-align: middle;
-}
-
-.ai-badge {
-    display: inline-block;
-    background-color: #315bce;
-    color: #ffffff;
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-size: 0.75em;
-    font-weight: 600;
-    margin-right: 4px;
-}
-
-.category-card-ai .category-name {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.weakness-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1f2937;
-    align-self: flex-start;
-    margin-bottom: -16px !important;
-    position: relative;
-    z-index: 1;
-}
-
-.lockon-image {
-    display: block;
-    width: 140px;
-    height: auto;
-    object-fit: contain;
-    margin: 0px auto 0;
-    position: relative;
-    z-index: 0;
-}
-
-.weakness-text {
-    position: relative;
-    display: inline-block;
-}
-
-.weakness-text span {
-    position: relative;
-    z-index: 1;
-}
-
-.lock-on-icon-small {
-    position: absolute;
-    right: -20px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    pointer-events: none;
-    z-index: 0;
-}
-
-.category-card-ai .category-name .ai-badge {
-    display: block;
-    width: fit-content;
-    margin: 0 auto 4px;
-}
-
-.category-card-ai .category-header {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 0;
-}
-
-.category-card-ai .category-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.ai-word-count-large {
-    text-align: center;
-    margin-top: 0;
-    line-height: 1;
-}
-
-/* 〇語表示：横並びで左にラベル、右に数字 */
-.ai-word-number {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.ai-word-number.show {
-    display: flex;
-}
-
-.weakness-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #64748b;
-    line-height: 1.3;
-    text-align: right;
-}
-
-.ai-word-count-value {
-    font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif;
-    font-size: 48px;
-    font-weight: 700;
-    color: #dc2626;
-}
-
-.ai-word-count-value span {
-    font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif;
-    font-size: 48px;
-    font-weight: 700;
-    color: #dc2626;
-}
-
-.ai-word-number .ai-word-unit {
-    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: #dc2626;
-}
-
-/* 分析中表示：小さいグレー */
-.ai-word-count-large .ai-analyzing {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    height: 24px;
-    margin-top: 15px;
-}
-
-.ai-analyzing .analyzing-text {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    color: #94a3b8;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-    background: #ffffff;
-    padding: 4px 8px;
-    position: relative;
-    z-index: 2;
-    animation: analyzingTextBlink 1.5s ease-in-out infinite;
-}
-
-@keyframes analyzingTextBlink {
-    0%, 100% {
-        color: #94a3b8;
-    }
-    50% {
-        color: rgba(148, 163, 184, 0.3);
-    }
-}
-
-.analyzing-zigzag {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 120px;
-    height: 16px;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.analyzing-zigzag .zigzag-line {
-    stroke-dasharray: 30 90;
-    animation: zigzagFlow 1.2s linear infinite;
-}
-
-@keyframes zigzagFlow {
-    0% {
-        stroke-dashoffset: 120;
-    }
-    100% {
-        stroke-dashoffset: 0;
-    }
-}
 
 /* 入試得点力アップコースのカードは英単語マスターコースと同じデザイン */
 
@@ -3169,7 +2975,7 @@ body.learning-mode .app-header {
 }
 
 .category-name {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
     color: #1f2937;
     margin-bottom: 0;
@@ -3307,9 +3113,9 @@ body.learning-mode .app-header {
 }
 
 .category-meta {
-    font-size: 13px;
+    font-size: 11px;
     color: #6b7280;
-    margin-top: 4px;
+    margin-top: 2px;
     line-height: 1.4;
 }
 
@@ -3321,7 +3127,7 @@ body.learning-mode .app-header {
 }
 
 .category-progress {
-    margin-top: 8px;
+    margin-top: 6px;
 }
 
 
@@ -3384,40 +3190,6 @@ body.learning-mode .app-header {
     text-align: right;
 }
 
-#allWordsCardBtn {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-#allWordsCardBtn .category-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    height: 100%;
-}
-
-#allWordsCardBtn .category-name,
-#allWordsCardBtn .category-meta,
-#allWordsCardBtn .category-progress {
-    margin: 0;
-}
-
-#allWordsCardBtn .category-progress {
-    position: relative;
-    padding-bottom: 0;
-    margin-top: 8px;
-    width: 100%;
-}
-
-#allWordsCardBtn .category-progress-bar {
-    width: 100%;
-}
-
-#allWordsCardBtn .category-progress-text {
-    margin-top: 4px;
-    text-align: right;
-}
 
 /* 入試得点力アップコースの進捗バーは表示（英単語マスターコースと同じ） */
 
@@ -7924,15 +7696,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .sidebar-menu-item span {
     flex: 1;
-}
-
-.sidebar-menu-item .ai-word-count {
-    font-size: 24px;
-    font-weight: 700;
-    color: #dc2626;
-    margin-left: auto;
-    min-width: 32px;
-    text-align: right;
 }
 
 /* 音量調整 */

@@ -1006,7 +1006,7 @@ let timerInterval = null; // タイマーのインターバル
 let totalTimeRemaining = 0; // 残り時間（秒）
 let wordStartTime = 0; // 現在の単語の開始時間
 let wordTimerInterval = null; // 単語あたりのタイマーのインターバル
-let wordResponseStartTime = 0; // 単語ごとの解答開始時刻（AI分析用）
+let wordResponseStartTime = 0;
 const TIME_PER_WORD = 2; // 1単語あたりの時間（秒）
 let isSentenceModeActive = false; // 厳選例文暗記モードかどうか
 let sentenceData = []; // 例文データ
@@ -1046,10 +1046,6 @@ const EXAM_TITLE_OPTIONS = [
 ];
 let examCountdownTimer = null;
 
-// AI分析（苦手単語）用の設定
-const WORD_STATS_KEY = 'wordStatsV1';
-const SLOW_RESPONSE_THRESHOLD_MS = 8000;
-let wordStats = {};
 
  // 0: 曜日, 1: 月
 
@@ -1119,9 +1115,9 @@ function saveCategoryWords(category, correctSet, wrongSet) {
     localStorage.setItem(`wrongWords-${category}_${mode}`, JSON.stringify([...wrongSet]));
 }
 
-// 単語の進捗保存用カテゴリーを取得（小学生で習った単語、AI分析、すべての単語の場合はword.categoryを使用）
+// 単語の進捗保存用カテゴリーを取得（小学生で習った単語、すべての単語の場合はword.categoryを使用）
 function getProgressCategory(word) {
-    if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語' || selectedCategory === 'AI分析 苦手単語' || selectedCategory === '大阪府のすべての英単語') {
+    if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語' || selectedCategory === '大阪府のすべての英単語') {
         return word.category;
     }
     return selectedCategory;
@@ -1186,30 +1182,6 @@ function loadData() {
     }
 }
 
-// 単語ごとの学習記録を読み込む（AI分析用）
-function loadWordStats() {
-    try {
-        const saved = localStorage.getItem(WORD_STATS_KEY);
-        if (!saved) {
-            wordStats = {};
-            return;
-        }
-        const parsed = JSON.parse(saved);
-        wordStats = parsed && typeof parsed === 'object' ? parsed : {};
-    } catch (error) {
-        console.error('Failed to load word stats:', error);
-        wordStats = {};
-    }
-}
-
-// 単語ごとの学習記録を保存
-function saveWordStats() {
-    try {
-        localStorage.setItem(WORD_STATS_KEY, JSON.stringify(wordStats));
-    } catch (error) {
-        console.error('Failed to save word stats:', error);
-    }
-}
 
 // 全単語データを取得（小学生データを含む）
 function getAllWordData() {
@@ -1236,169 +1208,7 @@ function getWordById(wordId) {
     return null;
 }
 
-// 単語への回答結果を記録（AI分析用）
-function recordWordResult(word, isCorrect, { responseMs = null, isTimeout = false } = {}) {
-    if (!word || typeof word.id === 'undefined') return;
-    
-    const now = Date.now();
-    const existing = wordStats[word.id] || {};
-    const normalized = {
-        totalAttempts: Number(existing.totalAttempts) || 0,
-        wrongCount: Number(existing.wrongCount) || 0,
-        correctCount: Number(existing.correctCount) || 0,
-        slowCount: Number(existing.slowCount) || 0,
-        consecutiveWrongCount: Number(existing.consecutiveWrongCount) || 0,
-        maxConsecutiveWrong: Number(existing.maxConsecutiveWrong) || 0,
-        firstWrongAt: typeof existing.firstWrongAt === 'number' ? existing.firstWrongAt : null,
-        firstCorrectAfterWrongAt: typeof existing.firstCorrectAfterWrongAt === 'number' ? existing.firstCorrectAfterWrongAt : null,
-        lastCorrectAt: typeof existing.lastCorrectAt === 'number' ? existing.lastCorrectAt : null,
-        lastReviewedAt: typeof existing.lastReviewedAt === 'number' ? existing.lastReviewedAt : null,
-        lastResponseMs: typeof existing.lastResponseMs === 'number' ? existing.lastResponseMs : null,
-        maxResponseMs: typeof existing.maxResponseMs === 'number' ? existing.maxResponseMs : 0
-    };
-    
-    normalized.totalAttempts += 1;
-    normalized.lastReviewedAt = now;
-    
-    if (!isCorrect) {
-        normalized.wrongCount += 1;
-        normalized.consecutiveWrongCount += 1;
-        normalized.maxConsecutiveWrong = Math.max(normalized.maxConsecutiveWrong, normalized.consecutiveWrongCount);
-        if (!normalized.firstWrongAt) {
-            normalized.firstWrongAt = now;
-        }
-    } else {
-        normalized.correctCount += 1;
-        normalized.consecutiveWrongCount = 0; // 正解したらリセット
-        normalized.lastCorrectAt = now;
-        if (normalized.firstWrongAt && !normalized.firstCorrectAfterWrongAt) {
-            normalized.firstCorrectAfterWrongAt = now;
-        }
-    }
-    
-    if (typeof responseMs === 'number' && !Number.isNaN(responseMs)) {
-        normalized.lastResponseMs = responseMs;
-        normalized.maxResponseMs = Math.max(normalized.maxResponseMs || 0, responseMs);
-        if (responseMs >= SLOW_RESPONSE_THRESHOLD_MS) {
-            normalized.slowCount += 1;
-        }
-    }
-    
-    // タイムアウトの記録は今後の拡張用（現在はカウントのみ活用）
-    if (isTimeout) {
-        normalized.wasTimeout = true;
-    }
-    
-    wordStats[word.id] = normalized;
-    saveWordStats();
-}
 
-// AI分析対象の単語リストを取得
-function getAiAnalysisWords() {
-    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000; // 1週間（ミリ秒）
-    const now = Date.now();
-    
-    const summary = {
-        needsReview: 0,
-        consecutiveWrong: 0,
-        manyWrong: 0,
-        slow: 0
-    };
-    
-    const reasonMap = new Map();
-    const wordMap = new Map();
-    getAllWordData().forEach(word => {
-        if (word && typeof word.id !== 'undefined') {
-            wordMap.set(word.id, word);
-        }
-    });
-    
-    Object.entries(wordStats || {}).forEach(([idStr, statRaw]) => {
-        const id = parseInt(idStr, 10);
-        const word = wordMap.get(id);
-        if (!word) return;
-        
-        const stat = {
-            wrongCount: Number(statRaw.wrongCount) || 0,
-            consecutiveWrongCount: Number(statRaw.consecutiveWrongCount) || 0,
-            maxConsecutiveWrong: Number(statRaw.maxConsecutiveWrong) || 0,
-            lastCorrectAt: typeof statRaw.lastCorrectAt === 'number' ? statRaw.lastCorrectAt : null,
-            firstWrongAt: typeof statRaw.firstWrongAt === 'number' ? statRaw.firstWrongAt : null,
-            maxResponseMs: typeof statRaw.maxResponseMs === 'number' ? statRaw.maxResponseMs : 0,
-            totalAttempts: Number(statRaw.totalAttempts) || 0
-        };
-        
-        const reasons = [];
-        
-        // ①間違えた単語で、正解してから1週間以上が経過した単語
-        if (stat.wrongCount > 0 && stat.lastCorrectAt && (now - stat.lastCorrectAt) >= ONE_WEEK_MS) {
-            summary.needsReview += 1;
-            const days = Math.floor((now - stat.lastCorrectAt) / (24 * 60 * 60 * 1000));
-            reasons.push(`${days}日前に正解`);
-        }
-        
-        // ②2回連続間違えた単語（現在または過去に）
-        if (stat.consecutiveWrongCount >= 2 || stat.maxConsecutiveWrong >= 2) {
-            summary.consecutiveWrong += 1;
-            if (stat.consecutiveWrongCount >= 2) {
-                reasons.push(`${stat.consecutiveWrongCount}回連続間違え中`);
-            } else {
-                reasons.push('2回連続間違えあり');
-            }
-        }
-        
-        // ③3回以上間違えた単語
-        if (stat.wrongCount >= 3) {
-            summary.manyWrong += 1;
-            reasons.push(`間違え ${stat.wrongCount}回`);
-        }
-        
-        // ④解答時間に8秒以上かかった単語
-        if (stat.maxResponseMs >= SLOW_RESPONSE_THRESHOLD_MS) {
-            summary.slow += 1;
-            const seconds = (stat.maxResponseMs / 1000).toFixed(1);
-            reasons.push(`解答 ${seconds}秒`);
-        }
-        
-        if (reasons.length > 0) {
-            reasonMap.set(id, reasons);
-        }
-    });
-    
-    const words = Array.from(reasonMap.keys())
-        .map(id => wordMap.get(id))
-        .filter(Boolean)
-        .sort((a, b) => {
-            const statA = wordStats[a.id] || {};
-            const statB = wordStats[b.id] || {};
-            // 優先順位: 連続間違え > 間違え回数 > 解答時間
-            const consecDiff = (statB.consecutiveWrongCount || 0) - (statA.consecutiveWrongCount || 0);
-            if (consecDiff !== 0) return consecDiff;
-            const wrongDiff = (statB.wrongCount || 0) - (statA.wrongCount || 0);
-            if (wrongDiff !== 0) return wrongDiff;
-            const slowDiff = (statB.maxResponseMs || 0) - (statA.maxResponseMs || 0);
-            if (slowDiff !== 0) return slowDiff;
-            return (statB.totalAttempts || 0) - (statA.totalAttempts || 0);
-        });
-    
-    return { words, summary, reasonMap };
-}
-
-// AI分析メニューを開く
-function openAiAnalysisMenu() {
-    const { words } = getAiAnalysisWords();
-    
-    if (!words.length) {
-        showAlert('通知', 'AI分析の対象となる単語がまだありません。通常の学習を進めてください。');
-        return;
-    }
-    
-    // オーバーレイで学習方法を選択
-    showStudyModeOverlay(
-        () => showInputModeDirectly('AI分析 苦手単語', words, 'AI分析 苦手単語'),
-        () => showWordFilterView('AI分析 苦手単語', words, 'AI分析 苦手単語')
-    );
-}
 
 // 大阪府のすべての英単語で学習を開始
 function startAllWordsLearning() {
@@ -2097,42 +1907,6 @@ function updateCategoryStars() {
     // 細分化メニュー（日常生活でよく使う生活語彙、英文でよく登場する機能語）の進捗バーを更新
     updateSubcategoryProgressBars();
     
-    // AI分析の苦手単語数を更新
-    try {
-        const { words } = getAiAnalysisWords();
-        const aiWordCount = words.length;
-        
-        // サイドバーのAI分析メニュー項目に表示
-        const sidebarAiWordCount = document.getElementById('sidebarAiWordCount');
-        if (sidebarAiWordCount) {
-            sidebarAiWordCount.textContent = aiWordCount;
-        }
-        
-        // カテゴリーカードのAI分析カードに表示
-        const cardAiWordCount = document.getElementById('cardAiWordCount');
-        const aiWordNumber = document.querySelector('.ai-word-number');
-        const aiAnalyzing = document.getElementById('aiAnalyzing');
-        if (cardAiWordCount) {
-            cardAiWordCount.textContent = aiWordCount;
-        }
-        // 0語のときは「分析中」を表示
-        if (aiWordNumber && aiAnalyzing) {
-            if (aiWordCount === 0) {
-                aiWordNumber.classList.remove('show');
-                aiAnalyzing.style.display = 'flex';
-            } else {
-                aiWordNumber.classList.add('show');
-                aiAnalyzing.style.display = 'none';
-            }
-        }
-    } catch (error) {
-        console.error('AI分析単語数の更新エラー:', error);
-        // エラーが発生した場合は0を表示
-        const sidebarAiWordCount = document.getElementById('sidebarAiWordCount');
-        const cardAiWordCount = document.getElementById('cardAiWordCount');
-        if (sidebarAiWordCount) sidebarAiWordCount.textContent = '0';
-        if (cardAiWordCount) cardAiWordCount.textContent = '0';
-    }
 }
 
 // 細分化メニューの進捗バーを更新
@@ -2719,7 +2493,6 @@ function init() {
         preventZoom();
         assignCategories();
         loadData();
-        loadWordStats();
         initExamCountdown();
         setupEventListeners();
         initSchoolSelector();
@@ -6010,14 +5783,6 @@ function setupEventListeners() {
         console.error('categorySelection element not found!');
     }
     
-    // AI分析カードボタン
-    const aiAnalysisCardBtn = document.getElementById('aiAnalysisCardBtn');
-    if (aiAnalysisCardBtn) {
-        aiAnalysisCardBtn.addEventListener('click', () => {
-            openAiAnalysisMenu();
-        });
-    }
-    
     // 大阪府のすべての英単語カードボタン
     const allWordsCardBtn = document.getElementById('allWordsCardBtn');
     if (allWordsCardBtn) {
@@ -6830,7 +6595,7 @@ function setupEventListeners() {
         // 背後にコース選択画面がある場合はそのまま、ない場合はカテゴリー選択画面に戻る
         const courseSelection = document.getElementById('courseSelection');
         if (!courseSelection || courseSelection.classList.contains('hidden')) {
-            // コース選択画面がない場合（すべての英単語、AI分析など）はカテゴリー選択画面に戻る
+            // コース選択画面がない場合（すべての英単語など）はカテゴリー選択画面に戻る
             setTimeout(() => {
                 showCategorySelection();
             }, 400);
@@ -6956,8 +6721,6 @@ function setupEventListeners() {
     const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
     const homeFromSidebarBtn = document.getElementById('homeFromSidebarBtn');
-    const aiAnalysisMenuBtn = document.getElementById('aiAnalysisMenuBtn');
-    
     // サイドバーを開く
     function openSidebar() {
         if (sidebar && sidebarOverlay) {
@@ -7177,13 +6940,6 @@ function setupEventListeners() {
         clearHistoryBtn.addEventListener('click', () => {
             closeSidebar();
             clearLearningHistory();
-        });
-    }
-    
-    if (aiAnalysisMenuBtn) {
-        aiAnalysisMenuBtn.addEventListener('click', () => {
-            closeSidebar();
-            openAiAnalysisMenu();
         });
     }
     
@@ -8492,7 +8248,7 @@ function applyMarkers(word) {
     let categoryWrongSet = wrongWords;
     if (selectedCategory) {
         // 小学生で習った単語の場合は、その単語のカテゴリーから進捗を読み込む
-        const categoryKey = (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語' || selectedCategory === 'AI分析 苦手単語') ? word.category : selectedCategory;
+        const categoryKey = (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') ? word.category : selectedCategory;
         const categoryData = loadCategoryWords(categoryKey);
         categoryCorrectSet = categoryData.correctSet;
         categoryWrongSet = categoryData.wrongSet;
@@ -10407,8 +10163,8 @@ function markMastered() {
     correctWords.add(word.id);
     
     // カテゴリごとの進捗を更新
-    // AI分析、小学生で習った単語、すべての単語の場合は、各単語のカテゴリーを使用
-    const categoryKey = (selectedCategory === 'AI分析 苦手単語' || selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語' || selectedCategory === '大阪府のすべての英単語') ? word.category : selectedCategory;
+    // 小学生で習った単語、すべての単語の場合は、各単語のカテゴリーを使用
+    const categoryKey = (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語' || selectedCategory === '大阪府のすべての英単語') ? word.category : selectedCategory;
     if (categoryKey) {
         const { correctSet, wrongSet } = loadCategoryWords(categoryKey);
         correctSet.add(word.id);
@@ -10462,8 +10218,7 @@ function markMastered() {
             selectedCategory &&
             selectedCategory !== '復習チェック' &&
             selectedCategory !== '間違い復習' &&
-            selectedCategory !== '大阪C問題対策英単語タイムアタック' &&
-            selectedCategory !== 'AI分析 苦手単語'
+            selectedCategory !== '大阪C問題対策英単語タイムアタック'
         ) {
             saveProgress(selectedCategory, currentIndex);
         }
@@ -10540,7 +10295,6 @@ function markAnswer(isCorrect, isTimeout = false) {
     const word = currentWords[currentIndex];
     answeredWords.add(word.id);
     const responseMs = wordResponseStartTime ? (Date.now() - wordResponseStartTime) : null;
-    recordWordResult(word, isCorrect, { responseMs, isTimeout });
     
 
     // 現在の問題の回答状況を記録
@@ -10554,8 +10308,8 @@ function markAnswer(isCorrect, isTimeout = false) {
         correctWords.add(word.id);
         
         // カテゴリごとの進捗を更新
-        // AI分析または小学生で習った単語の場合は、各単語のカテゴリー（機能語の場合は「冠詞」「代名詞」など）を使用
-        const categoryKey = (selectedCategory === 'AI分析 苦手単語' || selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') ? word.category : selectedCategory;
+        // 小学生で習った単語の場合は、各単語のカテゴリー（機能語の場合は「冠詞」「代名詞」など）を使用
+        const categoryKey = (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') ? word.category : selectedCategory;
         if (categoryKey) {
             const { correctSet, wrongSet } = loadCategoryWords(categoryKey);
             correctSet.add(word.id);
@@ -10572,8 +10326,8 @@ function markAnswer(isCorrect, isTimeout = false) {
         wrongWords.add(word.id);
         
         // カテゴリごとの進捗を更新
-        // AI分析、小学生で習った単語、すべての単語の場合は、各単語のカテゴリーを使用
-        const categoryKeyWrong = (selectedCategory === 'AI分析 苦手単語' || selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語' || selectedCategory === '大阪府のすべての英単語') ? word.category : selectedCategory;
+        // 小学生で習った単語、すべての単語の場合は、各単語のカテゴリーを使用
+        const categoryKeyWrong = (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語' || selectedCategory === '大阪府のすべての英単語') ? word.category : selectedCategory;
         if (categoryKeyWrong) {
             const { correctSet, wrongSet } = loadCategoryWords(categoryKeyWrong);
             wrongSet.add(word.id);
@@ -10654,8 +10408,7 @@ function markAnswer(isCorrect, isTimeout = false) {
             selectedCategory &&
             selectedCategory !== '復習チェック' &&
             selectedCategory !== '間違い復習' &&
-            selectedCategory !== '大阪C問題対策英単語タイムアタック' &&
-            selectedCategory !== 'AI分析 苦手単語'
+            selectedCategory !== '大阪C問題対策英単語タイムアタック'
         ) {
             saveProgress(selectedCategory, currentIndex);
         }
@@ -11697,9 +11450,6 @@ function clearLearningHistory() {
             }
             keysToRemove.forEach(key => localStorage.removeItem(key));
             
-            // AI分析データ（苦手・要復習）もリセット
-            wordStats = {};
-            localStorage.removeItem(WORD_STATS_KEY);
             
             // 画面を更新
             if (elements.categorySelection && !elements.categorySelection.classList.contains('hidden')) {
