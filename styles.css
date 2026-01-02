@@ -5431,6 +5431,8 @@ body.reorder-mode-active .word-card-container {
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
     letter-spacing: 0.08em;
     z-index: 5;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .input-list-number::after {
@@ -5571,7 +5573,7 @@ body.reorder-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
-    border-top: 0.5px solid #000000;
+    border-left: 0.5px solid #000000;
     border-bottom: 0.5px solid #000000;
     padding: 20px 16px;
     padding-top: 40px;
@@ -5579,8 +5581,8 @@ body.reorder-mode-active .word-card-container {
     transition: background 0.15s ease;
 }
 
-.input-list-item-expand:last-child {
-    border-bottom: none;
+.input-list-item-expand:first-child {
+    border-top: 0.5px solid #000000;
 }
 
 .input-list-item-expand.marker-correct {
