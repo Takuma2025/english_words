@@ -5932,6 +5932,16 @@ function setupEventListeners() {
         elements.wordCheckbox.addEventListener('pointerdown', (e) => e.stopPropagation());
     }
     
+    // チェックボックス（アウトプットモード裏面用）
+    const wordCheckboxBack = document.getElementById('wordCheckboxBack');
+    if (wordCheckboxBack) {
+        wordCheckboxBack.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleReview();
+        });
+        wordCheckboxBack.addEventListener('pointerdown', (e) => e.stopPropagation());
+    }
+    
     // チェックボックス（インプットモード用）
     const inputWordCheckbox = document.getElementById('inputWordCheckbox');
     if (inputWordCheckbox) {
@@ -7433,6 +7443,14 @@ function displayInputMode(skipAnimationReset = false) {
             elements.wordCheckbox.classList.remove('checked');
         }
     }
+    const wordCheckboxBack = document.getElementById('wordCheckboxBack');
+    if (wordCheckboxBack) {
+        if (reviewWords.has(word.id)) {
+            wordCheckboxBack.classList.add('checked');
+        } else {
+            wordCheckboxBack.classList.remove('checked');
+        }
+    }
     const inputWordCheckbox = document.getElementById('inputWordCheckbox');
     if (inputWordCheckbox) {
         if (reviewWords.has(word.id)) {
@@ -8162,6 +8180,14 @@ function toggleReview() {
             elements.wordCheckbox.classList.add('checked');
         } else {
             elements.wordCheckbox.classList.remove('checked');
+        }
+    }
+    const wordCheckboxBack = document.getElementById('wordCheckboxBack');
+    if (wordCheckboxBack) {
+        if (reviewWords.has(word.id)) {
+            wordCheckboxBack.classList.add('checked');
+        } else {
+            wordCheckboxBack.classList.remove('checked');
         }
     }
     const inputWordCheckbox = document.getElementById('inputWordCheckbox');
@@ -10009,7 +10035,7 @@ function updateFilterCount(filtered, total) {
         const filterNames = {
             'wrong': '覚えていない',
             'unlearned': '未学習',
-            'bookmark': 'ブックマーク',
+            'bookmark': 'チェックマーク',
             'correct': '覚えた'
         };
         

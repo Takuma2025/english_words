@@ -5297,7 +5297,7 @@ body.reorder-mode-active .word-card-container {
 .input-list-top-actions {
     position: absolute;
     top: 0;
-    right: 8px;
+    right: 5px;
     display: flex;
     align-items: flex-start;
     gap: 6px;
@@ -5461,7 +5461,7 @@ body.reorder-mode-active .word-card-container {
     left: 48px;
     width: 18px;
     height: 18px;
-    border: 2px solid #d1d5db;
+    border: 1.5px solid #d1d5db;
     border-radius: 5px;
     background: #ffffff;
     cursor: pointer;
@@ -5670,7 +5670,7 @@ body.reorder-mode-active .word-card-container {
     left: 48px;
     width: 20px;
     height: 20px;
-    border: 2px solid #d1d5db;
+    border: 1.5px solid #d1d5db;
     border-radius: 6px;
     background: #ffffff;
     cursor: pointer;
@@ -7039,15 +7039,15 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     background: #ef4444;
 }
 
-/* アウトプットモードのチェックボックス（単語番号の右） */
+/* アウトプットモードのチェックボックス（左上隅） */
 .word-checkbox {
     position: absolute;
-    top: 14px;
-    left: 75px;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #d1d5db;
-    border-radius: 5px;
+    top: 12px;
+    left: 12px;
+    width: 28px;
+    height: 28px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 6px;
     background: #ffffff;
     cursor: pointer;
     display: flex;
@@ -7059,12 +7059,12 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .word-checkbox::after {
     content: '';
-    width: 5px;
-    height: 9px;
+    width: 7px;
+    height: 13px;
     border: solid #d1d5db;
-    border-width: 0 2px 2px 0;
+    border-width: 0 2.5px 2.5px 0;
     transform: rotate(45deg);
-    margin-top: -2px;
+    margin-top: -3px;
 }
 
 .word-checkbox:hover {
@@ -7080,13 +7080,45 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     border-color: #ffffff;
 }
 
-/* アウトプットモードのときはチェックボックスも非表示 */
-body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-checkbox {
-    display: none;
+/* 裏面のチェックボックス */
+.word-checkbox-back {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 28px;
+    height: 28px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
 }
 
-.word-card.flipped .word-checkbox {
-    display: none;
+.word-checkbox-back::after {
+    content: '';
+    width: 7px;
+    height: 13px;
+    border: solid #d1d5db;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+    margin-top: -3px;
+}
+
+.word-checkbox-back:hover {
+    border-color: #9ca3af;
+}
+
+.word-checkbox-back.checked {
+    background: #fbbf24;
+    border-color: #f59e0b;
+}
+
+.word-checkbox-back.checked::after {
+    border-color: #ffffff;
 }
 
 /* インプットモードの単語番号 */
@@ -7127,7 +7159,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-checkbox {
     left: 70px !important;
     width: 20px;
     height: 20px;
-    border: 2px solid #d1d5db;
+    border: 1.5px solid #d1d5db;
     border-radius: 5px;
     background: #ffffff;
     cursor: pointer;
@@ -7200,19 +7232,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-checkbox {
     color: var(--warning);
 }
 
-/* アウトプットモードのカード用ブックマーク（リボン型、右上配置） */
+/* アウトプットモードのカード用ブックマーク（リボン型、右上配置） - 非表示 */
 .card-star-btn {
-    position: absolute;
-    top: 0;
-    right: 16px;
-    padding: 0;
-    margin: 0;
-    width: 28px;
-    height: 38px;
-    color: #d1d5db;
-    z-index: 100;
-    transition: color 0.2s ease;
-    backface-visibility: hidden;
+    display: none;
 }
 
 .card-star-btn:hover {
@@ -11995,16 +12017,19 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-checkbox {
 .filter-icon-bookmark {
     display: inline-block;
     margin-left: 6px;
-    width: 14px;
+    width: 16px;
     height: 16px;
     vertical-align: middle;
-    color: #fbbf24;
+}
+
+.filter-icon-bookmark rect {
     fill: #fbbf24;
+    stroke: #f59e0b;
 }
 
 .filter-icon-bookmark path {
-    fill: #fbbf24;
-    stroke: #fbbf24;
+    stroke: #ffffff;
+    fill: none;
 }
 
 .order-radio input[type="radio"] {
