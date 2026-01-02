@@ -9408,16 +9408,8 @@ function setupInputListModeToggle() {
         flipBtn.classList.add('active');
         expandBtn.classList.remove('active');
         updateRedSheetToggleVisibility();
-        // 現在の単語リストを再描画
-        const wordsToRender = currentCourseWords && currentCourseWords.length > 0 ? currentCourseWords : currentWords;
-        if (wordsToRender && wordsToRender.length > 0) {
-            // 大量データの場合はページネーションを使用
-            if (wordsToRender.length > 500) {
-                renderInputListViewPaginated(wordsToRender);
-            } else {
-            renderInputListView(wordsToRender);
-            }
-        }
+        // フィルターを適用して再描画（絞り込み状態を保持）
+        applyInputFilter();
     });
     
     expandBtn.addEventListener('click', () => {
@@ -9446,7 +9438,14 @@ function setupInputListFilter() {
             const isOpen = filterDropdown.classList.contains('show');
             if (isOpen) {
                 filterDropdown.classList.remove('show');
-                filterTrigger.classList.remove('active');
+                // 絞り込み中かどうかを確認してactiveを維持
+                const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
+                if (allCheckbox && !allCheckbox.checked) {
+                    // 絞り込み中はactiveを維持
+                    filterTrigger.classList.add('active');
+                } else {
+                    filterTrigger.classList.remove('active');
+                }
             } else {
                 filterDropdown.classList.remove('hidden');
                 // 少し遅延してアニメーションを適用
@@ -9461,7 +9460,14 @@ function setupInputListFilter() {
         document.addEventListener('click', (e) => {
             if (!filterDropdown.contains(e.target) && !filterTrigger.contains(e.target)) {
                 filterDropdown.classList.remove('show');
-                filterTrigger.classList.remove('active');
+                // 絞り込み中かどうかを確認してactiveを維持
+                const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
+                if (allCheckbox && !allCheckbox.checked) {
+                    // 絞り込み中はactiveを維持
+                    filterTrigger.classList.add('active');
+                } else {
+                    filterTrigger.classList.remove('active');
+                }
             }
         });
         
