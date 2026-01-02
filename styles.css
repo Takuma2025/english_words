@@ -467,7 +467,7 @@ body.learning-mode .app-header {
     }
     
     .category-list {
-        padding: 0; /* カテゴリーリストのパディングを削除 */
+        padding: 12px; /* カテゴリーリストのパディングを維持 */
     }
 }
 
@@ -1035,6 +1035,8 @@ body.learning-mode .app-header {
     margin-bottom: 24px;
     width: 100%;
     box-sizing: border-box;
+    background: #f5f5f5;
+    padding: 12px;
 }
 
 .course-section {
@@ -1069,20 +1071,25 @@ body.learning-mode .app-header {
 .category-cards-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0;
+    gap: 12px;
     margin-bottom: 0;
-    border-bottom: 1px solid #d1d5db;
+    border-bottom: none;
 }
 
 .category-cards-row .category-card {
     padding: 10px 12px;
     border-bottom: none;
-    border-right: 1px solid #d1d5db;
+    border-right: none;
     align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .category-cards-row .category-card:last-child {
     border-right: none;
+}
+
+.category-cards-row .category-card:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .category-cards-row .category-name {
@@ -2625,27 +2632,29 @@ body.learning-mode .app-header {
     align-items: center;
     background: #ffffff;
     border: none;
-    border-bottom: 1px solid #d1d5db;
     border-radius: 0;
     padding: 16px;
     width: 100%;
     box-sizing: border-box;
     text-align: left;
     cursor: pointer;
-    transition: background-color 0.1s;
-    box-shadow: none;
+    transition: background-color 0.1s, box-shadow 0.1s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .category-card:hover {
-    background-color: #f9fafb;
+    background-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .category-card:active {
-    background-color: #f3f4f6;
+    background-color: #f9fafb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .category-card.touch-hover {
-    background-color: #f9fafb;
+    background-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .category-card:last-child {
@@ -2659,10 +2668,12 @@ body.learning-mode .app-header {
     cursor: default;
     padding: 0;
     overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .category-card.category-card-with-actions:hover {
     background-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .category-card.category-card-with-actions .category-info {
