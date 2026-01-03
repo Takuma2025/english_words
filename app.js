@@ -516,6 +516,18 @@ function updateVocabProgressBar() {
     const requiredProgress = denominator > 0 ? Math.round((learnedWords / denominator) * 100) : 0;
     if (requiredProgressEl) requiredProgressEl.textContent = requiredProgress;
     
+    // 志望校カード内の進捗バーを更新
+    const schoolProgressPercentEl = document.getElementById('schoolProgressPercent');
+    const schoolProgressFractionEl = document.getElementById('schoolProgressFraction');
+    const schoolProgressBarEl = document.getElementById('schoolProgressBar');
+    
+    if (requiredWords > 0) {
+        const schoolProgress = Math.min(100, Math.round((learnedWords / requiredWords) * 100));
+        if (schoolProgressPercentEl) schoolProgressPercentEl.textContent = `${schoolProgress}%`;
+        if (schoolProgressFractionEl) schoolProgressFractionEl.textContent = `${learnedWords}/${requiredWords}`;
+        if (schoolProgressBarEl) schoolProgressBarEl.style.width = `${schoolProgress}%`;
+    }
+    
     // 必須ラインに達したかどうかを判定
     const hasReachedRequired = requiredWords > 0 && learnedWords >= requiredWords;
     if (countBikeEl) {
@@ -3188,6 +3200,7 @@ function startCategory(category) {
 
 // 日本語→英語モードで学習を初期化
 function initInputModeLearning(category, words, startIndex = 0) {
+    console.log('initInputModeLearning called:', { category, wordsCount: words.length, startIndex });
     selectedCategory = category;
     currentWords = words;
     isInputModeActive = true;
@@ -3295,13 +3308,36 @@ function initInputModeLearning(category, words, startIndex = 0) {
     
     // カードモード、例文モード、整序英作文モードを非表示、入力モードを表示
     const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
     const inputMode = document.getElementById('inputMode');
     const sentenceMode = document.getElementById('sentenceMode');
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
     const progressStepButtons = document.querySelector('.progress-step-buttons');
-    if (wordCard) wordCard.classList.add('hidden');
-    if (inputMode) inputMode.classList.remove('hidden');
+    const cardStacks = document.querySelectorAll('.card-stack');
+    
+    console.log('Hiding card elements and showing input mode');
+    
+    // カード関連を全て非表示（display: noneを直接設定）
+    if (wordCard) {
+        wordCard.classList.add('hidden');
+        wordCard.style.display = 'none';
+    }
+    if (wordCardContainer) {
+        wordCardContainer.classList.add('hidden');
+        wordCardContainer.style.display = 'none';
+    }
+    cardStacks.forEach(stack => {
+        stack.classList.add('hidden');
+        stack.style.display = 'none';
+    });
+    
+    // 入力モードを表示
+    if (inputMode) {
+        inputMode.classList.remove('hidden');
+        inputMode.style.display = 'flex';
+        console.log('inputMode displayed');
+    }
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
     // モードフラグをリセット
@@ -6787,9 +6823,21 @@ function setupEventListeners() {
                 // 単語帳（展開）モードで開始
                 showInputModeDirectly(currentFilterCategory, wordsToLearn, currentFilterCourseTitle);
             } else {
-                // 単語カードモードで開始
-                currentLearningMode = selectedLearningMode === 'input' ? 'input' : 'card';
-                initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
+                // テストモードを確認
+                const testModeJaToEn = document.getElementById('testModeJaToEn');
+                console.log('testModeJaToEn element:', testModeJaToEn);
+                console.log('testModeJaToEn checked:', testModeJaToEn ? testModeJaToEn.checked : 'element not found');
+                if (testModeJaToEn && testModeJaToEn.checked) {
+                    // 日本語→英語入力モードで開始
+                    console.log('Starting Japanese to English input mode');
+                    isInputModeActive = true;
+                    initInputModeLearning(currentFilterCategory, wordsToLearn, 0);
+                } else {
+                    // 単語カードモードで開始（英語→日本語）
+                    console.log('Starting English to Japanese card mode');
+                    currentLearningMode = selectedLearningMode === 'input' ? 'input' : 'card';
+                    initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
+                }
             }
         });
     }
@@ -14423,12 +14471,448 @@ function saveGrammarExerciseProgress(chapterNumber, exerciseIndex, allCorrect, e
     }
 }
 
+// =============================================
+// 手書き文字認識
+// =============================================
+
+// 手書き認識のための変数
+let handwriteCanvas = null;
+let handwriteCtx = null;
+let isDrawing = false;
+let currentStroke = [];
+let allStrokes = [];
+let lastRecognizedChar = '';
+
+// アルファベットテンプレート（正規化された座標パターン）
+const LETTER_TEMPLATES = {
+    'a': [[0.5,0.2],[0.3,0.3],[0.2,0.5],[0.2,0.7],[0.3,0.85],[0.5,0.9],[0.7,0.85],[0.8,0.7],[0.8,0.5],[0.8,0.9]],
+    'b': [[0.2,0.1],[0.2,0.9],[0.2,0.5],[0.4,0.4],[0.6,0.45],[0.7,0.55],[0.7,0.7],[0.6,0.85],[0.4,0.9],[0.2,0.85]],
+    'c': [[0.8,0.3],[0.6,0.15],[0.4,0.15],[0.25,0.3],[0.2,0.5],[0.25,0.7],[0.4,0.85],[0.6,0.85],[0.8,0.7]],
+    'd': [[0.8,0.1],[0.8,0.9],[0.8,0.5],[0.6,0.4],[0.4,0.45],[0.3,0.55],[0.3,0.7],[0.4,0.85],[0.6,0.9],[0.8,0.85]],
+    'e': [[0.75,0.5],[0.25,0.5],[0.25,0.35],[0.4,0.2],[0.6,0.2],[0.75,0.35],[0.75,0.55],[0.6,0.75],[0.4,0.85],[0.25,0.75]],
+    'f': [[0.7,0.15],[0.5,0.1],[0.35,0.2],[0.3,0.4],[0.3,0.9],[0.15,0.5],[0.55,0.5]],
+    'g': [[0.75,0.3],[0.5,0.2],[0.3,0.35],[0.25,0.55],[0.35,0.75],[0.55,0.8],[0.75,0.7],[0.75,0.9],[0.65,1.1],[0.45,1.15],[0.3,1.05]],
+    'h': [[0.2,0.1],[0.2,0.9],[0.2,0.5],[0.4,0.4],[0.6,0.45],[0.75,0.55],[0.75,0.9]],
+    'i': [[0.5,0.35],[0.5,0.9],[0.5,0.15],[0.5,0.2]],
+    'j': [[0.6,0.15],[0.6,0.2],[0.6,0.35],[0.6,0.9],[0.5,1.05],[0.35,1.1],[0.25,1.0]],
+    'k': [[0.25,0.1],[0.25,0.9],[0.25,0.55],[0.55,0.3],[0.75,0.15],[0.25,0.55],[0.55,0.75],[0.75,0.9]],
+    'l': [[0.5,0.1],[0.5,0.9]],
+    'm': [[0.15,0.9],[0.15,0.4],[0.25,0.25],[0.4,0.3],[0.5,0.45],[0.5,0.9],[0.5,0.45],[0.6,0.3],[0.75,0.25],[0.85,0.4],[0.85,0.9]],
+    'n': [[0.2,0.9],[0.2,0.4],[0.35,0.25],[0.55,0.25],[0.75,0.4],[0.75,0.9]],
+    'o': [[0.5,0.2],[0.3,0.3],[0.2,0.5],[0.25,0.7],[0.4,0.85],[0.6,0.85],[0.75,0.7],[0.8,0.5],[0.7,0.3],[0.5,0.2]],
+    'p': [[0.25,0.35],[0.25,1.15],[0.25,0.5],[0.4,0.35],[0.6,0.35],[0.75,0.5],[0.75,0.65],[0.6,0.8],[0.4,0.8],[0.25,0.65]],
+    'q': [[0.75,0.35],[0.75,1.15],[0.75,0.5],[0.6,0.35],[0.4,0.35],[0.25,0.5],[0.25,0.65],[0.4,0.8],[0.6,0.8],[0.75,0.65]],
+    'r': [[0.25,0.9],[0.25,0.4],[0.35,0.25],[0.5,0.25],[0.65,0.35]],
+    's': [[0.7,0.25],[0.5,0.2],[0.3,0.3],[0.3,0.45],[0.5,0.55],[0.7,0.65],[0.7,0.8],[0.5,0.9],[0.3,0.85]],
+    't': [[0.4,0.1],[0.4,0.85],[0.5,0.9],[0.65,0.85],[0.2,0.35],[0.6,0.35]],
+    'u': [[0.2,0.35],[0.2,0.7],[0.35,0.85],[0.55,0.85],[0.75,0.7],[0.75,0.35],[0.75,0.9]],
+    'v': [[0.2,0.3],[0.5,0.9],[0.8,0.3]],
+    'w': [[0.1,0.3],[0.3,0.9],[0.5,0.5],[0.7,0.9],[0.9,0.3]],
+    'x': [[0.2,0.3],[0.8,0.9],[0.5,0.6],[0.8,0.3],[0.2,0.9]],
+    'y': [[0.2,0.3],[0.5,0.6],[0.8,0.3],[0.5,0.6],[0.4,1.0],[0.25,1.1]],
+    'z': [[0.2,0.3],[0.8,0.3],[0.2,0.9],[0.8,0.9]]
+};
+
+// 手書き入力の初期化
+function initHandwriteInput() {
+    handwriteCanvas = document.getElementById('handwriteCanvas');
+    if (!handwriteCanvas) return;
+    
+    handwriteCtx = handwriteCanvas.getContext('2d');
+    
+    // Canvas解像度をデバイスピクセル比に合わせる
+    const dpr = window.devicePixelRatio || 1;
+    const rect = handwriteCanvas.getBoundingClientRect();
+    handwriteCanvas.width = rect.width * dpr;
+    handwriteCanvas.height = rect.height * dpr;
+    handwriteCtx.scale(dpr, dpr);
+    handwriteCanvas.style.width = rect.width + 'px';
+    handwriteCanvas.style.height = rect.height + 'px';
+    
+    // 描画設定
+    handwriteCtx.strokeStyle = '#1f2937';
+    handwriteCtx.lineWidth = 4;
+    handwriteCtx.lineCap = 'round';
+    handwriteCtx.lineJoin = 'round';
+    
+    // タッチイベント
+    handwriteCanvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    handwriteCanvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    handwriteCanvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+    
+    // マウスイベント（デバッグ用）
+    handwriteCanvas.addEventListener('mousedown', handleMouseDown);
+    handwriteCanvas.addEventListener('mousemove', handleMouseMove);
+    handwriteCanvas.addEventListener('mouseup', handleMouseUp);
+    handwriteCanvas.addEventListener('mouseleave', handleMouseUp);
+    
+    // ボタンイベント
+    const clearBtn = document.getElementById('handwriteClear');
+    const confirmBtn = document.getElementById('handwriteConfirm');
+    const keyboardTab = document.getElementById('keyboardTabBtn');
+    const handwriteTab = document.getElementById('handwriteTabBtn');
+    const passBtn = document.getElementById('handwritePass');
+    const decideBtn = document.getElementById('handwriteDecide');
+    
+    if (clearBtn) clearBtn.addEventListener('click', clearHandwriteCanvas);
+    if (confirmBtn) confirmBtn.addEventListener('click', confirmHandwriteChar);
+    
+    // タブ切り替え
+    if (keyboardTab) {
+        keyboardTab.addEventListener('click', () => switchInputMode('keyboard'));
+    }
+    if (handwriteTab) {
+        handwriteTab.addEventListener('click', () => switchInputMode('handwrite'));
+    }
+    
+    // パス・解答ボタン
+    if (passBtn) {
+        passBtn.addEventListener('click', () => {
+            const keyboardPassBtn = document.getElementById('keyboardPass');
+            if (keyboardPassBtn) keyboardPassBtn.click();
+        });
+    }
+    if (decideBtn) {
+        decideBtn.addEventListener('click', () => {
+            const keyboardDecideBtn = document.getElementById('keyboardDecide');
+            if (keyboardDecideBtn) keyboardDecideBtn.click();
+        });
+    }
+}
+
+// 入力モード切り替え
+function switchInputMode(mode) {
+    const keyboardTab = document.getElementById('keyboardTabBtn');
+    const handwriteTab = document.getElementById('handwriteTabBtn');
+    const virtualKeyboard = document.getElementById('virtualKeyboard');
+    const handwriteInput = document.getElementById('handwriteInput');
+    
+    if (mode === 'keyboard') {
+        keyboardTab?.classList.add('active');
+        handwriteTab?.classList.remove('active');
+        virtualKeyboard?.classList.remove('hidden');
+        handwriteInput?.classList.add('hidden');
+    } else {
+        keyboardTab?.classList.remove('active');
+        handwriteTab?.classList.add('active');
+        virtualKeyboard?.classList.add('hidden');
+        handwriteInput?.classList.remove('hidden');
+        
+        // Canvas初期化
+        if (!handwriteCtx) {
+            initHandwriteInput();
+        }
+        clearHandwriteCanvas();
+    }
+}
+
+// タッチイベントハンドラ
+function handleTouchStart(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const pos = getTouchPos(touch);
+    startStroke(pos.x, pos.y);
+}
+
+function handleTouchMove(e) {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const touch = e.touches[0];
+    const pos = getTouchPos(touch);
+    continueStroke(pos.x, pos.y);
+}
+
+function handleTouchEnd(e) {
+    e.preventDefault();
+    endStroke();
+}
+
+// マウスイベントハンドラ
+function handleMouseDown(e) {
+    const pos = getMousePos(e);
+    startStroke(pos.x, pos.y);
+}
+
+function handleMouseMove(e) {
+    if (!isDrawing) return;
+    const pos = getMousePos(e);
+    continueStroke(pos.x, pos.y);
+}
+
+function handleMouseUp() {
+    endStroke();
+}
+
+// 座標取得
+function getTouchPos(touch) {
+    const rect = handwriteCanvas.getBoundingClientRect();
+    return {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+    };
+}
+
+function getMousePos(e) {
+    const rect = handwriteCanvas.getBoundingClientRect();
+    return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+    };
+}
+
+// ストローク開始
+function startStroke(x, y) {
+    isDrawing = true;
+    currentStroke = [[x, y]];
+    handwriteCtx.beginPath();
+    handwriteCtx.moveTo(x, y);
+}
+
+// ストローク継続
+function continueStroke(x, y) {
+    currentStroke.push([x, y]);
+    handwriteCtx.lineTo(x, y);
+    handwriteCtx.stroke();
+    handwriteCtx.beginPath();
+    handwriteCtx.moveTo(x, y);
+}
+
+// ストローク終了
+function endStroke() {
+    if (!isDrawing) return;
+    isDrawing = false;
+    if (currentStroke.length > 2) {
+        allStrokes.push([...currentStroke]);
+        recognizeCharacter();
+    }
+    currentStroke = [];
+}
+
+// キャンバスクリア
+function clearHandwriteCanvas() {
+    if (!handwriteCtx) return;
+    const rect = handwriteCanvas.getBoundingClientRect();
+    handwriteCtx.clearRect(0, 0, rect.width, rect.height);
+    allStrokes = [];
+    currentStroke = [];
+    lastRecognizedChar = '';
+    
+    const recognized = document.getElementById('handwriteRecognized');
+    if (recognized) {
+        recognized.textContent = '';
+        recognized.classList.remove('show');
+    }
+}
+
+// 文字認識
+function recognizeCharacter() {
+    if (allStrokes.length === 0) return;
+    
+    // 全ストロークを1つの配列にまとめる
+    let allPoints = [];
+    allStrokes.forEach(stroke => {
+        allPoints = allPoints.concat(stroke);
+    });
+    
+    if (allPoints.length < 5) return;
+    
+    // 正規化
+    const normalized = normalizePoints(allPoints);
+    
+    // テンプレートとマッチング
+    let bestMatch = null;
+    let bestScore = Infinity;
+    
+    for (const [letter, template] of Object.entries(LETTER_TEMPLATES)) {
+        const score = calculateDistance(normalized, template);
+        if (score < bestScore) {
+            bestScore = score;
+            bestMatch = letter;
+        }
+    }
+    
+    if (bestMatch && bestScore < 2.5) {
+        lastRecognizedChar = bestMatch;
+        const recognized = document.getElementById('handwriteRecognized');
+        if (recognized) {
+            recognized.textContent = bestMatch;
+            recognized.classList.add('show');
+        }
+    }
+}
+
+// ポイントの正規化（0-1の範囲に）
+function normalizePoints(points) {
+    if (points.length === 0) return [];
+    
+    // バウンディングボックスを計算
+    let minX = Infinity, minY = Infinity;
+    let maxX = -Infinity, maxY = -Infinity;
+    
+    points.forEach(([x, y]) => {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+    });
+    
+    const width = maxX - minX || 1;
+    const height = maxY - minY || 1;
+    const scale = Math.max(width, height);
+    
+    // 正規化してリサンプリング
+    const normalized = points.map(([x, y]) => [
+        (x - minX) / scale,
+        (y - minY) / scale
+    ]);
+    
+    // リサンプリング（10ポイントに）
+    return resamplePoints(normalized, 10);
+}
+
+// ポイントのリサンプリング
+function resamplePoints(points, n) {
+    if (points.length <= 1) return points;
+    
+    // パスの総長を計算
+    let totalLength = 0;
+    for (let i = 1; i < points.length; i++) {
+        totalLength += distance(points[i-1], points[i]);
+    }
+    
+    if (totalLength === 0) return [points[0]];
+    
+    const interval = totalLength / (n - 1);
+    const resampled = [points[0]];
+    let accumulatedDist = 0;
+    
+    for (let i = 1; i < points.length; i++) {
+        const d = distance(points[i-1], points[i]);
+        
+        while (accumulatedDist + d >= interval && resampled.length < n) {
+            const t = (interval - accumulatedDist) / d;
+            const newPoint = [
+                points[i-1][0] + t * (points[i][0] - points[i-1][0]),
+                points[i-1][1] + t * (points[i][1] - points[i-1][1])
+            ];
+            resampled.push(newPoint);
+            accumulatedDist = 0;
+        }
+        accumulatedDist += d;
+    }
+    
+    // 最後のポイントを追加
+    while (resampled.length < n) {
+        resampled.push(points[points.length - 1]);
+    }
+    
+    return resampled.slice(0, n);
+}
+
+// 2点間の距離
+function distance(p1, p2) {
+    const dx = p2[0] - p1[0];
+    const dy = p2[1] - p1[1];
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+// テンプレートとの距離計算
+function calculateDistance(points, template) {
+    if (points.length !== template.length) {
+        // リサンプリング
+        const targetLen = Math.min(points.length, template.length);
+        points = resamplePoints(points, targetLen);
+        template = resamplePoints(template, targetLen);
+    }
+    
+    let totalDist = 0;
+    for (let i = 0; i < points.length; i++) {
+        totalDist += distance(points[i], template[i]);
+    }
+    
+    return totalDist / points.length;
+}
+
+// 認識した文字を確定して入力
+function confirmHandwriteChar() {
+    if (!lastRecognizedChar) return;
+    
+    // 現在フォーカスされている入力欄に文字を追加
+    const letterInputs = document.querySelectorAll('.letter-input');
+    let targetInput = null;
+    
+    // 空の入力欄を探す
+    for (const input of letterInputs) {
+        if (input.value === '' && !input.disabled) {
+            targetInput = input;
+            break;
+        }
+    }
+    
+    if (targetInput) {
+        // Shiftキーの状態を確認
+        const shiftBtn = document.getElementById('keyboardShift');
+        const isShift = shiftBtn && shiftBtn.dataset.shift === 'true';
+        const char = isShift ? lastRecognizedChar.toUpperCase() : lastRecognizedChar;
+        
+        targetInput.value = char;
+        targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+        
+        // 次の入力欄にフォーカス
+        const nextInput = targetInput.nextElementSibling;
+        if (nextInput && nextInput.classList.contains('letter-input')) {
+            nextInput.focus();
+        }
+    }
+    
+    // キャンバスをクリア
+    clearHandwriteCanvas();
+}
+
+// デバッグ用：手書き入力モードをテスト
+function debugTestHandwriteMode() {
+    console.log('debugTestHandwriteMode called');
+    
+    // テスト用の単語を作成
+    const testWords = [
+        { id: 1, word: 'apple', meaning: 'りんご', partOfSpeech: '名詞' },
+        { id: 2, word: 'book', meaning: '本', partOfSpeech: '名詞' },
+        { id: 3, word: 'cat', meaning: '猫', partOfSpeech: '名詞' },
+        { id: 4, word: 'dog', meaning: '犬', partOfSpeech: '名詞' },
+        { id: 5, word: 'egg', meaning: '卵', partOfSpeech: '名詞' }
+    ];
+    
+    // 日本語→英語入力モードで開始
+    initInputModeLearning('手書きテスト', testWords, 0);
+    
+    // 手書きモードに切り替え
+    setTimeout(() => {
+        switchInputMode('handwrite');
+    }, 500);
+}
+
 // アプリケーションの起動
 // DOMが読み込まれてから初期化
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', () => {
+        init();
+        initHandwriteInput();
+        
+        // デバッグボタンのイベントリスナー
+        const debugBtn = document.getElementById('debugHandwriteTest');
+        if (debugBtn) {
+            debugBtn.addEventListener('click', debugTestHandwriteMode);
+        }
+    });
 } else {
     // DOMが既に読み込まれている場合は即座に実行
     init();
+    initHandwriteInput();
+    
+    // デバッグボタンのイベントリスナー
+    const debugBtn = document.getElementById('debugHandwriteTest');
+    if (debugBtn) {
+        debugBtn.addEventListener('click', debugTestHandwriteMode);
+    }
 }
 

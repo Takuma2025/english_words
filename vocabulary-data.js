@@ -27,8 +27,8 @@ const familyWords = [
   { id: 10026, word: "aunt", meaning: "おば", partOfSpeech: "名詞", category: "家族", appearanceCount: 7, kana: "*ア*ーント" },
   { id: 10027, word: "grandpa", meaning: "おじいちゃん、祖父", partOfSpeech: "名詞", category: "家族", appearanceCount: 2, kana: "*グラ*ンパ" },
   { id: 10028, word: "grandma", meaning: "おばあちゃん、祖母", partOfSpeech: "名詞", category: "家族", appearanceCount: 2, kana: "*グラ*ンマ" },
-  { id: 10029, word: "mom", meaning: "ママ、お母さん", partOfSpeech:"名詞", category: "家族", appearanceCount: 0, kana: "*マ*マ" },
-  { id: 10029, word: "dad", meaning: "パパ、お父さん", partOfSpeech:"名詞", category: "家族", appearanceCount: 0, kana: "*パ*パ" },
+  { id: 10029, word: "mom", meaning: "ママ、お母さん", partOfSpeech:"名詞", category: "家族", appearanceCount: 0, kana: "*マ*ム" },
+  { id: 10029, word: "dad", meaning: "パパ、お父さん", partOfSpeech:"名詞", category: "家族", appearanceCount: 0, kana: "*ダ*ッド" },
   { id: 10029, word: "grandparent", meaning: "祖父母", partOfSpeech: "名詞", category: "家族", appearanceCount: 7, kana: "*グラ*ンドペアレント" },
   { id: 10030, word: "cousin", meaning: "いとこ", partOfSpeech: "名詞", category: "家族", appearanceCount: 0, kana: "*カ*ズン" },
   ];

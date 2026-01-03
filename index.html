@@ -164,67 +164,41 @@
                         </div>
                         <!-- 志望校設定時 -->
                         <div class="school-card school-card-set hidden" id="vocabSchoolSelected">
-                            <div class="school-card-icon school-card-icon-set">
-                                <img src="school_goal_w.png" alt="志望校" class="school-card-img">
-                            </div>
-                            <div class="school-card-content">
-                                <span class="school-card-label">志望校</span>
-                                <span class="school-card-name" id="vocabSchoolName"></span>
-                                <span class="school-card-course" id="vocabSchoolCourse"></span>
-                            </div>
-                            <button type="button" class="school-card-edit" id="vocabSchoolChangeBtn" aria-label="志望校を変更する">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="vocab-progress-bar-row">
-                        <div class="vocab-progress-bar-wrapper">
-                            <div class="vocab-progress-stats">
-                                <div class="vocab-stats-progress">
-                                    <span class="vocab-stats-label-inline">進捗率</span>
-                                    <span id="vocabRequiredProgress" class="vocab-stats-number-large">0</span>
-                                    <span class="vocab-stats-unit-large">%</span>
+                            <div class="school-card-main-row">
+                                <div class="school-card-icon school-card-icon-set">
+                                    <img src="school_goal_w.png" alt="志望校" class="school-card-img">
                                 </div>
-                                <div class="vocab-stats-equals">=</div>
-                                <div class="vocab-stats-fraction">
-                                    <div class="vocab-stats-row vocab-stats-numerator">
-                                        <span class="vocab-stats-text">覚えた単熟語</span>
-                                        <span id="vocabLearnedCount" class="vocab-stats-number">0</span>
-                                        <span class="vocab-stats-unit">語</span>
-                                    </div>
-                                    <div class="vocab-stats-divider"></div>
-                                    <div class="vocab-stats-row vocab-stats-denominator">
-                                        <span class="vocab-stats-text">志望校必須語彙数</span>
-                                        <span id="vocabRequiredCount" class="vocab-stats-number">0</span>
-                                        <span class="vocab-stats-unit">語</span>
-                                    </div>
+                                <div class="school-card-content">
+                                    <span class="school-card-label">志望校</span>
+                                    <span class="school-card-name" id="vocabSchoolName"></span>
+                                    <span class="school-card-course" id="vocabSchoolCourse"></span>
                                 </div>
-                            </div>
-                            <div class="vocab-progress-bar-new">
-                                <div class="vocab-progress-track">
-                                    <div class="vocab-progress-fill-new" id="vocabProgressFill" style="width: 0%"></div>
-                                </div>
-                                <div class="vocab-progress-indicator" id="vocabProgressBike" style="left: 0%">
-                                    <svg class="vocab-indicator-pin" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                <button type="button" class="school-card-edit" id="vocabSchoolChangeBtn" aria-label="志望校を変更する">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
                                     </svg>
+                                </button>
+                            </div>
+                            <div class="school-card-progress-row">
+                                <div class="school-card-progress-left">
+                                    <span class="school-card-progress-percent" id="schoolProgressPercent">60%</span>
+                                    <span class="school-card-progress-fraction" id="schoolProgressFraction">120/200</span>
                                 </div>
-                                <div class="vocab-progress-markers" id="vocabProgressMarkers"></div>
-                                <div class="vocab-progress-requirement hidden" id="vocabProgressRequirement">
-                                    <div class="vocab-requirement-flag">
-                                        <img src="school_goal.png" alt="志望校">
-                                    </div>
-                                    <div class="vocab-requirement-line"></div>
-                                    <div class="vocab-requirement-triangle"></div>
-                                    <div class="vocab-requirement-label" id="vocabRequirementLabel">志望校合格必須ライン</div>
+                                <div class="school-card-progress-bar-wrapper">
+                                    <div class="school-card-progress-bar" id="schoolProgressBar" style="width: 60%;"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- デバッグ用：手書き入力モードテスト -->
+                <div style="padding: 8px 16px; margin-bottom: 8px;">
+                    <button id="debugHandwriteTest" style="width: 100%; padding: 12px; background: #ea580c; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                        手書き入力モードをテスト
+                    </button>
+                </div>
+                
                 <div class="course-tabs" id="courseTabs">
                     <button class="course-tab active" data-target="courseMasterSection">英単語マスターコース</button>
                     <button class="course-tab" data-target="courseScoreSection">入試得点力アップコース</button>
@@ -864,6 +838,29 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- 入力モード切り替えタブ -->
+                        <div class="input-mode-tabs">
+                            <button class="input-mode-tab active" id="keyboardTabBtn" data-mode="keyboard">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                    <line x1="6" y1="8" x2="6" y2="8"/>
+                                    <line x1="10" y1="8" x2="10" y2="8"/>
+                                    <line x1="14" y1="8" x2="14" y2="8"/>
+                                    <line x1="18" y1="8" x2="18" y2="8"/>
+                                    <line x1="6" y1="12" x2="18" y2="12"/>
+                                    <line x1="6" y1="16" x2="18" y2="16"/>
+                                </svg>
+                                <span>キーボード</span>
+                            </button>
+                            <button class="input-mode-tab" id="handwriteTabBtn" data-mode="handwrite">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                                    <path d="M2 2l7.586 7.586"/>
+                                </svg>
+                                <span>手書き</span>
+                            </button>
+                        </div>
                         <!-- 仮想キーボード -->
                         <div class="virtual-keyboard" id="virtualKeyboard">
                             <div class="keyboard-row">
@@ -914,6 +911,33 @@
                             <div class="keyboard-actions">
                                 <button class="keyboard-action-btn" id="keyboardPass">パス</button>
                                 <button class="keyboard-action-btn keyboard-action-btn-primary" id="keyboardDecide">解答</button>
+                            </div>
+                        </div>
+                        <!-- 手書き入力 -->
+                        <div class="handwrite-input hidden" id="handwriteInput">
+                            <div class="handwrite-canvas-container">
+                                <canvas id="handwriteCanvas" width="280" height="280"></canvas>
+                                <div class="handwrite-recognized" id="handwriteRecognized"></div>
+                            </div>
+                            <div class="handwrite-controls">
+                                <button class="handwrite-btn handwrite-btn-clear" id="handwriteClear">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 6h18"/>
+                                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/>
+                                        <path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                                    </svg>
+                                    <span>消去</span>
+                                </button>
+                                <button class="handwrite-btn handwrite-btn-confirm" id="handwriteConfirm">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 6L9 17l-5-5"/>
+                                    </svg>
+                                    <span>決定</span>
+                                </button>
+                            </div>
+                            <div class="keyboard-actions">
+                                <button class="keyboard-action-btn" id="handwritePass">パス</button>
+                                <button class="keyboard-action-btn keyboard-action-btn-primary" id="handwriteDecide">解答</button>
                             </div>
                         </div>
                     </div>
@@ -1288,6 +1312,26 @@
         </div>
         <div class="filter-sheet-content">
             <div class="filter-card-container">
+                <div class="filter-section">
+                    <div class="filter-section-title">テストモード</div>
+                    <div class="order-options">
+                        <label class="order-radio">
+                            <input type="radio" name="testMode" id="testModeEnToJa" value="en-to-ja" checked>
+                            <div class="radio-option-content">
+                                <span class="radio-option-label">英語→日本語</span>
+                                <span class="radio-option-description">英単語を見て意味を選ぶ</span>
+                            </div>
+                        </label>
+                        <label class="order-radio">
+                            <input type="radio" name="testMode" id="testModeJaToEn" value="ja-to-en">
+                            <div class="radio-option-content">
+                                <span class="radio-option-label">日本語→英語（手書き可）</span>
+                                <span class="radio-option-description">意味を見て英単語を入力する</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="filter-section">
                     <div class="filter-section-title">出題順</div>
                     <div class="order-options">
