@@ -631,6 +631,19 @@ function updateVocabSelectedSchool(school) {
         vocabSchoolSelector.classList.add('hidden');
         vocabSchoolSelected.classList.remove('hidden');
         
+        // アイコンの色を学校種別に応じて変更
+        const iconSet = document.querySelector('.school-card-icon-set');
+        if (iconSet) {
+            iconSet.classList.remove('school-card-icon-public', 'school-card-icon-private', 'school-card-icon-national');
+            if (school.type === '公立') {
+                iconSet.classList.add('school-card-icon-public');
+            } else if (school.type === '私立') {
+                iconSet.classList.add('school-card-icon-private');
+            } else if (school.type === '国立') {
+                iconSet.classList.add('school-card-icon-national');
+            }
+        }
+        
         // 説明文を非表示にする
         const vocabProgressDescription = document.querySelector('.vocab-progress-description');
         if (vocabProgressDescription) {
@@ -2803,10 +2816,6 @@ function showCategorySelection() {
     const courseSelection = document.getElementById('courseSelection');
     if (courseSelection) {
         courseSelection.classList.add('hidden');
-    }
-    const examInfoView = document.getElementById('examInfoView');
-    if (examInfoView) {
-        examInfoView.classList.add('hidden');
     }
     selectedCategory = null;
     updateNavState('home');
@@ -5900,30 +5909,6 @@ function setupEventListeners() {
     }
     
     // コースタブ切り替え
-    // 大阪府公立入試について知るボタン
-    const examInfoBtn = document.getElementById('examInfoBtn');
-    const examInfoView = document.getElementById('examInfoView');
-    
-    if (examInfoBtn && examInfoView) {
-        examInfoBtn.addEventListener('click', () => {
-            // カテゴリー選択画面を非表示
-            if (elements.categorySelection) {
-                elements.categorySelection.classList.add('hidden');
-            }
-            // コース選択画面を非表示
-            const courseSelection = document.getElementById('courseSelection');
-            if (courseSelection) {
-                courseSelection.classList.add('hidden');
-            }
-            // 入試情報画面を表示
-            examInfoView.classList.remove('hidden');
-            // ハンバーガーメニューを非表示、戻るボタンを表示
-            updateHeaderButtons('back');
-        });
-    }
-    
-    // 入試情報クイズ機能
-    initExamQuiz();
     
     const courseTabs = document.querySelectorAll('.course-tab');
     const courseSections = document.querySelectorAll('.course-section');
@@ -6962,7 +6947,6 @@ function setupEventListeners() {
             const grammarChapterView = document.getElementById('grammarChapterView');
             const grammarTOCView = document.getElementById('grammarTableOfContentsView');
             const courseSelection = document.getElementById('courseSelection');
-            const examInfoView = document.getElementById('examInfoView');
             
             const wordFilterView = document.getElementById('wordFilterView');
             
@@ -6973,10 +6957,6 @@ function setupEventListeners() {
             } else if (grammarTOCView && !grammarTOCView.classList.contains('hidden')) {
                 // 文法目次ページからカテゴリー選択画面に戻る
                 grammarTOCView.classList.add('hidden');
-                showCategorySelection();
-            } else if (examInfoView && !examInfoView.classList.contains('hidden')) {
-                // 入試情報画面からカテゴリー選択画面に戻る
-                examInfoView.classList.add('hidden');
                 showCategorySelection();
             } else if (wordFilterView && !wordFilterView.classList.contains('hidden')) {
                 // フィルター画面からコース選択画面に戻る
@@ -14385,424 +14365,6 @@ function saveGrammarExerciseProgress(chapterNumber, exerciseIndex, allCorrect, e
             updateGrammarChapterCheckboxes();
         }
     }
-}
-
-// 大阪府公立入試クイズ機能
-const EXAM_QUIZ_QUESTIONS = [
-    // 前半：4択形式
-    {
-        type: "choice",
-        question: "大阪府公立高校入試の英語には、何種類の問題がありますか？",
-        choices: ["1種類","2種類", "3種類", "4種類"],
-        correct: 2,
-        explanation: "大阪府公立高校入試の英語には、A問題（基礎的問題）、B問題（標準的問題）、C問題（発展的問題）の3種類があります。"
-    },
-    {
-        type: "choice",
-        question: "A問題の特徴として正しいものはどれですか？",
-        choices: ["長文読解が中心", "基礎的な英語力を問う", "英作文が多い", "リスニングのみ"],
-        correct: 1,
-        explanation: "A問題は基礎的問題で、基本的な語彙力と文法知識を問う問題が出題されます。"
-    },
-    {
-        type: "choice",
-        question: "B問題で毎年必ず出題される問題形式は何ですか？",
-        choices: ["長文読解", "整序英作文", "リスニング", "自由英作文"],
-        correct: 1,
-        explanation: "B問題では整序英作文が毎年必ず出題されます。与えられた語句を並び替えて正しい英文を作る問題です。"
-    },
-    {
-        type: "choice",
-        question: "C問題の長文読解問題は何問出題されますか？",
-        choices: ["2問", "3問", "4問", "5問"],
-        correct: 2,
-        explanation: "C問題では大問2から大問5まで、計4つの長文読解問題が出題されます。"
-    },
-    {
-        type: "choice",
-        question: "入試対策として効果的な学習法はどれですか？",
-        choices: ["テスト前だけ勉強する", "頻出単語を確実に覚える", "難しい単語だけ覚える", "文法だけ勉強する"],
-        correct: 1,
-        explanation: "頻出単語が毎年繰り返し出題されるため、頻出単語を確実に覚えることが得点アップの鍵となります。"
-    },
-    // 後半：空欄補充形式
-    {
-        type: "fill",
-        sentence: "大阪府公立高校入試の英語には、A問題・B問題・C問題の【blank】種類がある。",
-        choices: ["2", "3", "4", "5"],
-        correct: "3",
-        explanation: "A問題（基礎的問題）、B問題（標準的問題）、C問題（発展的問題）の3種類があります。"
-    },
-    {
-        type: "fill",
-        sentence: "B問題では【blank】が毎年必ず出題される。",
-        choices: ["自由英作文", "整序英作文", "和文英訳", "ディクテーション"],
-        correct: "整序英作文",
-        explanation: "B問題では整序英作文が毎年必ず出題されます。与えられた語句を並び替えて正しい英文を作る問題です。"
-    },
-    {
-        type: "fill",
-        sentence: "C問題は【blank】が中心で、総合的な読解力が試される。",
-        choices: ["文法問題", "長文読解", "リスニング", "英作文"],
-        correct: "長文読解",
-        explanation: "C問題は長文読解が中心で、内容理解、語句の意味、文脈に合う表現の選択など、総合的な読解力が試されます。"
-    },
-    {
-        type: "fill",
-        sentence: "長文を素早く読むためには、単語の【blank】が重要である。",
-        choices: ["スペル力", "即答力", "発音力", "筆記力"],
-        correct: "即答力",
-        explanation: "長文を素早く読むためには、単語を瞬時に理解できる即答力が重要です。タイムアタック形式の練習が効果的です。"
-    },
-    {
-        type: "fill",
-        sentence: "志望校がA・B・C問題の【blank】を採用しているか確認することが重要である。",
-        choices: ["どれ", "すべて", "一部", "何種類"],
-        correct: "どれ",
-        explanation: "志望校がA・B・C問題のどれを採用しているかを確認し、適切な対策を行うことが重要です。"
-    }
-];
-
-let examQuizState = {
-    currentIndex: 0,
-    correctCount: 0,
-    shuffledQuestions: [],
-    answered: false,
-    selectedAnswer: null
-};
-
-function initExamQuiz() {
-    const startBtn = document.getElementById('examQuizStartBtn');
-    const nextBtn = document.getElementById('examQuizNextBtn');
-    const retryBtn = document.getElementById('examQuizRetryBtn');
-    const backBtn = document.getElementById('examQuizBackBtn');
-    const submitBtn = document.getElementById('examQuizSubmitBtn');
-    const radioButtons = document.querySelectorAll('input[name="examQuizChoice"]');
-    
-    if (startBtn) {
-        startBtn.addEventListener('click', startExamQuiz);
-    }
-    
-    if (nextBtn) {
-        nextBtn.addEventListener('click', showNextExamQuestion);
-    }
-    
-    if (retryBtn) {
-        retryBtn.addEventListener('click', startExamQuiz);
-    }
-    
-    if (backBtn) {
-        backBtn.addEventListener('click', () => {
-            resetExamQuizView();
-            showCategorySelection();
-        });
-    }
-    
-    if (submitBtn) {
-        submitBtn.addEventListener('click', handleExamQuizSubmit);
-    }
-    
-    if (radioButtons.length > 0) {
-        radioButtons.forEach((radio) => {
-            radio.addEventListener('change', handleExamQuizRadioChange);
-        });
-    }
-}
-
-function handleExamQuizRadioChange() {
-    const submitBtn = document.getElementById('examQuizSubmitBtn');
-    const selectedRadio = document.querySelector('input[name="examQuizChoice"]:checked');
-    if (selectedRadio) {
-        examQuizState.selectedAnswer = parseInt(selectedRadio.value);
-        if (submitBtn) {
-            submitBtn.disabled = false;
-        }
-    }
-}
-
-function handleExamQuizSubmit() {
-    if (examQuizState.answered) return;
-    const question = examQuizState.shuffledQuestions[examQuizState.currentIndex];
-    
-    if (question.type === 'fill') {
-        if (!examQuizState.selectedAnswer) return;
-        selectExamQuizAnswerFill(examQuizState.selectedAnswer);
-    } else {
-        if (examQuizState.selectedAnswer === null) return;
-        selectExamQuizAnswer(examQuizState.selectedAnswer);
-    }
-}
-
-function startExamQuiz() {
-    examQuizState.currentIndex = 0;
-    examQuizState.correctCount = 0;
-    examQuizState.answered = false;
-    examQuizState.shuffledQuestions = [...EXAM_QUIZ_QUESTIONS];
-    
-    document.getElementById('examQuizStart').classList.add('hidden');
-    document.getElementById('examQuizResult').classList.add('hidden');
-    document.getElementById('examQuizMain').classList.remove('hidden');
-    document.getElementById('examQuizFeedback').classList.add('hidden');
-    
-    document.getElementById('examQuizTotalNum').textContent = examQuizState.shuffledQuestions.length;
-    document.getElementById('examQuizTotalCount').textContent = examQuizState.shuffledQuestions.length;
-    
-    showExamQuizQuestion();
-}
-
-function showExamQuizQuestion() {
-    const question = examQuizState.shuffledQuestions[examQuizState.currentIndex];
-    examQuizState.answered = false;
-    examQuizState.selectedAnswer = null;
-    
-    document.getElementById('examQuizCurrentNum').textContent = `問題${examQuizState.currentIndex + 1}`;
-    
-    // プログレスバー更新
-    const progress = ((examQuizState.currentIndex) / examQuizState.shuffledQuestions.length) * 100;
-    document.getElementById('examQuizProgressFill').style.width = progress + '%';
-    
-    const choiceMode = document.getElementById('examQuizChoiceMode');
-    const fillMode = document.getElementById('examQuizFillMode');
-    
-    if (question.type === 'fill') {
-        // 空欄補充形式
-        choiceMode.classList.add('hidden');
-        fillMode.classList.remove('hidden');
-        
-        // 文章を空欄とプルダウンに分割して表示
-        const sentenceContainer = document.getElementById('examQuizFillSentence');
-        const parts = question.sentence.split('【blank】');
-        
-        let html = '<span class="exam-quiz-fill-text">' + parts[0] + '</span>';
-        html += '<select class="exam-quiz-fill-select" id="examQuizFillSelect">';
-        html += '<option value="">選択してください</option>';
-        question.choices.forEach(choice => {
-            html += `<option value="${choice}">${choice}</option>`;
-        });
-        html += '</select>';
-        if (parts[1]) {
-            html += '<span class="exam-quiz-fill-text">' + parts[1] + '</span>';
-        }
-        
-        sentenceContainer.innerHTML = html;
-        
-        // プルダウンのイベントリスナー
-        const selectEl = document.getElementById('examQuizFillSelect');
-        selectEl.addEventListener('change', () => {
-            examQuizState.selectedAnswer = selectEl.value;
-            const submitBtn = document.getElementById('examQuizSubmitBtn');
-            if (submitBtn) {
-                submitBtn.disabled = selectEl.value === '';
-            }
-        });
-    } else {
-        // 4択形式
-        choiceMode.classList.remove('hidden');
-        fillMode.classList.add('hidden');
-        
-        document.getElementById('examQuizQuestion').textContent = question.question;
-        
-        // 選択肢を更新
-        const choiceLabels = document.querySelectorAll('.exam-quiz-choice-label');
-        const choiceTexts = document.querySelectorAll('.exam-quiz-choice-text');
-        const radioButtons = document.querySelectorAll('input[name="examQuizChoice"]');
-        
-        choiceLabels.forEach((label, index) => {
-            label.classList.remove('correct', 'wrong', 'disabled', 'selected');
-            if (index < question.choices.length) {
-                label.style.display = 'flex';
-            } else {
-                label.style.display = 'none';
-            }
-        });
-        
-        choiceTexts.forEach((text, index) => {
-            if (index < question.choices.length) {
-                text.textContent = question.choices[index];
-            }
-        });
-        
-        radioButtons.forEach((radio, index) => {
-            radio.checked = false;
-            radio.disabled = false;
-        });
-    }
-    
-    // 解答ボタンを無効化
-    const submitBtn = document.getElementById('examQuizSubmitBtn');
-    if (submitBtn) {
-        submitBtn.disabled = true;
-    }
-    
-    // フィードバックを非表示
-    document.getElementById('examQuizFeedback').classList.add('hidden');
-    document.querySelector('.exam-quiz-submit-container').classList.remove('hidden');
-}
-
-function selectExamQuizAnswer(selectedIndex) {
-    if (examQuizState.answered) return;
-    examQuizState.answered = true;
-    
-    const question = examQuizState.shuffledQuestions[examQuizState.currentIndex];
-    const isCorrect = selectedIndex === question.correct;
-    
-    // 効果音を再生
-    if (isCorrect) {
-        SoundEffects.playCorrect();
-        examQuizState.correctCount++;
-    } else {
-        SoundEffects.playWrong();
-    }
-    
-    // 選択肢のスタイルを更新
-    const choiceLabels = document.querySelectorAll('.exam-quiz-choice-label');
-    const radioButtons = document.querySelectorAll('input[name="examQuizChoice"]');
-    
-    choiceLabels.forEach((label, index) => {
-        label.classList.add('disabled');
-        if (index === question.correct) {
-            label.classList.add('correct');
-        } else if (index === selectedIndex && !isCorrect) {
-            label.classList.add('wrong');
-        }
-    });
-    
-    radioButtons.forEach((radio) => {
-        radio.disabled = true;
-    });
-    
-    // 解答ボタンを非表示
-    document.querySelector('.exam-quiz-submit-container').classList.add('hidden');
-    
-    // フィードバックを表示
-    const feedback = document.getElementById('examQuizFeedback');
-    const feedbackIcon = document.getElementById('examQuizFeedbackIcon');
-    const feedbackText = document.getElementById('examQuizFeedbackText');
-    const explanation = document.getElementById('examQuizExplanation');
-    const nextBtn = document.getElementById('examQuizNextBtn');
-    
-    if (isCorrect) {
-        feedbackIcon.innerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 3 4-6"/></svg>';
-        feedbackText.textContent = '正解！';
-        feedbackText.className = 'exam-quiz-feedback-text correct';
-    } else {
-        feedbackIcon.innerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>';
-        feedbackText.textContent = '不正解...';
-        feedbackText.className = 'exam-quiz-feedback-text wrong';
-    }
-    
-    explanation.textContent = question.explanation;
-    
-    // 最後の問題かどうか
-    if (examQuizState.currentIndex >= examQuizState.shuffledQuestions.length - 1) {
-        nextBtn.textContent = '結果を見る';
-    } else {
-        nextBtn.textContent = '次の問題へ';
-    }
-    
-    feedback.classList.remove('hidden');
-}
-
-function selectExamQuizAnswerFill(selectedValue) {
-    if (examQuizState.answered) return;
-    examQuizState.answered = true;
-    
-    const question = examQuizState.shuffledQuestions[examQuizState.currentIndex];
-    const isCorrect = selectedValue === question.correct;
-    
-    // 効果音を再生
-    if (isCorrect) {
-        SoundEffects.playCorrect();
-        examQuizState.correctCount++;
-    } else {
-        SoundEffects.playWrong();
-    }
-    
-    // プルダウンのスタイルを更新
-    const selectEl = document.getElementById('examQuizFillSelect');
-    if (selectEl) {
-        selectEl.disabled = true;
-        if (isCorrect) {
-            selectEl.classList.add('correct');
-        } else {
-            selectEl.classList.add('wrong');
-            // 正解を表示
-            selectEl.value = question.correct;
-        }
-    }
-    
-    // 解答ボタンを非表示
-    document.querySelector('.exam-quiz-submit-container').classList.add('hidden');
-    
-    // フィードバックを表示
-    const feedback = document.getElementById('examQuizFeedback');
-    const feedbackIcon = document.getElementById('examQuizFeedbackIcon');
-    const feedbackText = document.getElementById('examQuizFeedbackText');
-    const explanation = document.getElementById('examQuizExplanation');
-    const nextBtn = document.getElementById('examQuizNextBtn');
-    
-    if (isCorrect) {
-        feedbackIcon.innerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 3 4-6"/></svg>';
-        feedbackText.textContent = '正解！';
-        feedbackText.className = 'exam-quiz-feedback-text correct';
-    } else {
-        feedbackIcon.innerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>';
-        feedbackText.textContent = '不正解...';
-        feedbackText.className = 'exam-quiz-feedback-text wrong';
-    }
-    
-    explanation.textContent = question.explanation;
-    
-    // 最後の問題かどうか
-    if (examQuizState.currentIndex >= examQuizState.shuffledQuestions.length - 1) {
-        nextBtn.textContent = '結果を見る';
-    } else {
-        nextBtn.textContent = '次の問題へ';
-    }
-    
-    feedback.classList.remove('hidden');
-}
-
-function showNextExamQuestion() {
-    if (examQuizState.currentIndex >= examQuizState.shuffledQuestions.length - 1) {
-        showExamQuizResult();
-    } else {
-        examQuizState.currentIndex++;
-        showExamQuizQuestion();
-    }
-}
-
-function showExamQuizResult() {
-    document.getElementById('examQuizMain').classList.add('hidden');
-    document.getElementById('examQuizResult').classList.remove('hidden');
-    
-    const correctCount = examQuizState.correctCount;
-    const total = examQuizState.shuffledQuestions.length;
-    const percentage = Math.round((correctCount / total) * 100);
-    
-    document.getElementById('examQuizCorrectCount').textContent = correctCount;
-    document.getElementById('examQuizTotalCount').textContent = total;
-    
-    // プログレスバーを100%に
-    document.getElementById('examQuizProgressFill').style.width = '100%';
-    
-    // メッセージを設定
-    const messageEl = document.getElementById('examQuizResultMessage');
-    if (percentage === 100) {
-        messageEl.textContent = '完璧です！入試について詳しくなりましたね！';
-    } else if (percentage >= 80) {
-        messageEl.textContent = '素晴らしい！よく理解できています！';
-    } else if (percentage >= 60) {
-        messageEl.textContent = 'いい調子です！もう一度挑戦してみましょう！';
-    } else {
-        messageEl.textContent = 'もう一度挑戦して、入試について学びましょう！';
-    }
-}
-
-function resetExamQuizView() {
-    document.getElementById('examQuizStart').classList.remove('hidden');
-    document.getElementById('examQuizMain').classList.add('hidden');
-    document.getElementById('examQuizResult').classList.add('hidden');
 }
 
 // アプリケーションの起動

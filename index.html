@@ -143,40 +143,39 @@
         <main class="app-main">
             <!-- カテゴリー選択画面 -->
             <div class="category-view" id="categorySelection">
-                <button class="exam-info-btn" id="examInfoBtn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                    <span>大阪府公立入試について知る</span>
-                    <img src="nyushi.image.png" alt="入試" class="exam-info-btn-image">
-                </button>
-
                 <!-- 英単語進捗バー -->
                 <div class="vocab-progress-container" id="vocabProgressContainer">
                     <div class="vocab-progress-header">
-                        <div class="vocab-school-selector" id="vocabSchoolSelector">
-                            <button type="button" class="school-set-btn" id="openSchoolSettings" aria-label="志望校を設定する">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                        <!-- 志望校未設定時 -->
+                        <div class="school-card school-card-empty" id="vocabSchoolSelector">
+                            <div class="school-card-icon">
+                                <img src="school_goal.png" alt="志望校" class="school-card-img">
+                            </div>
+                            <div class="school-card-content">
+                                <span class="school-card-label">志望校</span>
+                                <span class="school-card-placeholder">タップして設定</span>
+                            </div>
+                            <button type="button" class="school-card-action" id="openSchoolSettings" aria-label="志望校を設定する">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
                                 </svg>
-                                <span>志望校を設定する</span>
                             </button>
                         </div>
-                        <div class="vocab-school-selected hidden" id="vocabSchoolSelected">
-                            <div class="vocab-school-info">
-                                <div class="vocab-school-label">志望校</div>
-                                <div class="vocab-school-name" id="vocabSchoolName"></div>
-                                <div class="vocab-school-course" id="vocabSchoolCourse"></div>
+                        <!-- 志望校設定時 -->
+                        <div class="school-card school-card-set hidden" id="vocabSchoolSelected">
+                            <div class="school-card-icon school-card-icon-set">
+                                <img src="school_goal_w.png" alt="志望校" class="school-card-img">
                             </div>
-                            <button type="button" class="vocab-school-change-btn" id="vocabSchoolChangeBtn" aria-label="志望校を変更する">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            <div class="school-card-content">
+                                <span class="school-card-label">志望校</span>
+                                <span class="school-card-name" id="vocabSchoolName"></span>
+                                <span class="school-card-course" id="vocabSchoolCourse"></span>
+                            </div>
+                            <button type="button" class="school-card-edit" id="vocabSchoolChangeBtn" aria-label="志望校を変更する">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
                                 </svg>
-                                <span>変更</span>
                             </button>
                         </div>
                     </div>
@@ -206,11 +205,11 @@
                             <div class="vocab-progress-bar-new">
                                 <div class="vocab-progress-track">
                                     <div class="vocab-progress-fill-new" id="vocabProgressFill" style="width: 0%"></div>
-                                    <div class="vocab-progress-indicator" id="vocabProgressBike" style="left: 0%">
-                                        <svg class="vocab-indicator-pin" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                                        </svg>
-                                    </div>
+                                </div>
+                                <div class="vocab-progress-indicator" id="vocabProgressBike" style="left: 0%">
+                                    <svg class="vocab-indicator-pin" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                    </svg>
                                 </div>
                                 <div class="vocab-progress-markers" id="vocabProgressMarkers"></div>
                                 <div class="vocab-progress-requirement hidden" id="vocabProgressRequirement">
@@ -490,110 +489,6 @@
                 </div>
                 <div class="osaka-image-container">
                     <img src="osaka_5_nashi_b.png" alt="大阪府" class="osaka-image">
-                </div>
-            </div>
-
-            <!-- 大阪府公立入試について（4択クイズ） -->
-            <div class="category-view hidden" id="examInfoView">
-                <div class="exam-quiz-container">
-                    <!-- スタート画面 -->
-                    <div class="exam-quiz-start" id="examQuizStart">
-                        <div class="exam-quiz-start-header">
-                            <h2 class="exam-quiz-start-title">大阪府公立入試クイズ</h2>
-                            <p class="exam-quiz-start-subtitle">4択クイズで入試について学ぼう</p>
-                        </div>
-                        <div class="exam-quiz-start-icon">
-                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.5">
-                                <circle cx="12" cy="12" r="10"/>
-                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                                <circle cx="12" cy="17" r="0.5" fill="#2563eb"/>
-                            </svg>
-                        </div>
-                        <p class="exam-quiz-start-desc">大阪府公立高校入試の英語について、<br>クイズ形式で楽しく学びましょう。</p>
-                        <button class="exam-quiz-start-btn" id="examQuizStartBtn">クイズを始める</button>
-                    </div>
-                    
-                    <!-- クイズ画面 -->
-                    <div class="exam-quiz-main hidden" id="examQuizMain">
-                        <div class="exam-quiz-progress">
-                            <div class="exam-quiz-progress-bar">
-                                <div class="exam-quiz-progress-fill" id="examQuizProgressFill"></div>
-                            </div>
-                            <div class="exam-quiz-progress-text">
-                                <span id="examQuizCurrentNum">問題1</span> / <span id="examQuizTotalNum">10</span>
-                            </div>
-                        </div>
-                        
-                        <!-- 4択形式 -->
-                        <div class="exam-quiz-choice-mode" id="examQuizChoiceMode">
-                            <div class="exam-quiz-question-card">
-                                <div class="exam-quiz-question" id="examQuizQuestion">
-                                    問題文がここに表示されます
-                                </div>
-                            </div>
-                            
-                            <div class="exam-quiz-choices" id="examQuizChoices">
-                                <label class="exam-quiz-choice-label">
-                                    <input type="radio" name="examQuizChoice" value="0" class="exam-quiz-radio">
-                                    <span class="exam-quiz-choice-text">選択肢1</span>
-                                </label>
-                                <label class="exam-quiz-choice-label">
-                                    <input type="radio" name="examQuizChoice" value="1" class="exam-quiz-radio">
-                                    <span class="exam-quiz-choice-text">選択肢2</span>
-                                </label>
-                                <label class="exam-quiz-choice-label">
-                                    <input type="radio" name="examQuizChoice" value="2" class="exam-quiz-radio">
-                                    <span class="exam-quiz-choice-text">選択肢3</span>
-                                </label>
-                                <label class="exam-quiz-choice-label">
-                                    <input type="radio" name="examQuizChoice" value="3" class="exam-quiz-radio">
-                                    <span class="exam-quiz-choice-text">選択肢4</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <!-- 空欄補充形式 -->
-                        <div class="exam-quiz-fill-mode hidden" id="examQuizFillMode">
-                            <div class="exam-quiz-question-card">
-                                <div class="exam-quiz-fill-sentence" id="examQuizFillSentence">
-                                    <!-- 文章と空欄が動的に生成される -->
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="exam-quiz-submit-container">
-                            <button class="exam-quiz-submit-btn" id="examQuizSubmitBtn" disabled>解答する</button>
-                        </div>
-                        
-                        <div class="exam-quiz-feedback hidden" id="examQuizFeedback">
-                            <div class="exam-quiz-feedback-icon" id="examQuizFeedbackIcon"></div>
-                            <div class="exam-quiz-feedback-text" id="examQuizFeedbackText"></div>
-                            <div class="exam-quiz-explanation" id="examQuizExplanation"></div>
-                            <button class="exam-quiz-next-btn" id="examQuizNextBtn">次の問題へ</button>
-                        </div>
-                    </div>
-                    
-                    <!-- 結果画面 -->
-                    <div class="exam-quiz-result hidden" id="examQuizResult">
-                        <div class="exam-quiz-result-header">
-                            <h2 class="exam-quiz-result-title">クイズ終了</h2>
-                        </div>
-                        <div class="exam-quiz-result-score">
-                            <div class="exam-quiz-result-score-num">
-                                <span id="examQuizCorrectCount">0</span>
-                                <span class="exam-quiz-result-score-slash">/</span>
-                                <span id="examQuizTotalCount">10</span>
-                            </div>
-                            <div class="exam-quiz-result-score-label">正解</div>
-                        </div>
-                        <div class="exam-quiz-result-message" id="examQuizResultMessage">
-                            よく頑張りました
-                        </div>
-                        <div class="exam-quiz-result-buttons">
-                            <button class="exam-quiz-retry-btn" id="examQuizRetryBtn">もう一度挑戦</button>
-                            <button class="exam-quiz-back-btn" id="examQuizBackBtn">戻る</button>
-                        </div>
-                    </div>
                 </div>
             </div>
 
