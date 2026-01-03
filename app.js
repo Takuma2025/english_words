@@ -2539,9 +2539,9 @@ function init() {
 }
 
 // ヘッダーボタンの表示/非表示を制御
-// テーマカラーを更新（即座に変更、フェードなし）
+// テーマカラーを更新（スプラッシュ以外は常に#0055ca）
 function updateThemeColor(isLearningMode) {
-    const color = '#ffffff';
+    const color = '#0055ca';
     
     // 同期的に即座に更新（requestAnimationFrameを使わない）
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
@@ -2560,10 +2560,9 @@ function updateThemeColor(isLearningMode) {
         parent.insertBefore(newMeta, parent.firstChild);
     }
     
-    // iOS用のステータスバースタイルも更新
+    // iOS用のステータスバースタイルも更新（常に白テキスト）
     if (statusBarStyleMeta) {
-        // 薄いグレーの場合は黒テキスト、青の場合は白テキスト
-        statusBarStyleMeta.setAttribute('content', isLearningMode ? 'default' : 'black-translucent');
+        statusBarStyleMeta.setAttribute('content', 'black-translucent');
     }
 }
 

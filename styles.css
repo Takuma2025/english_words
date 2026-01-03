@@ -420,7 +420,7 @@ body.learning-mode .app-header {
 }
 
 .header-title-text {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
     color: #ffffff;
     text-align: center;
@@ -6962,13 +6962,37 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-stack {
     transform: translateX(-50%) translateY(0);
 }
 
-/* 学習モード時のスタイル */
+/* 学習モード時のスタイル - 左右スクロールを防止 */
+body.learning-mode {
+    overflow-x: hidden !important;
+    max-width: 100vw;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
 body.learning-mode .app-container {
     padding-top: 0;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 body.learning-mode .app-main {
     padding-top: env(safe-area-inset-top);
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+body.learning-mode .learning-view {
+    overflow-x: hidden;
+    max-width: 100%;
+    overflow-y: auto;
+    height: 100%;
+}
+
+body.learning-mode .card-area-wrapper {
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 body.learning-mode .word-card-container {
