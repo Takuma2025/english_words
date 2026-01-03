@@ -2811,11 +2811,13 @@ body.learning-mode .app-header {
 }
 
 .category-card:active {
-    background-color: #f1f5f9;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 2px #3182ce;
 }
 
 .category-card.touch-hover {
-    background-color: #f8fafc;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 2px #3182ce;
 }
 
 .category-card:last-child {
@@ -4714,6 +4716,7 @@ body.reorder-mode-active .word-card-container {
     overflow-x: hidden;
     flex: 1;
     min-height: 0;
+    background: #f1f5f9;
 }
 
 .input-list-header {
@@ -5505,11 +5508,11 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-item.marker-correct .input-list-front {
-    background: linear-gradient(to right, rgba(59, 130, 246, 0.08), transparent 50%);
+    background: linear-gradient(to right, rgba(59, 130, 246, 0.15), #ffffff 60%);
 }
 
 .input-list-item.marker-wrong .input-list-front {
-    background: linear-gradient(to right, rgba(239, 68, 68, 0.08), transparent 50%);
+    background: linear-gradient(to right, rgba(239, 68, 68, 0.15), #ffffff 60%);
 }
 
 .input-list-meta {
@@ -5861,11 +5864,11 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-item-expand.marker-correct {
-    background: linear-gradient(to right, rgba(59, 130, 246, 0.08), transparent 50%);
+    background: linear-gradient(to right, rgba(59, 130, 246, 0.15), #ffffff 60%);
 }
 
 .input-list-item-expand.marker-wrong {
-    background: linear-gradient(to right, rgba(239, 68, 68, 0.08), transparent 50%);
+    background: linear-gradient(to right, rgba(239, 68, 68, 0.15), #ffffff 60%);
 }
 
 .input-list-expand-header {
