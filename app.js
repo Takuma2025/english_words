@@ -1,34 +1,6 @@
 // アプリケーションの状態管理
 let currentWords = [];
 let currentIndex = 0;
-
-// スクロールの慣性を止めてスクロール位置をリセットする関数
-function stopScrollAndReset() {
-    // 慣性スクロールを止めるためにoverflowを一時的にhiddenにする
-    const scrollableElements = document.querySelectorAll('.category-selection, .course-selection, .main-content, .word-filter-view, .grammar-table-of-contents-view, .grammar-chapter-view');
-    scrollableElements.forEach(el => {
-        if (el) {
-            el.style.overflow = 'hidden';
-        }
-    });
-    document.body.style.overflow = 'hidden';
-    
-    // スクロール位置をリセット
-    window.scrollTo(0, 0);
-    scrollableElements.forEach(el => {
-        if (el) el.scrollTop = 0;
-    });
-    
-    // 次のフレームでoverflowを戻す
-    requestAnimationFrame(() => {
-        scrollableElements.forEach(el => {
-            if (el) {
-                el.style.overflow = '';
-            }
-        });
-        document.body.style.overflow = '';
-    });
-}
 let hasReachedGoalBefore = false; // 目標達成済みフラグ（演出重複防止）
 let pendingGoalCelebration = false; // 学習完了後に目標達成画面を表示するフラグ
 let selectedStudyMode = 'input'; // 'input' or 'output' - インプット/アウトプットモード選択
@@ -2814,8 +2786,10 @@ function updateHeaderUnitName(unitName) {
 
 // カテゴリー選択画面を表示
 function showCategorySelection() {
-    // スクロールの慣性を止めてリセット
-    stopScrollAndReset();
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    const appMain = document.querySelector('.app-main');
+    if (appMain) appMain.scrollTop = 0;
     
     // 復習モードのタイトルとクラスをリセット
     resetReviewWrongWordsTitle();
@@ -3323,8 +3297,10 @@ function initInputModeLearning(category, words, startIndex = 0) {
 
 // サブカテゴリー選択画面を表示
 function showSubcategorySelection(parentCategory, skipAnimation = false) {
-    // スクロールの慣性を止めてリセット
-    stopScrollAndReset();
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    const appMain = document.querySelector('.app-main');
+    if (appMain) appMain.scrollTop = 0;
     
     console.log('showSubcategorySelection called with:', parentCategory);
     const courseSelection = document.getElementById('courseSelection');
@@ -3652,8 +3628,10 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
 
 // カテゴリ別に覚える基本単語の画面を表示
 function showElementaryCategorySelection(skipAnimation = false) {
-    // スクロールの慣性を止めてリセット
-    stopScrollAndReset();
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    const appMain = document.querySelector('.app-main');
+    if (appMain) appMain.scrollTop = 0;
     
     // 学習画面から戻る場合、mainContentを非表示にする
     const mainContent = document.getElementById('mainContent');
@@ -3848,8 +3826,10 @@ function showElementaryCategorySelection(skipAnimation = false) {
 
 // レベル別細分化メニューを表示
 function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
-    // スクロールの慣性を止めてリセット
-    stopScrollAndReset();
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    const appMain = document.querySelector('.app-main');
+    if (appMain) appMain.scrollTop = 0;
     
     console.log('showLevelSubcategorySelection called with:', parentCategory, 'skipAnimation:', skipAnimation);
     
@@ -4153,8 +4133,10 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
 
 // コース選択画面を表示（100刻み）
 function showCourseSelection(category, categoryWords) {
-    // スクロールの慣性を止めてリセット
-    stopScrollAndReset();
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    const appMain = document.querySelector('.app-main');
+    if (appMain) appMain.scrollTop = 0;
     
     // 復習モードのタイトルとクラスをリセット
     resetReviewWrongWordsTitle();
@@ -4562,8 +4544,10 @@ let currentFilterCategory = '';
 let currentFilterCourseTitle = '';
 
 function showWordFilterView(category, categoryWords, courseTitle) {
-    // スクロールの慣性を止めてリセット
-    stopScrollAndReset();
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    const appMain = document.querySelector('.app-main');
+    if (appMain) appMain.scrollTop = 0;
     
     currentFilterCategory = category;
     currentFilterWords = categoryWords;
@@ -4850,8 +4834,10 @@ function getFilteredWords() {
 
 // インプットモードで直接単語一覧を表示
 function showInputModeDirectly(category, words, courseTitle) {
-    // スクロールの慣性を止めてリセット
-    stopScrollAndReset();
+    // スクロール位置を一番上にリセット
+    window.scrollTo(0, 0);
+    const appMain = document.querySelector('.app-main');
+    if (appMain) appMain.scrollTop = 0;
     
     selectedCategory = category;
     currentCourseWords = words;
@@ -6971,8 +6957,10 @@ function setupEventListeners() {
     
     // 戻る処理を共通関数化
     function handleBackButton() {
-            // スクロールの慣性を止めてリセット
-            stopScrollAndReset();
+            // スクロール位置を一番上にリセット
+            window.scrollTo(0, 0);
+            const appMain = document.querySelector('.app-main');
+            if (appMain) appMain.scrollTop = 0;
             
             // 現在の画面に応じて適切な画面に戻る
             const grammarChapterView = document.getElementById('grammarChapterView');
