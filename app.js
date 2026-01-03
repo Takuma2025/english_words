@@ -14493,6 +14493,7 @@ let lastRecognizedChar = '';
 let tfModel = null;
 let modelLoaded = false;
 let fontPrototypes = []; // 28x28 グレースケールのフォント基準データ
+let guidedTraining = { active: false, index: 0, letters: [] };
 
 // TensorFlow.js モデルの初期化
 async function initTFModel() {
@@ -14696,6 +14697,23 @@ function loadTrainingData() {
     } catch (e) {
         console.log('Could not load training data');
     }
+}
+
+// ガイド付きA-Z学習を開始（26文字を書いてもらう）
+function startGuidedTraining() {
+    guidedTraining = {
+        active: true,
+        index: 0,
+        letters: 'abcdefghijklmnopqrstuvwxyz'.split('')
+    };
+    lastRecognizedChar = '';
+    clearHandwriteCanvas();
+    const recognized = document.getElementById('handwriteRecognized');
+    if (recognized) {
+        recognized.textContent = '「A」を書いて「決定」';
+        recognized.classList.add('show');
+    }
+    console.log('Guided A-Z training start');
 }
 
 // モデルを訓練
@@ -15036,11 +15054,13 @@ function initHandwriteInput() {
     // ボタンイベント
     const clearBtn = document.getElementById('handwriteClear');
     const confirmBtn = document.getElementById('handwriteConfirm');
+    const trainAllBtn = document.getElementById('handwriteTrainAll');
     const passBtn = document.getElementById('handwritePass');
     const decideBtn = document.getElementById('handwriteDecide');
     
     if (clearBtn) clearBtn.addEventListener('click', clearHandwriteCanvas);
     if (confirmBtn) confirmBtn.addEventListener('click', confirmHandwriteChar);
+    if (trainAllBtn) trainAllBtn.addEventListener('click', startGuidedTraining);
     
     // $1テンプレートを構築（初期化時1回）
     if (dollarTemplates.length === 0) {
@@ -15479,7 +15499,40 @@ function calculateDistance(points, template) {
 
 // 認識した文字を確定して入力
 function confirmHandwriteChar() {
-    if (!lastRecognizedChar) return;
+    if (!guidedTraining.active && !lastRecognizedChar) return;
+    
+    // ガイド付き学習モード
+    if (guidedTraining.active) {
+        const letters = guidedTraining.letters;
+        const idx = guidedTraining.index;
+        if (idx < letters.length) {
+            const target = letters[idx];
+            saveTrainingData(target);
+            guidedTraining.index += 1;
+            clearHandwriteCanvas();
+            
+            const recognized = document.getElementById('handwriteRecognized');
+            if (guidedTraining.index >= letters.length) {
+                guidedTraining.active = false;
+                if (recognized) {
+                    recognized.textContent = '学習完了！モデルを更新中…';
+                    recognized.classList.add('show');
+                }
+                // 十分なデータがたまったら訓練
+                if (trainingData.length >= 26) {
+                    trainModel();
+                }
+                return;
+            } else {
+                const next = letters[guidedTraining.index];
+                if (recognized) {
+                    recognized.textContent = `「${next.toUpperCase()}」を書いて「決定」`;
+                    recognized.classList.add('show');
+                }
+                return;
+            }
+        }
+    }
     
     // 認識した文字を訓練データとして保存（確定=正解と仮定）
     saveTrainingData(lastRecognizedChar.toLowerCase());
