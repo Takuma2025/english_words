@@ -651,33 +651,51 @@ function updateVocabSelectedSchool(school) {
         }
         
         // 変更ボタンのイベントリスナーを設定（直接高校一覧を表示）
+        const openSchoolModal = () => {
+            // ボトムシートモーダルを表示（検索モードで開く）
+            if (typeof window.showSchoolModal === 'function') {
+                window.showSchoolModal(true);
+            } else {
+                const modal = document.getElementById('schoolModal');
+                if (modal) modal.classList.remove('hidden');
+            }
+            // 検索モードで表示（高校一覧を表示）
+            updateSelectedSchoolUI(school, true);
+            tempSelectedSchool = undefined;
+            // すべてボタンをアクティブにして全学校を表示
+            const typeButtons = document.querySelectorAll('.school-filter-tab');
+            typeButtons.forEach(b => b.classList.remove('active'));
+            const allBtn = document.getElementById('schoolTypeAll');
+            if (allBtn) allBtn.classList.add('active');
+            // 検索入力をクリア
+            const searchInput = document.getElementById('schoolSearchInput');
+            if (searchInput) searchInput.value = '';
+            renderSchoolList('all', '');
+        };
+        
         if (vocabSchoolChangeBtn) {
-            vocabSchoolChangeBtn.onclick = () => {
-                // ボトムシートモーダルを表示（検索モードで開く）
-                if (typeof window.showSchoolModal === 'function') {
-                    window.showSchoolModal(true);
-                } else {
-                    const modal = document.getElementById('schoolModal');
-                    if (modal) modal.classList.remove('hidden');
-                }
-                // 検索モードで表示（高校一覧を表示）
-                updateSelectedSchoolUI(school, true);
-                tempSelectedSchool = undefined;
-                // すべてボタンをアクティブにして全学校を表示
-                const typeButtons = document.querySelectorAll('.school-filter-tab');
-                typeButtons.forEach(b => b.classList.remove('active'));
-                const allBtn = document.getElementById('schoolTypeAll');
-                if (allBtn) allBtn.classList.add('active');
-                // 検索入力をクリア
-                const searchInput = document.getElementById('schoolSearchInput');
-                if (searchInput) searchInput.value = '';
-                renderSchoolList('all', '');
+            vocabSchoolChangeBtn.onclick = (e) => {
+                e.stopPropagation();
+                openSchoolModal();
             };
         }
+        
+        // カード全体にもクリックイベントを設定
+        vocabSchoolSelected.onclick = openSchoolModal;
     } else {
         // 志望校が未設定の場合
         vocabSchoolSelector.classList.remove('hidden');
         vocabSchoolSelected.classList.add('hidden');
+        
+        // カード全体にクリックイベントを設定
+        vocabSchoolSelector.onclick = () => {
+            if (typeof window.showSchoolModal === 'function') {
+                window.showSchoolModal(false);
+            } else {
+                const modal = document.getElementById('schoolModal');
+                if (modal) modal.classList.remove('hidden');
+            }
+        };
         
         // 説明文を表示する
         const vocabProgressDescription = document.querySelector('.vocab-progress-description');
@@ -981,7 +999,12 @@ function initSchoolSelector() {
         });
     }
 
-    if (openBtn) openBtn.addEventListener('click', () => openModal(false));
+    if (openBtn) {
+        openBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openModal(false);
+        });
+    }
     if (closeBtn) {
         closeBtn.addEventListener('click', (e) => {
             e.stopPropagation();

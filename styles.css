@@ -45,7 +45,7 @@ html {
 
 body {
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #ffffff; /* 真っ白背景 */
+    background-color: #f0f0f0; /* ライトグレー背景 */
     color: #1f2937; /* ダークグレー */
     line-height: 1.5;
     height: 100vh;
@@ -1046,18 +1046,18 @@ body.learning-mode .app-header {
 .category-list {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 12px;
     margin-bottom: 24px;
     width: 100%;
     box-sizing: border-box;
-    background: #ffffff;
+    background: transparent;
     padding: 0;
 }
 
 .course-section {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 12px;
 }
 
 .osaka-image-container {
@@ -1086,27 +1086,24 @@ body.learning-mode .app-header {
 .category-cards-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin-bottom: 8px;
-    border-bottom: 1px solid #e5e7eb;
+    gap: 12px;
+    margin-bottom: 0;
 }
 
 .category-cards-row .category-card {
     padding: 16px;
-    border-bottom: none;
-    border-right: 1px solid #e5e7eb;
     align-items: center;
     border-radius: 0;
-    box-shadow: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 0;
 }
 
 .category-cards-row .category-card:last-child {
-    border-right: none;
+    /* No special styles needed */
 }
 
 .category-cards-row .category-card:hover {
-    box-shadow: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .category-cards-row .category-name {
@@ -2802,12 +2799,12 @@ body.learning-mode .app-header {
     align-items: center;
     background: #ffffff;
     border: none;
-    border-bottom: 1px solid #e5e7eb;
     border-radius: 0;
     padding: 16px;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     width: 100%;
     box-sizing: border-box;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     text-align: left;
     cursor: pointer;
     transition: background-color 0.1s;
@@ -2816,21 +2813,20 @@ body.learning-mode .app-header {
 
 .category-card:hover {
     background-color: #f9fafb;
-    box-shadow: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .category-card:active {
     background-color: #f3f4f6;
-    box-shadow: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .category-card.touch-hover {
     background-color: #f9fafb;
-    box-shadow: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .category-card:last-child {
-    border-bottom: none;
     margin-bottom: 0;
 }
 
@@ -2842,12 +2838,12 @@ body.learning-mode .app-header {
     padding: 0;
     overflow: hidden;
     border-radius: 0;
-    box-shadow: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .category-card.category-card-with-actions:hover {
     background-color: #f9fafb;
-    box-shadow: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .category-card.category-card-with-actions .category-info {
