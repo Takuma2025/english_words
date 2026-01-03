@@ -6994,16 +6994,6 @@ body.learning-mode .learning-view {
     padding: 0 16px;
 }
 
-@media (max-width: 600px) {
-    body.learning-mode .app-main {
-        max-width: 100%;
-    }
-    
-    body.learning-mode .learning-view {
-        padding: 0 12px;
-    }
-}
-
 body.learning-mode .card-area-wrapper {
     overflow-x: hidden;
     max-width: 100%;
