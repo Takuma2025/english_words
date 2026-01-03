@@ -226,87 +226,6 @@
                     </div>
                 </div>
 
-                <!-- 志望校設定モーダル -->
-                <div class="school-modal hidden" id="schoolModal">
-                    <div class="school-modal-backdrop"></div>
-                    <div class="school-modal-sheet">
-                        <!-- ドラッグハンドル -->
-                        <div class="school-modal-handle">
-                            <span class="school-modal-handle-bar"></span>
-                        </div>
-                        <!-- ヘッダー -->
-                        <div class="school-modal-header">
-                            <div class="school-modal-header-content">
-                                <svg class="school-modal-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                                    <polyline points="9 22 9 12 15 12 15 22"/>
-                                </svg>
-                                <div class="school-modal-title-group">
-                                    <h2 class="school-modal-title">志望校を設定</h2>
-                                    <p class="school-modal-subtitle">大阪府の公立・私立・国立から選択</p>
-                                </div>
-                            </div>
-                            <button type="button" id="closeSchoolSettings" class="school-modal-close" aria-label="閉じる">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                            </button>
-                        </div>
-                        <!-- コンテンツ -->
-                        <div class="school-modal-body" id="schoolSelectorControls">
-                            <!-- フィルタータブ -->
-                            <div class="school-filter-tabs">
-                                <button type="button" class="school-filter-tab active" data-type="all" id="schoolTypeAll">
-                                    <span class="school-filter-tab-label">すべて</span>
-                                </button>
-                                <button type="button" class="school-filter-tab" data-type="公立" id="schoolTypePublic">
-                                    <span class="school-filter-tab-icon school-filter-tab-icon-public"></span>
-                                    <span class="school-filter-tab-label">公立</span>
-                                </button>
-                                <button type="button" class="school-filter-tab" data-type="私立" id="schoolTypePrivate">
-                                    <span class="school-filter-tab-icon school-filter-tab-icon-private"></span>
-                                    <span class="school-filter-tab-label">私立</span>
-                                </button>
-                                <button type="button" class="school-filter-tab" data-type="国立" id="schoolTypeNational">
-                                    <span class="school-filter-tab-icon school-filter-tab-icon-national"></span>
-                                    <span class="school-filter-tab-label">国立</span>
-                                </button>
-                            </div>
-                            <!-- 検索 -->
-                            <div class="school-search-box">
-                                <svg class="school-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <path d="m21 21-4.35-4.35"></path>
-                                </svg>
-                                <input type="text" id="schoolSearchInput" class="school-search-input" placeholder="高校名・コース名で検索" autocomplete="off">
-                            </div>
-                            <!-- 学校リスト -->
-                            <div class="school-list-wrapper" id="schoolListContainer">
-                                <div class="school-list-header">
-                                    <span class="school-list-header-text">大阪府の高校一覧</span>
-                                    <span class="school-list-header-hint">タップで選択</span>
-                                </div>
-                                <div class="school-list" id="schoolList"></div>
-                            </div>
-                        </div>
-                        <!-- 決定ボタン（固定フッター） -->
-                        <div class="school-modal-footer" id="schoolConfirmWrapper">
-                            <button type="button" id="schoolConfirmBtn" class="school-confirm-btn" disabled>
-                                <span class="school-confirm-btn-text">決定する</span>
-                            </button>
-                        </div>
-                        <!-- 選択済み表示（非表示状態） -->
-                        <div class="school-selected hidden" id="selectedSchoolContainer">
-                            <div class="selected-school-label">現在の志望校</div>
-                            <div class="selected-school-body">
-                                <div class="selected-school-text" id="selectedSchoolText">未設定</div>
-                            </div>
-                        </div>
-                        <button type="button" id="selectedSchoolReset" class="school-reset-btn hidden" aria-label="志望校を解除">変更</button>
-                    </div>
-                </div>
-
                 <div class="course-tabs" id="courseTabs">
                     <button class="course-tab active" data-target="courseMasterSection">英単語マスターコース</button>
                     <button class="course-tab" data-target="courseScoreSection">入試得点力アップコース</button>
@@ -1375,6 +1294,87 @@
                 <button class="completion-btn completion-btn-review hidden" id="completionReviewBtn">覚えていない単語を復習</button>
                 <button class="completion-btn completion-btn-back" id="completionBackBtn">ホーム画面に戻る</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 志望校設定モーダル（ボトムシート） - body直下に配置 -->
+    <div class="school-modal hidden" id="schoolModal">
+        <div class="school-modal-backdrop"></div>
+        <div class="school-modal-sheet">
+            <!-- ドラッグハンドル -->
+            <div class="school-modal-handle">
+                <span class="school-modal-handle-bar"></span>
+            </div>
+            <!-- ヘッダー -->
+            <div class="school-modal-header">
+                <div class="school-modal-header-content">
+                    <svg class="school-modal-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <div class="school-modal-title-group">
+                        <h2 class="school-modal-title">志望校を設定</h2>
+                        <p class="school-modal-subtitle">大阪府の公立・私立・国立から選択</p>
+                    </div>
+                </div>
+                <button type="button" id="closeSchoolSettings" class="school-modal-close" aria-label="閉じる">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <!-- コンテンツ -->
+            <div class="school-modal-body" id="schoolSelectorControls">
+                <!-- フィルタータブ -->
+                <div class="school-filter-tabs">
+                    <button type="button" class="school-filter-tab active" data-type="all" id="schoolTypeAll">
+                        <span class="school-filter-tab-label">すべて</span>
+                    </button>
+                    <button type="button" class="school-filter-tab" data-type="公立" id="schoolTypePublic">
+                        <span class="school-filter-tab-icon school-filter-tab-icon-public"></span>
+                        <span class="school-filter-tab-label">公立</span>
+                    </button>
+                    <button type="button" class="school-filter-tab" data-type="私立" id="schoolTypePrivate">
+                        <span class="school-filter-tab-icon school-filter-tab-icon-private"></span>
+                        <span class="school-filter-tab-label">私立</span>
+                    </button>
+                    <button type="button" class="school-filter-tab" data-type="国立" id="schoolTypeNational">
+                        <span class="school-filter-tab-icon school-filter-tab-icon-national"></span>
+                        <span class="school-filter-tab-label">国立</span>
+                    </button>
+                </div>
+                <!-- 検索 -->
+                <div class="school-search-box">
+                    <svg class="school-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="schoolSearchInput" class="school-search-input" placeholder="高校名・コース名で検索" autocomplete="off">
+                </div>
+                <!-- 学校リスト -->
+                <div class="school-list-wrapper" id="schoolListContainer">
+                    <div class="school-list-header">
+                        <span class="school-list-header-text">大阪府の高校一覧</span>
+                        <span class="school-list-header-hint">タップで選択</span>
+                    </div>
+                    <div class="school-list" id="schoolList"></div>
+                </div>
+            </div>
+            <!-- 決定ボタン（固定フッター） -->
+            <div class="school-modal-footer" id="schoolConfirmWrapper">
+                <button type="button" id="schoolConfirmBtn" class="school-confirm-btn" disabled>
+                    <span class="school-confirm-btn-text">決定する</span>
+                </button>
+            </div>
+            <!-- 選択済み表示（非表示状態） -->
+            <div class="school-selected hidden" id="selectedSchoolContainer">
+                <div class="selected-school-label">現在の志望校</div>
+                <div class="selected-school-body">
+                    <div class="selected-school-text" id="selectedSchoolText">未設定</div>
+                </div>
+            </div>
+            <button type="button" id="selectedSchoolReset" class="school-reset-btn hidden" aria-label="志望校を解除">変更</button>
         </div>
     </div>
 

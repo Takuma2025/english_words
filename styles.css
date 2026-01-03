@@ -2130,11 +2130,14 @@ body.learning-mode .app-header {
 .school-modal-body {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
     padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    min-height: 0;
 }
 
 /* フィルタータブ */
@@ -2241,14 +2244,16 @@ body.learning-mode .app-header {
 
 /* 学校リストラッパー */
 .school-list-wrapper {
-    flex: 1;
-    min-height: 0;
     display: flex;
     flex-direction: column;
     background: #ffffff;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    height: 45vh;
+    min-height: 280px;
+    max-height: 400px;
+    flex-shrink: 0;
 }
 
 /* リストヘッダー */
@@ -2277,8 +2282,10 @@ body.learning-mode .app-header {
 .school-list {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    max-height: 38vh;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
 }
 
 .school-list-item {
