@@ -2514,6 +2514,8 @@ function init() {
         if (splashScreen) {
             // スプラッシュ画面を3秒表示してから非表示にする
             setTimeout(() => {
+                // スプラッシュ終了時にテーマカラーを#0055caに更新
+                updateThemeColor(false);
                 splashScreen.classList.add('hidden');
                 setTimeout(() => {
                     splashScreen.style.display = 'none';
@@ -2522,6 +2524,7 @@ function init() {
             }, 3000);
         } else {
             // スプラッシュ画面が見つからない場合は即座にカテゴリー選択画面を表示
+            updateThemeColor(false);
             showCategorySelection();
         }
     } catch (error) {
@@ -2625,21 +2628,50 @@ function formatTitleWithLevelBadge(title) {
 
 // mode: 'home' = ホーム画面、'course' = コース選択画面、'back' = その他（戻るボタン表示）、'learning' = 学習画面
 // title: コース選択画面で表示するタイトル（オプション）
-function updateHeaderButtons(mode, title = '') {
+// isTestMode: テストモード（アウトプットモード）かどうか
+function updateHeaderButtons(mode, title = '', isTestMode = false) {
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
     const headerBackBtn = document.getElementById('headerBackBtn');
     const homeBtn = document.getElementById('homeBtn');
     const headerTitleLogo = document.querySelector('.header-title-logo');
     const headerTitleText = document.getElementById('headerTitleText');
+    const headerContent = document.querySelector('.header-content');
+    const headerLearningContent = document.getElementById('headerLearningContent');
+    const headerLearningActions = document.getElementById('headerLearningActions');
+    const headerPauseBtn = document.getElementById('headerPauseBtn');
     const appHeader = document.querySelector('.app-header');
     
-    // ヘッダー全体の表示/非表示（ホーム画面とコース選択画面のみ表示）
+    // ヘッダー全体は常に表示
     if (appHeader) {
-        if (mode === 'home' || mode === 'course') {
-            appHeader.classList.remove('hidden');
+        appHeader.classList.remove('hidden');
+    }
+    
+    // 学習モード用ヘッダー要素の制御
+    const headerTestBtn = document.getElementById('headerTestBtn');
+    if (mode === 'learning') {
+        // 学習モード時
+        if (headerContent) headerContent.classList.add('hidden');
+        if (headerLearningContent) headerLearningContent.classList.remove('hidden');
+        if (hamburgerMenuBtn) hamburgerMenuBtn.classList.add('hidden');
+        
+        if (isTestMode) {
+            // テストモード：×ボタンのみ表示、戻るボタンとテストボタンは非表示
+            if (headerBackBtn) headerBackBtn.classList.add('hidden');
+            if (headerTestBtn) headerTestBtn.classList.add('hidden');
+            if (headerPauseBtn) headerPauseBtn.classList.remove('hidden');
+            if (headerLearningActions) headerLearningActions.classList.remove('hidden');
         } else {
-            appHeader.classList.add('hidden');
+            // 学習モード（インプット）：戻るボタンとテストボタンを表示、×ボタンは非表示
+            if (headerBackBtn) headerBackBtn.classList.remove('hidden');
+            if (headerTestBtn) headerTestBtn.classList.remove('hidden');
+            if (headerPauseBtn) headerPauseBtn.classList.add('hidden');
+            if (headerLearningActions) headerLearningActions.classList.remove('hidden');
         }
+    } else {
+        // 通常モード時
+        if (headerContent) headerContent.classList.remove('hidden');
+        if (headerLearningContent) headerLearningContent.classList.add('hidden');
+        if (headerLearningActions) headerLearningActions.classList.add('hidden');
     }
     
     // タイトルロゴの表示/非表示（ホーム画面のみ表示）
@@ -2685,16 +2717,24 @@ function updateHeaderButtons(mode, title = '') {
     }
     
     if (headerBackBtn) {
-        if (mode === 'course') {
+        if (mode === 'course' || mode === 'learning') {
             headerBackBtn.classList.remove('hidden');
         } else {
             headerBackBtn.classList.add('hidden');
         }
     }
     
-    // 中断ボタンは常に非表示（上部コンテナの中断ボタンを使用）
+    // 中断ボタンは常に非表示
     if (homeBtn) {
         homeBtn.classList.add('hidden');
+    }
+}
+
+// ヘッダーの単元名を更新
+function updateHeaderUnitName(unitName) {
+    const headerUnitName = document.getElementById('headerUnitName');
+    if (headerUnitName) {
+        headerUnitName.textContent = unitName;
     }
 }
 
@@ -3142,31 +3182,34 @@ function initInputModeLearning(category, words, startIndex = 0) {
         courseSelection.classList.add('hidden');
     }
     elements.mainContent.classList.remove('hidden');
+    
+    // 単元名を設定
+    const scoreUpCategories = [
+        '英文法中学３年間の総復習',
+        '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
+        '条件英作文特訓コース',
+        '大阪C問題対策英単語タイムアタック',
+        '大阪C問題対策 英作写経ドリル',
+        '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+    ];
+    let displayTitle;
+    if (scoreUpCategories.includes(category)) {
+        displayTitle = category;
+    } else {
+        displayTitle = currentFilterCourseTitle || category;
+    }
+    
     if (elements.unitName) {
-        // 入試得点力アップコースの場合はカテゴリー名を直接使用
-        const scoreUpCategories = [
-            '英文法中学３年間の総復習',
-            '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
-            '条件英作文特訓コース',
-            '大阪C問題対策英単語タイムアタック',
-            '大阪C問題対策 英作写経ドリル',
-            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
-        ];
-        let displayTitle;
-        if (scoreUpCategories.includes(category)) {
-            // 入試得点力アップコースの場合はカテゴリー名をそのまま使用
-            displayTitle = category;
-        } else {
-            // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
-            displayTitle = currentFilterCourseTitle || category;
-        }
         const formattedTitle = formatTitleWithLevelBadge(displayTitle);
         if (formattedTitle !== displayTitle) {
             elements.unitName.innerHTML = formattedTitle;
         } else {
-        elements.unitName.textContent = displayTitle;
+            elements.unitName.textContent = displayTitle;
         }
     }
+    
+    // ヘッダーの単元名も更新
+    updateHeaderUnitName(displayTitle);
     
     // テーマカラーを先に更新（クラス追加の前に）
     updateThemeColor(true);
@@ -3176,7 +3219,7 @@ function initInputModeLearning(category, words, startIndex = 0) {
         updateFeedbackOverlayPosition();
     }, 0);
 
-    // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
+    // ヘッダーを学習モードに更新
     updateHeaderButtons('learning');
     
     // カードモード、例文モード、整序英作文モードを非表示、入力モードを表示
@@ -4755,8 +4798,8 @@ function showInputModeDirectly(category, words, courseTitle) {
     
     // ヘッダー更新
     updateHeaderButtons('learning');
+    const title = courseTitle || category;
     if (elements.unitName) {
-        const title = courseTitle || category;
         const formattedTitle = formatTitleWithLevelBadge(title);
         if (formattedTitle !== title) {
             elements.unitName.innerHTML = formattedTitle;
@@ -4764,6 +4807,8 @@ function showInputModeDirectly(category, words, courseTitle) {
             elements.unitName.textContent = title;
         }
     }
+    // ヘッダーの単元名も更新
+    updateHeaderUnitName(title);
     
     // テーマカラーを更新
     updateThemeColor(true);
@@ -5211,31 +5256,34 @@ function initTimeAttackLearning(category, words) {
         courseSelection.classList.add('hidden');
     }
     elements.mainContent.classList.remove('hidden');
+    
+    // 単元名を設定
+    const scoreUpCategoriesTA = [
+        '英文法中学３年間の総復習',
+        '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
+        '条件英作文特訓コース',
+        '大阪C問題対策英単語タイムアタック',
+        '大阪C問題対策 英作写経ドリル',
+        '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+    ];
+    let displayTitleTA;
+    if (scoreUpCategoriesTA.includes(category)) {
+        displayTitleTA = category;
+    } else {
+        displayTitleTA = currentFilterCourseTitle || category;
+    }
+    
     if (elements.unitName) {
-        // 入試得点力アップコースの場合はカテゴリー名を直接使用
-        const scoreUpCategories = [
-            '英文法中学３年間の総復習',
-            '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
-            '条件英作文特訓コース',
-            '大阪C問題対策英単語タイムアタック',
-            '大阪C問題対策 英作写経ドリル',
-            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
-        ];
-        let displayTitle;
-        if (scoreUpCategories.includes(category)) {
-            // 入試得点力アップコースの場合はカテゴリー名をそのまま使用
-            displayTitle = category;
-        } else {
-            // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
-            displayTitle = currentFilterCourseTitle || category;
-        }
-        const formattedTitle = formatTitleWithLevelBadge(displayTitle);
-        if (formattedTitle !== displayTitle) {
+        const formattedTitle = formatTitleWithLevelBadge(displayTitleTA);
+        if (formattedTitle !== displayTitleTA) {
             elements.unitName.innerHTML = formattedTitle;
         } else {
-        elements.unitName.textContent = displayTitle;
+            elements.unitName.textContent = displayTitleTA;
         }
     }
+    
+    // ヘッダーの単元名も更新
+    updateHeaderUnitName(displayTitleTA);
     
     // テーマカラーを先に更新（クラス追加の前に）
     updateThemeColor(true);
@@ -5246,8 +5294,8 @@ function initTimeAttackLearning(category, words) {
         updateFeedbackOverlayPosition();
     }, 0);
     
-    // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
-    updateHeaderButtons('learning');
+    // ヘッダーを学習モードに更新（テストモード）
+    updateHeaderButtons('learning', '', true);
     
     // 進捗ステップボタンを非表示（タイムアタックモード）
     const progressStepButtons = document.querySelector('.progress-step-buttons');
@@ -5680,6 +5728,8 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         // 戻るボタン表示、ポーズボタン非表示
         if (inputBackBtn) inputBackBtn.classList.remove('hidden');
         if (unitPauseBtn) unitPauseBtn.classList.add('hidden');
+        // ヘッダー更新（インプットモード：×ボタン非表示）
+        updateHeaderButtons('learning', '', false);
         renderInputListView(currentWords);
     } else {
         // 通常のカードモード（アウトプット）
@@ -5693,6 +5743,8 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         // 戻るボタン非表示、ポーズボタン表示
         if (inputBackBtn) inputBackBtn.classList.add('hidden');
         if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
+        // ヘッダー更新（テストモード：×ボタン表示）
+        updateHeaderButtons('learning', '', true);
     }
     
     // 例文モード用のナビゲーションボタンを非表示
@@ -6081,9 +6133,31 @@ function setupEventListeners() {
         });
     }
     
+    // ヘッダーのテストボタン
+    const headerTestBtn = document.getElementById('headerTestBtn');
+    if (headerTestBtn) {
+        headerTestBtn.addEventListener('click', () => {
+            if (currentFilterCategory && currentFilterWords && currentFilterWords.length > 0) {
+                showWordFilterView(currentFilterCategory, currentFilterWords, currentFilterCourseTitle || currentFilterCategory);
+            } else if (selectedCategory && currentCourseWords && currentCourseWords.length > 0) {
+                showWordFilterView(selectedCategory, currentCourseWords, currentFilterCourseTitle || selectedCategory);
+            }
+        });
+    }
+    
     // ポーズボタン（×ボタン）
     if (elements.unitPauseBtn) {
         elements.unitPauseBtn.addEventListener('click', () => {
+            if (elements.pauseOverlay) {
+                elements.pauseOverlay.classList.remove('hidden');
+            }
+        });
+    }
+    
+    // ヘッダーのポーズボタン（×ボタン）
+    const headerPauseBtn = document.getElementById('headerPauseBtn');
+    if (headerPauseBtn) {
+        headerPauseBtn.addEventListener('click', () => {
             if (elements.pauseOverlay) {
                 elements.pauseOverlay.classList.remove('hidden');
             }
@@ -11834,8 +11908,8 @@ function initSentenceModeLearning(category) {
     updateThemeColor(true);
     document.body.classList.add('learning-mode');
     
-    // ハンバーガーメニューと戻るボタンを非表示、ポーズボタンを表示
-    updateHeaderButtons('learning');
+    // ハンバーガーメニューと戻るボタンを非表示、ポーズボタンを表示（テストモード）
+    updateHeaderButtons('learning', '', true);
 
     // インプットモード用戻るボタンとポーズボタンの制御
     const inputBackBtn = document.getElementById('inputBackBtn');
@@ -12445,8 +12519,8 @@ function initReorderModeLearning(category) {
     updateThemeColor(true);
     document.body.classList.add('learning-mode');
     
-    // ハンバーガーメニューと戻るボタンを非表示、ポーズボタンを表示
-    updateHeaderButtons('learning');
+    // ハンバーガーメニューと戻るボタンを非表示、ポーズボタンを表示（テストモード）
+    updateHeaderButtons('learning', '', true);
 
     // インプットモード用戻るボタンとポーズボタンの制御
     const inputBackBtn = document.getElementById('inputBackBtn');

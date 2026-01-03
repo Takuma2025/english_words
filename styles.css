@@ -6978,9 +6978,12 @@ body.learning-mode .app-container {
 }
 
 body.learning-mode .app-main {
-    padding-top: env(safe-area-inset-top);
+    padding-top: 0;
     overflow-x: hidden;
-    max-width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 body.learning-mode .learning-view {
@@ -6988,6 +6991,17 @@ body.learning-mode .learning-view {
     max-width: 100%;
     overflow-y: auto;
     height: 100%;
+    padding: 0 16px;
+}
+
+@media (max-width: 600px) {
+    body.learning-mode .app-main {
+        max-width: 100%;
+    }
+    
+    body.learning-mode .learning-view {
+        padding: 0 12px;
+    }
 }
 
 body.learning-mode .card-area-wrapper {
