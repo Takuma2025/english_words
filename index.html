@@ -798,46 +798,36 @@
                         </div>
                     </div>
                     
-                    <!-- 日本語→英語入力モード（基本語彙500専用） -->
+                    <!-- 日本語→英語入力モード -->
                     <div class="input-mode hidden" id="inputMode">
-                        <div class="input-mode-content">
-                            <!-- No. -->
-                            <div class="word-number" id="inputWordNumber">No.1</div>
-                            <div class="word-checkbox" id="inputWordCheckbox"></div>
-                            <div class="card-top-info">
-                                <button class="star-btn" id="inputStarBtn">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                                        <path d="M7 4h10a1 1 0 0 1 1 1v14l-6-4-6 4V5a1 1 0 0 1 1-1z"></path>
-                                    </svg>
-                                </button>
+                        <!-- シンプルな問題表示 -->
+                        <div class="simple-question-area">
+                            <div class="simple-question-number" id="inputWordNumber">No.1</div>
+                            <div class="simple-question-meaning">
+                                <span class="simple-pos" id="inputPosInline"></span>
+                                <span class="simple-meaning-text" id="inputMeaning">意味</span>
                             </div>
-                            <div class="input-question">
-                                <div class="input-meaning-wrapper">
-                                    <span class="pos-inline part-of-speech" id="inputPosInline"></span>
-                                    <div class="input-meaning" id="inputMeaning">意味</div>
-                                </div>
-                            </div>
-                            <div class="word-appearance-count" id="inputWordAppearanceCount" style="display: none;">
-                                <span class="appearance-label">入試頻出度</span><span class="appearance-value"> 0回</span>
-                            </div>
-                            <div class="input-container">
-                                <div class="letter-inputs" id="letterInputs">
-                                    <!-- 動的に生成 -->
-                                </div>
-                                <div class="input-result hidden" id="inputResult">
-                                    <div class="result-message" id="resultMessage"></div>
-                                    <div class="correct-answer-container">
-                                        <span class="correct-word" id="correctAnswer"></span>
-                                        <button class="audio-btn" id="inputAudioBtn" title="音声を再生">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
+                        </div>
+                        
+                        <!-- 入力欄 -->
+                        <div class="simple-input-area">
+                            <div class="letter-inputs" id="letterInputs"></div>
+                            <div class="input-result hidden" id="inputResult">
+                                <div class="result-message" id="resultMessage"></div>
+                                <div class="correct-answer-container">
+                                    <span class="correct-word" id="correctAnswer"></span>
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- 非表示の互換性要素 -->
+                        <div class="word-checkbox hidden" id="inputWordCheckbox"></div>
+                        <button class="star-btn hidden" id="inputStarBtn"></button>
+                        <div class="word-appearance-count hidden" id="inputWordAppearanceCount">
+                            <span class="appearance-label"></span><span class="appearance-value"></span>
+                        </div>
+                        <button class="audio-btn hidden" id="inputAudioBtn"></button>
+                        
                         <!-- 入力モード切り替えタブ -->
                         <div class="input-mode-tabs">
                             <button class="input-mode-tab active" id="keyboardTabBtn" data-mode="keyboard">

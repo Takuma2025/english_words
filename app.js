@@ -3321,15 +3321,23 @@ function initInputModeLearning(category, words, startIndex = 0) {
     // カード関連を全て非表示（display: noneを直接設定）
     if (wordCard) {
         wordCard.classList.add('hidden');
-        wordCard.style.display = 'none';
+        wordCard.style.cssText = 'display: none !important; visibility: hidden !important;';
     }
     if (wordCardContainer) {
         wordCardContainer.classList.add('hidden');
-        wordCardContainer.style.display = 'none';
+        wordCardContainer.style.cssText = 'display: none !important; visibility: hidden !important;';
+    }
+    // 個別のカードスタックも非表示
+    for (let i = 1; i <= 5; i++) {
+        const stack = document.getElementById(`cardStack${i}`);
+        if (stack) {
+            stack.classList.add('hidden');
+            stack.style.cssText = 'display: none !important; visibility: hidden !important;';
+        }
     }
     cardStacks.forEach(stack => {
         stack.classList.add('hidden');
-        stack.style.display = 'none';
+        stack.style.cssText = 'display: none !important; visibility: hidden !important;';
     });
     
     // 入力モードを表示
@@ -14549,21 +14557,11 @@ function initHandwriteInput() {
     // ボタンイベント
     const clearBtn = document.getElementById('handwriteClear');
     const confirmBtn = document.getElementById('handwriteConfirm');
-    const keyboardTab = document.getElementById('keyboardTabBtn');
-    const handwriteTab = document.getElementById('handwriteTabBtn');
     const passBtn = document.getElementById('handwritePass');
     const decideBtn = document.getElementById('handwriteDecide');
     
     if (clearBtn) clearBtn.addEventListener('click', clearHandwriteCanvas);
     if (confirmBtn) confirmBtn.addEventListener('click', confirmHandwriteChar);
-    
-    // タブ切り替え
-    if (keyboardTab) {
-        keyboardTab.addEventListener('click', () => switchInputMode('keyboard'));
-    }
-    if (handwriteTab) {
-        handwriteTab.addEventListener('click', () => switchInputMode('handwrite'));
-    }
     
     // パス・解答ボタン
     if (passBtn) {
@@ -14582,10 +14580,18 @@ function initHandwriteInput() {
 
 // 入力モード切り替え
 function switchInputMode(mode) {
+    console.log('switchInputMode called with mode:', mode);
     const keyboardTab = document.getElementById('keyboardTabBtn');
     const handwriteTab = document.getElementById('handwriteTabBtn');
     const virtualKeyboard = document.getElementById('virtualKeyboard');
     const handwriteInput = document.getElementById('handwriteInput');
+    
+    console.log('Elements found:', {
+        keyboardTab: !!keyboardTab,
+        handwriteTab: !!handwriteTab,
+        virtualKeyboard: !!virtualKeyboard,
+        handwriteInput: !!handwriteInput
+    });
     
     if (mode === 'keyboard') {
         keyboardTab?.classList.add('active');
@@ -14596,10 +14602,15 @@ function switchInputMode(mode) {
         keyboardTab?.classList.remove('active');
         handwriteTab?.classList.add('active');
         virtualKeyboard?.classList.add('hidden');
-        handwriteInput?.classList.remove('hidden');
+        if (handwriteInput) {
+            handwriteInput.classList.remove('hidden');
+            handwriteInput.style.display = 'flex';
+            console.log('handwriteInput displayed');
+        }
         
         // Canvas初期化
         if (!handwriteCtx) {
+            console.log('Initializing handwrite canvas');
             initHandwriteInput();
         }
         clearHandwriteCanvas();
@@ -14891,12 +14902,33 @@ function debugTestHandwriteMode() {
     }, 500);
 }
 
+// 手書き入力タブのイベントリスナーを設定
+function setupHandwriteTabs() {
+    const keyboardTab = document.getElementById('keyboardTabBtn');
+    const handwriteTab = document.getElementById('handwriteTabBtn');
+    
+    console.log('setupHandwriteTabs called', { keyboardTab: !!keyboardTab, handwriteTab: !!handwriteTab });
+    
+    if (keyboardTab) {
+        keyboardTab.addEventListener('click', () => {
+            console.log('Keyboard tab clicked');
+            switchInputMode('keyboard');
+        });
+    }
+    if (handwriteTab) {
+        handwriteTab.addEventListener('click', () => {
+            console.log('Handwrite tab clicked');
+            switchInputMode('handwrite');
+        });
+    }
+}
+
 // アプリケーションの起動
 // DOMが読み込まれてから初期化
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         init();
-        initHandwriteInput();
+        setupHandwriteTabs();
         
         // デバッグボタンのイベントリスナー
         const debugBtn = document.getElementById('debugHandwriteTest');
@@ -14907,7 +14939,7 @@ if (document.readyState === 'loading') {
 } else {
     // DOMが既に読み込まれている場合は即座に実行
     init();
-    initHandwriteInput();
+    setupHandwriteTabs();
     
     // デバッグボタンのイベントリスナー
     const debugBtn = document.getElementById('debugHandwriteTest');

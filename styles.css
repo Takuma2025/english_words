@@ -4453,19 +4453,64 @@ body.learning-mode .app-header {
     padding-top: 0;
 }
 
-/* 日本語→英語入力モード（基本語彙500専用） */
+/* 日本語→英語入力モード */
 .input-mode {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 20px 16px 0 16px;
+    padding: 16px;
     overflow-y: auto;
     min-height: 0;
     max-height: 100%;
     box-sizing: border-box;
-    perspective: 1200px;
-    transform-style: preserve-3d;
-    justify-content: flex-start; /* 上揃え */
+    background: #f8fafc;
+}
+
+/* シンプルな問題エリア */
+.simple-question-area {
+    text-align: center;
+    padding: 24px 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.simple-question-number {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.simple-question-meaning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.simple-pos {
+    font-size: 12px;
+    padding: 2px 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    color: #475569;
+}
+
+.simple-meaning-text {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+/* シンプルな入力エリア */
+.simple-input-area {
+    text-align: center;
+    padding: 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* 例文・整序モードではカードUIを隠す */
@@ -4501,7 +4546,19 @@ body.reorder-mode-active .word-card-container {
 /* 入力モードが表示されている時はカード関連を非表示 */
 .card-area-wrapper:has(#inputMode:not(.hidden)) .word-card-container,
 .card-area-wrapper:has(#inputMode:not(.hidden)) .card-stack,
-.card-area-wrapper:has(#inputMode:not(.hidden)) #wordCard {
+.card-area-wrapper:has(#inputMode:not(.hidden)) #wordCard,
+.card-area-wrapper:has(#inputMode:not(.hidden)) #wordCardContainer {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
+/* 入力モード表示時のカード非表示（:hasをサポートしないブラウザ用フォールバック） */
+#inputMode:not(.hidden) ~ .word-card-container,
+#inputMode:not(.hidden) ~ #wordCardContainer {
     display: none !important;
 }
 
