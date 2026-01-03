@@ -2681,6 +2681,7 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
     const homeBtn = document.getElementById('homeBtn');
     const headerTitleLogo = document.querySelector('.header-title-logo');
     const headerTitleText = document.getElementById('headerTitleText');
+    const headerTitleImage = document.getElementById('headerTitleImage');
     const headerContent = document.querySelector('.header-content');
     const headerLearningContent = document.getElementById('headerLearningContent');
     const headerLearningActions = document.getElementById('headerLearningActions');
@@ -2729,10 +2730,10 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
         }
     }
     
-    // タイトルテキストの表示/非表示
-    if (headerTitleText) {
+    // タイトル画像とテキストの表示/非表示
+    if (headerTitleImage && headerTitleText) {
         if (mode === 'course' && title) {
-            // レベル別にバッジ付きタイトルを設定
+            // コース選択時：テキストを表示、画像を非表示
             if (title === 'カテゴリ別に覚える基本単語') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-green">レベル0</span> カテゴリー別360語';
             } else if (title === 'レベル１ 超重要700語') {
@@ -2744,12 +2745,15 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
             } else {
                 headerTitleText.textContent = title;
             }
+            headerTitleImage.classList.add('hidden');
             headerTitleText.classList.remove('hidden');
         } else if (mode === 'home') {
-            // ホーム画面では「大阪府英単語コンプリート」を表示
-            headerTitleText.textContent = '大阪府英単語コンプリート';
-            headerTitleText.classList.remove('hidden');
+            // ホーム画面：画像を表示、テキストを非表示
+            headerTitleImage.classList.remove('hidden');
+            headerTitleText.classList.add('hidden');
         } else {
+            // その他：両方非表示
+            headerTitleImage.classList.add('hidden');
             headerTitleText.classList.add('hidden');
         }
     }
