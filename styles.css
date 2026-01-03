@@ -300,7 +300,7 @@ textarea,
     height: calc(var(--header-height) + env(safe-area-inset-top));
     min-height: calc(var(--header-height) + env(safe-area-inset-top));
     max-height: calc(var(--header-height) + env(safe-area-inset-top));
-    background: #ffffff;
+    background: #0055ca;
     border-bottom: none;
     display: flex;
     align-items: center;
@@ -330,7 +330,7 @@ body.learning-mode .app-header {
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: #111827;
+    color: #ffffff;
     cursor: pointer;
     padding: 8px;
     margin-left: -8px;
@@ -356,7 +356,7 @@ body.learning-mode .app-header {
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: #111827;
+    color: #ffffff;
     cursor: pointer;
     padding: 8px;
     margin-left: -8px;
@@ -421,7 +421,7 @@ body.learning-mode .app-header {
 .header-title-text {
     font-size: 16px;
     font-weight: 600;
-    color: #1e293b;
+    color: #ffffff;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
@@ -1694,7 +1694,7 @@ body.learning-mode .app-header {
     left: 0;
     height: 100%;
     min-width: 0;
-    background: #0055ca;
+    background: #93c5fd;
     border-radius: 10px;
     transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1704,11 +1704,11 @@ body.learning-mode .app-header {
 }
 
 .vocab-progress-fill-new:not(.insufficient):not(.no-school) {
-    background: #0055ca;
+    background: #93c5fd;
 }
 
 .vocab-progress-fill-new.no-school {
-    background: #0055ca;
+    background: #93c5fd;
 }
 
 /* 進捗インジケーター（ドット） */
@@ -1949,7 +1949,8 @@ body.learning-mode .app-header {
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding-top: calc(var(--header-height) + env(safe-area-inset-top) + 10px);
+    padding-top: calc(var(--header-height) + env(safe-area-inset-top) + 5px);
+    padding-bottom: 10px;
     z-index: 10001 !important;
 }
 
@@ -1968,17 +1969,17 @@ body.learning-mode .app-header {
 .school-modal-content {
     position: relative;
     width: min(520px, 92%);
-    max-height: calc(100vh - 120px);
-    max-height: calc(100dvh - 120px);
+    max-height: calc(100vh - calc(var(--header-height) + env(safe-area-inset-top) + 20px));
+    max-height: calc(100dvh - calc(var(--header-height) + env(safe-area-inset-top) + 20px));
     background: #ffffff;
     border-radius: 14px;
-    padding: 16px;
+    padding: 20px;
     box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22);
     z-index: 10002;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .school-modal-header {
@@ -2137,7 +2138,7 @@ body.learning-mode .app-header {
 
 /* 学校一覧コンテナ */
 .school-list-container {
-    max-height: 35vh;
+    max-height: 50vh;
     overflow-y: auto;
     border: 1px solid #e5e7eb;
     border-radius: 10px;
@@ -2876,15 +2877,15 @@ body.learning-mode .app-header {
 .learning-menu-categories {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 6px;
+    margin-bottom: 12px;
 }
 
 .learning-menu-category-btn {
     width: 100%;
-    padding: 16px;
+    padding: 10px 12px;
     border: 2px solid #e5e7eb;
-    border-radius: 10px;
+    border-radius: 8px;
     background: white;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -2897,7 +2898,7 @@ body.learning-mode .app-header {
 }
 
 .learning-menu-category-title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: #1f2937;
 }
@@ -2905,17 +2906,17 @@ body.learning-mode .app-header {
 .learning-menu-subcategories {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 6px;
+    margin-bottom: 16px;
     max-height: 400px;
     overflow-y: auto;
 }
 
 .learning-menu-subcategory-btn {
     width: 100%;
-    padding: 12px;
+    padding: 8px 10px;
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: 6px;
     background: white;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -2933,7 +2934,7 @@ body.learning-mode .app-header {
 }
 
 .learning-menu-subcategory-title {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: #1f2937;
 }
@@ -3124,7 +3125,7 @@ body.learning-mode .app-header {
 }
 
 .category-meta {
-    font-size: 11px;
+    font-size: 13px;
     color: #6b7280;
     margin-top: 2px;
     line-height: 1.4;

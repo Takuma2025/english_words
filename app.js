@@ -2649,7 +2649,7 @@ function updateHeaderButtons(mode, title = '') {
         }
     }
     
-    // タイトルテキストの表示/非表示（コース選択画面のみ表示）
+    // タイトルテキストの表示/非表示
     if (headerTitleText) {
         if (mode === 'course' && title) {
             // レベル別にバッジ付きタイトルを設定
@@ -2664,6 +2664,10 @@ function updateHeaderButtons(mode, title = '') {
             } else {
                 headerTitleText.textContent = title;
             }
+            headerTitleText.classList.remove('hidden');
+        } else if (mode === 'home') {
+            // ホーム画面では「大阪府英単語コンプリート」を表示
+            headerTitleText.textContent = '大阪府英単語コンプリート';
             headerTitleText.classList.remove('hidden');
         } else {
             headerTitleText.classList.add('hidden');
@@ -10087,6 +10091,23 @@ function displayCurrentWord() {
 
     // 単語番号は元のIDを使用（シャッフル後も元の番号を表示）
     elements.wordNumber.textContent = `No.${word.id}`;
+    
+    // チェックボックスの状態を更新
+    if (elements.wordCheckbox) {
+        if (reviewWords.has(word.id)) {
+            elements.wordCheckbox.classList.add('checked');
+        } else {
+            elements.wordCheckbox.classList.remove('checked');
+        }
+    }
+    const wordCheckboxBack = document.getElementById('wordCheckboxBack');
+    if (wordCheckboxBack) {
+        if (reviewWords.has(word.id)) {
+            wordCheckboxBack.classList.add('checked');
+        } else {
+            wordCheckboxBack.classList.remove('checked');
+        }
+    }
     
     // 品詞を一文字に変換
     const posShort = getPartOfSpeechShort(word.partOfSpeech || '');
