@@ -2181,7 +2181,10 @@ const elements = {
     modalMessage: document.getElementById('modalMessage'),
     modalActions: document.getElementById('modalActions'),
     unitName: document.getElementById('unitName'),
-    unitInterruptBtn: document.getElementById('unitInterruptBtn'),
+    unitPauseBtn: document.getElementById('unitPauseBtn'),
+    pauseOverlay: document.getElementById('pauseOverlay'),
+    pauseContinueBtn: document.getElementById('pauseContinueBtn'),
+    pauseQuitBtn: document.getElementById('pauseQuitBtn'),
     correctBtn: document.getElementById('correctBtn'),
     wrongBtn: document.getElementById('wrongBtn'),
     masteredBtn: document.getElementById('masteredBtn'),
@@ -4777,11 +4780,11 @@ function showInputModeDirectly(category, words, courseTitle) {
     if (wordCardContainer) wordCardContainer.classList.add('hidden');
     if (cardTopSection) cardTopSection.classList.add('hidden');
     
-    // インプットモード用戻るボタンと中断ボタンの制御
+    // インプットモード用戻るボタンとポーズボタンの制御
     const inputBackBtn = document.getElementById('inputBackBtn');
-    const unitInterruptBtn = document.getElementById('unitInterruptBtn');
+    const unitPauseBtn = document.getElementById('unitPauseBtn');
     if (inputBackBtn) inputBackBtn.classList.remove('hidden');
-    if (unitInterruptBtn) unitInterruptBtn.classList.add('hidden');
+    if (unitPauseBtn) unitPauseBtn.classList.add('hidden');
     
     // 復習モードのタイトルとクラスをリセット
     resetReviewWrongWordsTitle();
@@ -5661,9 +5664,9 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     isSentenceModeActive = false;
     isReorderModeActive = false;
     
-    // インプットモード用戻るボタンと中断ボタンの制御
+    // インプットモード用戻るボタンとポーズボタンの制御
     const inputBackBtn = document.getElementById('inputBackBtn');
-    const unitInterruptBtn = document.getElementById('unitInterruptBtn');
+    const unitPauseBtn = document.getElementById('unitPauseBtn');
     
     // currentLearningMode === 'input'の場合は「眺めるだけ」のカードモード
     if (currentLearningMode === 'input') {
@@ -5675,9 +5678,9 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         if (progressStepRight) progressStepRight.classList.add('hidden');
         if (cardTopSection) cardTopSection.classList.add('hidden');
         if (wordCardContainer) wordCardContainer.classList.add('hidden');
-        // 戻るボタン表示、中断ボタン非表示
+        // 戻るボタン表示、ポーズボタン非表示
         if (inputBackBtn) inputBackBtn.classList.remove('hidden');
-        if (unitInterruptBtn) unitInterruptBtn.classList.add('hidden');
+        if (unitPauseBtn) unitPauseBtn.classList.add('hidden');
         renderInputListView(currentWords);
     } else {
         // 通常のカードモード（アウトプット）
@@ -5688,9 +5691,9 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         if (progressStepRight) progressStepRight.classList.add('hidden');
         if (cardTopSection) cardTopSection.classList.remove('hidden');
         if (inputListView) inputListView.classList.add('hidden');
-        // 戻るボタン非表示、中断ボタン表示
+        // 戻るボタン非表示、ポーズボタン表示
         if (inputBackBtn) inputBackBtn.classList.add('hidden');
-        if (unitInterruptBtn) unitInterruptBtn.classList.remove('hidden');
+        if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
     }
     
     // 例文モード用のナビゲーションボタンを非表示
@@ -6079,11 +6082,39 @@ function setupEventListeners() {
         });
     }
     
-    // 上部コンテナの中断ボタン
-    if (elements.unitInterruptBtn) {
-        elements.unitInterruptBtn.addEventListener('click', async () => {
-            if (await showConfirm('学習を中断してホームに戻りますか？\n\n中断してもここまでのデータは保存されます。')) {
-                showCategorySelection();
+    // ポーズボタン（×ボタン）
+    if (elements.unitPauseBtn) {
+        elements.unitPauseBtn.addEventListener('click', () => {
+            if (elements.pauseOverlay) {
+                elements.pauseOverlay.classList.remove('hidden');
+            }
+        });
+    }
+    
+    // ポーズメニュー：テストを続ける
+    if (elements.pauseContinueBtn) {
+        elements.pauseContinueBtn.addEventListener('click', () => {
+            if (elements.pauseOverlay) {
+                elements.pauseOverlay.classList.add('hidden');
+            }
+        });
+    }
+    
+    // ポーズメニュー：中断する
+    if (elements.pauseQuitBtn) {
+        elements.pauseQuitBtn.addEventListener('click', () => {
+            if (elements.pauseOverlay) {
+                elements.pauseOverlay.classList.add('hidden');
+            }
+            showCategorySelection();
+        });
+    }
+    
+    // ポーズオーバーレイの背景クリックで閉じる
+    if (elements.pauseOverlay) {
+        elements.pauseOverlay.addEventListener('click', (e) => {
+            if (e.target === elements.pauseOverlay) {
+                elements.pauseOverlay.classList.add('hidden');
             }
         });
     }
@@ -11804,14 +11835,14 @@ function initSentenceModeLearning(category) {
     updateThemeColor(true);
     document.body.classList.add('learning-mode');
     
-    // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
+    // ハンバーガーメニューと戻るボタンを非表示、ポーズボタンを表示
     updateHeaderButtons('learning');
 
-    // インプットモード用戻るボタンと中断ボタンの制御
+    // インプットモード用戻るボタンとポーズボタンの制御
     const inputBackBtn = document.getElementById('inputBackBtn');
-    const unitInterruptBtn = document.getElementById('unitInterruptBtn');
+    const unitPauseBtn = document.getElementById('unitPauseBtn');
     if (inputBackBtn) inputBackBtn.classList.add('hidden');
-    if (unitInterruptBtn) unitInterruptBtn.classList.remove('hidden');
+    if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
 
     // カードモード、入力モード、整序英作文モードを非表示、例文モードを表示
     const wordCard = document.getElementById('wordCard');
@@ -12415,14 +12446,14 @@ function initReorderModeLearning(category) {
     updateThemeColor(true);
     document.body.classList.add('learning-mode');
     
-    // ハンバーガーメニューと戻るボタンを非表示、中断ボタンを表示
+    // ハンバーガーメニューと戻るボタンを非表示、ポーズボタンを表示
     updateHeaderButtons('learning');
 
-    // インプットモード用戻るボタンと中断ボタンの制御
+    // インプットモード用戻るボタンとポーズボタンの制御
     const inputBackBtn = document.getElementById('inputBackBtn');
-    const unitInterruptBtn = document.getElementById('unitInterruptBtn');
+    const unitPauseBtn = document.getElementById('unitPauseBtn');
     if (inputBackBtn) inputBackBtn.classList.add('hidden');
-    if (unitInterruptBtn) unitInterruptBtn.classList.remove('hidden');
+    if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
 
     // 他のモードを非表示、整序英作文モードを表示
     const wordCard = document.getElementById('wordCard');

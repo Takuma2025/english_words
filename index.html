@@ -675,8 +675,24 @@
                         </button>
                         <span class="unit-name" id="unitName">単元名</span>
                         <div class="unit-header-actions">
-                            <button class="unit-test-btn" id="unitTestBtn">テストへ</button>
-                            <button class="unit-interrupt-btn" id="unitInterruptBtn">中断</button>
+                            <button class="unit-test-btn" id="unitTestBtn">テスト</button>
+                            <button class="unit-pause-btn" id="unitPauseBtn" aria-label="ポーズ">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- ポーズメニューオーバーレイ -->
+                    <div class="pause-overlay hidden" id="pauseOverlay">
+                        <div class="pause-menu">
+                            <div class="pause-title">ポーズ</div>
+                            <div class="pause-buttons">
+                                <button class="pause-continue-btn" id="pauseContinueBtn">テストを続ける</button>
+                                <button class="pause-quit-btn" id="pauseQuitBtn">中断する</button>
+                            </div>
                         </div>
                     </div>
                     <!-- 進捗バーとNo.をカードの上に配置 -->

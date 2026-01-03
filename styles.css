@@ -314,7 +314,7 @@ textarea,
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* 学習モード（インプット一覧・カード学習・文法など）ではグローバルヘッダーは非表示 */
@@ -324,15 +324,15 @@ body.learning-mode .app-header {
 
 .hamburger-menu-btn {
     position: absolute;
-    left: 16px;
-    top: calc(env(safe-area-inset-top) + var(--header-height) / 2);
+    left: 8px;
+    top: 50%;
     transform: translateY(-50%);
+    margin-top: calc(env(safe-area-inset-top) / 2);
     background: transparent;
     border: none;
     color: #ffffff;
     cursor: pointer;
     padding: 8px;
-    margin-left: -8px;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     display: flex;
@@ -345,20 +345,23 @@ body.learning-mode .app-header {
 
 .hamburger-menu-btn:active {
     opacity: 0.6;
-    transform: translateY(-50%);
+}
+
+.hamburger-menu-btn.hidden {
+    display: none;
 }
 
 .header-back-btn {
     position: absolute;
-    left: 16px;
-    top: calc(env(safe-area-inset-top) + var(--header-height) / 2);
+    left: 8px;
+    top: 50%;
     transform: translateY(-50%);
+    margin-top: calc(env(safe-area-inset-top) / 2);
     background: transparent;
     border: none;
     color: #ffffff;
     cursor: pointer;
     padding: 8px;
-    margin-left: -8px;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     display: flex;
@@ -371,7 +374,6 @@ body.learning-mode .app-header {
 
 .header-back-btn:active {
     opacity: 0.6;
-    transform: translateY(-50%);
 }
 
 .header-back-btn.hidden {
@@ -1610,20 +1612,20 @@ body.learning-mode .app-header {
 .vocab-progress-stats::before {
     content: '';
     position: absolute;
-    bottom: -12px;
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-top: 12px solid #0055ca;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #0055ca;
 }
 
 .vocab-progress-stats::after {
     content: '';
     position: absolute;
-    bottom: -10px;
+    bottom: -8px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
@@ -2176,7 +2178,7 @@ body.learning-mode .app-header {
 
 /* 学校一覧コンテナ */
 .school-list-container {
-    max-height: 50vh;
+    max-height: 35vh;
     overflow-y: auto;
     border: 1px solid #e5e7eb;
     border-radius: 10px;
@@ -3508,28 +3510,20 @@ body.learning-mode .app-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    padding: 8px 16px;
-    padding-bottom: 8px;
-    background: transparent;
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    margin-right: -16px;
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+    background: #0055ca;
     margin-bottom: 8px;
     font-size: 13px;
     font-weight: 500;
     position: relative;
 }
 
-.unit-header-container::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: -16px;
-    right: -16px;
-    height: 3px;
-    background: #718096;
-}
-
 .unit-name {
-    color: #1a202c;
+    color: #ffffff;
     flex: 1;
     text-align: left;
     font-size: 14px;
@@ -3565,25 +3559,109 @@ body.learning-mode .app-header {
     opacity: 0.8;
 }
 
-.unit-interrupt-btn {
-    color: #dc2626;
-    text-align: right;
-    flex-shrink: 0;
+/* ポーズボタン（×ボタン） */
+.unit-pause-btn {
     background: none;
     border: none;
-    padding: 0;
-    font-size: 14px;
+    padding: 4px;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.unit-pause-btn:hover {
+    opacity: 0.8;
+}
+
+.unit-pause-btn:active {
+    opacity: 0.6;
+}
+
+/* ポーズメニューオーバーレイ */
+.pause-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10010;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.pause-overlay.hidden {
+    display: none;
+}
+
+.pause-menu {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px 40px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    min-width: 280px;
+}
+
+.pause-title {
+    font-size: 24px;
     font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 24px;
+}
+
+.pause-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pause-continue-btn {
+    background: #0055ca;
+    color: #ffffff;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
     font-family: inherit;
+    transition: background-color 0.2s;
 }
 
-.unit-interrupt-btn:hover {
-    color: #b91c1c;
+.pause-continue-btn:hover {
+    background: #0047b3;
 }
 
-.unit-interrupt-btn:active {
-    color: #991b1b;
+.pause-continue-btn:active {
+    background: #003d99;
+}
+
+.pause-quit-btn {
+    background: #f3f4f6;
+    color: #dc2626;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.2s;
+}
+
+.pause-quit-btn:hover {
+    background: #e5e7eb;
+}
+
+.pause-quit-btn:active {
+    background: #d1d5db;
 }
 
 /* インプットモード用戻るボタン */
@@ -3593,7 +3671,7 @@ body.learning-mode .app-header {
     padding: 4px;
     margin: -4px;
     margin-right: 8px;
-    color: #4b5563;
+    color: #ffffff;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -3602,7 +3680,7 @@ body.learning-mode .app-header {
 }
 
 .input-back-btn:hover {
-    color: #1f2937;
+    opacity: 0.8;
 }
 
 .input-back-btn.hidden {
@@ -6844,9 +6922,9 @@ body.reorder-mode-active .word-card-container {
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease;
 }
 
-/* アウトプットモードのときはボーダーを非表示 */
+/* アウトプットモードのときは0.25pxの黒い縁線 */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-stack {
-    border: none;
+    border: 0.25px solid #000000;
 }
 
 .card-stack-1 {
@@ -7013,7 +7091,7 @@ body.learning-mode .bottom-nav {
 
 /* アウトプットモードのときはボーダーを非表示 */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
-    border: none;
+    border: 0.25px solid #000000;
 }
 
 /* カードの赤・青囲みは削除 - 単語番号下のマーカーのみ使用 */
@@ -7036,7 +7114,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
 
 /* アウトプットモードのときはボーダーを非表示 */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
-    border: none;
+    border: 0.25px solid #000000;
 }
 
 /* 裏面の英単語表示（小さく上部に） */
