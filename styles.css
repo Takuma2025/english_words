@@ -2815,11 +2815,6 @@ body.learning-mode .app-header {
     box-shadow: 0 0 0 2px #3182ce;
 }
 
-.category-card.touch-hover {
-    border-color: #3182ce;
-    box-shadow: 0 0 0 2px #3182ce;
-}
-
 .category-card:last-child {
     margin-bottom: 0;
 }
