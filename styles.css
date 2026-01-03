@@ -1982,260 +1982,313 @@ body.learning-mode .app-header {
     transform: translateY(1px);
 }
 
-/* 志望校モーダル */
+/* =============================================
+   志望校設定モーダル（ボトムシート）
+   ============================================= */
+
+/* オーバーレイ */
 .school-modal {
     position: fixed;
     inset: 0;
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: center;
-    padding-top: calc(var(--header-height) + env(safe-area-inset-top) + 5px);
-    padding-bottom: 10px;
-    z-index: 10001 !important;
+    z-index: 10010 !important;
+    pointer-events: none;
 }
 
 .school-modal.hidden {
     display: none;
 }
 
+.school-modal.show {
+    pointer-events: auto;
+}
+
+/* 背景オーバーレイ（全画面暗転・ヘッダーも覆う） */
 .school-modal-backdrop {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 10001;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 10010;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-.school-modal-content {
+.school-modal-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ボトムシート本体 */
+.school-modal-sheet {
     position: relative;
-    width: min(520px, 92%);
-    max-height: calc(100vh - calc(var(--header-height) + env(safe-area-inset-top) + 20px));
-    max-height: calc(100dvh - calc(var(--header-height) + env(safe-area-inset-top) + 20px));
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 20px;
-    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22);
-    z-index: 10002;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    overflow-y: auto;
-}
-
-.school-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-.school-modal-close {
-    border: none;
-    background: none;
-    color: #6b7280;
-    cursor: pointer;
-    padding: 6px;
-    border-radius: 8px;
-    transition: background 0.15s ease;
-}
-
-.school-modal-close:hover {
-    background: #f1f5f9;
-}
-
-/* 志望校設定 */
-
-.school-selector-header {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.school-selector-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1f2937;
-}
-
-.school-selector-sub {
-    font-size: 12px;
-    color: #6b7280;
-}
-
-.school-selector-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.school-search-input-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 88vh;
+    max-height: 88dvh;
     background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 10px 12px;
+    border-radius: 20px 20px 0 0;
+    z-index: 10011;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(100%);
+    transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+    box-shadow: 
+        0 -8px 32px rgba(15, 23, 42, 0.18),
+        0 -2px 8px rgba(15, 23, 42, 0.08);
 }
 
-.school-search-icon {
-    color: #6b7280;
+.school-modal.show .school-modal-sheet {
+    transform: translateY(0);
+}
+
+/* ドラッグハンドル */
+.school-modal-handle {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 6px;
+    background: #0055ca;
     flex-shrink: 0;
 }
 
-.school-search-input-wrapper input {
+.school-modal-handle-bar {
+    width: 36px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+}
+
+/* ヘッダー */
+.school-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px 16px;
+    background: #0055ca;
+    flex-shrink: 0;
+}
+
+.school-modal-header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.school-modal-icon {
+    color: rgba(255, 255, 255, 0.9);
+    flex-shrink: 0;
+}
+
+.school-modal-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.school-modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: 0.01em;
+}
+
+.school-modal-subtitle {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+}
+
+/* 閉じるボタン */
+.school-modal-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    transition: background 0.15s ease, transform 0.1s ease;
+    flex-shrink: 0;
+}
+
+.school-modal-close:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.school-modal-close:active {
+    transform: scale(0.92);
+}
+
+/* コンテンツエリア */
+.school-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* フィルタータブ */
+.school-filter-tabs {
+    display: flex;
+    gap: 6px;
+    background: #ffffff;
+    padding: 6px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.school-filter-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px 8px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.school-filter-tab:hover {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.school-filter-tab.active {
+    background: #0055ca;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 85, 202, 0.3);
+}
+
+.school-filter-tab-icon {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.school-filter-tab-icon-public {
+    background: #0055ca;
+}
+
+.school-filter-tab-icon-private {
+    background: #dc2626;
+}
+
+.school-filter-tab-icon-national {
+    background: #16a34a;
+}
+
+.school-filter-tab.active .school-filter-tab-icon {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+/* 検索ボックス */
+.school-search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 14px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.school-search-box:focus-within {
+    border-color: #0055ca;
+    box-shadow: 0 0 0 3px rgba(0, 85, 202, 0.12);
+}
+
+.school-search-icon {
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+.school-search-box:focus-within .school-search-icon {
+    color: #0055ca;
+}
+
+.school-search-input {
     flex: 1;
     border: none;
     background: transparent;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 500;
     outline: none;
-    color: #111827;
+    color: #1e293b;
 }
 
-.school-search-clear {
-    border: none;
-    background: none;
-    color: #6b7280;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 4px 6px;
+.school-search-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
 }
 
-.school-search-results {
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    background: #ffffff;
-    max-height: 220px;
-    overflow-y: auto;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
-}
-
-.school-search-results.hidden {
-    display: none;
-}
-
-.school-result-item {
-    padding: 10px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    cursor: pointer;
-    transition: background 0.15s ease;
-}
-
-.school-result-item:hover {
-    background: #f1f5f9;
-}
-
-.school-result-name {
-    font-size: 14px;
-    font-weight: 700;
-    color: #0f172a;
-}
-
-.school-result-meta {
-    font-size: 12px;
-    color: #475569;
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-
-/* 学校タイプボタン */
-.school-type-buttons {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-}
-
-.school-search-input-wrapper {
-    margin-bottom: 12px;
-}
-
-.school-type-btn {
+/* 学校リストラッパー */
+.school-list-wrapper {
     flex: 1;
-    padding: 10px 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background: #ffffff;
-    color: #475569;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.school-type-btn:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-}
-
-.school-type-btn.active {
-    background: #3182ce;
-    color: #ffffff;
-    border-color: #3182ce;
-}
-
-/* 学校一覧コンテナ */
-.school-list-container {
-    max-height: 35vh;
-    overflow-y: auto;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    background: #ffffff;
-    flex-shrink: 1;
-}
-
-.school-list-title-header {
-    font-size: 13px;
-    font-weight: 700;
-    color: #ffffff;
-    padding: 10px 16px;
-    background: #6b7280;
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    margin: 0;
-    border-radius: 10px 10px 0 0;
-}
-
-.school-list-hint {
-    font-size: 11px;
-    color: #9ca3af;
-    padding: 10px 16px 2px 16px;
-    text-align: center;
-}
-
-.school-list-container .school-list {
-    margin-top: 0;
-}
-
-.school-list {
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    margin: 0;
-    padding: 0;
     background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+/* リストヘッダー */
+.school-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    flex-shrink: 0;
+}
+
+.school-list-header-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+}
+
+.school-list-header-hint {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* 学校リスト */
+.school-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: 38vh;
 }
 
 .school-list-item {
-    padding: 12px 16px;
     display: flex;
     flex-direction: column;
     gap: 4px;
+    padding: 14px 16px;
     cursor: pointer;
-    transition: background 0.15s ease;
-}
-
-.school-list-item:first-child {
-    padding-top: 12px;
-    margin-top: 0;
-    border-top: none;
-}
-
-.school-list-container .school-list-item:first-child {
-    border-top: none;
-    margin-top: 0;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.12s ease;
 }
 
 .school-list-item:last-child {
@@ -2247,23 +2300,32 @@ body.learning-mode .app-header {
 }
 
 .school-list-item-even {
-    background: #f8fafc;
+    background: #fafbfc;
 }
 
 .school-list-item-undecided {
-    background: #f3f4f6;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.school-list-item-undecided .school-list-name {
+    color: #64748b;
+    font-weight: 600;
 }
 
 .school-list-item:hover {
-    background: #e5e7eb !important;
+    background: #e0f2fe !important;
 }
 
+.school-list-item:active {
+    background: #bae6fd !important;
+}
+
+/* 選択状態 */
 .school-list-item-selected {
-    background: #dbeafe !important;
-}
-
-.school-list-item-selected:hover {
-    background: #bfdbfe !important;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+    border-left: 4px solid #0055ca;
+    padding-left: 12px;
 }
 
 .school-list-item-selected .school-list-name {
@@ -2271,52 +2333,61 @@ body.learning-mode .app-header {
 }
 
 .school-list-item-selected .school-list-meta {
-    color: #1e40af !important;
+    color: #3b82f6 !important;
 }
 
+/* 学校名コンテナ */
 .school-list-name-container {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
+/* タイプバッジ */
 .school-type-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
     white-space: nowrap;
     flex-shrink: 0;
 }
 
 .school-type-badge-public {
-    background-color: #0055ca;
+    background: linear-gradient(135deg, #0055ca 0%, #0044a0 100%);
     color: #ffffff;
 }
 
 .school-type-badge-private {
-    background-color: #dc2626;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
     color: #ffffff;
 }
 
 .school-type-badge-national {
-    background-color: #16a34a;
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
     color: #ffffff;
 }
 
 .school-list-name {
     font-size: 14px;
     font-weight: 700;
-    color: #0f172a;
+    color: #1e293b;
     flex: 1;
+    line-height: 1.3;
 }
 
 .school-list-meta {
     font-size: 12px;
-    color: #475569;
+    color: #64748b;
+    padding-left: 0;
+    margin-top: 2px;
 }
 
+/* 選択済み表示（非表示状態） */
 .school-selected {
     border: 1px solid #3b82f6;
     border-radius: 10px;
@@ -2367,47 +2438,86 @@ body.learning-mode .app-header {
     background: #2563eb;
 }
 
-.school-confirm-wrapper {
-    margin-top: 12px;
-}
-
-.school-confirm-wrapper.hidden {
+.school-reset-btn.hidden {
     display: none;
 }
 
-.school-confirm-selected {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 8px;
+/* フッター（決定ボタン固定） */
+.school-modal-footer {
+    flex-shrink: 0;
+    padding: 12px 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.08);
 }
 
+/* 決定ボタン */
 .school-confirm-btn {
     width: 100%;
-    padding: 12px 16px;
-    background: #0055ca;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #0055ca 0%, #0044a0 100%);
     color: #ffffff;
     border: none;
-    border-radius: 10px;
-    font-size: 15px;
+    border-radius: 12px;
+    font-size: 16px;
     font-weight: 700;
     cursor: pointer;
-    transition: transform 0.05s, box-shadow 0.05s;
-    box-shadow: 0 3px 0 rgba(0, 68, 160, 0.6);
+    transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.15s ease;
+    box-shadow: 
+        0 4px 0 #003380,
+        0 6px 20px rgba(0, 85, 202, 0.35);
     position: relative;
-    top: 0;
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
 }
 
-.school-confirm-btn:hover {
-    background: #0044a0;
+.school-confirm-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 
+        0 5px 0 #003380,
+        0 8px 24px rgba(0, 85, 202, 0.4);
 }
 
-.school-confirm-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
+.school-confirm-btn:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 
+        0 1px 0 #003380,
+        0 2px 8px rgba(0, 85, 202, 0.3);
+}
+
+/* 無効状態 */
+.school-confirm-btn:disabled,
+.school-confirm-btn.disabled {
+    background: #cbd5e1;
+    color: #94a3b8;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.school-confirm-btn:disabled:hover,
+.school-confirm-btn.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.school-confirm-btn-text {
+    letter-spacing: 0.02em;
+}
+
+/* 旧クラス互換 */
+.school-type-btn {
+    display: none;
+}
+
+.school-confirm-wrapper.hidden {
+    display: none;
 }
 
 .course-tab {
@@ -11643,11 +11753,27 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     transform: translateX(-50%) translateY(0);
 }
 
+/* ドラッグハンドル */
+.filter-handle {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 6px;
+    background: #0055ca;
+    flex-shrink: 0;
+}
+
+.filter-handle-bar {
+    width: 36px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+}
+
 /* ヘッダー（固定） */
 .filter-header-banner {
     flex-shrink: 0;
     background: #0055ca;
-    padding: 16px 20px;
+    padding: 12px 20px 16px;
     display: flex;
     align-items: center;
     justify-content: center;

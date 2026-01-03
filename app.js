@@ -270,6 +270,16 @@ let reviewWords = new Set(); // 復習用チェック（★）
 const SCHOOL_STORAGE_KEY = 'preferredSchoolOsaka';
 let tempSelectedSchool = undefined; // 一時的に選択した学校（undefined=未選択、null=未定、オブジェクト=学校選択）
 
+// 志望校決定ボタンの活性/非活性を切り替える
+function setSchoolConfirmEnabled(enabled) {
+    const confirmWrapper = document.getElementById('schoolConfirmWrapper');
+    const confirmBtn = document.getElementById('schoolConfirmBtn');
+    if (confirmWrapper) confirmWrapper.classList.remove('hidden');
+    if (!confirmBtn) return;
+    confirmBtn.disabled = !enabled;
+    confirmBtn.classList.toggle('disabled', !enabled);
+}
+
 function normalizeSchoolText(str) {
     return (str || '').toLowerCase();
 }
@@ -630,13 +640,18 @@ function updateVocabSelectedSchool(school) {
         // 変更ボタンのイベントリスナーを設定（直接高校一覧を表示）
         if (vocabSchoolChangeBtn) {
             vocabSchoolChangeBtn.onclick = () => {
-                const modal = document.getElementById('schoolModal');
-                if (modal) modal.classList.remove('hidden');
+                // ボトムシートモーダルを表示（検索モードで開く）
+                if (typeof window.showSchoolModal === 'function') {
+                    window.showSchoolModal(true);
+                } else {
+                    const modal = document.getElementById('schoolModal');
+                    if (modal) modal.classList.remove('hidden');
+                }
                 // 検索モードで表示（高校一覧を表示）
                 updateSelectedSchoolUI(school, true);
                 tempSelectedSchool = undefined;
                 // すべてボタンをアクティブにして全学校を表示
-                const typeButtons = document.querySelectorAll('.school-type-btn');
+                const typeButtons = document.querySelectorAll('.school-filter-tab');
                 typeButtons.forEach(b => b.classList.remove('active'));
                 const allBtn = document.getElementById('schoolTypeAll');
                 if (allBtn) allBtn.classList.add('active');
@@ -665,6 +680,7 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
     if (!listEl) return;
     
     listEl.innerHTML = '';
+    setSchoolConfirmEnabled(false);
     
     // フィルタリング
     let filteredSchools = osakaSchools;
@@ -701,9 +717,8 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
         // 選択中のアイテムをハイライト
         document.querySelectorAll('.school-list-item').forEach(el => el.classList.remove('school-list-item-selected'));
         undecidedItem.classList.add('school-list-item-selected');
-        // 決定ボタンを表示
-        const confirmWrapper = document.getElementById('schoolConfirmWrapper');
-        if (confirmWrapper) confirmWrapper.classList.remove('hidden');
+        // 決定ボタンを有効化
+        setSchoolConfirmEnabled(true);
     });
     listEl.appendChild(undecidedItem);
     
@@ -756,9 +771,8 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
             // 選択中のアイテムをハイライト
             document.querySelectorAll('.school-list-item').forEach(el => el.classList.remove('school-list-item-selected'));
             item.classList.add('school-list-item-selected');
-            // 決定ボタンを表示
-            const confirmWrapper = document.getElementById('schoolConfirmWrapper');
-            if (confirmWrapper) confirmWrapper.classList.remove('hidden');
+            // 決定ボタンを有効化
+            setSchoolConfirmEnabled(true);
         });
         listEl.appendChild(item);
     });
@@ -817,7 +831,7 @@ function initSchoolSelector() {
     const closeBtn = document.getElementById('closeSchoolSettings');
     const modal = document.getElementById('schoolModal');
     const backdrop = document.querySelector('#schoolModal .school-modal-backdrop');
-    const typeButtons = document.querySelectorAll('.school-type-btn');
+    const typeButtons = document.querySelectorAll('.school-filter-tab');
     const searchInput = document.getElementById('schoolSearchInput');
 
     const saved = loadSelectedSchool();
@@ -825,7 +839,7 @@ function initSchoolSelector() {
 
     // 現在のタイプフィルタと検索クエリを取得する関数
     const getCurrentTypeFilter = () => {
-        const activeBtn = document.querySelector('.school-type-btn.active');
+        const activeBtn = document.querySelector('.school-filter-tab.active');
         return activeBtn ? (activeBtn.dataset.type || 'all') : 'all';
     };
 
@@ -836,6 +850,7 @@ function initSchoolSelector() {
         renderSchoolList(type, query);
         
         tempSelectedSchool = undefined;
+        setSchoolConfirmEnabled(false);
     };
 
     // タイプボタンのクリックイベント
@@ -869,16 +884,27 @@ function initSchoolSelector() {
             // 検索入力をクリア
             if (searchInput) searchInput.value = '';
             updateSchoolList();
+            setSchoolConfirmEnabled(false);
         });
     }
 
-    const openModal = () => {
-        if (modal) modal.classList.remove('hidden');
+    const openModal = (forceSearchMode = false) => {
+        if (!modal) return;
+        
+        // 表示用クラスを付与してボトムシート風に表示
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            modal.classList.add('show');
+            if (backdrop) backdrop.classList.add('show');
+        });
+        setSchoolConfirmEnabled(false);
+        
         const saved = loadSelectedSchool();
-        // 志望校が設定されている場合は志望校表示、未設定なら検索モード
-        updateSelectedSchoolUI(saved, !saved);
+        const shouldShowSearch = forceSearchMode || !saved;
+        // 志望校が設定されている場合は志望校表示、未設定またはforce時は検索モード
+        updateSelectedSchoolUI(saved, shouldShowSearch);
         tempSelectedSchool = undefined;
-        if (!saved) {
+        if (shouldShowSearch) {
             // すべてボタンをアクティブにして全学校を表示
             typeButtons.forEach(b => b.classList.remove('active'));
             const allBtn = document.getElementById('schoolTypeAll');
@@ -899,7 +925,8 @@ function initSchoolSelector() {
         if (!skipSound) {
             SoundEffects.playClose();
         }
-        if (modal) modal.classList.add('hidden');
+        if (modal) modal.classList.remove('show');
+        if (backdrop) backdrop.classList.remove('show');
         tempSelectedSchool = undefined;
         // 決定ボタンを非表示
         const confirmWrapper = document.getElementById('schoolConfirmWrapper');
@@ -907,11 +934,13 @@ function initSchoolSelector() {
         // モーダルを閉じるときは志望校表示に戻す
         const saved = loadSelectedSchool();
         if (saved) updateSelectedSchoolUI(saved, false);
+        setSchoolConfirmEnabled(false);
         
         // フラグをリセット（少し遅延させて確実に処理が完了するように）
         setTimeout(() => {
+            if (modal) modal.classList.add('hidden');
             isClosing = false;
-        }, 100);
+        }, 320);
     };
 
     const confirmBtn = document.getElementById('schoolConfirmBtn');
@@ -939,7 +968,7 @@ function initSchoolSelector() {
         });
     }
 
-    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (openBtn) openBtn.addEventListener('click', () => openModal(false));
     if (closeBtn) {
         closeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -947,6 +976,10 @@ function initSchoolSelector() {
         });
     }
     if (backdrop) backdrop.addEventListener('click', closeModal);
+    
+    // 他の箇所から呼び出せるようにグローバル公開
+    window.showSchoolModal = openModal;
+    window.closeSchoolModal = closeModal;
 }
 
 // 音量調整のセットアップ
@@ -4499,11 +4532,22 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     currentFilterWords = categoryWords;
     currentFilterCourseTitle = courseTitle || category;
     
-    // テストへボタンを非表示（テストモードでは不要）
-    const unitTestBtn = document.getElementById('unitTestBtn');
-    if (unitTestBtn) {
-        unitTestBtn.classList.add('hidden');
-    }
+    // フィルター設定をデフォルトにリセット
+    const resetFilterAll = document.getElementById('filterAll');
+    const resetFilterUnlearned = document.getElementById('filterUnlearned');
+    const resetFilterWrong = document.getElementById('filterWrong');
+    const resetFilterBookmark = document.getElementById('filterBookmark');
+    const resetFilterCorrect = document.getElementById('filterCorrect');
+    const resetOrderSequential = document.getElementById('orderSequential');
+    const resetOrderRandom = document.getElementById('orderRandom');
+    
+    if (resetFilterAll) resetFilterAll.checked = true;
+    if (resetFilterUnlearned) resetFilterUnlearned.checked = true;
+    if (resetFilterWrong) resetFilterWrong.checked = true;
+    if (resetFilterBookmark) resetFilterBookmark.checked = true;
+    if (resetFilterCorrect) resetFilterCorrect.checked = true;
+    if (resetOrderSequential) resetOrderSequential.checked = true;
+    if (resetOrderRandom) resetOrderRandom.checked = false;
     
     // フィルター画面をボトムシートとして表示
     const wordFilterView = document.getElementById('wordFilterView');
@@ -10161,6 +10205,32 @@ function resetInputFilter() {
             btn.classList.remove('active');
         }
     });
+
+    // ドロップダウン形式のフィルターもデフォルト（すべてON）に戻す
+    const dropdownCheckboxes = document.querySelectorAll('.filter-dropdown-item input[type="checkbox"]');
+    dropdownCheckboxes.forEach(cb => cb.checked = true);
+
+    // ドロップダウンの開閉状態とバッジをリセット
+    const filterDropdown = document.getElementById('inputFilterDropdown');
+    if (filterDropdown) {
+        filterDropdown.classList.add('hidden');
+        filterDropdown.classList.remove('show');
+    }
+
+    const filterTrigger = document.getElementById('inputFilterTrigger');
+    if (filterTrigger) {
+        filterTrigger.classList.remove('active');
+    }
+
+    const filterActiveBadge = document.getElementById('filterActiveBadge');
+    if (filterActiveBadge) {
+        filterActiveBadge.textContent = '';
+        filterActiveBadge.classList.add('hidden');
+    }
+
+    if (typeof window.updateFilterBadge === 'function') {
+        window.updateFilterBadge(null);
+    }
 }
 
 // 現在の単語を表示
