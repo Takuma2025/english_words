@@ -4884,7 +4884,7 @@ function showInputModeDirectly(category, words, courseTitle) {
     // メインコンテンツを表示
     elements.mainContent.classList.remove('hidden');
     
-    // テストへボタンを表示（学習モードでは表示）
+    // テストへボタンを表示（インプットモードなので常に表示）
     const unitTestBtn = document.getElementById('unitTestBtn');
     if (unitTestBtn) {
         unitTestBtn.classList.remove('hidden');
@@ -5650,6 +5650,16 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         currentCourseWords = words;
     }
     isInputModeActive = false; // 通常のカードモードにリセット
+    
+    // テストボタンの表示制御（インプットモードのみ表示、アウトプットモードでは非表示）
+    const unitTestBtn = document.getElementById('unitTestBtn');
+    if (unitTestBtn) {
+        if (currentLearningMode === 'input') {
+            unitTestBtn.classList.remove('hidden');
+        } else {
+            unitTestBtn.classList.add('hidden');
+        }
+    }
     
     const start = Math.max(0, startIndex || 0);
     const end = typeof rangeEnd === 'number' ? Math.min(rangeEnd, currentWords.length) : currentWords.length;

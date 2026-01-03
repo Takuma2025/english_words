@@ -2811,8 +2811,7 @@ body.learning-mode .app-header {
 }
 
 .category-card:active {
-    border-color: #3182ce;
-    box-shadow: 0 0 0 2px #3182ce;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .category-card:last-child {
@@ -5127,15 +5126,15 @@ body.reorder-mode-active .word-card-container {
     cursor: pointer;
     user-select: none;
     padding: 6px 10px;
-    background: #f1f5f9;
+    background: #ffffff;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #cbd5e1;
     transition: all 0.15s ease;
     white-space: nowrap;
 }
 
 .red-sheet-toggle:hover {
-    background: #e2e8f0;
+    background: #f8fafc;
 }
 
 .red-sheet-toggle.visible {
@@ -5171,14 +5170,14 @@ body.reorder-mode-active .word-card-container {
     left: auto;
     z-index: 1000;
     padding: 6px 10px;
-    background: #f1f5f9;
+    background: #ffffff;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #cbd5e1;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .red-sheet-toggle.sticky:hover {
-    background: #e2e8f0;
+    background: #f8fafc;
 }
 
 .red-sheet-toggle.sticky:has(.red-sheet-checkbox:checked) {
@@ -5278,9 +5277,9 @@ body.reorder-mode-active .word-card-container {
         left: auto;
         padding: 5px 8px;
         gap: 5px;
-        background: #f1f5f9;
+        background: #ffffff;
         border-radius: 8px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid #cbd5e1;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
     
@@ -5503,11 +5502,11 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-item.marker-correct .input-list-front {
-    background: linear-gradient(to right, rgba(59, 130, 246, 0.08), transparent 50%);
+    background: linear-gradient(to right, rgba(59, 130, 246, 0.08), #ffffff 50%);
 }
 
 .input-list-item.marker-wrong .input-list-front {
-    background: linear-gradient(to right, rgba(239, 68, 68, 0.08), transparent 50%);
+    background: linear-gradient(to right, rgba(239, 68, 68, 0.08), #ffffff 50%);
 }
 
 .input-list-meta {
@@ -5859,11 +5858,11 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-item-expand.marker-correct {
-    background: linear-gradient(to right, rgba(59, 130, 246, 0.08), transparent 50%);
+    background: linear-gradient(to right, rgba(59, 130, 246, 0.08), #ffffff 50%);
 }
 
 .input-list-item-expand.marker-wrong {
-    background: linear-gradient(to right, rgba(239, 68, 68, 0.08), transparent 50%);
+    background: linear-gradient(to right, rgba(239, 68, 68, 0.08), #ffffff 50%);
 }
 
 .input-list-expand-header {
