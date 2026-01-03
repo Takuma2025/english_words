@@ -491,11 +491,14 @@ function updateVocabProgressBar() {
     const requirementLabel = document.getElementById('vocabRequirementLabel');
     const learnedCountEl = document.getElementById('vocabLearnedCount');
     const requiredProgressEl = document.getElementById('vocabRequiredProgress');
+    const requiredCountEl = document.getElementById('vocabRequiredCount');
     const progressPercentEl = document.getElementById('vocabProgressPercent');
     const countBikeEl = document.querySelector('.vocab-progress-count-bike');
     
     if (progressPercentEl) progressPercentEl.textContent = progressPercent;
     if (learnedCountEl) learnedCountEl.textContent = learnedWords;
+    // 志望校必須ラインの語数を表示（未設定の場合は全単語数）
+    if (requiredCountEl) requiredCountEl.textContent = requiredWords > 0 ? requiredWords : totalWords;
     
     // 必須ラインに対する進捗率を計算
     // 志望校を設定している場合は必須単語数を分母、設定していない場合は全単語数を分母にする
