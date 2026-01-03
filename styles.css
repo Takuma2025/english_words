@@ -1380,17 +1380,17 @@ body.learning-mode .app-header {
 
 /* 公立（青） */
 .school-card-icon-public {
-    background: linear-gradient(135deg, #0055ca 0%, #0284c7 100%);
+    background: #0055ca;
 }
 
 /* 私立（赤） */
 .school-card-icon-private {
-    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    background: #dc2626;
 }
 
 /* 国立（緑） */
 .school-card-icon-national {
-    background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+    background: #22c55e;
 }
 
 .school-card-img {
@@ -2182,7 +2182,7 @@ body.learning-mode .app-header {
 }
 
 .school-filter-tab-icon-national {
-    background: #16a34a;
+    background: #22c55e;
 }
 
 .school-filter-tab.active .school-filter-tab-icon {
@@ -2353,17 +2353,17 @@ body.learning-mode .app-header {
 }
 
 .school-type-badge-public {
-    background: linear-gradient(135deg, #0055ca 0%, #0044a0 100%);
+    background: #0055ca;
     color: #ffffff;
 }
 
 .school-type-badge-private {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    background: #dc2626;
     color: #ffffff;
 }
 
 .school-type-badge-national {
-    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    background: #22c55e;
     color: #ffffff;
 }
 
