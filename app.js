@@ -6733,15 +6733,6 @@ function setupEventListeners() {
         }
         document.body.style.overflow = '';
         
-        // 背後にコース選択画面がある場合はそのまま、ない場合はカテゴリー選択画面に戻る
-        const courseSelection = document.getElementById('courseSelection');
-        if (!courseSelection || courseSelection.classList.contains('hidden')) {
-            // コース選択画面がない場合（すべての英単語など）はカテゴリー選択画面に戻る
-            setTimeout(() => {
-                showCategorySelection();
-            }, 400);
-        }
-        
         // アニメーション完了後にhiddenを追加してtransformをリセット
         setTimeout(() => {
             if (wordFilterView) {
