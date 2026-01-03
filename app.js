@@ -14492,6 +14492,7 @@ let allStrokes = [];
 let lastRecognizedChar = '';
 let tfModel = null;
 let modelLoaded = false;
+let fontPrototypes = []; // 28x28 グレースケールのフォント基準データ
 
 // TensorFlow.js モデルの初期化
 async function initTFModel() {
@@ -14549,6 +14550,34 @@ async function initTFModel() {
         console.error('Failed to initialize TF model:', error);
         return false;
     }
+}
+
+// フォントで作る簡易MNIST風プロトタイプ（推論が効かない場合のバックアップ）
+function buildFontPrototypes() {
+    if (fontPrototypes.length > 0) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = 28;
+    canvas.height = 28;
+    const ctx = canvas.getContext('2d');
+    const letters = 'abcdefghijklmnopqrstuvwxyz';
+    for (const ch of letters) {
+        ctx.clearRect(0, 0, 28, 28);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, 28, 28);
+        ctx.fillStyle = '#000';
+        ctx.font = '20px "Arial Black", Arial, sans-serif';
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        ctx.fillText(ch, 14, 14 + 1); // 少し下げて中央寄せ
+        const img = ctx.getImageData(0, 0, 28, 28).data;
+        const gray = new Float32Array(28 * 28);
+        for (let i = 0; i < 28 * 28; i++) {
+            const avg = (img[i * 4] + img[i * 4 + 1] + img[i * 4 + 2]) / 3;
+            gray[i] = (255 - avg) / 255; // 白背景->0, 黒文字->1
+        }
+        fontPrototypes.push({ letter: ch, vector: gray });
+    }
+    console.log('Font prototypes built');
 }
 
 // 事前訓練済みweightsをロード
@@ -14773,6 +14802,204 @@ const LETTER_TEMPLATES = {
     'z': [[0.25,0.25],[0.75,0.25],[0.25,0.9],[0.75,0.9]]
 };
 
+// $1 Recognizer 風テンプレート（認識精度向上用）
+let dollarTemplates = [];
+const DOLLAR_POINTS = 32; // リサンプル数
+
+function buildDollarTemplates() {
+    dollarTemplates = Object.entries(LETTER_TEMPLATES).map(([letter, pts]) => {
+        const pointObjs = pts.map(p => ({ x: p[0], y: p[1] }));
+        return {
+            letter,
+            points: preprocessDollarPoints(pointObjs)
+        };
+    });
+}
+
+function preprocessDollarPoints(points) {
+    let pts = [...points];
+    pts = resampleDollarPoints(pts, DOLLAR_POINTS);
+    const radians = indicativeAngle(pts);
+    pts = rotateBy(pts, -radians);
+    pts = scaleToSquare(pts, 1.0);
+    pts = translateToOrigin(pts);
+    return pts;
+}
+
+function resampleDollarPoints(points, n) {
+    const length = pathLength(points);
+    if (length === 0) {
+        return Array(n).fill(points[0]);
+    }
+    const I = length / (n - 1);
+    let D = 0.0;
+    const newPoints = [points[0]];
+    for (let i = 1; i < points.length; i++) {
+        const d = euclidean(points[i - 1], points[i]);
+        if (D + d >= I) {
+            const qx = points[i - 1].x + ((I - D) / d) * (points[i].x - points[i - 1].x);
+            const qy = points[i - 1].y + ((I - D) / d) * (points[i].y - points[i - 1].y);
+            const q = { x: qx, y: qy };
+            newPoints.push(q);
+            points.splice(i, 0, q);
+            D = 0.0;
+        } else {
+            D += d;
+        }
+    }
+    // 足りない分を最後の点で埋める
+    while (newPoints.length < n) {
+        newPoints.push(points[points.length - 1]);
+    }
+    return newPoints.slice(0, n);
+}
+
+function indicativeAngle(points) {
+    const c = centroid(points);
+    return Math.atan2(c.y - points[0].y, c.x - points[0].x);
+}
+
+function rotateBy(points, radians) {
+    const c = centroid(points);
+    return points.map(p => ({
+        x: (p.x - c.x) * Math.cos(radians) - (p.y - c.y) * Math.sin(radians) + c.x,
+        y: (p.x - c.x) * Math.sin(radians) + (p.y - c.y) * Math.cos(radians) + c.y
+    }));
+}
+
+function scaleToSquare(points, size) {
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    points.forEach(p => {
+        minX = Math.min(minX, p.x);
+        maxX = Math.max(maxX, p.x);
+        minY = Math.min(minY, p.y);
+        maxY = Math.max(maxY, p.y);
+    });
+    const width = maxX - minX || 1;
+    const height = maxY - minY || 1;
+    return points.map(p => ({
+        x: (p.x - minX) / width * size,
+        y: (p.y - minY) / height * size
+    }));
+}
+
+function translateToOrigin(points) {
+    const c = centroid(points);
+    return points.map(p => ({
+        x: p.x - c.x,
+        y: p.y - c.y
+    }));
+}
+
+function centroid(points) {
+    const sum = points.reduce((acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 });
+    return { x: sum.x / points.length, y: sum.y / points.length };
+}
+
+// 手書きストロークを28x28グレースケール配列に変換（MNIST風）
+function renderStrokesTo28x28() {
+    if (!handwriteCanvas || !handwriteCtx) return null;
+    if (!allStrokes || allStrokes.length === 0) return null;
+
+    let allPoints = [];
+    allStrokes.forEach(stroke => allPoints = allPoints.concat(stroke));
+    if (allPoints.length < 3) return null;
+
+    let minX = Infinity, minY = Infinity;
+    let maxX = -Infinity, maxY = -Infinity;
+    allPoints.forEach(([x, y]) => {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+    });
+
+    const width = maxX - minX || 1;
+    const height = maxY - minY || 1;
+    const size = Math.max(width, height);
+    const padding = 4;
+    const targetSize = 28 - padding * 2;
+    const scale = targetSize / size;
+    const offsetX = padding + (targetSize - width * scale) / 2 - minX * scale;
+    const offsetY = padding + (targetSize - height * scale) / 2 - minY * scale;
+
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = 28;
+    tempCanvas.height = 28;
+    const tempCtx = tempCanvas.getContext('2d');
+
+    tempCtx.fillStyle = '#ffffff';
+    tempCtx.fillRect(0, 0, 28, 28);
+    tempCtx.strokeStyle = '#000000';
+    tempCtx.lineWidth = Math.max(1.3, 2 * scale);
+    tempCtx.lineCap = 'round';
+    tempCtx.lineJoin = 'round';
+
+    allStrokes.forEach(stroke => {
+        if (stroke.length < 2) return;
+        tempCtx.beginPath();
+        tempCtx.moveTo(stroke[0][0] * scale + offsetX, stroke[0][1] * scale + offsetY);
+        for (let i = 1; i < stroke.length; i++) {
+            tempCtx.lineTo(stroke[i][0] * scale + offsetX, stroke[i][1] * scale + offsetY);
+        }
+        tempCtx.stroke();
+    });
+
+    const imageData = tempCtx.getImageData(0, 0, 28, 28).data;
+    const grayscale = new Float32Array(28 * 28);
+    for (let i = 0; i < 28 * 28; i++) {
+        const avg = (imageData[i * 4] + imageData[i * 4 + 1] + imageData[i * 4 + 2]) / 3;
+        grayscale[i] = (255 - avg) / 255; // 背景0, 線1
+    }
+    return grayscale;
+}
+
+// フォントプロトタイプとの類似度（コサイン類似度）
+function recognizeWithFontPrototype(gray) {
+    if (!fontPrototypes || fontPrototypes.length === 0) return null;
+    let best = null;
+    let bestSim = -1;
+    const normInput = Math.sqrt(gray.reduce((s, v) => s + v * v, 0)) || 1;
+
+    for (const proto of fontPrototypes) {
+        let dot = 0;
+        const pv = proto.vector;
+        for (let i = 0; i < gray.length; i++) {
+            dot += gray[i] * pv[i];
+        }
+        const normP = Math.sqrt(proto.vectorNorm || pv.reduce((s, v) => s + v * v, 0)) || 1;
+        const sim = dot / (normInput * normP);
+        proto.vectorNorm = normP; // キャッシュ
+        if (sim > bestSim) {
+            bestSim = sim;
+            best = { letter: proto.letter, similarity: sim };
+        }
+    }
+    console.log('Font prototype top similarity:', best ? `${best.letter}:${bestSim.toFixed(3)}` : 'none');
+    return best;
+}
+function pathLength(points) {
+    let d = 0.0;
+    for (let i = 1; i < points.length; i++) {
+        d += euclidean(points[i - 1], points[i]);
+    }
+    return d;
+}
+
+function euclidean(p1, p2) {
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    return Math.hypot(dx, dy);
+}
+
+function pathDistance(pts1, pts2) {
+    let d = 0.0;
+    for (let i = 0; i < pts1.length; i++) {
+        d += euclidean(pts1[i], pts2[i]);
+    }
+    return d / pts1.length;
+}
+
 // 手書き入力の初期化
 function initHandwriteInput() {
     handwriteCanvas = document.getElementById('handwriteCanvas');
@@ -14814,6 +15041,13 @@ function initHandwriteInput() {
     
     if (clearBtn) clearBtn.addEventListener('click', clearHandwriteCanvas);
     if (confirmBtn) confirmBtn.addEventListener('click', confirmHandwriteChar);
+    
+    // $1テンプレートを構築（初期化時1回）
+    if (dollarTemplates.length === 0) {
+        buildDollarTemplates();
+    }
+    // フォントプロトタイプを構築
+    buildFontPrototypes();
     
     // 訓練データをロード
     loadTrainingData();
@@ -14975,84 +15209,17 @@ function clearHandwriteCanvas() {
 
 // TensorFlow.jsを使った認識
 async function recognizeWithTF() {
-    if (!handwriteCanvas || !handwriteCtx) return null;
-    
+    if (!handwriteCanvas || !handwriteCtx || !tfModel) return null;
+    const gray = renderStrokesTo28x28();
+    if (!gray) return null;
+
     try {
-        // キャンバスを28x28にリサイズ
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = 28;
-        tempCanvas.height = 28;
-        const tempCtx = tempCanvas.getContext('2d');
-        
-        // 背景を白で塗りつぶし
-        tempCtx.fillStyle = '#ffffff';
-        tempCtx.fillRect(0, 0, 28, 28);
-        
-        // 手書き部分のバウンディングボックスを計算
-        let allPoints = [];
-        allStrokes.forEach(stroke => {
-            allPoints = allPoints.concat(stroke);
-        });
-        
-        if (allPoints.length < 3) return null;
-        
-        let minX = Infinity, minY = Infinity;
-        let maxX = -Infinity, maxY = -Infinity;
-        
-        allPoints.forEach(([x, y]) => {
-            minX = Math.min(minX, x);
-            minY = Math.min(minY, y);
-            maxX = Math.max(maxX, x);
-            maxY = Math.max(maxY, y);
-        });
-        
-        const width = maxX - minX || 1;
-        const height = maxY - minY || 1;
-        const size = Math.max(width, height);
-        
-        // パディングを追加して中央に配置
-        const padding = 4;
-        const targetSize = 28 - padding * 2;
-        const scale = targetSize / size;
-        
-        // 中央に配置するためのオフセット
-        const offsetX = padding + (targetSize - width * scale) / 2 - minX * scale;
-        const offsetY = padding + (targetSize - height * scale) / 2 - minY * scale;
-        
-        // ストロークを描画
-        tempCtx.strokeStyle = '#000000';
-        tempCtx.lineWidth = Math.max(1.5, 2 * scale);
-        tempCtx.lineCap = 'round';
-        tempCtx.lineJoin = 'round';
-        
-        allStrokes.forEach(stroke => {
-            if (stroke.length < 2) return;
-            tempCtx.beginPath();
-            tempCtx.moveTo(stroke[0][0] * scale + offsetX, stroke[0][1] * scale + offsetY);
-            for (let i = 1; i < stroke.length; i++) {
-                tempCtx.lineTo(stroke[i][0] * scale + offsetX, stroke[i][1] * scale + offsetY);
-            }
-            tempCtx.stroke();
-        });
-        
-        // 画像データを取得してTensor変換
-        const imageData = tempCtx.getImageData(0, 0, 28, 28);
-        const data = imageData.data;
-        
-        // グレースケールに変換（白黒反転：EMNIST形式）
-        const grayscale = new Float32Array(28 * 28);
-        for (let i = 0; i < 28 * 28; i++) {
-            // RGBの平均を取り、反転（黒い線を白、白い背景を黒に）
-            const avg = (data[i * 4] + data[i * 4 + 1] + data[i * 4 + 2]) / 3;
-            grayscale[i] = (255 - avg) / 255; // 0-1に正規化、反転
-        }
-        
-        // TensorFlow.jsで推論
-        const tensor = tf.tensor4d(grayscale, [1, 28, 28, 1]);
+        const tensor = tf.tensor4d(gray, [1, 28, 28, 1]);
         const prediction = tfModel.predict(tensor);
         const probabilities = await prediction.data();
-        
-        // 確率が最も高い文字を取得
+        tensor.dispose();
+        prediction.dispose();
+
         let maxProb = 0;
         let maxIndex = 0;
         for (let i = 0; i < 26; i++) {
@@ -15061,23 +15228,8 @@ async function recognizeWithTF() {
                 maxIndex = i;
             }
         }
-        
-        // メモリ解放
-        tensor.dispose();
-        prediction.dispose();
-        
-        // a=0, b=1, ... z=25
         const letter = String.fromCharCode(97 + maxIndex);
-        
         console.log(`TF Recognition: ${letter} (${(maxProb * 100).toFixed(1)}%)`);
-        console.log('Top 5:', [...probabilities]
-            .map((p, i) => ({ letter: String.fromCharCode(97 + i), prob: p }))
-            .sort((a, b) => b.prob - a.prob)
-            .slice(0, 5)
-            .map(x => `${x.letter}:${(x.prob * 100).toFixed(0)}%`)
-            .join(', ')
-        );
-        
         return { letter, confidence: maxProb };
     } catch (error) {
         console.error('TF recognition error:', error);
@@ -15097,34 +15249,41 @@ async function recognizeCharacter() {
     
     if (allPoints.length < 3) return;
     
-    // TensorFlow.jsが利用可能で訓練済みモデルがあれば使用
+    const gray = renderStrokesTo28x28();
+    if (!gray) return;
+
+    // TensorFlow.js（あれば）
     let tfResult = null;
     if (modelLoaded && tfModel) {
         tfResult = await recognizeWithTF();
     }
-    
-    // テンプレートマッチングも実行
+
+    // $1 テンプレート
     const templateResult = recognizeWithTemplate(allPoints);
-    
-    // 結果を統合
+
+    // フォントMNIST風マッチング
+    const fontResult = recognizeWithFontPrototype(gray);
+
+    // 結果を統合（信頼度・スコアで比較）
     let bestLetter = null;
-    
-    if (tfResult && tfResult.confidence > 0.7) {
-        // TFの信頼度が高ければそちらを優先
+    if (tfResult && tfResult.confidence > 0.75) {
         bestLetter = tfResult.letter;
-        console.log('Using TF result:', bestLetter);
-    } else if (templateResult && templateResult.score < 0.5) {
-        // テンプレートマッチングのスコアが良ければ使用
+        console.log('Using TF result (high conf):', bestLetter);
+    } else if (fontResult && fontResult.similarity > 0.85) {
+        bestLetter = fontResult.letter;
+        console.log('Using font prototype (high sim):', bestLetter, fontResult.similarity.toFixed(3));
+    } else if (templateResult && templateResult.score < 0.32) {
         bestLetter = templateResult.letter;
-        console.log('Using template result:', bestLetter);
+        console.log('Using $1 template (good score):', bestLetter, templateResult.score.toFixed(3));
     } else if (tfResult) {
-        // TFの結果を使用（低信頼度でも）
         bestLetter = tfResult.letter;
-        console.log('Using TF result (low confidence):', bestLetter);
+        console.log('Using TF result (fallback):', bestLetter, tfResult.confidence.toFixed(3));
+    } else if (fontResult) {
+        bestLetter = fontResult.letter;
+        console.log('Using font prototype (fallback):', bestLetter, fontResult.similarity.toFixed(3));
     } else if (templateResult) {
-        // テンプレートマッチングの結果を使用
         bestLetter = templateResult.letter;
-        console.log('Using template result (fallback):', bestLetter);
+        console.log('Using $1 template (fallback):', bestLetter, templateResult.score.toFixed(3));
     }
     
     if (bestLetter) {
@@ -15155,75 +15314,37 @@ function recognizeWithTemplate(allPoints) {
     
     // 正規化（0-1範囲、アスペクト比保持）
     const scale = Math.max(width, height);
-    const normalized = allPoints.map(([x, y]) => [
-        (x - minX) / scale,
-        (y - minY) / scale
-    ]);
+    const normalizedPoints = allPoints.map(([x, y]) => ({
+        x: (x - minX) / scale,
+        y: (y - minY) / scale
+    }));
     
-    // 特徴量を抽出
-    const aspectRatio = width / height;
+    // $1 recognizer 前処理
+    const processed = preprocessDollarPoints(normalizedPoints);
     
-    // 方向パターンを抽出
-    const directions = extractDirectionPattern(normalized);
+    let best = null;
+    let bestScore = Infinity;
     
-    // 各文字とマッチング
-    let candidates = [];
-    
-    for (const [letter, template] of Object.entries(LETTER_TEMPLATES)) {
-        // テンプレートをリサンプリング
-        const resampledInput = resamplePoints(normalized, template.length);
-        
-        // 距離計算
-        let totalDist = 0;
-        for (let i = 0; i < template.length; i++) {
-            const dx = resampledInput[i][0] - template[i][0];
-            const dy = resampledInput[i][1] - template[i][1];
-            totalDist += Math.sqrt(dx * dx + dy * dy);
+    for (const tpl of dollarTemplates) {
+        const score = pathDistance(processed, tpl.points);
+        if (score < bestScore) {
+            bestScore = score;
+            best = { letter: tpl.letter, score };
         }
-        
-        const avgDist = totalDist / template.length;
-        
-        // 特徴による補正
-        let bonus = 0;
-        const letterFeature = LETTER_FEATURES[letter];
-        
-        if (letterFeature) {
-            // アスペクト比チェック
-            if (letterFeature.aspectRatio) {
-                const [minAR, maxAR] = letterFeature.aspectRatio;
-                if (aspectRatio >= minAR && aspectRatio <= maxAR) {
-                    bonus += 0.08;
-                }
-            }
-            
-            // 縦長の文字（i, l, j, tなど）
-            if (letterFeature.vertical && aspectRatio < 0.5) {
-                bonus += 0.12;
-            }
-            
-            // 横長の文字（m, w）
-            if (letterFeature.wide && aspectRatio > 1.3) {
-                bonus += 0.12;
-            }
-            
-            // ループ検出
-            if (letterFeature.hasLoop) {
-                const hasLoop = detectLoop(normalized);
-                if (hasLoop) bonus += 0.08;
-            }
-        }
-        
-        const finalScore = avgDist - bonus;
-        candidates.push({ letter, score: finalScore });
     }
     
-    // スコアでソート
-    candidates.sort((a, b) => a.score - b.score);
+    console.log('Template candidates (top5):',
+        dollarTemplates
+            .map(t => ({ letter: t.letter, score: pathDistance(processed, t.points) }))
+            .sort((a, b) => a.score - b.score)
+            .slice(0, 5)
+            .map(c => `${c.letter}:${c.score.toFixed(3)}`)
+            .join(', ')
+    );
     
-    console.log('Template candidates:', candidates.slice(0, 5).map(c => `${c.letter}:${c.score.toFixed(2)}`).join(', '));
-    
-    // 最良の候補を選択
-    return candidates[0];
+    // スコアが小さいほど類似。閾値を 0.32 付近に設定
+    if (best && best.score < 0.32) return best;
+    return null;
 }
 
 // 方向パターン抽出
