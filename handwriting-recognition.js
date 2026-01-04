@@ -207,6 +207,153 @@ class HandwritingRecognition {
     }
     
     // ========================================
+    // 複数文字認識（横長キャンバス用）
+    // ========================================
+    async predictMultiple(canvas) {
+        if (!this.isModelLoaded) {
+            console.warn('[EMNIST] Model not loaded');
+            return null;
+        }
+        
+        // Step 1: 文字セグメントを検出
+        const segments = this.segmentCharacters(canvas);
+        
+        if (segments.length === 0) {
+            return { chars: [], error: 'no_content' };
+        }
+        
+        // Step 2: 各セグメントを認識
+        const results = [];
+        for (const segment of segments) {
+            // セグメントを個別キャンバスに描画
+            const segCanvas = document.createElement('canvas');
+            const size = Math.max(segment.width, segment.height) + 20;
+            segCanvas.width = size;
+            segCanvas.height = size;
+            const segCtx = segCanvas.getContext('2d');
+            
+            // 白で塗りつぶし
+            segCtx.fillStyle = '#ffffff';
+            segCtx.fillRect(0, 0, size, size);
+            
+            // セグメントを中央に配置
+            const offsetX = (size - segment.width) / 2;
+            const offsetY = (size - segment.height) / 2;
+            segCtx.drawImage(
+                canvas,
+                segment.x, segment.y, segment.width, segment.height,
+                offsetX, offsetY, segment.width, segment.height
+            );
+            
+            // 認識
+            const result = await this.predict(segCanvas);
+            if (result && result.topK && result.topK.length > 0) {
+                results.push({
+                    char: result.topK[0].label,
+                    confidence: result.topK[0].probability,
+                    topK: result.topK
+                });
+            }
+        }
+        
+        // 認識結果を結合
+        const combinedWord = results.map(r => r.char).join('');
+        
+        return {
+            chars: results,
+            word: combinedWord,
+            segments: segments
+        };
+    }
+    
+    // ========================================
+    // 文字セグメント検出
+    // ========================================
+    segmentCharacters(canvas) {
+        const ctx = canvas.getContext('2d');
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        
+        // 各x座標の縦方向インク密度を計算
+        const columnDensity = new Array(canvas.width).fill(0);
+        
+        for (let x = 0; x < canvas.width; x++) {
+            for (let y = 0; y < canvas.height; y++) {
+                const idx = (y * canvas.width + x) * 4;
+                const r = data[idx], g = data[idx + 1], b = data[idx + 2], a = data[idx + 3];
+                const brightness = (r + g + b) / 3;
+                if (a > 128 && brightness < 200) {
+                    columnDensity[x]++;
+                }
+            }
+        }
+        
+        // ギャップ（密度が0の連続領域）を検出してセグメント境界を特定
+        const segments = [];
+        let inChar = false;
+        let startX = 0;
+        const minGap = 5; // 最小ギャップ幅
+        let gapCount = 0;
+        
+        for (let x = 0; x < canvas.width; x++) {
+            if (columnDensity[x] > 0) {
+                if (!inChar) {
+                    inChar = true;
+                    startX = x;
+                }
+                gapCount = 0;
+            } else {
+                gapCount++;
+                if (inChar && gapCount >= minGap) {
+                    // セグメント終了
+                    const endX = x - gapCount;
+                    segments.push(this.getSegmentBounds(canvas, startX, endX));
+                    inChar = false;
+                }
+            }
+        }
+        
+        // 最後のセグメント
+        if (inChar) {
+            segments.push(this.getSegmentBounds(canvas, startX, canvas.width - 1));
+        }
+        
+        return segments.filter(s => s.width > 5 && s.height > 5);
+    }
+    
+    // セグメントの正確な境界を取得
+    getSegmentBounds(canvas, startX, endX) {
+        const ctx = canvas.getContext('2d');
+        const imageData = ctx.getImageData(startX, 0, endX - startX + 1, canvas.height);
+        const data = imageData.data;
+        const width = endX - startX + 1;
+        
+        let minY = canvas.height, maxY = 0;
+        let actualMinX = width, actualMaxX = 0;
+        
+        for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < width; x++) {
+                const idx = (y * width + x) * 4;
+                const r = data[idx], g = data[idx + 1], b = data[idx + 2], a = data[idx + 3];
+                const brightness = (r + g + b) / 3;
+                if (a > 128 && brightness < 200) {
+                    if (y < minY) minY = y;
+                    if (y > maxY) maxY = y;
+                    if (x < actualMinX) actualMinX = x;
+                    if (x > actualMaxX) actualMaxX = x;
+                }
+            }
+        }
+        
+        return {
+            x: startX + actualMinX,
+            y: minY,
+            width: actualMaxX - actualMinX + 1,
+            height: maxY - minY + 1
+        };
+    }
+    
+    // ========================================
     // 入力検証（精度向上ポイント②）
     // ========================================
     validateInput(canvas) {

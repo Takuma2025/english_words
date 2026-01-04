@@ -14717,7 +14717,7 @@ async function loadHWQuizModel() {
     
     if (window.handwritingRecognition.isModelLoaded) {
         if (predictions) {
-            predictions.innerHTML = '<span class="hw-candidates-placeholder">文字を書いてください</span>';
+            predictions.innerHTML = '';
         }
         return;
     }
@@ -14726,7 +14726,7 @@ async function loadHWQuizModel() {
         const result = await window.handwritingRecognition.loadModel();
         if (predictions) {
             if (result) {
-                predictions.innerHTML = '<span class="hw-candidates-placeholder">文字を書いてください</span>';
+                predictions.innerHTML = '';
             } else {
                 const errorDetail = window.handwritingRecognition.getLastError ? 
                     window.handwritingRecognition.getLastError() : 'エラー';
@@ -14867,7 +14867,7 @@ function getHWQuizPos(e) {
 }
 
 /**
- * キャンバスを認識して自動入力
+ * キャンバスを認識して自動入力（複数文字対応）
  */
 async function recognizeHWQuizCanvas() {
     if (!window.handwritingRecognition?.isModelLoaded) {
@@ -14875,32 +14875,101 @@ async function recognizeHWQuizCanvas() {
     }
     
     try {
-        const result = await window.handwritingRecognition.predict(hwQuizCanvas);
+        // 複数文字認識を試行
+        const result = await window.handwritingRecognition.predictMultiple(hwQuizCanvas);
         
         if (!result) return;
         
-        // エラーチェック（入力検証失敗）
+        // エラーチェック
         if (result.error) {
             const container = document.getElementById('hwQuizPredictions');
             if (container) {
-                let message = '文字を書いてください';
+                let message = '';
+                if (result.error === 'no_content') message = '';
                 if (result.error === 'too_small') message = 'もう少し大きく書いてください';
-                if (result.error === 'too_large') message = 'もう少し小さく書いてください';
-                if (result.error === 'multiple_chars') message = '1文字ずつ書いてください';
-                container.innerHTML = `<span class="hw-candidates-placeholder">${message}</span>`;
+                container.innerHTML = message ? `<span class="hw-candidates-placeholder">${message}</span>` : '';
             }
             return;
         }
         
-        // 1位の候補を自動入力（アニメーション付き）
-        if (result.topK && result.topK.length > 0) {
-            const topChar = result.topK[0].label;
-            autoInputHWQuizChar(topChar);
+        // 認識された単語を入力（アニメーション付き）
+        if (result.word && result.word.length > 0) {
+            autoInputHWQuizWord(result.word);
         }
         
     } catch (error) {
         console.error('[HWQuiz] Recognition error:', error);
     }
+}
+
+/**
+ * 単語を自動入力（複数文字を順番に飛ばす）
+ */
+function autoInputHWQuizWord(word) {
+    const canvas = document.getElementById('hwQuizCanvas');
+    const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
+    
+    if (!canvas || !answerDisplay || !word) {
+        hwQuizConfirmedText += word;
+        updateHWQuizAnswerDisplay();
+        clearHWQuizCanvas();
+        return;
+    }
+    
+    // キャンバスを即座にクリア
+    clearHWQuizCanvas();
+    
+    // 各文字を順番にアニメーション
+    const chars = word.split('');
+    let delay = 0;
+    
+    chars.forEach((char, index) => {
+        setTimeout(() => {
+            const canvasRect = canvas.getBoundingClientRect();
+            const answerRect = answerDisplay.getBoundingClientRect();
+            
+            // 現在のテキストの幅を計測
+            const currentText = hwQuizConfirmedText || '';
+            const tempSpan = document.createElement('span');
+            tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:38px;font-weight:700;font-family:"Times New Roman",serif;letter-spacing:2px;';
+            tempSpan.textContent = currentText;
+            document.body.appendChild(tempSpan);
+            const textWidth = tempSpan.offsetWidth;
+            tempSpan.remove();
+            
+            // 飛ぶ文字を作成
+            const flyingChar = document.createElement('div');
+            flyingChar.className = 'hw-flying-char';
+            flyingChar.textContent = char;
+            flyingChar.style.left = (canvasRect.left + canvasRect.width / 2) + 'px';
+            flyingChar.style.top = (canvasRect.top + canvasRect.height / 2) + 'px';
+            document.body.appendChild(flyingChar);
+            
+            // 目的地を計算
+            const centerX = answerRect.left + answerRect.width / 2;
+            const endX = centerX + textWidth / 2 + 10;
+            const endY = answerRect.top + answerRect.height / 2;
+            
+            // アニメーション開始
+            setTimeout(() => {
+                flyingChar.classList.add('flying');
+                flyingChar.style.left = endX + 'px';
+                flyingChar.style.top = endY + 'px';
+                flyingChar.style.transform = 'translate(-50%, -50%) scale(0.5)';
+                flyingChar.style.fontSize = '38px';
+            }, 50);
+            
+            // 文字を追加
+            setTimeout(() => {
+                hwQuizConfirmedText += char;
+                updateHWQuizAnswerDisplay();
+                flyingChar.remove();
+            }, 350);
+            
+        }, delay);
+        
+        delay += 150; // 各文字の間隔
+    });
 }
 
 /**
@@ -14920,9 +14989,20 @@ function autoInputHWQuizChar(char) {
     const startX = canvasRect.left + canvasRect.width / 2;
     const startY = canvasRect.top + canvasRect.height / 2;
     
-    // 回答欄の右側座標を取得
+    // 回答欄の次の文字位置を計算（中央揃えなので、現在のテキストの右端）
     const answerRect = answerDisplay.getBoundingClientRect();
-    const endX = answerRect.right - 20;
+    const currentText = hwQuizConfirmedText || '';
+    // テキストの幅を一時的に計測
+    const tempSpan = document.createElement('span');
+    tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:38px;font-weight:700;font-family:"Times New Roman",serif;letter-spacing:2px;';
+    tempSpan.textContent = currentText;
+    document.body.appendChild(tempSpan);
+    const textWidth = tempSpan.offsetWidth;
+    tempSpan.remove();
+    
+    // 中央揃えなので、テキストの右端の位置を計算
+    const centerX = answerRect.left + answerRect.width / 2;
+    const endX = centerX + textWidth / 2 + 10; // テキスト右端 + 少し余白
     const endY = answerRect.top + answerRect.height / 2;
     
     // 飛ぶ文字を作成
@@ -14941,8 +15021,8 @@ function autoInputHWQuizChar(char) {
         flyingChar.classList.add('flying');
         flyingChar.style.left = endX + 'px';
         flyingChar.style.top = endY + 'px';
-        flyingChar.style.transform = 'translate(-50%, -50%) scale(0.4)';
-        flyingChar.style.fontSize = '28px';
+        flyingChar.style.transform = 'translate(-50%, -50%) scale(0.5)';
+        flyingChar.style.fontSize = '38px';
     }, 200);
     
     // 文字を追加して飛ぶ文字を削除
@@ -14951,10 +15031,10 @@ function autoInputHWQuizChar(char) {
         updateHWQuizAnswerDisplay();
         flyingChar.remove();
         
-        // 次の入力を促す
+        // 予測をクリア
         const container = document.getElementById('hwQuizPredictions');
         if (container) {
-            container.innerHTML = '<span class="hw-candidates-placeholder">次の文字を書く</span>';
+            container.innerHTML = '';
         }
     }, 700);
 }
@@ -14967,10 +15047,10 @@ function addHWQuizChar(char) {
     updateHWQuizAnswerDisplay();
     clearHWQuizCanvas();
     
-    // 予測をプレースホルダーに戻す
+    // 予測をクリア
     const container = document.getElementById('hwQuizPredictions');
     if (container) {
-        container.innerHTML = '<span class="hw-candidates-placeholder">次の文字を書く</span>';
+        container.innerHTML = '';
     }
 }
 
@@ -15011,7 +15091,7 @@ function setupHWQuizEvents() {
             clearHWQuizCanvas();
             const container = document.getElementById('hwQuizPredictions');
             if (container) {
-                container.innerHTML = '<span class="hw-candidates-placeholder">文字を書いてください</span>';
+                container.innerHTML = '';
             }
         };
     }
@@ -15137,10 +15217,10 @@ function displayHWQuizQuestion() {
     // キャンバスをクリア
     clearHWQuizCanvas();
     
-    // 予測をプレースホルダーに
+    // 予測をクリア
     const predictions = document.getElementById('hwQuizPredictions');
     if (predictions) {
-        predictions.innerHTML = '<span class="hw-candidates-placeholder">文字を書いてください</span>';
+        predictions.innerHTML = '';
     }
     
     // UIをリセット
@@ -15350,7 +15430,7 @@ function restartHWQuiz() {
             <div class="hw-canvas-area">
                 <div class="hw-canvas-wrapper">
                     <div class="hw-canvas-lines"></div>
-                    <canvas id="hwQuizCanvas" class="hw-canvas" width="260" height="260"></canvas>
+                    <canvas id="hwQuizCanvas" class="hw-canvas" width="500" height="180"></canvas>
                 </div>
             </div>
             
