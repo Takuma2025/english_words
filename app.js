@@ -14646,6 +14646,7 @@ async function loadHWQuizModel() {
     if (loadingEl) loadingEl.classList.remove('hidden');
     
     try {
+        // Service Workerがキャッシュ済みなら即座にロード、初回のみダウンロード
         await window.handwritingRecognition.loadModel();
         console.log('[HWQuiz] Model loaded');
         return true;
