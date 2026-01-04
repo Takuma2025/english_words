@@ -116,14 +116,27 @@ class HandwritingRecognition {
             
             this.showDebugMessage('TF OK: ' + tf.getBackend());
             
-            // モデルファイルを読み込み（パスを動的に構築）
+            // モデルファイルを読み込み（2つのパスを試す）
             const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-            const modelUrl = baseUrl + 'emnist_final/model.json';
-            this.showDebugMessage('読込: ' + modelUrl);
-            try {
-                this.model = await tf.loadLayersModel(modelUrl);
-            } catch (modelErr) {
-                this.lastError = 'モデル読込失敗: ' + (modelErr.message || modelErr);
+            const paths = [
+                baseUrl + 'model.json',           // ルート（GitHub Pages用）
+                baseUrl + 'emnist_final/model.json'  // サブフォルダ（ローカル用）
+            ];
+            
+            let loadSuccess = false;
+            for (const modelUrl of paths) {
+                this.showDebugMessage('試行: ' + modelUrl.split('/').slice(-2).join('/'));
+                try {
+                    this.model = await tf.loadLayersModel(modelUrl);
+                    loadSuccess = true;
+                    break;
+                } catch (err) {
+                    console.log('[EMNIST] Failed to load from:', modelUrl);
+                }
+            }
+            
+            if (!loadSuccess) {
+                this.lastError = 'モデルが見つかりません';
                 this.showDebugMessage('失敗: ' + this.lastError);
                 this.isModelLoading = false;
                 return false;
