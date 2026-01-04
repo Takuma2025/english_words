@@ -14787,6 +14787,8 @@ function clearHWQuizCanvas() {
     hwQuizCtx.fillStyle = '#ffffff';
     hwQuizCtx.fillRect(0, 0, hwQuizCanvas.width, hwQuizCanvas.height);
     hwQuizCtx.strokeStyle = '#000000'; // 黒で描画（反転前提）
+    // 認識済みセグメント数をリセット
+    hwQuizRecognizedSegments = 0;
     // キャンバスサイズに応じて線幅を動的調整（細め）
     const scaleFactor = hwQuizCanvas.width / 28;
     hwQuizCtx.lineWidth = Math.max(3, Math.round(scaleFactor * 0.8));
@@ -14866,8 +14868,11 @@ function getHWQuizPos(e) {
     };
 }
 
+// 認識済みセグメント数を追跡
+let hwQuizRecognizedSegments = 0;
+
 /**
- * キャンバスを認識して自動入力（複数文字対応）
+ * キャンバスを認識して自動入力（書き終わった文字から順番に認識）
  */
 async function recognizeHWQuizCanvas() {
     if (!window.handwritingRecognition?.isModelLoaded) {
@@ -14875,26 +14880,28 @@ async function recognizeHWQuizCanvas() {
     }
     
     try {
-        // 複数文字認識を試行
-        const result = await window.handwritingRecognition.predictMultiple(hwQuizCanvas);
+        // 現在のセグメントを検出
+        const segments = window.handwritingRecognition.segmentCharacters(hwQuizCanvas);
         
-        if (!result) return;
-        
-        // エラーチェック
-        if (result.error) {
-            const container = document.getElementById('hwQuizPredictions');
-            if (container) {
-                let message = '';
-                if (result.error === 'no_content') message = '';
-                if (result.error === 'too_small') message = 'もう少し大きく書いてください';
-                container.innerHTML = message ? `<span class="hw-candidates-placeholder">${message}</span>` : '';
-            }
+        if (!segments || segments.length === 0) {
             return;
         }
         
-        // 認識された単語を入力（アニメーション付き）
-        if (result.word && result.word.length > 0) {
-            autoInputHWQuizWord(result.word);
+        // 新しいセグメント（まだ認識していない文字）があるか確認
+        if (segments.length > hwQuizRecognizedSegments) {
+            // 新しいセグメントを認識
+            const newSegments = segments.slice(hwQuizRecognizedSegments);
+            
+            for (const segment of newSegments) {
+                // セグメントを個別キャンバスに描画して認識
+                const result = await recognizeSingleSegment(segment);
+                
+                if (result && result.char) {
+                    // 文字を飛ばす（セグメントの位置から）
+                    flyCharFromSegment(result.char, segment);
+                    hwQuizRecognizedSegments++;
+                }
+            }
         }
         
     } catch (error) {
@@ -14903,73 +14910,125 @@ async function recognizeHWQuizCanvas() {
 }
 
 /**
- * 単語を自動入力（複数文字を順番に飛ばす）
+ * 単一セグメントを認識
  */
-function autoInputHWQuizWord(word) {
+async function recognizeSingleSegment(segment) {
+    const canvas = document.getElementById('hwQuizCanvas');
+    if (!canvas) return null;
+    
+    // セグメントを正方形キャンバスに描画
+    const segCanvas = document.createElement('canvas');
+    const size = Math.max(segment.width, segment.height) + 20;
+    segCanvas.width = size;
+    segCanvas.height = size;
+    const segCtx = segCanvas.getContext('2d');
+    
+    // 白で塗りつぶし
+    segCtx.fillStyle = '#ffffff';
+    segCtx.fillRect(0, 0, size, size);
+    
+    // セグメントを中央に配置
+    const offsetX = (size - segment.width) / 2;
+    const offsetY = (size - segment.height) / 2;
+    segCtx.drawImage(
+        canvas,
+        segment.x, segment.y, segment.width, segment.height,
+        offsetX, offsetY, segment.width, segment.height
+    );
+    
+    // 認識
+    const result = await window.handwritingRecognition.predict(segCanvas);
+    
+    if (result && result.topK && result.topK.length > 0) {
+        return {
+            char: result.topK[0].label,
+            confidence: result.topK[0].probability
+        };
+    }
+    
+    return null;
+}
+
+/**
+ * セグメント境界線を描画
+ */
+function drawSegmentLine(segmentEndX) {
+    if (!hwQuizCtx || !hwQuizCanvas) return;
+    
+    // 薄いグレーの縦線を描画
+    hwQuizCtx.save();
+    hwQuizCtx.strokeStyle = 'rgba(150, 150, 150, 0.5)';
+    hwQuizCtx.lineWidth = 1;
+    hwQuizCtx.setLineDash([4, 4]); // 点線
+    hwQuizCtx.beginPath();
+    hwQuizCtx.moveTo(segmentEndX + 5, 0);
+    hwQuizCtx.lineTo(segmentEndX + 5, hwQuizCanvas.height);
+    hwQuizCtx.stroke();
+    hwQuizCtx.restore();
+}
+
+/**
+ * セグメント位置から文字を飛ばす
+ */
+function flyCharFromSegment(char, segment) {
     const canvas = document.getElementById('hwQuizCanvas');
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
     
-    if (!canvas || !answerDisplay || !word) {
-        hwQuizConfirmedText += word;
+    if (!canvas || !answerDisplay) {
+        hwQuizConfirmedText += char;
         updateHWQuizAnswerDisplay();
-        clearHWQuizCanvas();
         return;
     }
     
-    // キャンバスを即座にクリア
-    clearHWQuizCanvas();
+    // セグメント境界線を描画
+    drawSegmentLine(segment.x + segment.width);
     
-    // 各文字を順番にアニメーション
-    const chars = word.split('');
-    let delay = 0;
+    const canvasRect = canvas.getBoundingClientRect();
+    const answerRect = answerDisplay.getBoundingClientRect();
     
-    chars.forEach((char, index) => {
-        setTimeout(() => {
-            const canvasRect = canvas.getBoundingClientRect();
-            const answerRect = answerDisplay.getBoundingClientRect();
-            
-            // 現在のテキストの幅を計測
-            const currentText = hwQuizConfirmedText || '';
-            const tempSpan = document.createElement('span');
-            tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:38px;font-weight:700;font-family:"Times New Roman",serif;letter-spacing:2px;';
-            tempSpan.textContent = currentText;
-            document.body.appendChild(tempSpan);
-            const textWidth = tempSpan.offsetWidth;
-            tempSpan.remove();
-            
-            // 飛ぶ文字を作成
-            const flyingChar = document.createElement('div');
-            flyingChar.className = 'hw-flying-char';
-            flyingChar.textContent = char;
-            flyingChar.style.left = (canvasRect.left + canvasRect.width / 2) + 'px';
-            flyingChar.style.top = (canvasRect.top + canvasRect.height / 2) + 'px';
-            document.body.appendChild(flyingChar);
-            
-            // 目的地を計算
-            const centerX = answerRect.left + answerRect.width / 2;
-            const endX = centerX + textWidth / 2 + 10;
-            const endY = answerRect.top + answerRect.height / 2;
-            
-            // アニメーション開始
-            setTimeout(() => {
-                flyingChar.classList.add('flying');
-                flyingChar.style.left = endX + 'px';
-                flyingChar.style.top = endY + 'px';
-                flyingChar.style.transform = 'translate(-50%, -50%) scale(0.5)';
-                flyingChar.style.fontSize = '38px';
-            }, 50);
-            
-            // 文字を追加
-            setTimeout(() => {
-                hwQuizConfirmedText += char;
-                updateHWQuizAnswerDisplay();
-                flyingChar.remove();
-            }, 350);
-            
-        }, delay);
-        
-        delay += 150; // 各文字の間隔
-    });
+    // セグメントの中心位置（キャンバス内）をスクリーン座標に変換
+    const scaleX = canvasRect.width / canvas.width;
+    const scaleY = canvasRect.height / canvas.height;
+    const startX = canvasRect.left + (segment.x + segment.width / 2) * scaleX;
+    const startY = canvasRect.top + (segment.y + segment.height / 2) * scaleY;
+    
+    // 現在のテキストの幅を計測
+    const currentText = hwQuizConfirmedText || '';
+    const tempSpan = document.createElement('span');
+    tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:38px;font-weight:700;font-family:"Times New Roman",serif;letter-spacing:2px;';
+    tempSpan.textContent = currentText;
+    document.body.appendChild(tempSpan);
+    const textWidth = tempSpan.offsetWidth;
+    tempSpan.remove();
+    
+    // 目的地を計算
+    const centerX = answerRect.left + answerRect.width / 2;
+    const endX = centerX + textWidth / 2 + 10;
+    const endY = answerRect.top + answerRect.height / 2;
+    
+    // 飛ぶ文字を作成
+    const flyingChar = document.createElement('div');
+    flyingChar.className = 'hw-flying-char';
+    flyingChar.textContent = char;
+    flyingChar.style.left = startX + 'px';
+    flyingChar.style.top = startY + 'px';
+    document.body.appendChild(flyingChar);
+    
+    // アニメーション開始
+    setTimeout(() => {
+        flyingChar.classList.add('flying');
+        flyingChar.style.left = endX + 'px';
+        flyingChar.style.top = endY + 'px';
+        flyingChar.style.transform = 'translate(-50%, -50%) scale(0.5)';
+        flyingChar.style.fontSize = '38px';
+    }, 50);
+    
+    // 文字を追加
+    setTimeout(() => {
+        hwQuizConfirmedText += char;
+        updateHWQuizAnswerDisplay();
+        flyingChar.remove();
+    }, 400);
 }
 
 /**
