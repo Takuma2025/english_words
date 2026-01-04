@@ -92,19 +92,42 @@ class HandwritingRecognition {
         
         try {
             this.isModelLoading = true;
-            this.showDebugMessage('モデル読み込み開始...');
+            this.showDebugMessage('開始...');
             
             // TensorFlow.js が読み込まれているか確認
             if (typeof tf === 'undefined') {
-                throw new Error('TensorFlow.js が読み込まれていません');
+                this.lastError = 'TensorFlow.js未読込';
+                this.showDebugMessage('失敗: ' + this.lastError);
+                this.isModelLoading = false;
+                return false;
             }
             
-            // バックエンドの準備を待つ
-            await tf.ready();
-            this.showDebugMessage('TF準備完了: ' + tf.getBackend());
+            this.showDebugMessage('TF.ready待機...');
             
-            this.model = await tf.loadLayersModel('emnist_final/model.json');
-            this.showDebugMessage('モデル読み込み完了');
+            // バックエンドの準備を待つ
+            try {
+                await tf.ready();
+            } catch (tfErr) {
+                this.lastError = 'TF初期化失敗: ' + (tfErr.message || tfErr);
+                this.showDebugMessage('失敗: ' + this.lastError);
+                this.isModelLoading = false;
+                return false;
+            }
+            
+            this.showDebugMessage('TF OK: ' + tf.getBackend());
+            
+            // モデルファイルを読み込み
+            this.showDebugMessage('model.json読込中...');
+            try {
+                this.model = await tf.loadLayersModel('emnist_final/model.json');
+            } catch (modelErr) {
+                this.lastError = 'モデル読込失敗: ' + (modelErr.message || modelErr);
+                this.showDebugMessage('失敗: ' + this.lastError);
+                this.isModelLoading = false;
+                return false;
+            }
+            
+            this.showDebugMessage('ウォームアップ中...');
             
             // ウォームアップ（初回推論の遅延を解消）
             const dummyInput = tf.zeros([1, 28, 28, 1]);
@@ -119,10 +142,16 @@ class HandwritingRecognition {
             
         } catch (error) {
             console.error('[EMNIST] Load error:', error);
-            this.showDebugMessage('エラー: ' + error.message);
+            this.lastError = '予期せぬエラー: ' + (error.message || String(error));
+            this.showDebugMessage('失敗: ' + this.lastError);
             this.isModelLoading = false;
             return false;
         }
+    }
+    
+    // 最後のエラーを取得
+    getLastError() {
+        return this.lastError || 'unknown error';
     }
     
     // デバッグメッセージを候補欄に表示
