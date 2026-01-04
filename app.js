@@ -3555,17 +3555,6 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                 showCourseActionModal(subcat, words, subcat);
             });
             
-            // タッチ時に一時的にホバー効果を表示
-            accordionItem.addEventListener('touchstart', () => {
-                accordionItem.classList.add('touch-hover');
-            });
-            
-            accordionItem.addEventListener('touchend', () => {
-                setTimeout(() => {
-                    accordionItem.classList.remove('touch-hover');
-                }, 150);
-            });
-            
             accordionContainer.appendChild(accordionItem);
         } else {
             // カードを作成（機能語の場合）
@@ -3618,17 +3607,6 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                 categoryInfo.addEventListener('click', (e) => {
                     e.stopPropagation();
                     showCourseActionModal(subcat, words, subcat);
-            });
-            
-            // タッチ時に一時的にホバー効果を表示
-            categoryInfo.addEventListener('touchstart', () => {
-                card.classList.add('touch-hover');
-            });
-            
-            categoryInfo.addEventListener('touchend', () => {
-                setTimeout(() => {
-                    card.classList.remove('touch-hover');
-                }, 150);
             });
         }
         
@@ -5102,17 +5080,6 @@ function showLearningSubcategoryMenu(category) {
             const subcategory = btn.dataset.subcategory;
             overlay.remove();
             startLearningFromMenu(category, subcategory);
-        });
-        
-        // タッチ時に一時的にホバー効果を表示
-        btn.addEventListener('touchstart', () => {
-            btn.classList.add('touch-hover');
-        });
-        
-        btn.addEventListener('touchend', () => {
-            setTimeout(() => {
-                btn.classList.remove('touch-hover');
-            }, 150);
         });
     });
     
@@ -7146,17 +7113,6 @@ function setupEventListeners() {
         learningMethodBtn.addEventListener('click', () => {
             closeSidebar();
             showLearningMenuSelection();
-        });
-        
-        // タッチ時に一時的にホバー効果を表示
-        learningMethodBtn.addEventListener('touchstart', () => {
-            learningMethodBtn.classList.add('touch-hover');
-        });
-        
-        learningMethodBtn.addEventListener('touchend', () => {
-            setTimeout(() => {
-                learningMethodBtn.classList.remove('touch-hover');
-            }, 150);
         });
     }
     
