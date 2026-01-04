@@ -14635,7 +14635,16 @@ async function startHandwritingQuiz(category, words, courseTitle) {
             </div>
             
             <!-- 回答欄 -->
-            <div class="hw-answer" id="hwQuizAnswerDisplay"></div>
+            <div class="hw-answer" id="hwQuizAnswerDisplay">
+                <span class="hw-answer-text"></span>
+                <button class="hw-backspace-icon-btn" id="hwQuizBackspaceBtn" type="button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                    </svg>
+                </button>
+            </div>
             
             <!-- キャンバス -->
             <div class="hw-canvas-area">
@@ -14648,18 +14657,6 @@ async function startHandwritingQuiz(category, words, courseTitle) {
             
             <!-- 認識候補 -->
             <div class="hw-candidates" id="hwQuizPredictions"></div>
-            
-            <!-- ツール -->
-            <div class="hw-tools">
-                <button class="hw-tool-btn" id="hwQuizBackspaceBtn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                        <line x1="18" y1="9" x2="12" y2="15"></line>
-                        <line x1="12" y1="9" x2="18" y2="15"></line>
-                    </svg>
-                    1文字消す
-                </button>
-            </div>
             
             <!-- 解答ボタン -->
             <button class="hw-submit-btn hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答する</button>
@@ -15285,7 +15282,12 @@ function addHWQuizChar(char) {
 function updateHWQuizAnswerDisplay() {
     const display = document.getElementById('hwQuizAnswerDisplay');
     if (display) {
-        display.textContent = hwQuizConfirmedText;
+        const textEl = display.querySelector('.hw-answer-text');
+        if (textEl) {
+            textEl.textContent = hwQuizConfirmedText;
+        } else {
+            display.textContent = hwQuizConfirmedText;
+        }
     }
 }
 
@@ -15789,7 +15791,16 @@ function restartHWQuiz() {
             </div>
             
             <!-- 回答欄 -->
-            <div class="hw-answer" id="hwQuizAnswerDisplay"></div>
+            <div class="hw-answer" id="hwQuizAnswerDisplay">
+                <span class="hw-answer-text"></span>
+                <button class="hw-backspace-icon-btn" id="hwQuizBackspaceBtn" type="button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                    </svg>
+                </button>
+            </div>
             
             <!-- キャンバス -->
             <div class="hw-canvas-area">
@@ -15802,18 +15813,6 @@ function restartHWQuiz() {
             
             <!-- 認識候補 -->
             <div class="hw-candidates" id="hwQuizPredictions"></div>
-            
-            <!-- ツール -->
-            <div class="hw-tools">
-                <button class="hw-tool-btn" id="hwQuizBackspaceBtn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                        <line x1="18" y1="9" x2="12" y2="15"></line>
-                        <line x1="12" y1="9" x2="18" y2="15"></line>
-                    </svg>
-                    1文字消す
-                </button>
-            </div>
             
             <!-- 解答ボタン -->
             <button class="hw-submit-btn hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答する</button>
