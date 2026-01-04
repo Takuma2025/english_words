@@ -82,21 +82,29 @@ class HandwritingRecognition {
         }
         
         if (this.isModelLoading) {
-            while (this.isModelLoading) {
+            let waitTime = 0;
+            while (this.isModelLoading && waitTime < 15000) {
                 await new Promise(resolve => setTimeout(resolve, 100));
+                waitTime += 100;
             }
             return this.isModelLoaded;
         }
         
         try {
             this.isModelLoading = true;
-            console.log('[EMNIST] Loading model...');
+            this.showDebugMessage('モデル読み込み開始...');
+            
+            // TensorFlow.js が読み込まれているか確認
+            if (typeof tf === 'undefined') {
+                throw new Error('TensorFlow.js が読み込まれていません');
+            }
+            
+            // バックエンドの準備を待つ
+            await tf.ready();
+            this.showDebugMessage('TF準備完了: ' + tf.getBackend());
             
             this.model = await tf.loadLayersModel('emnist_final/model.json');
-            
-            console.log('[EMNIST] Model loaded');
-            console.log('[EMNIST] Input shape:', this.model.inputs[0].shape);
-            console.log('[EMNIST] Output shape:', this.model.outputs[0].shape);
+            this.showDebugMessage('モデル読み込み完了');
             
             // ウォームアップ（初回推論の遅延を解消）
             const dummyInput = tf.zeros([1, 28, 28, 1]);
@@ -106,12 +114,23 @@ class HandwritingRecognition {
             
             this.isModelLoaded = true;
             this.isModelLoading = false;
+            this.showDebugMessage('準備完了');
             return true;
             
         } catch (error) {
             console.error('[EMNIST] Load error:', error);
+            this.showDebugMessage('エラー: ' + error.message);
             this.isModelLoading = false;
             return false;
+        }
+    }
+    
+    // デバッグメッセージを候補欄に表示
+    showDebugMessage(msg) {
+        console.log('[EMNIST] ' + msg);
+        const predictions = document.getElementById('hwQuizPredictions');
+        if (predictions) {
+            predictions.innerHTML = `<span class="hw-candidates-placeholder">${msg}</span>`;
         }
     }
     
