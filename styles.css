@@ -13038,6 +13038,15 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     max-width: 600px;
 }
 
+/* 手書きクイズ用ポーズオーバーレイ（画面全体に表示） */
+.handwriting-quiz-view .pause-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    z-index: 10010;
+}
+
 /* 手書きクイズ用ヘッダー（英語→日本語モードと同じスタイルを使用） */
 .handwriting-quiz-view .unit-header-container {
     width: 100%;
@@ -13048,6 +13057,12 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     width: 100%;
     max-width: 600px;
     padding: 0 16px 16px;
+}
+
+/* 手書きクイズの進捗バーはタップ不可 */
+.handwriting-quiz-view .progress-segment {
+    pointer-events: none;
+    cursor: default;
 }
 
 .hw-back-btn {
@@ -13432,6 +13447,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     -webkit-tap-highlight-color: transparent;
     flex-shrink: 0;
     box-shadow: 0 3px 0 #2c5282;
+    position: relative;
+    z-index: 200; /* 高めのz-indexを設定 */
 }
 
 .hw-submit-btn:active {
@@ -13523,6 +13540,56 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .hw-audio-btn:active {
     background: #d1d5db;
+}
+
+/* 正解表示ボックス */
+.hw-correct-answer-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 64px;
+    width: 340px;
+    margin: 12px auto 0;
+    padding: 4px 12px;
+    background: #fff5f5;
+    border: 2px solid #e53e3e;
+    border-radius: 6px;
+}
+
+.hw-correct-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #c53030;
+}
+
+.hw-correct-word {
+    font-size: 42px;
+    font-weight: 700;
+    color: #c53030;
+    font-family: 'Times New Roman', Times, serif;
+    letter-spacing: 2px;
+}
+
+.hw-correct-answer-box .hw-audio-btn {
+    width: 36px;
+    height: 36px;
+    background: #c53030;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* 次へボタンコンテナ */
+.hw-next-btn-container {
+    width: 100%;
+    padding: 16px;
+    margin-top: 16px;
 }
 
 .hw-next-btn {
