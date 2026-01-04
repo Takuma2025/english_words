@@ -14591,7 +14591,7 @@ let hwQuizDrawTimeout = null;
 /**
  * 手書きクイズモードを開始
  */
-async function startHandwritingQuiz(category, words, courseTitle) {
+function startHandwritingQuiz(category, words, courseTitle) {
     console.log('[HWQuiz] Starting handwriting quiz with', words.length, 'words');
     
     hwQuizWords = words;
@@ -14606,16 +14606,9 @@ async function startHandwritingQuiz(category, words, courseTitle) {
     if (categorySelection) categorySelection.classList.add('hidden');
     if (hwQuizView) hwQuizView.classList.remove('hidden');
     
-    // モデルをロード（完了まで待機）
-    const modelReady = await loadHWQuizModel();
-    if (!modelReady) {
-        const predictions = document.getElementById('hwQuizPredictions');
-        if (predictions) {
-            predictions.innerHTML = '<span class="hw-candidates-placeholder">モデルの読み込みに失敗しました。再読み込みしてください。</span>';
-        }
-        return;
-    }
-
+    // モデルをロード
+    loadHWQuizModel();
+    
     // キャンバスを初期化
     initHWQuizCanvas();
     
@@ -14630,31 +14623,43 @@ async function startHandwritingQuiz(category, words, courseTitle) {
  * モデルをロード
  */
 async function loadHWQuizModel() {
+    // ローディングスピナーは使わず、候補欄にステータスを表示
     const loadingEl = document.getElementById('hwQuizLoading');
+    if (loadingEl) loadingEl.classList.add('hidden');
+    
+    const predictions = document.getElementById('hwQuizPredictions');
     
     if (!window.handwritingRecognition) {
         console.error('[HWQuiz] HandwritingRecognition not found');
-        if (loadingEl) loadingEl.classList.add('hidden');
-        return false;
+        if (predictions) {
+            predictions.innerHTML = '<span class="hw-candidates-placeholder">エラー: 認識モジュールが見つかりません</span>';
+        }
+        return;
     }
     
     if (window.handwritingRecognition.isModelLoaded) {
-        if (loadingEl) loadingEl.classList.add('hidden');
-        return true;
+        if (predictions) {
+            predictions.innerHTML = '<span class="hw-candidates-placeholder">文字を書いてください</span>';
+        }
+        return;
     }
     
-    if (loadingEl) loadingEl.classList.remove('hidden');
+    // ステータスを候補欄に表示
+    if (predictions) {
+        predictions.innerHTML = '<span class="hw-candidates-placeholder">準備中...</span>';
+    }
     
     try {
-        // Service Workerがキャッシュ済みなら即座にロード、初回のみダウンロード
         await window.handwritingRecognition.loadModel();
         console.log('[HWQuiz] Model loaded');
-        return true;
+        if (predictions) {
+            predictions.innerHTML = '<span class="hw-candidates-placeholder">文字を書いてください</span>';
+        }
     } catch (error) {
         console.error('[HWQuiz] Model load error:', error);
-        return false;
-    } finally {
-        if (loadingEl) loadingEl.classList.add('hidden');
+        if (predictions) {
+            predictions.innerHTML = `<span class="hw-candidates-placeholder">読み込み失敗: ${error.message}</span>`;
+        }
     }
 }
 
@@ -14791,14 +14796,7 @@ function getHWQuizPos(e) {
  * 【精度向上】入力検証 + Top-5候補表示
  */
 async function recognizeHWQuizCanvas() {
-    const predictionsContainer = document.getElementById('hwQuizPredictions');
-    
-    if (!window.handwritingRecognition?.isModelLoaded) {
-        if (predictionsContainer) {
-            predictionsContainer.innerHTML = '<span class="hw-candidates-placeholder">モデル読み込み中です...</span>';
-        }
-        return;
-    }
+    if (!window.handwritingRecognition?.isModelLoaded) return;
     
     try {
         const result = await window.handwritingRecognition.predict(hwQuizCanvas);
