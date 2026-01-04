@@ -342,11 +342,6 @@ body.learning-mode .app-header {
     z-index: 1002;
 }
 
-
-.hamburger-menu-btn:active {
-    opacity: 0.6;
-}
-
 .hamburger-menu-btn.hidden {
     display: none;
 }
@@ -369,11 +364,6 @@ body.learning-mode .app-header {
     justify-content: center;
     transition: opacity 0.2s;
     z-index: 1002;
-}
-
-
-.header-back-btn:active {
-    opacity: 0.6;
 }
 
 .header-back-btn.hidden {
@@ -2061,16 +2051,22 @@ body.learning-mode .app-header {
 .school-modal-handle {
     display: flex;
     justify-content: center;
-    padding: 10px 0 6px;
+    padding: 14px 0 10px;
     background: #0055ca;
     flex-shrink: 0;
+    cursor: grab;
+    touch-action: none;
+}
+
+.school-modal-handle:active {
+    cursor: grabbing;
 }
 
 .school-modal-handle-bar {
-    width: 36px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 2px;
+    width: 40px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 3px;
 }
 
 /* ヘッダー */
@@ -2580,10 +2576,6 @@ body.learning-mode .app-header {
     transition: background-color 0.1s;
 }
 
-.category-accordion-header:hover {
-    background-color: #f9fafb;
-}
-
 .category-accordion-header:active {
     opacity: 0.7;
 }
@@ -2659,10 +2651,6 @@ body.learning-mode .app-header {
     border-top: 1px solid #e5e7eb;
 }
 
-.category-accordion-item:hover {
-    background-color: #f9fafb;
-}
-
 .category-accordion-item:active {
     opacity: 0.7;
 }
@@ -2672,10 +2660,6 @@ body.learning-mode .app-header {
     background: #ffffff;
 }
 
-.category-accordion-item-green:hover {
-    background-color: #f9fafb;
-}
-
 .category-accordion-item-green:active {
     opacity: 0.7;
 }
@@ -2683,10 +2667,6 @@ body.learning-mode .app-header {
 /* 英文でよく登場する機能語（白） */
 .category-accordion-item-purple {
     background: #ffffff;
-}
-
-.category-accordion-item-purple:hover {
-    background-color: #f9fafb;
 }
 
 .category-accordion-item-purple:active {
@@ -3011,11 +2991,6 @@ body.learning-mode .app-header {
     -webkit-tap-highlight-color: transparent;
 }
 
-.learning-menu-category-btn:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
-}
-
 .learning-menu-category-btn:active {
     opacity: 0.7;
 }
@@ -3045,11 +3020,6 @@ body.learning-mode .app-header {
     transition: all 0.2s ease;
     text-align: center;
     -webkit-tap-highlight-color: transparent;
-}
-
-.learning-menu-subcategory-btn:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
 }
 
 .learning-menu-subcategory-btn:active {

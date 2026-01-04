@@ -1025,6 +1025,48 @@ function initSchoolSelector() {
     }
     if (backdrop) backdrop.addEventListener('click', closeModal);
     
+    // ドラッグハンドルでスワイプダウンで閉じる
+    const schoolHandle = document.querySelector('.school-modal-handle');
+    const schoolSheet = document.querySelector('.school-modal-sheet');
+    if (schoolHandle && schoolSheet) {
+        let startY = 0;
+        let currentY = 0;
+        let isDragging = false;
+        
+        schoolHandle.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+            isDragging = true;
+            schoolSheet.style.transition = 'none';
+        }, { passive: true });
+        
+        schoolHandle.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentY = e.touches[0].clientY;
+            const deltaY = currentY - startY;
+            
+            // 下方向のみドラッグ可能
+            if (deltaY > 0) {
+                schoolSheet.style.transform = `translateY(${deltaY}px)`;
+            }
+        }, { passive: true });
+        
+        schoolHandle.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            const deltaY = currentY - startY;
+            schoolSheet.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+            
+            // 80px以上下にドラッグしたら閉じる
+            if (deltaY > 80) {
+                closeModal();
+            } else {
+                // 元に戻す
+                schoolSheet.style.transform = 'translateY(0)';
+            }
+        });
+    }
+    
     // 他の箇所から呼び出せるようにグローバル公開
     window.showSchoolModal = openModal;
     window.closeSchoolModal = closeModal;
