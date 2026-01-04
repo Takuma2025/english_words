@@ -2571,7 +2571,6 @@ body.learning-mode .app-header {
     box-sizing: border-box;
     text-align: left;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
 }
 
 .category-accordion-header:active {
@@ -2641,7 +2640,6 @@ body.learning-mode .app-header {
     border: none;
     text-align: left;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
     position: relative;
     min-height: 60px;
 }
@@ -2803,7 +2801,6 @@ body.learning-mode .app-header {
     text-align: left;
     cursor: pointer;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    -webkit-tap-highlight-color: transparent;
 }
 
 .category-card:active,
@@ -3029,7 +3026,6 @@ button.category-card:focus-visible {
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
-    -webkit-tap-highlight-color: transparent;
 }
 
 .learning-menu-category-btn:active {
@@ -3067,7 +3063,6 @@ button.category-card:focus-visible {
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
-    -webkit-tap-highlight-color: transparent;
 }
 
 .learning-menu-subcategory-btn:active {
