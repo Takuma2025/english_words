@@ -1429,27 +1429,54 @@
 
     <!-- 手書き入力クイズ画面（日本語→英語モード専用） -->
     <div class="handwriting-quiz-view hidden" id="handwritingQuizView">
-        <!-- ヘッダー -->
-        <div class="hw-header">
-            <button class="hw-header-btn" id="hwQuizBackBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="15 18 9 12 15 6"></polyline>
+        <!-- 単元名と中断ボタンのコンテナ（英語→日本語モードと同じ） -->
+        <div class="unit-header-container">
+            <button class="hw-back-btn" id="hwQuizBackBtn" aria-label="戻る">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <span class="unit-name" id="hwQuizUnitName">日本語→英語</span>
+            <button class="unit-pause-btn" id="hwQuizPauseBtn" aria-label="中断">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
             </button>
-            <span class="hw-header-progress" id="hwQuizProgressText">1 / 10</span>
-            <div style="width: 44px;"></div>
         </div>
         
-        <!-- 進捗バー -->
-        <div class="hw-progress-bar">
-            <div class="hw-progress-fill" id="hwQuizProgressFill"></div>
+        <!-- 進捗バー（英語→日本語モードと同じ） -->
+        <div class="progress-header" id="hwQuizStatsBar">
+            <div class="progress-bar-wrapper">
+                <div class="progress-range-display" id="hwQuizProgressRange">No.1-10</div>
+                <div class="progress-bar-container" id="hwQuizProgressBarContainer">
+                    <!-- セグメントは動的に生成 -->
+                </div>
+            </div>
+            <div class="progress-bottom-row">
+                <div class="progress-stats">
+                    <div class="progress-stats-scores">
+                        <span class="score-correct">
+                            <span class="score-label">正解</span>
+                            <span id="hwQuizCorrectCount">0</span>
+                        </span>
+                        <span class="score-wrong">
+                            <span class="score-label">不正解</span>
+                            <span id="hwQuizWrongCount">0</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="progress-nav-stats">
+                    <div class="progress-stats-content">
+                        <span class="progress-stats-label">進捗</span>
+                        <span id="hwQuizProgressText">0/10</span>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- メイン -->
         <div class="hw-main">
-            <!-- 問題 -->
-            <div class="hw-question">
-                <span class="hw-question-no" id="hwQuizWordNumber">No.1</span>
+            <!-- 問題（シンプル表示） -->
+            <div class="hw-question-simple">
                 <span class="hw-question-pos" id="hwQuizPos"></span>
                 <span class="hw-question-meaning" id="hwQuizMeaning">意味</span>
             </div>
@@ -1459,7 +1486,10 @@
             
             <!-- キャンバス -->
             <div class="hw-canvas-area">
-                <canvas id="hwQuizCanvas" class="hw-canvas" width="200" height="200"></canvas>
+                <div class="hw-canvas-wrapper">
+                    <div class="hw-canvas-lines"></div>
+                    <canvas id="hwQuizCanvas" class="hw-canvas" width="200" height="200"></canvas>
+                </div>
             </div>
             
             <!-- 認識候補 -->
@@ -1521,20 +1551,6 @@
     <script src="handwriting-recognition.js"></script>
     <script src="handwriting-ui.js"></script>
     <script src="app.js"></script>
-    <script>
-    // Service Worker登録（モデルの事前キャッシュ用）
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then((registration) => {
-                    console.log('[App] Service Worker registered:', registration.scope);
-                })
-                .catch((error) => {
-                    console.log('[App] Service Worker registration failed:', error);
-                });
-        });
-    }
-    </script>
 </body>
 </html>
 

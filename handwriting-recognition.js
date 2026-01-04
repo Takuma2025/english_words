@@ -92,42 +92,30 @@ class HandwritingRecognition {
         
         try {
             this.isModelLoading = true;
-            this.showDebugMessage('開始...');
             
             // TensorFlow.js が読み込まれているか確認
             if (typeof tf === 'undefined') {
                 this.lastError = 'TensorFlow.js未読込';
-                this.showDebugMessage('失敗: ' + this.lastError);
                 this.isModelLoading = false;
                 return false;
             }
-            
-            this.showDebugMessage('TF.ready待機...');
             
             // バックエンドの準備を待つ
-            try {
-                await tf.ready();
-            } catch (tfErr) {
-                this.lastError = 'TF初期化失敗: ' + (tfErr.message || tfErr);
-                this.showDebugMessage('失敗: ' + this.lastError);
-                this.isModelLoading = false;
-                return false;
-            }
-            
-            this.showDebugMessage('TF OK: ' + tf.getBackend());
+            await tf.ready();
+            console.log('[EMNIST] TensorFlow.js ready, backend:', tf.getBackend());
             
             // モデルファイルを読み込み（2つのパスを試す）
             const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
             const paths = [
-                baseUrl + 'model.json',           // ルート（GitHub Pages用）
+                baseUrl + 'model.json',              // ルート（GitHub Pages用）
                 baseUrl + 'emnist_final/model.json'  // サブフォルダ（ローカル用）
             ];
             
             let loadSuccess = false;
             for (const modelUrl of paths) {
-                this.showDebugMessage('試行: ' + modelUrl.split('/').slice(-2).join('/'));
                 try {
                     this.model = await tf.loadLayersModel(modelUrl);
+                    console.log('[EMNIST] Model loaded from:', modelUrl);
                     loadSuccess = true;
                     break;
                 } catch (err) {
@@ -137,12 +125,9 @@ class HandwritingRecognition {
             
             if (!loadSuccess) {
                 this.lastError = 'モデルが見つかりません';
-                this.showDebugMessage('失敗: ' + this.lastError);
                 this.isModelLoading = false;
                 return false;
             }
-            
-            this.showDebugMessage('ウォームアップ中...');
             
             // ウォームアップ（初回推論の遅延を解消）
             const dummyInput = tf.zeros([1, 28, 28, 1]);
@@ -152,13 +137,12 @@ class HandwritingRecognition {
             
             this.isModelLoaded = true;
             this.isModelLoading = false;
-            this.showDebugMessage('準備完了');
+            console.log('[EMNIST] Model ready');
             return true;
             
         } catch (error) {
             console.error('[EMNIST] Load error:', error);
-            this.lastError = '予期せぬエラー: ' + (error.message || String(error));
-            this.showDebugMessage('失敗: ' + this.lastError);
+            this.lastError = error.message || String(error);
             this.isModelLoading = false;
             return false;
         }

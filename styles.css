@@ -13020,26 +13020,54 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .handwriting-quiz-view {
     position: fixed;
     inset: 0;
-    background: #3182ce;
+    background: #f3f4f6;
     z-index: 1000;
     display: flex;
     flex-direction: column;
+    align-items: center;
     overflow: hidden;
-    box-sizing: border-box;
-    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px) 0;
 }
 
 .handwriting-quiz-view.hidden {
     display: none;
 }
 
-/* ヘッダー */
-.hw-header {
+/* 内部コンテナ（横幅制限） */
+.handwriting-quiz-view > * {
+    width: 100%;
+    max-width: 600px;
+}
+
+/* 手書きクイズ用ヘッダー（英語→日本語モードと同じスタイルを使用） */
+.handwriting-quiz-view .unit-header-container {
+    width: 100%;
+    max-width: 600px;
+}
+
+.handwriting-quiz-view .progress-header {
+    width: 100%;
+    max-width: 600px;
+    padding: 0 16px 16px;
+}
+
+.hw-back-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    color: #ffffff;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
+    justify-content: center;
     flex-shrink: 0;
+}
+
+.hw-back-btn:hover {
+    opacity: 0.8;
+}
+
+.hw-back-btn:active {
+    opacity: 0.6;
 }
 
 .hw-header-btn {
@@ -13070,21 +13098,13 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     border-radius: 20px;
 }
 
-/* 進捗バー */
+/* 旧進捗バー（互換性用） */
 .hw-progress-bar {
-    height: 6px;
-    background: rgba(255, 255, 255, 0.25);
-    margin: 0 16px;
-    border-radius: 3px;
-    flex-shrink: 0;
+    display: none;
 }
 
 .hw-progress-fill {
-    height: 100%;
-    background: #fff;
-    border-radius: 3px;
-    transition: width 0.3s ease;
-    width: 0%;
+    display: none;
 }
 
 /* メイン */
@@ -13092,18 +13112,42 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: #f8fafc;
-    margin-top: 16px;
-    border-top-left-radius: 24px;
-    border-top-right-radius: 24px;
-    padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+    background: transparent;
+    padding: 16px;
     gap: 12px;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
 }
 
-/* 問題 */
+/* 問題（シンプル表示） */
+.hw-question-simple {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.hw-question-simple .hw-question-pos {
+    font-size: 11px;
+    font-weight: 600;
+    color: #3182ce;
+}
+
+.hw-question-simple .hw-question-pos:empty {
+    display: none;
+}
+
+.hw-question-simple .hw-question-meaning {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a202c;
+    text-align: center;
+}
+
+/* 旧スタイル（互換性用） */
 .hw-question {
     display: flex;
     flex-direction: column;
@@ -13145,38 +13189,35 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 回答欄 */
 .hw-answer {
-    min-height: 52px;
-    padding: 12px 16px;
+    height: 44px;
+    width: 280px;
+    margin: 0 auto;
+    padding: 4px 8px;
     background: #fff;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 24px;
+    border: 2px solid #3182ce;
+    border-radius: 6px;
+    font-size: 28px;
     font-weight: 700;
     color: #1a202c;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     text-align: center;
-    font-family: system-ui, -apple-system, sans-serif;
-    transition: all 0.2s ease;
+    font-family: 'Times New Roman', Times, serif;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
     flex-shrink: 0;
-}
-
-.hw-answer:empty::before {
-    content: 'ここに表示されます';
-    color: #9ca3af;
-    font-weight: 400;
-    font-size: 13px;
-    letter-spacing: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: 36px;
+    box-sizing: border-box;
 }
 
 .hw-answer.correct {
-    border-color: #22c55e;
-    background: #f0fdf4;
-    color: #16a34a;
+    border-color: #3182ce;
+    background: #ebf8ff;
+    color: #2b6cb0;
 }
 
 .hw-answer.wrong {
-    border-color: #ef4444;
+    border-color: #dc2626;
     background: #fef2f2;
     color: #dc2626;
 }
@@ -13186,18 +13227,79 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
+}
+
+.hw-canvas-wrapper {
+    position: relative;
+    width: min(260px, 65vw);
+    height: min(260px, 65vw);
+    border: none;
+    border-radius: 0;
+    overflow: hidden;
+    background: #fff;
 }
 
 .hw-canvas {
-    width: min(180px, 42vw);
-    height: min(180px, 42vw);
-    background: #fff;
-    border: 2px solid #3182ce;
-    border-radius: 12px;
+    width: 100%;
+    height: 100%;
+    background: transparent;
     touch-action: none;
     cursor: crosshair;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* キャンバス内の英語4線（上に重ねて表示）間隔 5:6:5 */
+.hw-canvas-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    background-image:
+        /* 1本目：薄い青（一番上） */
+        linear-gradient(#90cdf4 0%, #90cdf4 1px, transparent 1px),
+        /* 2本目：薄い青（31%位置） */
+        linear-gradient(transparent 0%, transparent 31%, #90cdf4 31%, #90cdf4 calc(31% + 1px), transparent calc(31% + 1px)),
+        /* 3本目：太く赤（69%位置・ベースライン） */
+        linear-gradient(transparent 0%, transparent 69%, #dc2626 69%, #dc2626 calc(69% + 3px), transparent calc(69% + 3px)),
+        /* 4本目：薄い青（一番下） */
+        linear-gradient(transparent 0%, transparent calc(100% - 1px), #90cdf4 calc(100% - 1px), #90cdf4 100%);
+}
+
+/* 飛んでいく文字のアニメーション */
+.hw-flying-char {
+    position: fixed;
+    font-size: 72px;
+    font-weight: 400;
+    font-family: 'Times New Roman', Times, serif;
+    color: #3182ce;
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 2000;
+    transform: translate(-50%, -50%) scale(0);
+    animation: popUp 0.2s ease-out forwards;
+}
+
+.hw-flying-char.flying {
+    animation: none;
+    transition: left 0.5s cubic-bezier(0.22, 1, 0.36, 1), 
+                top 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                font-size 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes popUp {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.4);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
 }
 
 /* 認識候補 */
@@ -13298,22 +13400,23 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .hw-submit-btn {
     width: 100%;
     padding: 16px;
-    background: #38a169;
+    background: #3182ce;
     color: #fff;
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.15s ease;
     -webkit-tap-highlight-color: transparent;
     flex-shrink: 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 0 #2c5282;
 }
 
 .hw-submit-btn:active {
-    background: #2f855a;
-    transform: translateY(1px);
+    background: #2b6cb0;
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #2c5282;
 }
 
 .hw-submit-btn:disabled {
@@ -13351,8 +13454,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-result-badge.correct {
-    background: #c6f6d5;
-    color: #38a169;
+    background: #ebf8ff;
+    color: #3182ce;
 }
 
 .hw-result-badge.correct::before {
@@ -13360,7 +13463,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-result-badge.wrong {
-    background: #fed7d7;
+    background: #fff5f5;
     color: #dc2626;
 }
 
@@ -13375,9 +13478,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-result-word span {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 32px;
+    font-weight: 400;
+    font-family: 'Times New Roman', Times, serif;
     color: #1a202c;
+    letter-spacing: 2px;
 }
 
 .hw-audio-btn {
@@ -13405,19 +13510,20 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     background: #3182ce;
     color: #fff;
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.15s ease;
     -webkit-tap-highlight-color: transparent;
     margin-top: auto;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 0 #2c5282;
 }
 
 .hw-next-btn:active {
-    background: #2c5282;
-    transform: translateY(1px);
+    background: #2b6cb0;
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #2c5282;
 }
 
 /* ローディング */
