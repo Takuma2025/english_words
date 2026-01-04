@@ -390,6 +390,9 @@ body.learning-mode .app-header {
     transition: background 0.2s, transform 0.1s;
 }
 
+.fixed-back-btn:hover {
+    background: rgba(241, 245, 249, 0.98);
+}
 
 .fixed-back-btn:active {
     transform: scale(0.95);
@@ -911,6 +914,10 @@ body.learning-mode .app-header {
     box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
 }
 
+.back-btn:hover {
+    background: #0055ca;
+    color: #ffffff;
+}
 
 
 .section-title {
@@ -1163,8 +1170,9 @@ body.learning-mode .app-header {
     transition: all 0.2s;
 }
 
-.learning-challenge-info-btn:active {
-    opacity: 0.7;
+.learning-challenge-info-btn:hover {
+    background: #e5e7eb;
+    color: #374151;
 }
 
 .learning-challenge-info-btn svg {
@@ -1252,8 +1260,9 @@ body.learning-mode .app-header {
     box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
 }
 
-.learning-challenge-btn:active {
-    opacity: 0.7;
+.learning-challenge-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);
 }
 
 .learning-challenge-btn:active {
@@ -2767,8 +2776,8 @@ body.learning-mode .app-header {
     box-sizing: border-box;
     text-align: left;
     cursor: pointer;
-    transition: background-color 0.15s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .category-card:active {
@@ -2909,8 +2918,8 @@ body.learning-mode .app-header {
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.study-mode-choice-btn:active {
-    opacity: 0.7;
+.study-mode-choice-btn:hover {
+    opacity: 0.9;
 }
 
 .study-mode-choice-btn:active {
@@ -2958,8 +2967,8 @@ body.learning-mode .app-header {
     cursor: pointer;
 }
 
-.study-mode-cancel-btn:active {
-    opacity: 0.7;
+.study-mode-cancel-btn:hover {
+    background: #d1d5db;
 }
 
 /* 学習メニュー */
@@ -3711,8 +3720,8 @@ body.learning-mode .app-header {
     transition: background-color 0.2s;
 }
 
-.pause-quit-btn:active {
-    opacity: 0.7;
+.pause-quit-btn:hover {
+    background: #e5e7eb;
 }
 
 .pause-quit-btn:active {
@@ -4927,8 +4936,8 @@ body.reorder-mode-active .word-card-container {
     transition: background 0.15s ease;
 }
 
-.filter-dropdown-item:active {
-    opacity: 0.7;
+.filter-dropdown-item:hover {
+    background: #f8fafc;
 }
 
 .filter-dropdown-item input[type="checkbox"] {
@@ -5088,8 +5097,8 @@ body.reorder-mode-active .word-card-container {
     white-space: nowrap;
 }
 
-.red-sheet-toggle:active {
-    opacity: 0.7;
+.red-sheet-toggle:hover {
+    background: #f8fafc;
 }
 
 .red-sheet-toggle.visible {
@@ -5131,6 +5140,9 @@ body.reorder-mode-active .word-card-container {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.red-sheet-toggle.sticky:hover {
+    background: #f8fafc;
+}
 
 .red-sheet-toggle.sticky:has(.red-sheet-checkbox:checked) {
     background: #fef2f2;
@@ -5376,8 +5388,8 @@ body.reorder-mode-active .word-card-container {
     transition: background 0.15s;
 }
 
-.load-more-btn:active {
-    opacity: 0.7;
+.load-more-btn:hover {
+    background: #f3f4f6;
 }
 
 .load-more-btn:active {

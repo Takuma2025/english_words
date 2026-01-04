@@ -1035,7 +1035,6 @@ function initSchoolSelector() {
         
         schoolHandle.addEventListener('touchstart', (e) => {
             startY = e.touches[0].clientY;
-            currentY = startY;
             isDragging = true;
             schoolSheet.style.transition = 'none';
         }, { passive: true });
@@ -1056,25 +1055,14 @@ function initSchoolSelector() {
             isDragging = false;
             
             const deltaY = currentY - startY;
+            schoolSheet.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
             
             // 80px以上下にドラッグしたら閉じる
             if (deltaY > 80) {
-                schoolSheet.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
-                schoolSheet.style.transform = 'translateY(100%)';
-                setTimeout(() => {
-                    closeModal(false);
-                    // インラインスタイルをクリアしてCSSに戻す
-                    schoolSheet.style.transition = '';
-                    schoolSheet.style.transform = '';
-                }, 300);
+                closeModal();
             } else {
-                // 元に戻す（インラインスタイルをクリア）
-                schoolSheet.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+                // 元に戻す
                 schoolSheet.style.transform = 'translateY(0)';
-                setTimeout(() => {
-                    schoolSheet.style.transition = '';
-                    schoolSheet.style.transform = '';
-                }, 300);
             }
         });
     }
