@@ -1348,12 +1348,8 @@ body.learning-mode .app-header {
     transition: box-shadow 0.2s ease, transform 0.1s ease;
 }
 
-.school-card:hover {
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
-}
-
 .school-card:active {
-    transform: scale(0.99);
+    background: #f8fafc;
 }
 
 .school-card.hidden {
@@ -1458,11 +1454,6 @@ body.learning-mode .app-header {
     box-shadow: 0 2px 6px rgba(0, 85, 202, 0.3);
 }
 
-.school-card-action:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(0, 85, 202, 0.4);
-}
-
 .school-card-action:active {
     transform: scale(0.95);
 }
@@ -1483,13 +1474,8 @@ body.learning-mode .app-header {
     transition: background 0.15s ease, color 0.15s ease;
 }
 
-.school-card-edit:hover {
-    background: #e2e8f0;
-    color: #475569;
-}
-
 .school-card-edit:active {
-    background: #cbd5e1;
+    background: #e2e8f0;
 }
 
 /* 志望校設定時のカードレイアウト */
@@ -2020,13 +2006,8 @@ body.learning-mode .app-header {
     transition: all 0.15s ease;
 }
 
-.school-gear-btn:hover {
-    background: #f8fafc;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
 .school-gear-btn:active {
-    transform: translateY(1px);
+    background: #f8fafc;
 }
 
 /* =============================================
@@ -2165,12 +2146,8 @@ body.learning-mode .app-header {
     flex-shrink: 0;
 }
 
-.school-modal-close:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
-
 .school-modal-close:active {
-    transform: scale(0.92);
+    background: rgba(255, 255, 255, 0.25);
 }
 
 /* コンテンツエリア */
@@ -2212,11 +2189,6 @@ body.learning-mode .app-header {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.18s ease;
-}
-
-.school-filter-tab:hover {
-    background: #f1f5f9;
-    color: #475569;
 }
 
 .school-filter-tab.active {
@@ -2367,12 +2339,8 @@ body.learning-mode .app-header {
     font-weight: 600;
 }
 
-.school-list-item:hover {
-    background: #e0f2fe !important;
-}
-
 .school-list-item:active {
-    background: #bae6fd !important;
+    background: #e0f2fe !important;
 }
 
 /* 選択状態 */
@@ -2488,7 +2456,7 @@ body.learning-mode .app-header {
     margin-top: 0;
 }
 
-.school-reset-btn:hover {
+.school-reset-btn:active {
     background: #2563eb;
 }
 
@@ -2531,18 +2499,11 @@ body.learning-mode .app-header {
     -webkit-user-select: none;
 }
 
-.school-confirm-btn:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 
-        0 5px 0 #003380,
-        0 8px 24px rgba(0, 85, 202, 0.4);
-}
-
 .school-confirm-btn:active:not(:disabled) {
-    transform: translateY(3px);
+    transform: translateY(2px);
     box-shadow: 
-        0 1px 0 #003380,
-        0 2px 8px rgba(0, 85, 202, 0.3);
+        0 2px 0 #003380,
+        0 3px 10px rgba(0, 85, 202, 0.3);
 }
 
 /* 無効状態 */
@@ -2555,11 +2516,6 @@ body.learning-mode .app-header {
     transform: none;
 }
 
-.school-confirm-btn:disabled:hover,
-.school-confirm-btn.disabled:hover {
-    transform: none;
-    box-shadow: none;
-}
 
 .school-confirm-btn-text {
     letter-spacing: 0.02em;
@@ -3077,11 +3033,16 @@ body.learning-mode .app-header {
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .learning-menu-category-btn:hover {
     border-color: #3b82f6;
     background: #eff6ff;
+}
+
+.learning-menu-category-btn:active {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .learning-menu-category-title {
@@ -3108,11 +3069,16 @@ body.learning-mode .app-header {
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .learning-menu-subcategory-btn:hover {
     border-color: #3b82f6;
     background: #eff6ff;
+}
+
+.learning-menu-subcategory-btn:active {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .learning-menu-subcategory-btn.touch-hover {
@@ -12527,10 +12493,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     transition: all 0.2s ease;
 }
 
-.school-toggle:hover {
-    color: #1d4ed8;
-}
-
 .school-toggle-icon {
     transition: transform 0.2s ease;
     flex-shrink: 0;
@@ -12601,546 +12563,4 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         transform: none;
         box-shadow: inherit;
     }
-}
-
-/* ===============================================
-   テストモード選択オプション
-   =============================================== */
-.test-mode-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.test-mode-radio {
-    display: block;
-    cursor: pointer;
-}
-
-.test-mode-radio input[type="radio"] {
-    display: none;
-}
-
-.test-mode-option-content {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    transition: all 0.2s ease;
-}
-
-.test-mode-radio input[type="radio"]:checked + .test-mode-option-content {
-    background: #eff6ff;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.test-mode-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    background: #e2e8f0;
-    border-radius: 10px;
-    color: #64748b;
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-}
-
-.test-mode-radio input[type="radio"]:checked + .test-mode-option-content .test-mode-icon {
-    background: #3b82f6;
-    color: #ffffff;
-}
-
-.test-mode-text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.test-mode-label {
-    font-size: 15px;
-    font-weight: 600;
-    color: #1e293b;
-}
-
-.test-mode-desc {
-    font-size: 12px;
-    color: #64748b;
-}
-
-/* 入力方法選択セクション */
-.input-method-section {
-    margin-top: 16px;
-    padding: 14px;
-    background: #f1f5f9;
-    border-radius: 10px;
-}
-
-.input-method-section.hidden {
-    display: none;
-}
-
-.input-method-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: #475569;
-    margin-bottom: 10px;
-}
-
-.input-method-options {
-    display: flex;
-    gap: 10px;
-}
-
-.input-method-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    background: #ffffff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 8px;
-    cursor: pointer;
-    flex: 1;
-    transition: all 0.2s ease;
-}
-
-.input-method-checkbox:has(input:checked) {
-    background: #eff6ff;
-    border-color: #3b82f6;
-}
-
-.input-method-checkbox input[type="checkbox"] {
-    display: none;
-}
-
-.input-method-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #94a3b8;
-    transition: color 0.2s ease;
-}
-
-.input-method-checkbox:has(input:checked) .input-method-icon {
-    color: #3b82f6;
-}
-
-.input-method-label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #64748b;
-    transition: color 0.2s ease;
-}
-
-.input-method-checkbox:has(input:checked) .input-method-label {
-    color: #1e40af;
-}
-
-/* ===============================================
-   手書き入力モード
-   =============================================== */
-.handwriting-mode {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 16px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.handwriting-mode.hidden {
-    display: none;
-}
-
-.handwriting-content {
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
-
-.handwriting-question {
-    text-align: center;
-    padding: 12px 16px;
-    background: #f8fafc;
-    border-radius: 12px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.handwriting-meaning-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.handwriting-meaning {
-    font-size: 22px;
-    font-weight: 600;
-    color: #1e293b;
-    line-height: 1.4;
-}
-
-/* 入力エリア */
-.handwriting-input-area {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 56px;
-    padding: 12px 16px;
-    background: #ffffff;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    width: 100%;
-    box-sizing: border-box;
-    position: relative;
-}
-
-.handwriting-letters {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 2px;
-    font-size: 28px;
-    font-weight: 600;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #1e293b;
-    letter-spacing: 2px;
-    min-height: 40px;
-}
-
-.handwriting-letter {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 24px;
-    height: 40px;
-    animation: letterAppear 0.2s ease-out;
-}
-
-@keyframes letterAppear {
-    from {
-        opacity: 0;
-        transform: scale(0.5);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.handwriting-cursor {
-    width: 2px;
-    height: 32px;
-    background: #3b82f6;
-    animation: cursorBlink 1s infinite;
-}
-
-@keyframes cursorBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-/* Canvasエリア */
-.handwriting-canvas-container {
-    position: relative;
-    width: 280px;
-    height: 280px;
-    background: #ffffff;
-    border: 3px solid #cbd5e1;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
-    touch-action: none;
-}
-
-#handwritingCanvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    cursor: crosshair;
-    touch-action: none;
-}
-
-.handwriting-canvas-hint {
-    position: absolute;
-    bottom: 8px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 11px;
-    color: #94a3b8;
-    pointer-events: none;
-}
-
-/* 認識候補 */
-.handwriting-candidates {
-    width: 100%;
-    padding: 12px;
-    background: #f1f5f9;
-    border-radius: 10px;
-}
-
-.handwriting-candidates.hidden {
-    display: none;
-}
-
-.candidates-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: #64748b;
-    margin-bottom: 8px;
-}
-
-.candidates-list {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.candidate-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background: #ffffff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.candidate-item:hover {
-    background: #eff6ff;
-    border-color: #3b82f6;
-}
-
-.candidate-item.selected {
-    background: #3b82f6;
-    border-color: #3b82f6;
-    color: #ffffff;
-}
-
-.candidate-letter {
-    font-size: 20px;
-    font-weight: 700;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.candidate-score {
-    font-size: 11px;
-    color: #94a3b8;
-}
-
-.candidate-item.selected .candidate-score {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-/* 操作ボタン */
-.handwriting-actions {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    justify-content: center;
-}
-
-.handwriting-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.handwriting-btn-clear {
-    background: #f1f5f9;
-    color: #64748b;
-}
-
-.handwriting-btn-clear:hover {
-    background: #e2e8f0;
-}
-
-.handwriting-btn-recognize {
-    background: #3b82f6;
-    color: #ffffff;
-    flex: 1;
-    max-width: 140px;
-}
-
-.handwriting-btn-recognize:hover {
-    background: #2563eb;
-}
-
-.handwriting-btn-recognize:disabled {
-    background: #94a3b8;
-    cursor: not-allowed;
-}
-
-.handwriting-btn-backspace {
-    background: #fee2e2;
-    color: #dc2626;
-    padding: 12px 16px;
-}
-
-.handwriting-btn-backspace:hover {
-    background: #fecaca;
-}
-
-/* 結果表示 */
-.handwriting-result {
-    width: 100%;
-    padding: 16px;
-    background: #f8fafc;
-    border-radius: 12px;
-    text-align: center;
-}
-
-.handwriting-result.hidden {
-    display: none;
-}
-
-/* 解答ボタン */
-.handwriting-submit-actions {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-}
-
-.handwriting-submit-actions .keyboard-action-btn {
-    flex: 1;
-}
-
-/* モード切替ボタン */
-.handwriting-mode-toggle {
-    margin-top: 8px;
-}
-
-.mode-toggle-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 16px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #64748b;
-    background: transparent;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.mode-toggle-btn:hover {
-    background: #f8fafc;
-    color: #3b82f6;
-    border-color: #3b82f6;
-}
-
-/* モバイル対応 */
-@media (max-width: 360px) {
-    .handwriting-canvas-container {
-        width: 240px;
-        height: 240px;
-    }
-    
-    .handwriting-letters {
-        font-size: 24px;
-    }
-    
-    .handwriting-meaning {
-        font-size: 18px;
-    }
-    
-    .input-method-options {
-        flex-direction: column;
-    }
-}
-
-/* 手書きモードの結果表示 */
-.handwriting-result .result-message {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
-.handwriting-result .result-message.correct {
-    color: #16a34a;
-}
-
-.handwriting-result .result-message.incorrect {
-    color: #dc2626;
-}
-
-.handwriting-result .correct-answer-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-}
-
-.handwriting-result .correct-word {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1e293b;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* 手書きモードのWord Number */
-.handwriting-mode .word-number {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #64748b;
-    background: #f1f5f9;
-    padding: 4px 8px;
-    border-radius: 6px;
-}
-
-/* 手書きモードのコンテンツ配置 */
-.handwriting-content {
-    position: relative;
-    padding-top: 40px;
-}
-
-/* タッチ操作でのスクロール防止 */
-.handwriting-canvas-container {
-    touch-action: none;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-/* キャンバスのアクティブ状態 */
-.handwriting-canvas-container:active {
-    border-color: #3b82f6;
-}
-
-/* 候補選択時のアニメーション */
-.candidate-item {
-    transition: all 0.15s ease;
-}
-
-.candidate-item:active {
-    transform: scale(0.95);
 }

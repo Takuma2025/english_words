@@ -15,8 +15,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
-    <!-- TensorFlow.js for handwriting recognition -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
     <link rel="icon" href="app.png" type="image/png">
     <link rel="apple-touch-icon" href="app.png">
     <link rel="apple-touch-icon" sizes="192x192" href="app.png">
@@ -887,86 +885,6 @@
                         </div>
                     </div>
                     
-                    <!-- 日本語→英語手書き入力モード -->
-                    <div class="handwriting-mode hidden" id="handwritingMode">
-                        <div class="handwriting-content">
-                            <!-- No. -->
-                            <div class="word-number" id="handwritingWordNumber">No.1</div>
-                            <div class="handwriting-question">
-                                <div class="handwriting-meaning-wrapper">
-                                    <span class="pos-inline part-of-speech" id="handwritingPosInline"></span>
-                                    <div class="handwriting-meaning" id="handwritingMeaning">意味</div>
-                                </div>
-                            </div>
-                            <!-- 入力エリア -->
-                            <div class="handwriting-input-area">
-                                <div class="handwriting-letters" id="handwritingLetters">
-                                    <!-- 入力された文字が表示される -->
-                                </div>
-                                <div class="handwriting-cursor"></div>
-                            </div>
-                            <!-- Canvasエリア -->
-                            <div class="handwriting-canvas-container">
-                                <canvas id="handwritingCanvas" width="280" height="280"></canvas>
-                                <div class="handwriting-canvas-hint">ここに1文字ずつ書いてください</div>
-                            </div>
-                            <!-- 認識候補表示 -->
-                            <div class="handwriting-candidates hidden" id="handwritingCandidates">
-                                <div class="candidates-title">候補</div>
-                                <div class="candidates-list" id="candidatesList">
-                                    <!-- 認識候補が表示される -->
-                                </div>
-                            </div>
-                            <!-- 操作ボタン -->
-                            <div class="handwriting-actions">
-                                <button class="handwriting-btn handwriting-btn-clear" id="handwritingClearBtn">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                                    </svg>
-                                    消す
-                                </button>
-                                <button class="handwriting-btn handwriting-btn-recognize" id="handwritingRecognizeBtn">
-                                    認識
-                                </button>
-                                <button class="handwriting-btn handwriting-btn-backspace" id="handwritingBackspaceBtn">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
-                                        <line x1="18" y1="9" x2="12" y2="15"/>
-                                        <line x1="12" y1="9" x2="18" y2="15"/>
-                                    </svg>
-                                </button>
-                            </div>
-                            <!-- 結果表示 -->
-                            <div class="handwriting-result hidden" id="handwritingResult">
-                                <div class="result-message" id="handwritingResultMessage"></div>
-                                <div class="correct-answer-container">
-                                    <span class="correct-word" id="handwritingCorrectAnswer"></span>
-                                    <button class="audio-btn" id="handwritingAudioBtn" title="音声を再生">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-                                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- 解答ボタン -->
-                            <div class="handwriting-submit-actions">
-                                <button class="keyboard-action-btn" id="handwritingPassBtn">パス</button>
-                                <button class="keyboard-action-btn keyboard-action-btn-primary" id="handwritingSubmitBtn">解答</button>
-                            </div>
-                            <!-- キーボード入力切り替え -->
-                            <div class="handwriting-mode-toggle">
-                                <button class="mode-toggle-btn" id="switchToKeyboardBtn">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="2" y="4" width="20" height="16" rx="2"/>
-                                        <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 16h8"/>
-                                    </svg>
-                                    キーボード入力に切り替え
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
                     <!-- 整序英作文モード -->
                     <div class="reorder-mode hidden" id="reorderMode">
                         <!-- 日本語表示 -->
@@ -1337,69 +1255,6 @@
         </div>
         <div class="filter-sheet-content">
             <div class="filter-card-container">
-                <div class="filter-section">
-                    <div class="filter-section-title">テストモード</div>
-                    <div class="test-mode-options">
-                        <label class="test-mode-radio">
-                            <input type="radio" name="testMode" id="testModeEnToJp" value="en-to-jp" checked>
-                            <div class="test-mode-option-content">
-                                <div class="test-mode-icon">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="4" width="18" height="16" rx="2"/>
-                                        <path d="M7 8h10M7 12h6"/>
-                                    </svg>
-                                </div>
-                                <div class="test-mode-text">
-                                    <span class="test-mode-label">英語 → 日本語</span>
-                                    <span class="test-mode-desc">英単語を見て意味を答える</span>
-                                </div>
-                            </div>
-                        </label>
-                        <label class="test-mode-radio">
-                            <input type="radio" name="testMode" id="testModeJpToEn" value="jp-to-en">
-                            <div class="test-mode-option-content">
-                                <div class="test-mode-icon">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                    </svg>
-                                </div>
-                                <div class="test-mode-text">
-                                    <span class="test-mode-label">日本語 → 英語</span>
-                                    <span class="test-mode-desc">意味を見て英単語を入力する</span>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                    <!-- 日本語→英語モードの入力方法選択 -->
-                    <div class="input-method-section hidden" id="inputMethodSection">
-                        <div class="input-method-title">入力方法</div>
-                        <div class="input-method-options">
-                            <label class="input-method-checkbox">
-                                <input type="checkbox" id="inputMethodKeyboard" checked>
-                                <span class="input-method-icon">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="2" y="4" width="20" height="16" rx="2"/>
-                                        <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M8 16h8"/>
-                                    </svg>
-                                </span>
-                                <span class="input-method-label">キーボード入力</span>
-                            </label>
-                            <label class="input-method-checkbox">
-                                <input type="checkbox" id="inputMethodHandwriting">
-                                <span class="input-method-icon">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 19l7-7 3 3-7 7-3-3z"/>
-                                        <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
-                                        <path d="M2 2l7.586 7.586"/>
-                                        <circle cx="11" cy="11" r="2"/>
-                                    </svg>
-                                </span>
-                                <span class="input-method-label">手書き入力</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="filter-section">
                     <div class="filter-section-title">出題順</div>
                     <div class="order-options">
