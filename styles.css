@@ -2572,6 +2572,11 @@ body.learning-mode .app-header {
     text-align: left;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    transition: transform 0.1s ease;
+}
+
+.category-accordion-header:hover {
+    background: #ffffff;
 }
 
 .category-accordion-header:active {
@@ -2638,6 +2643,11 @@ body.learning-mode .app-header {
     -webkit-tap-highlight-color: transparent;
     position: relative;
     min-height: 60px;
+    transition: transform 0.1s ease;
+}
+
+.category-accordion-item:hover {
+    background: #ffffff;
 }
 
 .accordion-item-main {
@@ -2660,6 +2670,10 @@ body.learning-mode .app-header {
     background: #ffffff;
 }
 
+.category-accordion-item-green:hover {
+    background: #ffffff;
+}
+
 .category-accordion-item-green:active {
     transform: scale(0.99);
     background: #ffffff;
@@ -2667,6 +2681,10 @@ body.learning-mode .app-header {
 
 /* 英文でよく登場する機能語（白） */
 .category-accordion-item-purple {
+    background: #ffffff;
+}
+
+.category-accordion-item-purple:hover {
     background: #ffffff;
 }
 
@@ -2780,6 +2798,11 @@ body.learning-mode .app-header {
     cursor: pointer;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     -webkit-tap-highlight-color: transparent;
+    transition: transform 0.1s ease;
+}
+
+.category-card:hover {
+    background: #ffffff;
 }
 
 .category-card:active {
@@ -2800,6 +2823,11 @@ body.learning-mode .app-header {
     overflow: hidden;
     border-radius: 0;
     box-shadow: none;
+    transition: transform 0.1s ease;
+}
+
+.category-card.category-card-with-actions:hover {
+    background: #ffffff;
 }
 
 .category-card.category-card-with-actions:active:not(:has(.course-side-btn:active)) {
@@ -2986,9 +3014,13 @@ body.learning-mode .app-header {
     border-radius: 8px;
     background: white;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform 0.1s ease;
     text-align: left;
     -webkit-tap-highlight-color: transparent;
+}
+
+.learning-menu-category-btn:hover {
+    background: #ffffff;
 }
 
 .learning-menu-category-btn:active {
@@ -3018,14 +3050,18 @@ body.learning-mode .app-header {
     border-radius: 6px;
     background: white;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform 0.1s ease;
     text-align: center;
     -webkit-tap-highlight-color: transparent;
 }
 
+.learning-menu-subcategory-btn:hover {
+    background: #ffffff;
+}
+
 .learning-menu-subcategory-btn:active {
     transform: scale(0.98);
-    background: #f9fafb;
+    background: #ffffff;
 }
 
 .learning-menu-subcategory-title {
