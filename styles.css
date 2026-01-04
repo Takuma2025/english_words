@@ -2576,6 +2576,7 @@ body.learning-mode .app-header {
 
 .category-accordion-header:active {
     transform: scale(0.99);
+    background: #ffffff;
 }
 
 .category-accordion-header .category-info {
@@ -2651,6 +2652,7 @@ body.learning-mode .app-header {
 
 .category-accordion-item:active {
     transform: scale(0.99);
+    background: #ffffff;
 }
 
 /* 日常生活でよく使う生活語彙（白） */
@@ -2660,6 +2662,7 @@ body.learning-mode .app-header {
 
 .category-accordion-item-green:active {
     transform: scale(0.99);
+    background: #ffffff;
 }
 
 /* 英文でよく登場する機能語（白） */
@@ -2669,6 +2672,7 @@ body.learning-mode .app-header {
 
 .category-accordion-item-purple:active {
     transform: scale(0.99);
+    background: #ffffff;
 }
 
 .accordion-item-icon {
@@ -2780,6 +2784,7 @@ body.learning-mode .app-header {
 
 .category-card:active {
     transform: scale(0.98);
+    background: #ffffff;
 }
 
 .category-card:last-child {
@@ -2799,6 +2804,7 @@ body.learning-mode .app-header {
 
 .category-card.category-card-with-actions:active:not(:has(.course-side-btn:active)) {
     transform: scale(0.98);
+    background: #ffffff;
 }
 
 .category-card.category-card-with-actions .category-info {
@@ -2987,6 +2993,7 @@ body.learning-mode .app-header {
 
 .learning-menu-category-btn:active {
     transform: scale(0.98);
+    background: #ffffff;
 }
 
 .learning-menu-category-title {
@@ -3018,6 +3025,7 @@ body.learning-mode .app-header {
 
 .learning-menu-subcategory-btn:active {
     transform: scale(0.98);
+    background: #f9fafb;
 }
 
 .learning-menu-subcategory-title {
