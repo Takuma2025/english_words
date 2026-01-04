@@ -14895,13 +14895,38 @@ async function recognizeHWQuizCanvas() {
             return;
         }
         
-        // 最初のセグメントを認識（1文字ずつ処理）
-        const segment = segments[0];
-        const result = await recognizeSingleSegment(segment);
+        // 最大3マス同時並行で認識
+        const maxSegments = Math.min(segments.length, 3);
+        const recognitionPromises = [];
         
-        if (result && result.char) {
-            // 文字を処理（セグメントの位置から）
-            flyCharFromSegment(result.char, segment);
+        for (let i = 0; i < maxSegments; i++) {
+            recognitionPromises.push(
+                recognizeSingleSegment(segments[i]).then(result => ({
+                    result,
+                    segment: segments[i],
+                    index: i
+                }))
+            );
+        }
+        
+        // 全ての認識を並列実行
+        const results = await Promise.all(recognitionPromises);
+        
+        // 左から順にソート
+        results.sort((a, b) => a.segment.x - b.segment.x);
+        
+        // 順番に飛ばす（少し遅延を入れて）
+        for (let i = 0; i < results.length; i++) {
+            const { result, segment } = results[i];
+            setTimeout(() => {
+                if (result && result.char && result.confidence > 0.3) {
+                    // 認識成功
+                    flyCharFromSegment(result.char, segment);
+                } else {
+                    // 認識失敗 - ?マークを表示
+                    showRecognitionError(segment);
+                }
+            }, i * 100); // 100msずつ遅延
         }
         
     } catch (error) {
@@ -14970,12 +14995,53 @@ function drawSegmentLine(segmentEndX) {
 }
 
 /**
+ * 認識失敗時に?マークを表示
+ */
+function showRecognitionError(segment) {
+    const canvas = document.getElementById('hwQuizCanvas');
+    if (!canvas) return;
+    
+    const canvasRect = canvas.getBoundingClientRect();
+    const scaleX = canvasRect.width / canvas.width;
+    const scaleY = canvasRect.height / canvas.height;
+    
+    // セグメント部分を消去
+    hwQuizCtx.fillStyle = '#ffffff';
+    hwQuizCtx.fillRect(segment.x - 2, segment.y - 2, segment.width + 4, segment.height + 4);
+    
+    // ?マークを表示
+    const errorMark = document.createElement('div');
+    errorMark.textContent = '?';
+    errorMark.style.position = 'fixed';
+    errorMark.style.left = (canvasRect.left + (segment.x + segment.width / 2) * scaleX) + 'px';
+    errorMark.style.top = (canvasRect.top + (segment.y + segment.height / 2) * scaleY) + 'px';
+    errorMark.style.transform = 'translate(-50%, -50%)';
+    errorMark.style.fontSize = '48px';
+    errorMark.style.fontWeight = 'bold';
+    errorMark.style.color = '#ef4444';
+    errorMark.style.pointerEvents = 'none';
+    errorMark.style.zIndex = '2000';
+    errorMark.style.transition = 'all 0.5s ease-out';
+    document.body.appendChild(errorMark);
+    
+    // フェードアウト
+    setTimeout(() => {
+        errorMark.style.opacity = '0';
+        errorMark.style.transform = 'translate(-50%, -50%) scale(1.5)';
+    }, 100);
+    
+    // 削除
+    setTimeout(() => {
+        errorMark.remove();
+    }, 600);
+}
+
+/**
  * セグメント位置から文字を処理
  */
 function flyCharFromSegment(char, segment) {
     const canvas = document.getElementById('hwQuizCanvas');
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
-    const canvasWrapper = document.querySelector('.hw-canvas-wrapper');
     
     if (!canvas || !answerDisplay) {
         hwQuizConfirmedText += char;
@@ -14996,55 +15062,68 @@ function flyCharFromSegment(char, segment) {
     const captureCtx = captureCanvas.getContext('2d');
     captureCtx.drawImage(canvas, captureX, captureY, captureWidth, captureHeight, 0, 0, captureWidth, captureHeight);
     
-    // キャンバスからセグメント部分を即座に消去（認識継続のため）
+    // 白い背景を透明にする
+    const imageData = captureCtx.getImageData(0, 0, captureWidth, captureHeight);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        // 白に近いピクセル（RGB各230以上）を透明に
+        if (data[i] > 230 && data[i + 1] > 230 && data[i + 2] > 230) {
+            data[i + 3] = 0; // アルファを0に
+        }
+    }
+    captureCtx.putImageData(imageData, 0, 0);
+    
+    // キャンバスからセグメント部分を即座に消去（新しい文字が書けるように）
     hwQuizCtx.fillStyle = '#ffffff';
     hwQuizCtx.fillRect(captureX - 2, captureY - 2, captureWidth + 4, captureHeight + 4);
     
-    // オーバーレイで薄いグレーの文字を表示
-    if (canvasWrapper) {
-        const canvasRect = canvas.getBoundingClientRect();
-        const wrapperRect = canvasWrapper.getBoundingClientRect();
-        const scaleX = canvasRect.width / canvas.width;
-        const scaleY = canvasRect.height / canvas.height;
-        
-        // オーバーレイ画像を作成
-        const overlay = document.createElement('img');
-        overlay.src = captureCanvas.toDataURL();
-        overlay.className = 'hw-fading-overlay';
-        overlay.style.position = 'absolute';
-        overlay.style.left = (captureX * scaleX) + 'px';
-        overlay.style.top = (captureY * scaleY) + 'px';
-        overlay.style.width = (captureWidth * scaleX) + 'px';
-        overlay.style.height = (captureHeight * scaleY) + 'px';
-        overlay.style.opacity = '0.25';
-        overlay.style.pointerEvents = 'none';
-        overlay.style.zIndex = '5';
-        canvasWrapper.appendChild(overlay);
-        
-        // 区切り線オーバーレイ
-        const lineX = (segment.x + segment.width + 5) * scaleX;
-        const line = document.createElement('div');
-        line.className = 'hw-fading-line';
-        line.style.position = 'absolute';
-        line.style.left = lineX + 'px';
-        line.style.top = '0';
-        line.style.width = '1px';
-        line.style.height = '100%';
-        line.style.background = 'rgba(150, 150, 150, 0.5)';
-        line.style.pointerEvents = 'none';
-        line.style.zIndex = '5';
-        canvasWrapper.appendChild(line);
-        
-        // 2秒後にオーバーレイを削除
-        setTimeout(() => {
-            overlay.remove();
-            line.remove();
-        }, 2000);
-    }
+    // 書いた文字そのものを飛ばすアニメーション
+    const canvasRect = canvas.getBoundingClientRect();
+    const scaleX = canvasRect.width / canvas.width;
+    const scaleY = canvasRect.height / canvas.height;
     
-    // 文字をすぐに追加
-    hwQuizConfirmedText += char;
-    updateHWQuizAnswerDisplay();
+    // 飛ぶ画像要素を作成
+    const flyingImg = document.createElement('img');
+    flyingImg.src = captureCanvas.toDataURL();
+    flyingImg.style.position = 'fixed';
+    flyingImg.style.left = (canvasRect.left + captureX * scaleX + captureWidth * scaleX / 2) + 'px';
+    flyingImg.style.top = (canvasRect.top + captureY * scaleY + captureHeight * scaleY / 2) + 'px';
+    flyingImg.style.width = (captureWidth * scaleX) + 'px';
+    flyingImg.style.height = (captureHeight * scaleY) + 'px';
+    flyingImg.style.transform = 'translate(-50%, -50%)';
+    flyingImg.style.pointerEvents = 'none';
+    flyingImg.style.zIndex = '2000';
+    flyingImg.style.transition = 'all 0.35s ease-in-out';
+    document.body.appendChild(flyingImg);
+    
+    // 回答欄の位置を計算
+    const answerRect = answerDisplay.getBoundingClientRect();
+    const currentText = hwQuizConfirmedText || '';
+    const tempSpan = document.createElement('span');
+    tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:48px;font-weight:700;font-family:"Times New Roman",serif;letter-spacing:2px;';
+    tempSpan.textContent = currentText;
+    document.body.appendChild(tempSpan);
+    const textWidth = tempSpan.offsetWidth;
+    tempSpan.remove();
+    
+    const targetX = answerRect.left + answerRect.width / 2 + textWidth / 2;
+    const targetY = answerRect.top + answerRect.height / 2;
+    
+    // 飛ばす
+    requestAnimationFrame(() => {
+        flyingImg.style.left = targetX + 'px';
+        flyingImg.style.top = targetY + 'px';
+        flyingImg.style.width = '30px';
+        flyingImg.style.height = '30px';
+        flyingImg.style.opacity = '0.5';
+    });
+    
+    // アニメーション完了後に文字を追加して画像を削除
+    setTimeout(() => {
+        hwQuizConfirmedText += char;
+        updateHWQuizAnswerDisplay();
+        flyingImg.remove();
+    }, 350);
 }
 
 /**
