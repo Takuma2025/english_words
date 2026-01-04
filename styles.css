@@ -979,10 +979,6 @@ body.learning-mode .app-header {
     top: 0;
 }
 
-.course-action-btn:hover {
-    background: #f9fafb;
-}
-
 .course-action-btn:active {
     top: 2px;
     box-shadow: 0 0 0 #d1d5db, 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -993,10 +989,6 @@ body.learning-mode .app-header {
     box-shadow: 0 2px 0 #93c5fd, 0 2px 6px rgba(59, 130, 246, 0.15);
 }
 
-.course-action-btn.input-btn:hover {
-    background: #eff6ff;
-}
-
 .course-action-btn.input-btn:active {
     top: 2px;
     box-shadow: 0 0 0 #93c5fd, 0 1px 2px rgba(59, 130, 246, 0.1);
@@ -1005,10 +997,6 @@ body.learning-mode .app-header {
 .course-action-btn.output-btn {
     background: #ffffff;
     box-shadow: 0 2px 0 #0055ca, 0 2px 6px rgba(0, 85, 202, 0.2);
-}
-
-.course-action-btn.output-btn:hover {
-    background: #eff6ff;
 }
 
 .course-action-btn.output-btn:active {
@@ -1345,7 +1333,8 @@ body.learning-mode .app-header {
 }
 
 .school-card:active {
-    background: #f8fafc;
+    transform: scale(0.98);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.15);
 }
 
 .school-card.hidden {
@@ -1471,7 +1460,8 @@ body.learning-mode .app-header {
 }
 
 .school-card-edit:active {
-    background: #e2e8f0;
+    transform: scale(0.92);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.2);
 }
 
 /* 志望校設定時のカードレイアウト */
@@ -2003,7 +1993,8 @@ body.learning-mode .app-header {
 }
 
 .school-gear-btn:active {
-    background: #f8fafc;
+    transform: scale(0.97);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.12);
 }
 
 /* =============================================
@@ -2554,6 +2545,10 @@ body.learning-mode .app-header {
     color: #ffffff;
 }
 
+.course-tab:active {
+    transform: scale(0.97);
+}
+
 .course-selection-image {
     position: fixed;
     bottom: 16px;
@@ -2593,7 +2588,8 @@ body.learning-mode .app-header {
 }
 
 .category-accordion-header:active {
-    background-color: #f3f4f6;
+    transform: scale(0.99);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.12);
 }
 
 .category-accordion-header .category-info {
@@ -2672,7 +2668,8 @@ body.learning-mode .app-header {
 }
 
 .category-accordion-item:active {
-    background-color: #f3f4f6;
+    transform: scale(0.99);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.12);
 }
 
 /* 日常生活でよく使う生活語彙（白） */
@@ -2685,7 +2682,8 @@ body.learning-mode .app-header {
 }
 
 .category-accordion-item-green:active {
-    background-color: #f3f4f6;
+    transform: scale(0.99);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.12);
 }
 
 /* 英文でよく登場する機能語（白） */
@@ -2698,7 +2696,8 @@ body.learning-mode .app-header {
 }
 
 .category-accordion-item-purple:active {
-    background-color: #f3f4f6;
+    transform: scale(0.99);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.12);
 }
 
 .accordion-item-icon {
@@ -2809,7 +2808,8 @@ body.learning-mode .app-header {
 }
 
 .category-card:active {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: scale(0.98);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.15);
 }
 
 .category-card:last-child {
@@ -2825,6 +2825,11 @@ body.learning-mode .app-header {
     overflow: hidden;
     border-radius: 0;
     box-shadow: none;
+}
+
+.category-card.category-card-with-actions:active {
+    transform: scale(0.99);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.12);
 }
 
 .category-card.category-card-with-actions .category-info {
@@ -2855,11 +2860,7 @@ body.learning-mode .app-header {
 }
 
 .course-side-btn:active {
-    filter: brightness(0.9);
-}
-
-.course-side-btn:active {
-    filter: brightness(0.8);
+    filter: brightness(0.85);
 }
 
 .course-side-btn.input-btn {
@@ -3021,7 +3022,8 @@ body.learning-mode .app-header {
 }
 
 .learning-menu-category-btn:active {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transform: scale(0.98);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.15);
 }
 
 .learning-menu-category-title {
@@ -3057,7 +3059,8 @@ body.learning-mode .app-header {
 }
 
 .learning-menu-subcategory-btn:active {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transform: scale(0.98);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.15);
 }
 
 .learning-menu-subcategory-title {
@@ -8218,7 +8221,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .sidebar-menu-item:active {
-    background-color: #e5e7eb;
+    transform: scale(0.98);
+    box-shadow: inset 0 0 0 2px rgba(0, 85, 202, 0.12);
 }
 
 .sidebar-menu-item svg {
