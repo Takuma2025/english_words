@@ -6904,6 +6904,47 @@ function setupEventListeners() {
         filterOverlay.addEventListener('click', closeFilterSheet);
     }
     
+    // ドラッグハンドルでスワイプダウンで閉じる
+    const filterHandle = document.querySelector('.filter-handle');
+    const filterSheet = document.getElementById('wordFilterView');
+    if (filterHandle && filterSheet) {
+        let startY = 0;
+        let currentY = 0;
+        let isDragging = false;
+        
+        filterHandle.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+            isDragging = true;
+            filterSheet.style.transition = 'none';
+        }, { passive: true });
+        
+        filterHandle.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentY = e.touches[0].clientY;
+            const deltaY = currentY - startY;
+            
+            // 下方向のみドラッグ可能
+            if (deltaY > 0) {
+                filterSheet.style.transform = `translateX(-50%) translateY(${deltaY}px)`;
+            }
+        }, { passive: true });
+        
+        filterHandle.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            const deltaY = currentY - startY;
+            filterSheet.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+            
+            // 80px以上下にドラッグしたら閉じる
+            if (deltaY > 80) {
+                closeFilterSheet();
+            } else {
+                // 元に戻す
+                filterSheet.style.transform = 'translateX(-50%) translateY(0)';
+            }
+        });
+    }
     
     // ハンバーガーメニューボタンとサイドバー
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
