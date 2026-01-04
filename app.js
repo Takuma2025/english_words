@@ -14591,7 +14591,7 @@ let hwQuizDrawTimeout = null;
 /**
  * 手書きクイズモードを開始
  */
-function startHandwritingQuiz(category, words, courseTitle) {
+async function startHandwritingQuiz(category, words, courseTitle) {
     console.log('[HWQuiz] Starting handwriting quiz with', words.length, 'words');
     
     hwQuizWords = words;
@@ -14606,9 +14606,16 @@ function startHandwritingQuiz(category, words, courseTitle) {
     if (categorySelection) categorySelection.classList.add('hidden');
     if (hwQuizView) hwQuizView.classList.remove('hidden');
     
-    // モデルをロード
-    loadHWQuizModel();
-    
+    // モデルをロード（完了まで待機）
+    const modelReady = await loadHWQuizModel();
+    if (!modelReady) {
+        const predictions = document.getElementById('hwQuizPredictions');
+        if (predictions) {
+            predictions.innerHTML = '<span class="hw-candidates-placeholder">モデルの読み込みに失敗しました。再読み込みしてください。</span>';
+        }
+        return;
+    }
+
     // キャンバスを初期化
     initHWQuizCanvas();
     
@@ -14627,12 +14634,13 @@ async function loadHWQuizModel() {
     
     if (!window.handwritingRecognition) {
         console.error('[HWQuiz] HandwritingRecognition not found');
-        return;
+        if (loadingEl) loadingEl.classList.add('hidden');
+        return false;
     }
     
     if (window.handwritingRecognition.isModelLoaded) {
         if (loadingEl) loadingEl.classList.add('hidden');
-        return;
+        return true;
     }
     
     if (loadingEl) loadingEl.classList.remove('hidden');
@@ -14640,11 +14648,13 @@ async function loadHWQuizModel() {
     try {
         await window.handwritingRecognition.loadModel();
         console.log('[HWQuiz] Model loaded');
+        return true;
     } catch (error) {
         console.error('[HWQuiz] Model load error:', error);
+        return false;
+    } finally {
+        if (loadingEl) loadingEl.classList.add('hidden');
     }
-    
-    if (loadingEl) loadingEl.classList.add('hidden');
 }
 
 /**
@@ -14780,7 +14790,14 @@ function getHWQuizPos(e) {
  * 【精度向上】入力検証 + Top-5候補表示
  */
 async function recognizeHWQuizCanvas() {
-    if (!window.handwritingRecognition?.isModelLoaded) return;
+    const predictionsContainer = document.getElementById('hwQuizPredictions');
+    
+    if (!window.handwritingRecognition?.isModelLoaded) {
+        if (predictionsContainer) {
+            predictionsContainer.innerHTML = '<span class="hw-candidates-placeholder">モデル読み込み中です...</span>';
+        }
+        return;
+    }
     
     try {
         const result = await window.handwritingRecognition.predict(hwQuizCanvas);

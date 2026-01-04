@@ -13025,6 +13025,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    box-sizing: border-box;
+    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px) 0;
 }
 
 .handwriting-quiz-view.hidden {
@@ -13094,7 +13096,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     margin-top: 16px;
     border-top-left-radius: 24px;
     border-top-right-radius: 24px;
-    padding: 20px 16px;
+    padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px));
     gap: 12px;
     overflow-y: auto;
     overflow-x: hidden;
