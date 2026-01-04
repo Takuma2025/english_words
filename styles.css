@@ -12593,3 +12593,1184 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         outline: none;
     }
 }
+
+/* =============================================
+   学習モード選択（日本語→英語 / 英語→日本語）
+   ============================================= */
+.learning-mode-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.learning-mode-radio {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    gap: 12px;
+}
+
+.learning-mode-radio:hover {
+    border-color: #cbd5e1;
+    background: #ffffff;
+}
+
+.learning-mode-radio:has(input[type="radio"]:checked) {
+    border-color: #3b82f6;
+    background: #f0f9ff;
+}
+
+.learning-mode-radio input[type="radio"] {
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: #3b82f6;
+    align-self: center;
+}
+
+.learning-mode-radio .radio-option-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.learning-mode-radio .radio-option-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.learning-mode-radio .radio-option-description {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+/* =============================================
+   手書き入力UI
+   ============================================= */
+.handwriting-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin: 16px 0;
+}
+
+.handwriting-input-container.hidden {
+    display: none;
+}
+
+/* 確定済み文字列表示 */
+.handwriting-confirmed-text {
+    min-height: 48px;
+    padding: 12px 16px;
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1e293b;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    letter-spacing: 2px;
+    text-align: center;
+    word-break: break-all;
+}
+
+.handwriting-confirmed-text:empty::before {
+    content: '...';
+    color: #94a3b8;
+}
+
+/* 手書きキャンバスとツール */
+.handwriting-canvas-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.handwriting-canvas {
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 1;
+    background: #ffffff;
+    border: 2px solid #3b82f6;
+    border-radius: 12px;
+    touch-action: none;
+    cursor: crosshair;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+/* 手書きツールボタン */
+.handwriting-tools {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.handwriting-tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+    transition: all 0.15s ease;
+}
+
+.handwriting-tool-btn:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.handwriting-tool-btn:active {
+    transform: scale(0.98);
+}
+
+.handwriting-tool-btn svg {
+    flex-shrink: 0;
+}
+
+/* 認識結果（top-5候補） */
+.handwriting-predictions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.predictions-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    text-align: center;
+}
+
+.predictions-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 56px;
+}
+
+.prediction-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    padding: 6px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 3px 0 #1d4ed8, 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.prediction-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 #1d4ed8, 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+.prediction-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #1d4ed8, 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.prediction-label {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: lowercase;
+}
+
+.prediction-prob {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* デバッグ表示 */
+.handwriting-debug {
+    margin-top: 12px;
+    padding: 12px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    border: 1px dashed #94a3b8;
+}
+
+.handwriting-debug.hidden {
+    display: none;
+}
+
+.debug-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.debug-toggle label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #475569;
+}
+
+.debug-toggle input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #3b82f6;
+}
+
+.debug-content {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.debug-content.hidden {
+    display: none;
+}
+
+.debug-settings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+}
+
+.debug-settings label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.debug-settings input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: #3b82f6;
+}
+
+.debug-canvas {
+    width: 84px;
+    height: 84px;
+    border: 1px solid #94a3b8;
+    border-radius: 4px;
+    background: #ffffff;
+    image-rendering: pixelated;
+    align-self: center;
+}
+
+.debug-probabilities {
+    font-size: 11px;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.debug-prob-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #334155;
+}
+
+.debug-prob-item {
+    display: flex;
+    gap: 8px;
+    padding: 2px 0;
+}
+
+.debug-prob-rank {
+    color: #94a3b8;
+    min-width: 20px;
+}
+
+.debug-prob-label {
+    font-weight: 600;
+    color: #1e293b;
+    min-width: 20px;
+    text-transform: lowercase;
+}
+
+.debug-prob-value {
+    color: #3b82f6;
+}
+
+/* モデルローディング表示 */
+.handwriting-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    color: #64748b;
+}
+
+.handwriting-loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.handwriting-loading-text {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* 手書き入力用の回答ボタン */
+.handwriting-submit-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 3px 0 #047857, 0 4px 12px rgba(5, 150, 105, 0.25);
+}
+
+.handwriting-submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 #047857, 0 6px 16px rgba(5, 150, 105, 0.3);
+}
+
+.handwriting-submit-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #047857, 0 2px 8px rgba(5, 150, 105, 0.2);
+}
+
+.handwriting-submit-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* モバイル対応 */
+@media (max-width: 400px) {
+    .handwriting-canvas {
+        max-width: 240px;
+    }
+    
+    .prediction-btn {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .prediction-label {
+        font-size: 18px;
+    }
+    
+    .prediction-prob {
+        font-size: 9px;
+    }
+    
+    .handwriting-tool-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .handwriting-tool-btn span {
+        display: none;
+    }
+}
+
+/* =============================================
+   手書き入力クイズ画面（日本語→英語モード専用）
+   ============================================= */
+.handwriting-quiz-view {
+    position: fixed;
+    inset: 0;
+    background: #f1f5f9;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.handwriting-quiz-view.hidden {
+    display: none;
+}
+
+/* ヘッダー - 既存のapp-headerと同じスタイル */
+.hw-quiz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    height: 56px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+}
+
+.hw-quiz-back-btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #1f2937;
+    transition: background 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hw-quiz-back-btn:active {
+    background: #f3f4f6;
+}
+
+.hw-quiz-progress {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.hw-quiz-progress-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.hw-quiz-bookmark-btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #9ca3af;
+    transition: all 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hw-quiz-bookmark-btn:active {
+    background: #f3f4f6;
+}
+
+.hw-quiz-bookmark-btn.active {
+    color: #f59e0b;
+}
+
+.hw-quiz-bookmark-btn.active rect {
+    fill: #fef3c7;
+    stroke: #f59e0b;
+}
+
+.hw-quiz-bookmark-btn.active .bookmark-check {
+    stroke: #f59e0b;
+}
+
+/* 進捗バー - 既存と同じスタイル */
+.hw-quiz-progress-bar {
+    height: 3px;
+    background: #e5e7eb;
+    flex-shrink: 0;
+}
+
+.hw-quiz-progress-fill {
+    height: 100%;
+    background: #3b82f6;
+    transition: width 0.3s ease;
+}
+
+/* メインコンテンツ */
+.hw-quiz-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 問題カード - input-mode-contentと同じスタイル */
+.hw-quiz-question {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+}
+
+.hw-quiz-word-number {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #9ca3af;
+}
+
+.hw-quiz-meaning-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.hw-quiz-pos {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.hw-quiz-pos:empty {
+    display: none;
+}
+
+.hw-quiz-meaning {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1.4;
+}
+
+/* 入力エリアカード */
+.hw-quiz-input-area {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+/* 確定済み文字列表示 - letter-inputsと同じスタイル */
+.hw-quiz-answer-display {
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 16px;
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #1f2937;
+    font-family: system-ui, -apple-system, sans-serif;
+    letter-spacing: 2px;
+    text-align: center;
+    word-break: break-all;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.hw-quiz-answer-display:empty::before {
+    content: 'ここに表示されます';
+    color: #9ca3af;
+    font-weight: 400;
+    font-size: 16px;
+    letter-spacing: 0;
+}
+
+.hw-quiz-answer-display.correct {
+    border-color: #22c55e;
+    background: #f0fdf4;
+}
+
+.hw-quiz-answer-display.wrong {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
+/* 手書きキャンバス */
+.hw-quiz-canvas-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.hw-quiz-canvas {
+    width: 180px;
+    height: 180px;
+    background: #ffffff;
+    border: 2px solid #d1d5db;
+    border-radius: 12px;
+    touch-action: none;
+    cursor: crosshair;
+    transition: border-color 0.15s ease;
+}
+
+.hw-quiz-canvas:active {
+    border-color: #3b82f6;
+}
+
+.hw-quiz-canvas-hint {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+/* ツールボタン - keyboard-keyと同じスタイル */
+.hw-quiz-tools {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.hw-quiz-tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    transition: all 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hw-quiz-tool-btn:active {
+    background: #e5e7eb;
+    transform: scale(0.96);
+}
+
+/* 認識候補 */
+.hw-quiz-predictions {
+    width: 100%;
+}
+
+.hw-quiz-predictions-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.hw-quiz-predictions-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 56px;
+}
+
+.hw-quiz-pred-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 56px;
+    padding: 4px;
+    background: #3b82f6;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hw-quiz-pred-btn:active {
+    transform: scale(0.95);
+    background: #2563eb;
+}
+
+.hw-quiz-pred-label {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.hw-quiz-pred-prob {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* 回答ボタン - keyboard-action-btn-primaryと同じスタイル */
+.hw-quiz-submit-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: #22c55e;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hw-quiz-submit-btn:active {
+    background: #16a34a;
+    transform: scale(0.98);
+}
+
+.hw-quiz-submit-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.hw-quiz-submit-btn.hidden {
+    display: none;
+}
+
+/* 結果表示 */
+.hw-quiz-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 20px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hw-quiz-result.hidden {
+    display: none;
+}
+
+.hw-quiz-result-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.hw-quiz-result-icon.correct {
+    background: #dcfce7;
+    color: #22c55e;
+}
+
+.hw-quiz-result-icon.correct::before {
+    content: '\2713';
+}
+
+.hw-quiz-result-icon.wrong {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.hw-quiz-result-icon.wrong::before {
+    content: '\2717';
+}
+
+.hw-quiz-result-message {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.hw-quiz-result-message.correct {
+    color: #22c55e;
+}
+
+.hw-quiz-result-message.wrong {
+    color: #ef4444;
+}
+
+.hw-quiz-correct-answer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #f9fafb;
+    border-radius: 10px;
+}
+
+.hw-quiz-correct-label {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.hw-quiz-correct-word {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.hw-quiz-audio-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #374151;
+    transition: all 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hw-quiz-audio-btn:active {
+    background: #d1d5db;
+}
+
+.hw-quiz-next-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hw-quiz-next-btn:active {
+    background: #2563eb;
+    transform: scale(0.98);
+}
+
+/* ローディング */
+.hw-quiz-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: rgba(241, 245, 249, 0.95);
+    z-index: 100;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.hw-quiz-loading.hidden {
+    display: none;
+}
+
+.hw-quiz-loading-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: hw-spin 0.8s linear infinite;
+}
+
+@keyframes hw-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* デバッグ */
+.hw-quiz-debug {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #1f2937;
+    color: #f9fafb;
+    padding: 10px 12px;
+    font-size: 11px;
+    z-index: 1001;
+}
+
+.hw-quiz-debug.hidden {
+    display: none;
+}
+
+.hw-quiz-debug-toggle label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.hw-quiz-debug-content {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #374151;
+}
+
+.hw-quiz-debug-content.hidden {
+    display: none;
+}
+
+.hw-quiz-debug-settings {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.hw-quiz-debug-settings label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+#hwQuizDebugCanvas {
+    width: 56px;
+    height: 56px;
+    border: 1px solid #374151;
+    background: #ffffff;
+    image-rendering: pixelated;
+}
+
+.hw-quiz-debug-probs {
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+/* 完了画面 - completion-screenと同じスタイル */
+.hw-quiz-completion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    gap: 16px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px 24px;
+    margin: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hw-quiz-completion-icon {
+    margin-bottom: 4px;
+}
+
+.hw-quiz-completion-icon svg {
+    stroke: #22c55e;
+}
+
+.hw-quiz-completion-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.hw-quiz-completion-score {
+    font-size: 44px;
+    font-weight: 700;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.hw-quiz-completion-correct {
+    color: #22c55e;
+}
+
+.hw-quiz-completion-total {
+    color: #9ca3af;
+    font-size: 28px;
+}
+
+.hw-quiz-completion-percent {
+    font-size: 20px;
+    font-weight: 600;
+    color: #3b82f6;
+    background: #eff6ff;
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+.hw-quiz-completion-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+    width: 100%;
+    max-width: 280px;
+}
+
+.hw-quiz-completion-btn {
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hw-quiz-completion-retry {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+.hw-quiz-completion-retry:active {
+    background: #2563eb;
+    transform: scale(0.98);
+}
+
+.hw-quiz-completion-back {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.hw-quiz-completion-back:active {
+    background: #e5e7eb;
+    transform: scale(0.98);
+}
+
+/* モバイル対応 */
+@media (max-width: 420px) {
+    .hw-quiz-content {
+        padding: 12px;
+        gap: 12px;
+    }
+    
+    .hw-quiz-question {
+        padding: 20px 16px;
+    }
+    
+    .hw-quiz-canvas {
+        width: 160px;
+        height: 160px;
+    }
+    
+    .hw-quiz-meaning {
+        font-size: 22px;
+    }
+    
+    .hw-quiz-answer-display {
+        font-size: 22px;
+        padding: 10px 12px;
+        min-height: 46px;
+    }
+    
+    .hw-quiz-input-area {
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .hw-quiz-pred-btn {
+        width: 44px;
+        height: 50px;
+    }
+    
+    .hw-quiz-pred-label {
+        font-size: 18px;
+    }
+    
+    .hw-quiz-pred-prob {
+        font-size: 8px;
+    }
+    
+    .hw-quiz-tool-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    
+    .hw-quiz-tool-btn span {
+        display: none;
+    }
+    
+    .hw-quiz-submit-btn,
+    .hw-quiz-next-btn {
+        padding: 12px 16px;
+        font-size: 15px;
+    }
+    
+    .hw-quiz-result {
+        padding: 20px 16px;
+        gap: 12px;
+    }
+    
+    .hw-quiz-result-icon {
+        width: 52px;
+        height: 52px;
+        font-size: 24px;
+    }
+    
+    .hw-quiz-result-message {
+        font-size: 20px;
+    }
+    
+    .hw-quiz-correct-word {
+        font-size: 20px;
+    }
+    
+    .hw-quiz-completion {
+        padding: 24px 20px;
+        margin: 12px;
+    }
+    
+    .hw-quiz-completion-score {
+        font-size: 36px;
+    }
+    
+    .hw-quiz-completion-total {
+        font-size: 24px;
+    }
+    
+    .hw-quiz-completion-title {
+        font-size: 20px;
+    }
+}

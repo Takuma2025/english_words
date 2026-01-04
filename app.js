@@ -1124,6 +1124,9 @@ let currentRangeEnd = 0;   // 現在の学習範囲（終了index、exclusive）
 let isInputModeActive = false; // 日本語→英語入力モードかどうか
 let inputAnswerSubmitted = false; // 入力回答が送信済みかどうか
 let isShiftActive = false; // Shiftキーがアクティブかどうか（大文字入力モード）
+let isHandwritingMode = false; // 手書き入力モードかどうか（日本語→英語で使用）
+let handwritingUIInitialized = false; // 手書きUI初期化済みかどうか
+let selectedQuizDirection = 'eng-to-jpn'; // 学習方向: 'eng-to-jpn' または 'jpn-to-eng'
 let questionStatus = []; // 各問題の回答状況を追跡（'correct', 'wrong', null）
 let progressBarStartIndex = 0; // 進捗バーの表示開始インデックス（20問ずつ表示）
 const PROGRESS_BAR_DISPLAY_COUNT = 20; // 進捗バーに表示する問題数
@@ -4622,6 +4625,14 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     currentFilterWords = categoryWords;
     currentFilterCourseTitle = courseTitle || category;
     
+    // 学習モード（日本語→英語 / 英語→日本語）をデフォルトにリセット
+    selectedQuizDirection = 'eng-to-jpn';
+    isHandwritingMode = false;
+    const modeEngToJpn = document.getElementById('modeEngToJpn');
+    const modeJpnToEng = document.getElementById('modeJpnToEng');
+    if (modeEngToJpn) modeEngToJpn.checked = true;
+    if (modeJpnToEng) modeJpnToEng.checked = false;
+    
     // フィルター設定をデフォルトにリセット
     const resetFilterAll = document.getElementById('filterAll');
     const resetFilterUnlearned = document.getElementById('filterUnlearned');
@@ -6499,6 +6510,36 @@ function setupEventListeners() {
     const filterCorrect = document.getElementById('filterCorrect');
     const examDateInput = document.getElementById('examDateInput');
     const examDateSaveBtn = document.getElementById('examDateSaveBtn');
+    
+    // 学習方向（日本語→英語 / 英語→日本語）のラジオボタン
+    const modeEngToJpn = document.getElementById('modeEngToJpn');
+    const modeJpnToEng = document.getElementById('modeJpnToEng');
+    
+    if (modeEngToJpn) {
+        modeEngToJpn.addEventListener('change', () => {
+            if (modeEngToJpn.checked) {
+                selectedQuizDirection = 'eng-to-jpn';
+                isHandwritingMode = false;
+                console.log('[Filter] Quiz direction: 英語→日本語');
+            }
+        });
+    }
+    
+    if (modeJpnToEng) {
+        modeJpnToEng.addEventListener('change', () => {
+            if (modeJpnToEng.checked) {
+                selectedQuizDirection = 'jpn-to-eng';
+                isHandwritingMode = true;
+                console.log('[Filter] Quiz direction: 日本語→英語 (手書きモード)');
+                
+                // モデルを事前ロード
+                if (window.handwritingRecognition && !window.handwritingRecognition.isModelLoaded) {
+                    console.log('[Filter] Pre-loading EMNIST model...');
+                    window.handwritingRecognition.loadModel();
+                }
+            }
+        });
+    }
 
     // 入試日設定
     if (examDateSaveBtn) {
@@ -6810,6 +6851,13 @@ function setupEventListeners() {
                 filterOverlayEl.classList.add('hidden');
             }
             document.body.style.overflow = '';
+            
+            // 日本語→英語モード（手書き入力）の場合
+            if (isHandwritingMode) {
+                console.log('[Filter] Starting handwriting quiz mode');
+                startHandwritingQuiz(currentFilterCategory, wordsToLearn, currentFilterCourseTitle);
+                return;
+            }
             
             // 学習を開始
             // filterLearningMode === 'input'の場合は単語帳（展開）モード
@@ -7752,45 +7800,71 @@ function displayInputMode(skipAnimationReset = false) {
         inputAppearanceCountEl.style.display = 'flex';
     }
     
-    // 文字数分の入力フィールドを生成
-    if (letterInputs) {
-        letterInputs.innerHTML = '';
-        const wordLength = word.word.length;
-        
-        for (let i = 0; i < wordLength; i++) {
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'letter-input';
-            input.maxLength = 1;
-            input.dataset.index = i;
-            input.autocomplete = 'off';
-            input.spellcheck = false;
-            input.inputMode = 'none';
-            input.setAttribute('inputmode', 'none');
-            input.setAttribute('readonly', 'readonly');
+    // 手書きモードかどうかで入力UIを切り替え
+    const handwritingContainer = document.getElementById('handwritingInputContainer');
+    const virtualKeyboard = document.getElementById('virtualKeyboard');
+    
+    if (isHandwritingMode) {
+        // 手書きモード: letter-inputs を非表示にし、手書きUIを表示
+        if (letterInputs) {
+            letterInputs.classList.add('hidden');
+        }
+        if (handwritingContainer) {
+            handwritingContainer.classList.remove('hidden');
+            // 手書きUI初期化
+            initHandwritingMode(word);
+        }
+        if (virtualKeyboard) {
+            virtualKeyboard.classList.add('hidden');
+        }
+    } else {
+        // 通常モード: 文字数分の入力フィールドを生成
+        if (letterInputs) {
+            letterInputs.classList.remove('hidden');
+            letterInputs.innerHTML = '';
+            const wordLength = word.word.length;
             
-            // 入力時の処理（大文字小文字を保持）
-            input.addEventListener('input', (e) => {
-                const value = e.target.value;
-                // 大文字小文字を保持したまま設定（小文字に変換しない）
-                e.target.value = value;
+            for (let i = 0; i < wordLength; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'letter-input';
+                input.maxLength = 1;
+                input.dataset.index = i;
+                input.autocomplete = 'off';
+                input.spellcheck = false;
+                input.inputMode = 'none';
+                input.setAttribute('inputmode', 'none');
+                input.setAttribute('readonly', 'readonly');
                 
-                // 次のフィールドにフォーカス
-                if (value && i < wordLength - 1) {
-                    const nextInput = letterInputs.querySelector(`input[data-index="${i + 1}"]`);
-                    if (nextInput) nextInput.focus();
-                }
-            });
-            
-            // バックスペースで前のフィールドに戻る
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !e.target.value && i > 0) {
-                    const prevInput = letterInputs.querySelector(`input[data-index="${i - 1}"]`);
-                    if (prevInput) prevInput.focus();
-                }
-            });
-            
-            letterInputs.appendChild(input);
+                // 入力時の処理（大文字小文字を保持）
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    // 大文字小文字を保持したまま設定（小文字に変換しない）
+                    e.target.value = value;
+                    
+                    // 次のフィールドにフォーカス
+                    if (value && i < wordLength - 1) {
+                        const nextInput = letterInputs.querySelector(`input[data-index="${i + 1}"]`);
+                        if (nextInput) nextInput.focus();
+                    }
+                });
+                
+                // バックスペースで前のフィールドに戻る
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && i > 0) {
+                        const prevInput = letterInputs.querySelector(`input[data-index="${i - 1}"]`);
+                        if (prevInput) prevInput.focus();
+                    }
+                });
+                
+                letterInputs.appendChild(input);
+            }
+        }
+        if (handwritingContainer) {
+            handwritingContainer.classList.add('hidden');
+        }
+        if (virtualKeyboard) {
+            virtualKeyboard.classList.remove('hidden');
         }
     }
     
@@ -8106,6 +8180,11 @@ function goToNextWord() {
         isCardAnimating = true;
         isCardRevealed = false;
         inputAnswerSubmitted = false;
+        
+        // 手書きモードの場合はリセット
+        if (isHandwritingMode) {
+            resetHandwritingMode();
+        }
         
         const cardInner = elements.wordCard ? elements.wordCard.querySelector('.card-inner') : null;
         
@@ -14482,6 +14561,640 @@ function saveGrammarExerciseProgress(chapterNumber, exerciseIndex, allCorrect, e
             updateGrammarChapterCheckboxes();
         }
     }
+}
+
+// =============================================
+// 手書き入力クイズモード（日本語→英語専用）
+// =============================================
+
+// 手書きクイズの状態管理
+let hwQuizWords = [];
+let hwQuizIndex = 0;
+let hwQuizCategory = '';
+let hwQuizCourseTitle = '';
+let hwQuizAnswerSubmitted = false;
+let hwQuizConfirmedText = '';
+let hwQuizCanvas = null;
+let hwQuizCtx = null;
+let hwQuizIsDrawing = false;
+let hwQuizLastX = 0;
+let hwQuizLastY = 0;
+let hwQuizDrawTimeout = null;
+
+/**
+ * 手書きクイズモードを開始
+ */
+function startHandwritingQuiz(category, words, courseTitle) {
+    console.log('[HWQuiz] Starting handwriting quiz with', words.length, 'words');
+    
+    hwQuizWords = words;
+    hwQuizIndex = 0;
+    hwQuizCategory = category;
+    hwQuizCourseTitle = courseTitle;
+    
+    // 手書きクイズ画面を表示
+    const hwQuizView = document.getElementById('handwritingQuizView');
+    const categorySelection = document.getElementById('categorySelection');
+    
+    if (categorySelection) categorySelection.classList.add('hidden');
+    if (hwQuizView) hwQuizView.classList.remove('hidden');
+    
+    // モデルをロード
+    loadHWQuizModel();
+    
+    // キャンバスを初期化
+    initHWQuizCanvas();
+    
+    // イベントリスナーを設定
+    setupHWQuizEvents();
+    
+    // 最初の問題を表示
+    displayHWQuizQuestion();
+}
+
+/**
+ * モデルをロード
+ */
+async function loadHWQuizModel() {
+    const loadingEl = document.getElementById('hwQuizLoading');
+    
+    if (!window.handwritingRecognition) {
+        console.error('[HWQuiz] HandwritingRecognition not found');
+        return;
+    }
+    
+    if (window.handwritingRecognition.isModelLoaded) {
+        if (loadingEl) loadingEl.classList.add('hidden');
+        return;
+    }
+    
+    if (loadingEl) loadingEl.classList.remove('hidden');
+    
+    try {
+        await window.handwritingRecognition.loadModel();
+        console.log('[HWQuiz] Model loaded');
+    } catch (error) {
+        console.error('[HWQuiz] Model load error:', error);
+    }
+    
+    if (loadingEl) loadingEl.classList.add('hidden');
+}
+
+/**
+ * キャンバスを初期化
+ */
+function initHWQuizCanvas() {
+    hwQuizCanvas = document.getElementById('hwQuizCanvas');
+    if (!hwQuizCanvas) return;
+    
+    hwQuizCtx = hwQuizCanvas.getContext('2d');
+    clearHWQuizCanvas();
+    
+    // 描画イベント（マウス）
+    hwQuizCanvas.addEventListener('mousedown', hwQuizDrawStart);
+    hwQuizCanvas.addEventListener('mousemove', hwQuizDrawMove);
+    hwQuizCanvas.addEventListener('mouseup', hwQuizDrawEnd);
+    hwQuizCanvas.addEventListener('mouseleave', hwQuizDrawEnd);
+    
+    // 描画イベント（タッチ）
+    hwQuizCanvas.addEventListener('touchstart', hwQuizDrawStart, { passive: false });
+    hwQuizCanvas.addEventListener('touchmove', hwQuizDrawMove, { passive: false });
+    hwQuizCanvas.addEventListener('touchend', hwQuizDrawEnd);
+    hwQuizCanvas.addEventListener('touchcancel', hwQuizDrawEnd);
+}
+
+/**
+ * キャンバスをクリア
+ */
+function clearHWQuizCanvas() {
+    if (!hwQuizCtx) return;
+    hwQuizCtx.fillStyle = '#ffffff';
+    hwQuizCtx.fillRect(0, 0, hwQuizCanvas.width, hwQuizCanvas.height);
+    hwQuizCtx.strokeStyle = '#1e293b';
+    hwQuizCtx.lineWidth = 10;
+    hwQuizCtx.lineCap = 'round';
+    hwQuizCtx.lineJoin = 'round';
+}
+
+/**
+ * 描画開始
+ */
+function hwQuizDrawStart(e) {
+    e.preventDefault();
+    hwQuizIsDrawing = true;
+    
+    const pos = getHWQuizPos(e);
+    hwQuizLastX = pos.x;
+    hwQuizLastY = pos.y;
+    
+    if (hwQuizDrawTimeout) {
+        clearTimeout(hwQuizDrawTimeout);
+        hwQuizDrawTimeout = null;
+    }
+}
+
+/**
+ * 描画中
+ */
+function hwQuizDrawMove(e) {
+    if (!hwQuizIsDrawing) return;
+    e.preventDefault();
+    
+    const pos = getHWQuizPos(e);
+    
+    hwQuizCtx.beginPath();
+    hwQuizCtx.moveTo(hwQuizLastX, hwQuizLastY);
+    hwQuizCtx.lineTo(pos.x, pos.y);
+    hwQuizCtx.stroke();
+    
+    hwQuizLastX = pos.x;
+    hwQuizLastY = pos.y;
+}
+
+/**
+ * 描画終了
+ */
+function hwQuizDrawEnd(e) {
+    if (!hwQuizIsDrawing) return;
+    hwQuizIsDrawing = false;
+    
+    // 描画停止後、自動認識
+    if (hwQuizDrawTimeout) clearTimeout(hwQuizDrawTimeout);
+    hwQuizDrawTimeout = setTimeout(() => {
+        recognizeHWQuizCanvas();
+    }, 400);
+}
+
+/**
+ * キャンバス座標を取得
+ */
+function getHWQuizPos(e) {
+    const rect = hwQuizCanvas.getBoundingClientRect();
+    const scaleX = hwQuizCanvas.width / rect.width;
+    const scaleY = hwQuizCanvas.height / rect.height;
+    
+    let clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+    }
+    
+    return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+    };
+}
+
+/**
+ * キャンバスを認識
+ */
+async function recognizeHWQuizCanvas() {
+    if (!window.handwritingRecognition?.isModelLoaded) return;
+    
+    try {
+        const result = await window.handwritingRecognition.predict(hwQuizCanvas);
+        if (result) {
+            displayHWQuizPredictions(result.topK);
+            
+            // デバッグ表示
+            const debugContent = document.getElementById('hwQuizDebugContent');
+            if (debugContent && !debugContent.classList.contains('hidden')) {
+                const debugCanvas = document.getElementById('hwQuizDebugCanvas');
+                if (debugCanvas) {
+                    window.handwritingRecognition.drawPreprocessedImage(result.preprocessed.data, debugCanvas);
+                }
+                const debugProbs = document.getElementById('hwQuizDebugProbs');
+                if (debugProbs) {
+                    debugProbs.textContent = result.topK.map((item, i) => 
+                        `${i+1}. ${item.label}: ${(item.probability * 100).toFixed(1)}%`
+                    ).join(' | ');
+                }
+            }
+        }
+    } catch (error) {
+        console.error('[HWQuiz] Recognition error:', error);
+    }
+}
+
+/**
+ * 認識候補を表示
+ */
+function displayHWQuizPredictions(topK) {
+    const container = document.getElementById('hwQuizPredictions');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    topK.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'hw-quiz-pred-btn';
+        btn.innerHTML = `
+            <span class="hw-quiz-pred-label">${item.label}</span>
+            <span class="hw-quiz-pred-prob">${(item.probability * 100).toFixed(0)}%</span>
+        `;
+        btn.addEventListener('click', () => {
+            addHWQuizChar(item.label);
+        });
+        container.appendChild(btn);
+    });
+}
+
+/**
+ * 文字を追加
+ */
+function addHWQuizChar(char) {
+    hwQuizConfirmedText += char;
+    updateHWQuizAnswerDisplay();
+    clearHWQuizCanvas();
+    
+    // 予測をクリア
+    const container = document.getElementById('hwQuizPredictions');
+    if (container) container.innerHTML = '';
+}
+
+/**
+ * 回答表示を更新
+ */
+function updateHWQuizAnswerDisplay() {
+    const display = document.getElementById('hwQuizAnswerDisplay');
+    if (display) {
+        display.textContent = hwQuizConfirmedText;
+    }
+}
+
+/**
+ * イベントリスナーを設定
+ */
+function setupHWQuizEvents() {
+    // 戻るボタン
+    const backBtn = document.getElementById('hwQuizBackBtn');
+    if (backBtn) {
+        backBtn.onclick = () => {
+            exitHWQuiz();
+        };
+    }
+    
+    // ブックマークボタン
+    const bookmarkBtn = document.getElementById('hwQuizBookmarkBtn');
+    if (bookmarkBtn) {
+        bookmarkBtn.onclick = () => {
+            const word = hwQuizWords[hwQuizIndex];
+            if (word) {
+                toggleReviewWord(word.id);
+                updateHWQuizBookmarkBtn();
+            }
+        };
+    }
+    
+    // クリアボタン
+    const clearBtn = document.getElementById('hwQuizClearBtn');
+    if (clearBtn) {
+        clearBtn.onclick = () => {
+            clearHWQuizCanvas();
+            const container = document.getElementById('hwQuizPredictions');
+            if (container) container.innerHTML = '';
+        };
+    }
+    
+    // バックスペースボタン
+    const backspaceBtn = document.getElementById('hwQuizBackspaceBtn');
+    if (backspaceBtn) {
+        backspaceBtn.onclick = () => {
+            if (hwQuizConfirmedText.length > 0) {
+                hwQuizConfirmedText = hwQuizConfirmedText.slice(0, -1);
+                updateHWQuizAnswerDisplay();
+            }
+        };
+    }
+    
+    // スペースボタン
+    const spaceBtn = document.getElementById('hwQuizSpaceBtn');
+    if (spaceBtn) {
+        spaceBtn.onclick = () => {
+            hwQuizConfirmedText += ' ';
+            updateHWQuizAnswerDisplay();
+        };
+    }
+    
+    // 回答ボタン
+    const submitBtn = document.getElementById('hwQuizSubmitBtn');
+    if (submitBtn) {
+        submitBtn.onclick = () => {
+            submitHWQuizAnswer();
+        };
+    }
+    
+    // 次へボタン
+    const nextBtn = document.getElementById('hwQuizNextBtn');
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            goToNextHWQuizQuestion();
+        };
+    }
+    
+    // 音声ボタン
+    const audioBtn = document.getElementById('hwQuizAudioBtn');
+    if (audioBtn) {
+        audioBtn.onclick = () => {
+            const word = hwQuizWords[hwQuizIndex];
+            if (word) {
+                speakWord(word.word);
+            }
+        };
+    }
+    
+    // デバッグトグル
+    const debugToggle = document.getElementById('hwQuizDebugToggle');
+    if (debugToggle) {
+        debugToggle.onchange = () => {
+            const debugContent = document.getElementById('hwQuizDebugContent');
+            if (debugContent) {
+                debugContent.classList.toggle('hidden', !debugToggle.checked);
+            }
+        };
+    }
+    
+    // デバッグ設定
+    const debugInvert = document.getElementById('hwQuizDebugInvert');
+    const debugTrim = document.getElementById('hwQuizDebugTrim');
+    const debugCenter = document.getElementById('hwQuizDebugCenter');
+    
+    if (debugInvert) {
+        debugInvert.onchange = () => {
+            if (window.handwritingRecognition) {
+                window.handwritingRecognition.debugSettings.invert = debugInvert.checked;
+            }
+        };
+    }
+    if (debugTrim) {
+        debugTrim.onchange = () => {
+            if (window.handwritingRecognition) {
+                window.handwritingRecognition.debugSettings.trim = debugTrim.checked;
+            }
+        };
+    }
+    if (debugCenter) {
+        debugCenter.onchange = () => {
+            if (window.handwritingRecognition) {
+                window.handwritingRecognition.debugSettings.center = debugCenter.checked;
+            }
+        };
+    }
+}
+
+/**
+ * 問題を表示
+ */
+function displayHWQuizQuestion() {
+    const word = hwQuizWords[hwQuizIndex];
+    if (!word) return;
+    
+    hwQuizAnswerSubmitted = false;
+    hwQuizConfirmedText = '';
+    
+    // 進捗を更新
+    const progressText = document.getElementById('hwQuizProgressText');
+    const progressFill = document.getElementById('hwQuizProgressFill');
+    if (progressText) {
+        progressText.textContent = `${hwQuizIndex + 1} / ${hwQuizWords.length}`;
+    }
+    if (progressFill) {
+        progressFill.style.width = `${((hwQuizIndex + 1) / hwQuizWords.length) * 100}%`;
+    }
+    
+    // 単語番号
+    const wordNumber = document.getElementById('hwQuizWordNumber');
+    if (wordNumber) {
+        wordNumber.textContent = `No.${word.id}`;
+    }
+    
+    // 品詞
+    const posEl = document.getElementById('hwQuizPos');
+    if (posEl) {
+        const posShort = getPartOfSpeechShort(word.partOfSpeech || '');
+        posEl.textContent = posShort;
+    }
+    
+    // 意味
+    const meaningEl = document.getElementById('hwQuizMeaning');
+    if (meaningEl) {
+        meaningEl.textContent = word.meaning;
+    }
+    
+    // 回答表示をクリア
+    updateHWQuizAnswerDisplay();
+    
+    // キャンバスをクリア
+    clearHWQuizCanvas();
+    
+    // 予測をクリア
+    const predictions = document.getElementById('hwQuizPredictions');
+    if (predictions) predictions.innerHTML = '';
+    
+    // UIをリセット
+    const submitBtn = document.getElementById('hwQuizSubmitBtn');
+    const result = document.getElementById('hwQuizResult');
+    const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
+    const canvasContainer = document.querySelector('.hw-quiz-canvas-container');
+    const tools = document.querySelector('.hw-quiz-tools');
+    const predictionsArea = document.querySelector('.hw-quiz-predictions');
+    
+    if (submitBtn) submitBtn.classList.remove('hidden');
+    if (result) result.classList.add('hidden');
+    if (answerDisplay) {
+        answerDisplay.classList.remove('correct', 'wrong');
+    }
+    if (canvasContainer) canvasContainer.style.display = '';
+    if (tools) tools.style.display = '';
+    if (predictionsArea) predictionsArea.style.display = '';
+    
+    // ブックマーク状態を更新
+    updateHWQuizBookmarkBtn();
+}
+
+/**
+ * ブックマークボタンを更新
+ */
+function updateHWQuizBookmarkBtn() {
+    const bookmarkBtn = document.getElementById('hwQuizBookmarkBtn');
+    const word = hwQuizWords[hwQuizIndex];
+    
+    if (bookmarkBtn && word) {
+        if (reviewWords.has(word.id)) {
+            bookmarkBtn.classList.add('active');
+        } else {
+            bookmarkBtn.classList.remove('active');
+        }
+    }
+}
+
+/**
+ * 回答を送信
+ */
+function submitHWQuizAnswer() {
+    if (hwQuizAnswerSubmitted) return;
+    hwQuizAnswerSubmitted = true;
+    
+    const word = hwQuizWords[hwQuizIndex];
+    if (!word) return;
+    
+    const userAnswer = hwQuizConfirmedText.trim().toLowerCase();
+    const correctAnswer = word.word.toLowerCase();
+    const isCorrect = userAnswer === correctAnswer;
+    
+    console.log('[HWQuiz] Answer:', userAnswer, '| Correct:', correctAnswer, '| Result:', isCorrect);
+    
+    // 効果音
+    if (isCorrect) {
+        SoundEffects.playCorrect();
+        correctWords.add(word.id);
+        wrongWords.delete(word.id);
+    } else {
+        SoundEffects.playWrong();
+        wrongWords.add(word.id);
+    }
+    
+    // 進捗保存
+    saveCategoryWords(hwQuizCategory);
+    
+    // 結果を表示
+    showHWQuizResult(isCorrect, word);
+}
+
+/**
+ * 結果を表示
+ */
+function showHWQuizResult(isCorrect, word) {
+    const submitBtn = document.getElementById('hwQuizSubmitBtn');
+    const result = document.getElementById('hwQuizResult');
+    const resultIcon = document.getElementById('hwQuizResultIcon');
+    const resultMessage = document.getElementById('hwQuizResultMessage');
+    const correctWord = document.getElementById('hwQuizCorrectWord');
+    const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
+    const canvasContainer = document.querySelector('.hw-quiz-canvas-container');
+    const tools = document.querySelector('.hw-quiz-tools');
+    const predictionsArea = document.querySelector('.hw-quiz-predictions');
+    
+    // 入力エリアを非表示
+    if (submitBtn) submitBtn.classList.add('hidden');
+    if (canvasContainer) canvasContainer.style.display = 'none';
+    if (tools) tools.style.display = 'none';
+    if (predictionsArea) predictionsArea.style.display = 'none';
+    
+    // 回答表示を更新
+    if (answerDisplay) {
+        answerDisplay.classList.add(isCorrect ? 'correct' : 'wrong');
+    }
+    
+    // 結果を表示
+    if (result) result.classList.remove('hidden');
+    if (resultIcon) {
+        resultIcon.className = 'hw-quiz-result-icon ' + (isCorrect ? 'correct' : 'wrong');
+    }
+    if (resultMessage) {
+        resultMessage.textContent = isCorrect ? '正解!' : '不正解';
+        resultMessage.className = 'hw-quiz-result-message ' + (isCorrect ? 'correct' : 'wrong');
+    }
+    if (correctWord) {
+        correctWord.textContent = word.word;
+    }
+    
+    // 音声を自動再生
+    speakWord(word.word);
+}
+
+/**
+ * 次の問題へ
+ */
+function goToNextHWQuizQuestion() {
+    hwQuizIndex++;
+    
+    if (hwQuizIndex >= hwQuizWords.length) {
+        // クイズ完了
+        showHWQuizCompletion();
+    } else {
+        displayHWQuizQuestion();
+    }
+}
+
+/**
+ * クイズ完了画面
+ */
+function showHWQuizCompletion() {
+    // 正解数をカウント
+    let correctCount = 0;
+    hwQuizWords.forEach(word => {
+        if (correctWords.has(word.id)) {
+            correctCount++;
+        }
+    });
+    
+    const total = hwQuizWords.length;
+    const percentage = Math.round((correctCount / total) * 100);
+    
+    // 完了画面を表示
+    const content = document.querySelector('.hw-quiz-content');
+    if (content) {
+        content.innerHTML = `
+            <div class="hw-quiz-completion">
+                <div class="hw-quiz-completion-icon">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M8 12l3 3 5-5"></path>
+                    </svg>
+                </div>
+                <h2 class="hw-quiz-completion-title">テスト完了!</h2>
+                <div class="hw-quiz-completion-score">
+                    <span class="hw-quiz-completion-correct">${correctCount}</span>
+                    <span class="hw-quiz-completion-total">/ ${total}</span>
+                </div>
+                <div class="hw-quiz-completion-percent">${percentage}%</div>
+                <div class="hw-quiz-completion-buttons">
+                    <button class="hw-quiz-completion-btn hw-quiz-completion-retry" onclick="restartHWQuiz()">
+                        もう一度
+                    </button>
+                    <button class="hw-quiz-completion-btn hw-quiz-completion-back" onclick="exitHWQuiz()">
+                        戻る
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    SoundEffects.playComplete();
+}
+
+/**
+ * クイズをやり直す
+ */
+function restartHWQuiz() {
+    hwQuizIndex = 0;
+    
+    // コンテンツを復元
+    const hwQuizView = document.getElementById('handwritingQuizView');
+    if (hwQuizView) {
+        location.reload(); // 簡易的にリロード
+    }
+}
+
+/**
+ * クイズを終了
+ */
+function exitHWQuiz() {
+    const hwQuizView = document.getElementById('handwritingQuizView');
+    const categorySelection = document.getElementById('categorySelection');
+    
+    if (hwQuizView) hwQuizView.classList.add('hidden');
+    if (categorySelection) categorySelection.classList.remove('hidden');
+    
+    // リセット
+    hwQuizWords = [];
+    hwQuizIndex = 0;
+    hwQuizConfirmedText = '';
+    isHandwritingMode = false;
 }
 
 // アプリケーションの起動
