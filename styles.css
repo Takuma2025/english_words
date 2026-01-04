@@ -2571,6 +2571,7 @@ body.learning-mode .app-header {
     box-sizing: border-box;
     text-align: left;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .category-accordion-header:active {
@@ -2640,6 +2641,7 @@ body.learning-mode .app-header {
     border: none;
     text-align: left;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
     position: relative;
     min-height: 60px;
 }
@@ -2801,6 +2803,7 @@ body.learning-mode .app-header {
     text-align: left;
     cursor: pointer;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .category-card:active,
@@ -3026,6 +3029,7 @@ button.category-card:focus-visible {
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .learning-menu-category-btn:active {
@@ -3063,6 +3067,7 @@ button.category-card:focus-visible {
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .learning-menu-subcategory-btn:active {
@@ -12528,9 +12533,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* タッチデバイスでのスティッキーホバーを解消 */
 @media (hover: none) {
-    .category-card:hover,
-    .category-accordion-header:hover,
-    .category-accordion-item:hover,
     .course-tab:hover,
     .start-btn:hover,
     .star-btn:hover,
@@ -12544,32 +12546,45 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     .close-btn:hover,
     .modal-close:hover,
     .settings-btn:hover,
-    .install-btn:hover,
-    button:hover {
+    .install-btn:hover {
         background-color: inherit;
         transform: none;
         box-shadow: inherit;
     }
     
-    /* スマホでのタップ時も背景色を白に固定 */
+    /* 学習メニューは常に白で固定 */
+    .category-card,
+    .category-card:hover,
     .category-card:active,
     .category-card:focus,
     .category-card:focus-visible,
+    .category-accordion-header,
+    .category-accordion-header:hover,
     .category-accordion-header:active,
     .category-accordion-header:focus,
     .category-accordion-header:focus-visible,
+    .category-accordion-item,
+    .category-accordion-item:hover,
     .category-accordion-item:active,
     .category-accordion-item:focus,
     .category-accordion-item:focus-visible,
+    .category-accordion-item-green,
+    .category-accordion-item-green:hover,
     .category-accordion-item-green:active,
     .category-accordion-item-green:focus,
     .category-accordion-item-green:focus-visible,
+    .category-accordion-item-purple,
+    .category-accordion-item-purple:hover,
     .category-accordion-item-purple:active,
     .category-accordion-item-purple:focus,
     .category-accordion-item-purple:focus-visible,
+    .category-card.category-card-with-actions,
+    .category-card.category-card-with-actions:hover,
     .category-card.category-card-with-actions:active,
     .category-card.category-card-with-actions:focus,
     .category-card.category-card-with-actions:focus-visible,
+    button.category-card,
+    button.category-card:hover,
     button.category-card:active,
     button.category-card:focus,
     button.category-card:focus-visible {
