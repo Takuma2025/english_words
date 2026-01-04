@@ -874,11 +874,13 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- 認識結果（top-5候補） -->
+                                    <!-- 認識結果（候補） -->
                                     <div class="handwriting-predictions" id="handwritingPredictions">
-                                        <div class="predictions-label">認識候補（タップで確定）</div>
-                                        <div class="predictions-buttons" id="predictionsButtons">
-                                            <!-- 動的に生成 -->
+                                        <div class="predictions-row">
+                                            <!-- メイン候補（1位） -->
+                                            <div id="mainPredictionContainer"></div>
+                                            <!-- サブ候補（2位、3位） -->
+                                            <div class="sub-predictions-column" id="subPredictionsContainer"></div>
                                         </div>
                                     </div>
                                     
@@ -1430,122 +1432,84 @@
     <!-- 手書き入力クイズ画面（日本語→英語モード専用） -->
     <div class="handwriting-quiz-view hidden" id="handwritingQuizView">
         <!-- ヘッダー -->
-        <div class="hw-quiz-header">
-            <button class="hw-quiz-back-btn" id="hwQuizBackBtn" aria-label="戻る">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="hw-header">
+            <button class="hw-header-btn" id="hwQuizBackBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
             </button>
-            <div class="hw-quiz-progress">
-                <span class="hw-quiz-progress-text" id="hwQuizProgressText">1 / 10</span>
-            </div>
-            <button class="hw-quiz-bookmark-btn" id="hwQuizBookmarkBtn" aria-label="チェック">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="4" y="4" width="16" height="16" rx="4"></rect>
-                    <path class="bookmark-check" d="M8 12l3 3 5-5" stroke-linecap="round" stroke-linejoin="round"></path>
-                </svg>
-            </button>
+            <span class="hw-header-progress" id="hwQuizProgressText">1 / 10</span>
+            <div style="width: 44px;"></div>
         </div>
         
         <!-- 進捗バー -->
-        <div class="hw-quiz-progress-bar">
-            <div class="hw-quiz-progress-fill" id="hwQuizProgressFill" style="width: 0%"></div>
+        <div class="hw-progress-bar">
+            <div class="hw-progress-fill" id="hwQuizProgressFill"></div>
         </div>
         
-        <!-- メインコンテンツ -->
-        <div class="hw-quiz-content">
-            <!-- 問題表示エリア -->
-            <div class="hw-quiz-question">
-                <div class="hw-quiz-word-number" id="hwQuizWordNumber">No.1</div>
-                <div class="hw-quiz-meaning-wrapper">
-                    <span class="hw-quiz-pos" id="hwQuizPos"></span>
-                    <div class="hw-quiz-meaning" id="hwQuizMeaning">意味が表示されます</div>
-                </div>
+        <!-- メイン -->
+        <div class="hw-main">
+            <!-- 問題 -->
+            <div class="hw-question">
+                <span class="hw-question-no" id="hwQuizWordNumber">No.1</span>
+                <span class="hw-question-pos" id="hwQuizPos"></span>
+                <span class="hw-question-meaning" id="hwQuizMeaning">意味</span>
             </div>
             
-            <!-- 手書き入力エリア -->
-            <div class="hw-quiz-input-area">
-                <!-- 確定済み文字列表示 -->
-                <div class="hw-quiz-answer-display" id="hwQuizAnswerDisplay"></div>
-                
-                <!-- 手書きキャンバス -->
-                <div class="hw-quiz-canvas-container">
-                    <canvas id="hwQuizCanvas" class="hw-quiz-canvas" width="280" height="280"></canvas>
-                    <div class="hw-quiz-canvas-hint">ここに英字を1文字ずつ手書き</div>
-                </div>
-                
-                <!-- ツールボタン -->
-                <div class="hw-quiz-tools">
-                    <button class="hw-quiz-tool-btn" id="hwQuizClearBtn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"></path>
-                        </svg>
-                        <span>クリア</span>
-                    </button>
-                    <button class="hw-quiz-tool-btn" id="hwQuizBackspaceBtn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                            <line x1="18" y1="9" x2="12" y2="15"></line>
-                            <line x1="12" y1="9" x2="18" y2="15"></line>
-                        </svg>
-                        <span>1文字消す</span>
-                    </button>
-                    <button class="hw-quiz-tool-btn" id="hwQuizSpaceBtn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 15h14v4H5z"></path>
-                        </svg>
-                        <span>スペース</span>
-                    </button>
-                </div>
-                
-                <!-- 認識候補 -->
-                <div class="hw-quiz-predictions">
-                    <div class="hw-quiz-predictions-label">認識候補（タップで入力）</div>
-                    <div class="hw-quiz-predictions-buttons" id="hwQuizPredictions"></div>
-                </div>
+            <!-- 回答欄 -->
+            <div class="hw-answer" id="hwQuizAnswerDisplay"></div>
+            
+            <!-- キャンバス -->
+            <div class="hw-canvas-area">
+                <canvas id="hwQuizCanvas" class="hw-canvas" width="200" height="200"></canvas>
+            </div>
+            
+            <!-- 認識候補 -->
+            <div class="hw-candidates" id="hwQuizPredictions"></div>
+            
+            <!-- ツール -->
+            <div class="hw-tools">
+                <button class="hw-tool-btn" id="hwQuizClearBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                    クリア
+                </button>
+                <button class="hw-tool-btn" id="hwQuizBackspaceBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                    </svg>
+                    1文字消す
+                </button>
             </div>
             
             <!-- 回答ボタン -->
-            <button class="hw-quiz-submit-btn" id="hwQuizSubmitBtn">回答する</button>
+            <button class="hw-submit-btn" id="hwQuizSubmitBtn">回答する</button>
             
             <!-- 結果表示 -->
-            <div class="hw-quiz-result hidden" id="hwQuizResult">
-                <div class="hw-quiz-result-icon" id="hwQuizResultIcon"></div>
-                <div class="hw-quiz-result-message" id="hwQuizResultMessage"></div>
-                <div class="hw-quiz-correct-answer">
-                    <span class="hw-quiz-correct-label">正解:</span>
-                    <span class="hw-quiz-correct-word" id="hwQuizCorrectWord"></span>
-                    <button class="hw-quiz-audio-btn" id="hwQuizAudioBtn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="hw-result hidden" id="hwQuizResult">
+                <div class="hw-result-badge" id="hwQuizResultIcon"></div>
+                <div class="hw-result-word">
+                    <span id="hwQuizCorrectWord"></span>
+                    <button class="hw-audio-btn" id="hwQuizAudioBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
                         </svg>
                     </button>
                 </div>
-                <button class="hw-quiz-next-btn" id="hwQuizNextBtn">次の問題へ</button>
+                <button class="hw-next-btn" id="hwQuizNextBtn">次へ</button>
             </div>
         </div>
         
-        <!-- ローディング表示 -->
-        <div class="hw-quiz-loading hidden" id="hwQuizLoading">
-            <div class="hw-quiz-loading-spinner"></div>
-            <span>認識モデルを読み込み中...</span>
-        </div>
-        
-        <!-- デバッグ表示 -->
-        <div class="hw-quiz-debug hidden" id="hwQuizDebug">
-            <div class="hw-quiz-debug-toggle">
-                <label><input type="checkbox" id="hwQuizDebugToggle"><span>デバッグ</span></label>
-            </div>
-            <div class="hw-quiz-debug-content hidden" id="hwQuizDebugContent">
-                <div class="hw-quiz-debug-settings">
-                    <label><input type="checkbox" id="hwQuizDebugInvert" checked><span>反転</span></label>
-                    <label><input type="checkbox" id="hwQuizDebugTrim" checked><span>トリム</span></label>
-                    <label><input type="checkbox" id="hwQuizDebugCenter" checked><span>中心化</span></label>
-                </div>
-                <canvas id="hwQuizDebugCanvas" width="28" height="28"></canvas>
-                <div class="hw-quiz-debug-probs" id="hwQuizDebugProbs"></div>
-            </div>
+        <!-- ローディング -->
+        <div class="hw-loading hidden" id="hwQuizLoading">
+            <div class="hw-loading-spinner"></div>
+            <span>読み込み中...</span>
         </div>
     </div>
 

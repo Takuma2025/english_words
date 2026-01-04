@@ -933,13 +933,20 @@ function initSchoolSelector() {
 
     const openModal = (forceSearchMode = false) => {
         if (!modal) return;
-        
+
         // 表示用クラスを付与してボトムシート風に表示
         modal.classList.remove('hidden');
         requestAnimationFrame(() => {
             modal.classList.add('show');
             if (backdrop) backdrop.classList.add('show');
         });
+
+        // スクロール位置をリセット（2回目以降のスクロール位置保持を防ぐ）
+        const schoolList = document.getElementById('schoolList');
+        if (schoolList) {
+            schoolList.scrollTop = 0;
+        }
+
         setSchoolConfirmEnabled(false);
         
         const saved = loadSelectedSchool();
@@ -14643,12 +14650,25 @@ async function loadHWQuizModel() {
 /**
  * キャンバスを初期化
  */
+let hwQuizCanvasInitialized = false;
+
 function initHWQuizCanvas() {
     hwQuizCanvas = document.getElementById('hwQuizCanvas');
-    if (!hwQuizCanvas) return;
+    if (!hwQuizCanvas) {
+        console.error('[HWQuiz] Canvas not found');
+        return;
+    }
     
     hwQuizCtx = hwQuizCanvas.getContext('2d');
     clearHWQuizCanvas();
+    
+    // 既に初期化済みならイベント登録をスキップ
+    if (hwQuizCanvasInitialized) {
+        console.log('[HWQuiz] Canvas already initialized');
+        return;
+    }
+    
+    console.log('[HWQuiz] Initializing canvas events');
     
     // 描画イベント（マウス）
     hwQuizCanvas.addEventListener('mousedown', hwQuizDrawStart);
@@ -14661,17 +14681,24 @@ function initHWQuizCanvas() {
     hwQuizCanvas.addEventListener('touchmove', hwQuizDrawMove, { passive: false });
     hwQuizCanvas.addEventListener('touchend', hwQuizDrawEnd);
     hwQuizCanvas.addEventListener('touchcancel', hwQuizDrawEnd);
+    
+    hwQuizCanvasInitialized = true;
 }
 
 /**
  * キャンバスをクリア
+ * 【精度向上ポイント】線の太さをEMNISTの学習データに合わせる
+ * EMNISTは28x28ピクセルで線の太さは約2-3ピクセル
+ * キャンバスが200x200の場合、200/28 ≈ 7.14 なので線幅10-12が適切
  */
 function clearHWQuizCanvas() {
-    if (!hwQuizCtx) return;
+    if (!hwQuizCtx || !hwQuizCanvas) return;
     hwQuizCtx.fillStyle = '#ffffff';
     hwQuizCtx.fillRect(0, 0, hwQuizCanvas.width, hwQuizCanvas.height);
-    hwQuizCtx.strokeStyle = '#1e293b';
-    hwQuizCtx.lineWidth = 10;
+    hwQuizCtx.strokeStyle = '#000000'; // 黒で描画（反転前提）
+    // キャンバスサイズに応じて線幅を動的調整（EMNIST相当）
+    const scaleFactor = hwQuizCanvas.width / 28;
+    hwQuizCtx.lineWidth = Math.max(8, Math.round(scaleFactor * 2.5));
     hwQuizCtx.lineCap = 'round';
     hwQuizCtx.lineJoin = 'round';
 }
@@ -14750,30 +14777,34 @@ function getHWQuizPos(e) {
 
 /**
  * キャンバスを認識
+ * 【精度向上】入力検証 + Top-5候補表示
  */
 async function recognizeHWQuizCanvas() {
     if (!window.handwritingRecognition?.isModelLoaded) return;
     
     try {
         const result = await window.handwritingRecognition.predict(hwQuizCanvas);
-        if (result) {
-            displayHWQuizPredictions(result.topK);
-            
-            // デバッグ表示
-            const debugContent = document.getElementById('hwQuizDebugContent');
-            if (debugContent && !debugContent.classList.contains('hidden')) {
-                const debugCanvas = document.getElementById('hwQuizDebugCanvas');
-                if (debugCanvas) {
-                    window.handwritingRecognition.drawPreprocessedImage(result.preprocessed.data, debugCanvas);
-                }
-                const debugProbs = document.getElementById('hwQuizDebugProbs');
-                if (debugProbs) {
-                    debugProbs.textContent = result.topK.map((item, i) => 
-                        `${i+1}. ${item.label}: ${(item.probability * 100).toFixed(1)}%`
-                    ).join(' | ');
-                }
+        
+        if (!result) return;
+        
+        // エラーチェック（入力検証失敗）
+        if (result.error) {
+            const container = document.getElementById('hwQuizPredictions');
+            if (container) {
+                let message = '文字を書いてください';
+                if (result.error === 'too_small') message = 'もう少し大きく書いてください';
+                if (result.error === 'too_large') message = 'もう少し小さく書いてください';
+                if (result.error === 'multiple_chars') message = '1文字ずつ書いてください';
+                container.innerHTML = `<span class="hw-candidates-placeholder">${message}</span>`;
             }
+            return;
         }
+        
+        // Top-5候補を表示
+        if (result.topK && result.topK.length > 0) {
+            displayHWQuizPredictions(result.topK);
+        }
+        
     } catch (error) {
         console.error('[HWQuiz] Recognition error:', error);
     }
@@ -14788,13 +14819,11 @@ function displayHWQuizPredictions(topK) {
     
     container.innerHTML = '';
     
-    topK.forEach(item => {
+    // 上位5件を表示
+    topK.slice(0, 5).forEach(item => {
         const btn = document.createElement('button');
-        btn.className = 'hw-quiz-pred-btn';
-        btn.innerHTML = `
-            <span class="hw-quiz-pred-label">${item.label}</span>
-            <span class="hw-quiz-pred-prob">${(item.probability * 100).toFixed(0)}%</span>
-        `;
+        btn.className = 'hw-candidate-btn';
+        btn.textContent = item.label;
         btn.addEventListener('click', () => {
             addHWQuizChar(item.label);
         });
@@ -14810,9 +14839,11 @@ function addHWQuizChar(char) {
     updateHWQuizAnswerDisplay();
     clearHWQuizCanvas();
     
-    // 予測をクリア
+    // 予測をプレースホルダーに戻す
     const container = document.getElementById('hwQuizPredictions');
-    if (container) container.innerHTML = '';
+    if (container) {
+        container.innerHTML = '<span class="hw-candidates-placeholder">次の文字を書く</span>';
+    }
 }
 
 /**
@@ -14837,25 +14868,15 @@ function setupHWQuizEvents() {
         };
     }
     
-    // ブックマークボタン
-    const bookmarkBtn = document.getElementById('hwQuizBookmarkBtn');
-    if (bookmarkBtn) {
-        bookmarkBtn.onclick = () => {
-            const word = hwQuizWords[hwQuizIndex];
-            if (word) {
-                toggleReviewWord(word.id);
-                updateHWQuizBookmarkBtn();
-            }
-        };
-    }
-    
     // クリアボタン
     const clearBtn = document.getElementById('hwQuizClearBtn');
     if (clearBtn) {
         clearBtn.onclick = () => {
             clearHWQuizCanvas();
             const container = document.getElementById('hwQuizPredictions');
-            if (container) container.innerHTML = '';
+            if (container) {
+                container.innerHTML = '<span class="hw-candidates-placeholder">文字を書いてください</span>';
+            }
         };
     }
     
@@ -14990,45 +15011,29 @@ function displayHWQuizQuestion() {
     // キャンバスをクリア
     clearHWQuizCanvas();
     
-    // 予測をクリア
+    // 予測をプレースホルダーに
     const predictions = document.getElementById('hwQuizPredictions');
-    if (predictions) predictions.innerHTML = '';
+    if (predictions) {
+        predictions.innerHTML = '<span class="hw-candidates-placeholder">文字を書いてください</span>';
+    }
     
     // UIをリセット
     const submitBtn = document.getElementById('hwQuizSubmitBtn');
     const result = document.getElementById('hwQuizResult');
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
-    const canvasContainer = document.querySelector('.hw-quiz-canvas-container');
-    const tools = document.querySelector('.hw-quiz-tools');
-    const predictionsArea = document.querySelector('.hw-quiz-predictions');
+    const canvasArea = document.querySelector('.hw-canvas-area');
+    const candidates = document.querySelector('.hw-candidates');
+    const tools = document.querySelector('.hw-tools');
     
     if (submitBtn) submitBtn.classList.remove('hidden');
     if (result) result.classList.add('hidden');
     if (answerDisplay) {
         answerDisplay.classList.remove('correct', 'wrong');
     }
-    if (canvasContainer) canvasContainer.style.display = '';
+    if (canvasArea) canvasArea.style.display = '';
+    if (candidates) candidates.style.display = '';
     if (tools) tools.style.display = '';
-    if (predictionsArea) predictionsArea.style.display = '';
     
-    // ブックマーク状態を更新
-    updateHWQuizBookmarkBtn();
-}
-
-/**
- * ブックマークボタンを更新
- */
-function updateHWQuizBookmarkBtn() {
-    const bookmarkBtn = document.getElementById('hwQuizBookmarkBtn');
-    const word = hwQuizWords[hwQuizIndex];
-    
-    if (bookmarkBtn && word) {
-        if (reviewWords.has(word.id)) {
-            bookmarkBtn.classList.add('active');
-        } else {
-            bookmarkBtn.classList.remove('active');
-        }
-    }
 }
 
 /**
@@ -15071,18 +15076,17 @@ function showHWQuizResult(isCorrect, word) {
     const submitBtn = document.getElementById('hwQuizSubmitBtn');
     const result = document.getElementById('hwQuizResult');
     const resultIcon = document.getElementById('hwQuizResultIcon');
-    const resultMessage = document.getElementById('hwQuizResultMessage');
     const correctWord = document.getElementById('hwQuizCorrectWord');
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
-    const canvasContainer = document.querySelector('.hw-quiz-canvas-container');
-    const tools = document.querySelector('.hw-quiz-tools');
-    const predictionsArea = document.querySelector('.hw-quiz-predictions');
+    const canvasArea = document.querySelector('.hw-canvas-area');
+    const candidates = document.querySelector('.hw-candidates');
+    const tools = document.querySelector('.hw-tools');
     
     // 入力エリアを非表示
     if (submitBtn) submitBtn.classList.add('hidden');
-    if (canvasContainer) canvasContainer.style.display = 'none';
+    if (canvasArea) canvasArea.style.display = 'none';
+    if (candidates) candidates.style.display = 'none';
     if (tools) tools.style.display = 'none';
-    if (predictionsArea) predictionsArea.style.display = 'none';
     
     // 回答表示を更新
     if (answerDisplay) {
@@ -15092,11 +15096,7 @@ function showHWQuizResult(isCorrect, word) {
     // 結果を表示
     if (result) result.classList.remove('hidden');
     if (resultIcon) {
-        resultIcon.className = 'hw-quiz-result-icon ' + (isCorrect ? 'correct' : 'wrong');
-    }
-    if (resultMessage) {
-        resultMessage.textContent = isCorrect ? '正解!' : '不正解';
-        resultMessage.className = 'hw-quiz-result-message ' + (isCorrect ? 'correct' : 'wrong');
+        resultIcon.className = 'hw-result-badge ' + (isCorrect ? 'correct' : 'wrong');
     }
     if (correctWord) {
         correctWord.textContent = word.word;
@@ -15136,27 +15136,27 @@ function showHWQuizCompletion() {
     const percentage = Math.round((correctCount / total) * 100);
     
     // 完了画面を表示
-    const content = document.querySelector('.hw-quiz-content');
+    const content = document.querySelector('.hw-main');
     if (content) {
         content.innerHTML = `
-            <div class="hw-quiz-completion">
-                <div class="hw-quiz-completion-icon">
-                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+            <div class="hw-completion">
+                <div class="hw-completion-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke-width="2.5">
                         <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M8 12l3 3 5-5"></path>
+                        <path d="M8 12l3 3 5-5" stroke-linecap="round" stroke-linejoin="round"></path>
                     </svg>
                 </div>
-                <h2 class="hw-quiz-completion-title">テスト完了!</h2>
-                <div class="hw-quiz-completion-score">
-                    <span class="hw-quiz-completion-correct">${correctCount}</span>
-                    <span class="hw-quiz-completion-total">/ ${total}</span>
+                <h2 class="hw-completion-title">テスト完了</h2>
+                <div class="hw-completion-score">
+                    <span class="hw-completion-correct">${correctCount}</span>
+                    <span class="hw-completion-total">/ ${total}</span>
                 </div>
-                <div class="hw-quiz-completion-percent">${percentage}%</div>
-                <div class="hw-quiz-completion-buttons">
-                    <button class="hw-quiz-completion-btn hw-quiz-completion-retry" onclick="restartHWQuiz()">
+                <div class="hw-completion-percent">${percentage}%</div>
+                <div class="hw-completion-buttons">
+                    <button class="hw-completion-btn hw-completion-retry" onclick="restartHWQuiz()">
                         もう一度
                     </button>
-                    <button class="hw-quiz-completion-btn hw-quiz-completion-back" onclick="exitHWQuiz()">
+                    <button class="hw-completion-btn hw-completion-back" onclick="exitHWQuiz()">
                         戻る
                     </button>
                 </div>
@@ -15172,12 +15172,79 @@ function showHWQuizCompletion() {
  */
 function restartHWQuiz() {
     hwQuizIndex = 0;
+    hwQuizConfirmedText = '';
     
-    // コンテンツを復元
-    const hwQuizView = document.getElementById('handwritingQuizView');
-    if (hwQuizView) {
-        location.reload(); // 簡易的にリロード
+    // メインコンテンツを復元
+    const main = document.querySelector('.hw-main');
+    if (main) {
+        main.innerHTML = `
+            <!-- 問題 -->
+            <div class="hw-question">
+                <span class="hw-question-no" id="hwQuizWordNumber">No.1</span>
+                <span class="hw-question-pos" id="hwQuizPos"></span>
+                <span class="hw-question-meaning" id="hwQuizMeaning">意味</span>
+            </div>
+            
+            <!-- 回答欄 -->
+            <div class="hw-answer" id="hwQuizAnswerDisplay"></div>
+            
+            <!-- キャンバス -->
+            <div class="hw-canvas-area">
+                <canvas id="hwQuizCanvas" class="hw-canvas" width="200" height="200"></canvas>
+            </div>
+            
+            <!-- 認識候補 -->
+            <div class="hw-candidates" id="hwQuizPredictions"></div>
+            
+            <!-- ツール -->
+            <div class="hw-tools">
+                <button class="hw-tool-btn" id="hwQuizClearBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                    クリア
+                </button>
+                <button class="hw-tool-btn" id="hwQuizBackspaceBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                    </svg>
+                    1文字消す
+                </button>
+            </div>
+            
+            <!-- 回答ボタン -->
+            <button class="hw-submit-btn" id="hwQuizSubmitBtn">回答する</button>
+            
+            <!-- 結果表示 -->
+            <div class="hw-result hidden" id="hwQuizResult">
+                <div class="hw-result-badge" id="hwQuizResultIcon"></div>
+                <div class="hw-result-word">
+                    <span id="hwQuizCorrectWord"></span>
+                    <button class="hw-audio-btn" id="hwQuizAudioBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                    </button>
+                </div>
+                <button class="hw-next-btn" id="hwQuizNextBtn">次へ</button>
+            </div>
+        `;
     }
+    
+    // キャンバスを再初期化
+    hwQuizCanvasInitialized = false;
+    initHWQuizCanvas();
+    
+    // イベントを再設定
+    setupHWQuizEvents();
+    
+    // 最初の問題を表示
+    displayHWQuizQuestion();
 }
 
 /**
