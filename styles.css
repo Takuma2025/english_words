@@ -2579,6 +2579,12 @@ body.learning-mode .app-header {
     background: #ffffff;
 }
 
+.category-accordion-header:focus,
+.category-accordion-header:focus-visible {
+    background: #ffffff;
+    outline: none;
+}
+
 .category-accordion-header .category-info {
     flex: 1;
     min-width: 0;
@@ -2655,6 +2661,12 @@ body.learning-mode .app-header {
     background: #ffffff;
 }
 
+.category-accordion-item:focus,
+.category-accordion-item:focus-visible {
+    background: #ffffff;
+    outline: none;
+}
+
 /* 日常生活でよく使う生活語彙（白） */
 .category-accordion-item-green {
     background: #ffffff;
@@ -2665,6 +2677,12 @@ body.learning-mode .app-header {
     background: #ffffff;
 }
 
+.category-accordion-item-green:focus,
+.category-accordion-item-green:focus-visible {
+    background: #ffffff;
+    outline: none;
+}
+
 /* 英文でよく登場する機能語（白） */
 .category-accordion-item-purple {
     background: #ffffff;
@@ -2673,6 +2691,12 @@ body.learning-mode .app-header {
 .category-accordion-item-purple:active {
     transform: scale(0.99);
     background: #ffffff;
+}
+
+.category-accordion-item-purple:focus,
+.category-accordion-item-purple:focus-visible {
+    background: #ffffff;
+    outline: none;
 }
 
 .accordion-item-icon {
@@ -2789,6 +2813,15 @@ button.category-card:active {
     background: #ffffff !important;
 }
 
+.category-card:focus,
+.category-card:focus-visible,
+button.category-card:focus,
+button.category-card:focus-visible {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    outline: none;
+}
+
 .category-card:last-child {
     margin-bottom: 0;
 }
@@ -2807,6 +2840,12 @@ button.category-card:active {
 .category-card.category-card-with-actions:active:not(:has(.course-side-btn:active)) {
     transform: scale(0.98);
     background: #ffffff;
+}
+
+.category-card.category-card-with-actions:focus,
+.category-card.category-card-with-actions:focus-visible {
+    background: #ffffff;
+    outline: none;
 }
 
 .category-card.category-card-with-actions .category-info {
@@ -2998,6 +3037,12 @@ button.category-card:active {
     background: #ffffff;
 }
 
+.learning-menu-category-btn:focus,
+.learning-menu-category-btn:focus-visible {
+    background: #ffffff;
+    outline: none;
+}
+
 .learning-menu-category-title {
     font-size: 14px;
     font-weight: 600;
@@ -3028,6 +3073,12 @@ button.category-card:active {
 .learning-menu-subcategory-btn:active {
     transform: scale(0.98);
     background: #f9fafb;
+}
+
+.learning-menu-subcategory-btn:focus,
+.learning-menu-subcategory-btn:focus-visible {
+    background: #f9fafb;
+    outline: none;
 }
 
 .learning-menu-subcategory-title {
@@ -12507,7 +12558,28 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     
     /* スマホでのタップ時も背景色を白に固定 */
     .category-card:active,
-    button.category-card:active {
+    .category-card:focus,
+    .category-card:focus-visible,
+    .category-accordion-header:active,
+    .category-accordion-header:focus,
+    .category-accordion-header:focus-visible,
+    .category-accordion-item:active,
+    .category-accordion-item:focus,
+    .category-accordion-item:focus-visible,
+    .category-accordion-item-green:active,
+    .category-accordion-item-green:focus,
+    .category-accordion-item-green:focus-visible,
+    .category-accordion-item-purple:active,
+    .category-accordion-item-purple:focus,
+    .category-accordion-item-purple:focus-visible,
+    .category-card.category-card-with-actions:active,
+    .category-card.category-card-with-actions:focus,
+    .category-card.category-card-with-actions:focus-visible,
+    button.category-card:active,
+    button.category-card:focus,
+    button.category-card:focus-visible {
         background-color: #ffffff !important;
+        background: #ffffff !important;
+        outline: none;
     }
 }
