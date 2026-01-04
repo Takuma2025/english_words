@@ -14730,6 +14730,12 @@ function hwQuizDrawStart(e) {
     hwQuizLastX = pos.x;
     hwQuizLastY = pos.y;
     
+    // デバッグ: タッチ開始を表示
+    const predictions = document.getElementById('hwQuizPredictions');
+    if (predictions) {
+        predictions.innerHTML = '<span class="hw-candidates-placeholder">描画中...</span>';
+    }
+    
     if (hwQuizDrawTimeout) {
         clearTimeout(hwQuizDrawTimeout);
         hwQuizDrawTimeout = null;
@@ -14760,6 +14766,12 @@ function hwQuizDrawMove(e) {
 function hwQuizDrawEnd(e) {
     if (!hwQuizIsDrawing) return;
     hwQuizIsDrawing = false;
+    
+    // デバッグ: 描画終了を表示
+    const predictions = document.getElementById('hwQuizPredictions');
+    if (predictions) {
+        predictions.innerHTML = '<span class="hw-candidates-placeholder">認識中...</span>';
+    }
     
     // 描画停止後、自動認識
     if (hwQuizDrawTimeout) clearTimeout(hwQuizDrawTimeout);
@@ -14796,7 +14808,14 @@ function getHWQuizPos(e) {
  * 【精度向上】入力検証 + Top-5候補表示
  */
 async function recognizeHWQuizCanvas() {
-    if (!window.handwritingRecognition?.isModelLoaded) return;
+    const predictions = document.getElementById('hwQuizPredictions');
+    
+    if (!window.handwritingRecognition?.isModelLoaded) {
+        if (predictions) {
+            predictions.innerHTML = '<span class="hw-candidates-placeholder">モデル未読み込み</span>';
+        }
+        return;
+    }
     
     try {
         const result = await window.handwritingRecognition.predict(hwQuizCanvas);
