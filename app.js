@@ -14665,7 +14665,10 @@ async function loadHWQuizModel() {
             if (result) {
                 predictions.innerHTML = '<span class="hw-candidates-placeholder">文字を書いてください</span>';
             } else {
-                predictions.innerHTML = '<span class="hw-candidates-placeholder">loadModel失敗(false)</span>';
+                // エラー詳細を取得して表示
+                const errorDetail = window.handwritingRecognition.getLastError ? 
+                    window.handwritingRecognition.getLastError() : 'unknown';
+                predictions.innerHTML = `<span class="hw-candidates-placeholder">失敗: ${errorDetail}</span>`;
             }
         }
     } catch (error) {
