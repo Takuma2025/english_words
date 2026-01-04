@@ -2632,6 +2632,16 @@ function init() {
         setupRedSheetStickyScroll();
         updateVocabProgressBar();
         
+        // タップ後にフォーカスを外す（スマホでのアクティブ状態残り防止）
+        document.addEventListener('touchend', (e) => {
+            const target = e.target.closest('.category-card, .category-accordion-header, .category-accordion-item, .category-accordion-item-green, .category-accordion-item-purple, .learning-menu-category-btn, .learning-menu-subcategory-btn');
+            if (target) {
+                setTimeout(() => {
+                    target.blur();
+                }, 100);
+            }
+        }, { passive: true });
+        
         // スプラッシュ画面を表示
         const splashScreen = document.getElementById('splashScreen');
         if (splashScreen) {
