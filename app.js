@@ -14868,45 +14868,47 @@ function getHWQuizPos(e) {
     };
 }
 
-// 認識済みセグメント数を追跡
-let hwQuizRecognizedSegments = 0;
+// 認識処理中フラグ
+let hwQuizIsRecognizing = false;
 
 /**
- * キャンバスを認識して自動入力（書き終わった文字から順番に認識）
+ * キャンバスを認識して自動入力
  */
 async function recognizeHWQuizCanvas() {
     if (!window.handwritingRecognition?.isModelLoaded) {
         return;
     }
     
+    // 既に認識処理中なら何もしない
+    if (hwQuizIsRecognizing) {
+        return;
+    }
+    
+    hwQuizIsRecognizing = true;
+    
     try {
-        // 現在のセグメントを検出
+        // 現在のセグメントを検出（キャンバス上に残っているもの）
         const segments = window.handwritingRecognition.segmentCharacters(hwQuizCanvas);
         
         if (!segments || segments.length === 0) {
+            hwQuizIsRecognizing = false;
             return;
         }
         
-        // 新しいセグメント（まだ認識していない文字）があるか確認
-        if (segments.length > hwQuizRecognizedSegments) {
-            // 新しいセグメントを認識
-            const newSegments = segments.slice(hwQuizRecognizedSegments);
-            
-            for (const segment of newSegments) {
-                // セグメントを個別キャンバスに描画して認識
-                const result = await recognizeSingleSegment(segment);
-                
-                if (result && result.char) {
-                    // 文字を飛ばす（セグメントの位置から）
-                    flyCharFromSegment(result.char, segment);
-                    hwQuizRecognizedSegments++;
-                }
-            }
+        // 最初のセグメントを認識（1文字ずつ処理）
+        const segment = segments[0];
+        const result = await recognizeSingleSegment(segment);
+        
+        if (result && result.char) {
+            // 文字を処理（セグメントの位置から）
+            flyCharFromSegment(result.char, segment);
         }
         
     } catch (error) {
         console.error('[HWQuiz] Recognition error:', error);
     }
+    
+    hwQuizIsRecognizing = false;
 }
 
 /**
@@ -14973,6 +14975,7 @@ function drawSegmentLine(segmentEndX) {
 function flyCharFromSegment(char, segment) {
     const canvas = document.getElementById('hwQuizCanvas');
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
+    const canvasWrapper = document.querySelector('.hw-canvas-wrapper');
     
     if (!canvas || !answerDisplay) {
         hwQuizConfirmedText += char;
@@ -14993,38 +14996,55 @@ function flyCharFromSegment(char, segment) {
     const captureCtx = captureCanvas.getContext('2d');
     captureCtx.drawImage(canvas, captureX, captureY, captureWidth, captureHeight, 0, 0, captureWidth, captureHeight);
     
-    // セグメント部分を薄いグレーで再描画
+    // キャンバスからセグメント部分を即座に消去（認識継続のため）
     hwQuizCtx.fillStyle = '#ffffff';
-    hwQuizCtx.fillRect(captureX, captureY, captureWidth, captureHeight);
-    hwQuizCtx.globalAlpha = 0.25;
-    hwQuizCtx.drawImage(captureCanvas, captureX, captureY);
-    hwQuizCtx.globalAlpha = 1.0;
+    hwQuizCtx.fillRect(captureX - 2, captureY - 2, captureWidth + 4, captureHeight + 4);
     
-    // セグメント境界線を描画
-    const lineX = segment.x + segment.width + 5;
-    drawSegmentLine(segment.x + segment.width);
+    // オーバーレイで薄いグレーの文字を表示
+    if (canvasWrapper) {
+        const canvasRect = canvas.getBoundingClientRect();
+        const wrapperRect = canvasWrapper.getBoundingClientRect();
+        const scaleX = canvasRect.width / canvas.width;
+        const scaleY = canvasRect.height / canvas.height;
+        
+        // オーバーレイ画像を作成
+        const overlay = document.createElement('img');
+        overlay.src = captureCanvas.toDataURL();
+        overlay.className = 'hw-fading-overlay';
+        overlay.style.position = 'absolute';
+        overlay.style.left = (captureX * scaleX) + 'px';
+        overlay.style.top = (captureY * scaleY) + 'px';
+        overlay.style.width = (captureWidth * scaleX) + 'px';
+        overlay.style.height = (captureHeight * scaleY) + 'px';
+        overlay.style.opacity = '0.25';
+        overlay.style.pointerEvents = 'none';
+        overlay.style.zIndex = '5';
+        canvasWrapper.appendChild(overlay);
+        
+        // 区切り線オーバーレイ
+        const lineX = (segment.x + segment.width + 5) * scaleX;
+        const line = document.createElement('div');
+        line.className = 'hw-fading-line';
+        line.style.position = 'absolute';
+        line.style.left = lineX + 'px';
+        line.style.top = '0';
+        line.style.width = '1px';
+        line.style.height = '100%';
+        line.style.background = 'rgba(150, 150, 150, 0.5)';
+        line.style.pointerEvents = 'none';
+        line.style.zIndex = '5';
+        canvasWrapper.appendChild(line);
+        
+        // 2秒後にオーバーレイを削除
+        setTimeout(() => {
+            overlay.remove();
+            line.remove();
+        }, 2000);
+    }
     
     // 文字をすぐに追加
     hwQuizConfirmedText += char;
     updateHWQuizAnswerDisplay();
-    
-    // 3秒後にセグメントと区切り線を消去
-    setTimeout(() => {
-        // セグメント部分を白で消去
-        hwQuizCtx.fillStyle = '#ffffff';
-        hwQuizCtx.fillRect(captureX, captureY, captureWidth, captureHeight);
-        
-        // 区切り線を白で消去
-        hwQuizCtx.save();
-        hwQuizCtx.strokeStyle = '#ffffff';
-        hwQuizCtx.lineWidth = 3;
-        hwQuizCtx.setLineDash([]);
-        hwQuizCtx.beginPath();
-        hwQuizCtx.moveTo(lineX, 0);
-        hwQuizCtx.lineTo(lineX, hwQuizCanvas.height);
-        hwQuizCtx.stroke();
-        hwQuizCtx.restore();
-    }, 3000);
 }
 
 /**
@@ -15151,15 +15171,48 @@ function setupHWQuizEvents() {
         };
     }
     
-    // バックスペースボタン
+    // バックスペースボタン（長押し対応）
     const backspaceBtn = document.getElementById('hwQuizBackspaceBtn');
     if (backspaceBtn) {
-        backspaceBtn.onclick = () => {
+        let backspaceInterval = null;
+        let backspaceTimeout = null;
+        
+        const doBackspace = () => {
             if (hwQuizConfirmedText.length > 0) {
                 hwQuizConfirmedText = hwQuizConfirmedText.slice(0, -1);
                 updateHWQuizAnswerDisplay();
             }
         };
+        
+        const startBackspace = (e) => {
+            e.preventDefault();
+            doBackspace();
+            // 200ms後に連続削除開始
+            backspaceTimeout = setTimeout(() => {
+                backspaceInterval = setInterval(doBackspace, 60); // 60msごとに削除
+            }, 200);
+        };
+        
+        const stopBackspace = () => {
+            if (backspaceTimeout) {
+                clearTimeout(backspaceTimeout);
+                backspaceTimeout = null;
+            }
+            if (backspaceInterval) {
+                clearInterval(backspaceInterval);
+                backspaceInterval = null;
+            }
+        };
+        
+        // タッチイベント
+        backspaceBtn.addEventListener('touchstart', startBackspace, { passive: false });
+        backspaceBtn.addEventListener('touchend', stopBackspace);
+        backspaceBtn.addEventListener('touchcancel', stopBackspace);
+        
+        // マウスイベント
+        backspaceBtn.addEventListener('mousedown', startBackspace);
+        backspaceBtn.addEventListener('mouseup', stopBackspace);
+        backspaceBtn.addEventListener('mouseleave', stopBackspace);
     }
     
     // スペースボタン
@@ -15484,6 +15537,7 @@ function restartHWQuiz() {
             <!-- キャンバス -->
             <div class="hw-canvas-area">
                 <div class="hw-canvas-wrapper">
+                    <div class="hw-canvas-label">手書き入力欄</div>
                     <div class="hw-canvas-lines"></div>
                     <canvas id="hwQuizCanvas" class="hw-canvas" width="500" height="180"></canvas>
                 </div>

@@ -13193,14 +13193,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 回答欄 */
 .hw-answer {
-    height: 56px;
-    width: 300px;
+    height: 64px;
+    width: 340px;
     margin: 0 auto;
-    padding: 4px 8px;
+    padding: 4px 12px;
     background: #fff;
     border: 2px solid #3182ce;
     border-radius: 6px;
-    font-size: 38px;
+    font-size: 48px;
     font-weight: 700;
     color: #1a202c;
     letter-spacing: 2px;
@@ -13240,8 +13240,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     height: min(180px, 45vw);
     border: none;
     border-radius: 0;
-    overflow: hidden;
+    overflow: visible;
     background: #fff;
+    margin-top: 14px;
 }
 
 .hw-canvas {
@@ -13253,20 +13254,32 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 /* キャンバス内の英語4線（上に重ねて表示）間隔 5:6:5 */
+.hw-canvas-label {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #6b7280;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 4px;
+    z-index: 100;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
 .hw-canvas-lines {
     position: absolute;
     inset: 0;
     pointer-events: none;
     z-index: 10;
     background-image:
-        /* 1本目：薄い青（一番上） */
-        linear-gradient(#90cdf4 0%, #90cdf4 1px, transparent 1px),
-        /* 2本目：薄い青（31%位置） */
-        linear-gradient(transparent 0%, transparent 31%, #90cdf4 31%, #90cdf4 calc(31% + 1px), transparent calc(31% + 1px)),
-        /* 3本目：太く赤（69%位置・ベースライン） */
-        linear-gradient(transparent 0%, transparent 69%, #dc2626 69%, #dc2626 calc(69% + 3px), transparent calc(69% + 3px)),
-        /* 4本目：薄い青（一番下） */
-        linear-gradient(transparent 0%, transparent calc(100% - 1px), #90cdf4 calc(100% - 1px), #90cdf4 100%);
+        /* 上の太いグレー線 */
+        linear-gradient(#9ca3af 0%, #9ca3af 3px, transparent 3px),
+        /* 下の太いグレー線 */
+        linear-gradient(transparent 0%, transparent calc(100% - 3px), #9ca3af calc(100% - 3px), #9ca3af 100%);
 }
 
 /* 飛んでいく文字のアニメーション */
@@ -13702,9 +13715,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     }
     
     .hw-answer {
-        min-height: 44px;
+        min-height: 50px;
         padding: 10px 14px;
-        font-size: 22px;
+        font-size: 32px;
         border-radius: 10px;
     }
     
@@ -13810,9 +13823,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     }
     
     .hw-answer {
-        min-height: 40px;
+        min-height: 46px;
         padding: 8px 12px;
-        font-size: 20px;
+        font-size: 28px;
     }
     
     .hw-canvas-wrapper {
@@ -13899,9 +13912,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     }
     
     .hw-answer {
-        min-height: 36px;
+        min-height: 40px;
         padding: 6px 10px;
-        font-size: 18px;
+        font-size: 24px;
         border-radius: 8px;
     }
     
