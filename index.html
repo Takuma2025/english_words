@@ -874,13 +874,11 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- 認識結果（候補） -->
+                                    <!-- 認識結果（top-5候補） -->
                                     <div class="handwriting-predictions" id="handwritingPredictions">
-                                        <div class="predictions-row">
-                                            <!-- メイン候補（1位） -->
-                                            <div id="mainPredictionContainer"></div>
-                                            <!-- サブ候補（2位、3位） -->
-                                            <div class="sub-predictions-column" id="subPredictionsContainer"></div>
+                                        <div class="predictions-label">認識候補（タップで確定）</div>
+                                        <div class="predictions-buttons" id="predictionsButtons">
+                                            <!-- 動的に生成 -->
                                         </div>
                                     </div>
                                     
@@ -1487,8 +1485,8 @@
                 </button>
             </div>
             
-            <!-- 回答ボタン -->
-            <button class="hw-submit-btn" id="hwQuizSubmitBtn">回答する</button>
+            <!-- 解答ボタン -->
+            <button class="hw-submit-btn" id="hwQuizSubmitBtn">解答する</button>
             
             <!-- 結果表示 -->
             <div class="hw-result hidden" id="hwQuizResult">

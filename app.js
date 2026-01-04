@@ -14819,10 +14819,14 @@ function displayHWQuizPredictions(topK) {
     
     container.innerHTML = '';
     
-    // 上位5件を表示
-    topK.slice(0, 5).forEach(item => {
+    // 上位3件を表示（1位は大きく、2位3位は小さく）
+    topK.slice(0, 3).forEach((item, index) => {
         const btn = document.createElement('button');
-        btn.className = 'hw-candidate-btn';
+        if (index === 0) {
+            btn.className = 'hw-candidate-btn hw-candidate-primary';
+        } else {
+            btn.className = 'hw-candidate-btn hw-candidate-secondary';
+        }
         btn.textContent = item.label;
         btn.addEventListener('click', () => {
             addHWQuizChar(item.label);

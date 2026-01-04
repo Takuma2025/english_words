@@ -8,7 +8,6 @@ class HandwritingInputUI {
         this.ctx = null;
         this.isDrawing = false;
         this.hasDrawn = false;
-        this.initialized = false;
         this.lastX = 0;
         this.lastY = 0;
         this.drawTimeout = null;
@@ -26,10 +25,6 @@ class HandwritingInputUI {
      * 初期化
      */
     async init() {
-        // 二重初期化を避ける
-        if (this.initialized) return;
-        this.initialized = true;
-
         this.canvas = document.getElementById('handwritingCanvas');
         this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
         
@@ -37,8 +32,7 @@ class HandwritingInputUI {
             container: document.getElementById('handwritingInputContainer'),
             confirmedText: document.getElementById('handwritingConfirmedText'),
             predictions: document.getElementById('handwritingPredictions'),
-            mainPredictionContainer: document.getElementById('mainPredictionContainer'),
-            subPredictionsContainer: document.getElementById('subPredictionsContainer'),
+            predictionsButtons: document.getElementById('predictionsButtons'),
             clearBtn: document.getElementById('handwritingClearBtn'),
             backspaceBtn: document.getElementById('handwritingBackspaceBtn'),
             spaceBtn: document.getElementById('handwritingSpaceBtn'),
@@ -205,12 +199,7 @@ class HandwritingInputUI {
         this.hasDrawn = false;
         
         // 予測結果をクリア
-        if (this.elements.mainPredictionContainer) {
-            this.elements.mainPredictionContainer.innerHTML = '';
-        }
-        if (this.elements.subPredictionsContainer) {
-            this.elements.subPredictionsContainer.innerHTML = '';
-        }
+        this.elements.predictionsButtons.innerHTML = '';
         
         // デバッグキャンバスクリア
         const debugCtx = this.elements.debugCanvas.getContext('2d');
@@ -253,36 +242,29 @@ class HandwritingInputUI {
      * 予測候補を表示
      */
     displayPredictions(topK) {
-        if (!this.elements.mainPredictionContainer || !this.elements.subPredictionsContainer) return;
+        this.elements.predictionsButtons.innerHTML = '';
         
-        this.elements.mainPredictionContainer.innerHTML = '';
-        this.elements.subPredictionsContainer.innerHTML = '';
-        
-        if (topK.length === 0) return;
-
-        // メイン候補（1位）
-        const top = topK[0];
-        const mainBtn = document.createElement('button');
-        mainBtn.className = 'prediction-main-btn';
-        const labelSpan = document.createElement('span');
-        labelSpan.className = 'prediction-main-label';
-        labelSpan.textContent = top.label;
-        const probSpan = document.createElement('span');
-        probSpan.className = 'prediction-main-prob';
-        probSpan.textContent = `${(top.probability * 100).toFixed(0)}%`;
-        mainBtn.appendChild(labelSpan);
-        mainBtn.appendChild(probSpan);
-        mainBtn.addEventListener('click', () => this.confirmChar(top.label));
-        this.elements.mainPredictionContainer.appendChild(mainBtn);
-
-        // サブ候補（2位・3位）
-        const subs = topK.slice(1, 3);
-        subs.forEach(item => {
-            const subBtn = document.createElement('button');
-            subBtn.className = 'prediction-sub-btn';
-            subBtn.textContent = item.label;
-            subBtn.addEventListener('click', () => this.confirmChar(item.label));
-            this.elements.subPredictionsContainer.appendChild(subBtn);
+        topK.forEach((item, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'prediction-btn';
+            btn.dataset.label = item.label;
+            
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'prediction-label';
+            labelSpan.textContent = item.label;
+            
+            const probSpan = document.createElement('span');
+            probSpan.className = 'prediction-prob';
+            probSpan.textContent = `${(item.probability * 100).toFixed(1)}%`;
+            
+            btn.appendChild(labelSpan);
+            btn.appendChild(probSpan);
+            
+            btn.addEventListener('click', () => {
+                this.confirmChar(item.label);
+            });
+            
+            this.elements.predictionsButtons.appendChild(btn);
         });
     }
     
@@ -370,9 +352,4 @@ class HandwritingInputUI {
 
 // グローバルインスタンス
 window.handwritingInputUI = new HandwritingInputUI();
-
-// DOMContentLoaded後に自動初期化
-document.addEventListener('DOMContentLoaded', () => {
-    window.handwritingInputUI.init();
-});
 
