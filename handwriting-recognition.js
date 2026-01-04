@@ -116,10 +116,12 @@ class HandwritingRecognition {
             
             this.showDebugMessage('TF OK: ' + tf.getBackend());
             
-            // モデルファイルを読み込み
-            this.showDebugMessage('model.json読込中...');
+            // モデルファイルを読み込み（パスを動的に構築）
+            const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            const modelUrl = baseUrl + 'emnist_final/model.json';
+            this.showDebugMessage('読込: ' + modelUrl);
             try {
-                this.model = await tf.loadLayersModel('emnist_final/model.json');
+                this.model = await tf.loadLayersModel(modelUrl);
             } catch (modelErr) {
                 this.lastError = 'モデル読込失敗: ' + (modelErr.message || modelErr);
                 this.showDebugMessage('失敗: ' + this.lastError);
