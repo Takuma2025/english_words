@@ -14968,7 +14968,7 @@ function drawSegmentLine(segmentEndX) {
 }
 
 /**
- * セグメント位置から文字を飛ばす
+ * セグメント位置から文字を処理
  */
 function flyCharFromSegment(char, segment) {
     const canvas = document.getElementById('hwQuizCanvas');
@@ -14980,55 +14980,51 @@ function flyCharFromSegment(char, segment) {
         return;
     }
     
+    // セグメント部分をキャプチャ
+    const padding = 3;
+    const captureX = Math.max(0, segment.x - padding);
+    const captureY = Math.max(0, segment.y - padding);
+    const captureWidth = Math.min(canvas.width - captureX, segment.width + padding * 2);
+    const captureHeight = Math.min(canvas.height - captureY, segment.height + padding * 2);
+    
+    const captureCanvas = document.createElement('canvas');
+    captureCanvas.width = captureWidth;
+    captureCanvas.height = captureHeight;
+    const captureCtx = captureCanvas.getContext('2d');
+    captureCtx.drawImage(canvas, captureX, captureY, captureWidth, captureHeight, 0, 0, captureWidth, captureHeight);
+    
+    // セグメント部分を薄いグレーで再描画
+    hwQuizCtx.fillStyle = '#ffffff';
+    hwQuizCtx.fillRect(captureX, captureY, captureWidth, captureHeight);
+    hwQuizCtx.globalAlpha = 0.25;
+    hwQuizCtx.drawImage(captureCanvas, captureX, captureY);
+    hwQuizCtx.globalAlpha = 1.0;
+    
     // セグメント境界線を描画
+    const lineX = segment.x + segment.width + 5;
     drawSegmentLine(segment.x + segment.width);
     
-    const canvasRect = canvas.getBoundingClientRect();
-    const answerRect = answerDisplay.getBoundingClientRect();
+    // 文字をすぐに追加
+    hwQuizConfirmedText += char;
+    updateHWQuizAnswerDisplay();
     
-    // セグメントの中心位置（キャンバス内）をスクリーン座標に変換
-    const scaleX = canvasRect.width / canvas.width;
-    const scaleY = canvasRect.height / canvas.height;
-    const startX = canvasRect.left + (segment.x + segment.width / 2) * scaleX;
-    const startY = canvasRect.top + (segment.y + segment.height / 2) * scaleY;
-    
-    // 現在のテキストの幅を計測
-    const currentText = hwQuizConfirmedText || '';
-    const tempSpan = document.createElement('span');
-    tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:38px;font-weight:700;font-family:"Times New Roman",serif;letter-spacing:2px;';
-    tempSpan.textContent = currentText;
-    document.body.appendChild(tempSpan);
-    const textWidth = tempSpan.offsetWidth;
-    tempSpan.remove();
-    
-    // 目的地を計算
-    const centerX = answerRect.left + answerRect.width / 2;
-    const endX = centerX + textWidth / 2 + 10;
-    const endY = answerRect.top + answerRect.height / 2;
-    
-    // 飛ぶ文字を作成
-    const flyingChar = document.createElement('div');
-    flyingChar.className = 'hw-flying-char';
-    flyingChar.textContent = char;
-    flyingChar.style.left = startX + 'px';
-    flyingChar.style.top = startY + 'px';
-    document.body.appendChild(flyingChar);
-    
-    // アニメーション開始
+    // 3秒後にセグメントと区切り線を消去
     setTimeout(() => {
-        flyingChar.classList.add('flying');
-        flyingChar.style.left = endX + 'px';
-        flyingChar.style.top = endY + 'px';
-        flyingChar.style.transform = 'translate(-50%, -50%) scale(0.5)';
-        flyingChar.style.fontSize = '38px';
-    }, 50);
-    
-    // 文字を追加
-    setTimeout(() => {
-        hwQuizConfirmedText += char;
-        updateHWQuizAnswerDisplay();
-        flyingChar.remove();
-    }, 400);
+        // セグメント部分を白で消去
+        hwQuizCtx.fillStyle = '#ffffff';
+        hwQuizCtx.fillRect(captureX, captureY, captureWidth, captureHeight);
+        
+        // 区切り線を白で消去
+        hwQuizCtx.save();
+        hwQuizCtx.strokeStyle = '#ffffff';
+        hwQuizCtx.lineWidth = 3;
+        hwQuizCtx.setLineDash([]);
+        hwQuizCtx.beginPath();
+        hwQuizCtx.moveTo(lineX, 0);
+        hwQuizCtx.lineTo(lineX, hwQuizCanvas.height);
+        hwQuizCtx.stroke();
+        hwQuizCtx.restore();
+    }, 3000);
 }
 
 /**
