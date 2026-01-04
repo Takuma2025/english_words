@@ -14616,6 +14616,8 @@ async function startHandwritingQuiz(category, words, courseTitle) {
     hwQuizResults = new Array(words.length).fill(null);
     hwQuizCorrectCount = 0;
     hwQuizWrongCount = 0;
+    hwQuizInputMode = 'handwriting'; // デフォルトは手書きモード
+    hwKeyboardShiftActive = false;
     
     // 手書きクイズ画面を表示
     const hwQuizView = document.getElementById('handwritingQuizView');
@@ -14646,8 +14648,8 @@ async function startHandwritingQuiz(category, words, courseTitle) {
                 </button>
             </div>
             
-            <!-- キャンバス -->
-            <div class="hw-canvas-area">
+            <!-- キャンバス（手書きモード用） -->
+            <div class="hw-canvas-area" id="hwCanvasArea">
                 <div class="hw-canvas-wrapper">
                     <div class="hw-canvas-label">手書き入力欄</div>
                     <div class="hw-canvas-lines"></div>
@@ -14658,8 +14660,60 @@ async function startHandwritingQuiz(category, words, courseTitle) {
             <!-- 認識候補 -->
             <div class="hw-candidates" id="hwQuizPredictions"></div>
             
+            <!-- 仮想キーボード（タイピングモード用） -->
+            <div class="virtual-keyboard hidden" id="hwVirtualKeyboard">
+                <div class="keyboard-row">
+                    <button class="keyboard-key" data-key="q">q</button>
+                    <button class="keyboard-key" data-key="w">w</button>
+                    <button class="keyboard-key" data-key="e">e</button>
+                    <button class="keyboard-key" data-key="r">r</button>
+                    <button class="keyboard-key" data-key="t">t</button>
+                    <button class="keyboard-key" data-key="y">y</button>
+                    <button class="keyboard-key" data-key="u">u</button>
+                    <button class="keyboard-key" data-key="i">i</button>
+                    <button class="keyboard-key" data-key="o">o</button>
+                    <button class="keyboard-key" data-key="p">p</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="keyboard-key" data-key="a">a</button>
+                    <button class="keyboard-key" data-key="s">s</button>
+                    <button class="keyboard-key" data-key="d">d</button>
+                    <button class="keyboard-key" data-key="f">f</button>
+                    <button class="keyboard-key" data-key="g">g</button>
+                    <button class="keyboard-key" data-key="h">h</button>
+                    <button class="keyboard-key" data-key="j">j</button>
+                    <button class="keyboard-key" data-key="k">k</button>
+                    <button class="keyboard-key" data-key="l">l</button>
+                    <button class="keyboard-key keyboard-key-space" data-key=" ">_</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="keyboard-key keyboard-key-shift" id="hwKeyboardShift" data-shift="false">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                    </button>
+                    <button class="keyboard-key" data-key="z">z</button>
+                    <button class="keyboard-key" data-key="x">x</button>
+                    <button class="keyboard-key" data-key="c">c</button>
+                    <button class="keyboard-key" data-key="v">v</button>
+                    <button class="keyboard-key" data-key="b">b</button>
+                    <button class="keyboard-key" data-key="n">n</button>
+                    <button class="keyboard-key" data-key="m">m</button>
+                    <button class="keyboard-key keyboard-key-special" id="hwKeyboardBackspace">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                            <line x1="18" y1="9" x2="12" y2="15"></line>
+                            <line x1="12" y1="9" x2="18" y2="15"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
             <!-- 解答ボタン -->
-            <button class="hw-submit-btn hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答する</button>
+            <div class="keyboard-actions">
+                <button class="keyboard-action-btn" id="hwQuizPassBtn" type="button">パス</button>
+                <button class="keyboard-action-btn keyboard-action-btn-primary hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答</button>
+            </div>
             
             <!-- 結果表示 -->
             <div class="hw-result hidden" id="hwQuizResult">
@@ -14673,7 +14727,6 @@ async function startHandwritingQuiz(category, words, courseTitle) {
                         </svg>
                     </button>
                 </div>
-                <button class="hw-next-btn" id="hwQuizNextBtn">次へ</button>
             </div>
         `;
 
@@ -15291,10 +15344,28 @@ function updateHWQuizAnswerDisplay() {
     }
 }
 
+// 現在の入力モード（handwriting または typing）
+let hwQuizInputMode = 'handwriting';
+let hwKeyboardShiftActive = false;
+
 /**
  * イベントリスナーを設定
  */
 function setupHWQuizEvents() {
+    // 入力モード切替ボタン
+    const handwritingBtn = document.getElementById('hwModeHandwriting');
+    const typingBtn = document.getElementById('hwModeTyping');
+    
+    if (handwritingBtn) {
+        handwritingBtn.onclick = () => switchHWInputMode('handwriting');
+    }
+    if (typingBtn) {
+        typingBtn.onclick = () => switchHWInputMode('typing');
+    }
+    
+    // 仮想キーボードのイベント設定
+    setupHWVirtualKeyboard();
+    
     // 戻るボタン
     const backBtn = document.getElementById('hwQuizBackBtn');
     if (backBtn) {
@@ -15443,6 +15514,14 @@ function setupHWQuizEvents() {
         };
     }
     
+    // パスボタン
+    const passBtn = document.getElementById('hwQuizPassBtn');
+    if (passBtn) {
+        passBtn.onclick = () => {
+            handleHWQuizPass();
+        };
+    }
+    
     // デバッグトグル
     const debugToggle = document.getElementById('hwQuizDebugToggle');
     if (debugToggle) {
@@ -15480,6 +15559,106 @@ function setupHWQuizEvents() {
             }
         };
     }
+}
+
+/**
+ * 入力モードを切り替え
+ */
+function switchHWInputMode(mode) {
+    hwQuizInputMode = mode;
+    
+    const handwritingBtn = document.getElementById('hwModeHandwriting');
+    const typingBtn = document.getElementById('hwModeTyping');
+    const canvasArea = document.getElementById('hwCanvasArea');
+    const predictions = document.getElementById('hwQuizPredictions');
+    const keyboard = document.getElementById('hwVirtualKeyboard');
+    
+    if (mode === 'handwriting') {
+        // 手書きモード
+        if (handwritingBtn) handwritingBtn.classList.add('active');
+        if (typingBtn) typingBtn.classList.remove('active');
+        if (canvasArea) canvasArea.style.display = '';
+        if (predictions) predictions.style.display = '';
+        if (keyboard) keyboard.classList.add('hidden');
+    } else {
+        // タイピングモード
+        if (handwritingBtn) handwritingBtn.classList.remove('active');
+        if (typingBtn) typingBtn.classList.add('active');
+        if (canvasArea) canvasArea.style.display = 'none';
+        if (predictions) predictions.style.display = 'none';
+        if (keyboard) keyboard.classList.remove('hidden');
+    }
+}
+
+// Note: The toggle buttons now use input-list-mode-btn class for styling
+
+/**
+ * 仮想キーボードのイベント設定
+ */
+function setupHWVirtualKeyboard() {
+    const keyboard = document.getElementById('hwVirtualKeyboard');
+    if (!keyboard) return;
+    
+    // キーボードのキーにイベントを設定
+    const keys = keyboard.querySelectorAll('.keyboard-key');
+    keys.forEach(key => {
+        // 既にイベントが設定されている場合はスキップ
+        if (key._hwKeyboardEventSet) return;
+        key._hwKeyboardEventSet = true;
+        
+        key.addEventListener('click', (e) => {
+            e.preventDefault();
+            const keyValue = key.dataset.key;
+            
+            if (key.id === 'hwKeyboardBackspace') {
+                // バックスペース
+                if (hwQuizConfirmedText.length > 0) {
+                    hwQuizConfirmedText = hwQuizConfirmedText.slice(0, -1);
+                    updateHWQuizAnswerDisplay();
+                }
+            } else if (key.id === 'hwKeyboardShift') {
+                // シフトキー
+                hwKeyboardShiftActive = !hwKeyboardShiftActive;
+                key.classList.toggle('active', hwKeyboardShiftActive);
+                updateHWKeyboardCase();
+            } else if (keyValue) {
+                // 通常のキー
+                let char = keyValue;
+                if (hwKeyboardShiftActive) {
+                    char = char.toUpperCase();
+                    // シフトを解除
+                    hwKeyboardShiftActive = false;
+                    const shiftBtn = document.getElementById('hwKeyboardShift');
+                    if (shiftBtn) shiftBtn.classList.remove('active');
+                    updateHWKeyboardCase();
+                }
+                hwQuizConfirmedText += char;
+                updateHWQuizAnswerDisplay();
+            }
+        });
+        
+        // タッチイベント
+        key.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            key.click();
+        }, { passive: false });
+    });
+}
+
+/**
+ * キーボードの大文字/小文字表示を更新
+ */
+function updateHWKeyboardCase() {
+    const keyboard = document.getElementById('hwVirtualKeyboard');
+    if (!keyboard) return;
+    
+    const keys = keyboard.querySelectorAll('.keyboard-key');
+    keys.forEach(key => {
+        const keyValue = key.dataset.key;
+        if (keyValue && keyValue.length === 1 && keyValue.match(/[a-z]/i)) {
+            key.textContent = hwKeyboardShiftActive ? keyValue.toUpperCase() : keyValue.toLowerCase();
+        }
+    });
 }
 
 /**
@@ -15522,14 +15701,16 @@ function displayHWQuizQuestion() {
     }
     
     // UIをリセット
-    const submitBtn = document.querySelector('.hw-answer-btn');
+    const keyboardActions = document.querySelector('.hw-main > .keyboard-actions');
     const result = document.getElementById('hwQuizResult');
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
     const canvasArea = document.querySelector('.hw-canvas-area');
     const candidates = document.querySelector('.hw-candidates');
     const tools = document.querySelector('.hw-tools');
     
-    if (submitBtn) submitBtn.classList.remove('hidden');
+    const modeToggle = document.querySelector('.hw-mode-toggle-wrapper');
+    
+    if (keyboardActions) keyboardActions.style.display = '';
     if (result) result.classList.add('hidden');
     if (answerDisplay) {
         answerDisplay.classList.remove('correct', 'wrong');
@@ -15537,9 +15718,10 @@ function displayHWQuizQuestion() {
         answerDisplay.style.backgroundColor = '';
         answerDisplay.style.color = '';
     }
-    if (canvasArea) canvasArea.style.display = '';
-    if (candidates) candidates.style.display = '';
-    if (tools) tools.style.display = '';
+    if (modeToggle) modeToggle.style.display = '';
+    
+    // 現在の入力モードに応じて表示を切り替え
+    switchHWInputMode(hwQuizInputMode);
     
     // 追加した要素を削除
     const correctAnswerBox = document.getElementById('hwQuizCorrectAnswerBox');
@@ -15630,17 +15812,21 @@ window.submitHWQuizAnswer = submitHWQuizAnswer;
 function showHWQuizResult(isCorrect, word) {
     console.log('[HWQuiz] showHWQuizResult called, isCorrect:', isCorrect);
     
-    const submitBtn = document.querySelector('.hw-answer-btn');
+    const keyboardActions = document.querySelector('.hw-main > .keyboard-actions');
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
     const canvasArea = document.querySelector('.hw-canvas-area');
     const candidates = document.querySelector('.hw-candidates');
     const tools = document.querySelector('.hw-tools');
+    const keyboard = document.getElementById('hwVirtualKeyboard');
+    const modeToggle = document.querySelector('.hw-mode-toggle-wrapper');
     
     // 入力エリアを非表示
-    if (submitBtn) submitBtn.classList.add('hidden');
+    if (keyboardActions) keyboardActions.style.display = 'none';
     if (canvasArea) canvasArea.style.display = 'none';
     if (candidates) candidates.style.display = 'none';
     if (tools) tools.style.display = 'none';
+    if (keyboard) keyboard.classList.add('hidden');
+    if (modeToggle) modeToggle.style.display = 'none';
     
     // 解答欄の色を変更
     if (answerDisplay) {
@@ -15665,7 +15851,6 @@ function showHWQuizResult(isCorrect, word) {
             correctAnswerBox.id = 'hwQuizCorrectAnswerBox';
             correctAnswerBox.className = 'hw-correct-answer-box';
             correctAnswerBox.innerHTML = `
-                <span class="hw-correct-label">正解</span>
                 <span class="hw-correct-word">${word.word}</span>
                 <button class="hw-audio-btn" id="hwQuizAudioBtnResult">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -15689,8 +15874,9 @@ function showHWQuizResult(isCorrect, word) {
     if (!nextBtnContainer) {
         nextBtnContainer = document.createElement('div');
         nextBtnContainer.id = 'hwQuizNextBtnContainer';
-        nextBtnContainer.className = 'hw-next-btn-container';
-        nextBtnContainer.innerHTML = `<button class="hw-next-btn" id="hwQuizNextBtnNew">次へ</button>`;
+        nextBtnContainer.className = 'keyboard-actions';
+        nextBtnContainer.style.marginTop = '16px';
+        nextBtnContainer.innerHTML = `<button class="keyboard-action-btn keyboard-action-btn-primary" id="hwQuizNextBtnNew">次へ</button>`;
         
         const mainEl = document.querySelector('.hw-main');
         if (mainEl) {
@@ -15706,6 +15892,41 @@ function showHWQuizResult(isCorrect, word) {
     
     // 音声を自動再生
     speakWord(word.word);
+}
+
+/**
+ * パスボタンの処理
+ */
+function handleHWQuizPass() {
+    if (hwQuizAnswerSubmitted) return;
+    
+    const word = hwQuizWords[hwQuizIndex];
+    if (!word) return;
+    
+    // 不正解として記録
+    hwQuizResults[hwQuizIndex] = 'wrong';
+    hwQuizWrongCount++;
+    hwQuizAnswerSubmitted = true;
+    
+    // 進捗セグメントと統計を更新
+    updateHWQuizProgressSegments();
+    updateHWQuizStats();
+    
+    // 効果音
+    if (typeof SoundEffects !== 'undefined' && SoundEffects.playWrong) {
+        SoundEffects.playWrong();
+    }
+    
+    // 間違いとして保存
+    if (typeof wrongWords !== 'undefined') wrongWords.add(word.id);
+    
+    // 進捗保存
+    if (typeof saveCategoryWords === 'function' && typeof correctWords !== 'undefined' && typeof wrongWords !== 'undefined') {
+        saveCategoryWords(hwQuizCategory, correctWords, wrongWords);
+    }
+    
+    // 結果を表示（不正解として）
+    showHWQuizResult(false, word);
 }
 
 /**
@@ -15802,8 +16023,8 @@ function restartHWQuiz() {
                 </button>
             </div>
             
-            <!-- キャンバス -->
-            <div class="hw-canvas-area">
+            <!-- キャンバス（手書きモード用） -->
+            <div class="hw-canvas-area" id="hwCanvasArea">
                 <div class="hw-canvas-wrapper">
                     <div class="hw-canvas-label">手書き入力欄</div>
                     <div class="hw-canvas-lines"></div>
@@ -15814,8 +16035,60 @@ function restartHWQuiz() {
             <!-- 認識候補 -->
             <div class="hw-candidates" id="hwQuizPredictions"></div>
             
+            <!-- 仮想キーボード（タイピングモード用） -->
+            <div class="virtual-keyboard hidden" id="hwVirtualKeyboard">
+                <div class="keyboard-row">
+                    <button class="keyboard-key" data-key="q">q</button>
+                    <button class="keyboard-key" data-key="w">w</button>
+                    <button class="keyboard-key" data-key="e">e</button>
+                    <button class="keyboard-key" data-key="r">r</button>
+                    <button class="keyboard-key" data-key="t">t</button>
+                    <button class="keyboard-key" data-key="y">y</button>
+                    <button class="keyboard-key" data-key="u">u</button>
+                    <button class="keyboard-key" data-key="i">i</button>
+                    <button class="keyboard-key" data-key="o">o</button>
+                    <button class="keyboard-key" data-key="p">p</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="keyboard-key" data-key="a">a</button>
+                    <button class="keyboard-key" data-key="s">s</button>
+                    <button class="keyboard-key" data-key="d">d</button>
+                    <button class="keyboard-key" data-key="f">f</button>
+                    <button class="keyboard-key" data-key="g">g</button>
+                    <button class="keyboard-key" data-key="h">h</button>
+                    <button class="keyboard-key" data-key="j">j</button>
+                    <button class="keyboard-key" data-key="k">k</button>
+                    <button class="keyboard-key" data-key="l">l</button>
+                    <button class="keyboard-key keyboard-key-space" data-key=" ">_</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="keyboard-key keyboard-key-shift" id="hwKeyboardShift" data-shift="false">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                    </button>
+                    <button class="keyboard-key" data-key="z">z</button>
+                    <button class="keyboard-key" data-key="x">x</button>
+                    <button class="keyboard-key" data-key="c">c</button>
+                    <button class="keyboard-key" data-key="v">v</button>
+                    <button class="keyboard-key" data-key="b">b</button>
+                    <button class="keyboard-key" data-key="n">n</button>
+                    <button class="keyboard-key" data-key="m">m</button>
+                    <button class="keyboard-key keyboard-key-special" id="hwKeyboardBackspace">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                            <line x1="18" y1="9" x2="12" y2="15"></line>
+                            <line x1="12" y1="9" x2="18" y2="15"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
             <!-- 解答ボタン -->
-            <button class="hw-submit-btn hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答する</button>
+            <div class="keyboard-actions">
+                <button class="keyboard-action-btn" id="hwQuizPassBtn" type="button">パス</button>
+                <button class="keyboard-action-btn keyboard-action-btn-primary hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答</button>
+            </div>
             
             <!-- 結果表示 -->
             <div class="hw-result hidden" id="hwQuizResult">
@@ -15829,7 +16102,6 @@ function restartHWQuiz() {
                         </svg>
                     </button>
                 </div>
-                <button class="hw-next-btn" id="hwQuizNextBtn">次へ</button>
             </div>
         `;
     }
@@ -15854,16 +16126,22 @@ function restartHWQuiz() {
  */
 function exitHWQuiz() {
     const hwQuizView = document.getElementById('handwritingQuizView');
-    const categorySelection = document.getElementById('categorySelection');
+    
+    // 戻り先のために値を保存
+    const category = hwQuizCategory;
+    const words = currentFilterWords.length > 0 ? currentFilterWords : hwQuizWords;
+    const courseTitle = hwQuizCourseTitle;
     
     if (hwQuizView) hwQuizView.classList.add('hidden');
-    if (categorySelection) categorySelection.classList.remove('hidden');
     
     // リセット
     hwQuizWords = [];
     hwQuizIndex = 0;
     hwQuizConfirmedText = '';
     isHandwritingMode = false;
+    
+    // 細分化メニュー選択画面（フィルター画面）に戻る
+    showWordFilterView(category, words, courseTitle);
 }
 
 // アプリケーションの起動

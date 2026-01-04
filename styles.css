@@ -13424,6 +13424,13 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: none;
 }
 
+/* 入力モード切替 */
+.hw-mode-toggle-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 8px 16px;
+}
+
 /* メイン */
 .hw-main {
     flex: 1;
@@ -13515,9 +13522,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     margin: 0 auto;
     padding: 4px 12px 4px 12px;
     background: #fff;
-    border: 2px solid #3182ce;
+    border: 2px solid #9ca3af;
     border-radius: 6px;
-    font-size: 48px;
+    font-size: 40px;
     font-weight: 700;
     color: #1a202c;
     letter-spacing: 2px;
@@ -13545,30 +13552,29 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 1文字消すボタン（アイコンのみ・解答欄内右側） */
 .hw-backspace-icon-btn {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     padding: 0;
-    background: #6b7280;
+    background: transparent;
     border: none;
-    border-radius: 4px;
-    color: #fff;
+    color: #9ca3af;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     flex-shrink: 0;
-    transition: background-color 0.15s ease;
+    transition: color 0.15s ease;
     -webkit-tap-highlight-color: transparent;
 }
 
 .hw-backspace-icon-btn:active {
-    background: #4b5563;
+    color: #6b7280;
     transform: scale(0.95);
 }
 
 .hw-backspace-icon-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
 }
 
 .hw-answer.correct {
@@ -13894,21 +13900,15 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     width: 340px;
     margin: 12px auto 0;
     padding: 4px 12px;
-    background: #fff5f5;
-    border: 2px solid #e53e3e;
+    background: #ffffff;
+    border: 2px solid #3182ce;
     border-radius: 6px;
-}
-
-.hw-correct-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #c53030;
 }
 
 .hw-correct-word {
     font-size: 42px;
     font-weight: 700;
-    color: #c53030;
+    color: #3182ce;
     font-family: 'Times New Roman', Times, serif;
     letter-spacing: 2px;
 }
@@ -13916,7 +13916,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .hw-correct-answer-box .hw-audio-btn {
     width: 36px;
     height: 36px;
-    background: #c53030;
+    background: #3182ce;
     color: #fff;
     border: none;
     border-radius: 50%;
@@ -14110,6 +14110,10 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         margin: 0 12px;
     }
     
+    .hw-mode-toggle-wrapper {
+        padding: 6px 12px;
+    }
+
     .hw-main {
         padding: 14px 12px;
         gap: 10px;
@@ -14130,18 +14134,18 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     .hw-answer {
         min-height: 50px;
         padding: 10px 14px;
-        font-size: 32px;
+        font-size: 28px;
         border-radius: 10px;
     }
     
     .hw-backspace-icon-btn {
-        width: 38px;
-        height: 38px;
+        width: 30px;
+        height: 30px;
     }
     
     .hw-backspace-icon-btn svg {
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
     }
     
     .hw-canvas-area {
@@ -14248,17 +14252,17 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     .hw-answer {
         min-height: 46px;
         padding: 8px 12px;
-        font-size: 28px;
+        font-size: 24px;
     }
     
     .hw-backspace-icon-btn {
-        width: 34px;
-        height: 34px;
+        width: 28px;
+        height: 28px;
     }
     
     .hw-backspace-icon-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 18px;
+        height: 18px;
     }
     
     .hw-canvas-wrapper {
@@ -14347,18 +14351,18 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     .hw-answer {
         min-height: 40px;
         padding: 6px 10px;
-        font-size: 24px;
+        font-size: 22px;
         border-radius: 8px;
     }
     
     .hw-backspace-icon-btn {
-        width: 30px;
-        height: 30px;
+        width: 26px;
+        height: 26px;
     }
     
     .hw-backspace-icon-btn svg {
-        width: 12px;
-        height: 12px;
+        width: 16px;
+        height: 16px;
     }
     
     .hw-canvas {
