@@ -459,7 +459,7 @@ body.learning-mode .app-header {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 16px 0;
-    padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 16px); /* ナビの高さ + セーフエリア + 余白 */
+    padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom)); /* ナビの高さ + セーフエリアのみ */
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
@@ -470,7 +470,7 @@ body.learning-mode .app-header {
 @media (max-width: 600px) {
     .app-main {
         padding: 16px 0;
-        padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 16px);
+        padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom)); /* 余分な余白を削除 */
         max-width: 100%;
     }
     
@@ -4405,7 +4405,7 @@ button.category-card:focus-visible {
     justify-content: flex-start;
     align-items: stretch;
     position: relative;
-    padding: 0 16px 20px 16px; /* 上のパディングを削除（進捗バーを上揃え） */
+    padding: 0 16px 0 16px; /* 上下パディング0、左右のみ */
     overflow-y: auto;
     min-height: 0;
     z-index: 10001;
@@ -4736,7 +4736,7 @@ body.reorder-mode-active .word-card-container {
     flex-direction: column;
     gap: 0;
     padding: 0;
-    padding-bottom: env(safe-area-inset-bottom, 8px); /* セーフエリア + 最小余白 */
+    padding-bottom: 0;
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1;
