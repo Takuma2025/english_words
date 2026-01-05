@@ -1303,10 +1303,10 @@ body.learning-mode .app-header {
 
 /* 英単語進捗バー */
 .vocab-progress-container {
-    padding: 0 16px 12px 16px;
+    padding: 0 0 12px 0;
     margin: 0 auto 8px auto;
-    max-width: 720px;
-    width: min(720px, calc(100% - 24px));
+    max-width: 600px;
+    width: calc(100% - 24px);
 }
 
 .vocab-progress-header {
@@ -1982,34 +1982,13 @@ body.learning-mode .app-header {
 .course-tabs {
     display: flex;
     gap: 6px;
-    margin: 32px 0 16px 0;
+    margin: 32px auto 16px auto;
     border-bottom: none;
-    padding: 0 4px;
-    max-width: 720px;
-    width: min(720px, calc(100% - 24px));
-    margin-left: auto;
-    margin-right: auto;
+    padding: 0;
+    max-width: 600px;
+    width: calc(100% - 24px);
 }
 
-@media (max-width: 600px) {
-    .vocab-progress-container {
-        max-width: none;
-        width: calc(100% - 20px);
-        padding: 0 10px 12px 10px;
-    }
-
-    .course-tabs {
-        max-width: none;
-        width: calc(100% - 20px);
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-
-    .study-mode-container {
-        max-width: none;
-        width: calc(100% - 20px);
-    }
-}
 
 .course-tabs.score-active {
     border-bottom: none;
@@ -2981,15 +2960,15 @@ button.category-card:focus-visible {
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    padding: 20px;
+    padding: 12px;
 }
 
 .study-mode-container {
     background: white;
     border-radius: 16px;
     padding: 24px;
-    max-width: 720px;
-    width: min(720px, calc(100% - 24px));
+    max-width: 600px;
+    width: 100%;
     margin: 0 auto;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
 }
