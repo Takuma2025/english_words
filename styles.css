@@ -40,6 +40,7 @@ html {
     position: fixed;
     width: 100%;
     height: 100%;
+    height: 100dvh; /* 動的ビューポート高さを使用 */
     overflow: hidden;
 }
 
@@ -282,6 +283,7 @@ textarea,
     display: flex;
     flex-direction: column;
     height: 100%;
+    height: 100dvh; /* 動的ビューポート高さ */
     width: 100%;
     position: relative;
     z-index: 1;
@@ -289,10 +291,16 @@ textarea,
     padding-top: calc(var(--header-height) + env(safe-area-inset-top));
 }
 
-/* PWA設定の重複を削除 */
+/* PWAスタンドアロンモード */
 @media (display-mode: standalone) {
     .app-container {
         height: 100%;
+        height: 100dvh;
+    }
+    
+    /* PWAでは画面下部まで完全に使用 */
+    .bottom-nav {
+        padding-bottom: env(safe-area-inset-bottom, 0);
     }
 }
 
@@ -450,19 +458,20 @@ body.learning-mode .app-header {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 16px 0; /* 左右のパディングを削除 */
+    padding: 16px 0;
+    padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 16px); /* ナビの高さ + セーフエリア + 余白 */
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
     box-sizing: border-box;
-    /* 高さはflexで自動調整されるため指定不要 */
 }
 
 /* スマホ向け：フルスクリーン表示 */
 @media (max-width: 600px) {
     .app-main {
-        padding: 16px 0; /* 左右のパディングなし */
-        max-width: 100%; /* 最大幅を100%に */
+        padding: 16px 0;
+        padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 16px);
+        max-width: 100%;
     }
     
     .category-view {
@@ -1023,7 +1032,7 @@ body.learning-mode .app-header {
     display: flex;
     flex-direction: column;
     gap: 0;
-    margin-bottom: 24px;
+    margin-bottom: 0; /* 下部余白を削除（app-mainで管理） */
     width: 100%;
     box-sizing: border-box;
     background: transparent;
@@ -4742,9 +4751,38 @@ body.reorder-mode-active .word-card-container {
 .input-list-header-row {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 8px;
     margin-bottom: 12px;
+}
+
+/* インラインメモボタン（トグル横） */
+.memo-pad-btn-inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 10px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.memo-pad-btn-inline:hover {
+    background: #d1d5db;
+    color: #374151;
+}
+
+.memo-pad-btn-inline:active {
+    background: #9ca3af;
+}
+
+.memo-pad-btn-inline.hidden {
+    display: none;
 }
 
 .input-list-controls-row {
@@ -13369,15 +13407,13 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 0;
     right: 0;
     height: 50vh;
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: #fffbf0;
     z-index: 10000;
     display: flex;
     flex-direction: column;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.1);
     transform: translateY(0);
     transition: transform 0.3s ease-out;
 }
@@ -13423,7 +13459,73 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .memo-pad-title {
     font-size: 14px;
     font-weight: 600;
-    color: rgba(55, 65, 81, 0.8);
+    color: #8b7355;
+}
+
+/* ペンの太さコントロール */
+.memo-pad-thickness-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.memo-pad-thickness-label {
+    font-size: 12px;
+    color: #8b7355;
+}
+
+.memo-pad-thickness-btns {
+    display: flex;
+    gap: 4px;
+    background: #f5edd8;
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.memo-pad-thickness-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.memo-pad-thickness-btn:active {
+    background: #e8dcc0;
+}
+
+.memo-pad-thickness-btn.active {
+    background: #c4a574;
+}
+
+.memo-pad-thickness-btn.active .thickness-dot {
+    background: #ffffff;
+}
+
+.thickness-dot {
+    border-radius: 50%;
+    background: #8b7355;
+    transition: background 0.15s ease;
+}
+
+.thickness-thin {
+    width: 4px;
+    height: 4px;
+}
+
+.thickness-medium {
+    width: 8px;
+    height: 8px;
+}
+
+.thickness-thick {
+    width: 14px;
+    height: 14px;
 }
 
 .memo-pad-actions {
@@ -13436,18 +13538,18 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     align-items: center;
     gap: 4px;
-    padding: 5px 10px;
-    background: rgba(0, 0, 0, 0.1);
-    border: none;
+    padding: 6px 12px;
+    background: #f5edd8;
+    border: 1px solid #e0d4b8;
     border-radius: 6px;
-    color: rgba(55, 65, 81, 0.9);
-    font-size: 12px;
+    color: #8b7355;
+    font-size: 13px;
     cursor: pointer;
     transition: background 0.15s ease;
 }
 
 .memo-pad-clear-btn:active {
-    background: rgba(0, 0, 0, 0.2);
+    background: #e8dcc0;
 }
 
 .memo-pad-close-btn {
@@ -13456,7 +13558,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     justify-content: center;
     width: 32px;
     height: 32px;
-    background: rgba(55, 65, 81, 0.6);
+    background: #c4a574;
     border: none;
     border-radius: 50%;
     color: #ffffff;
@@ -13465,14 +13567,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .memo-pad-close-btn:active {
-    background: rgba(55, 65, 81, 0.8);
+    background: #a88b5a;
 }
 
 .memo-pad-canvas {
     flex: 1;
     width: 100%;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #fff9e6;
+    border: 1px solid #e8dcc0;
     border-radius: 12px;
     touch-action: none;
     cursor: crosshair;
@@ -13658,17 +13760,12 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     flex-shrink: 0;
 }
 
-.hw-question-simple .hw-question-pos {
-    font-size: 12px;
-    font-weight: 500;
-    color: #1a202c;
-    background: transparent;
-    border: 1px solid #1a202c;
-    padding: 2px 8px;
-    border-radius: 4px;
+/* hw-question-simple内のpos-inlineスタイル調整 */
+.hw-question-simple .pos-inline {
+    font-size: clamp(12px, 2.5vw, 14px);
 }
 
-.hw-question-simple .hw-question-pos:empty {
+.hw-question-simple .pos-inline:empty {
     display: none;
 }
 
@@ -14094,15 +14191,23 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     background: #d1d5db;
 }
 
+/* 解答エリアラッパー（解答欄と正解表示を含む） */
+.hw-answer-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-height: 140px; /* 固定高さで位置を安定させる */
+}
+
 /* 正解表示ボックス */
 .hw-correct-answer-box {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
     height: 64px;
-    width: 340px;
-    margin: 12px auto 0;
+    width: 300px;
     padding: 4px 12px;
     background: #ffffff;
     border: 2px solid #3182ce;
@@ -14110,7 +14215,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-correct-word {
-    font-size: 42px;
+    font-size: 36px;
     font-weight: 700;
     color: #3182ce;
     font-family: 'Times New Roman', Times, serif;

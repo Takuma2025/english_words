@@ -50,7 +50,9 @@ class HandwritingRecognition {
         
         // 混同しやすい文字ペアと形状特徴
         this.confusionPairs = {
-            'l': ['i'], // lとi
+            'l': ['i', 'j'], // lとi、j
+            'i': ['l', 'j'], // iとl、j
+            'j': ['i', 'l'], // jとi、l
             'o': ['a', 'e'], // oとa、e
             'q': ['g'], // qとg
             'u': ['v'], // uとv
@@ -745,13 +747,29 @@ class HandwritingRecognition {
         // 補正ルールを適用
         const corrected = [...topK];
         
-        // l vs i: 上部にドットがあるかどうか
-        if (this.hasConfusion(topK, 'l', 'i')) {
+        // i, j, l の混同処理（ドットと下部の形状で判定）
+        if (this.hasConfusionAny(topK, ['i', 'j', 'l'])) {
             const hasTopDot = features.hasTopSeparateRegion;
-            if (hasTopDot) {
-                this.boostLabel(corrected, 'i', 0.1);
+            const hasBottomHook = features.hasBottomLeftHook;
+            
+            if (hasTopDot && hasBottomHook) {
+                // ドットあり + 下部に左向きのフックあり → j
+                this.boostLabel(corrected, 'j', 0.15);
+                this.penalizeLabel(corrected, 'l', 0.1);
+                this.penalizeLabel(corrected, 'i', 0.05);
+            } else if (hasTopDot && !hasBottomHook) {
+                // ドットあり + フックなし → i
+                this.boostLabel(corrected, 'i', 0.15);
+                this.penalizeLabel(corrected, 'l', 0.1);
+                this.penalizeLabel(corrected, 'j', 0.05);
+            } else if (!hasTopDot && hasBottomHook) {
+                // ドットなし + フックあり → j（ドットを忘れた場合）
+                this.boostLabel(corrected, 'j', 0.08);
             } else {
-                this.boostLabel(corrected, 'l', 0.1);
+                // ドットなし + フックなし → l
+                this.boostLabel(corrected, 'l', 0.12);
+                this.penalizeLabel(corrected, 'i', 0.08);
+                this.penalizeLabel(corrected, 'j', 0.08);
             }
         }
         
@@ -803,33 +821,52 @@ class HandwritingRecognition {
     extractShapeFeatures(data, width, height) {
         const threshold = 0.3;
         
-        // 上部1/4に独立した領域があるか（i のドット検出）
-        const topQuarter = height / 4;
+        // 上部1/3に独立した領域があるか（i, j のドット検出）
+        const topThird = Math.floor(height / 3);
         let topRegionPixels = 0;
         let mainRegionPixels = 0;
         
-        for (let y = 0; y < topQuarter; y++) {
+        // 上部領域のピクセル数をカウント
+        for (let y = 0; y < topThird; y++) {
             for (let x = 0; x < width; x++) {
                 if (data[y * width + x] > threshold) topRegionPixels++;
             }
         }
-        for (let y = topQuarter; y < height; y++) {
+        // メイン領域のピクセル数をカウント
+        for (let y = topThird; y < height; y++) {
             for (let x = 0; x < width; x++) {
                 if (data[y * width + x] > threshold) mainRegionPixels++;
             }
         }
         
         // 空白行があるかチェック（ドットと本体の間）
+        // より広い範囲で空白を探す
         let hasGap = false;
-        for (let y = 3; y < topQuarter + 3; y++) {
+        let gapStartY = -1;
+        let consecutiveEmptyRows = 0;
+        
+        for (let y = 2; y < topThird + 5; y++) {
             let rowSum = 0;
             for (let x = 0; x < width; x++) {
                 rowSum += data[y * width + x];
             }
-            if (rowSum < width * threshold * 0.1) {
-                hasGap = true;
-                break;
+            if (rowSum < width * threshold * 0.05) {
+                consecutiveEmptyRows++;
+                if (consecutiveEmptyRows >= 2) {
+                    hasGap = true;
+                    gapStartY = y - 1;
+                    break;
+                }
+            } else {
+                consecutiveEmptyRows = 0;
             }
+        }
+        
+        // ドット検出の追加条件：上部に小さな塊があるか
+        let dotDetected = false;
+        if (topRegionPixels > 2 && topRegionPixels < mainRegionPixels * 0.3) {
+            // 上部のピクセルが全体の30%未満で、かつ存在する場合
+            dotDetected = hasGap || (topRegionPixels > 0 && mainRegionPixels > topRegionPixels * 3);
         }
         
         // 右側に延長があるか（a のしっぽ）
@@ -870,12 +907,44 @@ class HandwritingRecognition {
             if (data[centerY * width + x] > threshold) centerLinePixels++;
         }
         
+        // jのフック検出（下部の左側にカーブがあるか）
+        // 下部1/4の領域で、左側にピクセルが集中しているか確認
+        const bottomStart = Math.floor(height * 3 / 4);
+        let bottomLeftPixels = 0;
+        let bottomRightPixels = 0;
+        let bottomCenterX = 0;
+        let bottomTotalPixels = 0;
+        
+        for (let y = bottomStart; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                if (data[y * width + x] > threshold) {
+                    bottomTotalPixels++;
+                    bottomCenterX += x;
+                    if (x < width / 2) {
+                        bottomLeftPixels++;
+                    } else {
+                        bottomRightPixels++;
+                    }
+                }
+            }
+        }
+        
+        // フックの判定：下部で左側にピクセルが多い、かつ下に行くほど左に寄る
+        const hasBottomLeftHook = bottomTotalPixels > 10 && 
+            bottomLeftPixels > bottomRightPixels * 1.5;
+        
+        // iとlの区別改善：縦横比もチェック
+        const verticalRatio = mainRegionPixels > 0 ? 
+            (topRegionPixels / mainRegionPixels) : 0;
+        
         return {
-            hasTopSeparateRegion: topRegionPixels > 5 && hasGap,
+            hasTopSeparateRegion: dotDetected || (topRegionPixels > 2 && hasGap),
             hasRightExtension: rightPixels > 10,
             hasBottomLoop: bottomLoopPixels > 20,
             hasRoundedBottom: bottomVariance < 2,
-            hasCenterHorizontalLine: centerLinePixels > width / 4
+            hasCenterHorizontalLine: centerLinePixels > width / 4,
+            hasBottomLeftHook: hasBottomLeftHook,
+            topToMainRatio: verticalRatio
         };
     }
     
@@ -893,10 +962,27 @@ class HandwritingRecognition {
         return labels.includes(label1) && labels.includes(label2);
     }
     
+    // 複数ラベルのいずれかが上位に含まれているか
+    hasConfusionAny(topK, labels) {
+        const topLabels = topK.slice(0, 4).map(t => t.label);
+        let count = 0;
+        for (const label of labels) {
+            if (topLabels.includes(label)) count++;
+        }
+        return count >= 2; // 2つ以上が上位にある場合
+    }
+    
     boostLabel(topK, label, boost) {
         const item = topK.find(t => t.label === label);
         if (item) {
             item.probability += boost;
+        }
+    }
+    
+    penalizeLabel(topK, label, penalty) {
+        const item = topK.find(t => t.label === label);
+        if (item) {
+            item.probability = Math.max(0, item.probability - penalty);
         }
     }
     

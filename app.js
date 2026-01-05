@@ -4954,10 +4954,16 @@ function showInputModeDirectly(category, words, courseTitle) {
         unitTestBtn.classList.remove('hidden');
     }
     
-    // メモボタンを表示（インプットモードなので常に表示）
+    // ヘッダーのメモボタンは非表示（インラインのメモボタンを使用）
     const memoPadBtn = document.getElementById('memoPadBtn');
     if (memoPadBtn) {
-        memoPadBtn.classList.remove('hidden');
+        memoPadBtn.classList.add('hidden');
+    }
+    
+    // インラインメモボタンを表示
+    const memoPadBtnInline = document.getElementById('memoPadBtnInline');
+    if (memoPadBtnInline) {
+        memoPadBtnInline.classList.remove('hidden');
     }
     
     // ヘッダー更新
@@ -5721,12 +5727,19 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     }
     
     // メモボタンの表示制御（インプットモードのみ表示、アウトプットモードでは非表示）
+    // ヘッダーのメモボタンは常に非表示（インラインボタンを使用）
     const memoPadBtn = document.getElementById('memoPadBtn');
     if (memoPadBtn) {
+        memoPadBtn.classList.add('hidden');
+    }
+    
+    // インラインメモボタン（トグル横）はインプットモードのみ表示
+    const memoPadBtnInline = document.getElementById('memoPadBtnInline');
+    if (memoPadBtnInline) {
         if (currentLearningMode === 'input') {
-            memoPadBtn.classList.remove('hidden');
+            memoPadBtnInline.classList.remove('hidden');
         } else {
-            memoPadBtn.classList.add('hidden');
+            memoPadBtnInline.classList.add('hidden');
         }
     }
     
@@ -14652,13 +14665,17 @@ async function startHandwritingQuiz(category, words, courseTitle) {
         mainEl.innerHTML = `
             <!-- 問題（シンプル表示） -->
             <div class="hw-question-simple">
-                <span class="hw-question-pos" id="hwQuizPos"></span>
+                <span class="pos-inline part-of-speech" id="hwQuizPos"></span>
                 <span class="hw-question-meaning" id="hwQuizMeaning">意味</span>
             </div>
             
-            <!-- 回答欄 -->
-            <div class="hw-answer" id="hwQuizAnswerDisplay">
-                <span class="hw-answer-text"></span>
+            <!-- 回答エリア -->
+            <div class="hw-answer-area">
+                <div class="hw-answer" id="hwQuizAnswerDisplay">
+                    <span class="hw-answer-text"></span>
+                </div>
+                <!-- 正解表示用のプレースホルダー -->
+                <div id="hwQuizCorrectAnswerPlaceholder"></div>
             </div>
             
             <!-- 結果表示 -->
@@ -15710,11 +15727,13 @@ function displayHWQuizQuestion() {
     updateHWQuizProgressSegments();
     updateHWQuizStats();
     
-    // 品詞
+    // 品詞（インプットモードと同じスタイル）
     const posEl = document.getElementById('hwQuizPos');
     if (posEl) {
         const posShort = getPartOfSpeechShort(word.partOfSpeech || '');
+        const posClass = getPartOfSpeechClass(word.partOfSpeech || '');
         posEl.textContent = posShort;
+        posEl.className = `pos-inline part-of-speech ${posClass}`;
     }
     
     // 意味
@@ -15757,11 +15776,28 @@ function displayHWQuizQuestion() {
     // キャンバスを再初期化（2回目以降も動作するように）
     initHWQuizCanvas();
     
+    // 正解表示をクリア
+    const placeholder = document.getElementById('hwQuizCorrectAnswerPlaceholder');
+    if (placeholder) placeholder.innerHTML = '';
+    
     // 追加した要素を削除
-    const correctAnswerBox = document.getElementById('hwQuizCorrectAnswerBox');
-    if (correctAnswerBox) correctAnswerBox.remove();
     const nextBtnContainer = document.getElementById('hwQuizNextBtnContainer');
     if (nextBtnContainer) nextBtnContainer.remove();
+    
+    // keyboard-actionsをパス・解答ボタンに復元
+    const keyboardActions = inputFixedBottom ? inputFixedBottom.querySelector('.keyboard-actions') : null;
+    if (keyboardActions) {
+        keyboardActions.innerHTML = `
+            <button class="keyboard-action-btn" id="hwQuizPassBtn" type="button">パス</button>
+            <button class="keyboard-action-btn keyboard-action-btn-primary hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答</button>
+        `;
+        
+        // パスボタンのイベントを再設定
+        const passBtn = document.getElementById('hwQuizPassBtn');
+        if (passBtn) {
+            passBtn.onclick = () => handleHWQuizPass();
+        }
+    }
     
     // 念のため再バインド
     bindHWQuizSubmitButton();
@@ -15850,9 +15886,7 @@ function showHWQuizResult(isCorrect, word) {
     const modeToggle = document.querySelector('.hw-mode-toggle-row');
     const inputFixedBottom = document.getElementById('hwInputFixedBottom');
     
-    // 下部固定入力エリアを非表示
-    if (inputFixedBottom) inputFixedBottom.style.display = 'none';
-    if (modeToggle) modeToggle.style.display = 'none';
+    // モードトグルも表示したまま（キーボード・手書きエリアも表示したまま）
     
     // 画面全体のフィードバック表示（正解は青、不正解は赤）
     const feedbackOverlay = document.getElementById('feedbackOverlay');
@@ -15883,14 +15917,11 @@ function showHWQuizResult(isCorrect, word) {
         }
     }
     
-    // 不正解の場合、正解を表示する欄を追加
-    let correctAnswerBox = document.getElementById('hwQuizCorrectAnswerBox');
-    if (!isCorrect) {
-        if (!correctAnswerBox) {
-            correctAnswerBox = document.createElement('div');
-            correctAnswerBox.id = 'hwQuizCorrectAnswerBox';
-            correctAnswerBox.className = 'hw-correct-answer-box';
-            correctAnswerBox.innerHTML = `
+    // 不正解の場合、正解を表示する欄を追加（プレースホルダーに挿入）
+    const placeholder = document.getElementById('hwQuizCorrectAnswerPlaceholder');
+    if (!isCorrect && placeholder) {
+        placeholder.innerHTML = `
+            <div class="hw-correct-answer-box" id="hwQuizCorrectAnswerBox">
                 <span class="hw-correct-word">${word.word}</span>
                 <button class="hw-audio-btn" id="hwQuizAudioBtnResult">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -15898,30 +15929,20 @@ function showHWQuizResult(isCorrect, word) {
                         <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
                     </svg>
                 </button>
-            `;
-            answerDisplay.parentNode.insertBefore(correctAnswerBox, answerDisplay.nextSibling);
-            
-            // 音声ボタンのイベント
-            const audioBtn = document.getElementById('hwQuizAudioBtnResult');
-            if (audioBtn) {
-                audioBtn.onclick = () => speakWord(word.word);
-            }
+            </div>
+        `;
+        
+        // 音声ボタンのイベント
+        const audioBtn = document.getElementById('hwQuizAudioBtnResult');
+        if (audioBtn) {
+            audioBtn.onclick = () => speakWord(word.word);
         }
     }
     
-    // 次へボタンを表示
-    let nextBtnContainer = document.getElementById('hwQuizNextBtnContainer');
-    if (!nextBtnContainer) {
-        nextBtnContainer = document.createElement('div');
-        nextBtnContainer.id = 'hwQuizNextBtnContainer';
-        nextBtnContainer.className = 'keyboard-actions';
-        nextBtnContainer.style.marginTop = '16px';
-        nextBtnContainer.innerHTML = `<button class="keyboard-action-btn keyboard-action-btn-primary" id="hwQuizNextBtnNew">次へ</button>`;
-        
-        const mainEl = document.querySelector('.hw-main');
-        if (mainEl) {
-            mainEl.appendChild(nextBtnContainer);
-        }
+    // 既存のkeyboard-actionsを次へボタンに置き換え
+    const keyboardActions = inputFixedBottom ? inputFixedBottom.querySelector('.keyboard-actions') : null;
+    if (keyboardActions) {
+        keyboardActions.innerHTML = `<button class="keyboard-action-btn keyboard-action-btn-primary" id="hwQuizNextBtnNew">次へ</button>`;
         
         // 次へボタンのイベント
         const nextBtn = document.getElementById('hwQuizNextBtnNew');
@@ -16047,13 +16068,17 @@ function restartHWQuiz() {
         main.innerHTML = `
             <!-- 問題（シンプル表示） -->
             <div class="hw-question-simple">
-                <span class="hw-question-pos" id="hwQuizPos"></span>
+                <span class="pos-inline part-of-speech" id="hwQuizPos"></span>
                 <span class="hw-question-meaning" id="hwQuizMeaning">意味</span>
             </div>
             
-            <!-- 回答欄 -->
-            <div class="hw-answer" id="hwQuizAnswerDisplay">
-                <span class="hw-answer-text"></span>
+            <!-- 回答エリア -->
+            <div class="hw-answer-area">
+                <div class="hw-answer" id="hwQuizAnswerDisplay">
+                    <span class="hw-answer-text"></span>
+                </div>
+                <!-- 正解表示用のプレースホルダー -->
+                <div id="hwQuizCorrectAnswerPlaceholder"></div>
             </div>
             
             <!-- 結果表示 -->
@@ -16220,10 +16245,38 @@ let memoPadCtx = null;
 let memoPadIsDrawing = false;
 let memoPadLastX = 0;
 let memoPadLastY = 0;
+let memoPadLineWidth = 2; // デフォルトの太さ
 
 function initMemoPad() {
     // インプットモード用のみ（アウトプットモードではメモ不要）
     setupMemoPadListeners('memoPadBtn', 'memoPadOverlay', 'memoPadCloseBtn', 'memoPadClearBtn', 'memoPadCanvas');
+    
+    // インラインメモボタン（トグル横）も同じオーバーレイに接続
+    const inlineBtn = document.getElementById('memoPadBtnInline');
+    if (inlineBtn) {
+        inlineBtn.addEventListener('click', () => {
+            const overlay = document.getElementById('memoPadOverlay');
+            const canvas = document.getElementById('memoPadCanvas');
+            if (overlay && canvas) {
+                if (!overlay.classList.contains('hidden') && !overlay.classList.contains('closing')) {
+                    // 開いている場合は閉じる
+                    overlay.classList.add('closing');
+                    overlay.classList.remove('opening');
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                        overlay.classList.remove('closing');
+                    }, 300);
+                } else if (overlay.classList.contains('hidden')) {
+                    // 閉じている場合は開く
+                    overlay.classList.remove('hidden');
+                    overlay.classList.remove('closing');
+                    overlay.classList.add('opening');
+                    memoPadCanvas = canvas;
+                    initMemoPadCanvas();
+                }
+            }
+        });
+    }
 }
 
 function setupMemoPadListeners(btnId, overlayId, closeBtnId, clearBtnId, canvasId) {
@@ -16303,9 +16356,12 @@ function initMemoPadCanvas() {
     
     // 描画設定
     memoPadCtx.strokeStyle = '#1f2937';
-    memoPadCtx.lineWidth = 2;
+    memoPadCtx.lineWidth = memoPadLineWidth;
     memoPadCtx.lineCap = 'round';
     memoPadCtx.lineJoin = 'round';
+    
+    // 太さボタンのイベントリスナー設定
+    setupMemoPadThicknessButtons();
     
     // イベントリスナー（既に設定済みならスキップ）
     if (memoPadCanvas._eventsAttached) return;
@@ -16322,6 +16378,32 @@ function initMemoPadCanvas() {
     memoPadCanvas.addEventListener('touchmove', memoPadDrawMove, { passive: false });
     memoPadCanvas.addEventListener('touchend', memoPadDrawEnd);
     memoPadCanvas.addEventListener('touchcancel', memoPadDrawEnd);
+}
+
+function setupMemoPadThicknessButtons() {
+    const thicknessButtons = document.querySelectorAll('.memo-pad-thickness-btn');
+    if (!thicknessButtons.length) return;
+    
+    // 既に設定済みならスキップ
+    if (thicknessButtons[0]._eventsAttached) return;
+    
+    thicknessButtons.forEach(btn => {
+        btn._eventsAttached = true;
+        btn.addEventListener('click', () => {
+            // アクティブ状態を更新
+            thicknessButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // 太さを変更
+            const thickness = parseInt(btn.dataset.thickness, 10);
+            memoPadLineWidth = thickness;
+            
+            // 現在のコンテキストに即座に反映
+            if (memoPadCtx) {
+                memoPadCtx.lineWidth = thickness;
+            }
+        });
+    });
 }
 
 function clearMemoPadCanvas() {

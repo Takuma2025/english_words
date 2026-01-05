@@ -523,7 +523,20 @@
                     <div class="memo-pad-overlay hidden" id="memoPadOverlay">
                         <div class="memo-pad-container">
                             <div class="memo-pad-header">
-                                <span class="memo-pad-title">メモ用紙</span>
+                                <div class="memo-pad-thickness-control">
+                                    <span class="memo-pad-thickness-label">ペンの太さ</span>
+                                    <div class="memo-pad-thickness-btns">
+                                        <button class="memo-pad-thickness-btn" data-thickness="1" title="細い">
+                                            <span class="thickness-dot thickness-thin"></span>
+                                        </button>
+                                        <button class="memo-pad-thickness-btn active" data-thickness="2" title="普通">
+                                            <span class="thickness-dot thickness-medium"></span>
+                                        </button>
+                                        <button class="memo-pad-thickness-btn" data-thickness="4" title="太い">
+                                            <span class="thickness-dot thickness-thick"></span>
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="memo-pad-actions">
                                     <button class="memo-pad-clear-btn" id="memoPadClearBtn">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -611,6 +624,14 @@
                                         <span>単語カード</span>
                                     </button>
                                 </div>
+                                <button class="memo-pad-btn-inline" id="memoPadBtnInline" aria-label="メモ">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    </svg>
+                                </button>
                             </div>
                             <div class="input-list-controls-row">
                                 <button class="input-shuffle-btn" id="inputShuffleBtn" title="ランダム表示">
@@ -1603,13 +1624,17 @@
         <div class="hw-main">
             <!-- 問題（シンプル表示） -->
             <div class="hw-question-simple">
-                <span class="hw-question-pos" id="hwQuizPos"></span>
+                <span class="pos-inline part-of-speech" id="hwQuizPos"></span>
                 <span class="hw-question-meaning" id="hwQuizMeaning">意味</span>
             </div>
             
-            <!-- 回答欄 -->
-            <div class="hw-answer" id="hwQuizAnswerDisplay">
-                <span class="hw-answer-text"></span>
+            <!-- 回答エリア -->
+            <div class="hw-answer-area">
+                <div class="hw-answer" id="hwQuizAnswerDisplay">
+                    <span class="hw-answer-text"></span>
+                </div>
+                <!-- 正解表示用のプレースホルダー -->
+                <div id="hwQuizCorrectAnswerPlaceholder"></div>
             </div>
             
             <!-- 結果表示 -->
