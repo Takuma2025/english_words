@@ -1042,6 +1042,7 @@ function initSchoolSelector() {
         
         schoolHandle.addEventListener('touchstart', (e) => {
             startY = e.touches[0].clientY;
+            currentY = startY;
             isDragging = true;
             schoolSheet.style.transition = 'none';
         }, { passive: true });
@@ -1051,27 +1052,31 @@ function initSchoolSelector() {
             currentY = e.touches[0].clientY;
             const deltaY = currentY - startY;
             
-            // 下方向のみドラッグ可能
+            // 下方向のみドラッグ可能（上方向は無視）
             if (deltaY > 0) {
-                schoolSheet.style.transform = `translateY(${deltaY}px)`;
+                // GPU accelerationを使用
+                schoolSheet.style.transform = `translate3d(0, ${deltaY}px, 0)`;
             }
         }, { passive: true });
         
-        schoolHandle.addEventListener('touchend', () => {
+        const endDrag = () => {
             if (!isDragging) return;
             isDragging = false;
             
             const deltaY = currentY - startY;
-            schoolSheet.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+            schoolSheet.style.transition = 'transform 0.25s cubic-bezier(0.32, 0.72, 0, 1)';
             
             // 80px以上下にドラッグしたら閉じる
             if (deltaY > 80) {
                 closeModal();
             } else {
                 // 元に戻す
-                schoolSheet.style.transform = 'translateY(0)';
+                schoolSheet.style.transform = 'translate3d(0, 0, 0)';
             }
-        });
+        };
+        
+        schoolHandle.addEventListener('touchend', endDrag);
+        schoolHandle.addEventListener('touchcancel', endDrag);
     }
     
     // 他の箇所から呼び出せるようにグローバル公開

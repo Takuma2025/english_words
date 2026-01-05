@@ -2037,6 +2037,7 @@ body.learning-mode .app-header {
     max-width: 520px;
     max-height: 88vh;
     max-height: 88dvh;
+    will-change: transform;
     background: #f8fafc;
     border-radius: 20px 20px 0 0;
     z-index: 10011;
@@ -2140,10 +2141,7 @@ body.learning-mode .app-header {
 /* コンテンツエリア */
 .school-modal-body {
     flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
+    overflow: hidden; /* スクロールは子要素で管理 */
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -2256,10 +2254,9 @@ body.learning-mode .app-header {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-    height: 45vh;
-    min-height: 280px;
-    max-height: 400px;
-    flex-shrink: 0;
+    flex: 1; /* 残りスペースを使用 */
+    min-height: 200px;
+    max-height: none; /* 最大高さの制限を解除 */
 }
 
 /* リストヘッダー */
@@ -2290,8 +2287,11 @@ body.learning-mode .app-header {
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    touch-action: pan-y;
+    overscroll-behavior-y: contain;
+    overscroll-behavior-x: none;
+    scroll-behavior: smooth;
+    will-change: scroll-position;
+    /* touch-actionは削除してスムーズなスクロールを有効化 */
 }
 
 .school-list-item {
@@ -2301,7 +2301,7 @@ body.learning-mode .app-header {
     padding: 14px 16px;
     cursor: pointer;
     border-bottom: 1px solid #f1f5f9;
-    transition: background 0.12s ease;
+    /* transitionを削除してスクロールパフォーマンスを向上 */
 }
 
 .school-list-item:last-child {
@@ -4421,6 +4421,8 @@ button.category-card:focus-visible {
 .card-area-wrapper:has(#inputListView:not(.hidden)) {
     overflow-y: hidden;
     padding-top: 0;
+    padding-bottom: 0; /* 下部の余白のみ削除 */
+    /* 横パディングは維持 */
 }
 
 /* 日本語→英語入力モード（基本語彙500専用） */
@@ -4733,7 +4735,8 @@ body.reorder-mode-active .word-card-container {
     display: flex;
     flex-direction: column;
     gap: 0;
-    padding: 0 0 20px 0;
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom, 8px); /* セーフエリア + 最小余白 */
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1;
@@ -7154,6 +7157,7 @@ body.learning-mode .app-container {
 
 body.learning-mode .app-main {
     padding-top: 0;
+    padding-bottom: 0; /* 学習モードではナビが非表示なので余白不要 */
     overflow-x: hidden;
 }
 
