@@ -2641,6 +2641,7 @@ function init() {
         setupInputListFilter();
         setupRedSheetStickyScroll();
         updateVocabProgressBar();
+        initMemoPad();
         
         // タップ後にフォーカスを外す（スマホでのアクティブ状態残り防止）
         document.addEventListener('touchend', (e) => {
@@ -4926,6 +4927,9 @@ function showInputModeDirectly(category, words, courseTitle) {
     const appMain = document.querySelector('.app-main');
     if (appMain) appMain.scrollTop = 0;
     
+    // インプットモードに設定
+    currentLearningMode = 'input';
+    
     selectedCategory = category;
     currentCourseWords = words;
     currentFilterCourseTitle = courseTitle;
@@ -4948,6 +4952,12 @@ function showInputModeDirectly(category, words, courseTitle) {
     const unitTestBtn = document.getElementById('unitTestBtn');
     if (unitTestBtn) {
         unitTestBtn.classList.remove('hidden');
+    }
+    
+    // メモボタンを表示（インプットモードなので常に表示）
+    const memoPadBtn = document.getElementById('memoPadBtn');
+    if (memoPadBtn) {
+        memoPadBtn.classList.remove('hidden');
     }
     
     // ヘッダー更新
@@ -5707,6 +5717,16 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
             unitTestBtn.classList.remove('hidden');
         } else {
             unitTestBtn.classList.add('hidden');
+        }
+    }
+    
+    // メモボタンの表示制御（インプットモードのみ表示、アウトプットモードでは非表示）
+    const memoPadBtn = document.getElementById('memoPadBtn');
+    if (memoPadBtn) {
+        if (currentLearningMode === 'input') {
+            memoPadBtn.classList.remove('hidden');
+        } else {
+            memoPadBtn.classList.add('hidden');
         }
     }
     
@@ -14616,7 +14636,7 @@ async function startHandwritingQuiz(category, words, courseTitle) {
     hwQuizResults = new Array(words.length).fill(null);
     hwQuizCorrectCount = 0;
     hwQuizWrongCount = 0;
-    hwQuizInputMode = 'handwriting'; // デフォルトは手書きモード
+    hwQuizInputMode = 'typing'; // デフォルトはタイピングモード
     hwKeyboardShiftActive = false;
     
     // 手書きクイズ画面を表示
@@ -14639,15 +14659,28 @@ async function startHandwritingQuiz(category, words, courseTitle) {
             <!-- 回答欄 -->
             <div class="hw-answer" id="hwQuizAnswerDisplay">
                 <span class="hw-answer-text"></span>
-                <button class="hw-backspace-icon-btn" id="hwQuizBackspaceBtn" type="button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                        <line x1="18" y1="9" x2="12" y2="15"></line>
-                        <line x1="12" y1="9" x2="18" y2="15"></line>
-                    </svg>
-                </button>
             </div>
             
+            <!-- 結果表示 -->
+            <div class="hw-result hidden" id="hwQuizResult">
+                <div class="hw-result-badge" id="hwQuizResultIcon"></div>
+                <div class="hw-result-word">
+                    <span id="hwQuizCorrectWord"></span>
+                    <button class="hw-audio-btn" id="hwQuizAudioBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    // 下部固定エリアを初期化
+    const inputFixedEl = hwQuizView.querySelector('.hw-input-fixed-bottom');
+    if (inputFixedEl) {
+        inputFixedEl.innerHTML = `
             <!-- キャンバス（手書きモード用） -->
             <div class="hw-canvas-area" id="hwCanvasArea">
                 <div class="hw-canvas-wrapper">
@@ -14655,6 +14688,15 @@ async function startHandwritingQuiz(category, words, courseTitle) {
                     <div class="hw-canvas-lines"></div>
                     <canvas id="hwQuizCanvas" class="hw-canvas" width="500" height="180"></canvas>
                 </div>
+                <!-- 1文字消すボタン（手書きモード用） -->
+                <button class="hw-backspace-btn" id="hwQuizBackspaceBtn" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                    </svg>
+                    <span>1文字消す</span>
+                </button>
             </div>
             
             <!-- 認識候補 -->
@@ -14713,20 +14755,6 @@ async function startHandwritingQuiz(category, words, courseTitle) {
             <div class="keyboard-actions">
                 <button class="keyboard-action-btn" id="hwQuizPassBtn" type="button">パス</button>
                 <button class="keyboard-action-btn keyboard-action-btn-primary hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答</button>
-            </div>
-            
-            <!-- 結果表示 -->
-            <div class="hw-result hidden" id="hwQuizResult">
-                <div class="hw-result-badge" id="hwQuizResultIcon"></div>
-                <div class="hw-result-word">
-                    <span id="hwQuizCorrectWord"></span>
-                    <button class="hw-audio-btn" id="hwQuizAudioBtn">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                        </svg>
-                    </button>
-                </div>
             </div>
         `;
 
@@ -14872,11 +14900,16 @@ function initHWQuizCanvas() {
     }
     
     hwQuizCtx = hwQuizCanvas.getContext('2d');
+    
+    // 状態をリセット
+    hwQuizIsDrawing = false;
+    hwQuizIsRecognizing = false;
+    
     clearHWQuizCanvas();
     
     // 既に初期化済みならイベント登録をスキップ
     if (hwQuizCanvasInitialized) {
-        console.log('[HWQuiz] Canvas already initialized');
+        console.log('[HWQuiz] Canvas already initialized, context refreshed');
         return;
     }
     
@@ -15339,13 +15372,13 @@ function updateHWQuizAnswerDisplay() {
         if (textEl) {
             textEl.textContent = hwQuizConfirmedText;
         } else {
-            display.textContent = hwQuizConfirmedText;
+        display.textContent = hwQuizConfirmedText;
         }
     }
 }
 
 // 現在の入力モード（handwriting または typing）
-let hwQuizInputMode = 'handwriting';
+let hwQuizInputMode = 'typing';
 let hwKeyboardShiftActive = false;
 
 /**
@@ -15577,8 +15610,8 @@ function switchHWInputMode(mode) {
         // 手書きモード
         if (handwritingBtn) handwritingBtn.classList.add('active');
         if (typingBtn) typingBtn.classList.remove('active');
-        if (canvasArea) canvasArea.style.display = '';
-        if (predictions) predictions.style.display = '';
+        if (canvasArea) canvasArea.style.display = 'flex';
+        if (predictions) predictions.style.display = 'flex';
         if (keyboard) keyboard.classList.add('hidden');
     } else {
         // タイピングモード
@@ -15670,6 +15703,8 @@ function displayHWQuizQuestion() {
     
     hwQuizAnswerSubmitted = false;
     hwQuizConfirmedText = '';
+    hwQuizIsDrawing = false;
+    hwQuizIsRecognizing = false;
     
     // 進捗セグメントと統計を更新
     updateHWQuizProgressSegments();
@@ -15701,16 +15736,11 @@ function displayHWQuizQuestion() {
     }
     
     // UIをリセット
-    const keyboardActions = document.querySelector('.hw-main > .keyboard-actions');
     const result = document.getElementById('hwQuizResult');
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
-    const canvasArea = document.querySelector('.hw-canvas-area');
-    const candidates = document.querySelector('.hw-candidates');
-    const tools = document.querySelector('.hw-tools');
+    const modeToggle = document.querySelector('.hw-mode-toggle-row');
+    const inputFixedBottom = document.getElementById('hwInputFixedBottom');
     
-    const modeToggle = document.querySelector('.hw-mode-toggle-wrapper');
-    
-    if (keyboardActions) keyboardActions.style.display = '';
     if (result) result.classList.add('hidden');
     if (answerDisplay) {
         answerDisplay.classList.remove('correct', 'wrong');
@@ -15719,9 +15749,13 @@ function displayHWQuizQuestion() {
         answerDisplay.style.color = '';
     }
     if (modeToggle) modeToggle.style.display = '';
+    if (inputFixedBottom) inputFixedBottom.style.display = '';
     
     // 現在の入力モードに応じて表示を切り替え
     switchHWInputMode(hwQuizInputMode);
+    
+    // キャンバスを再初期化（2回目以降も動作するように）
+    initHWQuizCanvas();
     
     // 追加した要素を削除
     const correctAnswerBox = document.getElementById('hwQuizCorrectAnswerBox');
@@ -15812,21 +15846,27 @@ window.submitHWQuizAnswer = submitHWQuizAnswer;
 function showHWQuizResult(isCorrect, word) {
     console.log('[HWQuiz] showHWQuizResult called, isCorrect:', isCorrect);
     
-    const keyboardActions = document.querySelector('.hw-main > .keyboard-actions');
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
-    const canvasArea = document.querySelector('.hw-canvas-area');
-    const candidates = document.querySelector('.hw-candidates');
-    const tools = document.querySelector('.hw-tools');
-    const keyboard = document.getElementById('hwVirtualKeyboard');
-    const modeToggle = document.querySelector('.hw-mode-toggle-wrapper');
+    const modeToggle = document.querySelector('.hw-mode-toggle-row');
+    const inputFixedBottom = document.getElementById('hwInputFixedBottom');
     
-    // 入力エリアを非表示
-    if (keyboardActions) keyboardActions.style.display = 'none';
-    if (canvasArea) canvasArea.style.display = 'none';
-    if (candidates) candidates.style.display = 'none';
-    if (tools) tools.style.display = 'none';
-    if (keyboard) keyboard.classList.add('hidden');
+    // 下部固定入力エリアを非表示
+    if (inputFixedBottom) inputFixedBottom.style.display = 'none';
     if (modeToggle) modeToggle.style.display = 'none';
+    
+    // 画面全体のフィードバック表示（正解は青、不正解は赤）
+    const feedbackOverlay = document.getElementById('feedbackOverlay');
+    if (feedbackOverlay) {
+        feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
+        setTimeout(() => {
+            feedbackOverlay.classList.remove('active');
+        }, 400);
+    }
+    
+    // 正解時にキラキラエフェクトを表示
+    if (isCorrect && typeof showSparkleEffect === 'function') {
+        showSparkleEffect();
+    }
     
     // 解答欄の色を変更
     if (answerDisplay) {
@@ -16014,15 +16054,28 @@ function restartHWQuiz() {
             <!-- 回答欄 -->
             <div class="hw-answer" id="hwQuizAnswerDisplay">
                 <span class="hw-answer-text"></span>
-                <button class="hw-backspace-icon-btn" id="hwQuizBackspaceBtn" type="button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                        <line x1="18" y1="9" x2="12" y2="15"></line>
-                        <line x1="12" y1="9" x2="18" y2="15"></line>
-                    </svg>
-                </button>
             </div>
             
+            <!-- 結果表示 -->
+            <div class="hw-result hidden" id="hwQuizResult">
+                <div class="hw-result-badge" id="hwQuizResultIcon"></div>
+                <div class="hw-result-word">
+                    <span id="hwQuizCorrectWord"></span>
+                    <button class="hw-audio-btn" id="hwQuizAudioBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    // 下部固定エリアを復元
+    const inputFixed = document.getElementById('hwInputFixedBottom');
+    if (inputFixed) {
+        inputFixed.innerHTML = `
             <!-- キャンバス（手書きモード用） -->
             <div class="hw-canvas-area" id="hwCanvasArea">
                 <div class="hw-canvas-wrapper">
@@ -16030,6 +16083,15 @@ function restartHWQuiz() {
                     <div class="hw-canvas-lines"></div>
                     <canvas id="hwQuizCanvas" class="hw-canvas" width="500" height="180"></canvas>
                 </div>
+                <!-- 1文字消すボタン（手書きモード用） -->
+                <button class="hw-backspace-btn" id="hwQuizBackspaceBtn" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                    </svg>
+                    <span>1文字消す</span>
+                </button>
             </div>
             
             <!-- 認識候補 -->
@@ -16065,8 +16127,8 @@ function restartHWQuiz() {
                     <button class="keyboard-key keyboard-key-shift" id="hwKeyboardShift" data-shift="false">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="18 15 12 9 6 15"></polyline>
-                        </svg>
-                    </button>
+                    </svg>
+                </button>
                     <button class="keyboard-key" data-key="z">z</button>
                     <button class="keyboard-key" data-key="x">x</button>
                     <button class="keyboard-key" data-key="c">c</button>
@@ -16076,11 +16138,11 @@ function restartHWQuiz() {
                     <button class="keyboard-key" data-key="m">m</button>
                     <button class="keyboard-key keyboard-key-special" id="hwKeyboardBackspace">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                            <line x1="18" y1="9" x2="12" y2="15"></line>
-                            <line x1="12" y1="9" x2="18" y2="15"></line>
-                        </svg>
-                    </button>
+                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                    </svg>
+                </button>
                 </div>
             </div>
             
@@ -16127,11 +16189,6 @@ function restartHWQuiz() {
 function exitHWQuiz() {
     const hwQuizView = document.getElementById('handwritingQuizView');
     
-    // 戻り先のために値を保存
-    const category = hwQuizCategory;
-    const words = currentFilterWords.length > 0 ? currentFilterWords : hwQuizWords;
-    const courseTitle = hwQuizCourseTitle;
-    
     if (hwQuizView) hwQuizView.classList.add('hidden');
     
     // リセット
@@ -16139,9 +16196,183 @@ function exitHWQuiz() {
     hwQuizIndex = 0;
     hwQuizConfirmedText = '';
     isHandwritingMode = false;
+    hwQuizCanvasInitialized = false; // キャンバス初期化フラグをリセット
+    hwQuizCanvas = null;
+    hwQuizCtx = null;
     
-    // 細分化メニュー選択画面（フィルター画面）に戻る
-    showWordFilterView(category, words, courseTitle);
+    // 細分化メニュー画面に戻る
+    const parent = window.currentSubcategoryParent;
+    if (parent === 'レベル１ 超重要700語' || parent === 'レベル２ 重要500語' || parent === 'レベル３ 差がつく300語') {
+        showLevelSubcategorySelection(parent, true);
+    } else if (parent === 'カテゴリ別に覚える基本単語') {
+        showElementaryCategorySelection(true);
+    } else {
+        // その他の場合はカテゴリー選択画面に戻る
+        showCategorySelection();
+    }
+}
+
+// =============================================
+// メモ用紙機能
+// =============================================
+let memoPadCanvas = null;
+let memoPadCtx = null;
+let memoPadIsDrawing = false;
+let memoPadLastX = 0;
+let memoPadLastY = 0;
+
+function initMemoPad() {
+    // インプットモード用のみ（アウトプットモードではメモ不要）
+    setupMemoPadListeners('memoPadBtn', 'memoPadOverlay', 'memoPadCloseBtn', 'memoPadClearBtn', 'memoPadCanvas');
+}
+
+function setupMemoPadListeners(btnId, overlayId, closeBtnId, clearBtnId, canvasId) {
+    const btn = document.getElementById(btnId);
+    const overlay = document.getElementById(overlayId);
+    const closeBtn = document.getElementById(closeBtnId);
+    const clearBtn = document.getElementById(clearBtnId);
+    const canvas = document.getElementById(canvasId);
+    
+    if (!btn || !overlay || !canvas) return;
+    
+    // メモを閉じる関数
+    function closeMemoPad() {
+        overlay.classList.add('closing');
+        overlay.classList.remove('opening');
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+            overlay.classList.remove('closing');
+        }, 300);
+    }
+    
+    // メモを開く関数
+    function openMemoPad() {
+        overlay.classList.remove('hidden');
+        overlay.classList.remove('closing');
+        overlay.classList.add('opening');
+        memoPadCanvas = canvas;
+        initMemoPadCanvas();
+    }
+    
+    // メモボタンクリック（トグル動作）
+    btn.addEventListener('click', () => {
+        if (!overlay.classList.contains('hidden') && !overlay.classList.contains('closing')) {
+            // 開いている場合は閉じる
+            closeMemoPad();
+        } else if (overlay.classList.contains('hidden')) {
+            // 閉じている場合は開く
+            openMemoPad();
+        }
+    });
+    
+    // 閉じるボタン
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            closeMemoPad();
+        });
+    }
+    
+    // クリアボタン
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            memoPadCanvas = canvas;
+            memoPadCtx = canvas.getContext('2d');
+            clearMemoPadCanvas();
+        });
+    }
+}
+
+function initMemoPadCanvas() {
+    if (!memoPadCanvas) return;
+    
+    // キャンバスサイズを設定
+    const container = memoPadCanvas.parentElement;
+    const rect = container.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    
+    memoPadCanvas.width = rect.width * dpr;
+    memoPadCanvas.height = (rect.height - 60) * dpr; // ヘッダー分を引く
+    memoPadCanvas.style.width = rect.width + 'px';
+    memoPadCanvas.style.height = (rect.height - 60) + 'px';
+    
+    memoPadCtx = memoPadCanvas.getContext('2d');
+    memoPadCtx.scale(dpr, dpr);
+    
+    // 背景をクリア（透明）
+    memoPadCtx.clearRect(0, 0, memoPadCanvas.width, memoPadCanvas.height);
+    
+    // 描画設定
+    memoPadCtx.strokeStyle = '#1f2937';
+    memoPadCtx.lineWidth = 2;
+    memoPadCtx.lineCap = 'round';
+    memoPadCtx.lineJoin = 'round';
+    
+    // イベントリスナー（既に設定済みならスキップ）
+    if (memoPadCanvas._eventsAttached) return;
+    memoPadCanvas._eventsAttached = true;
+    
+    // マウスイベント
+    memoPadCanvas.addEventListener('mousedown', memoPadDrawStart);
+    memoPadCanvas.addEventListener('mousemove', memoPadDrawMove);
+    memoPadCanvas.addEventListener('mouseup', memoPadDrawEnd);
+    memoPadCanvas.addEventListener('mouseleave', memoPadDrawEnd);
+    
+    // タッチイベント
+    memoPadCanvas.addEventListener('touchstart', memoPadDrawStart, { passive: false });
+    memoPadCanvas.addEventListener('touchmove', memoPadDrawMove, { passive: false });
+    memoPadCanvas.addEventListener('touchend', memoPadDrawEnd);
+    memoPadCanvas.addEventListener('touchcancel', memoPadDrawEnd);
+}
+
+function clearMemoPadCanvas() {
+    if (!memoPadCtx || !memoPadCanvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    memoPadCtx.clearRect(0, 0, memoPadCanvas.width / dpr, memoPadCanvas.height / dpr);
+}
+
+function memoPadDrawStart(e) {
+    e.preventDefault();
+    memoPadIsDrawing = true;
+    const pos = getMemoPadPos(e);
+    memoPadLastX = pos.x;
+    memoPadLastY = pos.y;
+}
+
+function memoPadDrawMove(e) {
+    if (!memoPadIsDrawing) return;
+    e.preventDefault();
+    
+    const pos = getMemoPadPos(e);
+    
+    memoPadCtx.beginPath();
+    memoPadCtx.moveTo(memoPadLastX, memoPadLastY);
+    memoPadCtx.lineTo(pos.x, pos.y);
+    memoPadCtx.stroke();
+    
+    memoPadLastX = pos.x;
+    memoPadLastY = pos.y;
+}
+
+function memoPadDrawEnd(e) {
+    memoPadIsDrawing = false;
+}
+
+function getMemoPadPos(e) {
+    const rect = memoPadCanvas.getBoundingClientRect();
+    let clientX, clientY;
+    
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+    }
+    
+    return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+    };
 }
 
 // アプリケーションの起動

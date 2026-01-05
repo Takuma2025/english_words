@@ -173,7 +173,7 @@ textarea,
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 0;
+    z-index: 9999;
     opacity: 0;
     transition: opacity 0.3s ease;
     background-color: transparent;
@@ -5381,6 +5381,24 @@ body.reorder-mode-active .word-card-container {
 .input-list-mode-toggle-large .input-list-mode-btn .mode-btn-icon {
     width: 18px;
     height: 18px;
+}
+
+/* 小さなトグル（手書き/タイピング用） */
+.hw-mode-toggle-small {
+    padding: 2px;
+    border-radius: 6px;
+}
+
+.hw-mode-toggle-small .input-list-mode-btn {
+    padding: 4px 10px;
+    height: 28px;
+    font-size: 12px;
+    gap: 4px;
+}
+
+.hw-mode-toggle-small .input-list-mode-btn .mode-btn-icon {
+    width: 14px;
+    height: 14px;
 }
 
 .input-list-mode-btn {
@@ -13317,6 +13335,150 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 /* =============================================
+   メモ用紙オーバーレイ
+   ============================================= */
+.memo-pad-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.memo-pad-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.memo-pad-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.memo-pad-btn.hidden {
+    display: none;
+}
+
+.memo-pad-overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50vh;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    transform: translateY(0);
+    transition: transform 0.3s ease-out;
+}
+
+.memo-pad-overlay.closing {
+    transform: translateY(100%);
+}
+
+.memo-pad-overlay.opening {
+    animation: memo-slide-up 0.3s ease-out;
+}
+
+@keyframes memo-slide-up {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.memo-pad-overlay.hidden {
+    display: none;
+}
+
+.memo-pad-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 8px 12px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    background: transparent;
+}
+
+.memo-pad-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.memo-pad-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(55, 65, 81, 0.8);
+}
+
+.memo-pad-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.memo-pad-clear-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 6px;
+    color: rgba(55, 65, 81, 0.9);
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.memo-pad-clear-btn:active {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.memo-pad-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(55, 65, 81, 0.6);
+    border: none;
+    border-radius: 50%;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.memo-pad-close-btn:active {
+    background: rgba(55, 65, 81, 0.8);
+}
+
+.memo-pad-canvas {
+    flex: 1;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+/* =============================================
    手書き入力クイズ画面（スマホファースト）
    ============================================= */
 .handwriting-quiz-view {
@@ -13424,11 +13586,22 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: none;
 }
 
-/* 入力モード切替 */
-.hw-mode-toggle-wrapper {
+/* 手書きクイズ用の進捗エリア */
+.hw-progress-bottom-row {
     display: flex;
+    align-items: center;
     justify-content: center;
-    padding: 8px 16px;
+    width: 100%;
+    margin-top: 8px;
+    gap: 24px;
+}
+
+/* 入力モード切替行 */
+.hw-mode-toggle-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 4px 0;
+    margin-top: 4px;
 }
 
 /* メイン */
@@ -13438,10 +13611,41 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     flex-direction: column;
     background: transparent;
     padding: 16px;
+    padding-bottom: 280px; /* 下部固定エリアのためのスペース */
     gap: 12px;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+}
+
+/* 入力エリア（キーボード・手書き・ボタン）を下部固定 */
+.hw-input-fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #f3f4f6;
+    padding: 8px 16px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    z-index: 100;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hw-input-fixed-bottom .hw-canvas-area {
+    flex: 0 0 auto;
+}
+
+.hw-input-fixed-bottom .virtual-keyboard {
+    width: 100%;
+}
+
+.hw-input-fixed-bottom .keyboard-actions {
+    width: 100%;
 }
 
 /* 問題（シンプル表示） */
@@ -13518,7 +13722,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 /* 回答欄 */
 .hw-answer {
     height: 64px;
-    width: 340px;
+    width: 300px;
     margin: 0 auto;
     padding: 4px 12px 4px 12px;
     background: #fff;
@@ -13537,44 +13741,43 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     position: relative;
 }
 
 .hw-answer-text {
-    flex: 1;
+    width: 100%;
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding-right: 8px;
 }
 
-/* 1文字消すボタン（アイコンのみ・解答欄内右側） */
-.hw-backspace-icon-btn {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    background: transparent;
-    border: none;
-    color: #9ca3af;
+/* 1文字消すボタン（手書きモード用・キャンバス下中央） */
+.hw-backspace-btn {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 6px;
+    padding: 6px 14px;
+    margin-top: 8px;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 6px;
+    color: #374151;
+    font-size: 13px;
     cursor: pointer;
-    flex-shrink: 0;
-    transition: color 0.15s ease;
+    transition: background 0.15s ease;
     -webkit-tap-highlight-color: transparent;
 }
 
-.hw-backspace-icon-btn:active {
-    color: #6b7280;
-    transform: scale(0.95);
+.hw-backspace-btn:active {
+    background: #d1d5db;
 }
 
-.hw-backspace-icon-btn svg {
-    width: 22px;
-    height: 22px;
+.hw-backspace-btn svg {
+    width: 16px;
+    height: 16px;
 }
 
 .hw-answer.correct {
@@ -13592,6 +13795,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 /* キャンバスエリア */
 .hw-canvas-area {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     flex: 1 1 auto;
@@ -14110,16 +14314,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         margin: 0 12px;
     }
     
-    .hw-mode-toggle-wrapper {
-        padding: 6px 12px;
-    }
 
     .hw-main {
         padding: 14px 12px;
+        padding-bottom: 260px;
         gap: 10px;
-        margin-top: 12px;
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
     }
     
     .hw-question {
@@ -14136,16 +14335,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         padding: 10px 14px;
         font-size: 28px;
         border-radius: 10px;
-    }
-    
-    .hw-backspace-icon-btn {
-        width: 30px;
-        height: 30px;
-    }
-    
-    .hw-backspace-icon-btn svg {
-        width: 20px;
-        height: 20px;
     }
     
     .hw-canvas-area {
@@ -14235,10 +14424,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     
     .hw-main {
         padding: 12px 10px;
+        padding-bottom: 250px;
         gap: 8px;
-        margin-top: 10px;
-        border-top-left-radius: 16px;
-        border-top-right-radius: 16px;
     }
     
     .hw-question {
@@ -14253,16 +14440,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         min-height: 46px;
         padding: 8px 12px;
         font-size: 24px;
-    }
-    
-    .hw-backspace-icon-btn {
-        width: 28px;
-        height: 28px;
-    }
-    
-    .hw-backspace-icon-btn svg {
-        width: 18px;
-        height: 18px;
     }
     
     .hw-canvas-wrapper {
@@ -14328,10 +14505,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     
     .hw-main {
         padding: 10px 8px;
+        padding-bottom: 240px;
         gap: 6px;
-        margin-top: 8px;
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
     }
     
     .hw-question {
@@ -14353,16 +14528,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         padding: 6px 10px;
         font-size: 22px;
         border-radius: 8px;
-    }
-    
-    .hw-backspace-icon-btn {
-        width: 26px;
-        height: 26px;
-    }
-    
-    .hw-backspace-icon-btn svg {
-        width: 16px;
-        height: 16px;
     }
     
     .hw-canvas {

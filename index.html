@@ -490,6 +490,14 @@
                         </button>
                         <span class="unit-name" id="unitName">単元名</span>
                         <div class="unit-header-actions">
+                            <button class="memo-pad-btn" id="memoPadBtn" aria-label="メモ">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                            </button>
                             <button class="unit-test-btn" id="unitTestBtn">テスト</button>
                             <button class="unit-pause-btn" id="unitPauseBtn" aria-label="ポーズ">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -508,6 +516,32 @@
                                 <button class="pause-continue-btn" id="pauseContinueBtn">テストを続ける</button>
                                 <button class="pause-quit-btn" id="pauseQuitBtn">中断する</button>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- メモ用紙オーバーレイ -->
+                    <div class="memo-pad-overlay hidden" id="memoPadOverlay">
+                        <div class="memo-pad-container">
+                            <div class="memo-pad-header">
+                                <span class="memo-pad-title">メモ用紙</span>
+                                <div class="memo-pad-actions">
+                                    <button class="memo-pad-clear-btn" id="memoPadClearBtn">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 6h18"></path>
+                                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                                        </svg>
+                                        <span>クリア</span>
+                                    </button>
+                                    <button class="memo-pad-close-btn" id="memoPadCloseBtn">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <canvas id="memoPadCanvas" class="memo-pad-canvas"></canvas>
                         </div>
                     </div>
                     <!-- 進捗バーとNo.をカードの上に配置 -->
@@ -1508,13 +1542,15 @@
         
         <!-- 進捗バー（英語→日本語モードと同じ） -->
         <div class="progress-header" id="hwQuizStatsBar">
+            <!-- 上段: 進捗バー -->
             <div class="progress-bar-wrapper">
                 <div class="progress-range-display" id="hwQuizProgressRange">No.1-10</div>
                 <div class="progress-bar-container" id="hwQuizProgressBarContainer">
                     <!-- セグメントは動的に生成 -->
                 </div>
             </div>
-            <div class="progress-bottom-row">
+            <!-- 中段: 統計（中央揃え） -->
+            <div class="hw-progress-bottom-row">
                 <div class="progress-stats">
                     <div class="progress-stats-scores">
                         <span class="score-correct">
@@ -1534,37 +1570,36 @@
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- 入力モード切替 -->
-        <div class="hw-mode-toggle-wrapper">
-            <div class="input-list-mode-toggle input-list-mode-toggle-large">
-                <button class="input-list-mode-btn active" id="hwModeHandwriting" data-mode="handwriting">
-                    <svg class="mode-btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
-                        <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
-                        <path d="M2 2l7.586 7.586"></path>
-                    </svg>
-                    <span>手書き</span>
-                </button>
-                <button class="input-list-mode-btn" id="hwModeTyping" data-mode="typing">
-                    <svg class="mode-btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
-                        <path d="M6 8h.001"></path>
-                        <path d="M10 8h.001"></path>
-                        <path d="M14 8h.001"></path>
-                        <path d="M18 8h.001"></path>
-                        <path d="M8 12h.001"></path>
-                        <path d="M12 12h.001"></path>
-                        <path d="M16 12h.001"></path>
-                        <path d="M7 16h10"></path>
-                    </svg>
-                    <span>タイピング</span>
-                </button>
+            <!-- 下段: 入力モード切替 -->
+            <div class="hw-mode-toggle-row">
+                <div class="input-list-mode-toggle hw-mode-toggle-small">
+                    <button class="input-list-mode-btn active" id="hwModeTyping" data-mode="typing">
+                        <svg class="mode-btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                            <path d="M6 8h.001"></path>
+                            <path d="M10 8h.001"></path>
+                            <path d="M14 8h.001"></path>
+                            <path d="M18 8h.001"></path>
+                            <path d="M8 12h.001"></path>
+                            <path d="M12 12h.001"></path>
+                            <path d="M16 12h.001"></path>
+                            <path d="M7 16h10"></path>
+                        </svg>
+                        <span>タイピング</span>
+                    </button>
+                    <button class="input-list-mode-btn" id="hwModeHandwriting" data-mode="handwriting">
+                        <svg class="mode-btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                            <path d="M2 2l7.586 7.586"></path>
+                        </svg>
+                        <span>手書き</span>
+                    </button>
+                </div>
             </div>
         </div>
         
-        <!-- メイン -->
+        <!-- メイン（問題と回答欄） -->
         <div class="hw-main">
             <!-- 問題（シンプル表示） -->
             <div class="hw-question-simple">
@@ -1575,15 +1610,25 @@
             <!-- 回答欄 -->
             <div class="hw-answer" id="hwQuizAnswerDisplay">
                 <span class="hw-answer-text"></span>
-                <button class="hw-backspace-icon-btn" id="hwQuizBackspaceBtn" type="button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                        <line x1="18" y1="9" x2="12" y2="15"></line>
-                        <line x1="12" y1="9" x2="18" y2="15"></line>
-                    </svg>
-                </button>
             </div>
             
+            <!-- 結果表示 -->
+            <div class="hw-result hidden" id="hwQuizResult">
+                <div class="hw-result-badge" id="hwQuizResultIcon"></div>
+                <div class="hw-result-word">
+                    <span id="hwQuizCorrectWord"></span>
+                    <button class="hw-audio-btn" id="hwQuizAudioBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 入力エリア（下部固定） -->
+        <div class="hw-input-fixed-bottom" id="hwInputFixedBottom">
             <!-- キャンバス（手書きモード用） -->
             <div class="hw-canvas-area" id="hwCanvasArea">
                 <div class="hw-canvas-wrapper">
@@ -1591,6 +1636,15 @@
                     <div class="hw-canvas-lines"></div>
                     <canvas id="hwQuizCanvas" class="hw-canvas" width="500" height="180"></canvas>
                 </div>
+                <!-- 1文字消すボタン（手書きモード用） -->
+                <button class="hw-backspace-btn" id="hwQuizBackspaceBtn" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                    </svg>
+                    <span>1文字消す</span>
+                </button>
             </div>
             
             <!-- 認識候補 -->
@@ -1649,20 +1703,6 @@
             <div class="keyboard-actions">
                 <button class="keyboard-action-btn" id="hwQuizPassBtn" type="button">パス</button>
                 <button class="keyboard-action-btn keyboard-action-btn-primary hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答</button>
-            </div>
-            
-            <!-- 結果表示 -->
-            <div class="hw-result hidden" id="hwQuizResult">
-                <div class="hw-result-badge" id="hwQuizResultIcon"></div>
-                <div class="hw-result-word">
-                    <span id="hwQuizCorrectWord"></span>
-                    <button class="hw-audio-btn" id="hwQuizAudioBtn">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                        </svg>
-                    </button>
-                </div>
             </div>
         </div>
         
