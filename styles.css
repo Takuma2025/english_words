@@ -295,9 +295,8 @@ textarea,
 .app-container {
     display: flex;
     flex-direction: column;
-    height: 100dvh; /* 動的ビューポート高さ */
     width: 100% !important;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -509,6 +508,7 @@ body.learning-mode .app-header {
 
 .category-list, .category-header {
     max-width: 600px;
+    width: calc(100% - 24px);
     margin-left: auto;
     margin-right: auto;
 }
@@ -4449,7 +4449,7 @@ button.category-card:focus-visible {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
-    width: 100%;
+    width: calc(100% - 24px);
 }
 
 /* 入力モードの場合は下のパディングを調整 */
@@ -4789,7 +4789,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-header, .input-list-scroll {
-    width: 100%;
+    width: calc(100% - 24px);
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
