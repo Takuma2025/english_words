@@ -42,11 +42,11 @@ html {
     left: 0;
     right: 0;
     bottom: 0;
-    width: 100vw;
-    height: 100dvh;
+    width: 100%;
+    height: 100%;
+    height: 100dvh; /* 動的ビューポート高さを使用 */
     overflow: hidden;
-    margin: 0;
-    padding: 0;
+    background-color: #f1f5f9;
 }
 
 body {
@@ -54,16 +54,17 @@ body {
     background-color: #f1f5f9;
     color: #1f2937;
     line-height: 1.5;
+    height: 100vh;
+    height: 100dvh;
+    width: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    width: 100vw;
-    height: 100dvh;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
     touch-action: pan-y;
     overscroll-behavior: none;
     overscroll-behavior-y: none;
@@ -290,19 +291,18 @@ textarea,
 .app-container {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    height: 100dvh; /* 動的ビューポート高さ */
+    width: 100%;
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    width: 100vw;
-    height: 100dvh;
     z-index: 1;
     overflow: hidden;
     padding-top: calc(var(--header-height) + env(safe-area-inset-top));
-    margin: 0;
-    padding-left: 0;
-    padding-right: 0;
+    background-color: #f1f5f9;
 }
 
 /* PWAスタンドアロンモード */
@@ -489,7 +489,7 @@ body.learning-mode .app-header {
     }
     
     .category-view {
-        padding: 0 8px; /* カテゴリービュー内でパディングを設定 */
+        padding: 0; /* 左右の余白をなくす */
     }
     
     .category-list {
@@ -4419,7 +4419,7 @@ button.category-card:focus-visible {
     justify-content: flex-start;
     align-items: stretch;
     position: relative;
-    padding: 0 16px 0 16px; /* 上下パディング0、左右のみ */
+    padding: 0; /* スマホで左右端まで使えるようにパディングを削除 */
     overflow-y: auto;
     min-height: 0;
     z-index: 10001;
@@ -5314,10 +5314,10 @@ body.reorder-mode-active .word-card-container {
     width: 55%;
     bottom: 0;
     background: rgb(200, 30, 30);
-    z-index: 10000; /* 高いz-indexで確実に表示 */
+    z-index: 500;
     cursor: grab;
     user-select: none;
-    border-radius: 12px; /* 四つ角角丸 */
+    border-radius: 12px;
     box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
     pointer-events: auto;
     touch-action: none;
