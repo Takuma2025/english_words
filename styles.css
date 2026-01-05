@@ -3630,7 +3630,7 @@ button.category-card:focus-visible {
     display: flex;
     flex-direction: column;
     height: 100%;
-    overflow: hidden;
+    overflow: clip; /* hiddenではなくclipを使用（position:fixedに影響しない） */
     min-height: 0;
 }
 
@@ -4419,7 +4419,7 @@ button.category-card:focus-visible {
 }
 
 .card-area-wrapper:has(#inputListView:not(.hidden)) {
-    overflow-y: hidden;
+    overflow-y: clip; /* hiddenではなくclipを使用 */
     padding-top: 0;
     padding-bottom: 0; /* 下部の余白のみ削除 */
     /* 横パディングは維持 */
@@ -4738,7 +4738,7 @@ body.reorder-mode-active .word-card-container {
     padding: 0;
     padding-bottom: 0;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: clip; /* hiddenではなくclipを使用（position:fixedに影響しない） */
     flex: 1;
     min-height: 0;
     background: #f1f5f9;
@@ -5300,10 +5300,10 @@ body.reorder-mode-active .word-card-container {
     width: 55%;
     bottom: 0;
     background: rgb(200, 30, 30);
-    z-index: 500;
+    z-index: 10000; /* 画面の余白より上に表示 */
     cursor: grab;
     user-select: none;
-    border-radius: 12px;
+    border-radius: 12px; /* 四つ角角丸 */
     box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
     pointer-events: auto;
     touch-action: none;
@@ -5323,6 +5323,7 @@ body.reorder-mode-active .word-card-container {
     .red-sheet-overlay {
         left: 15%;
         width: 90%;
+        border-radius: 12px; /* 四つ角角丸 */
     }
     
     .red-sheet-toggle {
