@@ -745,32 +745,12 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
     // 偏差値でソート（高い順）
     filteredSchools.sort((a, b) => (b.hensachi || 0) - (a.hensachi || 0));
     
-    // 一番上に「未定」を追加
-    const undecidedItem = document.createElement('div');
-    undecidedItem.className = 'school-list-item school-list-item-undecided';
-    const undecidedName = document.createElement('div');
-    undecidedName.className = 'school-list-name';
-    undecidedName.textContent = '未定（設定しない）';
-    undecidedItem.appendChild(undecidedName);
-    undecidedItem.addEventListener('click', () => {
-        // 効果音を再生
-        SoundEffects.playMenuSelect();
-        // 未設定を選択
-        tempSelectedSchool = null;
-        // 選択中のアイテムをハイライト
-        document.querySelectorAll('.school-list-item').forEach(el => el.classList.remove('school-list-item-selected'));
-        undecidedItem.classList.add('school-list-item-selected');
-        // 決定ボタンを有効化
-        setSchoolConfirmEnabled(true);
-    });
-    listEl.appendChild(undecidedItem);
-    
     // 学校一覧を表示（交互の色を適用）
     filteredSchools.forEach((school, index) => {
         const item = document.createElement('div');
         item.className = 'school-list-item';
-        // 交互の色を適用（index + 1 は未定の分を考慮）
-        if ((index + 1) % 2 === 0) {
+        // 交互の色を適用
+        if (index % 2 === 1) {
             item.classList.add('school-list-item-even');
         } else {
             item.classList.add('school-list-item-odd');
@@ -872,6 +852,7 @@ function initSchoolSelector() {
     const resetBtn = document.getElementById('selectedSchoolReset');
     const openBtn = document.getElementById('openSchoolSettings');
     const closeBtn = document.getElementById('closeSchoolSettings');
+    const deleteBtn = document.getElementById('vocabSchoolDeleteBtn');
     const modal = document.getElementById('schoolModal');
     const backdrop = document.querySelector('#schoolModal .school-modal-backdrop');
     const typeButtons = document.querySelectorAll('.school-filter-tab');
@@ -879,6 +860,22 @@ function initSchoolSelector() {
 
     const saved = loadSelectedSchool();
     if (saved) updateSelectedSchoolUI(saved);
+    
+    // 削除ボタンのイベントリスナー
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            SoundEffects.playTap();
+            // 志望校を削除
+            localStorage.removeItem(SCHOOL_STORAGE_KEY);
+            // 目標達成フラグをリセット
+            hasReachedGoalBefore = false;
+            localStorage.removeItem('goalAchieved');
+            // UIを更新
+            updateSelectedSchoolUI(null, false);
+            updateVocabProgressBar();
+        });
+    }
 
     // 現在のタイプフィルタと検索クエリを取得する関数
     const getCurrentTypeFilter = () => {
@@ -1054,8 +1051,7 @@ function initSchoolSelector() {
             
             // 下方向のみドラッグ可能（上方向は無視）
             if (deltaY > 0) {
-                // GPU accelerationを使用
-                schoolSheet.style.transform = `translate3d(0, ${deltaY}px, 0)`;
+                schoolSheet.style.transform = `translateY(${deltaY}px)`;
             }
         }, { passive: true });
         
@@ -1064,14 +1060,22 @@ function initSchoolSelector() {
             isDragging = false;
             
             const deltaY = currentY - startY;
-            schoolSheet.style.transition = 'transform 0.25s cubic-bezier(0.32, 0.72, 0, 1)';
             
             // 80px以上下にドラッグしたら閉じる
             if (deltaY > 80) {
+                // インラインスタイルをクリアしてからcloseModalを呼ぶ
+                schoolSheet.style.transition = '';
+                schoolSheet.style.transform = '';
                 closeModal();
             } else {
                 // 元に戻す
-                schoolSheet.style.transform = 'translate3d(0, 0, 0)';
+                schoolSheet.style.transition = 'transform 0.2s ease-out';
+                schoolSheet.style.transform = 'translateY(0)';
+                // トランジション完了後にインラインスタイルをクリア
+                setTimeout(() => {
+                    schoolSheet.style.transition = '';
+                    schoolSheet.style.transform = '';
+                }, 200);
             }
         };
         
@@ -16267,6 +16271,7 @@ function initMemoPad() {
                     // 開いている場合は閉じる
                     overlay.classList.add('closing');
                     overlay.classList.remove('opening');
+                    inlineBtn.classList.remove('active');
                     setTimeout(() => {
                         overlay.classList.add('hidden');
                         overlay.classList.remove('closing');
@@ -16276,6 +16281,7 @@ function initMemoPad() {
                     overlay.classList.remove('hidden');
                     overlay.classList.remove('closing');
                     overlay.classList.add('opening');
+                    inlineBtn.classList.add('active');
                     memoPadCanvas = canvas;
                     initMemoPadCanvas();
                 }
@@ -16297,6 +16303,10 @@ function setupMemoPadListeners(btnId, overlayId, closeBtnId, clearBtnId, canvasI
     function closeMemoPad() {
         overlay.classList.add('closing');
         overlay.classList.remove('opening');
+        const inlineBtn = document.getElementById('memoPadBtnInline');
+        if (inlineBtn) {
+            inlineBtn.classList.remove('active');
+        }
         setTimeout(() => {
             overlay.classList.add('hidden');
             overlay.classList.remove('closing');
