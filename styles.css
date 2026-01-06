@@ -455,8 +455,7 @@ body.learning-mode .app-header {
     flex: 1;
     overflow-y: auto;
     overflow-x: visible;
-    padding: 16px 0;
-    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding: 16px 0 0 0;
     width: 100% !important;
     max-width: none !important;
     margin: 0;
