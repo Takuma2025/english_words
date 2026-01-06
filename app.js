@@ -2403,6 +2403,47 @@ function getNativeVoice() {
 }
 
 // 音声リストの読み込みを待つ
+// アプリ起動時に音声合成を事前に初期化
+function initSpeechSynthesis() {
+    if (!('speechSynthesis' in window)) return;
+    
+    // 音声リストを事前に読み込む
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+        voicesLoaded = true;
+        console.log('[Speech] Voices pre-loaded:', voices.length);
+    }
+    
+    // onvoiceschangedイベントを設定
+    window.speechSynthesis.onvoiceschanged = () => {
+        voicesLoaded = true;
+        console.log('[Speech] Voices loaded via event:', window.speechSynthesis.getVoices().length);
+    };
+    
+    // iOSでの音声合成を有効にするため、ユーザーインタラクション時に初期化
+    const initOnInteraction = () => {
+        if (!voicesLoaded) {
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length > 0) {
+                voicesLoaded = true;
+            }
+        }
+        // 無音の発話を実行して音声合成を初期化（iOSで必要）
+        const utterance = new SpeechSynthesisUtterance('');
+        utterance.volume = 0;
+        window.speechSynthesis.speak(utterance);
+        window.speechSynthesis.cancel();
+        
+        // イベントリスナーを削除
+        document.removeEventListener('touchstart', initOnInteraction);
+        document.removeEventListener('click', initOnInteraction);
+        console.log('[Speech] Initialized on user interaction');
+    };
+    
+    document.addEventListener('touchstart', initOnInteraction, { once: true, passive: true });
+    document.addEventListener('click', initOnInteraction, { once: true });
+}
+
 function ensureVoicesLoaded(callback) {
     if (voicesLoaded) {
         callback();
@@ -2416,14 +2457,29 @@ function ensureVoicesLoaded(callback) {
         return;
     }
     
-    // 音声リストの読み込みを待つ
-    window.speechSynthesis.onvoiceschanged = () => {
-        voicesLoaded = true;
-        callback();
+    // 音声リストの読み込みを待つ（既存のハンドラを上書きしないようにする）
+    const checkVoices = () => {
+        if (window.speechSynthesis.getVoices().length > 0) {
+            voicesLoaded = true;
+            callback();
+            return true;
+        }
+        return false;
     };
+    
+    // まず即座にチェック
+    if (checkVoices()) return;
+    
+    // 少し待ってから再チェック
+    const intervalId = setInterval(() => {
+        if (checkVoices()) {
+            clearInterval(intervalId);
+        }
+    }, 100);
     
     // タイムアウト（500ms待っても読み込まれない場合はデフォルトで続行）
     setTimeout(() => {
+        clearInterval(intervalId);
         if (!voicesLoaded) {
             voicesLoaded = true;
             callback();
@@ -2652,6 +2708,7 @@ function init() {
         setupEventListeners();
         initSchoolSelector();
         setupVolumeControl();
+        initSpeechSynthesis(); // 音声合成を事前に初期化
         setupInputListModeToggle();
         setupInputListFilter();
         setupRedSheetStickyScroll();
@@ -10856,8 +10913,11 @@ function showSparkleEffect() {
     container.className = 'sparkle-container';
     document.body.appendChild(container);
     
+    // カラフルな色の配列
+    const colors = ['#f472b6', '#a78bfa', '#60a5fa', '#34d399', '#fbbf24', '#fb923c', '#f87171'];
+    
     // 星型キラキラを複数生成（少なめに）
-    const sparkleCount = 10;
+    const sparkleCount = 12;
     for (let i = 0; i < sparkleCount; i++) {
         setTimeout(() => {
             // ランダムな位置
@@ -10873,8 +10933,11 @@ function showSparkleEffect() {
             // ランダムなサイズ（バラバラに）
             const size = 0.5 + Math.random() * 1.2;
             star.style.setProperty('--star-scale', size);
+            // ランダムなカラフル色を設定
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            star.style.setProperty('--star-color', color);
             container.appendChild(star);
-        }, i * 40);
+        }, i * 35);
     }
     
     // コンテナを削除
@@ -15254,7 +15317,8 @@ function flyCharFromSegment(char, segment) {
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
     
     if (!canvas || !answerDisplay) {
-        hwQuizConfirmedText += char;
+        const adjustedChar = adjustCharCaseForAnswer(char);
+        hwQuizConfirmedText += adjustedChar;
         updateHWQuizAnswerDisplay();
         return;
     }
@@ -15330,7 +15394,8 @@ function flyCharFromSegment(char, segment) {
     
     // アニメーション完了後に文字を追加して画像を削除
     setTimeout(() => {
-        hwQuizConfirmedText += char;
+        const adjustedChar = adjustCharCaseForAnswer(char);
+        hwQuizConfirmedText += adjustedChar;
         updateHWQuizAnswerDisplay();
         flyingImg.remove();
     }, 350);
@@ -15391,7 +15456,8 @@ function autoInputHWQuizChar(char) {
     
     // 文字を追加して飛ぶ文字を削除
     setTimeout(() => {
-        hwQuizConfirmedText += char;
+        const adjustedChar = adjustCharCaseForAnswer(char);
+        hwQuizConfirmedText += adjustedChar;
         updateHWQuizAnswerDisplay();
         flyingChar.remove();
         
@@ -15404,10 +15470,39 @@ function autoInputHWQuizChar(char) {
 }
 
 /**
+ * 文字のケースを正解の単語に合わせて調整
+ * 最初の文字の場合、正解が大文字で始まるなら大文字に変換
+ */
+function adjustCharCaseForAnswer(char) {
+    // 現在入力中の位置
+    const position = hwQuizConfirmedText.length;
+    
+    // 正解の単語を取得
+    const word = hwQuizWords && hwQuizWords[hwQuizIndex];
+    if (!word || !word.word) return char;
+    
+    const correctWord = word.word;
+    
+    // 対応する位置の正解文字を取得
+    if (position < correctWord.length) {
+        const correctChar = correctWord[position];
+        // 正解が大文字なら大文字に、小文字なら小文字に変換
+        if (correctChar === correctChar.toUpperCase() && correctChar !== correctChar.toLowerCase()) {
+            return char.toUpperCase();
+        } else {
+            return char.toLowerCase();
+        }
+    }
+    
+    return char;
+}
+
+/**
  * 文字を追加（手動用フォールバック）
  */
 function addHWQuizChar(char) {
-    hwQuizConfirmedText += char;
+    const adjustedChar = adjustCharCaseForAnswer(char);
+    hwQuizConfirmedText += adjustedChar;
     updateHWQuizAnswerDisplay();
     clearHWQuizCanvas();
     
@@ -15721,7 +15816,9 @@ function setupHWVirtualKeyboard() {
                     if (shiftBtn) shiftBtn.classList.remove('active');
                     updateHWKeyboardCase();
                 }
-                hwQuizConfirmedText += char;
+                // 正解の大文字/小文字に合わせて調整
+                const adjustedChar = adjustCharCaseForAnswer(char);
+                hwQuizConfirmedText += adjustedChar;
                 updateHWQuizAnswerDisplay();
             }
         });

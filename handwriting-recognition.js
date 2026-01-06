@@ -747,29 +747,31 @@ class HandwritingRecognition {
         // 補正ルールを適用
         const corrected = [...topK];
         
-        // i, j, l の混同処理（ドットと下部の形状で判定）
+        // i, j, l の混同処理（ドットと下部の形状で判定）- 補正値強化
         if (this.hasConfusionAny(topK, ['i', 'j', 'l'])) {
             const hasTopDot = features.hasTopSeparateRegion;
             const hasBottomHook = features.hasBottomLeftHook;
             
             if (hasTopDot && hasBottomHook) {
                 // ドットあり + 下部に左向きのフックあり → j
-                this.boostLabel(corrected, 'j', 0.15);
-                this.penalizeLabel(corrected, 'l', 0.1);
-                this.penalizeLabel(corrected, 'i', 0.05);
+                this.boostLabel(corrected, 'j', 0.35);
+                this.penalizeLabel(corrected, 'l', 0.25);
+                this.penalizeLabel(corrected, 'i', 0.15);
             } else if (hasTopDot && !hasBottomHook) {
                 // ドットあり + フックなし → i
-                this.boostLabel(corrected, 'i', 0.15);
-                this.penalizeLabel(corrected, 'l', 0.1);
-                this.penalizeLabel(corrected, 'j', 0.05);
+                this.boostLabel(corrected, 'i', 0.35);
+                this.penalizeLabel(corrected, 'l', 0.25);
+                this.penalizeLabel(corrected, 'j', 0.15);
             } else if (!hasTopDot && hasBottomHook) {
                 // ドットなし + フックあり → j（ドットを忘れた場合）
-                this.boostLabel(corrected, 'j', 0.08);
+                this.boostLabel(corrected, 'j', 0.25);
+                this.penalizeLabel(corrected, 'i', 0.15);
+                this.penalizeLabel(corrected, 'l', 0.10);
             } else {
                 // ドットなし + フックなし → l
-                this.boostLabel(corrected, 'l', 0.12);
-                this.penalizeLabel(corrected, 'i', 0.08);
-                this.penalizeLabel(corrected, 'j', 0.08);
+                this.boostLabel(corrected, 'l', 0.30);
+                this.penalizeLabel(corrected, 'i', 0.20);
+                this.penalizeLabel(corrected, 'j', 0.20);
             }
         }
         
@@ -821,12 +823,20 @@ class HandwritingRecognition {
     extractShapeFeatures(data, width, height) {
         const threshold = 0.3;
         
-        // 上部1/3に独立した領域があるか（i, j のドット検出）
+        // 上部1/4と1/3に独立した領域があるか（i, j のドット検出）- 強化版
+        const topQuarter = Math.floor(height / 4);
         const topThird = Math.floor(height / 3);
+        let topQuarterPixels = 0;
         let topRegionPixels = 0;
         let mainRegionPixels = 0;
         
-        // 上部領域のピクセル数をカウント
+        // 上部1/4領域のピクセル数をカウント（ドット検出用）
+        for (let y = 0; y < topQuarter; y++) {
+            for (let x = 0; x < width; x++) {
+                if (data[y * width + x] > threshold) topQuarterPixels++;
+            }
+        }
+        // 上部1/3領域のピクセル数をカウント
         for (let y = 0; y < topThird; y++) {
             for (let x = 0; x < width; x++) {
                 if (data[y * width + x] > threshold) topRegionPixels++;
@@ -839,34 +849,49 @@ class HandwritingRecognition {
             }
         }
         
-        // 空白行があるかチェック（ドットと本体の間）
-        // より広い範囲で空白を探す
+        // 空白行があるかチェック（ドットと本体の間）- 検出範囲拡大
         let hasGap = false;
         let gapStartY = -1;
         let consecutiveEmptyRows = 0;
+        let maxConsecutiveEmpty = 0;
         
-        for (let y = 2; y < topThird + 5; y++) {
+        for (let y = 2; y < Math.floor(height * 0.5); y++) {
             let rowSum = 0;
             for (let x = 0; x < width; x++) {
                 rowSum += data[y * width + x];
             }
-            if (rowSum < width * threshold * 0.05) {
+            // 閾値を緩和して空白行を検出しやすくする
+            if (rowSum < width * threshold * 0.08) {
                 consecutiveEmptyRows++;
-                if (consecutiveEmptyRows >= 2) {
+                if (consecutiveEmptyRows > maxConsecutiveEmpty) {
+                    maxConsecutiveEmpty = consecutiveEmptyRows;
+                }
+                if (consecutiveEmptyRows >= 1 && !hasGap) {
                     hasGap = true;
-                    gapStartY = y - 1;
-                    break;
+                    gapStartY = y;
                 }
             } else {
                 consecutiveEmptyRows = 0;
             }
         }
         
-        // ドット検出の追加条件：上部に小さな塊があるか
+        // ドット検出の強化：複数の条件で判定
         let dotDetected = false;
-        if (topRegionPixels > 2 && topRegionPixels < mainRegionPixels * 0.3) {
-            // 上部のピクセルが全体の30%未満で、かつ存在する場合
-            dotDetected = hasGap || (topRegionPixels > 0 && mainRegionPixels > topRegionPixels * 3);
+        // 条件1: 上部1/4にピクセルがあり、空白行がある
+        if (topQuarterPixels > 1 && hasGap) {
+            dotDetected = true;
+        }
+        // 条件2: 上部ピクセルがメイン領域より明らかに少なく、独立している
+        if (topRegionPixels > 1 && topRegionPixels < mainRegionPixels * 0.35) {
+            dotDetected = true;
+        }
+        // 条件3: 上部に塊があり、下部と分離している
+        if (topQuarterPixels >= 2 && maxConsecutiveEmpty >= 1) {
+            dotDetected = true;
+        }
+        // 条件4: 上部のピクセルが全体の30%未満で、メイン領域の方が明らかに多い
+        if (topRegionPixels > 0 && mainRegionPixels > topRegionPixels * 2.5 && hasGap) {
+            dotDetected = true;
         }
         
         // 右側に延長があるか（a のしっぽ）
@@ -907,9 +932,10 @@ class HandwritingRecognition {
             if (data[centerY * width + x] > threshold) centerLinePixels++;
         }
         
-        // jのフック検出（下部の左側にカーブがあるか）
-        // 下部1/4の領域で、左側にピクセルが集中しているか確認
+        // jのフック検出（下部の左側にカーブがあるか）- 強化版
+        // 下部1/4と1/3の領域で分析
         const bottomStart = Math.floor(height * 3 / 4);
+        const bottomThird = Math.floor(height * 2 / 3);
         let bottomLeftPixels = 0;
         let bottomRightPixels = 0;
         let bottomCenterX = 0;
@@ -929,16 +955,44 @@ class HandwritingRecognition {
             }
         }
         
-        // フックの判定：下部で左側にピクセルが多い、かつ下に行くほど左に寄る
-        const hasBottomLeftHook = bottomTotalPixels > 10 && 
-            bottomLeftPixels > bottomRightPixels * 1.5;
+        // 下部での左への曲がりを検出（各行の重心を追跡）
+        let leftCurvature = 0;
+        let prevRowCenterX = -1;
+        for (let y = bottomThird; y < height; y++) {
+            let rowCenterX = 0;
+            let rowPixelCount = 0;
+            for (let x = 0; x < width; x++) {
+                if (data[y * width + x] > threshold) {
+                    rowCenterX += x;
+                    rowPixelCount++;
+                }
+            }
+            if (rowPixelCount > 0) {
+                rowCenterX /= rowPixelCount;
+                if (prevRowCenterX !== -1 && rowCenterX < prevRowCenterX) {
+                    leftCurvature += (prevRowCenterX - rowCenterX);
+                }
+                prevRowCenterX = rowCenterX;
+            }
+        }
+        
+        // フックの判定を強化：複数の条件で判定
+        // 条件1: 下部で左側にピクセルが多い
+        const hasBottomLeftBias = bottomTotalPixels > 5 && bottomLeftPixels > bottomRightPixels * 1.2;
+        // 条件2: 下に行くほど左に曲がる
+        const hasCurveToLeft = leftCurvature > 1.5;
+        // 条件3: 下部の平均位置が左寄り
+        const avgBottomX = bottomTotalPixels > 0 ? bottomCenterX / bottomTotalPixels : width / 2;
+        const isBottomLeftish = avgBottomX < width * 0.45;
+        
+        const hasBottomLeftHook = hasBottomLeftBias || hasCurveToLeft || isBottomLeftish;
         
         // iとlの区別改善：縦横比もチェック
         const verticalRatio = mainRegionPixels > 0 ? 
             (topRegionPixels / mainRegionPixels) : 0;
         
         return {
-            hasTopSeparateRegion: dotDetected || (topRegionPixels > 2 && hasGap),
+            hasTopSeparateRegion: dotDetected || (topQuarterPixels > 1 && hasGap),
             hasRightExtension: rightPixels > 10,
             hasBottomLoop: bottomLoopPixels > 20,
             hasRoundedBottom: bottomVariance < 2,
