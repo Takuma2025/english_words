@@ -2432,6 +2432,8 @@ function ensureVoicesLoaded(callback) {
 }
 
 function speakWord(word, buttonElement) {
+    console.log('[speakWord] Called with word:', word);
+    
     // 既存の音声を停止
     if (currentSpeech) {
         window.speechSynthesis.cancel();
@@ -2440,12 +2442,15 @@ function speakWord(word, buttonElement) {
 
     // Web Speech APIが利用可能か確認
     if (!('speechSynthesis' in window)) {
+        console.log('[speakWord] speechSynthesis not available');
         showAlert('エラー', 'お使いのブラウザでは音声機能が利用できません。');
         return;
     }
 
+    console.log('[speakWord] speechSynthesis available, loading voices...');
     // 音声リストの読み込みを待つ
     ensureVoicesLoaded(() => {
+        console.log('[speakWord] Voices loaded, creating utterance...');
         // ネイティブ音声を取得
         const voice = getNativeVoice();
         
@@ -2509,6 +2514,7 @@ function speakWord(word, buttonElement) {
         };
 
         // 音声を再生
+        console.log('[speakWord] Speaking:', speakText);
         window.speechSynthesis.speak(utterance);
     });
 }
@@ -8070,11 +8076,11 @@ function submitAnswer() {
     
     // 答え表示時に音声を自動再生（効果音の後に遅延して再生）
     const wordToSpeak = word.word;
+    console.log('[Audio] submitAnswer - scheduling speech for:', wordToSpeak);
     setTimeout(function() {
-        if (typeof speakWord === 'function') {
-            speakWord(wordToSpeak);
-        }
-    }, 400);
+        console.log('[Audio] submitAnswer - calling speakWord for:', wordToSpeak);
+        speakWord(wordToSpeak);
+    }, 500);
     
     // 次へボタンを表示（自動で進まない）
     showNextButton();
@@ -8119,11 +8125,11 @@ function markAnswerAsDontKnow() {
     
     // 答え表示時に音声を自動再生（効果音の後に遅延して再生）
     const wordToSpeak = word.word;
+    console.log('[Audio] markAnswerAsDontKnow - scheduling speech for:', wordToSpeak);
     setTimeout(function() {
-        if (typeof speakWord === 'function') {
-            speakWord(wordToSpeak);
-        }
-    }, 400);
+        console.log('[Audio] markAnswerAsDontKnow - calling speakWord for:', wordToSpeak);
+        speakWord(wordToSpeak);
+    }, 500);
     
     // 次へボタンを表示（自動で進まない）
     showNextButton();
@@ -15974,11 +15980,11 @@ function showHWQuizResult(isCorrect, word) {
     
     // 答え表示時に音声を自動再生（効果音の後に遅延して再生）
     const wordToSpeak = word.word;
+    console.log('[Audio] showHWQuizResult - scheduling speech for:', wordToSpeak);
     setTimeout(function() {
-        if (typeof speakWord === 'function') {
-            speakWord(wordToSpeak);
-        }
-    }, 400);
+        console.log('[Audio] showHWQuizResult - calling speakWord for:', wordToSpeak);
+        speakWord(wordToSpeak);
+    }, 500);
 }
 
 /**
