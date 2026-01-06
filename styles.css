@@ -6599,6 +6599,7 @@ body.reorder-mode-active .word-card-container {
     background: transparent;
     border-top: none;
     padding: 14px 0;
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
     margin: 0;
     border-radius: 20px 20px 0 0;
     width: 100%;

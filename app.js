@@ -8068,8 +8068,10 @@ function submitAnswer() {
     // 画面全体のフィードバック表示（テキストなし、色のみ）
     markAnswer(isCorrect);
     
-    // 答え表示時に音声を自動再生（正解・不正解どちらでも）
-    speakWord(word.word);
+    // 答え表示時に音声を自動再生（効果音の後に遅延して再生）
+    setTimeout(() => {
+        speakWord(word.word);
+    }, 400);
     
     // 次へボタンを表示（自動で進まない）
     showNextButton();
@@ -8111,6 +8113,11 @@ function markAnswerAsDontKnow() {
     
     // 間違い扱いにする
     markAnswer(false);
+    
+    // 答え表示時に音声を自動再生（効果音の後に遅延して再生）
+    setTimeout(() => {
+        speakWord(word.word);
+    }, 400);
     
     // 次へボタンを表示（自動で進まない）
     showNextButton();
@@ -15959,8 +15966,10 @@ function showHWQuizResult(isCorrect, word) {
         }
     }
     
-    // 答え表示時に音声を自動再生（正解・不正解どちらでも）
-    speakWord(word.word);
+    // 答え表示時に音声を自動再生（効果音の後に遅延して再生）
+    setTimeout(() => {
+        speakWord(word.word);
+    }, 400);
 }
 
 /**
