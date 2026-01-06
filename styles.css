@@ -456,7 +456,7 @@ body.learning-mode .app-header {
     overflow-y: auto;
     overflow-x: visible;
     padding: 16px 0;
-    padding-bottom: 0;
+    padding-bottom: 0 !important; /* 画面下部まで完全に使用 */
     width: 100% !important;
     max-width: none !important;
     margin: 0;
@@ -4565,7 +4565,7 @@ body.reorder-mode-active .word-card-container {
         font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
     }
     .input-meaning {
-        font-size: clamp(18px, 5vw, 24px);
+        font-size: clamp(14px, 4vw, 18px);
         line-height: 1.2;
         font-weight: 700;
         font-family: "UD Digi Kyokasho", "UDデジタル教科書体", "Yu Kyokasho", "游教科書体", "Kokoro", "こころ", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
@@ -4639,7 +4639,7 @@ body.reorder-mode-active .word-card-container {
         font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
     }
     .input-meaning {
-        font-size: clamp(18px, 5vw, 24px);
+        font-size: clamp(14px, 4vw, 18px);
         line-height: 1.2;
         font-weight: 700;
         font-family: "UD Digi Kyokasho", "UDデジタル教科書体", "Yu Kyokasho", "游教科書体", "Kokoro", "こころ", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
@@ -6448,7 +6448,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-meaning {
-    font-size: clamp(20px, 5vw, 26px);
+    font-size: clamp(16px, 4vw, 20px);
     font-weight: 700;
     color: #1f2937;
     line-height: 1.4;
@@ -6960,8 +6960,8 @@ body.reorder-mode-active .word-card-container {
 
 /* 音声ボタンのスタイル */
 .audio-btn {
-    background: #ffffff;
-    border: 1px solid #d1d5db;
+    background: rgba(107, 114, 128, 0.1);
+    border: 1px solid rgba(107, 114, 128, 0.3);
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -6977,20 +6977,19 @@ body.reorder-mode-active .word-card-container {
 }
 
 .audio-btn:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
+    background: rgba(107, 114, 128, 0.2);
+    border-color: rgba(107, 114, 128, 0.5);
     transform: scale(1.05);
 }
 
 .audio-btn:active {
-    background: #e5e7eb;
+    background: rgba(107, 114, 128, 0.3);
     transform: scale(0.95);
 }
 
 .audio-btn.playing {
-    background: #e0f2fe;
-    border-color: #38bdf8;
-    color: #0ea5e9;
+    background: rgba(107, 114, 128, 0.3);
+    border-color: #6b7280;
     animation: pulse 1s ease-in-out infinite;
 }
 
