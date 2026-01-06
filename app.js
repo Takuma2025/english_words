@@ -10086,10 +10086,9 @@ function setupRedSheet() {
         const isActive = redSheetCheckbox.checked;
         
         if (isActive) {
-            // 下から65%の位置（上から35%の位置）から開始
-            const viewportHeight = window.innerHeight;
-            const topPosition = Math.round(viewportHeight * 0.35);
-            redSheetOverlay.style.top = topPosition + 'px';
+            // 毎回定位置からスタート
+            redSheetOverlay.style.top = '150px';
+            redSheetOverlay.style.left = '40%';
             
             redSheetOverlay.classList.remove('hidden');
             inputListView.classList.add('red-sheet-mode');
@@ -10165,10 +10164,9 @@ function setupRedSheetDrag(overlay) {
         if (!isDragging) return;
         const deltaX = e.clientX - startX;
         const deltaY = e.clientY - startY;
-        // 左側は画面の左端まで動かせるように（負の値も許可）
-        const minLeft = -overlay.offsetWidth * 0.8;
-        const newLeft = Math.max(minLeft, startLeft + deltaX);
-        const newTop = Math.max(0, startTop + deltaY);
+        // 自由に動かせる
+        const newLeft = startLeft + deltaX;
+        const newTop = startTop + deltaY;
         overlay.style.left = newLeft + 'px';
         overlay.style.top = newTop + 'px';
     };

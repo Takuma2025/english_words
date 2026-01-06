@@ -455,7 +455,8 @@ body.learning-mode .app-header {
     flex: 1;
     overflow-y: auto;
     overflow-x: visible;
-    padding: 16px 0 0 0;
+    padding: 16px 0;
+    padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
     width: 100% !important;
     max-width: none !important;
     margin: 0;
@@ -5374,10 +5375,12 @@ body.reorder-mode-active .word-card-container {
 /* 赤シートオーバーレイ */
 .red-sheet-overlay {
     position: fixed;
-    top: 200px;
+    top: 150px;
     left: 40%;
     width: 55%;
-    bottom: 0;
+    height: 80vh;
+    max-height: 800px;
+    min-height: 300px;
     background: rgb(200, 30, 30);
     z-index: 500;
     cursor: grab;
