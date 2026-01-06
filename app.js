@@ -872,10 +872,27 @@ function initSchoolSelector() {
     const resetBtn = document.getElementById('selectedSchoolReset');
     const openBtn = document.getElementById('openSchoolSettings');
     const closeBtn = document.getElementById('closeSchoolSettings');
+    const deleteBtn = document.getElementById('vocabSchoolDeleteBtn');
     const modal = document.getElementById('schoolModal');
     const backdrop = document.querySelector('#schoolModal .school-modal-backdrop');
     const typeButtons = document.querySelectorAll('.school-filter-tab');
     const searchInput = document.getElementById('schoolSearchInput');
+    
+    // 削除ボタンのイベントリスナー
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            SoundEffects.playTap();
+            // 志望校を削除
+            localStorage.removeItem(SCHOOL_STORAGE_KEY);
+            // 目標達成フラグをリセット
+            hasReachedGoalBefore = false;
+            localStorage.removeItem('goalAchieved');
+            // UIを更新
+            updateSelectedSchoolUI(null, false);
+            updateVocabProgressBar();
+        });
+    }
 
     const saved = loadSelectedSchool();
     if (saved) updateSelectedSchoolUI(saved);
