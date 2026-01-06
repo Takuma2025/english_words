@@ -2960,18 +2960,16 @@ button.category-card:focus-visible {
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    padding: 0 12px !important;
-    box-sizing: border-box !important;
+    padding: 12px;
 }
 
 .study-mode-container {
     background: white;
     border-radius: 16px;
     padding: 24px;
-    max-width: 600px !important;
-    width: calc(100% - 24px) !important;
+    max-width: 600px;
+    width: calc(100% - 24px);
     margin: 0 auto;
-    box-sizing: border-box;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
 }
 
