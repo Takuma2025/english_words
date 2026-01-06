@@ -10086,9 +10086,17 @@ function setupRedSheet() {
         const isActive = redSheetCheckbox.checked;
         
         if (isActive) {
-            // 毎回定位置からスタート
-            redSheetOverlay.style.top = '150px';
-            redSheetOverlay.style.left = '40%';
+            // 1番上の単語の日本語の意味が隠れるように
+            const firstMeaning = document.querySelector('.input-list-expand-meaning');
+            let topPosition = 150; // デフォルト値
+            let leftPosition = 0; // デフォルト値
+            if (firstMeaning) {
+                const rect = firstMeaning.getBoundingClientRect();
+                topPosition = rect.top; // 日本語の意味の上端から
+                leftPosition = rect.left; // 日本語の意味の左端から
+            }
+            redSheetOverlay.style.top = topPosition + 'px';
+            redSheetOverlay.style.left = leftPosition + 'px';
             
             redSheetOverlay.classList.remove('hidden');
             inputListView.classList.add('red-sheet-mode');
