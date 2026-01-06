@@ -8068,6 +8068,11 @@ function submitAnswer() {
     // 画面全体のフィードバック表示（テキストなし、色のみ）
     markAnswer(isCorrect);
     
+    // 正解時は音声を自動再生
+    if (isCorrect) {
+        speakWord(word.word);
+    }
+    
     // 次へボタンを表示（自動で進まない）
     showNextButton();
     
@@ -15940,20 +15945,8 @@ function showHWQuizResult(isCorrect, word) {
         placeholder.innerHTML = `
             <div class="hw-correct-answer-box" id="hwQuizCorrectAnswerBox">
                 <span class="hw-correct-word">${word.word}</span>
-                <button class="hw-audio-btn" id="hwQuizAudioBtnResult">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                    </svg>
-                </button>
             </div>
         `;
-        
-        // 音声ボタンのイベント
-        const audioBtn = document.getElementById('hwQuizAudioBtnResult');
-        if (audioBtn) {
-            audioBtn.onclick = () => speakWord(word.word);
-        }
     }
     
     // 既存のkeyboard-actionsを次へボタンに置き換え
@@ -15968,8 +15961,10 @@ function showHWQuizResult(isCorrect, word) {
         }
     }
     
-    // 音声を自動再生
-    speakWord(word.word);
+    // 正解時のみ音声を自動再生
+    if (isCorrect) {
+        speakWord(word.word);
+    }
 }
 
 /**
