@@ -456,7 +456,7 @@ body.learning-mode .app-header {
     overflow-y: auto;
     overflow-x: visible;
     padding: 16px 0;
-    padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
+    padding-bottom: 0;
     width: 100% !important;
     max-width: none !important;
     margin: 0;
@@ -1097,13 +1097,13 @@ body.learning-mode .app-header {
     grid-template-columns: 1fr 1fr;
     gap: 0;
     margin-bottom: 8px;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: none;
 }
 
 .category-cards-row .category-card {
     padding: 16px;
     border-bottom: none;
-    border-right: 1px solid #e5e7eb;
+    border-right: none;
     align-items: center;
     border-radius: 0;
     box-shadow: none;
@@ -2615,7 +2615,7 @@ body.learning-mode .app-header {
 /* カテゴリー別アコーディオン */
 .category-accordion {
     background: #ffffff;
-    border-bottom: 1px solid #d1d5db;
+    border-bottom: none;
 }
 
 .category-accordion-header {
@@ -2711,7 +2711,7 @@ body.learning-mode .app-header {
 }
 
 .category-accordion-item + .category-accordion-item {
-    border-top: 1px solid #e5e7eb;
+    border-top: none;
 }
 
 .category-accordion-item:active {
@@ -2852,7 +2852,7 @@ body.learning-mode .app-header {
     display: flex;
     align-items: center;
     background: #ffffff;
-    border: 1px solid #e2e8f0;
+    border: none;
     border-radius: 10px;
     padding: 16px;
     margin-bottom: 10px;
@@ -3082,7 +3082,7 @@ button.category-card:focus-visible {
 .learning-menu-category-btn {
     width: 100%;
     padding: 10px 12px;
-    border: 2px solid #e5e7eb;
+    border: none;
     border-radius: 8px;
     background: white;
     cursor: pointer;
@@ -3120,7 +3120,7 @@ button.category-card:focus-visible {
 .learning-menu-subcategory-btn {
     width: 100%;
     padding: 8px 10px;
-    border: 1px solid #e5e7eb;
+    border: none;
     border-radius: 6px;
     background: white;
     cursor: pointer;
@@ -5377,7 +5377,7 @@ body.reorder-mode-active .word-card-container {
     position: fixed;
     top: 150px;
     left: 0;
-    width: 100%;
+    width: 500px;
     height: 80vh;
     max-height: 800px;
     min-height: 300px;
@@ -5386,7 +5386,7 @@ body.reorder-mode-active .word-card-container {
     cursor: grab;
     user-select: none;
     border-radius: 12px;
-    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
     pointer-events: auto;
     touch-action: none;
     mix-blend-mode: multiply;

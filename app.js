@@ -10089,11 +10089,13 @@ function setupRedSheet() {
             // 1番上の単語の日本語の意味が隠れるように
             const firstMeaning = document.querySelector('.input-list-expand-meaning');
             let topPosition = 150; // デフォルト値
-            let leftPosition = 0; // デフォルト値
+            let leftPosition = -400; // デフォルト値（左からひょっこり）
             if (firstMeaning) {
                 const rect = firstMeaning.getBoundingClientRect();
                 topPosition = rect.top; // 日本語の意味の上端から
-                leftPosition = rect.left; // 日本語の意味の左端から
+                // 左からひょっこり出てくる感じに（赤シートの右端が日本語をカバー）
+                const sheetWidth = 500; // CSSで設定した幅
+                leftPosition = rect.left - sheetWidth + rect.width + 20;
             }
             redSheetOverlay.style.top = topPosition + 'px';
             redSheetOverlay.style.left = leftPosition + 'px';
