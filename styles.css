@@ -6599,7 +6599,6 @@ body.reorder-mode-active .word-card-container {
     background: transparent;
     border-top: none;
     padding: 14px 0;
-    padding-bottom: max(14px, env(safe-area-inset-bottom));
     margin: 0;
     border-radius: 20px 20px 0 0;
     width: 100%;
@@ -13828,8 +13827,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     left: 0;
     right: 0;
     background: #f3f4f6;
-    padding: 8px 16px;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    padding: 8px 16px 12px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;

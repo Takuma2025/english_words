@@ -8069,8 +8069,11 @@ function submitAnswer() {
     markAnswer(isCorrect);
     
     // 答え表示時に音声を自動再生（効果音の後に遅延して再生）
-    setTimeout(() => {
-        speakWord(word.word);
+    const wordToSpeak = word.word;
+    setTimeout(function() {
+        if (typeof speakWord === 'function') {
+            speakWord(wordToSpeak);
+        }
     }, 400);
     
     // 次へボタンを表示（自動で進まない）
@@ -8115,8 +8118,11 @@ function markAnswerAsDontKnow() {
     markAnswer(false);
     
     // 答え表示時に音声を自動再生（効果音の後に遅延して再生）
-    setTimeout(() => {
-        speakWord(word.word);
+    const wordToSpeak = word.word;
+    setTimeout(function() {
+        if (typeof speakWord === 'function') {
+            speakWord(wordToSpeak);
+        }
     }, 400);
     
     // 次へボタンを表示（自動で進まない）
@@ -15967,8 +15973,11 @@ function showHWQuizResult(isCorrect, word) {
     }
     
     // 答え表示時に音声を自動再生（効果音の後に遅延して再生）
-    setTimeout(() => {
-        speakWord(word.word);
+    const wordToSpeak = word.word;
+    setTimeout(function() {
+        if (typeof speakWord === 'function') {
+            speakWord(wordToSpeak);
+        }
     }, 400);
 }
 
