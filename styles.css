@@ -4562,10 +4562,11 @@ body.reorder-mode-active .word-card-container {
         margin-bottom: 0;
         vertical-align: baseline;
         font-weight: 700;
+        font-size: clamp(14px, 3.5vw, 20px);
         font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
     }
     .input-meaning {
-        font-size: clamp(14px, 4vw, 18px);
+        font-size: clamp(18px, 5vw, 26px);
         line-height: 1.2;
         font-weight: 700;
         font-family: "UD Digi Kyokasho", "UDデジタル教科書体", "Yu Kyokasho", "游教科書体", "Kokoro", "こころ", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
@@ -4636,10 +4637,11 @@ body.reorder-mode-active .word-card-container {
         margin-bottom: 0;
         vertical-align: baseline;
         font-weight: 700;
+        font-size: clamp(13px, 3.5vw, 18px);
         font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
     }
     .input-meaning {
-        font-size: clamp(14px, 4vw, 18px);
+        font-size: clamp(16px, 4.5vw, 24px);
         line-height: 1.2;
         font-weight: 700;
         font-family: "UD Digi Kyokasho", "UDデジタル教科書体", "Yu Kyokasho", "游教科書体", "Kokoro", "こころ", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
@@ -6444,11 +6446,12 @@ body.reorder-mode-active .word-card-container {
     margin-bottom: 0;
     vertical-align: baseline;
     font-weight: 700;
+    font-size: clamp(16px, 4vw, 22px);
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
 }
 
 .input-meaning {
-    font-size: clamp(16px, 4vw, 20px);
+    font-size: clamp(22px, 6vw, 32px);
     font-weight: 700;
     color: #1f2937;
     line-height: 1.4;
@@ -6988,8 +6991,9 @@ body.reorder-mode-active .word-card-container {
 }
 
 .audio-btn.playing {
-    background: rgba(107, 114, 128, 0.3);
-    border-color: #6b7280;
+    background: rgba(56, 189, 248, 0.2);
+    border-color: #38bdf8;
+    color: #0ea5e9;
     animation: pulse 1s ease-in-out infinite;
 }
 
@@ -13858,7 +13862,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* hw-question-simple内のpos-inlineスタイル調整 */
 .hw-question-simple .pos-inline {
-    font-size: clamp(12px, 2.5vw, 14px);
+    font-size: clamp(16px, 4vw, 22px);
 }
 
 .hw-question-simple .pos-inline:empty {
@@ -13866,7 +13870,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-question-simple .hw-question-meaning {
-    font-size: 18px;
+    font-size: clamp(22px, 6vw, 30px);
     font-weight: 700;
     color: #1a202c;
     text-align: center;
@@ -13906,7 +13910,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-question-meaning {
-    font-size: 18px;
+    font-size: clamp(22px, 6vw, 30px);
     font-weight: 700;
     color: #1a202c;
     text-align: center;
@@ -14269,22 +14273,38 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-audio-btn {
-    width: 44px;
-    height: 44px;
+    background: rgba(107, 114, 128, 0.1);
+    border: 1px solid rgba(107, 114, 128, 0.3);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #e5e7eb;
-    border: none;
-    border-radius: 50%;
     cursor: pointer;
-    color: #0055ca;
-    transition: all 0.1s ease;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
     -webkit-tap-highlight-color: transparent;
 }
 
+.hw-audio-btn:hover {
+    background: rgba(107, 114, 128, 0.2);
+    border-color: rgba(107, 114, 128, 0.5);
+    transform: scale(1.05);
+}
+
 .hw-audio-btn:active {
-    background: #d1d5db;
+    background: rgba(107, 114, 128, 0.3);
+}
+
+.hw-audio-btn.playing {
+    background: rgba(56, 189, 248, 0.3);
+    border-color: rgba(56, 189, 248, 0.5);
+    color: #0ea5e9;
+    animation: pulse 1s ease-in-out infinite;
 }
 
 /* 解答エリアラッパー（解答欄と正解表示を含む） */
@@ -14311,7 +14331,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-correct-word {
-    font-size: 36px;
+    font-size: 40px;
     font-weight: 700;
     color: #3182ce;
     font-family: 'Times New Roman', Times, serif;
@@ -14321,9 +14341,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .hw-correct-answer-box .hw-audio-btn {
     width: 36px;
     height: 36px;
-    background: #3182ce;
-    color: #fff;
-    border: none;
+    background: rgba(107, 114, 128, 0.1);
+    border: 1px solid rgba(107, 114, 128, 0.3);
+    color: #6b7280;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -14528,14 +14548,18 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     }
     
     .hw-question-meaning {
-        font-size: 16px;
+        font-size: clamp(20px, 5.5vw, 26px);
     }
     
     .hw-answer {
         min-height: 50px;
         padding: 10px 14px;
         font-size: 28px;
-        border-radius: 10px;
+        border-radius: 6px;
+    }
+    
+    .hw-correct-word {
+        font-size: 28px;
     }
     
     .hw-canvas-area {
@@ -14634,12 +14658,16 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     }
     
     .hw-question-meaning {
-        font-size: 15px;
+        font-size: clamp(18px, 5vw, 24px);
     }
     
     .hw-answer {
         min-height: 46px;
         padding: 8px 12px;
+        font-size: 24px;
+    }
+    
+    .hw-correct-word {
         font-size: 24px;
     }
     
@@ -14721,14 +14749,18 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     }
     
     .hw-question-meaning {
-        font-size: 14px;
+        font-size: clamp(16px, 4.5vw, 20px);
     }
     
     .hw-answer {
         min-height: 40px;
         padding: 6px 10px;
         font-size: 22px;
-        border-radius: 8px;
+        border-radius: 6px;
+    }
+    
+    .hw-correct-word {
+        font-size: 22px;
     }
     
     .hw-canvas {

@@ -8068,10 +8068,8 @@ function submitAnswer() {
     // 画面全体のフィードバック表示（テキストなし、色のみ）
     markAnswer(isCorrect);
     
-    // 正解時は音声を自動再生
-    if (isCorrect) {
-        speakWord(word.word);
-    }
+    // 答え表示時に音声を自動再生（正解・不正解どちらでも）
+    speakWord(word.word);
     
     // 次へボタンを表示（自動で進まない）
     showNextButton();
@@ -15961,10 +15959,8 @@ function showHWQuizResult(isCorrect, word) {
         }
     }
     
-    // 正解時のみ音声を自動再生
-    if (isCorrect) {
-        speakWord(word.word);
-    }
+    // 答え表示時に音声を自動再生（正解・不正解どちらでも）
+    speakWord(word.word);
 }
 
 /**
