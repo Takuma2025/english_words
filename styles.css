@@ -487,16 +487,20 @@ body.learning-mode .app-header {
 @media (max-width: 600px) {
     .app-main {
         padding: 16px 0;
-        padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom)); /* 余分な余白を削除 */
+        padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
         max-width: 100%;
     }
     
     .category-view {
-        padding: 0; /* 左右の余白をなくす */
+        padding: 0;
     }
     
-    .category-list {
-        padding: 0; /* カテゴリーリストのパディングなし */
+    .category-list, .category-header {
+        padding: 0;
+        width: calc(100% - 16px) !important;
+        max-width: none !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 }
 
@@ -508,7 +512,7 @@ body.learning-mode .app-header {
 
 .category-list, .category-header {
     max-width: 600px;
-    width: calc(100% - 24px);
+    width: calc(100% - 16px);
     margin-left: auto;
     margin-right: auto;
 }
@@ -969,6 +973,11 @@ body.learning-mode .app-header {
     line-height: 1.6;
     margin-bottom: 20px;
     padding: 0 4px;
+    max-width: 600px;
+    width: calc(100% - 16px);
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
 }
 
 /* コースカード用インプット/アウトプットボタン */
@@ -1306,7 +1315,7 @@ body.learning-mode .app-header {
     padding: 0 0 12px 0;
     margin: 0 auto 8px auto;
     max-width: 600px;
-    width: calc(100% - 24px);
+    width: calc(100% - 16px);
 }
 
 .vocab-progress-header {
@@ -1986,7 +1995,7 @@ body.learning-mode .app-header {
     border-bottom: none;
     padding: 0;
     max-width: 600px;
-    width: calc(100% - 24px);
+    width: calc(100% - 16px);
 }
 
 
@@ -4793,20 +4802,17 @@ body.reorder-mode-active .word-card-container {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
-}
-
-.input-list-scroll {
-    width: 100%;
-    max-width: none;
-    margin-left: 0;
-    margin-right: 0;
-}
-
-.input-list-header {
-    padding: 8px 10px;
+    padding: 8px 0;
     color: #1f2937;
     border-bottom: none;
     margin-bottom: 0;
+}
+
+.input-list-scroll {
+    width: calc(100% - 16px);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .input-list-header-row {
@@ -7090,7 +7096,10 @@ body.reorder-mode-active .word-card-container {
 }
 
 .word-card-container {
-    width: 100%;
+    width: calc(100% - 16px);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
     aspect-ratio: 3/3.2;
     max-height: 400px;
     position: relative;
@@ -11129,7 +11138,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
-    width: min(960px, calc(100% - 24px));
+    width: min(960px, calc(100% - 16px));
     background: rgba(255, 183, 77, 0.7); /* 透明度を少し強めた明るいオレンジ */
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.12);
     z-index: 1000;

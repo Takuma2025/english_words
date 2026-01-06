@@ -5046,7 +5046,7 @@ function showLearningMenuSelection() {
     overlay.className = 'study-mode-overlay';
     
     overlay.innerHTML = `
-        <div class="study-mode-container" style="width: calc(100vw - 24px); max-width: 600px; margin: 0 12px;">
+        <div class="study-mode-container" style="width: calc(100% - 16px); max-width: 600px; margin: 0 auto;">
             <div class="study-mode-title">学習メニュー</div>
             <div class="learning-menu-categories">
                 <button type="button" class="learning-menu-category-btn" data-category="超重要700語">
@@ -5148,7 +5148,7 @@ function showLearningSubcategoryMenu(category) {
     ).join('');
     
     overlay.innerHTML = `
-        <div class="study-mode-container" style="width: calc(100vw - 24px); max-width: 600px; margin: 0 12px;">
+        <div class="study-mode-container" style="width: calc(100% - 16px); max-width: 600px; margin: 0 auto;">
             <div class="study-mode-title">${category}</div>
             <div class="learning-menu-subcategories">
                 ${subcategoryButtons}
@@ -5268,7 +5268,7 @@ function showStudyModeOverlay(onInput, onOutput) {
     console.log('Overlay element created');
     
     overlay.innerHTML = `
-        <div class="study-mode-container" style="width: calc(100vw - 24px); max-width: 600px; margin: 0 12px;">
+        <div class="study-mode-container" style="width: calc(100% - 16px); max-width: 600px; margin: 0 auto;">
             <div class="study-mode-title">学習方法を選択</div>
             <div class="study-mode-buttons">
                 <button type="button" class="study-mode-choice-btn study-mode-input-btn">
