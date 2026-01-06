@@ -456,7 +456,7 @@ body.learning-mode .app-header {
     overflow-y: auto;
     overflow-x: visible;
     padding: 16px 0;
-    padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom, 0);
     width: 100% !important;
     max-width: none !important;
     margin: 0;
@@ -1478,11 +1478,31 @@ body.learning-mode .app-header {
     color: #64748b;
     cursor: pointer;
     flex-shrink: 0;
-    transition: background 0.15s ease, color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .school-card-edit:active {
-    opacity: 0.7;
+    transform: scale(0.95);
+}
+
+.school-card-delete {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fee2e2;
+    border: none;
+    border-radius: 8px;
+    color: #dc2626;
+    cursor: pointer;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.school-card-delete:active {
+    transform: scale(0.95);
+    background: #fecaca;
 }
 
 /* 志望校設定時のカードレイアウト */

@@ -745,32 +745,12 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
     // 偏差値でソート（高い順）
     filteredSchools.sort((a, b) => (b.hensachi || 0) - (a.hensachi || 0));
     
-    // 一番上に「未定」を追加
-    const undecidedItem = document.createElement('div');
-    undecidedItem.className = 'school-list-item school-list-item-undecided';
-    const undecidedName = document.createElement('div');
-    undecidedName.className = 'school-list-name';
-    undecidedName.textContent = '未定（設定しない）';
-    undecidedItem.appendChild(undecidedName);
-    undecidedItem.addEventListener('click', () => {
-        // 効果音を再生
-        SoundEffects.playMenuSelect();
-        // 未設定を選択
-        tempSelectedSchool = null;
-        // 選択中のアイテムをハイライト
-        document.querySelectorAll('.school-list-item').forEach(el => el.classList.remove('school-list-item-selected'));
-        undecidedItem.classList.add('school-list-item-selected');
-        // 決定ボタンを有効化
-        setSchoolConfirmEnabled(true);
-    });
-    listEl.appendChild(undecidedItem);
-    
     // 学校一覧を表示（交互の色を適用）
     filteredSchools.forEach((school, index) => {
         const item = document.createElement('div');
         item.className = 'school-list-item';
-        // 交互の色を適用（index + 1 は未定の分を考慮）
-        if ((index + 1) % 2 === 0) {
+        // 交互の色を適用
+        if (index % 2 === 0) {
             item.classList.add('school-list-item-even');
         } else {
             item.classList.add('school-list-item-odd');
@@ -872,10 +852,27 @@ function initSchoolSelector() {
     const resetBtn = document.getElementById('selectedSchoolReset');
     const openBtn = document.getElementById('openSchoolSettings');
     const closeBtn = document.getElementById('closeSchoolSettings');
+    const deleteBtn = document.getElementById('vocabSchoolDeleteBtn');
     const modal = document.getElementById('schoolModal');
     const backdrop = document.querySelector('#schoolModal .school-modal-backdrop');
     const typeButtons = document.querySelectorAll('.school-filter-tab');
     const searchInput = document.getElementById('schoolSearchInput');
+    
+    // 削除ボタンのイベントリスナー
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            SoundEffects.playTap();
+            // 志望校を削除
+            localStorage.removeItem(SCHOOL_STORAGE_KEY);
+            // 目標達成フラグをリセット
+            hasReachedGoalBefore = false;
+            localStorage.removeItem('goalAchieved');
+            // UIを更新
+            updateSelectedSchoolUI(null, false);
+            updateVocabProgressBar();
+        });
+    }
 
     const saved = loadSelectedSchool();
     if (saved) updateSelectedSchoolUI(saved);
