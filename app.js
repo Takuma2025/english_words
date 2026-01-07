@@ -2460,8 +2460,8 @@ function ensureVoicesLoaded(callback) {
     // 音声リストの読み込みを待つ（既存のハンドラを上書きしないようにする）
     const checkVoices = () => {
         if (window.speechSynthesis.getVoices().length > 0) {
-            voicesLoaded = true;
-            callback();
+        voicesLoaded = true;
+        callback();
             return true;
         }
         return false;
@@ -8137,7 +8137,7 @@ function submitAnswer() {
     setTimeout(function() {
         console.log('[Audio] submitAnswer - calling speakWord for:', wordToSpeak);
         speakWord(wordToSpeak);
-    }, 500);
+    }, 600);
     
     // 次へボタンを表示（自動で進まない）
     showNextButton();
@@ -8186,7 +8186,7 @@ function markAnswerAsDontKnow() {
     setTimeout(function() {
         console.log('[Audio] markAnswerAsDontKnow - calling speakWord for:', wordToSpeak);
         speakWord(wordToSpeak);
-    }, 500);
+    }, 600);
     
     // 次へボタンを表示（自動で進まない）
     showNextButton();
@@ -16081,7 +16081,7 @@ function showHWQuizResult(isCorrect, word) {
     setTimeout(function() {
         console.log('[Audio] showHWQuizResult - calling speakWord for:', wordToSpeak);
         speakWord(wordToSpeak);
-    }, 500);
+    }, 600);
 }
 
 /**

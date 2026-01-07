@@ -41,7 +41,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #f1f5f9;
+    background-color: #fafafa;
     overscroll-behavior: none;
     -webkit-overflow-scrolling: touch;
 }
@@ -282,7 +282,7 @@ textarea,
     z-index: 1;
     overflow: visible; /* position:fixedの赤シートを許可 */
     padding-top: calc(var(--header-height) + env(safe-area-inset-top));
-    background-color: #f1f5f9;
+    background-color: #fafafa;
     box-sizing: border-box;
 }
 
@@ -459,7 +459,7 @@ body.learning-mode .app-header {
     max-width: none !important;
     margin: 0;
     box-sizing: border-box;
-    background-color: #f1f5f9;
+    background-color: #fafafa;
 }
 
 /* スマホ向け：フルスクリーン表示 */
@@ -993,7 +993,7 @@ body.learning-mode .app-header {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.1s ease;
-    box-shadow: 0 2px 0 #d1d5db, 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 0 #d1d5db;
     position: relative;
     top: 0;
 }
@@ -1005,22 +1005,22 @@ body.learning-mode .app-header {
 
 .course-action-btn.input-btn {
     background: #ffffff;
-    box-shadow: 0 2px 0 #93c5fd, 0 2px 6px rgba(59, 130, 246, 0.15);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15), 0 2px 0 #93c5fd;
 }
 
 .course-action-btn.input-btn:active {
     top: 2px;
-    box-shadow: 0 0 0 #93c5fd, 0 1px 2px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 1px 4px rgba(59, 130, 246, 0.1), 0 0 0 #93c5fd;
 }
 
 .course-action-btn.output-btn {
     background: #ffffff;
-    box-shadow: 0 2px 0 #0055ca, 0 2px 6px rgba(0, 85, 202, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 85, 202, 0.2), 0 2px 0 #0055ca;
 }
 
 .course-action-btn.output-btn:active {
     top: 2px;
-    box-shadow: 0 0 0 #0055ca, 0 1px 2px rgba(0, 85, 202, 0.1);
+    box-shadow: 0 1px 4px rgba(0, 85, 202, 0.1), 0 0 0 #0055ca;
 }
 
 .course-action-btn svg,
@@ -1053,12 +1053,12 @@ body.learning-mode .app-header {
 .category-list {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 12px;
     margin-bottom: 0; /* 下部余白を削除（app-mainで管理） */
     width: 100%;
     box-sizing: border-box;
     background: transparent;
-    padding: 0;
+    padding: 12px;
 }
 
 .course-section {
@@ -1093,9 +1093,10 @@ body.learning-mode .app-header {
 .category-cards-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin-bottom: 12px;
     border-bottom: none;
+    padding: 0 12px;
 }
 
 .category-cards-row .category-card {
@@ -1103,8 +1104,8 @@ body.learning-mode .app-header {
     border-bottom: none;
     border-right: none;
     align-items: center;
-    border-radius: 0;
-    box-shadow: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     margin-bottom: 0;
 }
 
@@ -1188,7 +1189,7 @@ body.learning-mode .app-header {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #f3f4f6;
+    background: #fafafa;
     border: none;
     display: flex;
     align-items: center;
@@ -1347,8 +1348,8 @@ body.learning-mode .app-header {
     width: 100%;
     padding: 14px 16px;
     background: #ffffff;
-    border-radius: 0;
-    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     cursor: pointer;
     transition: box-shadow 0.2s ease, transform 0.1s ease;
 }
@@ -1470,7 +1471,7 @@ body.learning-mode .app-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f1f5f9;
+    background: #fafafa;
     border: none;
     border-radius: 8px;
     color: #64748b;
@@ -2085,7 +2086,7 @@ body.learning-mode .app-header {
     max-height: 88vh;
     max-height: 88dvh;
     will-change: transform;
-    background: #f8fafc;
+    background: #ffffff;
     border-radius: 20px 20px 0 0;
     z-index: 10011;
     display: flex;
@@ -2364,7 +2365,7 @@ body.learning-mode .app-header {
 }
 
 .school-list-item-undecided {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
     border-bottom: 2px solid #e2e8f0;
 }
 
@@ -2674,7 +2675,7 @@ body.learning-mode .app-header {
 
 .category-accordion-content {
     display: none;
-    background: #ffffff;
+    background: transparent;
     padding: 12px;
 }
 
@@ -2683,23 +2684,30 @@ body.learning-mode .app-header {
 }
 
 .category-accordion-container {
-    background: #ffffff;
+    background: transparent;
     border: none;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .category-accordion-item {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: auto;
     padding: 18px 16px;
     background: #ffffff;
     border: none;
+    border-radius: 10px;
     text-align: left;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     position: relative;
     min-height: 60px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.category-accordion-item:last-child {
+    margin-bottom: 2px;
 }
 
 .accordion-item-main {
@@ -2858,7 +2866,7 @@ body.learning-mode .app-header {
     box-sizing: border-box;
     text-align: left;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -2889,8 +2897,9 @@ button.category-card:focus-visible {
     cursor: default;
     padding: 0;
     overflow: hidden;
-    border-radius: 0;
-    box-shadow: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    margin-bottom: 12px;
 }
 
 .category-card.category-card-with-actions:active:not(:has(.course-side-btn:active)) {
@@ -3087,6 +3096,7 @@ button.category-card:focus-visible {
     transition: all 0.2s ease;
     text-align: left;
     -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .learning-menu-category-btn:active {
@@ -3125,16 +3135,17 @@ button.category-card:focus-visible {
     transition: all 0.2s ease;
     text-align: center;
     -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
 }
 
 .learning-menu-subcategory-btn:active {
     transform: scale(0.98);
-    background: #f9fafb;
+    background: #ffffff;
 }
 
 .learning-menu-subcategory-btn:focus,
 .learning-menu-subcategory-btn:focus-visible {
-    background: #f9fafb;
+    background: #ffffff;
     outline: none;
 }
 
@@ -3821,7 +3832,7 @@ button.category-card:focus-visible {
 }
 
 .pause-quit-btn {
-    background: #f3f4f6;
+    background: #fafafa;
     color: #dc2626;
     border: none;
     padding: 14px 24px;
@@ -4001,7 +4012,7 @@ button.category-card:focus-visible {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f3f4f6;
+    background: #fafafa;
     border: 1px solid #e5e7eb;
     border-radius: 6px;
     cursor: pointer;
@@ -4805,7 +4816,7 @@ body.reorder-mode-active .word-card-container {
     width: 100% !important;
     max-width: none !important;
     margin: 0;
-    background: #f1f5f9;
+    background: #fafafa;
 }
 
 .input-list-header {
@@ -5113,7 +5124,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .filter-dropdown-item:hover {
-    background: #f8fafc;
+    background: #ffffff;
 }
 
 .filter-dropdown-item input[type="checkbox"] {
@@ -5274,7 +5285,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .red-sheet-toggle:hover {
-    background: #f8fafc;
+    background: #ffffff;
 }
 
 .red-sheet-toggle.visible {
@@ -5317,7 +5328,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .red-sheet-toggle.sticky:hover {
-    background: #f8fafc;
+    background: #ffffff;
 }
 
 .red-sheet-toggle.sticky:has(.red-sheet-checkbox:checked) {
@@ -5586,7 +5597,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .load-more-btn:hover {
-    background: #f3f4f6;
+    background: #fafafa;
 }
 
 .load-more-btn:active {
@@ -5973,7 +5984,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-example {
-    background: #f8fafc;
+    background: #ffffff;
     border-radius: 6px;
     padding: 8px 10px;
     margin-top: 6px;
@@ -6115,7 +6126,7 @@ body.reorder-mode-active .word-card-container {
 .input-list-expand-pos {
     font-size: 10px;
     padding: 2px 5px;
-    background: #f3f4f6;
+    background: #fafafa;
     border-radius: 3px;
     color: #6b7280;
     font-weight: 500;
@@ -6252,7 +6263,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-expand-example {
-    background: #f8fafc;
+    background: #ffffff;
     border-radius: 6px;
     padding: 8px 10px;
     margin-top: 6px;
@@ -6763,7 +6774,7 @@ body.reorder-mode-active .word-card-container {
 
 /* Shiftキー */
 .keyboard-key-shift {
-    background: #f3f4f6;
+    background: #fafafa;
     color: #1f2937;
 }
 
@@ -7055,12 +7066,12 @@ body.reorder-mode-active .word-card-container {
 }
 
 .home-btn-header:hover {
-    background: #f8fafc;
+    background: #ffffff;
     color: #2563eb;
 }
 
 .home-btn-header:active {
-    background: #f1f5f9;
+    background: #fafafa;
     color: #1d4ed8;
     transform: translateY(-50%) scale(0.95);
 }
@@ -7088,7 +7099,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .nav-arrow-btn:active {
-    background: #f1f5f9;
+    background: #fafafa;
     transform: translateY(-50%) scale(0.95);
 }
 
@@ -8387,7 +8398,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .sidebar-menu-item:hover {
-    background-color: #f3f4f6;
+    background-color: #fafafa;
 }
 
 .sidebar-menu-item:active {
@@ -8968,7 +8979,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .install-instructions {
     width: 100%;
-    background: #f9fafb;
+    background: #ffffff;
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 20px;
@@ -9116,7 +9127,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .sentence-blank:hover {
     border-color: #000000;
-    background: #f9fafb;
+    background: #ffffff;
 }
 
 .sentence-blank.selected {
@@ -9311,7 +9322,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .reorder-answer-box:hover {
-    background: #f3f4f6;
+    background: #fafafa;
 }
 
 .reorder-answer-box.dragging {
@@ -9355,7 +9366,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .reorder-word-box:hover:not(.used) {
-    background: #f3f4f6;
+    background: #fafafa;
 }
 
 .reorder-word-box.dragging {
@@ -10023,7 +10034,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     color: #4b5563;
     line-height: 1.8;
     text-align: left;
-    background: #f9fafb;
+    background: #ffffff;
     padding: 16px;
     border-radius: 10px;
     width: 100%;
@@ -10104,7 +10115,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .exam-quiz-back-btn {
-    background: #f3f4f6;
+    background: #fafafa;
     color: #1f2937;
     border: none;
     border-radius: 10px;
@@ -10213,7 +10224,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .exam-info-table tbody tr:nth-child(even) {
-    background: #f9fafb;
+    background: #ffffff;
 }
 
 .exam-info-table .feature-cell {
@@ -11064,7 +11075,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .exercise-explanation {
     margin-top: 12px;
     padding: 12px 14px;
-    background: #f9fafb;
+    background: #ffffff;
     border-left: 3px solid #2563eb;
     border-radius: 8px;
     color: #1f2937;
@@ -11902,7 +11913,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     max-width: 540px;
     height: 85vh;
     max-height: 85vh;
-    background: #f1f5f9;
+    background: #fafafa;
     border-radius: 20px 20px 0 0;
     z-index: 10000;
     display: flex;
@@ -11992,7 +12003,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     -webkit-overflow-scrolling: touch;
     padding: 24px 20px;
     padding-bottom: calc(24px + 90px); /* ボタン分の余白を確保 */
-    background: #f1f5f9;
+    background: #fafafa;
 }
 
 .filter-card-container {
@@ -12160,7 +12171,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     margin-top: 4px;
     margin-bottom: 80px;
     padding: 16px;
-    background: #f8fafc;
+    background: #ffffff;
     border: 2px solid #e2e8f0;
     border-radius: 12px;
     display: flex;
@@ -12361,7 +12372,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .order-options {
     display: flex;
     gap: 0;
-    background: #f1f5f9;
+    background: #fafafa;
     border-radius: 12px;
     padding: 4px;
     border: 2px solid #e2e8f0;
@@ -12480,7 +12491,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     align-items: center;
     justify-content: center;
     padding: 12px 10px;
-    background: #f8fafc;
+    background: #ffffff;
     border: 2px solid #e2e8f0;
     border-radius: 10px;
     cursor: pointer;
@@ -12491,7 +12502,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .filter-checkbox-grid:hover {
     border-color: #cbd5e1;
-    background: #f1f5f9;
+    background: #fafafa;
 }
 
 .filter-checkbox-grid:has(input:checked) {
@@ -12548,7 +12559,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     align-items: center;
     padding: 10px 14px;
-    background: #f8fafc;
+    background: #ffffff;
     border: 2px solid #e2e8f0;
     border-radius: 10px;
     cursor: pointer;
@@ -12559,7 +12570,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .filter-checkbox:hover {
     border-color: #cbd5e1;
-    background: #f1f5f9;
+    background: #fafafa;
 }
 
 .filter-checkbox:has(input:checked) {
@@ -12635,7 +12646,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .filter-checkbox input[type="checkbox"]:disabled {
     cursor: not-allowed;
     opacity: 0.4;
-    background: #f1f5f9;
+    background: #fafafa;
 }
 
 .filter-checkbox:has(input[type="checkbox"]:disabled) {
@@ -12645,7 +12656,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .filter-checkbox:has(input[type="checkbox"]:disabled):hover {
     border-color: #e2e8f0;
-    background: #f8fafc;
+    background: #ffffff;
 }
 
 .checkbox-label {
@@ -12854,7 +12865,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .filter-info {
     margin-top: 8px;
     padding: 14px 16px;
-    background: #f8fafc;
+    background: #ffffff;
     border: 2px solid #e2e8f0;
     border-radius: 10px;
     text-align: center;
@@ -12998,7 +13009,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .learning-mode-options {
     display: flex;
     gap: 0;
-    background: #f1f5f9;
+    background: #fafafa;
     border-radius: 12px;
     padding: 4px;
     border: 2px solid #e2e8f0;
@@ -13088,7 +13099,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     justify-content: center;
     width: 56px;
     height: 56px;
-    background: #f1f5f9;
+    background: #fafafa;
     border-radius: 12px;
     flex-shrink: 0;
     margin-bottom: 4px;
@@ -13117,7 +13128,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     flex-direction: column;
     gap: 16px;
     padding: 16px;
-    background: #f8fafc;
+    background: #ffffff;
     border-radius: 12px;
     margin: 16px 0;
 }
@@ -13191,7 +13202,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .handwriting-tool-btn:hover {
-    background: #f1f5f9;
+    background: #fafafa;
     border-color: #cbd5e1;
 }
 
@@ -13268,7 +13279,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .handwriting-debug {
     margin-top: 12px;
     padding: 12px;
-    background: #f1f5f9;
+    background: #fafafa;
     border-radius: 10px;
     border: 1px dashed #94a3b8;
 }
@@ -13684,7 +13695,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .handwriting-quiz-view {
     position: fixed;
     inset: 0;
-    background: #f3f4f6;
+    background: #fafafa;
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -13824,7 +13835,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     bottom: 0;
     left: 0;
     right: 0;
-    background: #f3f4f6;
+    background: #fafafa;
     padding: 8px 16px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
     display: flex;
@@ -14504,7 +14515,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-completion-back {
-    background: #f3f4f6;
+    background: #fafafa;
     color: #374151;
 }
 
