@@ -21,6 +21,9 @@
     <link rel="apple-touch-icon" sizes="512x512" href="app.png">
     <!-- TensorFlow.js for EMNIST handwriting recognition -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+    <!-- MapLibre GL JS -->
+    <link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
 </head>
 <body>
     <!-- スプラッシュ画面 -->
@@ -83,6 +86,14 @@
                             <polyline points="10 9 9 9 8 9"></polyline>
                         </svg>
                         <span>学習方法を選択</span>
+                    </button>
+                    <button class="sidebar-menu-item" id="stageMapBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+                            <line x1="9" y1="3" x2="9" y2="18"></line>
+                            <line x1="15" y1="6" x2="15" y2="21"></line>
+                        </svg>
+                        <span>高校ステージマップ</span>
                     </button>
                 </div>
                 <div class="sidebar-section">
@@ -195,6 +206,34 @@
                                     <div class="school-card-progress-bar" id="schoolProgressBar" style="width: 60%;"></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <!-- ミニ地図 -->
+                    <div class="mini-map-wrapper">
+                        <div class="mini-map-container" id="miniMapContainer"></div>
+                        <div class="mini-map-overlay">
+                            <button class="mini-map-btn" id="miniMapNextBtn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon>
+                                </svg>
+                                次へ
+                            </button>
+                            <button class="mini-map-btn mini-map-btn-expand" id="miniMapExpandBtn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <polyline points="9 21 3 21 3 15"></polyline>
+                                    <line x1="21" y1="3" x2="14" y2="10"></line>
+                                    <line x1="3" y1="21" x2="10" y2="14"></line>
+                                </svg>
+                                全画面
+                            </button>
+                        </div>
+                        <div class="mini-map-stats">
+                            <span class="mini-map-stat-cleared" id="miniMapCleared">0</span>
+                            <span class="mini-map-stat-sep">/</span>
+                            <span class="mini-map-stat-total" id="miniMapTotal">0</span>
+                            <span class="mini-map-stat-label">クリア</span>
                         </div>
                     </div>
                 </div>
@@ -1238,6 +1277,123 @@
             <p class="install-message" id="installMessage">このアプリをホーム画面に追加すると、より快適に学習できます。</p>
             <div class="install-instructions" id="installInstructions"></div>
             <button class="install-close-btn" id="installCloseBtn">閉じる</button>
+        </div>
+    </div>
+
+    <!-- 大阪府高校ステージマップ画面 -->
+    <div class="stage-map-view hidden" id="stageMapView">
+        <!-- ヘッダー -->
+        <header class="stage-map-header">
+            <button class="stage-map-back-btn" id="stageMapBackBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <h1 class="stage-map-title">大阪府 高校ステージ</h1>
+            <div class="stage-map-progress">
+                <span id="stageMapCurrentStage">0</span>/<span id="stageMapTotalStage">0</span>
+            </div>
+        </header>
+
+        <!-- 検索・フィルター -->
+        <div class="stage-map-controls">
+            <div class="stage-map-search-wrap">
+                <svg class="stage-map-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" class="stage-map-search" id="stageMapSearch" placeholder="高校名で検索...">
+            </div>
+            <div class="stage-map-btns">
+                <button class="stage-map-btn" id="stageMapNextBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon>
+                    </svg>
+                    次のステージへ
+                </button>
+                <label class="stage-map-toggle">
+                    <input type="checkbox" id="stageMapClearedOnly">
+                    <span>クリア済みのみ</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 地図 -->
+        <div class="stage-map-container" id="stageMapContainer"></div>
+
+        <!-- 凡例 -->
+        <div class="stage-map-legend">
+            <div class="stage-map-legend-item">
+                <span class="legend-icon legend-cleared"></span>
+                <span>クリア済</span>
+            </div>
+            <div class="stage-map-legend-item">
+                <span class="legend-icon legend-active"></span>
+                <span>挑戦中</span>
+            </div>
+            <div class="stage-map-legend-item">
+                <span class="legend-icon legend-locked"></span>
+                <span>ロック</span>
+            </div>
+        </div>
+
+        <!-- ボトムシート -->
+        <div class="stage-bottom-sheet hidden" id="stageBottomSheet">
+            <div class="sheet-handle"></div>
+            <button class="sheet-close-btn" id="sheetCloseBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="sheet-content" id="sheetContent">
+                <!-- 動的に内容が入る -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 5問テストモーダル -->
+    <div class="school-test-modal hidden" id="schoolTestModal">
+        <div class="test-modal-content">
+            <div class="test-modal-header">
+                <h2 class="test-modal-title" id="testModalTitle">5問テスト</h2>
+                <div class="test-progress">
+                    <span id="testCurrentQ">1</span>/5
+                </div>
+            </div>
+            <div class="test-question-area" id="testQuestionArea">
+                <!-- 問題が表示される -->
+            </div>
+            <div class="test-choices" id="testChoices">
+                <!-- 選択肢が表示される -->
+            </div>
+        </div>
+    </div>
+
+    <!-- テスト結果モーダル -->
+    <div class="test-result-modal hidden" id="testResultModal">
+        <div class="test-result-content">
+            <div class="test-result-score">
+                <span class="result-score-num" id="resultScoreNum">0</span>
+                <span class="result-score-label">/ 5</span>
+            </div>
+            <div class="test-result-message" id="testResultMessage">お疲れ様でした</div>
+            <div class="test-result-btns">
+                <button class="result-btn result-retry" id="testRetryBtn">もう一回</button>
+                <button class="result-btn result-back" id="testBackBtn">地図へ戻る</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- クリア演出 -->
+    <div class="clear-celebration hidden" id="clearCelebration">
+        <div class="clear-content">
+            <div class="clear-flag">
+                <img src="flag.png" alt="旗">
+            </div>
+            <div class="clear-text">STAGE CLEAR!</div>
+            <div class="clear-school-name" id="clearSchoolName"></div>
         </div>
     </div>
 

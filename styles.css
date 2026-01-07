@@ -41,7 +41,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #fafafa;
+    background-color: #ffffff;
     overscroll-behavior: none;
     -webkit-overflow-scrolling: touch;
 }
@@ -282,7 +282,7 @@ textarea,
     z-index: 1;
     overflow: visible; /* position:fixedの赤シートを許可 */
     padding-top: calc(var(--header-height) + env(safe-area-inset-top));
-    background-color: #fafafa;
+    background-color: #ffffff;
     box-sizing: border-box;
 }
 
@@ -459,7 +459,7 @@ body.learning-mode .app-header {
     max-width: none !important;
     margin: 0;
     box-sizing: border-box;
-    background-color: #fafafa;
+    background-color: #ffffff;
 }
 
 /* スマホ向け：フルスクリーン表示 */
@@ -2694,7 +2694,7 @@ body.learning-mode .app-header {
     display: flex;
     flex-direction: column;
     width: 100%; /* 横幅をいっぱいに広げる */
-    padding: 18px 16px;
+    padding: 10px 16px;
     background: #ffffff;
     border: none;
     border-radius: 0;
@@ -2702,13 +2702,13 @@ body.learning-mode .app-header {
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     position: relative;
-    min-height: 60px;
-    margin-bottom: 10px;
+    min-height: 48px;
+    margin-bottom: 2px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .category-accordion-item:last-child {
-    margin-bottom: 2px;
+    margin-bottom: 1px;
 }
 
 .accordion-item-main {
@@ -2900,7 +2900,7 @@ button.category-card:focus-visible {
     overflow: hidden;
     border-radius: 0;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
-    margin-bottom: 12px;
+    margin-bottom: 2px;
 }
 
 .category-card.category-card-with-actions:active:not(:has(.course-side-btn:active)) {
@@ -2917,7 +2917,7 @@ button.category-card:focus-visible {
 .category-card.category-card-with-actions .category-info {
     flex: 1;
     min-width: 0;
-    padding: 16px;
+    padding: 10px 16px;
 }
 
 /* 右側の縦並びボタン */
@@ -3120,15 +3120,15 @@ button.category-card:focus-visible {
 .learning-menu-subcategories {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-    margin-bottom: 16px;
+    gap: 2px;
+    margin-bottom: 12px;
     max-height: 400px;
     overflow-y: auto;
 }
 
 .learning-menu-subcategory-btn {
     width: 100%;
-    padding: 8px 10px;
+    padding: 6px 8px;
     border: none;
     border-radius: 6px;
     background: white;
@@ -14857,4 +14857,812 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         font-size: 13px;
         border-radius: 8px;
     }
+}
+
+/* ====================================
+   大阪府 高校ステージマップ
+   ==================================== */
+
+.stage-map-view {
+    position: fixed;
+    inset: 0;
+    background: #f8fafc;
+    z-index: 10010;
+    display: flex;
+    flex-direction: column;
+}
+
+.stage-map-view.hidden {
+    display: none;
+}
+
+/* ヘッダー */
+.stage-map-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+    background: #3182ce;
+    flex-shrink: 0;
+}
+
+.stage-map-back-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 8px;
+    margin: -8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.stage-map-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.stage-map-progress {
+    background: #ffffff;
+    color: #3182ce;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+/* 検索・フィルター */
+.stage-map-controls {
+    padding: 10px 16px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.stage-map-search-wrap {
+    position: relative;
+}
+
+.stage-map-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.stage-map-search {
+    width: 100%;
+    padding: 10px 12px 10px 40px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #f8fafc;
+    color: #1e293b;
+    transition: border-color 0.2s;
+}
+
+.stage-map-search:focus {
+    outline: none;
+    border-color: #3182ce;
+    background: #ffffff;
+}
+
+.stage-map-search::placeholder {
+    color: #94a3b8;
+}
+
+.stage-map-btns {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stage-map-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #3182ce;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.stage-map-btn:active {
+    background: #2563eb;
+}
+
+.stage-map-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.stage-map-toggle input {
+    width: 16px;
+    height: 16px;
+    accent-color: #3182ce;
+}
+
+/* 地図コンテナ */
+.stage-map-container {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+}
+
+/* 凡例 */
+.stage-map-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 16px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    flex-shrink: 0;
+}
+
+.stage-map-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #64748b;
+}
+
+.legend-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.legend-cleared {
+    background: #38a169;
+}
+
+.legend-active {
+    background: #ed8936;
+    animation: pulse-legend 1.5s infinite;
+}
+
+.legend-locked {
+    background: #a0aec0;
+}
+
+@keyframes pulse-legend {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(237, 137, 54, 0.4); }
+    50% { box-shadow: 0 0 0 4px rgba(237, 137, 54, 0); }
+}
+
+/* ボトムシート */
+.stage-bottom-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-radius: 20px 20px 0 0;
+    padding: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+    z-index: 100;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.stage-bottom-sheet.hidden {
+    transform: translateY(100%);
+    pointer-events: none;
+}
+
+.sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: #cbd5e1;
+    border-radius: 2px;
+    margin: 0 auto 16px;
+}
+
+.sheet-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #f1f5f9;
+    border: none;
+    color: #64748b;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* シート内容 */
+.sheet-school-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.sheet-stage-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.sheet-stage-badge.cleared {
+    background: #38a169;
+    color: #ffffff;
+}
+
+.sheet-stage-badge.active {
+    background: #ed8936;
+    color: #ffffff;
+}
+
+.sheet-stage-badge.locked {
+    background: #e2e8f0;
+    color: #64748b;
+}
+
+.sheet-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.sheet-info-row:last-child {
+    border-bottom: none;
+}
+
+.sheet-info-value {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.sheet-progress-bar {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+.sheet-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ed8936 0%, #38a169 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.sheet-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: transform 0.1s;
+}
+
+.sheet-btn:active {
+    transform: scale(0.98);
+}
+
+.sheet-btn-clear {
+    background: #ed8936;
+    color: #ffffff;
+}
+
+.sheet-btn-clear:disabled {
+    background: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.sheet-btn-test {
+    background: #3182ce;
+    color: #ffffff;
+}
+
+.sheet-test-history {
+    margin-top: 12px;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+.sheet-test-history-title {
+    font-weight: 600;
+    color: #3182ce;
+    margin-bottom: 6px;
+}
+
+/* 5問テストモーダル */
+.school-test-modal {
+    position: fixed;
+    inset: 0;
+    background: #f8fafc;
+    z-index: 10020;
+    display: flex;
+    flex-direction: column;
+}
+
+.school-test-modal.hidden {
+    display: none;
+}
+
+.test-modal-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    padding-top: calc(20px + env(safe-area-inset-top));
+}
+
+.test-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.test-modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.test-progress {
+    background: #3182ce;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+}
+
+.test-question-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.test-word {
+    font-size: 36px;
+    font-weight: 700;
+    color: #3182ce;
+    margin-bottom: 8px;
+}
+
+.test-hint {
+    font-size: 14px;
+    color: #64748b;
+}
+
+.test-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+}
+
+.test-choice-btn {
+    width: 100%;
+    padding: 16px 20px;
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    color: #1e293b;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.test-choice-btn:active {
+    background: #f1f5f9;
+    border-color: #3182ce;
+}
+
+.test-choice-btn.correct {
+    background: #d1fae5;
+    border-color: #38a169;
+    color: #166534;
+}
+
+.test-choice-btn.wrong {
+    background: #fee2e2;
+    border-color: #dc2626;
+    color: #991b1b;
+}
+
+@keyframes shake-correct {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes shake-wrong {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-10px); }
+    40%, 80% { transform: translateX(10px); }
+}
+
+/* テスト結果モーダル */
+.test-result-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10030;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.test-result-modal.hidden {
+    display: none;
+}
+
+.test-result-content {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 32px;
+    text-align: center;
+    max-width: 300px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.test-result-score {
+    margin-bottom: 16px;
+}
+
+.result-score-num {
+    font-size: 72px;
+    font-weight: 800;
+    color: #3182ce;
+}
+
+.result-score-label {
+    font-size: 24px;
+    color: #94a3b8;
+}
+
+.test-result-message {
+    font-size: 16px;
+    color: #1e293b;
+    margin-bottom: 24px;
+}
+
+.test-result-btns {
+    display: flex;
+    gap: 12px;
+}
+
+.result-btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.result-retry {
+    background: #3182ce;
+    color: #ffffff;
+}
+
+.result-back {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+/* クリア演出 */
+.clear-celebration {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-celebration.hidden {
+    display: none;
+}
+
+.clear-content {
+    text-align: center;
+    animation: clear-pop 0.5s ease-out;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes clear-pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.clear-flag {
+    margin-bottom: 16px;
+}
+
+.clear-flag img {
+    width: 80px;
+    height: 80px;
+    animation: flag-wave 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes flag-wave {
+    0% { transform: rotate(-5deg); }
+    100% { transform: rotate(5deg); }
+}
+
+.clear-text {
+    font-size: 28px;
+    font-weight: 800;
+    color: #38a169;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+}
+
+.clear-school-name {
+    font-size: 16px;
+    color: #1e293b;
+}
+
+/* MapLibre カスタムマーカー - 学校アイコン */
+.stage-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.school-marker {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+/* アイコン本体 */
+.school-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.school-icon img {
+    width: 22px;
+    height: 22px;
+}
+
+/* ステージ番号バッジ */
+.school-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 4px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+
+/* 旗 */
+.school-flag {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    z-index: 10;
+}
+
+/* クリア済み - 緑 */
+.school-marker.cleared .school-icon {
+    background: #38a169;
+}
+.school-marker.cleared .school-badge {
+    background: #276749;
+}
+
+/* アクティブ - オレンジ */
+.school-marker.active .school-icon {
+    background: #ed8936;
+    animation: pulse-icon 1.5s infinite;
+}
+.school-marker.active .school-badge {
+    background: #c05621;
+}
+
+/* ロック - グレー */
+.school-marker.locked .school-icon {
+    background: #a0aec0;
+    opacity: 0.7;
+}
+.school-marker.locked .school-badge {
+    background: #718096;
+}
+
+@keyframes pulse-icon {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(237, 137, 54, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    50% { 
+        box-shadow: 0 0 0 8px rgba(237, 137, 54, 0), 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* ミニ地図（志望校設定下） */
+.mini-map-wrapper {
+    position: relative;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.mini-map-container {
+    width: 100%;
+    height: 150px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.mini-map-container .maplibregl-ctrl-attrib {
+    display: none;
+}
+
+.mini-map-container .maplibregl-ctrl-top-right {
+    display: none;
+}
+
+/* ミニ地図ボタン */
+.mini-map-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 6px;
+}
+
+.mini-map-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #3182ce;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+}
+
+.mini-map-btn:active {
+    background: #f1f5f9;
+    transform: scale(0.98);
+}
+
+.mini-map-btn-expand {
+    color: #64748b;
+}
+
+/* ミニ地図統計 */
+.mini-map-stats {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.mini-map-stat-cleared {
+    color: #38a169;
+}
+
+.mini-map-stat-sep {
+    color: #94a3b8;
+}
+
+.mini-map-stat-total {
+    color: #1e293b;
+}
+
+.mini-map-stat-label {
+    color: #64748b;
+    margin-left: 4px;
+}
+
+
+/* クラスターマーカー */
+.cluster-marker {
+    background: #3182ce;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* MapLibreポップアップ非表示 */
+.maplibregl-popup {
+    display: none !important;
 }
