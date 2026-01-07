@@ -4564,12 +4564,13 @@ body.reorder-mode-active .word-card-container {
     .input-meaning-wrapper {
         margin-bottom: 0;
         gap: 4px;
-        align-items: center;
+        align-items: baseline;
     }
     .input-meaning-wrapper .pos-inline {
-        margin-top: 0;
-        align-self: center;
+        margin-top: -2px;
+        align-self: baseline;
         margin-bottom: 0;
+        vertical-align: baseline;
         font-weight: 700;
         font-size: clamp(14px, 3.5vw, 20px);
         font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
@@ -4638,12 +4639,13 @@ body.reorder-mode-active .word-card-container {
     .input-meaning-wrapper {
         margin-bottom: 0;
         gap: 3px;
-        align-items: center;
+        align-items: baseline;
     }
     .input-meaning-wrapper .pos-inline {
-        margin-top: 0;
-        align-self: center;
+        margin-top: -2px;
+        align-self: baseline;
         margin-bottom: 0;
+        vertical-align: baseline;
         font-weight: 700;
         font-size: clamp(13px, 3.5vw, 18px);
         font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
@@ -5776,7 +5778,7 @@ body.reorder-mode-active .word-card-container {
 
 .input-list-meaning-wrapper {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 6px;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -6252,7 +6254,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-expand-meaning-pos {
-    margin-top: 0 !important;
+    margin-top: 6px !important;
     font-size: 12px !important;
     padding: 2px 3px !important;
     border-radius: 2px;
@@ -6441,7 +6443,7 @@ body.reorder-mode-active .word-card-container {
 
 .input-meaning-wrapper {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
     gap: 6px;
     flex-wrap: wrap;
@@ -6449,9 +6451,10 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-meaning-wrapper .pos-inline {
-    margin-top: 0;
-    align-self: center;
+    margin-top: -2px;
+    align-self: baseline;
     margin-bottom: 0;
+    vertical-align: baseline;
     font-weight: 700;
     font-size: clamp(16px, 4vw, 22px);
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
@@ -7022,7 +7025,7 @@ body.reorder-mode-active .word-card-container {
 
 /* カードモードの音声ボタン位置調整 */
 .english-word-wrapper .audio-btn {
-    align-self: center;
+    align-self: baseline;
     margin-top: 0;
 }
 
@@ -7731,7 +7734,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .english-word-wrapper {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
     gap: 8px;
     margin-top: auto;
@@ -7793,8 +7796,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 英語単語のときの品詞位置調整 */
 .english-word-wrapper .pos-inline {
-    align-self: center;
+    align-self: baseline;
     margin-top: 0;
+    top: -0.18em;
 }
 
 /* 入試頻出度表示 */
@@ -7829,9 +7833,10 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 意味のときの品詞位置調整 */
 .meaning-wrapper .pos-inline {
-    align-self: center;
-    margin-top: 0;
+    align-self: baseline;
+    margin-top: -2px;
     margin-bottom: 0;
+    vertical-align: baseline;
     font-weight: 700;
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
 }
@@ -8013,7 +8018,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .meaning-wrapper {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
@@ -13841,6 +13846,19 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     z-index: 100;
     max-width: 600px;
     margin: 0 auto;
+    transition: opacity 0.3s ease, pointer-events 0.3s ease;
+}
+
+.hw-input-fixed-bottom.hw-input-disabled .hw-canvas-area,
+.hw-input-fixed-bottom.hw-input-disabled .virtual-keyboard,
+.hw-input-fixed-bottom.hw-input-disabled .hw-candidates {
+    opacity: 0.6;
+    pointer-events: none;
+    filter: grayscale(0.5);
+}
+
+.hw-input-fixed-bottom.hw-input-disabled {
+    background: #f1f5f9;
 }
 
 .hw-input-fixed-bottom .hw-canvas-area {

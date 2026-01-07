@@ -10165,17 +10165,39 @@ function setupRedSheet() {
         const isActive = redSheetCheckbox.checked;
         
         if (isActive) {
-            // 1番上の単語の日本語の意味が隠れるように
-            const firstMeaning = document.querySelector('.input-list-expand-meaning');
+            // 現在表示されている範囲内で、一番上の単語の日本語の意味を探す
+            const meanings = document.querySelectorAll('.input-list-expand-meaning');
+            let targetMeaning = null;
+            
+            // ヘッダーの高さを考慮したオフセット（スティッキーなコントロールバーなど）
+            const headerOffset = 150; 
+
+            for (const meaning of meanings) {
+                const rect = meaning.getBoundingClientRect();
+                // 画面内にあり、かつヘッダーより下にある最初の意味要素を見つける
+                if (rect.bottom > headerOffset) {
+                    targetMeaning = meaning;
+                    break;
+                }
+            }
+
             let topPosition = 150; // デフォルト値
             let leftPosition = -400; // デフォルト値（左からひょっこり）
-            if (firstMeaning) {
-                const rect = firstMeaning.getBoundingClientRect();
+
+            if (targetMeaning) {
+                const rect = targetMeaning.getBoundingClientRect();
                 topPosition = rect.top; // 日本語の意味の上端から
                 // 左からひょっこり出てくる感じに（赤シートの右端が日本語をカバー）
                 const sheetWidth = 500; // CSSで設定した幅
                 leftPosition = rect.left - sheetWidth + rect.width + 20;
+            } else if (meanings.length > 0) {
+                // 見つからない場合は一番最初の要素（フォールバック）
+                const rect = meanings[0].getBoundingClientRect();
+                topPosition = rect.top;
+                const sheetWidth = 500;
+                leftPosition = rect.left - sheetWidth + rect.width + 20;
             }
+
             redSheetOverlay.style.top = topPosition + 'px';
             redSheetOverlay.style.left = leftPosition + 'px';
             
@@ -15073,6 +15095,7 @@ function clearHWQuizCanvas() {
  * 描画開始
  */
 function hwQuizDrawStart(e) {
+    if (hwQuizAnswerSubmitted) return;
     e.preventDefault();
     hwQuizIsDrawing = true;
     
@@ -15148,6 +15171,7 @@ let hwQuizIsRecognizing = false;
  * キャンバスを認識して自動入力
  */
 async function recognizeHWQuizCanvas() {
+    if (hwQuizAnswerSubmitted) return;
     if (!window.handwritingRecognition?.isModelLoaded) {
         return;
     }
@@ -15612,6 +15636,7 @@ function setupHWQuizEvents() {
         let isTouching = false;
         
         const doBackspace = () => {
+            if (hwQuizAnswerSubmitted) return;
             if (hwQuizConfirmedText.length > 0) {
                 hwQuizConfirmedText = hwQuizConfirmedText.slice(0, -1);
                 updateHWQuizAnswerDisplay();
@@ -15672,6 +15697,7 @@ function setupHWQuizEvents() {
     const spaceBtn = document.getElementById('hwQuizSpaceBtn');
     if (spaceBtn) {
         spaceBtn.onclick = () => {
+            if (hwQuizAnswerSubmitted) return;
             hwQuizConfirmedText += ' ';
             updateHWQuizAnswerDisplay();
         };
@@ -15791,6 +15817,7 @@ function setupHWVirtualKeyboard() {
         key._hwKeyboardEventSet = true;
         
         key.addEventListener('click', (e) => {
+            if (hwQuizAnswerSubmitted) return;
             e.preventDefault();
             const keyValue = key.dataset.key;
             
@@ -15859,6 +15886,12 @@ function displayHWQuizQuestion() {
     hwQuizIsDrawing = false;
     hwQuizIsRecognizing = false;
     
+    // 入力エリアの無効化を解除
+    const inputFixedBottom = document.getElementById('hwInputFixedBottom');
+    if (inputFixedBottom) {
+        inputFixedBottom.classList.remove('hw-input-disabled');
+    }
+    
     // 進捗セグメントと統計を更新
     updateHWQuizProgressSegments();
     updateHWQuizStats();
@@ -15894,7 +15927,6 @@ function displayHWQuizQuestion() {
     const result = document.getElementById('hwQuizResult');
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
     const modeToggle = document.querySelector('.hw-mode-toggle-row');
-    const inputFixedBottom = document.getElementById('hwInputFixedBottom');
     
     if (result) result.classList.add('hidden');
     if (answerDisplay) {
@@ -16021,6 +16053,11 @@ function showHWQuizResult(isCorrect, word) {
     const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
     const modeToggle = document.querySelector('.hw-mode-toggle-row');
     const inputFixedBottom = document.getElementById('hwInputFixedBottom');
+    
+    // 入力エリアを無効化（視覚的フィードバック）
+    if (inputFixedBottom) {
+        inputFixedBottom.classList.add('hw-input-disabled');
+    }
     
     // モードトグルも表示したまま（キーボード・手書きエリアも表示したまま）
     
