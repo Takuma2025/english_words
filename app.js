@@ -17300,16 +17300,24 @@ async function initMiniMap() {
         maxZoom: 13
     });
     
-    // 高校データ読み込み
-    await loadMiniMapSchools();
+    // マップ読み込み完了後に高校データを読み込み
+    miniMap.on('load', async () => {
+        await loadMiniMapSchools();
+    });
 }
 
 async function loadMiniMapSchools() {
     try {
-        const response = await fetch('data/osaka_highschools.geojson');
-        const data = await response.json();
-        miniMapSchools = assignStageNumbers(data.features || []);
+        // ステージマップで既に読み込まれていればそれを使用
+        if (allSchools && allSchools.length > 0) {
+            miniMapSchools = allSchools;
+        } else {
+            const response = await fetch('data/osaka_highschools.geojson');
+            const data = await response.json();
+            miniMapSchools = assignStageNumbers(data.features || []);
+        }
         updateMiniMapMarkers();
+        updateMiniMapStats();
     } catch (e) {
         console.error('Failed to load mini map schools:', e);
     }
@@ -17393,7 +17401,12 @@ function showMiniMap() {
         initMiniMap();
     } else {
         miniMap.resize();
-        updateMiniMapMarkers();
+        // マーカーがない場合は再読み込み
+        if (miniMapMarkers.length === 0 && miniMapSchools.length === 0) {
+            loadMiniMapSchools();
+        } else {
+            updateMiniMapMarkers();
+        }
     }
     
     // 統計を更新
