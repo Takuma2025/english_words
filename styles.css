@@ -1054,11 +1054,12 @@ body.learning-mode .app-header {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-bottom: 0; /* 下部余白を削除（app-mainで管理） */
-    width: 100%;
+    margin: 0 auto; /* 中央寄せ */
+    max-width: 600px; /* 志望校コンテナと同じ最大幅 */
+    width: calc(100% - 16px); /* 志望校コンテナと同じ横幅計算 */
     box-sizing: border-box;
     background: transparent;
-    padding: 12px;
+    padding: 0; /* 余白はmarginで管理 */
 }
 
 .course-section {
@@ -1096,7 +1097,7 @@ body.learning-mode .app-header {
     gap: 12px;
     margin-bottom: 12px;
     border-bottom: none;
-    padding: 0 12px;
+    padding: 0; /* 細分化メニューの横幅をメインカードに合わせるためパディングを削除 */
 }
 
 .category-cards-row .category-card {
@@ -1104,7 +1105,7 @@ body.learning-mode .app-header {
     border-bottom: none;
     border-right: none;
     align-items: center;
-    border-radius: 12px;
+    border-radius: 0;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     margin-bottom: 0;
 }
@@ -2676,7 +2677,7 @@ body.learning-mode .app-header {
 .category-accordion-content {
     display: none;
     background: transparent;
-    padding: 12px;
+    padding: 0; /* 細分化メニューの横幅をメインカードに合わせるためパディングを削除 */
 }
 
 .category-accordion.open .category-accordion-content {
@@ -2692,11 +2693,11 @@ body.learning-mode .app-header {
 .category-accordion-item {
     display: flex;
     flex-direction: column;
-    width: auto;
+    width: 100%; /* 横幅をいっぱいに広げる */
     padding: 18px 16px;
     background: #ffffff;
     border: none;
-    border-radius: 10px;
+    border-radius: 0;
     text-align: left;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
@@ -2897,7 +2898,7 @@ button.category-card:focus-visible {
     cursor: default;
     padding: 0;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: 0;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     margin-bottom: 12px;
 }
@@ -4563,13 +4564,12 @@ body.reorder-mode-active .word-card-container {
     .input-meaning-wrapper {
         margin-bottom: 0;
         gap: 4px;
-        align-items: baseline;
+        align-items: center;
     }
     .input-meaning-wrapper .pos-inline {
-        margin-top: -2px;
-        align-self: baseline;
+        margin-top: 0;
+        align-self: center;
         margin-bottom: 0;
-        vertical-align: baseline;
         font-weight: 700;
         font-size: clamp(14px, 3.5vw, 20px);
         font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
@@ -4638,13 +4638,12 @@ body.reorder-mode-active .word-card-container {
     .input-meaning-wrapper {
         margin-bottom: 0;
         gap: 3px;
-        align-items: baseline;
+        align-items: center;
     }
     .input-meaning-wrapper .pos-inline {
-        margin-top: -2px;
-        align-self: baseline;
+        margin-top: 0;
+        align-self: center;
         margin-bottom: 0;
-        vertical-align: baseline;
         font-weight: 700;
         font-size: clamp(13px, 3.5vw, 18px);
         font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
@@ -5777,7 +5776,7 @@ body.reorder-mode-active .word-card-container {
 
 .input-list-meaning-wrapper {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 6px;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -6253,7 +6252,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-expand-meaning-pos {
-    margin-top: 6px !important;
+    margin-top: 0 !important;
     font-size: 12px !important;
     padding: 2px 3px !important;
     border-radius: 2px;
@@ -6442,7 +6441,7 @@ body.reorder-mode-active .word-card-container {
 
 .input-meaning-wrapper {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: center;
     gap: 6px;
     flex-wrap: wrap;
@@ -6450,10 +6449,9 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-meaning-wrapper .pos-inline {
-    margin-top: -2px;
-    align-self: baseline;
+    margin-top: 0;
+    align-self: center;
     margin-bottom: 0;
-    vertical-align: baseline;
     font-weight: 700;
     font-size: clamp(16px, 4vw, 22px);
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
@@ -7024,7 +7022,7 @@ body.reorder-mode-active .word-card-container {
 
 /* カードモードの音声ボタン位置調整 */
 .english-word-wrapper .audio-btn {
-    align-self: baseline;
+    align-self: center;
     margin-top: 0;
 }
 
@@ -7733,7 +7731,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .english-word-wrapper {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: center;
     gap: 8px;
     margin-top: auto;
@@ -7795,9 +7793,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 英語単語のときの品詞位置調整 */
 .english-word-wrapper .pos-inline {
-    align-self: baseline;
+    align-self: center;
     margin-top: 0;
-    top: -0.18em;
 }
 
 /* 入試頻出度表示 */
@@ -7832,10 +7829,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 意味のときの品詞位置調整 */
 .meaning-wrapper .pos-inline {
-    align-self: baseline;
-    margin-top: -2px;
+    align-self: center;
+    margin-top: 0;
     margin-bottom: 0;
-    vertical-align: baseline;
     font-weight: 700;
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
 }
@@ -8017,7 +8013,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .meaning-wrapper {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
