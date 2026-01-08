@@ -1303,11 +1303,11 @@ body.learning-mode .app-header {
    高校進捗ロードマップ
    ======================================== */
 .school-roadmap-container {
-    margin: 0 auto 12px auto;
-    max-width: 600px;
-    width: calc(100% - 16px);
-    background: transparent;
-    padding: 0;
+    margin: 0 0 12px 0;
+    width: 100%;
+    background: #e0f7fa;
+    padding: 12px 0;
+    border-radius: 0;
     position: relative;
     overflow: visible;
 }
@@ -1324,7 +1324,6 @@ body.learning-mode .app-header {
 .school-roadmap-title {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
     padding: 6px 14px;
     font-size: 13px;
     font-weight: 800;
@@ -1332,16 +1331,6 @@ body.learning-mode .app-header {
     background: #1d4ed8;
     border-radius: 20px;
     letter-spacing: 0.5px;
-}
-
-.school-roadmap-title::before {
-    content: '';
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.08V12a10 10 0 1 1-5.93-9.14'/%3E%3Cpolyline points='22 4 12 14.01 9 11.01'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
 }
 
 .school-roadmap-scroll {
@@ -1378,9 +1367,9 @@ body.learning-mode .app-header {
 /* スタートマス */
 .roadmap-tile-start {
     width: 90px;
-    background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+    background: linear-gradient(180deg, #67e8f9 0%, #22d3ee 100%);
     box-shadow: 
-        0 4px 0 #16a34a,
+        0 4px 0 #06b6d4,
         0 6px 8px rgba(0, 0, 0, 0.15);
     display: flex;
     align-items: center;
