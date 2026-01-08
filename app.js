@@ -4920,9 +4920,9 @@ function updateQuestionCountOptions(wordCount) {
     // スワイプハンドルの位置を更新
     if (questionCountTrack && questionCountHandle && wordCount >= 1) {
         const trackWidth = questionCountTrack.offsetWidth;
-        const handleWidth = 28;
-        const minLeft = 2;
-        const maxLeft = trackWidth - handleWidth - 2;
+        const handleWidth = 22;
+        const minLeft = 1;
+        const maxLeft = trackWidth - handleWidth - 1;
         // 最大値（すべて）なので右端に配置
         questionCountHandle.style.left = maxLeft + 'px';
     }
@@ -6728,9 +6728,9 @@ function setupEventListeners() {
     function updateHandlePosition(count, maxCount, trackWidth) {
         if (!questionCountHandle || !questionCountTrack) return;
         
-        const handleWidth = 28;
-        const minLeft = 2;
-        const maxLeft = trackWidth - handleWidth - 2;
+        const handleWidth = 22;
+        const minLeft = 1;
+        const maxLeft = trackWidth - handleWidth - 1;
         
         // カウントを0-1の範囲に正規化（すべての場合は1.0）
         let ratio = 0;
@@ -6746,9 +6746,9 @@ function setupEventListeners() {
     }
     
     function getCountFromPosition(left, trackWidth, maxCount) {
-        const handleWidth = 28;
-        const minLeft = 2;
-        const maxLeft = trackWidth - handleWidth - 2;
+        const handleWidth = 22;
+        const minLeft = 1;
+        const maxLeft = trackWidth - handleWidth - 1;
         const ratio = Math.max(0, Math.min(1, (left - minLeft) / (maxLeft - minLeft)));
         
         // 右端に近い場合（95%以上）は「すべて」を返す
@@ -6806,7 +6806,7 @@ function setupEventListeners() {
             e.preventDefault();
             const touch = e.touches[0];
             swipeStartX = touch.clientX;
-            swipeStartLeft = parseFloat(questionCountHandle.style.left) || 2;
+            swipeStartLeft = parseFloat(questionCountHandle.style.left) || 1;
             isDragging = true;
             questionCountHandle.classList.add('dragging');
             
@@ -6822,9 +6822,9 @@ function setupEventListeners() {
             const touch = e.touches[0];
             const deltaX = touch.clientX - swipeStartX;
             const trackWidth = questionCountTrack.offsetWidth;
-            const handleWidth = 28;
-            const minLeft = 2;
-            const maxLeft = trackWidth - handleWidth - 2;
+            const handleWidth = 22;
+            const minLeft = 1;
+            const maxLeft = trackWidth - handleWidth - 1;
             
             let newLeft = swipeStartLeft + deltaX;
             newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
@@ -6858,7 +6858,7 @@ function setupEventListeners() {
         questionCountTrack.addEventListener('mousedown', (e) => {
             e.preventDefault();
             swipeStartX = e.clientX;
-            swipeStartLeft = parseFloat(questionCountHandle.style.left) || 2;
+            swipeStartLeft = parseFloat(questionCountHandle.style.left) || 1;
             isDragging = true;
             questionCountHandle.classList.add('dragging');
             
@@ -6872,9 +6872,9 @@ function setupEventListeners() {
             
             const deltaX = e.clientX - swipeStartX;
             const trackWidth = questionCountTrack.offsetWidth;
-            const handleWidth = 28;
-            const minLeft = 2;
-            const maxLeft = trackWidth - handleWidth - 2;
+            const handleWidth = 22;
+            const minLeft = 1;
+            const maxLeft = trackWidth - handleWidth - 1;
             
             let newLeft = swipeStartLeft + deltaX;
             newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
