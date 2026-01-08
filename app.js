@@ -5974,6 +5974,9 @@ function handleTimeUp() {
 // rangeEnd: 学習範囲の終了index（exclusive）
 // rangeStartOverride: 進捗計算に用いる開始index（表示開始位置をずらすため）
 function initLearning(category, words, startIndex = 0, rangeEnd = undefined, rangeStartOverride = undefined) {
+    // ロードマップアニメーション用に現在の学習語数を保存
+    previousLearnedWordsForRoadmap = calculateTotalLearnedWords();
+    
     selectedCategory = category;
     currentWords = words;
     // インプットモード（眺めるモード）の場合は、currentCourseWordsも設定
@@ -15031,6 +15034,9 @@ let hwQuizWrongCount = 0;
  */
 async function startHandwritingQuiz(category, words, courseTitle) {
     console.log('[HWQuiz] Starting handwriting quiz with', words.length, 'words');
+    
+    // ロードマップアニメーション用に現在の学習語数を保存
+    previousLearnedWordsForRoadmap = calculateTotalLearnedWords();
     
     hwQuizWords = words;
     hwQuizIndex = 0;
