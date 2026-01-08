@@ -908,11 +908,7 @@ function showSchoolNameTooltip(name, type, course, targetElement) {
         let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
         let top = rect.top - tooltipRect.height - 10;
         
-        // 画面外にはみ出す場合の調整
-        if (left < 10) left = 10;
-        if (left + tooltipRect.width > window.innerWidth - 10) {
-            left = window.innerWidth - tooltipRect.width - 10;
-        }
+        // 上にはみ出す場合のみ下に表示
         if (top < 10) {
             top = rect.bottom + 10;
         }
