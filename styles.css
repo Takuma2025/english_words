@@ -1092,11 +1092,11 @@ body.learning-mode .app-header {
 
 .category-cards-row .category-card {
     padding: 16px;
+    border: 1px solid #0055ca;
     border-bottom: none;
     border-right: none;
     align-items: center;
     border-radius: 0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     margin-bottom: 0;
 }
 
@@ -1339,10 +1339,10 @@ body.learning-mode .app-header {
     width: 100%;
     padding: 14px 16px;
     background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    border-radius: 0;
+    border: 1px solid #0055ca;
     cursor: pointer;
-    transition: box-shadow 0.2s ease, transform 0.1s ease;
+    transition: border-color 0.2s ease, transform 0.1s ease;
 }
 
 .school-card:active {
@@ -2849,15 +2849,14 @@ body.learning-mode .app-header {
     display: flex;
     align-items: center;
     background: #ffffff;
-    border: none;
-    border-radius: 10px;
+    border: 1px solid #0055ca;
+    border-radius: 0;
     padding: 16px;
     margin-bottom: 10px;
     width: 100%;
     box-sizing: border-box;
     text-align: left;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -2889,7 +2888,7 @@ button.category-card:focus-visible {
     padding: 0;
     overflow: hidden;
     border-radius: 0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    border: 1px solid #0055ca;
     margin-bottom: 2px;
 }
 
@@ -3080,14 +3079,13 @@ button.category-card:focus-visible {
 .learning-menu-category-btn {
     width: 100%;
     padding: 10px 12px;
-    border: none;
+    border: 1px solid #0055ca;
     border-radius: 8px;
     background: white;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
     -webkit-tap-highlight-color: transparent;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .learning-menu-category-btn:active {
@@ -3119,14 +3117,13 @@ button.category-card:focus-visible {
 .learning-menu-subcategory-btn {
     width: 100%;
     padding: 6px 8px;
-    border: none;
+    border: 1px solid #0055ca;
     border-radius: 6px;
     background: white;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
     -webkit-tap-highlight-color: transparent;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
 }
 
 .learning-menu-subcategory-btn:active {
@@ -5654,7 +5651,7 @@ body.reorder-mode-active .word-card-container {
 .flip-mode .input-list-inner {
     box-shadow: none;
     border-radius: 0;
-    border: 1px solid #000000;
+    border: 0.5px solid #000000;
 }
 
 .flip-mode .input-list-front,
@@ -5892,6 +5889,7 @@ body.reorder-mode-active .word-card-container {
     justify-content: center;
     align-items: center;
     width: auto;
+    padding-top: 0;
 }
 
 .flip-mode .input-list-word-container {
@@ -6081,8 +6079,8 @@ body.reorder-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
-    border-top: 1px solid #000000;
-    border-left: 1px solid #000000;
+    border-top: 0.5px solid #000000;
+    border-left: 0.5px solid #000000;
     padding: 20px 16px;
     padding-top: 40px;
     padding-bottom: 24px;
@@ -6090,11 +6088,11 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-item-expand:first-child {
-    border-top: 1px solid #000000;
+    border-top: 0.5px solid #000000;
 }
 
 .input-list-item-expand:last-child {
-    border-bottom: 1px solid #000000;
+    border-bottom: 0.5px solid #000000;
 }
 
 .input-list-item-expand.marker-correct {
@@ -7356,14 +7354,14 @@ body.reorder-mode-active .word-card-container {
     background: #ffffff;
     border-radius: 20px;
     box-shadow: none;
-    border: 1px solid #000000;
+    border: 0.5px solid #000000;
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease;
 }
 
 /* アウトプットモードのときも黒ボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-stack {
-    border: 1px solid #000000;
+    border: 0.5px solid #000000;
 }
 
 .card-stack-1 {
@@ -7553,13 +7551,13 @@ body.learning-mode .bottom-nav {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1px solid #000000;
+    border: 0.5px solid #000000;
     transition: border-color 0.3s ease;
 }
 
 /* アウトプットモードのときも黒ボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
-    border: 1px solid #000000;
+    border: 0.5px solid #000000;
 }
 
 /* カードの赤・青囲みは削除 - 単語番号下のマーカーのみ使用 */
@@ -7575,14 +7573,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1px solid #000000;
+    border: 0.5px solid #000000;
     transform: rotateY(180deg);
     transition: border-color 0.3s ease;
 }
 
 /* アウトプットモードのときも黒ボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
-    border: 1px solid #000000;
+    border: 0.5px solid #000000;
 }
 
 /* 裏面の英単語表示（小さく上部に） */
