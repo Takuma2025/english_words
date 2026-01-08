@@ -1312,6 +1312,39 @@ body.learning-mode .app-header {
     overflow: hidden;
 }
 
+/* ロードマップヘッダー */
+.school-roadmap-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.school-roadmap-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(29, 78, 216, 0.3);
+    letter-spacing: 0.5px;
+}
+
+.school-roadmap-title::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.08V12a10 10 0 1 1-5.93-9.14'/%3E%3Cpolyline points='22 4 12 14.01 9 11.01'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
 .school-roadmap-scroll {
     overflow-x: auto;
     overflow-y: visible;
@@ -1385,15 +1418,48 @@ body.learning-mode .app-header {
         0 6px 12px rgba(29, 78, 216, 0.15);
 }
 
+.roadmap-school-name-row {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    max-width: 100%;
+}
+
+.roadmap-school-type {
+    flex-shrink: 0;
+    font-size: 8px;
+    font-weight: 700;
+    color: #ffffff;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.roadmap-school-type-public {
+    background: #2563eb;
+}
+
+.roadmap-school-type-private {
+    background: #dc2626;
+}
+
+.roadmap-school-type-national {
+    background: #16a34a;
+}
+
 .roadmap-school-name {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     color: #334155;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    line-height: 1.2;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
 }
 
 .roadmap-tile-school.cleared .roadmap-school-name {
@@ -1457,56 +1523,77 @@ body.learning-mode .app-header {
     50% { transform: skewY(-3deg); }
 }
 
-/* タイルが新しく到達したときのアニメーション（ひっくり返る） */
-@keyframes tileFlip {
+/* タイルが新しく到達したときのアニメーション */
+@keyframes tileArrival {
     0% { 
-        transform: rotateY(0deg);
+        transform: scale(1);
+        box-shadow: 0 4px 0 #1d4ed8, 0 6px 8px rgba(0, 0, 0, 0.15);
     }
-    50% { 
-        transform: rotateY(90deg);
+    30% { 
+        transform: scale(1.3) translateY(-8px);
+        box-shadow: 0 12px 0 #1d4ed8, 0 20px 30px rgba(29, 78, 216, 0.4);
+    }
+    50% {
+        transform: scale(1.2) translateY(-4px);
     }
     100% { 
-        transform: rotateY(0deg);
+        transform: scale(1);
+        box-shadow: 0 4px 0 #1d4ed8, 0 6px 8px rgba(0, 0, 0, 0.15);
     }
 }
 
-@keyframes tileFlipPulse {
+@keyframes tilePulse {
     0%, 100% { 
-        box-shadow: 0 4px 0 #1d4ed8, 0 6px 8px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(59, 130, 246, 0.6);
+        box-shadow: 0 4px 0 #1d4ed8, 0 6px 8px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(59, 130, 246, 0.5);
     }
     50% { 
-        box-shadow: 0 4px 0 #1d4ed8, 0 6px 8px rgba(0, 0, 0, 0.15), 0 0 0 16px rgba(59, 130, 246, 0);
+        box-shadow: 0 4px 0 #1d4ed8, 0 6px 8px rgba(0, 0, 0, 0.15), 0 0 0 12px rgba(59, 130, 246, 0);
+    }
+}
+
+@keyframes schoolTileArrival {
+    0% { 
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    30% { 
+        transform: scale(1.15) translateY(-10px);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1) translateY(-5px);
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 1;
     }
 }
 
 @keyframes flagAppear {
     0% { 
-        transform: translateX(-50%) translateY(20px) scale(0);
+        transform: translateX(-50%) scale(0) rotate(-30deg);
         opacity: 0;
     }
-    60% { 
-        transform: translateX(-50%) translateY(-5px) scale(1.1);
+    50% { 
+        transform: translateX(-50%) scale(1.2) rotate(10deg);
         opacity: 1;
     }
     100% { 
-        transform: translateX(-50%) translateY(0) scale(1);
+        transform: translateX(-50%) scale(1) rotate(0deg);
         opacity: 1;
     }
 }
 
-/* 通常タイルのひっくり返りアニメーション */
 .roadmap-tile-cleared.tile-just-cleared {
-    animation: tileFlip 0.6s ease-in-out, tileFlipPulse 0.8s ease-out 0.6s 2;
-    transform-style: preserve-3d;
+    animation: tileArrival 0.6s ease-out, tilePulse 1s ease-in-out 0.6s 2;
 }
 
-/* 高校タイルは旗が立つのでシンプルに光る */
 .roadmap-tile-school.tile-just-cleared {
-    animation: tileFlipPulse 0.8s ease-out 0.3s 3;
+    animation: schoolTileArrival 0.7s ease-out, tilePulse 1s ease-in-out 0.7s 2;
 }
 
 .roadmap-flag.flag-just-appeared {
-    animation: flagAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+    animation: flagAppear 0.5s ease-out 0.3s both;
 }
 
 /* 現在位置インジケーター */
@@ -1524,15 +1611,15 @@ body.learning-mode .app-header {
 
 /* 進捗インジケーター */
 .school-roadmap-progress-indicator {
-    position: absolute;
-    top: 8px;
-    right: 16px;
-    background: #1d4ed8;
-    color: #ffffff;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.school-roadmap-progress-indicator #roadmapCurrentWords {
+    font-size: 15px;
     font-weight: 700;
+    color: #1d4ed8;
 }
 
 /* タイル番号（10語ごと） */
@@ -1565,7 +1652,13 @@ body.learning-mode .app-header {
     }
     
     .roadmap-school-name {
-        font-size: 10px;
+        font-size: 9px;
+    }
+    
+    .roadmap-school-type {
+        width: 12px;
+        height: 12px;
+        font-size: 7px;
     }
     
     .roadmap-flag-pole {

@@ -736,15 +736,36 @@ function updateSchoolRoadmap(forceAnimation = false) {
                     }
                 }
                 
+                // 高校名行（種別バッジ + 高校名）
+                const nameRow = document.createElement('div');
+                nameRow.className = 'roadmap-school-name-row';
+                
+                // 種別バッジ
+                const typeEl = document.createElement('span');
+                typeEl.className = 'roadmap-school-type';
+                if (school.type === '公立') {
+                    typeEl.classList.add('roadmap-school-type-public');
+                    typeEl.textContent = '公';
+                } else if (school.type === '私立') {
+                    typeEl.classList.add('roadmap-school-type-private');
+                    typeEl.textContent = '私';
+                } else if (school.type === '国立') {
+                    typeEl.classList.add('roadmap-school-type-national');
+                    typeEl.textContent = '国';
+                }
+                nameRow.appendChild(typeEl);
+                
                 // 高校名（短縮）
-                const nameEl = document.createElement('div');
+                const nameEl = document.createElement('span');
                 nameEl.className = 'roadmap-school-name';
                 const shortName = school.name
                     .replace(/高等学校$/, '高')
                     .replace(/大阪府立|大阪教育大学附属|大阪公立大学|大阪/g, '')
                     .replace(/高等専門学校$/, '高専');
                 nameEl.textContent = shortName;
-                tile.appendChild(nameEl);
+                nameRow.appendChild(nameEl);
+                
+                tile.appendChild(nameRow);
                 
                 // 必須語彙数
                 const vocabEl = document.createElement('div');
@@ -5974,9 +5995,6 @@ function handleTimeUp() {
 // rangeEnd: 学習範囲の終了index（exclusive）
 // rangeStartOverride: 進捗計算に用いる開始index（表示開始位置をずらすため）
 function initLearning(category, words, startIndex = 0, rangeEnd = undefined, rangeStartOverride = undefined) {
-    // ロードマップアニメーション用に現在の学習語数を保存
-    previousLearnedWordsForRoadmap = calculateTotalLearnedWords();
-    
     selectedCategory = category;
     currentWords = words;
     // インプットモード（眺めるモード）の場合は、currentCourseWordsも設定
@@ -15034,9 +15052,6 @@ let hwQuizWrongCount = 0;
  */
 async function startHandwritingQuiz(category, words, courseTitle) {
     console.log('[HWQuiz] Starting handwriting quiz with', words.length, 'words');
-    
-    // ロードマップアニメーション用に現在の学習語数を保存
-    previousLearnedWordsForRoadmap = calculateTotalLearnedWords();
     
     hwQuizWords = words;
     hwQuizIndex = 0;
