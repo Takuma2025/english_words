@@ -4911,6 +4911,10 @@ body.reorder-mode-active .word-card-container {
     display: none;
 }
 
+.input-flip-all-btn {
+    margin-left: auto;
+}
+
 .input-shuffle-btn .btn-label,
 .input-flip-all-btn .btn-label {
     display: inline;
@@ -5646,6 +5650,17 @@ body.reorder-mode-active .word-card-container {
     background: #ffffff;
 }
 
+/* フリップカードに影をつける */
+.flip-mode .input-list-inner {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+    border-radius: 0;
+}
+
+.flip-mode .input-list-front,
+.flip-mode .input-list-back {
+    border-radius: 0;
+}
+
 .input-list-item.flipped .input-list-inner {
     transform: rotateY(180deg);
 }
@@ -6065,6 +6080,8 @@ body.reorder-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
+    border-top: 2px solid #e5e7eb;
+    border-left: 2px solid #e5e7eb;
     padding: 20px 16px;
     padding-top: 40px;
     padding-bottom: 24px;
@@ -6072,7 +6089,11 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-item-expand:first-child {
-    border: none;
+    border-top: 2px solid #e5e7eb;
+}
+
+.input-list-item-expand:last-child {
+    border-bottom: 2px solid #e5e7eb;
 }
 
 .input-list-item-expand.marker-correct {
@@ -7333,15 +7354,15 @@ body.reorder-mode-active .word-card-container {
     height: 100%;
     background: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    border: 0.5px solid #000000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: none;
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease;
 }
 
-/* アウトプットモードのときは0.25pxの黒い縁線 */
+/* アウトプットモードのときも影のみ */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-stack {
-    border: 0.25px solid #000000;
+    border: none;
 }
 
 .card-stack-1 {
@@ -7525,19 +7546,19 @@ body.learning-mode .bottom-nav {
     backface-visibility: hidden;
     background: #ffffff;
     border-radius: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
     user-select: none;
     -webkit-user-select: none;
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 0.5px solid #000000;
-    transition: border-color 0.3s ease;
+    border: none;
+    transition: box-shadow 0.3s ease;
 }
 
-/* アウトプットモードのときはボーダーを非表示 */
+/* アウトプットモードのときも影のみ */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
-    border: 0.25px solid #000000;
+    border: none;
 }
 
 /* カードの赤・青囲みは削除 - 単語番号下のマーカーのみ使用 */
@@ -7549,18 +7570,18 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
     backface-visibility: hidden;
     background: #ffffff;
     border-radius: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 0.5px solid #000000;
+    border: none;
     transform: rotateY(180deg);
-    transition: border-color 0.3s ease;
+    transition: box-shadow 0.3s ease;
 }
 
-/* アウトプットモードのときはボーダーを非表示 */
+/* アウトプットモードのときも影のみ */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
-    border: 0.25px solid #000000;
+    border: none;
 }
 
 /* 裏面の英単語表示（小さく上部に） */
