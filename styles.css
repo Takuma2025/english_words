@@ -5652,8 +5652,9 @@ body.reorder-mode-active .word-card-container {
 
 /* フリップカードに影をつける */
 .flip-mode .input-list-inner {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-shadow: none;
     border-radius: 0;
+    border: 1px solid #e5e7eb;
 }
 
 .flip-mode .input-list-front,
@@ -6080,8 +6081,8 @@ body.reorder-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
-    border-top: 2px solid #e5e7eb;
-    border-left: 2px solid #e5e7eb;
+    border-top: 1px solid #e5e7eb;
+    border-left: 1px solid #e5e7eb;
     padding: 20px 16px;
     padding-top: 40px;
     padding-bottom: 24px;
@@ -6089,11 +6090,11 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-item-expand:first-child {
-    border-top: 2px solid #e5e7eb;
+    border-top: 1px solid #e5e7eb;
 }
 
 .input-list-item-expand:last-child {
-    border-bottom: 2px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .input-list-item-expand.marker-correct {
