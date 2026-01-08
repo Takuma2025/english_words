@@ -7668,8 +7668,8 @@ function insertLetter(letter) {
             // letterはdata-keyから取得した小文字なので、toUpperCase()で大文字に変換
             if (wasShiftActive) {
                 letterToInsert = String(letter).toUpperCase();
-                // 1文字入力したら自動的に小文字モードに戻る
-                toggleShift();
+                // ボタンを離したときにシフトを解除するためフラグを設定
+                window.pendingShiftReset = 'virtualKeyboard';
             } else {
                 letterToInsert = String(letter).toLowerCase();
             }
@@ -7694,6 +7694,7 @@ function insertLetter(letter) {
 function toggleShift() {
     isShiftActive = !isShiftActive;
     const shiftKey = document.getElementById('keyboardShift');
+    const keyboard = document.getElementById('virtualKeyboard');
     if (shiftKey) {
         if (isShiftActive) {
             shiftKey.classList.add('active');
@@ -7702,6 +7703,10 @@ function toggleShift() {
             shiftKey.classList.remove('active');
             shiftKey.dataset.shift = 'false';
         }
+    }
+    // キーボードにshift-activeクラスを追加/削除（ポップアップ用）
+    if (keyboard) {
+        keyboard.classList.toggle('shift-active', isShiftActive);
     }
     updateKeyboardDisplay();
 }
@@ -7716,8 +7721,10 @@ function updateKeyboardDisplay() {
         if (letter && letter !== ' ') { // スペースキーは除外
             if (isShiftActive) {
                 key.textContent = letter.toUpperCase();
+                key.dataset.key = letter.toUpperCase(); // ポップアップ用にdata-keyも更新
             } else {
                 key.textContent = letter.toLowerCase();
+                key.dataset.key = letter.toLowerCase(); // ポップアップ用にdata-keyも更新
             }
         }
     });
@@ -12628,7 +12635,8 @@ function insertSentenceLetter(letter) {
         } else {
             if (isShiftActive) {
                 letterToInsert = String(letter).toUpperCase();
-                toggleSentenceShift();
+                // ボタンを離したときにシフトを解除するためフラグを設定
+                window.pendingShiftReset = 'sentenceKeyboard';
             } else {
                 letterToInsert = String(letter).toLowerCase();
             }
@@ -12674,12 +12682,30 @@ function removeSentenceLetter() {
 function toggleSentenceShift() {
     isShiftActive = !isShiftActive;
     const shiftKey = document.getElementById('sentenceKeyboardShift');
+    const keyboard = document.getElementById('sentenceKeyboard');
     if (shiftKey) {
         if (isShiftActive) {
             shiftKey.classList.add('active');
         } else {
             shiftKey.classList.remove('active');
         }
+    }
+    // キーボードにshift-activeクラスを追加/削除（ポップアップ用）
+    if (keyboard) {
+        keyboard.classList.toggle('shift-active', isShiftActive);
+        // キーボードの表示を更新（大文字/小文字）
+        keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+            const letter = key.dataset.key;
+            if (letter && letter !== ' ') {
+                if (isShiftActive) {
+                    key.textContent = letter.toUpperCase();
+                    key.dataset.key = letter.toUpperCase();
+                } else {
+                    key.textContent = letter.toLowerCase();
+                    key.dataset.key = letter.toLowerCase();
+                }
+            }
+        });
     }
 }
 
@@ -14545,9 +14571,10 @@ function setupGrammarExerciseKeyboard() {
                 const currentShift = shiftKey && shiftKey.dataset.shift === 'true';
                 const charToInsert = (currentShift && letter.match(/[a-z]/)) ? letter.toUpperCase() : letter;
                 insertGrammarExerciseLetter(charToInsert);
-                // 大文字を入力した場合は、自動的にShift状態を解除
+                // 大文字を入力した場合は、ボタンを離したときにシフトを解除するためフラグを設定
                 if (currentShift && letter.match(/[a-z]/) && charToInsert === letter.toUpperCase()) {
-                    resetShiftState();
+                    window.pendingShiftReset = 'grammarExerciseKeyboard';
+                    window.grammarExerciseResetShiftState = resetShiftState;
                 }
             };
             key.addEventListener('touchstart', handleLetter, { passive: false });
@@ -14600,10 +14627,15 @@ function setupGrammarExerciseKeyboard() {
 
 // 演習問題のキーボードの大文字・小文字を更新
 function updateGrammarExerciseKeyboardCase(keyboard, isShift) {
+    // キーボードにshift-activeクラスを追加/削除（ポップアップ用）
+    keyboard.classList.toggle('shift-active', isShift);
+    
     keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
         const keyValue = key.dataset.key;
-        if (keyValue && keyValue.length === 1 && keyValue.match(/[a-z]/)) {
-            key.textContent = isShift ? keyValue.toUpperCase() : keyValue;
+        if (keyValue && keyValue.length === 1 && keyValue.match(/[a-z]/i)) {
+            const newValue = isShift ? keyValue.toUpperCase() : keyValue.toLowerCase();
+            key.textContent = newValue;
+            key.dataset.key = newValue; // ポップアップ用にdata-keyも更新
         }
         // アポストロフィ/アンダーバーの切り替え
         if (key.dataset.shiftKey) {
@@ -14882,6 +14914,7 @@ async function startHandwritingQuiz(category, words, courseTitle) {
                     <button class="keyboard-key" data-key="b">b</button>
                     <button class="keyboard-key" data-key="n">n</button>
                     <button class="keyboard-key" data-key="m">m</button>
+                    <button class="keyboard-key" data-key="'">'</button>
                     <button class="keyboard-key keyboard-key-special" id="hwKeyboardBackspace">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
@@ -15835,13 +15868,11 @@ function setupHWVirtualKeyboard() {
             } else if (keyValue) {
                 // 通常のキー
                 let char = keyValue;
-                if (hwKeyboardShiftActive) {
+                const wasShiftActive = hwKeyboardShiftActive;
+                if (wasShiftActive) {
                     char = char.toUpperCase();
-                    // シフトを解除
-                    hwKeyboardShiftActive = false;
-                    const shiftBtn = document.getElementById('hwKeyboardShift');
-                    if (shiftBtn) shiftBtn.classList.remove('active');
-                    updateHWKeyboardCase();
+                    // ボタンを離したときにシフトを解除するためフラグを設定
+                    window.pendingShiftReset = 'hwVirtualKeyboard';
                 }
                 // 正解の大文字/小文字に合わせて調整
                 const adjustedChar = adjustCharCaseForAnswer(char);
@@ -15865,11 +15896,16 @@ function updateHWKeyboardCase() {
     const keyboard = document.getElementById('hwVirtualKeyboard');
     if (!keyboard) return;
     
+    // キーボードにshift-activeクラスを追加/削除（ポップアップ用）
+    keyboard.classList.toggle('shift-active', hwKeyboardShiftActive);
+    
     const keys = keyboard.querySelectorAll('.keyboard-key');
     keys.forEach(key => {
         const keyValue = key.dataset.key;
         if (keyValue && keyValue.length === 1 && keyValue.match(/[a-z]/i)) {
-            key.textContent = hwKeyboardShiftActive ? keyValue.toUpperCase() : keyValue.toLowerCase();
+            const newValue = hwKeyboardShiftActive ? keyValue.toUpperCase() : keyValue.toLowerCase();
+            key.textContent = newValue;
+            key.dataset.key = newValue; // ポップアップ用にdata-keyも更新
         }
     });
 }
@@ -16327,6 +16363,7 @@ function restartHWQuiz() {
                     <button class="keyboard-key" data-key="b">b</button>
                     <button class="keyboard-key" data-key="n">n</button>
                     <button class="keyboard-key" data-key="m">m</button>
+                    <button class="keyboard-key" data-key="'">'</button>
                     <button class="keyboard-key keyboard-key-special" id="hwKeyboardBackspace">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
@@ -16658,803 +16695,89 @@ document.addEventListener('touchstart', function(e) {
     }
 }, { capture: true, passive: false });
 
-// ====================================
-// 大阪府 高校ステージマップ
-// ====================================
-
-let stageMap = null;
-let stageMarkers = [];
-let allSchools = [];
-let allWords = [];
-let currentTestSchool = null;
-let testQuestions = [];
-let testCurrentIndex = 0;
-let testScore = 0;
-
-// 進捗データ
-function getStageProgress() {
-    return {
-        learnedCount: parseInt(localStorage.getItem('learnedCount') || '0'),
-        clearedStage: parseInt(localStorage.getItem('clearedStage') || '0')
-    };
-}
-
-function setStageProgress(key, value) {
-    localStorage.setItem(key, String(value));
-}
-
-function getTestHistory() {
-    try {
-        return JSON.parse(localStorage.getItem('schoolTestHistory') || '{}');
-    } catch {
-        return {};
-    }
-}
-
-function saveTestHistory(schoolId, score) {
-    const history = getTestHistory();
-    const now = new Date().toISOString();
-    if (!history[schoolId]) {
-        history[schoolId] = { bestScore: score, lastScore: score, lastAt: now };
-    } else {
-        history[schoolId].lastScore = score;
-        history[schoolId].lastAt = now;
-        if (score > history[schoolId].bestScore) {
-            history[schoolId].bestScore = score;
-        }
-    }
-    localStorage.setItem('schoolTestHistory', JSON.stringify(history));
-}
-
-// 習得単語数をカウント
-function countLearnedWords() {
-    let total = new Set();
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('correctWords-')) {
-            try {
-                const data = JSON.parse(localStorage.getItem(key));
-                if (Array.isArray(data)) {
-                    data.forEach(id => total.add(id));
+// キーボードキーのポップアップエフェクト（iOSスタイル）
+(function() {
+    // ボタンを離したときにシフトを解除する関数
+    function handlePendingShiftReset() {
+        if (!window.pendingShiftReset) return;
+        
+        const keyboardType = window.pendingShiftReset;
+        window.pendingShiftReset = null;
+        
+        switch (keyboardType) {
+            case 'virtualKeyboard':
+                if (typeof isShiftActive !== 'undefined' && isShiftActive) {
+                    toggleShift();
                 }
-            } catch (e) {}
-        }
-    }
-    // learnedCountを更新
-    setStageProgress('learnedCount', total.size);
-    return total.size;
-}
-
-// ステージ番号を付与
-function assignStageNumbers(features) {
-    // hensachi昇順、同じならname昇順でソート
-    const sorted = [...features].sort((a, b) => {
-        const ha = a.properties.hensachi || 999;
-        const hb = b.properties.hensachi || 999;
-        if (ha !== hb) return ha - hb;
-        return (a.properties.name || '').localeCompare(b.properties.name || '');
-    });
-    // ステージ番号付与
-    sorted.forEach((f, i) => {
-        f.properties.stage = i + 1;
-    });
-    return sorted;
-}
-
-// 状態を計算
-function computeStatus(stage, clearedStage) {
-    if (stage <= clearedStage) return 'cleared';
-    if (stage === clearedStage + 1) return 'active';
-    return 'locked';
-}
-
-// マップ画面を表示
-function showStageMap() {
-    const view = document.getElementById('stageMapView');
-    if (!view) return;
-    
-    view.classList.remove('hidden');
-    
-    // サイドバー閉じる
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    if (sidebar) sidebar.classList.remove('open');
-    if (overlay) overlay.classList.remove('visible');
-    
-    // learnedCountを更新
-    countLearnedWords();
-    
-    // マップ初期化
-    if (!stageMap) {
-        initStageMap();
-    } else {
-        stageMap.resize();
-        updateMapMarkers();
-    }
-}
-
-function hideStageMap() {
-    const view = document.getElementById('stageMapView');
-    if (view) view.classList.add('hidden');
-}
-
-// マップ初期化
-async function initStageMap() {
-    const container = document.getElementById('stageMapContainer');
-    if (!container) return;
-    
-    // 大阪中心
-    const osakaCenter = [135.5023, 34.6937];
-    
-    stageMap = new maplibregl.Map({
-        container: 'stageMapContainer',
-        style: {
-            version: 8,
-            sources: {
-                'carto-dark': {
-                    type: 'raster',
-                    tiles: [
-                        'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-                        'https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'
-                    ],
-                    tileSize: 256,
-                    attribution: '&copy; CARTO &copy; OpenStreetMap'
+                break;
+            case 'sentenceKeyboard':
+                if (typeof isShiftActive !== 'undefined' && isShiftActive) {
+                    toggleSentenceShift();
                 }
-            },
-            layers: [
-                {
-                    id: 'carto-tiles',
-                    type: 'raster',
-                    source: 'carto-dark',
-                    paint: {
-                        'raster-saturation': -0.3,
-                        'raster-contrast': 0.1,
-                        'raster-brightness-min': 0.1,
-                        'raster-brightness-max': 0.9
-                    }
+                break;
+            case 'grammarExerciseKeyboard':
+                if (window.grammarExerciseResetShiftState) {
+                    window.grammarExerciseResetShiftState();
+                    window.grammarExerciseResetShiftState = null;
                 }
-            ]
-        },
-        center: osakaCenter,
-        zoom: 10,
-        minZoom: 9,
-        maxZoom: 15,
-        maxBounds: [[134.8, 34.2], [136.0, 35.1]]
-    });
-    
-    stageMap.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
-    
-    // データ読み込み
-    await loadStageData();
-    
-    // イベント設定
-    setupStageMapEvents();
-}
-
-// データ読み込み
-async function loadStageData() {
-    try {
-        // 高校データ
-        const schoolRes = await fetch('data/osaka_highschools.geojson');
-        const schoolData = await schoolRes.json();
-        allSchools = assignStageNumbers(schoolData.features || []);
-        
-        // 単語データ
-        const wordRes = await fetch('data/words.json');
-        allWords = await wordRes.json();
-        
-        // UI更新
-        document.getElementById('stageMapTotalStage').textContent = allSchools.length;
-        
-        updateMapMarkers();
-    } catch (err) {
-        console.error('Failed to load stage data:', err);
-    }
-}
-
-// マーカー更新
-function updateMapMarkers() {
-    if (!stageMap) return;
-    
-    // 既存マーカー削除
-    stageMarkers.forEach(m => m.remove());
-    stageMarkers = [];
-    
-    const { learnedCount, clearedStage } = getStageProgress();
-    const clearedOnly = document.getElementById('stageMapClearedOnly')?.checked || false;
-    const searchQuery = (document.getElementById('stageMapSearch')?.value || '').toLowerCase().trim();
-    
-    // UI更新
-    document.getElementById('stageMapCurrentStage').textContent = clearedStage;
-    
-    // フィルタリング
-    let filtered = allSchools.filter(f => {
-        const status = computeStatus(f.properties.stage, clearedStage);
-        if (clearedOnly && status !== 'cleared') return false;
-        if (searchQuery && !f.properties.name.toLowerCase().includes(searchQuery)) return false;
-        return true;
-    });
-    
-    // activeを最後に追加（最前面表示のため）
-    filtered.sort((a, b) => {
-        const sa = computeStatus(a.properties.stage, clearedStage);
-        const sb = computeStatus(b.properties.stage, clearedStage);
-        if (sa === 'active') return 1;
-        if (sb === 'active') return -1;
-        return 0;
-    });
-    
-    filtered.forEach(feature => {
-        const props = feature.properties;
-        const coords = feature.geometry.coordinates;
-        const status = computeStatus(props.stage, clearedStage);
-        
-        // マーカー要素作成（シンプル学校アイコン）
-        const el = document.createElement('div');
-        el.className = 'stage-marker';
-        
-        const marker_div = document.createElement('div');
-        marker_div.className = `school-marker ${status}`;
-        
-        // アイコン
-        const icon = document.createElement('div');
-        icon.className = 'school-icon';
-        const img = document.createElement('img');
-        img.src = 'school_goal_w.png';
-        img.alt = '学校';
-        icon.appendChild(img);
-        marker_div.appendChild(icon);
-        
-        // クリア済み: 旗を表示
-        if (status === 'cleared') {
-            const flag = document.createElement('img');
-            flag.src = 'flag.png';
-            flag.alt = '旗';
-            flag.className = 'school-flag';
-            marker_div.appendChild(flag);
-        }
-        
-        // ステージ番号バッジ
-        const badge = document.createElement('div');
-        badge.className = 'school-badge';
-        badge.textContent = props.stage;
-        marker_div.appendChild(badge);
-        
-        el.appendChild(marker_div);
-        
-        // クリックイベント
-        el.addEventListener('click', () => {
-            showBottomSheet(feature, status, learnedCount);
-        });
-        
-        const marker = new maplibregl.Marker({ element: el })
-            .setLngLat(coords)
-            .addTo(stageMap);
-        
-        stageMarkers.push(marker);
-    });
-}
-
-// ボトムシート表示
-function showBottomSheet(feature, status, learnedCount) {
-    const sheet = document.getElementById('stageBottomSheet');
-    const content = document.getElementById('sheetContent');
-    if (!sheet || !content) return;
-    
-    const props = feature.properties;
-    const progress = getStageProgress();
-    const history = getTestHistory()[props.id];
-    
-    let html = `
-        <div class="sheet-school-name">${props.name}</div>
-        <div class="sheet-stage-badge ${status}">
-            ${status === 'cleared' ? 'CLEAR' : status === 'active' ? '挑戦中' : 'ロック'}
-            - Stage ${props.stage}
-        </div>
-        <div class="sheet-info-row">
-            <span>偏差値</span>
-            <span class="sheet-info-value">${props.hensachi}</span>
-        </div>
-        <div class="sheet-info-row">
-            <span>必要単語数</span>
-            <span class="sheet-info-value">${props.required_vocab}</span>
-        </div>
-        <div class="sheet-info-row">
-            <span>習得済み単語</span>
-            <span class="sheet-info-value">${learnedCount}</span>
-        </div>
-    `;
-    
-    if (status === 'active') {
-        const percent = Math.min(100, Math.round((learnedCount / props.required_vocab) * 100));
-        const canClear = learnedCount >= props.required_vocab;
-        html += `
-            <div class="sheet-progress-bar">
-                <div class="sheet-progress-fill" style="width: ${percent}%"></div>
-            </div>
-            <button class="sheet-btn sheet-btn-clear" id="sheetClearBtn" ${canClear ? '' : 'disabled'}>
-                ${canClear ? 'CLEAR!' : `あと ${props.required_vocab - learnedCount} 単語`}
-            </button>
-        `;
-    } else if (status === 'cleared') {
-        html += `
-            <button class="sheet-btn sheet-btn-test" id="sheetTestBtn">5問テスト</button>
-        `;
-        if (history) {
-            html += `
-                <div class="sheet-test-history">
-                    <div class="sheet-test-history-title">テスト履歴</div>
-                    <div>ベスト: ${history.bestScore}/5 | 前回: ${history.lastScore}/5</div>
-                </div>
-            `;
-        }
-    } else {
-        html += `
-            <div style="color:#64748b;text-align:center;padding:20px;">
-                前のステージをクリアしてください
-            </div>
-        `;
-    }
-    
-    content.innerHTML = html;
-    sheet.classList.remove('hidden');
-    
-    // クリアボタン
-    const clearBtn = document.getElementById('sheetClearBtn');
-    if (clearBtn && !clearBtn.disabled) {
-        clearBtn.addEventListener('click', () => {
-            clearStage(feature);
-        });
-    }
-    
-    // テストボタン
-    const testBtn = document.getElementById('sheetTestBtn');
-    if (testBtn) {
-        testBtn.addEventListener('click', () => {
-            startSchoolTest(feature);
-        });
-    }
-}
-
-function hideBottomSheet() {
-    const sheet = document.getElementById('stageBottomSheet');
-    if (sheet) sheet.classList.add('hidden');
-}
-
-// ステージクリア
-function clearStage(feature) {
-    const props = feature.properties;
-    setStageProgress('clearedStage', props.stage);
-    
-    hideBottomSheet();
-    
-    // クリア演出
-    const celebration = document.getElementById('clearCelebration');
-    const schoolName = document.getElementById('clearSchoolName');
-    if (celebration && schoolName) {
-        schoolName.textContent = props.name;
-        celebration.classList.remove('hidden');
-        
-        setTimeout(() => {
-            celebration.classList.add('hidden');
-            updateMapMarkers();
-        }, 2500);
-    } else {
-        updateMapMarkers();
-    }
-}
-
-// 5問テスト開始
-function startSchoolTest(feature) {
-    currentTestSchool = feature;
-    testCurrentIndex = 0;
-    testScore = 0;
-    
-    // ランダムに5問選択
-    const shuffled = [...allWords].sort(() => Math.random() - 0.5);
-    testQuestions = shuffled.slice(0, 5).map(w => {
-        // ダミー選択肢3つ
-        const otherWords = allWords.filter(x => x.id !== w.id);
-        const dummies = otherWords.sort(() => Math.random() - 0.5).slice(0, 3);
-        const choices = [w, ...dummies].sort(() => Math.random() - 0.5);
-        return { question: w, choices };
-    });
-    
-    hideBottomSheet();
-    showTestModal();
-    displayTestQuestion();
-}
-
-function showTestModal() {
-    const modal = document.getElementById('schoolTestModal');
-    if (modal) {
-        document.getElementById('testModalTitle').textContent = 
-            `${currentTestSchool.properties.name} - 5問テスト`;
-        modal.classList.remove('hidden');
-    }
-}
-
-function hideTestModal() {
-    const modal = document.getElementById('schoolTestModal');
-    if (modal) modal.classList.add('hidden');
-}
-
-function displayTestQuestion() {
-    if (testCurrentIndex >= testQuestions.length) {
-        showTestResult();
-        return;
-    }
-    
-    const q = testQuestions[testCurrentIndex];
-    document.getElementById('testCurrentQ').textContent = testCurrentIndex + 1;
-    
-    const area = document.getElementById('testQuestionArea');
-    area.innerHTML = `
-        <div class="test-word">${q.question.word}</div>
-        <div class="test-hint">意味を選んでください</div>
-    `;
-    
-    const choicesEl = document.getElementById('testChoices');
-    choicesEl.innerHTML = q.choices.map((c, i) => `
-        <button class="test-choice-btn" data-index="${i}">${c.meaning}</button>
-    `).join('');
-    
-    // クリックイベント
-    choicesEl.querySelectorAll('.test-choice-btn').forEach((btn, i) => {
-        btn.addEventListener('click', () => {
-            handleTestAnswer(i);
-        });
-    });
-}
-
-function handleTestAnswer(selectedIndex) {
-    const q = testQuestions[testCurrentIndex];
-    const correctIndex = q.choices.findIndex(c => c.id === q.question.id);
-    const btns = document.querySelectorAll('.test-choice-btn');
-    
-    btns.forEach((btn, i) => {
-        btn.disabled = true;
-        if (i === correctIndex) {
-            btn.classList.add('correct');
-        } else if (i === selectedIndex && i !== correctIndex) {
-            btn.classList.add('wrong');
-        }
-    });
-    
-    if (selectedIndex === correctIndex) {
-        testScore++;
-    }
-    
-    setTimeout(() => {
-        testCurrentIndex++;
-        displayTestQuestion();
-    }, 800);
-}
-
-function showTestResult() {
-    hideTestModal();
-    
-    // 結果保存
-    if (currentTestSchool) {
-        saveTestHistory(currentTestSchool.properties.id, testScore);
-    }
-    
-    const modal = document.getElementById('testResultModal');
-    const scoreNum = document.getElementById('resultScoreNum');
-    const message = document.getElementById('testResultMessage');
-    
-    if (modal && scoreNum && message) {
-        scoreNum.textContent = testScore;
-        if (testScore === 5) {
-            message.textContent = '完璧!';
-        } else if (testScore >= 3) {
-            message.textContent = 'よくできました!';
-        } else {
-            message.textContent = 'もう少し頑張ろう!';
-        }
-        modal.classList.remove('hidden');
-    }
-}
-
-function hideTestResult() {
-    const modal = document.getElementById('testResultModal');
-    if (modal) modal.classList.add('hidden');
-}
-
-// 次のステージへ飛ぶ
-function flyToActiveStage() {
-    const { clearedStage } = getStageProgress();
-    const activeSchool = allSchools.find(f => f.properties.stage === clearedStage + 1);
-    
-    if (activeSchool && stageMap) {
-        const coords = activeSchool.geometry.coordinates;
-        stageMap.flyTo({
-            center: coords,
-            zoom: 13,
-            duration: 1000
-        });
-        
-        setTimeout(() => {
-            const learnedCount = countLearnedWords();
-            showBottomSheet(activeSchool, 'active', learnedCount);
-        }, 1200);
-    }
-}
-
-// 検索でflyTo
-function searchAndFlyTo(query) {
-    const found = allSchools.find(f => 
-        f.properties.name.toLowerCase().includes(query.toLowerCase())
-    );
-    
-    if (found && stageMap) {
-        const coords = found.geometry.coordinates;
-        stageMap.flyTo({
-            center: coords,
-            zoom: 13,
-            duration: 800
-        });
-        
-        setTimeout(() => {
-            const { learnedCount, clearedStage } = getStageProgress();
-            const status = computeStatus(found.properties.stage, clearedStage);
-            showBottomSheet(found, status, learnedCount);
-        }, 1000);
-    }
-}
-
-// イベント設定
-function setupStageMapEvents() {
-    // 戻るボタン
-    document.getElementById('stageMapBackBtn')?.addEventListener('click', hideStageMap);
-    
-    // シート閉じる
-    document.getElementById('sheetCloseBtn')?.addEventListener('click', hideBottomSheet);
-    
-    // 次のステージへ
-    document.getElementById('stageMapNextBtn')?.addEventListener('click', flyToActiveStage);
-    
-    // 検索
-    let searchTimeout;
-    document.getElementById('stageMapSearch')?.addEventListener('input', (e) => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            updateMapMarkers();
-        }, 300);
-    });
-    
-    document.getElementById('stageMapSearch')?.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const query = e.target.value.trim();
-            if (query) {
-                searchAndFlyTo(query);
-            }
-        }
-    });
-    
-    // クリア済みのみ
-    document.getElementById('stageMapClearedOnly')?.addEventListener('change', () => {
-        updateMapMarkers();
-    });
-    
-    // テスト結果ボタン
-    document.getElementById('testRetryBtn')?.addEventListener('click', () => {
-        hideTestResult();
-        if (currentTestSchool) {
-            startSchoolTest(currentTestSchool);
-        }
-    });
-    
-    document.getElementById('testBackBtn')?.addEventListener('click', () => {
-        hideTestResult();
-    });
-}
-
-// サイドバーボタン
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('stageMapBtn')?.addEventListener('click', showStageMap);
-});
-
-// ====================================
-// ミニ地図（志望校設定下）- 高校ステージマップ
-// ====================================
-
-let miniMap = null;
-let miniMapMarkers = [];
-let miniMapSchools = [];
-
-async function initMiniMap() {
-    const container = document.getElementById('miniMapContainer');
-    if (!container || miniMap) return;
-    
-    // 大阪中心
-    const osakaCenter = [135.5023, 34.6937];
-    
-    miniMap = new maplibregl.Map({
-        container: 'miniMapContainer',
-        style: {
-            version: 8,
-            sources: {
-                'carto': {
-                    type: 'raster',
-                    tiles: [
-                        'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'
-                    ],
-                    tileSize: 256
+                break;
+            case 'hwVirtualKeyboard':
+                if (typeof hwKeyboardShiftActive !== 'undefined' && hwKeyboardShiftActive) {
+                    hwKeyboardShiftActive = false;
+                    const shiftBtn = document.getElementById('hwKeyboardShift');
+                    if (shiftBtn) shiftBtn.classList.remove('active');
+                    updateHWKeyboardCase();
                 }
-            },
-            layers: [
-                {
-                    id: 'carto-tiles',
-                    type: 'raster',
-                    source: 'carto',
-                    paint: {
-                        'raster-saturation': -0.3
-                    }
-                }
-            ]
-        },
-        center: osakaCenter,
-        zoom: 9,
-        minZoom: 8,
-        maxZoom: 13
-    });
-    
-    // マップ読み込み完了後に高校データを読み込み
-    miniMap.on('load', async () => {
-        await loadMiniMapSchools();
-    });
-}
-
-async function loadMiniMapSchools() {
-    try {
-        // ステージマップで既に読み込まれていればそれを使用
-        if (allSchools && allSchools.length > 0) {
-            miniMapSchools = allSchools;
-        } else {
-            const response = await fetch('data/osaka_highschools.geojson');
-            const data = await response.json();
-            miniMapSchools = assignStageNumbers(data.features || []);
-        }
-        updateMiniMapMarkers();
-        updateMiniMapStats();
-    } catch (e) {
-        console.error('Failed to load mini map schools:', e);
-    }
-}
-
-function updateMiniMapMarkers() {
-    if (!miniMap) return;
-    
-    // 既存のマーカーを削除
-    miniMapMarkers.forEach(m => m.remove());
-    miniMapMarkers = [];
-    
-    const { clearedStage } = getStageProgress();
-    
-    miniMapSchools.forEach(feature => {
-        const props = feature.properties;
-        const coords = feature.geometry.coordinates;
-        const status = computeStatus(props.stage, clearedStage);
-        
-        // ステージマップと同じデザイン
-        const el = document.createElement('div');
-        el.className = 'stage-marker';
-        
-        const marker_div = document.createElement('div');
-        marker_div.className = `school-marker ${status}`;
-        
-        // アイコン
-        const icon = document.createElement('div');
-        icon.className = 'school-icon';
-        const img = document.createElement('img');
-        img.src = 'school_goal_w.png';
-        img.alt = '学校';
-        icon.appendChild(img);
-        marker_div.appendChild(icon);
-        
-        // クリア済み: 旗を表示
-        if (status === 'cleared') {
-            const flag = document.createElement('img');
-            flag.src = 'flag.png';
-            flag.alt = '旗';
-            flag.className = 'school-flag';
-            marker_div.appendChild(flag);
-        }
-        
-        // ステージ番号バッジ
-        const badge = document.createElement('div');
-        badge.className = 'school-badge';
-        badge.textContent = props.stage;
-        marker_div.appendChild(badge);
-        
-        el.appendChild(marker_div);
-        
-        const marker = new maplibregl.Marker({ element: el })
-            .setLngLat(coords)
-            .addTo(miniMap);
-        
-        miniMapMarkers.push(marker);
-    });
-    
-    // 志望校の位置に移動
-    const savedSchool = localStorage.getItem('targetSchool');
-    if (savedSchool) {
-        try {
-            const schoolData = JSON.parse(savedSchool);
-            if (schoolData.lat && schoolData.lng) {
-                miniMap.flyTo({
-                    center: [schoolData.lng, schoolData.lat],
-                    zoom: 11
-                });
-            }
-        } catch (e) {}
-    }
-}
-
-// 志望校設定表示時にミニ地図を初期化
-function showMiniMap() {
-    const container = document.getElementById('miniMapContainer');
-    if (!container) return;
-    
-    if (!miniMap) {
-        initMiniMap();
-    } else {
-        miniMap.resize();
-        // マーカーがない場合は再読み込み
-        if (miniMapMarkers.length === 0 && miniMapSchools.length === 0) {
-            loadMiniMapSchools();
-        } else {
-            updateMiniMapMarkers();
+                break;
         }
     }
     
-    // 統計を更新
-    updateMiniMapStats();
-}
-
-// ミニ地図の統計を更新
-function updateMiniMapStats() {
-    const { clearedStage } = getStageProgress();
-    const total = miniMapSchools.length || allSchools.length;
+    // タッチデバイスでのポップアップエフェクト
+    document.addEventListener('touchstart', function(e) {
+        const key = e.target.closest('.keyboard-key[data-key]');
+        if (key && !key.classList.contains('keyboard-key-special') && !key.classList.contains('keyboard-key-shift')) {
+            key.classList.add('key-pressed');
+        }
+    }, { passive: true });
     
-    const clearedEl = document.getElementById('miniMapCleared');
-    const totalEl = document.getElementById('miniMapTotal');
+    document.addEventListener('touchend', function(e) {
+        const key = e.target.closest('.keyboard-key[data-key]');
+        if (key) {
+            setTimeout(() => {
+                key.classList.remove('key-pressed');
+                // ボタンを離したときにシフトを解除
+                handlePendingShiftReset();
+            }, 100);
+        }
+    }, { passive: true });
     
-    if (clearedEl) clearedEl.textContent = clearedStage;
-    if (totalEl) totalEl.textContent = total;
-}
-
-// ミニ地図で次のステージへ飛ぶ
-function miniMapFlyToNext() {
-    if (!miniMap) return;
+    document.addEventListener('touchcancel', function(e) {
+        const key = e.target.closest('.keyboard-key[data-key]');
+        if (key) {
+            key.classList.remove('key-pressed');
+        }
+    }, { passive: true });
     
-    const { clearedStage } = getStageProgress();
-    const schools = miniMapSchools.length ? miniMapSchools : allSchools;
-    const activeSchool = schools.find(f => f.properties.stage === clearedStage + 1);
+    // マウスでのポップアップエフェクト（デスクトップ用）
+    document.addEventListener('mousedown', function(e) {
+        const key = e.target.closest('.keyboard-key[data-key]');
+        if (key && !key.classList.contains('keyboard-key-special') && !key.classList.contains('keyboard-key-shift')) {
+            key.classList.add('key-pressed');
+        }
+    });
     
-    if (activeSchool) {
-        const coords = activeSchool.geometry.coordinates;
-        miniMap.flyTo({
-            center: coords,
-            zoom: 12,
-            duration: 800
+    document.addEventListener('mouseup', function(e) {
+        document.querySelectorAll('.keyboard-key.key-pressed').forEach(key => {
+            key.classList.remove('key-pressed');
         });
-    }
-}
-
-// ページ読み込み時にミニ地図を初期化
-document.addEventListener('DOMContentLoaded', () => {
-    // ミニ地図を少し遅延して初期化
-    setTimeout(() => {
-        const container = document.getElementById('miniMapContainer');
-        if (container) {
-            showMiniMap();
-        }
-    }, 800);
+        // ボタンを離したときにシフトを解除
+        handlePendingShiftReset();
+    });
     
-    // ミニ地図ボタン
-    document.getElementById('miniMapNextBtn')?.addEventListener('click', miniMapFlyToNext);
-    document.getElementById('miniMapExpandBtn')?.addEventListener('click', showStageMap);
-});
+    document.addEventListener('mouseleave', function(e) {
+        if (e.target.classList && e.target.classList.contains('keyboard-key')) {
+            e.target.classList.remove('key-pressed');
+        }
+    }, { capture: true });
+})();
 

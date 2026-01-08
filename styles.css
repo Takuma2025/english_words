@@ -146,16 +146,6 @@ textarea,
     z-index: 1;
 }
 
-.splash-girl {
-    position: absolute;
-    left: calc(50% - 45%);
-    top: 50%;
-    transform: translateY(-50%);
-    max-width: 30%;
-    max-height: 60%;
-    z-index: 0;
-}
-
 .feedback-overlay {
     position: fixed;
     top: 0;
@@ -4502,13 +4492,14 @@ button.category-card:focus-visible {
     display: flex;
     flex-direction: column;
     padding: 20px 16px 0 16px;
-    overflow-y: auto;
+    overflow: visible; /* ポップアップを隠さないように */
     min-height: 0;
     max-height: 100%;
     box-sizing: border-box;
     perspective: 1200px;
     transform-style: preserve-3d;
     justify-content: flex-start; /* 上揃え */
+    position: relative;
 }
 
 /* 例文・整序モードではカードUIを隠す */
@@ -4706,6 +4697,7 @@ body.reorder-mode-active .word-card-container {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 100%;
     position: relative;
+    z-index: 1; /* ポップアップより低くする */
     max-width: 100%;
     margin: 0 auto 12px auto; /* キーボードとの適切な間隔 */
     display: flex;
@@ -5958,7 +5950,8 @@ body.reorder-mode-active .word-card-container {
     font-weight: 800;
     letter-spacing: 0.03em;
     color: #0f172a;
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     word-break: break-word;
     overflow-wrap: break-word;
 }
@@ -5994,7 +5987,8 @@ body.reorder-mode-active .word-card-container {
 .input-list-example-en {
     font-size: 13px;
     color: #1f2937;
-    font-family: "Times New Roman", Times, serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     line-height: 1.4;
     margin-bottom: 2px;
     word-break: break-word;
@@ -6157,7 +6151,8 @@ body.reorder-mode-active .word-card-container {
     font-size: 32px;
     font-weight: 700;
     color: #111827;
-    font-family: "Times New Roman", Times, serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     letter-spacing: 0.02em;
     margin-top: 0;
 }
@@ -6273,7 +6268,8 @@ body.reorder-mode-active .word-card-container {
 .input-list-expand-example-en {
     font-size: 13px;
     color: #1f2937;
-    font-family: "Times New Roman", Times, serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     line-height: 1.4;
     margin-bottom: 2px;
 }
@@ -6513,7 +6509,8 @@ body.reorder-mode-active .word-card-container {
     background-color: transparent;
     transition: all 0.2s;
     box-sizing: border-box;
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     -webkit-user-select: text;
     user-select: text;
     letter-spacing: 0px;
@@ -6604,74 +6601,79 @@ body.reorder-mode-active .word-card-container {
     box-shadow: none;
 }
 
-/* 仮想キーボード */
+/* 仮想キーボード（iOSスタイル） */
 .virtual-keyboard {
-    background: transparent;
+    background: #d1d4d9;
     border-top: none;
-    padding: 14px 0;
+    padding: 10px 3px 6px 3px;
     margin: 0;
-    border-radius: 20px 20px 0 0;
+    border-radius: 0;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    overflow-x: hidden;
+    overflow: visible;
+    position: relative;
+    z-index: 10;
 }
 
 /* スマホ向け：キーボードをギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .virtual-keyboard {
-        padding: 18px 0; /* 左右のパディングを削除 */
+        padding: 10px 3px 6px 3px;
         margin: 0;
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
-        overflow-x: hidden;
+        overflow: visible;
     }
 }
 
 .keyboard-row {
     display: flex;
     justify-content: center;
-    gap: 2px;
-    margin-bottom: 8px;
+    gap: 6px;
+    margin-bottom: 10px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    padding: 0 2px;
+    padding: 0 3px;
+    position: relative;
+    overflow: visible;
 }
 
 /* スマホ向け：キーボード行をギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-row {
-        gap: 3px; /* キー同士の間隔を少し広げる */
-        margin-bottom: 10px;
-        padding: 0; /* パディングを削除 */
+        gap: 6px;
+        margin-bottom: 12px;
+        padding: 0 3px;
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
+        overflow: visible;
     }
     
     .keyboard-row:last-of-type {
-        margin-bottom: 14px;
+        margin-bottom: 12px;
     }
 }
 
 .keyboard-row:last-of-type {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .keyboard-key {
-    width: 26px;
-    height: 36px;
+    width: 32px;
+    height: 42px;
     background: #ffffff;
     border: none;
     border-radius: 5px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #1f2937;
+    font-size: 22px;
+    font-weight: 400;
+    color: #000000;
     cursor: pointer;
-    transition: transform 0.05s, box-shadow 0.05s;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+    transition: none;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -6681,43 +6683,125 @@ body.reorder-mode-active .word-card-container {
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
-    will-change: transform;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
 }
 
 /* qとpのキーを他のキーと同じ形に（通常表示） */
 .keyboard-key[data-key="q"],
 .keyboard-key[data-key="p"] {
-    width: 26px;
-    height: 36px;
-    /* border-radiusは通常の.keyboard-keyから継承（5px） */
+    width: 32px;
+    height: 42px;
     flex: 0 0 auto;
+}
+
+/* キーボードポップアップエフェクト */
+.keyboard-key::before {
+    content: attr(data-key);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    width: 100%;
+    height: 48px;
+    background: #ffffff;
+    border-radius: 6px;
+    font-size: 28px;
+    font-weight: 400;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+    opacity: 0;
+    transition: none;
+    z-index: 1000;
+}
+
+/* ポップアップの下矢印 */
+.keyboard-key::after {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #ffffff;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 1001;
+}
+
+.keyboard-key.key-pressed::before {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+}
+
+.keyboard-key.key-pressed::after {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+}
+
+.keyboard-key.key-pressed {
+    background: #c8c9cc;
+    z-index: 9999;
+}
+
+/* シフトキーがアクティブなときはポップアップを大文字に */
+.virtual-keyboard.shift-active .keyboard-key::before {
+    text-transform: uppercase;
+}
+
+/* 特殊キー・スペースキーはポップアップなし */
+.keyboard-key-special::before,
+.keyboard-key-special::after,
+.keyboard-key-shift::before,
+.keyboard-key-shift::after,
+.keyboard-key-space::before,
+.keyboard-key-space::after {
+    display: none !important;
 }
 
 /* スマホ向け：キーボードを大きく、文字も大きく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-key {
-        width: calc((100% - 30px) / 11); /* 11個のキーが収まるように計算（gap分を考慮、gap: 3px × 10個 = 30px） */
+        width: calc((100% - 54px) / 10);
         max-width: none;
         min-width: 0;
-        height: 48px;
+        height: 42px;
         font-size: 24px;
-        border-radius: 6px;
-        flex: 1; /* 均等に配置 */
-        overflow: hidden;
-        text-overflow: ellipsis;
+        border-radius: 5px;
+        flex: 1;
+        overflow: visible;
     }
     
     /* qとpのキーも他のキーと同じ形に */
     .keyboard-key[data-key="q"],
     .keyboard-key[data-key="p"] {
-        width: calc((100% - 30px) / 11);
+        width: calc((100% - 54px) / 10);
         max-width: none;
         min-width: 0;
-        height: 48px;
-        border-radius: 6px; /* 通常の.keyboard-keyと同じ値 */
+        height: 42px;
+        border-radius: 5px;
         flex: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        overflow: visible;
+    }
+    
+    .keyboard-key::before {
+        width: 100%;
+        height: 52px;
+        font-size: 30px;
+        border-radius: 6px;
+    }
+    
+    .keyboard-key::after {
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid #ffffff;
     }
     
     /* 入力欄をスマホ向けに大きく */
@@ -6735,78 +6819,78 @@ body.reorder-mode-active .word-card-container {
 }
 
 .keyboard-key:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    background: #c8c9cc;
 }
 
 .keyboard-key-special {
-    width: 48px;
-    height: 36px;
-    background: #ffffff;
+    width: 42px;
+    height: 42px;
+    background: #adb0b6;
     border: none;
     border-radius: 5px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
     flex-shrink: 0;
     box-sizing: border-box;
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
-    will-change: transform;
-    transition: transform 0.05s, box-shadow 0.05s;
+    transition: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
 }
 
 /* スマホ向け：特殊キーも大きく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-key-special {
-        width: calc((100% - 30px) / 11); /* 他のキーと同じサイズ計算（gap: 3px × 10個 = 30px） */
+        width: calc((100% - 54px) / 10);
         max-width: none;
         min-width: 0;
-        height: 48px;
-        border-radius: 6px;
-        flex: 1; /* 均等に配置 */
+        height: 42px;
+        border-radius: 5px;
+        flex: 1;
     }
 }
 
 .keyboard-key-special:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    background: #8e9096;
 }
 
 /* Shiftキー */
 .keyboard-key-shift {
-    background: #fafafa;
-    color: #1f2937;
+    background: #adb0b6;
+    color: #000000;
 }
 
 .keyboard-key-shift.active {
-    background: #0055ca;
-    color: #ffffff;
-    box-shadow: 0 2px 0 #0044a0, inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background: #ffffff;
+    color: #000000;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
 }
 
 .keyboard-key-shift:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    background: #8e9096;
 }
 
 .keyboard-key-shift.active:active {
-    box-shadow: 0 1px 0 #0044a0, inset 0 1px 2px rgba(0, 0, 0, 0.15);
+    background: #e0e0e0;
 }
 
 /* スペースキー */
 .keyboard-key-space {
-    width: 26px;
-    height: 36px;
+    width: 32px;
+    height: 42px;
     background: #ffffff;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #1f2937;
+    font-size: 20px;
+    font-weight: 400;
+    color: #9ca3af;
     cursor: pointer;
-    transition: transform 0.05s, box-shadow 0.05s;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+    transition: none;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -6816,102 +6900,104 @@ body.reorder-mode-active .word-card-container {
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
-    will-change: transform;
     padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
 }
 
 .keyboard-key-space:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    background: #c8c9cc;
 }
 
 /* スマホ向け：スペースキーとShiftキーも大きく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-key-shift {
-        width: calc((100% - 30px) / 11); /* 他のキーと同じサイズ計算（gap: 3px × 10個 = 30px） */
+        width: calc((100% - 54px) / 10);
         max-width: none;
         min-width: 0;
-        height: 48px;
-        border-radius: 6px;
-        flex: 1; /* 均等に配置 */
+        height: 42px;
+        border-radius: 5px;
+        flex: 1;
     }
     
     .keyboard-key-space {
-        width: calc((100% - 30px) / 11); /* 他のキーと同じサイズ計算（gap: 3px × 10個 = 30px） */
+        width: calc((100% - 54px) / 10);
         max-width: none;
         min-width: 0;
-        height: 48px;
+        height: 42px;
         font-size: 22px;
-        flex: 1; /* 均等に配置 */
+        flex: 1;
     }
 }
 
 .keyboard-actions {
     display: flex;
     gap: 8px;
-    padding: 0 2px;
+    padding: 0 3px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    background: #d1d4d9;
+    padding-bottom: 10px;
+    padding-top: 6px;
 }
 
 .keyboard-action-btn {
     flex: 1;
-    height: 48px;
+    height: 42px;
     border: none;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 600;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
     cursor: pointer;
-    transition: transform 0.05s, box-shadow 0.05s;
-    background: #ffffff;
-    color: #1f2937;
-    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+    transition: none;
+    background: #adb0b6;
+    color: #000000;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
     position: relative;
     top: 0;
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
-    will-change: transform;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+
+.keyboard-action-btn:active {
+    background: #8e9096;
+}
+
+/* プライマリボタン（確定ボタン）*/
+.keyboard-action-btn-primary {
+    background: #007aff;
+    color: #ffffff;
+}
+
+.keyboard-action-btn-primary:active {
+    background: #0062cc;
 }
 
 /* スマホ向け：アクションボタンを小さく、ギリギリいっぱい使えるように */
 @media (max-width: 600px) {
     .keyboard-action-btn {
-        height: 44px;
-        font-size: 15px;
-        border-radius: 10px;
+        height: 42px;
+        font-size: 16px;
+        border-radius: 5px;
     }
     
     .keyboard-actions {
-        gap: 2px; /* 最小限の間隔 */
-        padding: 0; /* パディングを削除 */
+        gap: 8px;
+        padding: 6px 3px 10px 3px;
     }
     
     .reorder-mode .keyboard-actions {
         gap: 12px;
-        margin-top: auto; /* 下揃え */
-        padding: 0 16px; /* 左右にパディングを追加して画面からはみ出さないように */
-        margin-bottom: 16px; /* 下にマージンを追加 */
+        margin-top: auto;
+        padding: 6px 16px 16px 16px;
+        margin-bottom: 0;
     }
 }
 
-.keyboard-action-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
-}
-
-.keyboard-action-btn-primary {
-    background: #0055ca;
-    color: #ffffff;
-    box-shadow: 0 3px 0 rgba(0, 68, 160, 0.6);
-}
-
-.keyboard-action-btn-primary:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 rgba(0, 68, 160, 0.6);
-}
+/* 下の重複スタイルは削除済み - iOSスタイルのキーボードアクションボタンは上部で定義 */
 
 .input-result {
     position: absolute;
@@ -6957,7 +7043,8 @@ body.reorder-mode-active .word-card-container {
     font-size: clamp(28px, 7vw, 42px);
     color: #3b82f6;
     font-weight: 700;
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     line-height: 1.2;
     margin: 0;
     padding: 0;
@@ -7744,7 +7831,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .english-word {
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     font-size: clamp(36px, 9vw, 56px);
     font-weight: 700;
     text-align: center;
@@ -8008,7 +8096,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* カード裏面の英語表示 */
 .english-word-back {
-    font-family: 'Times New Roman', Times, serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     font-size: 20px;
     color: #64748b;
     margin-bottom: 8px;
@@ -8110,7 +8199,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .example-english {
     margin-bottom: 0;
     font-size: 16px;
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif; /* 単語カードと同じ系統 */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600; /* 単語カードと同じ系統 */
 }
 
 .example-english strong {
@@ -9028,10 +9118,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     flex-direction: column;
     padding: 20px 16px 0 16px;
-    overflow-y: auto;
+    overflow: visible; /* ポップアップを隠さないように */
     min-height: 0;
     max-height: 100%;
     box-sizing: border-box;
+    position: relative;
 }
 
 .sentence-navigation {
@@ -9094,7 +9185,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     line-height: 1.7;
     margin-bottom: 18px; /* 日本語との縦間隔を詰める */
     text-align: left;
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     word-spacing: 0.1em;
 }
 
@@ -9267,7 +9359,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .reorder-punctuation {
     font-size: 17px;
     font-weight: 600;
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     color: #1f2937;
     display: inline-flex;
     align-items: center;
@@ -9313,7 +9406,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     border: 1px solid #000000;
     font-size: 17px;
     font-weight: 600;
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
     user-select: none;
@@ -9359,7 +9453,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     border: 1px solid #000000;
     font-size: 17px;
     font-weight: 600;
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     cursor: grab;
     transition: all 0.2s;
     user-select: none;
@@ -9395,7 +9490,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .reorder-correct-answer {
     font-size: 20px;
     text-align: left;
-    font-family: "Times New Roman", Times, "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     font-weight: 600;
     margin-bottom: 16px;
     padding: 0 16px;
@@ -11379,7 +11475,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "Times New Roman", "Times", "Georgia", "Palatino", "Book Antiqua", serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     font-size: 56px;
     font-weight: 700;
     color: #111827;
@@ -13836,17 +13933,18 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     bottom: 0;
     left: 0;
     right: 0;
-    background: #fafafa;
-    padding: 8px 16px;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: #d1d4d9;
+    padding: 8px 3px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    z-index: 100;
+    z-index: 500;
     max-width: 600px;
     margin: 0 auto;
     transition: opacity 0.3s ease, pointer-events 0.3s ease;
+    overflow: visible;
 }
 
 .hw-input-fixed-bottom.hw-input-disabled .hw-canvas-area,
@@ -13858,7 +13956,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-input-fixed-bottom.hw-input-disabled {
-    background: #f1f5f9;
+    background: #c8cacd;
 }
 
 .hw-input-fixed-bottom .hw-canvas-area {
@@ -13952,7 +14050,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     font-weight: 700;
     color: #1a202c;
     letter-spacing: 2px;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     transition: border-color 0.2s ease, background-color 0.2s ease;
     flex-shrink: 0;
     overflow: hidden;
@@ -14019,6 +14118,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     justify-content: center;
     align-items: center;
     flex: 1 1 auto;
+    position: relative;
+    z-index: 1;
 }
 
 .hw-canvas-wrapper {
@@ -14078,7 +14179,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     position: fixed;
     font-size: 72px;
     font-weight: 400;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     color: #3182ce;
     opacity: 0.4;
     pointer-events: none;
@@ -14118,6 +14220,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     gap: 12px;
     min-height: 72px;
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .hw-candidate-btn {
@@ -14290,7 +14394,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .hw-result-word span {
     font-size: 32px;
     font-weight: 400;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     color: #1a202c;
     letter-spacing: 2px;
 }
@@ -14357,7 +14462,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     font-size: 40px;
     font-weight: 700;
     color: #3182ce;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
     letter-spacing: 2px;
 }
 
@@ -14858,811 +14964,4 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         border-radius: 8px;
     }
 }
-
-/* ====================================
-   大阪府 高校ステージマップ
-   ==================================== */
-
-.stage-map-view {
-    position: fixed;
-    inset: 0;
-    background: #f8fafc;
-    z-index: 10010;
-    display: flex;
-    flex-direction: column;
-}
-
-.stage-map-view.hidden {
-    display: none;
-}
-
-/* ヘッダー */
-.stage-map-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    padding-top: calc(12px + env(safe-area-inset-top));
-    background: #3182ce;
-    flex-shrink: 0;
-}
-
-.stage-map-back-btn {
-    background: transparent;
-    border: none;
-    color: #ffffff;
-    cursor: pointer;
-    padding: 8px;
-    margin: -8px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-}
-
-.stage-map-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #ffffff;
-    margin: 0;
-}
-
-.stage-map-progress {
-    background: #ffffff;
-    color: #3182ce;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 6px 12px;
-    border-radius: 20px;
-}
-
-/* 検索・フィルター */
-.stage-map-controls {
-    padding: 10px 16px;
-    background: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex-shrink: 0;
-}
-
-.stage-map-search-wrap {
-    position: relative;
-}
-
-.stage-map-search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94a3b8;
-    pointer-events: none;
-}
-
-.stage-map-search {
-    width: 100%;
-    padding: 10px 12px 10px 40px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 14px;
-    background: #f8fafc;
-    color: #1e293b;
-    transition: border-color 0.2s;
-}
-
-.stage-map-search:focus {
-    outline: none;
-    border-color: #3182ce;
-    background: #ffffff;
-}
-
-.stage-map-search::placeholder {
-    color: #94a3b8;
-}
-
-.stage-map-btns {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.stage-map-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background: #3182ce;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.stage-map-btn:active {
-    background: #2563eb;
-}
-
-.stage-map-toggle {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: #64748b;
-    cursor: pointer;
-}
-
-.stage-map-toggle input {
-    width: 16px;
-    height: 16px;
-    accent-color: #3182ce;
-}
-
-/* 地図コンテナ */
-.stage-map-container {
-    flex: 1;
-    min-height: 0;
-    position: relative;
-}
-
-/* 凡例 */
-.stage-map-legend {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 10px 16px;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom));
-    background: #ffffff;
-    border-top: 1px solid #e2e8f0;
-    flex-shrink: 0;
-}
-
-.stage-map-legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: #64748b;
-}
-
-.legend-icon {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-}
-
-.legend-cleared {
-    background: #38a169;
-}
-
-.legend-active {
-    background: #ed8936;
-    animation: pulse-legend 1.5s infinite;
-}
-
-.legend-locked {
-    background: #a0aec0;
-}
-
-@keyframes pulse-legend {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(237, 137, 54, 0.4); }
-    50% { box-shadow: 0 0 0 4px rgba(237, 137, 54, 0); }
-}
-
-/* ボトムシート */
-.stage-bottom-sheet {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #ffffff;
-    border-radius: 20px 20px 0 0;
-    padding: 16px;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom));
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-    transform: translateY(0);
-    transition: transform 0.3s ease;
-    z-index: 100;
-    max-height: 60vh;
-    overflow-y: auto;
-}
-
-.stage-bottom-sheet.hidden {
-    transform: translateY(100%);
-    pointer-events: none;
-}
-
-.sheet-handle {
-    width: 40px;
-    height: 4px;
-    background: #cbd5e1;
-    border-radius: 2px;
-    margin: 0 auto 16px;
-}
-
-.sheet-close-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: #f1f5f9;
-    border: none;
-    color: #64748b;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-/* シート内容 */
-.sheet-school-name {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 8px;
-}
-
-.sheet-stage-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
-.sheet-stage-badge.cleared {
-    background: #38a169;
-    color: #ffffff;
-}
-
-.sheet-stage-badge.active {
-    background: #ed8936;
-    color: #ffffff;
-}
-
-.sheet-stage-badge.locked {
-    background: #e2e8f0;
-    color: #64748b;
-}
-
-.sheet-info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid #e2e8f0;
-    font-size: 13px;
-    color: #64748b;
-}
-
-.sheet-info-row:last-child {
-    border-bottom: none;
-}
-
-.sheet-info-value {
-    font-weight: 600;
-    color: #1e293b;
-}
-
-.sheet-progress-bar {
-    height: 8px;
-    background: #e2e8f0;
-    border-radius: 4px;
-    overflow: hidden;
-    margin: 12px 0;
-}
-
-.sheet-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #ed8936 0%, #38a169 100%);
-    border-radius: 4px;
-    transition: width 0.3s ease;
-}
-
-.sheet-btn {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 12px;
-    transition: transform 0.1s;
-}
-
-.sheet-btn:active {
-    transform: scale(0.98);
-}
-
-.sheet-btn-clear {
-    background: #ed8936;
-    color: #ffffff;
-}
-
-.sheet-btn-clear:disabled {
-    background: #e2e8f0;
-    color: #94a3b8;
-    cursor: not-allowed;
-}
-
-.sheet-btn-test {
-    background: #3182ce;
-    color: #ffffff;
-}
-
-.sheet-test-history {
-    margin-top: 12px;
-    padding: 10px;
-    background: #f8fafc;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #64748b;
-    border: 1px solid #e2e8f0;
-}
-
-.sheet-test-history-title {
-    font-weight: 600;
-    color: #3182ce;
-    margin-bottom: 6px;
-}
-
-/* 5問テストモーダル */
-.school-test-modal {
-    position: fixed;
-    inset: 0;
-    background: #f8fafc;
-    z-index: 10020;
-    display: flex;
-    flex-direction: column;
-}
-
-.school-test-modal.hidden {
-    display: none;
-}
-
-.test-modal-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    padding-top: calc(20px + env(safe-area-inset-top));
-}
-
-.test-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.test-modal-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0;
-}
-
-.test-progress {
-    background: #3182ce;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 6px 14px;
-    border-radius: 20px;
-}
-
-.test-question-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.test-word {
-    font-size: 36px;
-    font-weight: 700;
-    color: #3182ce;
-    margin-bottom: 8px;
-}
-
-.test-hint {
-    font-size: 14px;
-    color: #64748b;
-}
-
-.test-choices {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom));
-}
-
-.test-choice-btn {
-    width: 100%;
-    padding: 16px 20px;
-    background: #ffffff;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    color: #1e293b;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.test-choice-btn:active {
-    background: #f1f5f9;
-    border-color: #3182ce;
-}
-
-.test-choice-btn.correct {
-    background: #d1fae5;
-    border-color: #38a169;
-    color: #166534;
-}
-
-.test-choice-btn.wrong {
-    background: #fee2e2;
-    border-color: #dc2626;
-    color: #991b1b;
-}
-
-@keyframes shake-correct {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
-@keyframes shake-wrong {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-10px); }
-    40%, 80% { transform: translateX(10px); }
-}
-
-/* テスト結果モーダル */
-.test-result-modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 10030;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.test-result-modal.hidden {
-    display: none;
-}
-
-.test-result-content {
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 32px;
-    text-align: center;
-    max-width: 300px;
-    width: 90%;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-}
-
-.test-result-score {
-    margin-bottom: 16px;
-}
-
-.result-score-num {
-    font-size: 72px;
-    font-weight: 800;
-    color: #3182ce;
-}
-
-.result-score-label {
-    font-size: 24px;
-    color: #94a3b8;
-}
-
-.test-result-message {
-    font-size: 16px;
-    color: #1e293b;
-    margin-bottom: 24px;
-}
-
-.test-result-btns {
-    display: flex;
-    gap: 12px;
-}
-
-.result-btn {
-    flex: 1;
-    padding: 14px;
-    border: none;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.result-retry {
-    background: #3182ce;
-    color: #ffffff;
-}
-
-.result-back {
-    background: #e2e8f0;
-    color: #1e293b;
-}
-
-/* クリア演出 */
-.clear-celebration {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 10050;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.clear-celebration.hidden {
-    display: none;
-}
-
-.clear-content {
-    text-align: center;
-    animation: clear-pop 0.5s ease-out;
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 24px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-@keyframes clear-pop {
-    0% { transform: scale(0.5); opacity: 0; }
-    70% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-.clear-flag {
-    margin-bottom: 16px;
-}
-
-.clear-flag img {
-    width: 80px;
-    height: 80px;
-    animation: flag-wave 0.5s ease-in-out infinite alternate;
-}
-
-@keyframes flag-wave {
-    0% { transform: rotate(-5deg); }
-    100% { transform: rotate(5deg); }
-}
-
-.clear-text {
-    font-size: 28px;
-    font-weight: 800;
-    color: #38a169;
-    margin-bottom: 12px;
-    letter-spacing: 2px;
-}
-
-.clear-school-name {
-    font-size: 16px;
-    color: #1e293b;
-}
-
-/* MapLibre カスタムマーカー - 学校アイコン */
-.stage-marker {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-}
-
-.school-marker {
-    position: relative;
-    width: 40px;
-    height: 40px;
-}
-
-/* アイコン本体 */
-.school-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.school-icon img {
-    width: 22px;
-    height: 22px;
-}
-
-/* ステージ番号バッジ */
-.school-badge {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    min-width: 20px;
-    height: 20px;
-    padding: 0 4px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: 800;
-    color: #ffffff;
-    border: 2px solid #ffffff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    z-index: 10;
-}
-
-/* 旗 */
-.school-flag {
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 20px;
-    z-index: 10;
-}
-
-/* クリア済み - 緑 */
-.school-marker.cleared .school-icon {
-    background: #38a169;
-}
-.school-marker.cleared .school-badge {
-    background: #276749;
-}
-
-/* アクティブ - オレンジ */
-.school-marker.active .school-icon {
-    background: #ed8936;
-    animation: pulse-icon 1.5s infinite;
-}
-.school-marker.active .school-badge {
-    background: #c05621;
-}
-
-/* ロック - グレー */
-.school-marker.locked .school-icon {
-    background: #a0aec0;
-    opacity: 0.7;
-}
-.school-marker.locked .school-badge {
-    background: #718096;
-}
-
-@keyframes pulse-icon {
-    0%, 100% { 
-        box-shadow: 0 0 0 0 rgba(237, 137, 54, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
-    }
-    50% { 
-        box-shadow: 0 0 0 8px rgba(237, 137, 54, 0), 0 2px 6px rgba(0, 0, 0, 0.3);
-    }
-}
-
-/* ミニ地図（志望校設定下） */
-.mini-map-wrapper {
-    position: relative;
-    margin-top: 16px;
-    margin-bottom: 8px;
-}
-
-.mini-map-container {
-    width: 100%;
-    height: 150px;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #e2e8f0;
-    background: #f8fafc;
-}
-
-.mini-map-container .maplibregl-ctrl-attrib {
-    display: none;
-}
-
-.mini-map-container .maplibregl-ctrl-top-right {
-    display: none;
-}
-
-/* ミニ地図ボタン */
-.mini-map-overlay {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    display: flex;
-    gap: 6px;
-}
-
-.mini-map-btn {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    color: #3182ce;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s;
-}
-
-.mini-map-btn:active {
-    background: #f1f5f9;
-    transform: scale(0.98);
-}
-
-.mini-map-btn-expand {
-    color: #64748b;
-}
-
-/* ミニ地図統計 */
-.mini-map-stats {
-    position: absolute;
-    bottom: 8px;
-    left: 8px;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    padding: 4px 10px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.mini-map-stat-cleared {
-    color: #38a169;
-}
-
-.mini-map-stat-sep {
-    color: #94a3b8;
-}
-
-.mini-map-stat-total {
-    color: #1e293b;
-}
-
-.mini-map-stat-label {
-    color: #64748b;
-    margin-left: 4px;
-}
-
-
-/* クラスターマーカー */
-.cluster-marker {
-    background: #3182ce;
-    border: 3px solid #ffffff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 700;
-    color: #ffffff;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
-}
-
-/* MapLibreポップアップ非表示 */
-.maplibregl-popup {
-    display: none !important;
 }
