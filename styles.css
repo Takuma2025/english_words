@@ -1305,7 +1305,7 @@ body.learning-mode .app-header {
 .school-roadmap-container {
     margin: 0 0 12px 0;
     width: 100%;
-    background: #e0f7fa;
+    background: #e7fcff;
     padding: 12px 0;
     border-radius: 0;
     position: relative;
@@ -1317,8 +1317,8 @@ body.learning-mode .app-header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 4px;
+    margin-bottom: 4px;
 }
 
 .school-roadmap-title {
