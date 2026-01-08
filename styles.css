@@ -7833,8 +7833,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .english-word {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 600;
-    font-size: clamp(36px, 9vw, 56px);
-    font-weight: 700;
+    font-size: clamp(20px, 5vw, 28px) !important;
     text-align: center;
     display: inline-block;          /* テキスト幅に合わせる */
     padding: 0 6px;                 /* 少し余白で読みやすく */
