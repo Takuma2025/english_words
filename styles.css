@@ -4889,7 +4889,8 @@ body.reorder-mode-active .word-card-container {
     padding: 6px 0;
 }
 
-.input-shuffle-btn {
+.input-shuffle-btn,
+.input-flip-all-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4906,16 +4907,23 @@ body.reorder-mode-active .word-card-container {
     white-space: nowrap;
 }
 
-.input-shuffle-btn .btn-label {
+.input-flip-all-btn.hidden {
+    display: none;
+}
+
+.input-shuffle-btn .btn-label,
+.input-flip-all-btn .btn-label {
     display: inline;
 }
 
-.input-shuffle-btn:hover {
+.input-shuffle-btn:hover,
+.input-flip-all-btn:hover {
     background: #475569;
     border-color: #475569;
 }
 
-.input-shuffle-btn:active {
+.input-shuffle-btn:active,
+.input-flip-all-btn:active {
     transform: scale(0.97);
 }
 
@@ -5440,6 +5448,7 @@ body.reorder-mode-active .word-card-container {
     }
     
     .input-shuffle-btn,
+    .input-flip-all-btn,
     .input-filter-trigger {
         padding: 7px 10px;
         font-size: 11px;
@@ -5452,6 +5461,7 @@ body.reorder-mode-active .word-card-container {
     }
     
     .input-shuffle-btn svg,
+    .input-flip-all-btn svg,
     .input-filter-trigger svg {
         width: 12px;
         height: 12px;
@@ -5631,7 +5641,7 @@ body.reorder-mode-active .word-card-container {
     transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     transform-style: preserve-3d;
     border-radius: 0;
-    border: 0.5px solid #000000;
+    border: none;
     background: #ffffff;
 }
 
@@ -5843,6 +5853,50 @@ body.reorder-mode-active .word-card-container {
     background: #ef4444;
 }
 
+/* 単語カードモードでは単語番号・出た度・カタカナを非表示 */
+.flip-mode .input-list-number,
+.flip-mode .input-list-checkbox,
+.flip-mode .input-list-top-actions,
+.flip-mode .input-list-kana {
+    display: none !important;
+}
+
+/* 単語カードモードの英字を大きく・中央揃え */
+.flip-mode .input-list-word {
+    font-size: 30px;
+}
+
+.flip-mode .input-list-front {
+    justify-content: center;
+    align-items: center;
+}
+
+.flip-mode .input-list-row {
+    justify-content: center;
+    align-items: center;
+    width: auto;
+}
+
+.flip-mode .input-list-word-container {
+    align-items: center;
+}
+
+/* 単語カードモードの日本語を黒字・中央揃えに */
+.flip-mode .input-list-meaning {
+    color: #0f172a;
+    justify-content: center;
+    text-align: center;
+}
+
+.flip-mode .input-list-back {
+    align-items: center;
+}
+
+.flip-mode .input-list-meaning-wrapper {
+    justify-content: center;
+    text-align: center;
+}
+
 /* フリップモードのチェックボックス（単語番号の右） */
 .input-list-checkbox {
     position: absolute;
@@ -6010,8 +6064,6 @@ body.reorder-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
-    border-left: 0.5px solid #000000;
-    border-bottom: 0.5px solid #000000;
     padding: 20px 16px;
     padding-top: 40px;
     padding-bottom: 24px;
@@ -6019,7 +6071,7 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-list-item-expand:first-child {
-    border-top: 0.5px solid #000000;
+    border: none;
 }
 
 .input-list-item-expand.marker-correct {

@@ -9969,6 +9969,7 @@ function renderInputListView(words) {
 function setupInputListModeToggle() {
     const flipBtn = document.getElementById('inputListModeFlip');
     const expandBtn = document.getElementById('inputListModeExpand');
+    const flipAllBtn = document.getElementById('inputFlipAllBtn');
     
     if (!flipBtn || !expandBtn) return;
     
@@ -9978,6 +9979,12 @@ function setupInputListModeToggle() {
         flipBtn.classList.add('active');
         expandBtn.classList.remove('active');
         updateRedSheetToggleVisibility();
+        // すべてめくるボタンを表示・ラベルをリセット
+        if (flipAllBtn) {
+            flipAllBtn.classList.remove('hidden');
+            const btnLabel = flipAllBtn.querySelector('.btn-label');
+            if (btnLabel) btnLabel.textContent = '英語→日本語';
+        }
         // フィルターを適用して再描画（絞り込み状態を保持）
         applyInputFilter();
     });
@@ -9988,9 +9995,42 @@ function setupInputListModeToggle() {
         expandBtn.classList.add('active');
         flipBtn.classList.remove('active');
         updateRedSheetToggleVisibility();
+        // すべてめくるボタンを非表示
+        if (flipAllBtn) flipAllBtn.classList.add('hidden');
         // 現在の単語リストを再描画（フィルターを適用）
         applyInputFilter();
     });
+    
+    // すべてめくるボタンのイベント
+    if (flipAllBtn) {
+        flipAllBtn.addEventListener('click', () => {
+            const container = document.getElementById('inputListContainer');
+            if (!container) return;
+            const items = container.querySelectorAll('.input-list-item');
+            const btnLabel = flipAllBtn.querySelector('.btn-label');
+            
+            // 現在の状態を確認（最初のアイテムで判断）
+            const firstItem = items[0];
+            const isCurrentlyFlipped = firstItem && firstItem.classList.contains('flipped');
+            
+            items.forEach(item => {
+                if (isCurrentlyFlipped) {
+                    item.classList.remove('flipped');
+                } else {
+                    item.classList.add('flipped');
+                }
+            });
+            
+            // ボタンのラベルを切り替え
+            if (btnLabel) {
+                if (isCurrentlyFlipped) {
+                    btnLabel.textContent = '英語→日本語';
+                } else {
+                    btnLabel.textContent = '日本語→英語';
+                }
+            }
+        });
+    }
 }
 
 // インプットモード用フィルターのセットアップ
