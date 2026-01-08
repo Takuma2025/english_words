@@ -926,6 +926,7 @@ function showSchoolNameTooltip(name, type, course, targetElement) {
             tooltip.remove();
         }
         document.removeEventListener('click', closeTooltip);
+        window.removeEventListener('scroll', onScroll, true);
         if (scrollContainer) {
             scrollContainer.removeEventListener('scroll', onScroll);
         }
@@ -933,27 +934,26 @@ function showSchoolNameTooltip(name, type, course, targetElement) {
     
     // タップで閉じる
     const closeTooltip = (e) => {
-        if (!tooltip.contains(e.target)) {
+        if (!tooltip.contains(e.target) && !targetElement.contains(e.target)) {
             cleanup();
         }
     };
     
-    // スクロールで消える
+    // スクロールで消える（上下・横すべて）
     const onScroll = () => {
         cleanup();
     };
     
+    // スクロールイベントは即座に設定
+    window.addEventListener('scroll', onScroll, true);
+    if (scrollContainer) {
+        scrollContainer.addEventListener('scroll', onScroll);
+    }
+    
+    // クリックイベントは少し遅らせて設定（現在のクリックイベントが終わってから）
     setTimeout(() => {
         document.addEventListener('click', closeTooltip);
-        if (scrollContainer) {
-            scrollContainer.addEventListener('scroll', onScroll);
-        }
     }, 10);
-    
-    // 3秒後に自動で閉じる
-    setTimeout(() => {
-        cleanup();
-    }, 3000);
 }
 
 // 志望校をヘッダーに表示

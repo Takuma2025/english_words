@@ -1305,7 +1305,7 @@ body.learning-mode .app-header {
 .school-roadmap-container {
     margin: 0 0 12px 0;
     width: 100%;
-    background: #e7fcff;
+    background: transparent;
     padding: 12px 0;
     border-radius: 0;
     position: relative;
@@ -1355,8 +1355,8 @@ body.learning-mode .app-header {
 
 /* 通常のマス */
 .roadmap-tile {
-    width: 44px;
-    height: 44px;
+    width: 56px;
+    height: 56px;
     flex-shrink: 0;
     border-radius: 6px;
     position: relative;
@@ -1427,8 +1427,8 @@ body.learning-mode .app-header {
 
 /* 高校マス */
 .roadmap-tile-school {
-    width: 64px;
-    height: 64px;
+    width: 76px;
+    height: 76px;
     padding: 4px;
     background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
     border: 2px solid #e2e8f0;
@@ -1787,21 +1787,21 @@ body.learning-mode .app-header {
 /* レスポンシブ */
 @media (max-width: 400px) {
     .roadmap-tile {
-        width: 36px;
-        height: 36px;
+        width: 48px;
+        height: 48px;
     }
     
     .roadmap-tile-start {
-        width: 70px;
+        width: 80px;
     }
     
     .roadmap-tile-goal {
-        width: 70px;
+        width: 80px;
     }
     
     .roadmap-tile-school {
-        width: 54px;
-        height: 54px;
+        width: 64px;
+        height: 64px;
         padding: 3px;
     }
     
@@ -12702,7 +12702,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 24px 20px;
+    padding: 24px 10px;
     padding-bottom: calc(24px + 90px); /* ボタン分の余白を確保 */
     background: #fafafa;
 }
@@ -13437,7 +13437,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 /* モバイル対応 */
 @media (max-width: 600px) {
     .filter-sheet-content {
-        padding: 16px;
+        padding: 16px 5px;
         padding-bottom: calc(16px + 90px);
     }
     
