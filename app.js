@@ -634,10 +634,14 @@ function updateVocabProgressBar() {
 let previousLearnedWordsForRoadmap = null;
 
 // 高校データからユニークな高校リストを作成（必須語彙数順）
+// 私立はコースごとに別マス、公立・国立は学校ごとに1マス
 function getSchoolsByRequiredVocab() {
     const schoolMap = new Map();
     for (const school of osakaSchools) {
-        const key = school.name;
+        // 私立はコースごとに別マス、公立・国立は学校名で1つにまとめる
+        const key = school.type === '私立' 
+            ? `${school.name}|${school.course}` 
+            : school.name;
         if (!schoolMap.has(key) || schoolMap.get(key).hensachi < school.hensachi) {
             schoolMap.set(key, school);
         }
@@ -780,6 +784,17 @@ function updateSchoolRoadmap(forceAnimation = false) {
                 
                 tile.appendChild(nameRow);
                 
+                // 私立の場合はコース名も表示
+                if (school.type === '私立' && school.course) {
+                    const courseEl = document.createElement('div');
+                    courseEl.className = 'roadmap-school-course';
+                    const shortCourse = school.course
+                        .replace(/普通科/, '')
+                        .replace(/コース$/, '');
+                    courseEl.textContent = shortCourse;
+                    tile.appendChild(courseEl);
+                }
+                
                 // 必須語彙数
                 const vocabEl = document.createElement('div');
                 vocabEl.className = 'roadmap-school-vocab';
@@ -873,6 +888,8 @@ function showSchoolNameTooltip(name, type, course, targetElement) {
         existingTooltip.remove();
     }
     
+    const scrollContainer = document.getElementById('schoolRoadmapScroll');
+    
     // ツールチップを作成
     const tooltip = document.createElement('div');
     tooltip.className = 'roadmap-school-tooltip';
@@ -883,44 +900,63 @@ function showSchoolNameTooltip(name, type, course, targetElement) {
     
     document.body.appendChild(tooltip);
     
-    // 位置を計算
-    const rect = targetElement.getBoundingClientRect();
-    const tooltipRect = tooltip.getBoundingClientRect();
+    // 位置を更新する関数
+    const updatePosition = () => {
+        const rect = targetElement.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        
+        let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
+        let top = rect.top - tooltipRect.height - 10;
+        
+        // 画面外にはみ出す場合の調整
+        if (left < 10) left = 10;
+        if (left + tooltipRect.width > window.innerWidth - 10) {
+            left = window.innerWidth - tooltipRect.width - 10;
+        }
+        if (top < 10) {
+            top = rect.bottom + 10;
+        }
+        
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+    };
     
-    let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
-    let top = rect.top - tooltipRect.height - 10;
-    
-    // 画面外にはみ出す場合の調整
-    if (left < 10) left = 10;
-    if (left + tooltipRect.width > window.innerWidth - 10) {
-        left = window.innerWidth - tooltipRect.width - 10;
-    }
-    if (top < 10) {
-        top = rect.bottom + 10;
-    }
-    
-    tooltip.style.left = `${left}px`;
-    tooltip.style.top = `${top}px`;
+    updatePosition();
     tooltip.classList.add('show');
+    
+    // クリーンアップ関数
+    const cleanup = () => {
+        if (document.body.contains(tooltip)) {
+            tooltip.remove();
+        }
+        document.removeEventListener('click', closeTooltip);
+        if (scrollContainer) {
+            scrollContainer.removeEventListener('scroll', onScroll);
+        }
+    };
     
     // タップで閉じる
     const closeTooltip = (e) => {
         if (!tooltip.contains(e.target)) {
-            tooltip.remove();
-            document.removeEventListener('click', closeTooltip);
+            cleanup();
         }
+    };
+    
+    // スクロールで消える
+    const onScroll = () => {
+        cleanup();
     };
     
     setTimeout(() => {
         document.addEventListener('click', closeTooltip);
+        if (scrollContainer) {
+            scrollContainer.addEventListener('scroll', onScroll);
+        }
     }, 10);
     
     // 3秒後に自動で閉じる
     setTimeout(() => {
-        if (document.body.contains(tooltip)) {
-            tooltip.remove();
-            document.removeEventListener('click', closeTooltip);
-        }
+        cleanup();
     }, 3000);
 }
 
