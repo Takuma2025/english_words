@@ -621,6 +621,200 @@ function updateVocabProgressBar() {
     
     // 志望校を表示
     updateVocabSelectedSchool(selectedSchool);
+    
+    // 高校ロードマップを更新
+    updateSchoolRoadmap();
+}
+
+// ========================================
+// 高校進捗ロードマップ
+// ========================================
+
+// 以前の学習語数を保存（アニメーション用）
+let previousLearnedWordsForRoadmap = null;
+
+// 高校データからユニークな高校リストを作成（必須語彙数順）
+function getSchoolsByRequiredVocab() {
+    const schoolMap = new Map();
+    for (const school of osakaSchools) {
+        const key = school.name;
+        if (!schoolMap.has(key) || schoolMap.get(key).hensachi < school.hensachi) {
+            schoolMap.set(key, school);
+        }
+    }
+    
+    // 必須語彙数を計算して付与
+    const schoolsWithVocab = Array.from(schoolMap.values()).map(school => ({
+        ...school,
+        requiredVocab: calculateRequiredWords(school.hensachi, school.name)
+    }));
+    
+    // 必須語彙数順にソート（少ない順）
+    return schoolsWithVocab.sort((a, b) => a.requiredVocab - b.requiredVocab);
+}
+
+// 高校ロードマップを更新
+function updateSchoolRoadmap(forceAnimation = false) {
+    const trackContainer = document.getElementById('schoolRoadmapTrack');
+    const scrollContainer = document.getElementById('schoolRoadmapScroll');
+    const currentWordsEl = document.getElementById('roadmapCurrentWords');
+    
+    if (!trackContainer) return;
+    
+    const learnedWords = calculateTotalLearnedWords();
+    const totalWords = calculateTotalWords();
+    const schools = getSchoolsByRequiredVocab();
+    
+    if (currentWordsEl) currentWordsEl.textContent = learnedWords;
+    
+    // アニメーション対象を検出
+    const prevWords = previousLearnedWordsForRoadmap;
+    const shouldAnimate = forceAnimation || (prevWords !== null && learnedWords > prevWords);
+    previousLearnedWordsForRoadmap = learnedWords;
+    
+    // 10語ごとのマスを生成
+    const stepSize = 10;
+    const maxSteps = Math.ceil(totalWords / stepSize);
+    
+    // 高校を必須語彙数でマッピング
+    const schoolAtStep = new Map();
+    schools.forEach(school => {
+        const step = Math.ceil(school.requiredVocab / stepSize);
+        if (!schoolAtStep.has(step)) {
+            schoolAtStep.set(step, []);
+        }
+        schoolAtStep.get(step).push(school);
+    });
+    
+    trackContainer.innerHTML = '';
+    
+    // 現在のステップ
+    const currentStep = Math.floor(learnedWords / stepSize);
+    const prevStep = prevWords !== null ? Math.floor(prevWords / stepSize) : currentStep;
+    let lastScrollTarget = null;
+    let animationTarget = null;
+    
+    for (let step = 1; step <= maxSteps; step++) {
+        const wordCount = step * stepSize;
+        const isCleared = learnedWords >= wordCount;
+        const wasCleared = prevWords !== null ? prevWords >= wordCount : isCleared;
+        const isCurrent = step === currentStep + 1;
+        const justCleared = shouldAnimate && isCleared && !wasCleared;
+        
+        // この位置に高校があるかチェック
+        const schoolsAtThisStep = schoolAtStep.get(step) || [];
+        
+        if (schoolsAtThisStep.length > 0) {
+            // 高校マスを作成
+            schoolsAtThisStep.forEach(school => {
+                const tile = document.createElement('div');
+                tile.className = 'roadmap-tile roadmap-tile-school';
+                
+                const schoolCleared = learnedWords >= school.requiredVocab;
+                const schoolWasCleared = prevWords !== null ? prevWords >= school.requiredVocab : schoolCleared;
+                const schoolJustCleared = shouldAnimate && schoolCleared && !schoolWasCleared;
+                
+                if (schoolCleared) {
+                    tile.classList.add('cleared');
+                    
+                    // 旗を追加
+                    const flag = document.createElement('div');
+                    flag.className = 'roadmap-flag';
+                    if (schoolJustCleared) {
+                        flag.classList.add('flag-just-appeared');
+                    }
+                    flag.innerHTML = `
+                        <div class="roadmap-flag-pole">
+                            <div class="roadmap-flag-cloth"></div>
+                        </div>
+                    `;
+                    tile.appendChild(flag);
+                    
+                    if (schoolJustCleared) {
+                        tile.classList.add('tile-just-cleared');
+                        animationTarget = tile;
+                    }
+                }
+                
+                // 高校名（短縮）
+                const nameEl = document.createElement('div');
+                nameEl.className = 'roadmap-school-name';
+                const shortName = school.name
+                    .replace(/高等学校$/, '高')
+                    .replace(/大阪府立|大阪教育大学附属|大阪公立大学|大阪/g, '')
+                    .replace(/高等専門学校$/, '高専');
+                nameEl.textContent = shortName;
+                tile.appendChild(nameEl);
+                
+                // 必須語彙数
+                const vocabEl = document.createElement('div');
+                vocabEl.className = 'roadmap-school-vocab';
+                vocabEl.textContent = `${school.requiredVocab}語`;
+                tile.appendChild(vocabEl);
+                
+                // 現在位置のすぐ先ならスクロール対象
+                if (!schoolCleared && !lastScrollTarget) {
+                    lastScrollTarget = tile;
+                }
+                
+                trackContainer.appendChild(tile);
+            });
+        } else {
+            // 通常のマス
+            const tile = document.createElement('div');
+            tile.className = 'roadmap-tile';
+            
+            if (isCleared) {
+                tile.classList.add('roadmap-tile-cleared');
+                if (justCleared) {
+                    tile.classList.add('tile-just-cleared');
+                    if (!animationTarget) animationTarget = tile;
+                }
+            } else {
+                tile.classList.add('roadmap-tile-pending');
+            }
+            
+            // 現在位置マーカー
+            if (isCurrent) {
+                const marker = document.createElement('div');
+                marker.className = 'roadmap-current-marker';
+                tile.appendChild(marker);
+                lastScrollTarget = tile;
+            }
+            
+            // 50語ごとに数字を表示
+            if (wordCount % 50 === 0) {
+                const numberEl = document.createElement('div');
+                numberEl.className = 'roadmap-tile-number';
+                numberEl.textContent = wordCount;
+                tile.appendChild(numberEl);
+            }
+            
+            trackContainer.appendChild(tile);
+        }
+    }
+    
+    // アニメーション対象があればスクロール、なければ現在位置付近にスクロール
+    const scrollTarget = animationTarget || lastScrollTarget;
+    if (scrollTarget && scrollContainer) {
+        requestAnimationFrame(() => {
+            const scrollLeft = scrollTarget.offsetLeft - scrollContainer.offsetWidth / 2 + scrollTarget.offsetWidth / 2;
+            scrollContainer.scrollTo({
+                left: Math.max(0, scrollLeft),
+                behavior: shouldAnimate ? 'smooth' : 'auto'
+            });
+        });
+    }
+    
+    // アニメーション後にクラスを削除
+    if (shouldAnimate) {
+        setTimeout(() => {
+            const justClearedTiles = trackContainer.querySelectorAll('.tile-just-cleared');
+            justClearedTiles.forEach(tile => tile.classList.remove('tile-just-cleared'));
+            const justAppearedFlags = trackContainer.querySelectorAll('.flag-just-appeared');
+            justAppearedFlags.forEach(flag => flag.classList.remove('flag-just-appeared'));
+        }, 3500);
+    }
 }
 
 // 志望校をヘッダーに表示
