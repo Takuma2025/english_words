@@ -786,6 +786,11 @@ function updateSchoolRoadmap(forceAnimation = false) {
                 vocabEl.textContent = `${school.requiredVocab}語`;
                 tile.appendChild(vocabEl);
                 
+                // タップで高校名を表示
+                tile.addEventListener('click', () => {
+                    showSchoolNameTooltip(school.name, school.type, school.course, tile);
+                });
+                
                 // 現在位置のすぐ先ならスクロール対象
                 if (!schoolCleared && !lastScrollTarget) {
                     lastScrollTarget = tile;
@@ -858,6 +863,65 @@ function updateSchoolRoadmap(forceAnimation = false) {
             justAppearedFlags.forEach(flag => flag.classList.remove('flag-just-appeared'));
         }, 3500);
     }
+}
+
+// 高校名ツールチップを表示
+function showSchoolNameTooltip(name, type, course, targetElement) {
+    // 既存のツールチップを削除
+    const existingTooltip = document.querySelector('.roadmap-school-tooltip');
+    if (existingTooltip) {
+        existingTooltip.remove();
+    }
+    
+    // ツールチップを作成
+    const tooltip = document.createElement('div');
+    tooltip.className = 'roadmap-school-tooltip';
+    tooltip.innerHTML = `
+        <div class="tooltip-school-name">${name}</div>
+        <div class="tooltip-school-info">${type} / ${course}</div>
+    `;
+    
+    document.body.appendChild(tooltip);
+    
+    // 位置を計算
+    const rect = targetElement.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    
+    let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
+    let top = rect.top - tooltipRect.height - 10;
+    
+    // 画面外にはみ出す場合の調整
+    if (left < 10) left = 10;
+    if (left + tooltipRect.width > window.innerWidth - 10) {
+        left = window.innerWidth - tooltipRect.width - 10;
+    }
+    if (top < 10) {
+        top = rect.bottom + 10;
+    }
+    
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+    tooltip.classList.add('show');
+    
+    // タップで閉じる
+    const closeTooltip = (e) => {
+        if (!tooltip.contains(e.target)) {
+            tooltip.remove();
+            document.removeEventListener('click', closeTooltip);
+        }
+    };
+    
+    setTimeout(() => {
+        document.addEventListener('click', closeTooltip);
+    }, 10);
+    
+    // 3秒後に自動で閉じる
+    setTimeout(() => {
+        if (document.body.contains(tooltip)) {
+            tooltip.remove();
+            document.removeEventListener('click', closeTooltip);
+        }
+    }, 3000);
 }
 
 // 志望校をヘッダーに表示
