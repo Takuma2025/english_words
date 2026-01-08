@@ -14,8 +14,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="src/styles/osakaMap.css">
-    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="app.png" type="image/png">
     <link rel="apple-touch-icon" href="app.png">
@@ -23,8 +21,6 @@
     <link rel="apple-touch-icon" sizes="512x512" href="app.png">
     <!-- TensorFlow.js for EMNIST handwriting recognition -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
-    <!-- MapLibre GL JS -->
-    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 </head>
 <body>
     <!-- スプラッシュ画面 -->
@@ -119,16 +115,6 @@
                         </div>
                         <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="50">
                     </div>
-                </div>
-                <div class="sidebar-section">
-                    <div class="sidebar-section-title">高校マップ</div>
-                    <button class="sidebar-menu-item" id="osakaMapBtn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        <span>大阪府 高校マップ</span>
-                    </button>
                 </div>
                 <div class="sidebar-section">
                     <div class="sidebar-section-title">シェア</div>
@@ -1236,124 +1222,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 大阪府高校マップ画面 -->
-            <div class="osaka-map-view hidden" id="osakaMapView">
-                <!-- マップヘッダー -->
-                <div class="osaka-map-header">
-                    <button class="osaka-map-back-btn" id="osakaMapBackBtn" aria-label="戻る">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="15 18 9 12 15 6"></polyline>
-                        </svg>
-                    </button>
-                    <h1 class="osaka-map-title">大阪府 高校マップ</h1>
-                    <div class="osaka-map-header-spacer"></div>
-                </div>
-
-                <!-- 検索バー -->
-                <div class="osaka-map-search-container">
-                    <div class="osaka-map-search-input-wrapper">
-                        <svg class="osaka-map-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                        <input type="text" class="osaka-map-search-input" id="osakaMapSearchInput" placeholder="高校名で検索..." autocomplete="off">
-                        <button class="osaka-map-search-clear hidden" id="osakaMapSearchClear" aria-label="クリア">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                        </button>
-                    </div>
-                    <ul class="osaka-map-search-results hidden" id="osakaMapSearchResults"></ul>
-                </div>
-
-                <!-- フィルタチップ -->
-                <div class="osaka-map-filters">
-                    <button class="osaka-map-filter-chip active" data-filter="all">すべて</button>
-                    <button class="osaka-map-filter-chip" data-filter="achieved">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-                            <line x1="4" y1="22" x2="4" y2="15" stroke="currentColor" stroke-width="2"></line>
-                        </svg>
-                        達成のみ
-                    </button>
-                    <button class="osaka-map-filter-chip" data-filter="unachieved">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        未達のみ
-                    </button>
-                </div>
-
-                <!-- 進捗サマリー -->
-                <div class="osaka-map-progress-summary">
-                    <div class="osaka-map-progress-item">
-                        <span class="osaka-map-progress-label">学習語彙数</span>
-                        <span class="osaka-map-progress-value" id="osakaMapLearnedCount">0</span>
-                    </div>
-                    <div class="osaka-map-progress-divider"></div>
-                    <div class="osaka-map-progress-item">
-                        <span class="osaka-map-progress-label">達成校</span>
-                        <span class="osaka-map-progress-value osaka-map-progress-achieved" id="osakaMapAchievedCount">0</span>
-                    </div>
-                    <div class="osaka-map-progress-divider"></div>
-                    <div class="osaka-map-progress-item">
-                        <span class="osaka-map-progress-label">未達校</span>
-                        <span class="osaka-map-progress-value osaka-map-progress-unachieved" id="osakaMapUnachievedCount">0</span>
-                    </div>
-                </div>
-
-                <!-- 地図コンテナ -->
-                <div class="osaka-map-container" id="osakaMapContainer"></div>
-
-                <!-- BottomSheet -->
-                <div class="osaka-map-bottom-sheet hidden" id="osakaMapBottomSheet">
-                    <div class="osaka-map-bottom-sheet-handle"></div>
-                    <div class="osaka-map-bottom-sheet-content">
-                        <div class="osaka-map-school-header">
-                            <div class="osaka-map-school-icon" id="osakaMapSchoolIcon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                            </div>
-                            <div class="osaka-map-school-info">
-                                <h2 class="osaka-map-school-name" id="osakaMapSchoolName">高校名</h2>
-                                <span class="osaka-map-school-status" id="osakaMapSchoolStatus">未達成</span>
-                            </div>
-                            <button class="osaka-map-bottom-sheet-close" id="osakaMapBottomSheetClose" aria-label="閉じる">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="osaka-map-school-details">
-                            <div class="osaka-map-vocab-row">
-                                <div class="osaka-map-vocab-item">
-                                    <span class="osaka-map-vocab-label">必要語彙数</span>
-                                    <span class="osaka-map-vocab-value" id="osakaMapRequiredVocab">0</span>
-                                </div>
-                                <div class="osaka-map-vocab-item">
-                                    <span class="osaka-map-vocab-label">現在の語彙数</span>
-                                    <span class="osaka-map-vocab-value" id="osakaMapCurrentVocab">0</span>
-                                </div>
-                            </div>
-                            <div class="osaka-map-progress-bar-container">
-                                <div class="osaka-map-progress-bar">
-                                    <div class="osaka-map-progress-bar-fill" id="osakaMapProgressBarFill"></div>
-                                </div>
-                                <span class="osaka-map-progress-percent" id="osakaMapProgressPercent">0%</span>
-                            </div>
-                            <div class="osaka-map-vocab-remaining" id="osakaMapVocabRemaining">
-                                あと <span id="osakaMapRemainingCount">0</span> 語で達成
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </main>
     </div>
 
@@ -1452,7 +1320,6 @@
             <!-- ヘッダー -->
             <div class="school-modal-header">
                 <div class="school-modal-header-content">
-                    <img src="school_goal_w.png" alt="志望校" class="school-modal-icon" width="28" height="24">
                     <div class="school-modal-title-group">
                         <h2 class="school-modal-title">志望校を設定</h2>
                         <p class="school-modal-subtitle">大阪府の公立・私立・国立から選択</p>
@@ -1495,10 +1362,6 @@
                 </div>
                 <!-- 学校リスト -->
                 <div class="school-list-wrapper" id="schoolListContainer">
-                    <div class="school-list-header">
-                        <span class="school-list-header-text">大阪府の高校一覧</span>
-                        <span class="school-list-header-hint">タップで選択</span>
-                    </div>
                     <div class="school-list" id="schoolList"></div>
                 </div>
             </div>
@@ -1884,7 +1747,6 @@
     <script src="school-data.js"></script>
     <script src="handwriting-recognition.js"></script>
     <script src="handwriting-ui.js"></script>
-    <script src="src/pages/osakaMap.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

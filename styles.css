@@ -1092,11 +1092,11 @@ body.learning-mode .app-header {
 
 .category-cards-row .category-card {
     padding: 16px;
-    border: 1px solid #0055ca;
     border-bottom: none;
     border-right: none;
     align-items: center;
     border-radius: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     margin-bottom: 0;
 }
 
@@ -1339,10 +1339,10 @@ body.learning-mode .app-header {
     width: 100%;
     padding: 14px 16px;
     background: #ffffff;
-    border-radius: 0;
-    border: 1px solid #0055ca;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     cursor: pointer;
-    transition: border-color 0.2s ease, transform 0.1s ease;
+    transition: box-shadow 0.2s ease, transform 0.1s ease;
 }
 
 .school-card:active {
@@ -2366,7 +2366,7 @@ body.learning-mode .app-header {
 }
 
 .school-list-item:active {
-    background: #e0f2fe !important;
+    background: inherit;
 }
 
 /* 選択状態 */
@@ -2849,14 +2849,15 @@ body.learning-mode .app-header {
     display: flex;
     align-items: center;
     background: #ffffff;
-    border: 1px solid #0055ca;
-    border-radius: 0;
+    border: none;
+    border-radius: 10px;
     padding: 16px;
     margin-bottom: 10px;
     width: 100%;
     box-sizing: border-box;
     text-align: left;
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -2888,7 +2889,7 @@ button.category-card:focus-visible {
     padding: 0;
     overflow: hidden;
     border-radius: 0;
-    border: 1px solid #0055ca;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     margin-bottom: 2px;
 }
 
@@ -3079,13 +3080,14 @@ button.category-card:focus-visible {
 .learning-menu-category-btn {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #0055ca;
+    border: none;
     border-radius: 8px;
     background: white;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
     -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .learning-menu-category-btn:active {
@@ -3117,13 +3119,14 @@ button.category-card:focus-visible {
 .learning-menu-subcategory-btn {
     width: 100%;
     padding: 6px 8px;
-    border: 1px solid #0055ca;
+    border: none;
     border-radius: 6px;
     background: white;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
     -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
 }
 
 .learning-menu-subcategory-btn:active {
@@ -4709,7 +4712,7 @@ body.reorder-mode-active .word-card-container {
     transform-style: preserve-3d;
     backface-visibility: hidden;
     flex-shrink: 0;
-    border: 3px solid transparent;
+    border: 1px solid #e5e7eb;
     min-height: 400px;
 }
 
@@ -6332,7 +6335,7 @@ body.reorder-mode-active .word-card-container {
 
 .input-list-expand-example {
     background: #f5f5f5;
-    border-radius: 6px;
+    border-radius: 0;
     padding: 8px 10px;
     margin-top: 6px;
 }
@@ -6478,11 +6481,11 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-mode-content.marker-correct {
-    border-color: #3b82f6;
+    border: 1px solid #3b82f6;
 }
 
 .input-mode-content.marker-wrong {
-    border-color: #ef4444;
+    border: 1px solid #ef4444;
 }
 
 /* カードフリップアニメーション */
@@ -7438,8 +7441,8 @@ body.learning-mode .card-area-wrapper {
 }
 
 body.learning-mode .word-card-container {
-    aspect-ratio: 3/4;
-    max-height: 500px;
+    aspect-ratio: 3/3.2;
+    max-height: 420px;
 }
 
 /* 学習モード中は下部のタブバーを非表示にして余白をなくす */
@@ -13019,15 +13022,15 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .filter-start-btn-orange {
-    background: #ea580c;
+    background: #f9b916;
 }
 
 .filter-start-btn-orange:hover {
-    background: #c2410c;
+    background: #f5a500;
 }
 
 .filter-start-btn-orange:active {
-    background: #9a3412;
+    background: #e09800;
 }
 
 /* 選択状態の表示 */
