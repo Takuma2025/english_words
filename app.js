@@ -694,11 +694,24 @@ function updateSchoolRoadmap(forceAnimation = false) {
     let lastScrollTarget = null;
     let animationTarget = null;
     
+    // スタートマスを追加
+    const startTile = document.createElement('div');
+    startTile.className = 'roadmap-tile roadmap-tile-start';
+    startTile.innerHTML = '<span class="roadmap-start-text">START</span>';
+    trackContainer.appendChild(startTile);
+    
+    // 0語の場合はスタートマスに現在地マーカーを表示
+    if (currentStep === 0 && learnedWords === 0) {
+        const marker = document.createElement('div');
+        marker.className = 'roadmap-current-marker';
+        startTile.appendChild(marker);
+    }
+    
     for (let step = 1; step <= maxSteps; step++) {
         const wordCount = step * stepSize;
         const isCleared = learnedWords >= wordCount;
         const wasCleared = prevWords !== null ? prevWords >= wordCount : isCleared;
-        const isCurrent = step === currentStep + 1;
+        const isCurrent = step === currentStep && currentStep > 0;
         const justCleared = shouldAnimate && isCleared && !wasCleared;
         
         // この位置に高校があるかチェック
@@ -760,7 +773,7 @@ function updateSchoolRoadmap(forceAnimation = false) {
                 nameEl.className = 'roadmap-school-name';
                 const shortName = school.name
                     .replace(/高等学校$/, '高')
-                    .replace(/大阪府立|大阪教育大学附属|大阪公立大学|大阪/g, '')
+                    .replace(/大阪府立|大阪教育大学附属|大阪公立大学/g, '')
                     .replace(/高等専門学校$/, '高専');
                 nameEl.textContent = shortName;
                 nameRow.appendChild(nameEl);
@@ -814,6 +827,15 @@ function updateSchoolRoadmap(forceAnimation = false) {
             trackContainer.appendChild(tile);
         }
     }
+    
+    // ゴールマスを追加
+    const goalTile = document.createElement('div');
+    goalTile.className = 'roadmap-tile roadmap-tile-goal';
+    if (learnedWords >= totalWords) {
+        goalTile.classList.add('cleared');
+    }
+    goalTile.innerHTML = '<span class="roadmap-goal-text">GOAL</span>';
+    trackContainer.appendChild(goalTile);
     
     // アニメーション対象があればスクロール、なければ現在位置付近にスクロール
     const scrollTarget = animationTarget || lastScrollTarget;
