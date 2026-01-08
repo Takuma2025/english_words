@@ -4712,7 +4712,7 @@ body.reorder-mode-active .word-card-container {
     transform-style: preserve-3d;
     backface-visibility: hidden;
     flex-shrink: 0;
-    border: 1px solid #e5e7eb;
+    border: 0.5px solid #d1d5db;
     min-height: 400px;
 }
 
@@ -6481,11 +6481,11 @@ body.reorder-mode-active .word-card-container {
 }
 
 .input-mode-content.marker-correct {
-    border: 1px solid #3b82f6;
+    border: 0.5px solid #3b82f6;
 }
 
 .input-mode-content.marker-wrong {
-    border: 1px solid #ef4444;
+    border: 0.5px solid #ef4444;
 }
 
 /* カードフリップアニメーション */
@@ -7441,8 +7441,8 @@ body.learning-mode .card-area-wrapper {
 }
 
 body.learning-mode .word-card-container {
-    aspect-ratio: 3/3.2;
-    max-height: 420px;
+    aspect-ratio: 3/4;
+    max-height: 500px;
 }
 
 /* 学習モード中は下部のタブバーを非表示にして余白をなくす */
@@ -14024,13 +14024,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .hw-input-fixed-bottom.hw-input-disabled .hw-canvas-area,
 .hw-input-fixed-bottom.hw-input-disabled .virtual-keyboard,
 .hw-input-fixed-bottom.hw-input-disabled .hw-candidates {
-    opacity: 0.6;
     pointer-events: none;
-    filter: grayscale(0.5);
 }
 
 .hw-input-fixed-bottom.hw-input-disabled {
-    background: #c8cacd;
+    /* 色は変えない */
 }
 
 .hw-input-fixed-bottom .hw-canvas-area {
@@ -14118,7 +14116,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     margin: 0 auto;
     padding: 4px 12px 4px 12px;
     background: #fff;
-    border: 2px solid #9ca3af;
+    border: 1px solid #9ca3af;
     border-radius: 6px;
     font-size: 40px;
     font-weight: 700;
@@ -14528,7 +14526,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     width: 300px;
     padding: 4px 12px;
     background: #ffffff;
-    border: 2px solid #3182ce;
+    border: 1px solid #3182ce;
     border-radius: 6px;
 }
 
