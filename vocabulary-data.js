@@ -1029,6 +1029,7 @@ function getVocabularyByCategory(categoryName) {
     'LEVEL2 助動詞': level2AuxiliaryWords,
     'LEVEL2 接続詞': level2ConjunctionWords,
     'LEVEL2 代名詞': level2IndefinitePronounWords,
+    '代名詞': level2IndefinitePronounWords,
     // レベル3の品詞別
     'LEVEL3 動詞': level3VerbWords,
     'LEVEL3 名詞': level3NounWords,
