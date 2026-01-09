@@ -3031,11 +3031,15 @@ function showCategorySelection() {
     const sentenceMode = document.getElementById('sentenceMode');
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
+    const handwritingQuizView = document.getElementById('handwritingQuizView');
+    const cardTopSection = document.querySelector('.card-top-section');
     if (wordCard) wordCard.classList.add('hidden');
     if (inputMode) inputMode.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
     if (cardHint) cardHint.classList.add('hidden');
+    if (handwritingQuizView) handwritingQuizView.classList.add('hidden');
+    if (cardTopSection) cardTopSection.classList.add('hidden');
     
     // モードフラグをリセット
     isInputModeActive = false;
@@ -8215,19 +8219,9 @@ function showNextButton() {
 
 // 日本語→英語モードの完了画面を表示
 function showInputCompletionScreen() {
-    const inputMode = document.getElementById('inputMode');
-    
-    if (inputMode) {
-        inputMode.classList.add('hidden');
-    }
-    
-    // 完了メッセージを表示
-    showAlert('通知', `学習完了！\n覚えた数: ${correctCount}\n覚えていない数: ${wrongCount}`);
-    
-    // ホームに戻る
-    setTimeout(() => {
-        showCategorySelection();
-    }, 2000);
+    // 学習画面は非表示にせず、完了画面のオーバーレイだけを表示
+    // （完了画面が閉じられた時にホーム画面に戻る）
+    showCompletion();
 }
 
 // 前の単語に移動（履歴ベースではなく単純なインデックス操作）
@@ -11812,24 +11806,32 @@ function returnToCourseSelection() {
 
 // 覚えていない単語を復習
 function reviewWrongWords() {
-    hideCompletion();
-    
     // 今回のセッションで間違えた単語を取得（questionStatusを使用）
     const wrongWordsInSession = currentWords.filter((word, index) => {
         return questionStatus[index] === 'wrong';
     });
     
+    // 間違えた単語がない場合は、完了画面を閉じずに通知を表示
     if (wrongWordsInSession.length === 0) {
         showAlert('通知', '覚えていない単語はありません');
-        showCategorySelection();
         return;
     }
     
-    // 間違えた単語を「眺めるだけ」のカード一覧モードで復習開始
-    setTimeout(() => {
-        currentLearningMode = 'input'; // 眺めるモードに設定
-        initLearning(selectedCategory, wrongWordsInSession, 0, wrongWordsInSession.length, 0);
-    }, 350);
+    // 現在表示されている学習画面を非表示にする
+    const handwritingQuizView = document.getElementById('handwritingQuizView');
+    const inputMode = document.getElementById('inputMode');
+    const cardTopSection = document.querySelector('.card-top-section');
+    const wordCard = document.getElementById('wordCard');
+    if (handwritingQuizView) handwritingQuizView.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (cardTopSection) cardTopSection.classList.add('hidden');
+    if (wordCard) wordCard.classList.add('hidden');
+    
+    // 先に復習画面を表示してから、完了画面を閉じる（一瞬他の画面が見えないようにする）
+    showInputModeDirectly(selectedCategory, wrongWordsInSession, currentFilterCourseTitle || selectedCategory);
+    
+    // 復習画面が表示された後で完了画面を閉じる
+    hideCompletion();
 }
 
 // 進捗バーのセグメントを生成（20問ずつ表示）
@@ -16247,47 +16249,19 @@ function goToNextHWQuizQuestion() {
  * クイズ完了画面
  */
 function showHWQuizCompletion() {
-    // 正解数をカウント
-    let correctCount = 0;
-    hwQuizWords.forEach(word => {
-        if (correctWords.has(word.id)) {
-            correctCount++;
-        }
-    });
+    // 手書きモードの変数をグローバル変数に反映（showCompletionで使用するため）
+    correctCount = hwQuizCorrectCount || 0;
+    wrongCount = hwQuizWrongCount || 0;
+    currentWords = hwQuizWords || [];
+    selectedCategory = hwQuizCategory || selectedCategory;
+    currentFilterCourseTitle = hwQuizCourseTitle || currentFilterCourseTitle;
     
-    const total = hwQuizWords.length;
-    const percentage = Math.round((correctCount / total) * 100);
+    // questionStatusを手書きモードの結果から設定（復習ボタン用）
+    questionStatus = (hwQuizResults || []).map(result => result === 'correct' ? 'correct' : 'wrong');
     
-    // 完了画面を表示
-    const content = document.querySelector('.hw-main');
-    if (content) {
-        content.innerHTML = `
-            <div class="hw-completion">
-                <div class="hw-completion-icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke-width="2.5">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M8 12l3 3 5-5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                </div>
-                <h2 class="hw-completion-title">テスト完了</h2>
-                <div class="hw-completion-score">
-                    <span class="hw-completion-correct">${correctCount}</span>
-                    <span class="hw-completion-total">/ ${total}</span>
-                </div>
-                <div class="hw-completion-percent">${percentage}%</div>
-                <div class="hw-completion-buttons">
-                    <button class="hw-completion-btn hw-completion-retry" onclick="restartHWQuiz()">
-                        もう一度
-                    </button>
-                    <button class="hw-completion-btn hw-completion-back" onclick="exitHWQuiz()">
-                        戻る
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-    
-    SoundEffects.playComplete();
+    // 学習画面は非表示にせず、完了画面のオーバーレイだけを表示
+    // （完了画面が閉じられた時にホーム画面に戻る）
+    showCompletion();
 }
 
 /**

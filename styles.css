@@ -155,7 +155,7 @@ textarea,
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 99;
     opacity: 0;
     transition: opacity 0.3s ease;
     background-color: transparent;
@@ -263,6 +263,7 @@ textarea,
     flex-direction: column;
     width: 100%;
     height: 100%;
+    height: 100dvh;
     position: fixed;
     top: 0;
     left: 0;
@@ -270,23 +271,36 @@ textarea,
     bottom: 0;
     z-index: 1;
     overflow: visible; /* position:fixedの赤シートを許可 */
-    padding-top: calc(var(--header-height) + env(safe-area-inset-top, 0px));
+    padding-top: calc(var(--header-height) + env(safe-area-inset-top));
     background-color: #ffffff;
     box-sizing: border-box;
 }
 
+/* PWAスタンドアロンモード */
+@media (display-mode: standalone) {
+    .app-container {
+        height: 100%;
+        height: 100dvh;
+    }
+    
+    /* PWAでは画面下部まで完全に使用 */
+    .bottom-nav {
+        padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+}
+
 .app-header {
-    height: var(--header-height);
-    min-height: var(--header-height);
-    max-height: var(--header-height);
+    height: calc(var(--header-height) + env(safe-area-inset-top));
+    min-height: calc(var(--header-height) + env(safe-area-inset-top));
+    max-height: calc(var(--header-height) + env(safe-area-inset-top));
     background: #0055ca;
     border-bottom: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 16px;
+    padding: env(safe-area-inset-top) 16px 0 16px;
     position: fixed;
-    top: env(safe-area-inset-top, 0px);
+    top: 0;
     left: 0;
     right: 0;
     z-index: 10005;
@@ -306,6 +320,7 @@ body.learning-mode .app-header {
     left: 8px;
     top: 50%;
     transform: translateY(-50%);
+    margin-top: calc(env(safe-area-inset-top) / 2);
     background: transparent;
     border: none;
     color: #ffffff;
@@ -328,6 +343,7 @@ body.learning-mode .app-header {
     left: 8px;
     top: 50%;
     transform: translateY(-50%);
+    margin-top: calc(env(safe-area-inset-top) / 2);
     background: transparent;
     border: none;
     color: #ffffff;
@@ -11896,6 +11912,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     font-size: 16px;
     font-weight: 600;
     color: #6b7280;
+    margin-top: 20px;
     margin-bottom: 8px;
 }
 
