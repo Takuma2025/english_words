@@ -14407,6 +14407,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     font-weight: 600;
     transition: border-color 0.2s ease, background-color 0.2s ease;
     flex-shrink: 0;
+    overflow: visible;
     overflow: hidden;
     white-space: nowrap;
     line-height: 48px;
@@ -14872,10 +14873,16 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 差分ハイライト（ユーザー入力表示用） */
 .diff-wrong-input {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: #dc2626;
     background: rgba(220, 38, 38, 0.15);
-    border-radius: 2px;
-    padding: 0 1px;
+    border-radius: 0;
+    padding: 0;
+    height: 100%;
+    min-height: 36px;
+    overflow: visible;
 }
 
 .diff-extra {
@@ -14887,13 +14894,24 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .diff-missing-slot {
-    display: inline-block;
-    width: 0.55em;
-    height: 1.1em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.6em;
+    height: 100%;
+    min-height: 36px;
     background: rgba(220, 38, 38, 0.15);
-    border-radius: 2px;
-    margin: 0 1px;
-    vertical-align: text-bottom;
+    border-radius: 0;
+    margin: 0;
+    vertical-align: middle;
+}
+
+.hw-answer-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    overflow: visible;
 }
 
 .diff-empty {
@@ -15122,6 +15140,12 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         border-radius: 6px;
     }
     
+    .hw-correct-answer-box {
+        min-height: 50px;
+        padding: 10px 14px;
+        border-radius: 6px;
+    }
+    
     .hw-correct-word {
         font-size: 28px;
     }
@@ -15231,6 +15255,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         font-size: 24px;
     }
     
+    .hw-correct-answer-box {
+        min-height: 46px;
+        padding: 8px 12px;
+    }
+    
     .hw-correct-word {
         font-size: 24px;
     }
@@ -15320,6 +15349,12 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         min-height: 40px;
         padding: 6px 10px;
         font-size: 22px;
+        border-radius: 6px;
+    }
+    
+    .hw-correct-answer-box {
+        min-height: 40px;
+        padding: 6px 10px;
         border-radius: 6px;
     }
     

@@ -16485,60 +16485,31 @@ function computeUserDiff(userInput, correctWord) {
 }
 
 /**
- * 完全な差分を計算（編集距離アルゴリズムを使用）
- * 置換、挿入、削除を正確に判定
+ * 完全な差分を計算
+ * ユーザー入力の各文字を順番に処理し、正解と比較
+ * 入力文字を先に表示、不足分を末尾に追加
  */
 function computeFullDiff(userInput, correctWord) {
-    const m = userInput.length;
-    const n = correctWord.length;
-    
-    // DPテーブルを作成（編集距離）
-    const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
-    
-    // 初期化
-    for (let i = 0; i <= m; i++) dp[i][0] = i;
-    for (let j = 0; j <= n; j++) dp[0][j] = j;
-    
-    // DPテーブルを埋める
-    for (let i = 1; i <= m; i++) {
-        for (let j = 1; j <= n; j++) {
-            if (userInput[i - 1] === correctWord[j - 1]) {
-                dp[i][j] = dp[i - 1][j - 1];
-            } else {
-                dp[i][j] = 1 + Math.min(
-                    dp[i - 1][j],     // 削除（ユーザーが余分に入力）
-                    dp[i][j - 1],     // 挿入（ユーザーが入力しなかった）
-                    dp[i - 1][j - 1]  // 置換
-                );
-            }
-        }
-    }
-    
-    // バックトラックして差分を取得
     const result = [];
-    let i = m, j = n;
+    const maxLen = Math.max(userInput.length, correctWord.length);
     
-    while (i > 0 || j > 0) {
-        if (i > 0 && j > 0 && userInput[i - 1] === correctWord[j - 1]) {
-            // 一致
-            result.unshift({ type: 'match', char: userInput[i - 1] });
-            i--;
-            j--;
-        } else if (i > 0 && j > 0 && dp[i][j] === dp[i - 1][j - 1] + 1) {
-            // 置換（間違った文字）
-            result.unshift({ type: 'wrong', char: userInput[i - 1] });
-            i--;
-            j--;
-        } else if (j > 0 && (i === 0 || dp[i][j] === dp[i][j - 1] + 1)) {
-            // 挿入（欠けている文字）
-            result.unshift({ type: 'missing', char: correctWord[j - 1] });
-            j--;
-        } else if (i > 0 && (j === 0 || dp[i][j] === dp[i - 1][j] + 1)) {
-            // 削除（余分な文字）
-            result.unshift({ type: 'wrong', char: userInput[i - 1] });
-            i--;
-        } else {
-            break;
+    for (let i = 0; i < maxLen; i++) {
+        const userChar = userInput[i];
+        const correctChar = correctWord[i];
+        
+        if (userChar && correctChar) {
+            // 両方に文字がある
+            if (userChar === correctChar) {
+                result.push({ type: 'match', char: userChar });
+            } else {
+                result.push({ type: 'wrong', char: userChar });
+            }
+        } else if (userChar && !correctChar) {
+            // ユーザーが余分に入力（正解より長い）
+            result.push({ type: 'wrong', char: userChar });
+        } else if (!userChar && correctChar) {
+            // ユーザーが入力しなかった（正解より短い）
+            result.push({ type: 'missing', char: correctChar });
         }
     }
     
