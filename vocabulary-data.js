@@ -14,6 +14,7 @@
 
 // 家族に関する単語
 const familyWords = [
+  { id: 10001, word: "family", meaning: "家族", partOfSpeech: "名詞", category: "家族", appearanceCount: 48 },
   { id: 10003, word: "father", meaning: "父、父親", partOfSpeech: "名詞", category: "家族", appearanceCount: 4, kana: "*ファ*ーザー" },
   { id: 10004, word: "mother", meaning: "母、母親、お母さん", partOfSpeech: "名詞", category: "家族", appearanceCount: 1, kana: "*マ*ザー" },
   { id: 10005, word: "parent", meaning: "親　（parents:両親）", partOfSpeech: "名詞", category: "家族", appearanceCount: 1, kana: "*ペア*レント" },
@@ -35,6 +36,7 @@ const familyWords = [
 
 // 数字に関する単語
 const numberWords = [
+  { id: 10100, word: "number", meaning: "数、数字", partOfSpeech: "名詞", category: "数字", appearanceCount: 56 },
   // zero（最初に）
   { id: 10101, word: "zero", meaning: "ゼロ", partOfSpeech: "名詞・形容詞", category: "数字", appearanceCount: 2 },
   // 数字（順番に）
@@ -113,9 +115,12 @@ const clothingWords = [
   { id: 10234, word: "pants", meaning: "ズボン", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
   { id: 10235, word: "sweater", meaning: "セーター", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
   { id: 10236, word: "jacket", meaning: "上着、ジャケット", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10236, word: "coat", meaning: "コート", partOfSpeech: "名詞", category: "衣類", appearanceCount: 2 },
   { id: 10237, word: "dress", meaning: "ドレス、服装", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
   { id: 10237, word: "glove", meaning: "手ぶくろ", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10237, word: "shoe", meaning: "（通例 ～s)くつ", partOfSpeech: "名詞", category: "衣類", appearanceCount: 5 },
   { id: 10237, word: "tie", meaning: "ネクタイ", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10237, word: "scarf", meaning: "スカーフ、マフラー", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
   { id: 10237, word: "apron", meaning: "エプロン", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
 ];
 
@@ -140,6 +145,7 @@ const unitWords = [
 
 // 体に関する単語
 const bodyWords = [
+  { id: 10300, word: "body", meaning: "体", partOfSpeech: "名詞", category: "体", appearanceCount: 42 },
   { id: 10301, word: "head", meaning: "頭", partOfSpeech: "名詞", category: "体", appearanceCount: 5 },
   { id: 10302, word: "face", meaning: "顔", partOfSpeech: "名詞", category: "体", appearanceCount: 2 },
   { id: 10303, word: "eye", meaning: "目", partOfSpeech: "名詞", category: "体", appearanceCount: 4 },
@@ -164,6 +170,7 @@ const bodyWords = [
 
 // 色に関する単語
 const colorWords = [
+  { id: 10400, word: "color", meaning: "色", partOfSpeech: "名詞", category: "色", appearanceCount: 7 },
   { id: 10401, word: "red", meaning: "赤（の）", partOfSpeech: "名詞・形容詞", category: "色", appearanceCount: 1 },
   { id: 10402, word: "blue", meaning: "青（の）", partOfSpeech: "名詞・形容詞", category: "色", appearanceCount: 2 },
   { id: 10403, word: "yellow", meaning: "黄色（の）", partOfSpeech: "名詞・形容詞", category: "色", appearanceCount: 2 },
@@ -179,6 +186,7 @@ const colorWords = [
 
 // 食べ物・飲み物に関する単語
 const foodDrinkWords = [
+  { id: 10501, word: "food", meaning: "食べ物", partOfSpeech: "名詞", category: "食べ物・飲み物", appearanceCount: 138 },
   { id: 10515, word: "rice", meaning: "ご飯、米", partOfSpeech: "名詞", category: "食べ物・飲み物", appearanceCount: 2 },
   { id: 10516, word: "bread", meaning: "パン", partOfSpeech: "名詞", category: "食べ物・飲み物", appearanceCount: 0 },
   { id: 10571, word: "noodle", meaning: "麺類、ヌードル", partOfSpeech: "名詞", category: "食べ物・飲み物", appearanceCount: 0 },
@@ -244,7 +252,7 @@ const townFacilityWords = [
   { id: 10602, word: "airport", meaning: "空港", partOfSpeech: "名詞", category: "町の施設", appearanceCount: 2 },
   { id: 10605, word: "library", meaning: "図書館、図書室", partOfSpeech: "名詞", category: "町の施設", appearanceCount: 15 },
   { id: 10606, word: "museum", meaning: "博物館、美術館", partOfSpeech: "名詞", category: "町の施設", appearanceCount: 49 },
-  { id: 10607, word: "park", meaning: "公園、遊園地", partOfSpeech: "名詞", category: "町の施設", appearanceCount: 44 },
+  { id: 10607, word: "park", meaning: "公園", partOfSpeech: "名詞", category: "町の施設", appearanceCount: 44 },
   { id: 10608, word: "post office", meaning: "郵便局", partOfSpeech: "名詞", category: "町の施設", appearanceCount: 3 },
   { id: 10609, word: "police station", meaning: "警察署", partOfSpeech: "名詞", category: "町の施設", appearanceCount: 0 },
   { id: 10610, word: "hospital", meaning: "病院", partOfSpeech: "名詞", category: "町の施設", appearanceCount: 1 },
@@ -353,6 +361,7 @@ const calendarWords = [
   { id: 11021, word: "November", meaning: "11月", partOfSpeech: "名詞", category: "曜日・月・季節", appearanceCount: 6 },
   { id: 11022, word: "December", meaning: "12月", partOfSpeech: "名詞", category: "曜日・月・季節", appearanceCount: 6 },
   // 季節
+  { id: 11022, word: "season", meaning: "季節", partOfSpeech: "名詞", category: "曜日・月・季節", appearanceCount: 25 },
   { id: 11023, word: "spring", meaning: "春、ばね・ぜんまい、泉", partOfSpeech: "名詞", category: "曜日・月・季節", appearanceCount: 15 },
   { id: 11024, word: "summer", meaning: "夏", partOfSpeech: "名詞", category: "曜日・月・季節", appearanceCount: 23 },
   { id: 11025, word: "autumn", meaning: "秋", partOfSpeech: "名詞", category: "曜日・月・季節", appearanceCount: 8 },
@@ -382,6 +391,7 @@ const timeWords = [
 
 // 動物に関する単語
 const animalWords = [
+  { id: 11101, word: "animal", meaning: "動物", partOfSpeech: "名詞", category: "動物", appearanceCount: 18 },
   { id: 11102, word: "dog", meaning: "犬", partOfSpeech: "名詞", category: "動物", appearanceCount: 14 },
   { id: 11103, word: "cat", meaning: "猫", partOfSpeech: "名詞", category: "動物", appearanceCount: 2 },
   { id: 11105, word: "fish", meaning: "魚 （複数形： fish)、釣りをする", partOfSpeech: "名詞・動詞", category: "動物", appearanceCount: 0 },
@@ -417,6 +427,7 @@ const animalWords = [
 // 自然、天気、方角に関する単語
 // 自然に関する単語
 const natureWords = [
+    { id: 11200, word: "nature", meaning: "自然", partOfSpeech: "名詞", category: "自然", appearanceCount: 21 },
     { id: 11220, word: "mountain", meaning: "山［Mt.～ ～山］", partOfSpeech: "名詞", category: "自然", appearanceCount: 19 },
     { id: 11223, word: "sea", meaning: "海、海の", partOfSpeech: "名詞、形容詞", category: "自然", appearanceCount: 24 },
     { id: 11221, word: "river", meaning: "川、河川", partOfSpeech: "名詞", category: "自然", appearanceCount: 38 },
@@ -442,6 +453,7 @@ const natureWords = [
 
 // 天気に関する単語
 const weatherWords = [
+  { id: 11200, word: "weather", meaning: "天気", partOfSpeech: "名詞", category: "天気", appearanceCount: 1 },
   { id: 11207, word: "sunny", meaning: "晴れた", partOfSpeech: "形容詞", category: "天気", appearanceCount: 4 },
   { id: 11208, word: "cloudy", meaning: "曇った", partOfSpeech: "形容詞", category: "天気", appearanceCount: 4 },
   { id: 11209, word: "rainy", meaning: "雨の", partOfSpeech: "形容詞", category: "天気", appearanceCount: 1 },
@@ -474,6 +486,7 @@ const directionWords = [
 
 // 教科に関する単語
 const subjectWords = [
+  { id: 11300, word: "subject", meaning: "教科", partOfSpeech: "名詞", category: "教科", appearanceCount: 1 },
   { id: 11308, word: "English", meaning: "英語", partOfSpeech: "名詞", category: "教科", appearanceCount: 82 },
   { id: 11309, word: "math", meaning: "数学、算数", partOfSpeech: "名詞", category: "教科", appearanceCount: 7 },
   { id: 11310, word: "science", meaning: "理科、科学", partOfSpeech: "名詞", category: "教科", appearanceCount: 22 },
@@ -489,6 +502,7 @@ const subjectWords = [
 
 // 文房具に関する単語
 const stationeryWords = [
+  { id: 11340, word: "stationery", meaning: "文具", partOfSpeech: "名詞", category: "文房具", appearanceCount: 0 },
   { id: 11344, word: "pen", meaning: "ペン", partOfSpeech: "名詞", category: "文房具", appearanceCount: 1 },
   { id: 11345, word: "pencil", meaning: "鉛筆", partOfSpeech: "名詞", category: "文房具", appearanceCount: 1 },
   { id: 11346, word: "eraser", meaning: "消しゴム", partOfSpeech: "名詞", category: "文房具", appearanceCount: 0 },
@@ -808,16 +822,6 @@ const level2IndefinitePronounWords = [
 
 // レベル2 数量を表す限定詞
 const level2QuantifierWords = [
-  { id: 20507, word: "many", meaning: "たくさんの（数えられる名詞に）", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 258, example: { english: "I have <strong>many</strong> books.", japanese: "私はたくさんの本を持っています。" } },
-  { id: 20508, word: "much", meaning: "たくさんの（数えられない名詞に）", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 46, example: { english: "I want to drink <strong>much</strong> water.", japanese: "私はたくさんの水を飲みたいです。" } },
-  { id: 20509, word: "a few", meaning: "少しの、いくつかの（数えられる名詞に、肯定的）", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 22, example: { english: "I have <strong>a few</strong> friends.", japanese: "私は少しの友達がいます。" } },
-  { id: 20510, word: "a little", meaning: "少しの（数えられない名詞に、肯定的）", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 5, example: { english: "There is <strong>a little</strong> water in the glass.", japanese: "コップに水が少し入っています。" } },
-  { id: 20511, word: "few", meaning: "ほとんどない、（数えられる名詞に、否定的）", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 23, example: { english: "I have <strong>few</strong> friends.", japanese: "私はほとんど友達がいません。" } },
-  { id: 20512, word: "little", meaning: "ほとんどない、わずかな（数えられない名詞に、否定的）、小さい", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 15, example: { english: "I have <strong>little</strong> money.", japanese: "私はほとんどお金がありません。" } },
-  { id: 20514, word: "a lot of", meaning: "たくさんの、多くの", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 50, example: { english: "I have <strong>a lot of</strong> friends.", japanese: "私はたくさんの友達がいます。" } },
-  { id: 20504, word: "some", meaning: "いくつかの、いくらかの", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 287, example: { english: "I have <strong>some</strong> books.", japanese: "私は本を何冊か（いくつか）持っています。" } },
-  { id: 20505, word: "any", meaning: "（疑問文・否定文で）いくつかの、どれでも", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 30, example: { english: "Do you have <strong>any</strong> questions?", japanese: "何か質問はありますか。" } },
-  { id: 20506, word: "no", meaning: "〜が（まったく）ない", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 73, example: { english: "He has <strong>no</strong> money.", japanese: "彼はお金がありません。" } },
   { id: 20513, word: "several", meaning: "いくつかの、数個の", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 15, example: { english: "Ken bought <strong>several</strong> pens.", japanese: "ケンはいくつかのペンを買いました。" } },
 ];
 

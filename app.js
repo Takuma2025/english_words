@@ -3623,10 +3623,18 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
         // 進捗を計算（全モードの進捗を合算）
         let correctCount = 0;
         let wrongCount = 0;
+        // 入力モード（日本語→英語）での完了状態を確認
+        let inputModeCorrectCount = 0;
+        let inputModeWrongCount = 0;
+        
         if (words && words.length > 0) {
             const modes = ['card', 'input'];
             const allCorrectSet = new Set();
             const allWrongSet = new Set();
+            
+            // 入力モード専用のセット
+            const inputCorrectSet = new Set();
+            const inputWrongSet = new Set();
             
             modes.forEach(mode => {
                 const savedCorrectWords = localStorage.getItem(`correctWords-${subcat}_${mode}`);
@@ -3638,6 +3646,10 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                         if (!allWrongSet.has(numId)) {
                             allCorrectSet.add(numId);
                         }
+                        // 入力モードの場合は別途記録
+                        if (mode === 'input' && !inputWrongSet.has(numId)) {
+                            inputCorrectSet.add(numId);
+                        }
                     });
                 }
                 
@@ -3646,6 +3658,11 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                         const numId = typeof id === 'string' ? parseInt(id, 10) : id;
                         allWrongSet.add(numId);
                         allCorrectSet.delete(numId);
+                        // 入力モードの場合は別途記録
+                        if (mode === 'input') {
+                            inputWrongSet.add(numId);
+                            inputCorrectSet.delete(numId);
+                        }
                     });
                 }
             });
@@ -3656,6 +3673,12 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
                 } else if (allCorrectSet.has(word.id)) {
                     correctCount++;
                 }
+                // 入力モードの進捗を別途カウント
+                if (inputWrongSet.has(word.id)) {
+                    inputModeWrongCount++;
+                } else if (inputCorrectSet.has(word.id)) {
+                    inputModeCorrectCount++;
+                }
             });
         }
         const correctPercent = wordCount > 0 ? (correctCount / wordCount) * 100 : 0;
@@ -3663,7 +3686,19 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
         
         // COMPLETE!!の判定（間違いが0で正解数が総数と等しい場合）
         const isComplete = wordCount > 0 && wrongCount === 0 && correctCount === wordCount;
-        const progressBarClass = isComplete ? 'category-progress-bar category-progress-complete' : 'category-progress-bar';
+        // 入力モードで全問正解しているかを判定
+        const isInputModeComplete = wordCount > 0 && inputModeWrongCount === 0 && inputModeCorrectCount === wordCount;
+        
+        // モードに応じて異なるCOMPLETEクラスを適用
+        // 入力モードで全問正解している場合は金色を優先表示
+        let progressBarClass = 'category-progress-bar';
+        if (isInputModeComplete) {
+            // 入力モード（日本語→英語）で全問正解: 金色
+            progressBarClass = 'category-progress-bar category-progress-complete-input';
+        } else if (isComplete) {
+            // カードモードでのみ全問正解: 青色
+            progressBarClass = 'category-progress-bar category-progress-complete';
+        }
         
         // 番号を取得（1から始まる）
         const number = index + 1;
@@ -3860,10 +3895,18 @@ function showElementaryCategorySelection(skipAnimation = false) {
         // 進捗を計算
         let correctCount = 0;
         let wrongCount = 0;
+        // 入力モード（日本語→英語）での完了状態を確認
+        let inputModeCorrectCount = 0;
+        let inputModeWrongCount = 0;
+        
         if (words && words.length > 0) {
             const modes = ['card', 'input'];
             const allCorrectSet = new Set();
             const allWrongSet = new Set();
+            
+            // 入力モード専用のセット
+            const inputCorrectSet = new Set();
+            const inputWrongSet = new Set();
             
             modes.forEach(mode => {
                 const savedCorrectWords = localStorage.getItem(`correctWords-${subcat}_${mode}`);
@@ -3875,6 +3918,10 @@ function showElementaryCategorySelection(skipAnimation = false) {
                         if (!allWrongSet.has(numId)) {
                             allCorrectSet.add(numId);
                         }
+                        // 入力モードの場合は別途記録
+                        if (mode === 'input' && !inputWrongSet.has(numId)) {
+                            inputCorrectSet.add(numId);
+                        }
                     });
                 }
                 
@@ -3883,6 +3930,11 @@ function showElementaryCategorySelection(skipAnimation = false) {
                         const numId = typeof id === 'string' ? parseInt(id, 10) : id;
                         allWrongSet.add(numId);
                         allCorrectSet.delete(numId);
+                        // 入力モードの場合は別途記録
+                        if (mode === 'input') {
+                            inputWrongSet.add(numId);
+                            inputCorrectSet.delete(numId);
+                        }
                     });
                 }
             });
@@ -3893,6 +3945,12 @@ function showElementaryCategorySelection(skipAnimation = false) {
                 } else if (allCorrectSet.has(word.id)) {
                     correctCount++;
                 }
+                // 入力モードの進捗を別途カウント
+                if (inputWrongSet.has(word.id)) {
+                    inputModeWrongCount++;
+                } else if (inputCorrectSet.has(word.id)) {
+                    inputModeCorrectCount++;
+                }
             });
         }
         const correctPercent = wordCount > 0 ? (correctCount / wordCount) * 100 : 0;
@@ -3900,7 +3958,19 @@ function showElementaryCategorySelection(skipAnimation = false) {
         
         // COMPLETE!!の判定（間違いが0で正解数が総数と等しい場合）
         const isComplete = wordCount > 0 && wrongCount === 0 && correctCount === wordCount;
-        const progressBarClass = isComplete ? 'category-progress-bar category-progress-complete' : 'category-progress-bar';
+        // 入力モードで全問正解しているかを判定
+        const isInputModeComplete = wordCount > 0 && inputModeWrongCount === 0 && inputModeCorrectCount === wordCount;
+        
+        // モードに応じて異なるCOMPLETEクラスを適用
+        // 入力モードで全問正解している場合は金色を優先表示
+        let progressBarClass = 'category-progress-bar';
+        if (isInputModeComplete) {
+            // 入力モード（日本語→英語）で全問正解: 金色
+            progressBarClass = 'category-progress-bar category-progress-complete-input';
+        } else if (isComplete) {
+            // カードモードでのみ全問正解: 青色
+            progressBarClass = 'category-progress-bar category-progress-complete';
+        }
         
         // 番号を取得（1から始まる）
         const number = index + 1;
@@ -4167,10 +4237,18 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         // 進捗を計算（actualCategoryNameで保存されているので、それで取得）
         let correctCount = 0;
         let wrongCount = 0;
+        // 入力モード（日本語→英語）での完了状態を確認
+        let inputModeCorrectCount = 0;
+        let inputModeWrongCount = 0;
+        
         if (words && words.length > 0) {
             const modes = ['card', 'input'];
             const allCorrectSet = new Set();
             const allWrongSet = new Set();
+            
+            // 入力モード専用のセット
+            const inputCorrectSet = new Set();
+            const inputWrongSet = new Set();
             
             modes.forEach(mode => {
                 const savedCorrectWords = localStorage.getItem(`correctWords-${actualCategoryName}_${mode}`);
@@ -4182,6 +4260,10 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
                         if (!allWrongSet.has(numId)) {
                             allCorrectSet.add(numId);
                         }
+                        // 入力モードの場合は別途記録
+                        if (mode === 'input' && !inputWrongSet.has(numId)) {
+                            inputCorrectSet.add(numId);
+                        }
                     });
                 }
                 
@@ -4190,6 +4272,11 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
                         const numId = typeof id === 'string' ? parseInt(id, 10) : id;
                         allWrongSet.add(numId);
                         allCorrectSet.delete(numId);
+                        // 入力モードの場合は別途記録
+                        if (mode === 'input') {
+                            inputWrongSet.add(numId);
+                            inputCorrectSet.delete(numId);
+                        }
                     });
                 }
             });
@@ -4200,6 +4287,12 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
                 } else if (allCorrectSet.has(word.id)) {
                     correctCount++;
                 }
+                // 入力モードの進捗を別途カウント
+                if (inputWrongSet.has(word.id)) {
+                    inputModeWrongCount++;
+                } else if (inputCorrectSet.has(word.id)) {
+                    inputModeCorrectCount++;
+                }
             });
         }
         const correctPercent = wordCount > 0 ? (correctCount / wordCount) * 100 : 0;
@@ -4207,7 +4300,19 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         
         // COMPLETE!!の判定（間違いが0で正解数が総数と等しい場合）
         const isComplete = wordCount > 0 && wrongCount === 0 && correctCount === wordCount;
-        const progressBarClass = isComplete ? 'category-progress-bar category-progress-complete' : 'category-progress-bar';
+        // 入力モードで全問正解しているかを判定
+        const isInputModeComplete = wordCount > 0 && inputModeWrongCount === 0 && inputModeCorrectCount === wordCount;
+        
+        // モードに応じて異なるCOMPLETEクラスを適用
+        // 入力モードで全問正解している場合は金色を優先表示
+        let progressBarClass = 'category-progress-bar';
+        if (isInputModeComplete) {
+            // 入力モード（日本語→英語）で全問正解: 金色
+            progressBarClass = 'category-progress-bar category-progress-complete-input';
+        } else if (isComplete) {
+            // カードモードでのみ全問正解: 青色
+            progressBarClass = 'category-progress-bar category-progress-complete';
+        }
         
         // 番号を取得（1から始まる）
         const number = index + 1;
@@ -4460,6 +4565,9 @@ function showCourseSelection(category, categoryWords) {
                 // 進捗を計算（サブコースごと）- 各単語のカテゴリー（courseName）から読み込む
                 let correctCountInCourse = 0;
                 let wrongCountInCourse = 0;
+                // 入力モード（日本語→英語）での完了状態を確認
+                let inputModeCorrectCount = 0;
+                let inputModeWrongCount = 0;
 
                 // このコースの進捗をキャッシュから取得、なければ読み込む
                 if (!progressCache[courseName]) {
@@ -4471,6 +4579,12 @@ function showCourseSelection(category, categoryWords) {
                     };
                 }
                 const courseProgress = progressCache[courseName];
+                
+                // 入力モード専用の進捗を取得
+                const savedInputCorrect = localStorage.getItem(`correctWords-${courseName}_input`);
+                const savedInputWrong = localStorage.getItem(`wrongWords-${courseName}_input`);
+                const inputCorrectSet = savedInputCorrect ? new Set(JSON.parse(savedInputCorrect).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set();
+                const inputWrongSet = savedInputWrong ? new Set(JSON.parse(savedInputWrong).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set();
 
                 courseWords.forEach(word => {
                     const isCorrect = courseProgress.correct.has(word.id);
@@ -4482,12 +4596,22 @@ function showCourseSelection(category, categoryWords) {
                     } else if (isCorrect) {
                         correctCountInCourse++;
                     }
+                    
+                    // 入力モードの進捗を別途カウント
+                    if (inputWrongSet.has(word.id)) {
+                        inputModeWrongCount++;
+                    } else if (inputCorrectSet.has(word.id)) {
+                        inputModeCorrectCount++;
+                    }
                 });
 
                 const total = courseWords.length;
                 const correctPercent = total === 0 ? 0 : (correctCountInCourse / total) * 100;
                 const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
                 const completedCount = correctCountInCourse + wrongCountInCourse;
+                
+                // 入力モードで全問正解しているかを判定
+                const isInputModeComplete = total > 0 && inputModeWrongCount === 0 && inputModeCorrectCount === total;
 
                 const numberMark = circledNumbers[index] || '';
                 const badgeLabel =
@@ -4518,7 +4642,8 @@ function showCourseSelection(category, categoryWords) {
                         showWordFilterView(courseName, courseWords, courseName);
                     },
                     badgeLabel,
-                    numberMark
+                    numberMark,
+                    isInputModeComplete
                 );
                 body.appendChild(courseCard);
             });
@@ -4546,7 +4671,17 @@ function showCourseSelection(category, categoryWords) {
             // 進捗を計算（カテゴリごと）
             let correctCountInCourse = 0;
             let wrongCountInCourse = 0;
+            // 入力モード（日本語→英語）での完了状態を確認
+            let inputModeCorrectCount = 0;
+            let inputModeWrongCount = 0;
+            
             const { correctSet, wrongSet } = loadCategoryWords(category);
+            
+            // 入力モード専用の進捗を取得
+            const savedInputCorrect = localStorage.getItem(`correctWords-${category}_input`);
+            const savedInputWrong = localStorage.getItem(`wrongWords-${category}_input`);
+            const inputCorrectSet = savedInputCorrect ? new Set(JSON.parse(savedInputCorrect).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set();
+            const inputWrongSet = savedInputWrong ? new Set(JSON.parse(savedInputWrong).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set();
             
             courseWords.forEach(word => {
                 const isCorrect = correctSet.has(word.id);
@@ -4558,12 +4693,22 @@ function showCourseSelection(category, categoryWords) {
                 } else if (isCorrect) {
                     correctCountInCourse++;
                 }
+                
+                // 入力モードの進捗を別途カウント
+                if (inputWrongSet.has(word.id)) {
+                    inputModeWrongCount++;
+                } else if (inputCorrectSet.has(word.id)) {
+                    inputModeCorrectCount++;
+                }
             });
             
             const total = courseWords.length;
             const correctPercent = total === 0 ? 0 : (correctCountInCourse / total) * 100;
             const wrongPercent = total === 0 ? 0 : (wrongCountInCourse / total) * 100;
             const completedCount = correctCountInCourse + wrongCountInCourse;
+            
+            // 入力モードで全問正解しているかを判定
+            const isInputModeComplete = total > 0 && inputModeWrongCount === 0 && inputModeCorrectCount === total;
             
             const courseTitle = `${start + 1}～${end}語`;
             const courseCard = createCourseCard(
@@ -4580,7 +4725,10 @@ function showCourseSelection(category, categoryWords) {
                 () => {
                     // アウトプット：フィルター画面を表示
                     showWordFilterView(category, courseWords, courseTitle);
-                }
+                },
+                '',
+                '',
+                isInputModeComplete
             );
             courseList.appendChild(courseCard);
         }
@@ -4629,7 +4777,7 @@ function showCourseSelection(category, categoryWords) {
 }
 
 // コースカードを作成
-function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, onInput, onOutput, badgeLabel = '', badgeNumber = '') {
+function createCourseCard(title, description, correctPercent, wrongPercent, completedCount, total, onInput, onOutput, badgeLabel = '', badgeNumber = '', isInputModeComplete = false) {
     const card = document.createElement('div');
     card.className = 'category-card category-card-with-actions';
     
@@ -4642,7 +4790,16 @@ function createCourseCard(title, description, correctPercent, wrongPercent, comp
 
     // 全部青（間違い0、正解数=総数）のときだけCOMPLETE!!
     const isComplete = total > 0 && wrongPercent === 0 && correctPercent === 100;
-    const progressBarClass = isComplete ? 'category-progress-bar category-progress-complete' : 'category-progress-bar';
+    // モードに応じて異なるCOMPLETEクラスを適用
+    // 入力モードで全問正解している場合は金色を優先表示
+    let progressBarClass = 'category-progress-bar';
+    if (isInputModeComplete) {
+        // 入力モード（日本語→英語）で全問正解: 金色
+        progressBarClass = 'category-progress-bar category-progress-complete-input';
+    } else if (isComplete) {
+        // カードモードでのみ全問正解: 青色
+        progressBarClass = 'category-progress-bar category-progress-complete';
+    }
     const progressText = `${completedCount}/${total}語`;
 
     const descriptionHtml = description ? `<div class="category-meta">${description}</div>` : '';
@@ -5791,6 +5948,9 @@ function handleTimeUp() {
 function initLearning(category, words, startIndex = 0, rangeEnd = undefined, rangeStartOverride = undefined) {
     selectedCategory = category;
     currentWords = words;
+    // 英語→日本語モード（カードモード）なので、selectedLearningModeを'card'に設定
+    // これにより、進捗が_cardキーで保存される
+    selectedLearningMode = 'card';
     // インプットモード（眺めるモード）の場合は、currentCourseWordsも設定
     if (currentLearningMode === 'input') {
         currentCourseWords = words;
@@ -11237,8 +11397,8 @@ function showCompletion() {
     // 前回のアニメーション状態を完全にリセット
     const completionProgressBar = document.querySelector('.completion-progress-bar');
     if (completionProgressBar) {
-        // クラスを確実に削除
-        completionProgressBar.classList.remove('completion-progress-complete');
+        // すべてのCOMPLETEクラスを確実に削除
+        completionProgressBar.classList.remove('completion-progress-complete', 'completion-progress-complete-card', 'completion-progress-complete-input');
         // 強制リフローで確実に反映
         completionProgressBar.offsetHeight;
     }
@@ -11335,13 +11495,22 @@ function showCompletion() {
                 // COMPLETEの場合はwrongがないので、correctのみで1秒
                 const animationTime = 1000; // correctアニメーションの時間
                 setTimeout(() => {
-                    // クラスを確実に削除（念のため）
-                    completionProgressBar.classList.remove('completion-progress-complete');
+                    // すべてのCOMPLETEクラスを確実に削除（念のため）
+                    completionProgressBar.classList.remove('completion-progress-complete', 'completion-progress-complete-card', 'completion-progress-complete-input');
                     // 強制リフローで確実に反映
                     void completionProgressBar.offsetHeight;
-                    // 少し待ってからクラスを再追加（アニメーションを確実に再実行）
+                    // 少し待ってからモードに応じたクラスを追加（アニメーションを確実に再実行）
                     requestAnimationFrame(() => {
-                        completionProgressBar.classList.add('completion-progress-complete');
+                        // モードに応じて異なるCOMPLETE表示クラスを追加
+                        // 英語→日本語モード（カードモード）: 青色でシンプル
+                        // 日本語→英語モード（キーボード/手書き入力）: 豪華な金色グラデーション
+                        if (selectedQuizDirection === 'jpn-to-eng') {
+                            // 日本語→英語モード（入力モード）: 豪華なCOMPLETE表示
+                            completionProgressBar.classList.add('completion-progress-complete-input');
+                        } else {
+                            // 英語→日本語モード（カードモード）: 青色のCOMPLETE表示
+                            completionProgressBar.classList.add('completion-progress-complete-card');
+                        }
                     });
                 }, animationTime + 100); // 少し余裕を持たせる
             }
@@ -11769,7 +11938,7 @@ function hideCompletion() {
             // アニメーション関連のクラスを削除して、次回の表示時に確実に再実行されるようにする
             const completionProgressBar = document.querySelector('.completion-progress-bar');
             if (completionProgressBar) {
-                completionProgressBar.classList.remove('completion-progress-complete');
+                completionProgressBar.classList.remove('completion-progress-complete', 'completion-progress-complete-card', 'completion-progress-complete-input');
             }
         }, 300);
     }
@@ -14862,6 +15031,10 @@ let hwQuizWrongCount = 0;
  */
 async function startHandwritingQuiz(category, words, courseTitle) {
     console.log('[HWQuiz] Starting handwriting quiz with', words.length, 'words');
+    
+    // 日本語→英語モードなので、selectedLearningModeを'input'に設定
+    // これにより、進捗が_inputキーで保存される
+    selectedLearningMode = 'input';
     
     hwQuizWords = words;
     hwQuizIndex = 0;

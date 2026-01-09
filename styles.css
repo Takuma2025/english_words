@@ -3434,6 +3434,50 @@ button.category-card:focus-visible {
     z-index: 1;
 }
 
+/* 日本語→英語モード（入力モード）で全問正解した場合の金色COMPLETE表示 */
+.category-progress-bar.category-progress-complete-input {
+    background: linear-gradient(90deg, #ffd700 0%, #ffb300 15%, #ffd700 30%, #fff176 45%, #ffd700 60%, #ffb300 75%, #ffd700 90%, #ffb300 100%);
+    background-size: 200% 100%;
+    animation: categoryGoldShimmer 2s linear infinite;
+    box-shadow: 
+        0 0 8px rgba(255, 215, 0, 0.5),
+        0 0 16px rgba(255, 215, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.category-progress-bar.category-progress-complete-input::after {
+    content: "COMPLETE!!";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
+    color: #7c2d12;
+    letter-spacing: 1px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    text-transform: uppercase;
+    text-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.6),
+        0 0 8px rgba(255, 215, 0, 0.8);
+    z-index: 1;
+}
+
+.category-progress-bar.category-progress-complete-input .category-progress-correct,
+.category-progress-bar.category-progress-complete-input .category-progress-wrong {
+    background: transparent;
+}
+
+@keyframes categoryGoldShimmer {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}
+
 .category-progress-fill {
     height: 100%;
     width: 0%;
@@ -11984,7 +12028,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     position: relative;
 }
 
-.completion-progress-bar.completion-progress-complete::after {
+/* 英語→日本語モード（カードモード）: 青色でシンプルなCOMPLETE表示 */
+.completion-progress-bar.completion-progress-complete-card::after {
     content: "COMPLETE!!";
     position: absolute;
     inset: 0;
@@ -12001,6 +12046,68 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     transform: scale(0.5);
     animation: completePopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     z-index: 1;
+}
+
+/* 日本語→英語モード（入力モード）: 豪華な金色グラデーションCOMPLETE表示 */
+.completion-progress-bar.completion-progress-complete-input {
+    background: linear-gradient(90deg, #ffd700 0%, #ffb300 15%, #ffd700 30%, #fff176 45%, #ffd700 60%, #ffb300 75%, #ffd700 90%, #ffb300 100%);
+    background-size: 200% 100%;
+    animation: goldShimmer 2s linear infinite;
+    box-shadow: 
+        0 0 10px rgba(255, 215, 0, 0.5),
+        0 0 20px rgba(255, 215, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.completion-progress-bar.completion-progress-complete-input::after {
+    content: "COMPLETE!!";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 900;
+    color: #7c2d12;
+    letter-spacing: 2px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    text-transform: uppercase;
+    text-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.6),
+        0 0 10px rgba(255, 215, 0, 0.8);
+    opacity: 0;
+    transform: scale(0.5);
+    animation: completePopInLuxury 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    z-index: 1;
+}
+
+/* 入力モード用の正解バーを金色に変更 */
+.completion-progress-bar.completion-progress-complete-input .completion-progress-correct {
+    background: transparent;
+}
+
+@keyframes goldShimmer {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+@keyframes completePopInLuxury {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-5deg);
+    }
+    60% {
+        opacity: 1;
+        transform: scale(1.1) rotate(2deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
 }
 
 @keyframes completePopIn {
