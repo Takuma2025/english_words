@@ -7339,7 +7339,7 @@ body.reorder-mode-active .word-card-container {
     max-height: 400px;
     position: relative;
     perspective: 1200px;
-    touch-action: pan-y;
+    touch-action: none;
     margin-top: 4px;
     user-select: none;
     -webkit-user-select: none;
@@ -7480,6 +7480,19 @@ body.learning-mode .learning-view {
 body.learning-mode .card-area-wrapper {
     overflow-x: hidden;
     max-width: 100%;
+}
+
+/* カードモード時（展開モード・文モード・整序モード以外）はスクロールを無効化 */
+body.learning-mode .card-area-wrapper:has(.word-card:not(.hidden)) {
+    overflow-y: hidden;
+}
+
+body.learning-mode:has(.word-card:not(.hidden)) {
+    overflow: hidden;
+}
+
+body.learning-mode:has(.word-card:not(.hidden)) .learning-view {
+    overflow: hidden;
 }
 
 body.learning-mode .word-card-container {

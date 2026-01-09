@@ -5068,10 +5068,12 @@ function showInputModeDirectly(category, words, courseTitle) {
     const wordCardContainer = document.getElementById('wordCardContainer');
     const cardTopSection = document.querySelector('.card-top-section');
     const inputListView = document.getElementById('inputListView');
+    const cardHint = document.getElementById('cardHint');
     
     if (wordCard) wordCard.classList.add('hidden');
     if (wordCardContainer) wordCardContainer.classList.add('hidden');
     if (cardTopSection) cardTopSection.classList.add('hidden');
+    if (cardHint) cardHint.classList.add('hidden');
     
     // インプットモード用戻るボタンとポーズボタンの制御
     const inputBackBtn = document.getElementById('inputBackBtn');
