@@ -30,9 +30,8 @@
         </div>
     </div>
     
-    <div id="feedbackOverlay" class="feedback-overlay"></div>
-    
     <div class="app-container">
+        <div id="feedbackOverlay" class="feedback-overlay"></div>
         <header class="app-header">
             <button class="hamburger-menu-btn" id="hamburgerMenuBtn" aria-label="メニュー">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -187,29 +186,12 @@
                                 </button>
                             </div>
                             <div class="school-card-progress-row">
-                                <div class="school-card-progress-left">
-                                    <span class="school-card-progress-percent" id="schoolProgressPercent">60%</span>
-                                    <span class="school-card-progress-fraction" id="schoolProgressFraction">120/200</span>
-                                </div>
+                                <span class="school-card-progress-fraction" id="schoolProgressFraction">120/200</span>
                                 <div class="school-card-progress-bar-wrapper">
                                     <div class="school-card-progress-bar" id="schoolProgressBar" style="width: 60%;"></div>
                                 </div>
+                                <span class="school-card-progress-percent" id="schoolProgressPercent">60%</span>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 高校進捗ロードマップ -->
-                <div class="school-roadmap-container" id="schoolRoadmapContainer">
-                    <div class="school-roadmap-header">
-                        <div class="school-roadmap-title">英単語コンプリートロードマップ</div>
-                        <div class="school-roadmap-progress-indicator" id="roadmapProgressIndicator">
-                            <span id="roadmapCurrentWords">0</span>語 マスター
-                        </div>
-                    </div>
-                    <div class="school-roadmap-scroll" id="schoolRoadmapScroll">
-                        <div class="school-roadmap-track" id="schoolRoadmapTrack">
-                            <!-- JavaScriptで動的に生成 -->
                         </div>
                     </div>
                 </div>
