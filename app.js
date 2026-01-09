@@ -15363,6 +15363,17 @@ function clearHWQuizCanvas() {
  */
 function hwQuizDrawStart(e) {
     if (hwQuizAnswerSubmitted) return;
+    
+    // キャンバスコンテキストがない場合は再初期化
+    if (!hwQuizCtx || !hwQuizCanvas) {
+        hwQuizCanvas = document.getElementById('hwQuizCanvas');
+        if (hwQuizCanvas) {
+            hwQuizCtx = hwQuizCanvas.getContext('2d');
+            clearHWQuizCanvas();
+        }
+        if (!hwQuizCtx) return;
+    }
+    
     e.preventDefault();
     hwQuizIsDrawing = true;
     
@@ -15387,6 +15398,7 @@ function hwQuizDrawStart(e) {
  */
 function hwQuizDrawMove(e) {
     if (!hwQuizIsDrawing) return;
+    if (!hwQuizCtx) return;
     e.preventDefault();
     
     const pos = getHWQuizPos(e);
@@ -16235,7 +16247,11 @@ function displayHWQuizQuestion() {
     // 回答表示をクリア
     updateHWQuizAnswerDisplay();
     
-    // キャンバスをクリア
+    // キャンバスコンテキストを再取得してクリア
+    hwQuizCanvas = document.getElementById('hwQuizCanvas');
+    if (hwQuizCanvas) {
+        hwQuizCtx = hwQuizCanvas.getContext('2d');
+    }
     clearHWQuizCanvas();
     
     // 予測をクリア
