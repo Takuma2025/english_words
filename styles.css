@@ -6874,46 +6874,31 @@ body.reorder-mode-active .word-card-container {
     bottom: calc(100% + 8px);
     left: 50%;
     transform: translateX(-50%) scale(0);
-    width: 100%;
-    height: 48px;
-    background: #ffffff;
+    min-width: 32px;
+    width: auto;
+    padding: 8px 10px;
+    height: auto;
+    background: #4b5563;
     border-radius: 6px;
-    font-size: 28px;
-    font-weight: 400;
-    color: #000000;
+    font-size: 32px;
+    font-weight: 500;
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
     pointer-events: none;
     opacity: 0;
     transition: none;
     z-index: 1000;
 }
 
-/* ポップアップの下矢印 */
+/* ポップアップの下矢印（非表示） */
 .keyboard-key::after {
-    content: '';
-    position: absolute;
-    bottom: calc(100% + 2px);
-    left: 50%;
-    transform: translateX(-50%) scale(0);
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid #ffffff;
-    pointer-events: none;
-    opacity: 0;
-    z-index: 1001;
+    display: none;
 }
 
 .keyboard-key.key-pressed::before {
-    transform: translateX(-50%) scale(1);
-    opacity: 1;
-}
-
-.keyboard-key.key-pressed::after {
     transform: translateX(-50%) scale(1);
     opacity: 1;
 }
@@ -6964,16 +6949,12 @@ body.reorder-mode-active .word-card-container {
     }
     
     .keyboard-key::before {
-        width: 100%;
-        height: 52px;
-        font-size: 30px;
+        min-width: 34px;
+        width: auto;
+        padding: 10px 12px;
+        height: auto;
+        font-size: 34px;
         border-radius: 6px;
-    }
-    
-    .keyboard-key::after {
-        border-left: 6px solid transparent;
-        border-right: 6px solid transparent;
-        border-top: 6px solid #ffffff;
     }
     
     /* 入力欄をスマホ向けに大きく */
@@ -14173,7 +14154,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     bottom: 0;
     left: 0;
     right: 0;
-    background: #d1d4d9;
+    background: transparent;
     padding: 8px 3px;
     padding-bottom: max(8px, env(safe-area-inset-bottom));
     display: flex;
@@ -14310,6 +14291,38 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     text-overflow: ellipsis;
 }
 
+/* 手書きモード用のボタンコンテナ */
+.hw-canvas-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8px;
+    margin-bottom: -4px;
+}
+
+/* スペースボタン（手書きモード用） */
+.hw-space-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 18px;
+    background: #dbeafe;
+    border: none;
+    border-radius: 6px;
+    color: #1e40af;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hw-space-btn:active {
+    background: #bfdbfe;
+}
+
 /* 1文字消すボタン（手書きモード用・キャンバス下中央） */
 .hw-backspace-btn {
     display: flex;
@@ -14317,8 +14330,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     justify-content: center;
     gap: 6px;
     padding: 6px 14px;
-    margin-top: 8px;
-    margin-bottom: -4px;
     background: #e5e7eb;
     border: none;
     border-radius: 6px;
@@ -14386,7 +14397,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     top: -12px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(107, 114, 128, 0.9);
+    background: rgba(59, 130, 246, 0.9);
     color: #fff;
     font-size: 11px;
     font-weight: 600;
@@ -14404,13 +14415,13 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     pointer-events: none;
     z-index: 10;
     background-image:
-        /* 上の太いグレー線 */
-        linear-gradient(#9ca3af 0%, #9ca3af 3px, transparent 3px),
-        /* 下の太いグレー線 */
-        linear-gradient(transparent 0%, transparent calc(100% - 3px), #9ca3af calc(100% - 3px), #9ca3af 100%),
+        /* 上の太い青線 */
+        linear-gradient(#3b82f6 0%, #3b82f6 3px, transparent 3px),
+        /* 下の太い青線 */
+        linear-gradient(transparent 0%, transparent calc(100% - 3px), #3b82f6 calc(100% - 3px), #3b82f6 100%),
         /* 縦のセグメント線（3マス分 = 2本の縦線） */
-        linear-gradient(90deg, transparent 0%, transparent calc(33.33% - 1px), #d1d5db calc(33.33% - 1px), #d1d5db calc(33.33% + 1px), transparent calc(33.33% + 1px)),
-        linear-gradient(90deg, transparent 0%, transparent calc(66.67% - 1px), #d1d5db calc(66.67% - 1px), #d1d5db calc(66.67% + 1px), transparent calc(66.67% + 1px));
+        linear-gradient(90deg, transparent 0%, transparent calc(33.33% - 1px), #93c5fd calc(33.33% - 1px), #93c5fd calc(33.33% + 1px), transparent calc(33.33% + 1px)),
+        linear-gradient(90deg, transparent 0%, transparent calc(66.67% - 1px), #93c5fd calc(66.67% - 1px), #93c5fd calc(66.67% + 1px), transparent calc(66.67% + 1px));
 }
 
 /* 飛んでいく文字のアニメーション */

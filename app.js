@@ -7816,9 +7816,6 @@ function setupVirtualKeyboard() {
 function insertLetter(letter) {
     if (inputAnswerSubmitted || !isInputModeActive) return;
     
-    // キークリック音を再生
-    SoundEffects.playClick();
-    
     const letterInputs = document.getElementById('letterInputs');
     if (!letterInputs) return;
     
@@ -12840,9 +12837,6 @@ function selectSentenceBlank(blankIndex) {
 function insertSentenceLetter(letter) {
     if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
     
-    // キークリック音を再生
-    SoundEffects.playClick();
-    
     // 選択中の空所を取得
     let currentBlank = sentenceBlanks.find(b => b.index === currentSelectedBlankIndex);
     
@@ -14669,9 +14663,6 @@ function selectGrammarExerciseBlank(blankIndex, exerciseIndex) {
 function insertGrammarExerciseLetter(letter) {
     if (currentGrammarSelectedBlankIndex === -1 || currentGrammarSelectedExerciseIndex === -1) return;
     
-    // キークリック音を再生
-    SoundEffects.playClick();
-    
     const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === currentGrammarSelectedExerciseIndex);
     if (!exerciseData) return;
     
@@ -15099,15 +15090,20 @@ async function startHandwritingQuiz(category, words, courseTitle) {
                     <div class="hw-canvas-lines"></div>
                     <canvas id="hwQuizCanvas" class="hw-canvas" width="500" height="180"></canvas>
                 </div>
-                <!-- 1文字消すボタン（手書きモード用） -->
-                <button class="hw-backspace-btn" id="hwQuizBackspaceBtn" type="button">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                        <line x1="18" y1="9" x2="12" y2="15"></line>
-                        <line x1="12" y1="9" x2="18" y2="15"></line>
-                    </svg>
-                    <span>1文字消す</span>
-                </button>
+                <!-- 手書きモード用のボタン -->
+                <div class="hw-canvas-buttons">
+                    <button class="hw-space-btn" id="hwQuizHandwritingSpaceBtn" type="button">
+                        <span>空白</span>
+                    </button>
+                    <button class="hw-backspace-btn" id="hwQuizBackspaceBtn" type="button">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                            <line x1="18" y1="9" x2="12" y2="15"></line>
+                            <line x1="12" y1="9" x2="18" y2="15"></line>
+                        </svg>
+                        <span>1文字消す</span>
+                    </button>
+                </div>
             </div>
             
             <!-- 認識候補 -->
@@ -15969,6 +15965,24 @@ function setupHWQuizEvents() {
     if (spaceBtn) {
         spaceBtn.onclick = () => {
             if (hwQuizAnswerSubmitted) return;
+            // 連続スペースを防ぐ（最後の文字がスペースなら追加しない）
+            if (hwQuizConfirmedText.length > 0 && hwQuizConfirmedText.slice(-1) === ' ') {
+                return;
+            }
+            hwQuizConfirmedText += ' ';
+            updateHWQuizAnswerDisplay();
+        };
+    }
+    
+    // 手書きモード用のスペースボタン
+    const handwritingSpaceBtn = document.getElementById('hwQuizHandwritingSpaceBtn');
+    if (handwritingSpaceBtn) {
+        handwritingSpaceBtn.onclick = () => {
+            if (hwQuizAnswerSubmitted) return;
+            // 連続スペースを防ぐ（最後の文字がスペースなら追加しない）
+            if (hwQuizConfirmedText.length > 0 && hwQuizConfirmedText.slice(-1) === ' ') {
+                return;
+            }
             hwQuizConfirmedText += ' ';
             updateHWQuizAnswerDisplay();
         };
@@ -16104,6 +16118,16 @@ function setupHWVirtualKeyboard() {
                 key.classList.toggle('active', hwKeyboardShiftActive);
                 updateHWKeyboardCase();
             } else if (keyValue) {
+                // スペースキーの場合、連続スペースを防ぐ
+                if (keyValue === ' ') {
+                    if (hwQuizConfirmedText.length > 0 && hwQuizConfirmedText.slice(-1) === ' ') {
+                        return; // 最後の文字がスペースなら追加しない
+                    }
+                    hwQuizConfirmedText += ' ';
+                    updateHWQuizAnswerDisplay();
+                    return;
+                }
+                
                 // 通常のキー
                 let char = keyValue;
                 const wasShiftActive = hwKeyboardShiftActive;
@@ -16520,15 +16544,20 @@ function restartHWQuiz() {
                     <div class="hw-canvas-lines"></div>
                     <canvas id="hwQuizCanvas" class="hw-canvas" width="500" height="180"></canvas>
                 </div>
-                <!-- 1文字消すボタン（手書きモード用） -->
-                <button class="hw-backspace-btn" id="hwQuizBackspaceBtn" type="button">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                        <line x1="18" y1="9" x2="12" y2="15"></line>
-                        <line x1="12" y1="9" x2="18" y2="15"></line>
-                    </svg>
-                    <span>1文字消す</span>
-                </button>
+                <!-- 手書きモード用のボタン -->
+                <div class="hw-canvas-buttons">
+                    <button class="hw-space-btn" id="hwQuizHandwritingSpaceBtn" type="button">
+                        <span>空白</span>
+                    </button>
+                    <button class="hw-backspace-btn" id="hwQuizBackspaceBtn" type="button">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                            <line x1="18" y1="9" x2="12" y2="15"></line>
+                            <line x1="12" y1="9" x2="18" y2="15"></line>
+                        </svg>
+                        <span>1文字消す</span>
+                    </button>
+                </div>
             </div>
             
             <!-- 認識候補 -->
