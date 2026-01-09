@@ -3279,6 +3279,18 @@ button.category-card:focus-visible {
     background: #22c55e;
 }
 
+/* レベル4: 紫 */
+.category-card[data-category="LEVEL4 私立高校入試レベル"] .level-badge {
+    background: #9333ea;
+}
+
+/* レベル5: ゴールド（最高難度） */
+.category-card[data-category="LEVEL5 難関私立高校入試レベル"] .level-badge {
+    background: linear-gradient(135deg, #b8860b 0%, #daa520 50%, #b8860b 100%);
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
 .category-word-count {
     font-size: 14px;
     font-weight: 500;
@@ -7054,7 +7066,7 @@ body.reorder-mode-active .word-card-container {
     box-sizing: border-box;
     background: #d1d4d9;
     padding-bottom: 10px;
-    padding-top: 6px;
+    padding-top: 0;
 }
 
 .keyboard-action-btn {
@@ -7102,7 +7114,7 @@ body.reorder-mode-active .word-card-container {
     
     .keyboard-actions {
         gap: 8px;
-        padding: 6px 3px 10px 3px;
+        padding: 0 3px 10px 3px;
     }
     
     .reorder-mode .keyboard-actions {
@@ -14102,7 +14114,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* hw-question-simple内のpos-inlineスタイル調整 */
 .hw-question-simple .pos-inline {
-    font-size: clamp(16px, 4vw, 22px);
+    font-size: clamp(12px, 3vw, 16px);
 }
 
 .hw-question-simple .pos-inline:empty {
@@ -14110,7 +14122,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-question-simple .hw-question-meaning {
-    font-size: clamp(22px, 6vw, 30px);
+    font-size: clamp(18px, 4.5vw, 22px);
     font-weight: 700;
     color: #1a202c;
     text-align: center;
@@ -14150,7 +14162,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .hw-question-meaning {
-    font-size: clamp(22px, 6vw, 30px);
+    font-size: clamp(18px, 4.5vw, 22px);
     font-weight: 700;
     color: #1a202c;
     text-align: center;
@@ -14158,14 +14170,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 回答欄 */
 .hw-answer {
-    height: 64px;
-    width: 300px;
+    height: 44px;
+    width: 260px;
     margin: 0 auto;
     padding: 4px 12px 4px 12px;
     background: #fff;
-    border: 1px solid #9ca3af;
+    border: 1.5px solid #444444;
     border-radius: 6px;
-    font-size: 40px;
+    font-size: 28px;
     font-weight: 700;
     color: #1a202c;
     letter-spacing: 2px;
@@ -14199,6 +14211,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     gap: 6px;
     padding: 6px 14px;
     margin-top: 8px;
+    margin-bottom: -4px;
     background: #e5e7eb;
     border: none;
     border-radius: 6px;
@@ -14569,16 +14582,16 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    height: 64px;
-    width: 300px;
+    height: 44px;
+    width: 260px;
     padding: 4px 12px;
     background: #ffffff;
-    border: 1px solid #3182ce;
+    border: 1.5px solid #3182ce;
     border-radius: 6px;
 }
 
 .hw-correct-word {
-    font-size: 40px;
+    font-size: 28px;
     font-weight: 700;
     color: #3182ce;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
