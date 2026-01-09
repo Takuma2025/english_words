@@ -69,7 +69,8 @@ const numberWords = [
   { id: 10130, word: "thousand", meaning: "1,000（の）", partOfSpeech: "名詞・形容詞", category: "数字", appearanceCount: 9 },
   { id: 10131, word: "million", meaning: "100万", partOfSpeech: "名詞・形容詞", category: "数字", appearanceCount: 8 },
   { id: 10132, word: "billion", meaning: "10億", partOfSpeech: "名詞・形容詞", category: "数字", appearanceCount: 2 },
-  // 序数（順番に）
+  { id: 10133, word: "half", meaning: "２分の1、半分", partOfSpeech: "名詞・形容詞・副詞", category: "数字", appearanceCount: 0 },
+  { id: 10133, word: "quarter", meaning: "４分の１", partOfSpeech: "名詞", category: "数字", appearanceCount: 0 }, // 序数（順番に）
   { id: 10133, word: "first", meaning: "1番目（の）、最初（の）、まず第一に、最初に、初めて", partOfSpeech: "名詞・形容詞・副詞", category: "数字", appearanceCount: 115 },
   { id: 10134, word: "second", meaning: "2番目（の）", partOfSpeech: "名詞・形容詞", category: "数字", appearanceCount: 17 },
   { id: 10135, word: "third", meaning: "3番目（の）", partOfSpeech: "名詞・形容詞", category: "数字", appearanceCount: 8 },
@@ -101,7 +102,41 @@ const instrumentWords = [
   { id: 10228, word: "drum", meaning: "ドラム、太鼓", partOfSpeech: "名詞", category: "楽器", appearanceCount: 0 },
   { id: 10229, word: "flute", meaning: "フルート", partOfSpeech: "名詞", category: "楽器", appearanceCount: 0 },
   { id: 10230, word: "trunmpet", meaning: "トランペット", partOfSpeech: "名詞", category: "楽器", appearanceCount: 1 },
- ];
+];
+
+// 衣類に関する単語
+const clothingWords = [
+  { id: 10231, word: "cap", meaning: "(縁なしの)帽子、キャップ", partOfSpeech: "名詞", category: "衣類", appearanceCount: 1 },
+  { id: 10232, word: "hat", meaning: "(縁のある)帽子", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10233, word: "T-shirt", meaning: "Tシャツ", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10233, word: "shirt", meaning: "シャツ", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10234, word: "pants", meaning: "ズボン", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10235, word: "sweater", meaning: "セーター", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10236, word: "jacket", meaning: "上着、ジャケット", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10237, word: "dress", meaning: "ドレス、服装", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10237, word: "glove", meaning: "手ぶくろ", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10237, word: "tie", meaning: "ネクタイ", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+  { id: 10237, word: "apron", meaning: "エプロン", partOfSpeech: "名詞", category: "衣類", appearanceCount: 0 },
+];
+
+// 単位に関する単語
+const unitWords = [
+  { id: 10243, word: "meter", meaning: "メートル(長さの単位)", partOfSpeech: "名詞", category: "単位", appearanceCount: 7 },
+  { id: 10244, word: "kilometer", meaning: "キロメートル(長さの単位)", partOfSpeech: "名詞", category: "単位", appearanceCount: 0 },
+  { id: 10245, word: "gram", meaning: "グラム(重さの単位)", partOfSpeech: "名詞", category: "単位", appearanceCount: 0 },
+  { id: 10246, word: "kilogram", meaning: "キログラム(重さの単位)", partOfSpeech: "名詞", category: "単位", appearanceCount: 0 },
+  { id: 10247, word: "yen", meaning: "円(日本の貨幣の単位)", partOfSpeech: "名詞", category: "単位", appearanceCount: 0 },
+  { id: 10248, word: "dollar", meaning: "ドル(アメリカなどの貨幣の単位)", partOfSpeech: "名詞", category: "単位", appearanceCount: 2 },
+  { id: 10240, word: "second", meaning: "～秒(時間の単位)", partOfSpeech: "名詞", category: "単位", appearanceCount: 8 },
+  { id: 10241, word: "minute", meaning: "～分(時間の単位)", partOfSpeech: "名詞", category: "単位", appearanceCount: 17 },
+  { id: 10242, word: "hour", meaning: "～時間(時間の単位)", partOfSpeech: "名詞", category: "単位", appearanceCount: 23 },
+   { id: 11031, word: "day", meaning: "～日（時間の単位）", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 96 },
+  { id: 11032, word: "week", meaning: "～週間（時間の単位）", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 35 },
+  { id: 11033, word: "month", meaning: "～か月（時間の単位）", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 20 },
+  { id: 11034, word: "year", meaning: "～年（時間の単位）", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 135 },
+  { id: 11035, word: "century", meaning: "～世紀（時間の単位", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 16 },
+  { id: 10249, word: "percent", meaning: "パーセント", partOfSpeech: "名詞", category: "単位", appearanceCount: 11 },
+];
 
 // 体に関する単語
 const bodyWords = [
@@ -170,6 +205,7 @@ const foodDrinkWords = [
   { id: 10575, word: "yogurt", meaning: "ヨーグルト", partOfSpeech: "名詞", category: "食べ物・飲み物", appearanceCount: 0 },
   { id: 10570, word: "pie", meaning: "パイ", partOfSpeech: "名詞", category: "食べ物・飲み物", appearanceCount: 0 },
   { id: 10572, word: "jam", meaning: "ジャム", partOfSpeech: "名詞", category: "食べ物・飲み物", appearanceCount: 0 },
+  { id: 10573, salt: "salt", meaning: "塩", partOfSpeech: "名詞", category: "食べ物・飲み物", appearanceCount: 7 },
   // 野菜
   { id: 10522, word: "vegetable", meaning: "野菜", partOfSpeech: "名詞", category: "食べ物・飲み物", appearanceCount: 15 },
   { id: 10523, word: "cabbage", meaning: "キャベツ", partOfSpeech: "名詞", category: "食べ物・飲み物", appearanceCount: 0 },
@@ -260,6 +296,7 @@ const occupationWords = [
   { id: 10810, word: "singer", meaning: "歌手", partOfSpeech: "名詞", category: "職業", appearanceCount: 7 },
   { id: 10826, word: "musician", meaning: "音楽家、ミュージシャン、演奏家", partOfSpeech: "名詞", category: "職業", appearanceCount: 4 },
   { id: 10828, word: "comedian", meaning: "コメディアン、お笑い芸人", partOfSpeech: "名詞", category: "職業", appearanceCount: 0 },
+  { id: 10829, word:"actor", meaning: "俳優、男優", partOfSpeech: "名詞", category: "職業", appearanceCount: 3 },
   { id: 10829, word: "cook", meaning: "料理人、コック、料理する", partOfSpeech: "名詞・動詞", category: "職業", appearanceCount: 10 },
   { id: 10834, word: "pilot", meaning: "パイロット、操縦士", partOfSpeech: "名詞", category: "職業", appearanceCount: 0 },
   { id: 10829, word: "flight attendant", meaning: "客室乗務員、キャビンアテンダント", partOfSpeech: "名詞", category: "職業", appearanceCount: 0 },
@@ -267,6 +304,7 @@ const occupationWords = [
   { id: 10831, word: "police officer", meaning: "警察官", partOfSpeech: "名詞", category: "職業", appearanceCount: 0 },
   { id: 10832, word: "dancer", meaning: "ダンサー、踊る人", partOfSpeech: "名詞", category: "職業", appearanceCount: 0 },
   { id: 10833, word: "photographer", meaning: "写真家", partOfSpeech: "名詞", category: "職業", appearanceCount: 1 },
+  { id: 10835, word: "writer", meaning: "作家、筆者", partOfSpeech: "名詞", category: "職業", appearanceCount: 3 },
 ];
 
 // スポーツに関する単語
@@ -324,15 +362,6 @@ const calendarWords = [
 
 //時間・時間帯に関する単語
 const timeWords = [
-  { id: 11028, word: "hour", meaning: "時間、時刻、１時間、60分", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 23 },
-  { id: 11029, word: "minute", meaning: "分、１分、60秒", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 17 },
-  { id: 11030, word: "second", meaning: "秒、１秒", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 17 },
-  { id: 11031, word: "day", meaning: "日、１日、昼間、日中", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 96 },
-  { id: 11032, word: "week", meaning: "週、１週間", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 35 },
-  { id: 11033, word: "month", meaning: "月、1か月、", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 20 },
-  { id: 11034, word: "year", meaning: "年、１年、年度・学年、～歳", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 135 },
-  { id: 11035, word: "century", meaning: "世紀、１世紀、100年", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 16 },
-  { id: 11035, word: "date", meaning: "日付、月日", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 1},
   { id: 11036, word: "today", meaning: "今日、本日、現在、このごろ", partOfSpeech: "名詞・副詞", category: "時間・時間帯", appearanceCount: 64 },
   { id: 11037, word: "tomorrow", meaning: "明日", partOfSpeech: "名詞・副詞", category: "時間・時間帯", appearanceCount: 20 },
   { id: 11038, word: "yesterday", meaning: "昨日", partOfSpeech: "副詞", category: "時間・時間帯", appearanceCount: 15 },
@@ -344,6 +373,8 @@ const timeWords = [
   { id: 11043, word: "night", meaning: "夜、晩", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 12 },
   { id: 11044, word: "midnight", meaning: "深夜、真夜中", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 0 },
   { id: 11045, word: "tonight", meaning: "今夜、今晩", partOfSpeech: "名詞・副詞", category: "時間・時間帯", appearanceCount: 1 },
+  { id: 11045, word: "a.m.", meaning: "午前", partOfSpeech: "副詞", category: "時間・時間帯", appearanceCount: 0 },
+  { id: 11045, word: "p.m.", meaning: "午後", partOfSpeech: "副詞", category: "時間・時間帯", appearanceCount: 1 },
 　{ id: 11046, word: "breakfast", meaning: "朝食", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 1 },
   { id: 11047, word: "lunch", meaning: "昼食、ランチ", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 15 },
   { id: 11048, word: "dinner", meaning: "夕食、ディナー", partOfSpeech: "名詞", category: "時間・時間帯", appearanceCount: 16 },
@@ -522,29 +553,20 @@ const countryWords = [
   { id: 11437, word: "German", meaning: "ドイツ人（の）、ドイツの、ドイツ語", partOfSpeech: "名形", category: "国や地域", appearanceCount: 0 },
 ];
 
-// 行事・余暇に関する単語（手入力でデータを追加してください）
-const eventLeisureWords = [
-  // 例: { id: 10299, word: "party", meaning: "パーティー", partOfSpeech: "名詞", category: "行事・余暇に関する単語", appearanceCount: 0, example: { english: "I went to a <strong>party</strong>.", japanese: "私はパーティーに行きました。" } },
-];
-
-// 否定・程度・焦点を表す副詞
-const adverbWords = [
-  { id: 20301, word: "not", meaning: "（否定）〜でない", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 127, example: { english: "I do <strong>not</strong> like math.", japanese: "私は数学が好きではありません。" } },
-  { id: 20302, word: "never", meaning: "決して〜ない、これまで一度も〜ない", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 18, example: { english: "I <strong>never</strong> study at home on Sunday.", japanese: "私は日曜日に決して家で勉強しません。" } },
-  { id: 20303, word: "very", meaning: "とても", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 180, example: { english: "This dog is <strong>very</strong> big.", japanese: "この犬はとても大きいです。" } },
-  { id: 20304, word: "so", meaning: "そんなに、とても、そのように", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 213, example: { english: "This movie isn't <strong>so</strong> interesting.", japanese: "この映画はそんなに面白くありません。" } },
-  { id: 20305, word: "too", meaning: "〜すぎる、〜も［文末］", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 60, example: { english: "This box is <strong>too</strong> heavy.", japanese: "この箱は重すぎます。" } },
-  { id: 20312, word: "quite", meaning: "かなり、まったく、相当、とても", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 2, example: { english: "It's <strong>quite</strong> cold today.", japanese: "今日はかなり寒いです。" } },
-  { id: 20306, word: "almost", meaning: "ほとんど", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 11, example: { english: "<strong>Almost</strong> all the students like soccer.", japanese: "ほとんどすべての学生がサッカーが好きです。" } },
-  { id: 20307, word: "just", meaning: "ちょうど、ぴったりの、単に、ちょっと", partOfSpeech: "副詞・形容詞", category: "副詞（否定・程度・焦点）", appearanceCount: 21, example: { english: "I have <strong>just</strong> finished my homework.", japanese: "私はちょうど宿題を終わらせたところです。" } },
-  { id: 20308, word: "also", meaning: "〜もまた", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 131, example: { english: "I <strong>also</strong> like music.", japanese: "私も音楽が好きです。" } },
-  { id: 20309, word: "only", meaning: "〜だけ、唯一の", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 51, example: { english: "I have <strong>only</strong> one book.", japanese: "私は本を１冊しか持っていません。" } },
-  { id: 20310, word: "even", meaning: "〜でさえ（すら）", partOfSpeech: "副詞", category: "副詞（否定・程度・焦点）", appearanceCount: 27, example: { english: "He <strong>even</strong> forgot my name.", japanese: "彼は私の名前さえ忘れてしまいました。" } },
-  { id: 20311, word: "else", meaning: "ほかに（の）、その他に（の）", partOfSpeech: "副詞・形容詞", category: "副詞（否定・程度・焦点）", appearanceCount: 5, example: { english: "I want to talk to someone <strong>else</strong>.", japanese: "私はほかのだれかと話したい。" } },
-];
-
-// 関係代名詞（後方互換性のため空配列として保持、実際のデータはlevel3RelativePronounWordsを使用）
+// 後方互換性のため空配列として保持（実際のデータはレベル別配列を使用）
+const adverbWords = [];
 const relativeWords = [];
+const eventLeisureWords = [];
+
+// 機能語の後方互換性用エイリアス（レベル別配列を参照）
+const articleWords = [];
+const pronounWords = [];
+const indefinitePronounWords = [];
+const questionWords = [];
+const quantifierWords = [];
+const auxiliaryWords = [];
+const conjunctionWords = [];
+const interjectionWords = [];
 
 // 前置詞
 const prepositionWords = [
@@ -669,7 +691,7 @@ const level1QuestionWords = [
   { id: 20405, word: "where", meaning: "どこに（で）、どこへ", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 126, example: { english: "<strong>Where</strong> is the station?", japanese: "駅はどこにありますか。" } },
   { id: 20406, word: "why", meaning: "なぜ", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 47, example: { english: "<strong>Why</strong> do you like music?", japanese: "あなたはなぜ音楽が好きなのですか。" } },
   { id: 20407, word: "how", meaning: "どのように（どうやって）、どれくらい", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 171, example: { english: "<strong>How</strong> does he go to school every day?", japanese: "彼は毎日どうやって学校に行きますか。" } },
-  { id: 20408, word: "whose", meaning: "だれの", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 5, example: { english: "<strong>Whose</strong> book is this?", japanese: "この本は誰の本ですか。" } },
+  { id: 20408, word: "whose", meaning: "だれの、だれのもの", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 5, example: { english: "<strong>Whose</strong> book is this?", japanese: "この本は誰の本ですか。" } },
   { id: 20409, word: "how much", meaning: "いくら（値段・料金をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 6, example: { english: "<strong>How much</strong> is this notebook?", japanese: "このノートはいくらですか。" } },
   { id: 20410, word: "how many", meaning: "いくつ（数をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 6, example: { english: "<strong>How many</strong> books are there in the library?", japanese: "その図書館には本が何冊ありますか。" } },
   { id: 20411, word: "how long", meaning: "どれくらいの間（期間をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 3, example: { english: "<strong>How long</strong> will you stay at the hotel?", japanese: "あなたはホテルにどのくらい滞在するつもりですか。" } },
@@ -690,8 +712,6 @@ const level1InterjectionWords = [
   { id: 21009, word: "no", meaning: "いいえ、いや、だめだ", partOfSpeech: "間投詞・副詞", category: "LEVEL1 間投詞", appearanceCount: 73, example: { english: "<strong>No</strong>, I don't.", japanese: "いいえ、違います。" } },
   { id: 21010, word: "OK", meaning: "わかりました、それでは、大丈夫な", partOfSpeech: "間投詞・形容詞", category: "LEVEL1 間投詞", appearanceCount: 70, example: { english: "<strong>OK</strong>, let's go.", japanese: "わかりました、行きましょう。" } },
   { id: 21011, word: "well", meaning: "ええっと…（考え中）", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 151, example: { english: "<strong>Well</strong>, I'm not sure.", japanese: "ええっと…、わかりません。" } },
-  { id: 21012, word: "please", meaning: "どうぞ、どうか（お願いします）", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 84, example: { english: "<strong>Please</strong> help me.", japanese: "どうか、助けてください。" } },
-  { id: 21013, word: "welcome", meaning: "ようこそ、いらっしゃい（歓迎）", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 11, example: { english: "<strong>Welcome</strong> to our party.", japanese: "パーティーへようこそ。" } },
   { id: 21014, word: "yeah", meaning: "うん、ああ（yesのくだけた表現）", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 5, example: { english: "<strong>Yeah</strong>, I think so.", japanese: "うん、そう思う。" } },
 ];
 
@@ -738,6 +758,7 @@ const level2AuxiliaryWords = [
   { id: 20708, word: "be able to", meaning: "〜することができる", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 8, example: { english: "I <strong>am able to</strong> play the piano.", japanese: "私はピアノを弾けます。" } },
   { id: 20709, word: "be going to", meaning: "〜するつもり", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 14, example: { english: "I <strong>am going to</strong> go to the park next week.", japanese: "私は来週公園に行くつもりです。" } },
   { id: 20710, word: "have to", meaning: "〜しなければならない、（don't have to～：～する必要はない）", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 22, example: { english: "I <strong>have to</strong> do my homework.", japanese: "私は宿題をしなければなりません。" } },
+  { id: 20711, word: "used to", meaning: "以前は～だった", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 2, example: { english: "This house <strong>used to</strong> be a shop.", japanese: "この家は以前は店でした。" } },
   { id: 20711, word: "Will you～?", meaning: "〜してくれませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 15, example: { english: "<strong>Can you</strong> open the door?", japanese: "ドアを開けてくれませんか。" } },
   { id: 20711, word: "Can you～?", meaning: "〜してくれませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 16, example: { english: "<strong>Can you</strong> open the door?", japanese: "ドアを開けてくれませんか。" } },
   { id: 20712, word: "Would you～?", meaning: "〜していただけませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 2, example: { english: "<strong>Would you</strong> close the window?", japanese: "窓を閉めていただけませんか。" } },
@@ -773,34 +794,31 @@ const level2ConjunctionWords = [
 
 // レベル2 不定代名詞
 const level2IndefinitePronounWords = [
-  { id: 20201, word: "something", meaning: "何か（もの・こと）", partOfSpeech: "代名詞", category: "LEVEL2 不定代名詞", appearanceCount: 36, example: { english: "I want <strong>something</strong> to drink.", japanese: "私は何か飲みものがほしいです。" } },
-  { id: 20202, word: "anything", meaning: "（否定文で）何も～ない、（疑問文で）何か", partOfSpeech: "代名詞", category: "LEVEL2 不定代名詞", appearanceCount: 21, example: { english: "Do you have <strong>anything</strong> to eat?", japanese: "何か食べ物はありますか。" } },
-  { id: 20203, word: "nothing", meaning: "何も〜ない", partOfSpeech: "代名詞", category: "LEVEL2 不定代名詞", appearanceCount: 8, example: { english: "There is <strong>nothing</strong> in the box.", japanese: "箱の中には何もありません。" } },
-  { id: 20204, word: "everything", meaning: "すべてのもの、すべてのこと", partOfSpeech: "代名詞", category: "LEVEL2 不定代名詞", appearanceCount: 12, example: { english: "<strong>Everything</strong> is ready.", japanese: "すべての準備ができています。" } },
-  { id: 20205, word: "everyone", meaning: "みんな、すべての人", partOfSpeech: "代名詞", category: "LEVEL2 不定代名詞", appearanceCount: 23, example: { english: "<strong>Everyone</strong> has a book.", japanese: "みんな本を持っています。" } },
-  { id: 20206, word: "someone", meaning: "だれか、ある人", partOfSpeech: "代名詞", category: "LEVEL2 不定代名詞", appearanceCount: 8, example: { english: "<strong>Someone</strong> is calling you.", japanese: "だれかがあなたを呼んでいます。" } },
-  { id: 20207, word: "anyone", meaning: "（肯定文で）誰でも、（否定文で）誰も、（疑問文で）誰か", partOfSpeech: "代名詞", category: "LEVEL2 不定代名詞", appearanceCount: 1, example: { english: "Can <strong>anyone</strong> help me?", japanese: "だれか手伝ってくれますか。" } },
-  { id: 20208, word: "everybody", meaning: "みんな、すべての人", partOfSpeech: "代名詞", category: "LEVEL2 不定代名詞", appearanceCount: 1, example: { english: "<strong>Everybody</strong> likes music.", japanese: "みんな音楽が好きです。" } },
-  { id: 20209, word: "somebody", meaning: "だれか、ある人", partOfSpeech: "代名詞", category: "LEVEL2 不定代名詞", appearanceCount: 0, example: { english: "<strong>Somebody</strong> is at the door.", japanese: "だれかがドアにいます。" } },
-  { id: 20210, word: "nobody", meaning: "だれも〜ない", partOfSpeech: "代名詞", category: "LEVEL2 不定代名詞", appearanceCount: 0, example: { english: "<strong>Nobody</strong> knows the answer.", japanese: "だれも答えを知りません。" } },
+  { id: 20201, word: "something", meaning: "何か（もの・こと）", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 36, example: { english: "I want <strong>something</strong> to drink.", japanese: "私は何か飲みものがほしいです。" } },
+  { id: 20202, word: "anything", meaning: "（否定文で）何も～ない、（疑問文で）何か", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 21, example: { english: "Do you have <strong>anything</strong> to eat?", japanese: "何か食べ物はありますか。" } },
+  { id: 20203, word: "nothing", meaning: "何も〜ない", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 8, example: { english: "There is <strong>nothing</strong> in the box.", japanese: "箱の中には何もありません。" } },
+  { id: 20204, word: "everything", meaning: "すべてのもの、すべてのこと", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 12, example: { english: "<strong>Everything</strong> is ready.", japanese: "すべての準備ができています。" } },
+  { id: 20205, word: "everyone", meaning: "みんな、すべての人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 23, example: { english: "<strong>Everyone</strong> has a book.", japanese: "みんな本を持っています。" } },
+  { id: 20206, word: "someone", meaning: "だれか、ある人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 8, example: { english: "<strong>Someone</strong> is calling you.", japanese: "だれかがあなたを呼んでいます。" } },
+  { id: 20207, word: "anyone", meaning: "（肯定文で）誰でも、（否定文で）誰も、（疑問文で）誰か", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 1, example: { english: "Can <strong>anyone</strong> help me?", japanese: "だれか手伝ってくれますか。" } },
+  { id: 20208, word: "everybody", meaning: "みんな、すべての人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 1, example: { english: "<strong>Everybody</strong> likes music.", japanese: "みんな音楽が好きです。" } },
+  { id: 20209, word: "somebody", meaning: "だれか、ある人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 0, example: { english: "<strong>Somebody</strong> is at the door.", japanese: "だれかがドアにいます。" } },
+  { id: 20210, word: "nobody", meaning: "だれも〜ない", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 0, example: { english: "<strong>Nobody</strong> knows the answer.", japanese: "だれも答えを知りません。" } },
 ];
 
 // レベル2 数量を表す限定詞
 const level2QuantifierWords = [
-  { id: 20501, word: "all", meaning: "すべての、すべてのもの", partOfSpeech: "限定詞・形容詞・代名詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 40, example: { english: "<strong>All</strong> boys in this class play soccer.", japanese: "このクラスの男の子はすべてサッカーをします。" } },
-  { id: 20502, word: "each", meaning: "それぞれの、各々の", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 101, example: { english: "<strong>Each</strong> student has a book.", japanese: "それぞれの学生が本を持っています。" } },
-  { id: 20503, word: "every", meaning: "すべての、毎〜", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 34, example: { english: "<strong>Every</strong> girl in this class is good at English.", japanese: "このクラスの女の子はみんな英語が得意です。" } },
-  { id: 20504, word: "some", meaning: "いくつかの、いくらかの", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 287, example: { english: "I have <strong>some</strong> books.", japanese: "私は本を何冊か（いくつか）持っています。" } },
-  { id: 20505, word: "any", meaning: "（疑問文・否定文で）いくつかの、どれでも", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 30, example: { english: "Do you have <strong>any</strong> questions?", japanese: "何か質問はありますか。" } },
-  { id: 20506, word: "no", meaning: "〜が（まったく）ない", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 73, example: { english: "He has <strong>no</strong> money.", japanese: "彼はお金がありません。" } },
   { id: 20507, word: "many", meaning: "たくさんの（数えられる名詞に）", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 258, example: { english: "I have <strong>many</strong> books.", japanese: "私はたくさんの本を持っています。" } },
   { id: 20508, word: "much", meaning: "たくさんの（数えられない名詞に）", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 46, example: { english: "I want to drink <strong>much</strong> water.", japanese: "私はたくさんの水を飲みたいです。" } },
   { id: 20509, word: "a few", meaning: "少しの、いくつかの（数えられる名詞に、肯定的）", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 22, example: { english: "I have <strong>a few</strong> friends.", japanese: "私は少しの友達がいます。" } },
   { id: 20510, word: "a little", meaning: "少しの（数えられない名詞に、肯定的）", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 5, example: { english: "There is <strong>a little</strong> water in the glass.", japanese: "コップに水が少し入っています。" } },
   { id: 20511, word: "few", meaning: "ほとんどない、（数えられる名詞に、否定的）", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 23, example: { english: "I have <strong>few</strong> friends.", japanese: "私はほとんど友達がいません。" } },
   { id: 20512, word: "little", meaning: "ほとんどない、わずかな（数えられない名詞に、否定的）、小さい", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 15, example: { english: "I have <strong>little</strong> money.", japanese: "私はほとんどお金がありません。" } },
-  { id: 20513, word: "several", meaning: "いくつかの、数個の", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 15, example: { english: "Ken bought <strong>several</strong> pens.", japanese: "ケンはいくつかのペンを買いました。" } },
   { id: 20514, word: "a lot of", meaning: "たくさんの、多くの", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 50, example: { english: "I have <strong>a lot of</strong> friends.", japanese: "私はたくさんの友達がいます。" } },
+  { id: 20504, word: "some", meaning: "いくつかの、いくらかの", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 287, example: { english: "I have <strong>some</strong> books.", japanese: "私は本を何冊か（いくつか）持っています。" } },
+  { id: 20505, word: "any", meaning: "（疑問文・否定文で）いくつかの、どれでも", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 30, example: { english: "Do you have <strong>any</strong> questions?", japanese: "何か質問はありますか。" } },
+  { id: 20506, word: "no", meaning: "〜が（まったく）ない", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 73, example: { english: "He has <strong>no</strong> money.", japanese: "彼はお金がありません。" } },
+  { id: 20513, word: "several", meaning: "いくつかの、数個の", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 15, example: { english: "Ken bought <strong>several</strong> pens.", japanese: "ケンはいくつかのペンを買いました。" } },
 ];
 
 // ============================================
@@ -949,6 +967,8 @@ function getVocabularyByCategory(categoryName) {
     '体': bodyWords,
     '文房具': stationeryWords,
     '楽器': instrumentWords,
+    '衣類': clothingWords,
+    '単位': unitWords,
     '食べ物・飲み物': foodDrinkWords,
     'スポーツ': sportsWords,
     '動物': animalWords,
@@ -981,8 +1001,6 @@ function getVocabularyByCategory(categoryName) {
     // 機能語（後方互換性のため保持、レベル別のカテゴリー名を優先）
     '冠詞': level1ArticleWords, // レベル1に移動
     '代名詞': level1PronounWords, // レベル1に移動
-    '不定代名詞': level2IndefinitePronounWords, // レベル2に移動
-    '副詞（否定・程度・焦点）': adverbWords,
     '疑問詞': level1QuestionWords, // レベル1に移動
     '限定詞（数量）': level2QuantifierWords, // レベル2に移動
     '前置詞': prepositionWords,
@@ -1010,7 +1028,7 @@ function getVocabularyByCategory(categoryName) {
     'LEVEL2 前置詞': level2PrepositionWords,
     'LEVEL2 助動詞': level2AuxiliaryWords,
     'LEVEL2 接続詞': level2ConjunctionWords,
-    'LEVEL2 不定代名詞': level2IndefinitePronounWords,
+    'LEVEL2 代名詞': level2IndefinitePronounWords,
     // レベル3の品詞別
     'LEVEL3 動詞': level3VerbWords,
     'LEVEL3 名詞': level3NounWords,
@@ -1039,6 +1057,8 @@ function getElementaryVocabulary() {
     ...bodyWords,
     ...stationeryWords,
     ...instrumentWords,
+    ...clothingWords,
+    ...unitWords,
     ...foodDrinkWords,
     ...sportsWords,
     ...animalWords,
@@ -1201,8 +1221,7 @@ ID番号の割り当てルール：
 - 11601-11699: 行事・余暇に関する単語
 - 20001-20099: 冠詞
 - 20101-20199: 代名詞
-- 20201-20299: 不定代名詞
-- 20301-20399: 副詞（否定・程度・焦点）
+- 20201-20299: 代名詞（レベル2）
 - 20401-20499: 疑問詞
 - 20501-20599: 限定詞（数量）
 - 20601-20699: 前置詞

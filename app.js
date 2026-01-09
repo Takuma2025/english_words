@@ -347,6 +347,8 @@ function calculateTotalLearnedWords() {
         '体',
         '文房具',
         '楽器',
+        '衣類',
+        '単位',
         '食べ物・飲み物',
         'スポーツ',
         '動物',
@@ -361,8 +363,6 @@ function calculateTotalLearnedWords() {
         '方角・方向',
         '冠詞',
         '代名詞',
-        '不定代名詞',
-        '副詞（否定・程度・焦点）',
         '疑問詞',
         '限定詞（数量）',
         '前置詞',
@@ -836,13 +836,15 @@ function updateSchoolRoadmap(forceAnimation = false) {
                 lastScrollTarget = tile;
             }
             
-            // 50語ごとに数字を表示
+            // すべてのマスに数字を表示
+            const numberEl = document.createElement('div');
+            numberEl.className = 'roadmap-tile-number';
+            // 50語ごとに数字を大きく
             if (wordCount % 50 === 0) {
-                const numberEl = document.createElement('div');
-                numberEl.className = 'roadmap-tile-number';
-                numberEl.textContent = wordCount;
-                tile.appendChild(numberEl);
+                numberEl.classList.add('roadmap-tile-number-large');
             }
+            numberEl.textContent = wordCount;
+            tile.appendChild(numberEl);
             
             trackContainer.appendChild(tile);
         }
@@ -1031,6 +1033,9 @@ function updateVocabSelectedSchool(school) {
         // 志望校が未設定の場合
         vocabSchoolSelector.classList.remove('hidden');
         vocabSchoolSelected.classList.add('hidden');
+        
+        // 志望校が設定されていないときは光らせる
+        vocabSchoolSelector.classList.add('glow-pulse');
         
         // カード全体にクリックイベントを設定
         vocabSchoolSelector.onclick = () => {
@@ -1699,14 +1704,14 @@ function startAllWordsLearning() {
             
             // カテゴリ別単語のサブカテゴリー
             const elementarySubcategories = [
-                '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器',
+                '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器', '衣類', '単位',
                 '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
                 '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
             ];
             
             // レベル別サブカテゴリー
             const level1Subcategories = ['冠詞', '代名詞', '名詞', '動詞', '形容詞', '副詞', '前置詞', '疑問詞', '間投詞'];
-            const level2Subcategories = ['名詞', '動詞', '形容詞', '副詞', '前置詞', '助動詞', '接続詞', '限定詞（数量）', '不定代名詞'];
+            const level2Subcategories = ['名詞', '動詞', '形容詞', '副詞', '前置詞', '助動詞', '接続詞', '数や量を表す詞', '代名詞'];
             const level3Subcategories = ['名詞', '動詞', '形容詞', '副詞', '前置詞', '接続詞', '再帰代名詞', '関係代名詞'];
             
             // カテゴリ別単語を取得
@@ -1934,7 +1939,7 @@ function updateCategoryStars() {
         if (categoryDataName === '小学生で習った単語とカテゴリー別に覚える単語') {
             // サブカテゴリーベースで計算（updateSubcategoryProgressBarsと同じロジック）
             const elementarySubcategories = [
-                '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器',
+                '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器', '衣類', '単位',
                 '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
                 '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
             ];
@@ -2229,7 +2234,7 @@ function updateCategoryStars() {
             // サブカテゴリーを定義
             const subcategoryMap = {
                 1: ['冠詞', '代名詞', '名詞', '動詞', '形容詞', '副詞', '前置詞', '疑問詞', '間投詞'],
-                2: ['名詞', '動詞', '形容詞', '副詞', '前置詞', '助動詞', '接続詞', '限定詞', '不定代名詞'],
+                2: ['名詞', '動詞', '形容詞', '副詞', '前置詞', '助動詞', '接続詞', '数や量を表す詞', '代名詞'],
                 3: ['名詞', '動詞', '形容詞', '副詞', '前置詞', '接続詞', '関係代名詞', '再帰代名詞']
             };
             const subcategories = subcategoryMap[level] || [];
@@ -2391,14 +2396,14 @@ function updateCategoryStars() {
 function updateSubcategoryProgressBars() {
     // 日常生活でよく使う生活語彙のサブカテゴリー（指定順）
     const dailyLifeSubcategories = [
-        '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器',
+        '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器', '衣類', '単位',
         '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
         '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
     ];
     
     // 英文でよく登場する機能語のサブカテゴリー
     const functionWordSubcategories = [
-        '冠詞', '代名詞', '不定代名詞', '副詞（否定・程度・焦点）', '疑問詞',
+        '冠詞', '代名詞', '疑問詞',
         '限定詞（数量）', '前置詞', '助動詞・助動詞的表現', '接続詞'
     ];
     
@@ -2593,7 +2598,7 @@ function updateSubcategoryProgressBars() {
     
     // レベル1〜3のサブカテゴリ
     const level1Subcategories = ['冠詞', '代名詞', '名詞', '動詞', '形容詞', '副詞', '前置詞', '疑問詞', '間投詞'];
-    const level2Subcategories = ['名詞', '動詞', '形容詞', '副詞', '前置詞', '助動詞', '接続詞', '限定詞', '不定代名詞'];
+    const level2Subcategories = ['名詞', '動詞', '形容詞', '副詞', '前置詞', '助動詞', '接続詞', '数や量を表す詞', '代名詞'];
     const level3Subcategories = ['名詞', '動詞', '形容詞', '副詞', '前置詞', '接続詞', '関係代名詞', '再帰代名詞'];
     
     // レベル1〜3の進捗バーを更新
@@ -3144,7 +3149,7 @@ function formatTitleWithLevelBadge(title) {
     
     // カテゴリ別に覚える基本単語のサブカテゴリ一覧（指定順）
     const elementarySubcategories = [
-        '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器',
+        '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器', '衣類', '単位',
         '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
         '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
     ];
@@ -3635,10 +3640,10 @@ function startCategory(category) {
 
     // サブカテゴリー（vocabulary-data.jsのカテゴリー）かどうかを判定
     const vocabularySubcategories = [
-        '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器',
+        '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器', '衣類', '単位',
         '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
         '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向',
-        '冠詞', '代名詞', '不定代名詞', '副詞（否定・程度・焦点）', '疑問詞',
+        '冠詞', '代名詞', '疑問詞',
         '限定詞（数量）', '前置詞', '助動詞・助動詞的表現', '接続詞', '関係代名詞', '間投詞'
     ];
     
@@ -3842,14 +3847,12 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
     const functionWordDescriptions = {
         '冠詞': 'aやtheなど名詞の前に置く冠詞を覚えましょう。',
         '代名詞': 'Iやyouなど名詞の代わりに使う代名詞を覚えましょう。',
-        '不定代名詞': 'somethingやanyoneなど不特定の人や物を表す不定代名詞を覚えましょう。',
         '疑問詞': 'whatやwhereなど疑問文を作る疑問詞を覚えましょう。',
         '限定詞（数量）': 'manyやsomeなど数量を表す限定詞を覚えましょう。',
         '前置詞': 'inやonなど名詞の前に置いて位置や関係を表す前置詞を覚えましょう。',
         '助動詞・助動詞的表現': 'canやwillなど動詞の前に置いて意味を加える助動詞とhave toなどの助動詞的表現を覚えましょう。',
         '接続詞': '文や語句をつなぐ、andやbutなどの等位接続詞やwhenやifなどの従属接続詞を覚えましょう。',
         '関係代名詞': 'whichやthatなど名詞を修飾する関係代名詞を覚えましょう。',
-        '副詞（否定・程度・焦点）': 'notやveryなど否定や程度を表す副詞を覚えましょう。',
         '間投詞': 'hiやyesなどあいさつや返事を表す間投詞を覚えましょう。間投詞は機能語ではありませんがここで学びましょう。'
     };
     
@@ -3927,8 +3930,6 @@ function showSubcategorySelection(parentCategory, skipAnimation = false) {
         subcategories = [
             '冠詞',
             '代名詞',
-            '不定代名詞',
-            '副詞（否定・程度・焦点）',
             '疑問詞',
             '限定詞（数量）',
             '前置詞',
@@ -4160,6 +4161,8 @@ function showElementaryCategorySelection(skipAnimation = false) {
         '体',
         '文房具',
         '楽器',
+        '衣類',
+        '単位',
         '食べ物・飲み物',
         'スポーツ',
         '動物',
@@ -4396,8 +4399,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
             '前置詞',
             '助動詞',
             '接続詞',
-            '限定詞',
-            '不定代名詞'
+            '数や量を表す詞',
+            '代名詞'
         ];
         levelCategory = 'LEVEL2 重要単語300';
         badgeColor = '#f97316'; // オレンジ
@@ -4464,8 +4467,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
             else if (subcat === '前置詞') categoryName = 'LEVEL2 前置詞';
             else if (subcat === '助動詞') categoryName = 'LEVEL2 助動詞';
             else if (subcat === '接続詞') categoryName = 'LEVEL2 接続詞';
-            else if (subcat === '限定詞') categoryName = 'LEVEL2 限定詞（数量）';
-            else if (subcat === '不定代名詞') categoryName = 'LEVEL2 不定代名詞';
+            else if (subcat === '数や量を表す詞') categoryName = 'LEVEL2 限定詞（数量）';
+            else if (subcat === '代名詞') categoryName = 'LEVEL2 代名詞';
         } else if (parentCategory === 'レベル３ 差がつく300語') {
             if (subcat === '名詞') categoryName = 'LEVEL3 名詞';
             else if (subcat === '動詞') categoryName = 'LEVEL3 動詞';
@@ -4690,8 +4693,6 @@ function showCourseSelection(category, categoryWords) {
         const functionWordCourses = [
             '冠詞',
             '代名詞',
-            '不定代名詞',
-            '副詞（否定・程度・焦点）',
             '疑問詞',
             '限定詞（数量）',
             '前置詞',
@@ -4705,14 +4706,12 @@ function showCourseSelection(category, categoryWords) {
         const functionWordDescriptions = {
             '冠詞': 'aやtheなど名詞の前に置く冠詞を覚えましょう。',
             '代名詞': 'Iやyouなど名詞の代わりに使う代名詞を覚えましょう。',
-            '不定代名詞': 'somethingやanyoneなど不特定の人や物を表す不定代名詞を覚えましょう。',
             '疑問詞': 'whatやwhereなど疑問文を作る疑問詞を覚えましょう。',
             '限定詞（数量）': 'manyやsomeなど数量を表す限定詞を覚えましょう。',
             '前置詞': 'inやonなど名詞の前に置いて位置や関係を表す前置詞を覚えましょう。',
             '助動詞・助動詞的表現': 'canやwillなど動詞の前に置いて意味を加える助動詞とhave toなどの助動詞的表現を覚えましょう。',
             '接続詞': '文や語句をつなぐ、andやbutなどの等位接続詞やwhenやifなどの従属接続詞を覚えましょう。',
             '関係代名詞': 'whichやthatなど名詞を修飾する関係代名詞を覚えましょう。',
-            '副詞（否定・程度・焦点）': 'notやveryなど否定や程度を表す副詞を覚えましょう。',
             '間投詞': 'hiやyesなどあいさつや返事を表す間投詞を覚えましょう。間投詞は機能語ではありませんがここで学びましょう。'
         };
 
@@ -5521,8 +5520,8 @@ function showLearningSubcategoryMenu(category) {
             '前置詞',
             '助動詞',
             '接続詞',
-            '限定詞',
-            '不定代名詞'
+            '数や量を表す詞',
+            '代名詞'
         ];
     } else if (category === '差がつく300語') {
         subcategories = [
@@ -5631,8 +5630,8 @@ function startLearningFromMenu(category, subcategory) {
                 if (subcategory === '間投詞') return partOfSpeech.includes('間投詞');
                 if (subcategory === '助動詞') return partOfSpeech.includes('助動詞');
                 if (subcategory === '接続詞') return partOfSpeech.includes('接続詞');
-                if (subcategory === '限定詞') return partOfSpeech.includes('限定詞');
-                if (subcategory === '不定代名詞') return partOfSpeech.includes('不定代名詞');
+                if (subcategory === '数や量を表す詞') return partOfSpeech.includes('限定詞');
+                if (subcategory === '代名詞') return partOfSpeech.includes('代名詞');
                 if (subcategory === '関係代名詞') return partOfSpeech.includes('関係代名詞');
                 return false;
             });
@@ -6780,14 +6779,14 @@ function setupEventListeners() {
             
             // 日常生活でよく使う生活語彙のサブカテゴリー（指定順）
             const dailyLifeSubcategories = [
-                '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器',
+                '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器', '衣類', '単位',
                 '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
                 '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
             ];
             
             // 英文でよく登場する機能語のサブカテゴリー
             const functionWordSubcategories = [
-                '冠詞', '代名詞', '不定代名詞', '副詞（否定・程度・焦点）', '疑問詞',
+                '冠詞', '代名詞', '疑問詞',
                 '限定詞（数量）', '前置詞', '助動詞・助動詞的表現', '接続詞', '関係代名詞', '間投詞'
             ];
             

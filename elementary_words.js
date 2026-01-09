@@ -1644,13 +1644,13 @@ const elementaryWordData = [
       "japanese": "一言も言わずに"
     }
   },
-  // 副詞（否定・程度・焦点）
+  // 否定・程度・焦点を表す詞
   {
     "id": 8021,
     "word": "not",
     "meaning": "（否定）〜でない",
     "partOfSpeech": "副詞",
-    "category": "副詞（否定・程度・焦点）",
+    "category": "否定・程度・焦点を表す詞",
     "appearanceCount": 127,
     "example": {
       "english": "I do <strong>not</strong> like math.",
@@ -1662,7 +1662,7 @@ const elementaryWordData = [
     "word": "never",
     "meaning": "決して〜ない、これまで一度も〜ない",
     "partOfSpeech": "副詞",
-    "category": "副詞（否定・程度・焦点）",
+    "category": "否定・程度・焦点を表す詞",
     "appearanceCount": 18,
     "example": {
       "english": "I <strong>never</strong> study at home on Sunday.",
@@ -1674,7 +1674,7 @@ const elementaryWordData = [
     "word": "very",
     "meaning": "とても",
     "partOfSpeech": "副詞",
-    "category": "副詞（否定・程度・焦点）",
+    "category": "否定・程度・焦点を表す詞",
     "appearanceCount": 180,
     "example": {
       "english": "This dog is <strong>very</strong> big.",
@@ -1686,7 +1686,7 @@ const elementaryWordData = [
     "word": "so",
     "meaning": "そんなに、とても、そのように",
     "partOfSpeech": "副詞",
-    "category": "副詞（否定・程度・焦点）",
+    "category": "否定・程度・焦点を表す詞",
     "appearanceCount": 213,
     "example": {
       "english": "This movie isn't <strong>so</strong> interesting.",
@@ -1698,7 +1698,7 @@ const elementaryWordData = [
     "word": "too",
     "meaning": "〜すぎる、〜も［文末］",
     "partOfSpeech": "副詞",
-    "category": "副詞（否定・程度・焦点）",
+    "category": "否定・程度・焦点を表す詞",
     "appearanceCount": 60,
     "example": {
       "english": "This box is <strong>too</strong> heavy.",
@@ -1710,7 +1710,7 @@ const elementaryWordData = [
     "word": "almost",
     "meaning": "ほとんど",
     "partOfSpeech": "副詞",
-    "category": "副詞（否定・程度・焦点）",
+    "category": "否定・程度・焦点を表す詞",
     "appearanceCount": 11,
     "example": {
       "english": "<strong>Almost</strong> all the students like soccer.",
@@ -1722,7 +1722,7 @@ const elementaryWordData = [
     "word": "just",
     "meaning": "ちょうど、単に、ちょっと",
     "partOfSpeech": "副詞",
-    "category": "副詞（否定・程度・焦点）",
+    "category": "否定・程度・焦点を表す詞",
     "appearanceCount": 21,
     "example": {
       "english": "I have <strong>just</strong> finished my homework.",
@@ -1734,7 +1734,7 @@ const elementaryWordData = [
     "word": "also",
     "meaning": "〜もまた",
     "partOfSpeech": "副詞",
-    "category": "副詞（否定・程度・焦点）",
+    "category": "否定・程度・焦点を表す詞",
     "appearanceCount": 131,
     "example": {
       "english": "I <strong>also</strong> like music.",
@@ -1746,7 +1746,7 @@ const elementaryWordData = [
     "word": "only",
     "meaning": "〜だけ、唯一の",
     "partOfSpeech": "副詞",
-    "category": "副詞（否定・程度・焦点）",
+    "category": "否定・程度・焦点を表す詞",
     "appearanceCount": 51,
     "example": {
       "english": "I have <strong>only</strong> one book.",
@@ -1758,7 +1758,7 @@ const elementaryWordData = [
     "word": "even",
     "meaning": "〜でさえ（すら）",
     "partOfSpeech": "副詞",
-    "category": "副詞（否定・程度・焦点）",
+    "category": "否定・程度・焦点を表す詞",
     "appearanceCount": 27,
     "example": {
       "english": "He even forgot my name.",
@@ -2220,7 +2220,7 @@ const elementaryWordData = [
     "word": "something",
     "meaning": "何か（もの・こと）",
     "partOfSpeech": "代名詞",
-    "category": "不定代名詞",
+    "category": "代名詞",
     "appearanceCount": 36,
     "example": {
       "english": "I want <strong>something</strong> to drink.",
@@ -2232,7 +2232,7 @@ const elementaryWordData = [
     "word": "anything",
     "meaning": "（否定文で）何も～ない、（疑問文で）何か",
     "partOfSpeech": "代名詞",
-    "category": "不定代名詞",
+    "category": "代名詞",
     "appearanceCount": 21,
     "example": {
       "english": "Do you have <strong>anything</strong> to eat?",
@@ -2244,7 +2244,7 @@ const elementaryWordData = [
     "word": "nothing",
     "meaning": "何も〜ない",
     "partOfSpeech": "代名詞",
-    "category": "不定代名詞",
+    "category": "代名詞",
     "appearanceCount": 8,
     "example": {
       "english": "There is <strong>nothing</strong> in the box.",
@@ -2256,7 +2256,7 @@ const elementaryWordData = [
     "word": "everything",
     "meaning": "すべてのもの、すべてのこと",
     "partOfSpeech": "代名詞",
-    "category": "不定代名詞",
+    "category": "代名詞",
     "appearanceCount": 12,
     "example": {
       "english": "<strong>Everything</strong> is ready.",
@@ -2268,7 +2268,7 @@ const elementaryWordData = [
     "word": "everyone",
     "meaning": "みんな、すべての人",
     "partOfSpeech": "代名詞",
-    "category": "不定代名詞",
+    "category": "代名詞",
     "appearanceCount": 23,
     "example": {
       "english": "<strong>Everyone</strong> has a book.",
@@ -2280,7 +2280,7 @@ const elementaryWordData = [
     "word": "someone",
     "meaning": "だれか（人）",
     "partOfSpeech": "代名詞",
-    "category": "不定代名詞",
+    "category": "代名詞",
     "appearanceCount": 8,
     "example": {
       "english": "<strong>Someone</strong> is calling you.",
@@ -2292,7 +2292,7 @@ const elementaryWordData = [
     "word": "anyone",
     "meaning": "（肯定文で）誰でも、（否定文で）誰も、（疑問文で）誰か",
     "partOfSpeech": "代名詞",
-    "category": "不定代名詞",
+    "category": "代名詞",
     "appearanceCount": 1,
     "example": {
       "english": "Can <strong>anyone</strong> help me?",
@@ -2304,7 +2304,7 @@ const elementaryWordData = [
     "word": "everybody",
     "meaning": "みんな、すべての人",
     "partOfSpeech": "代名詞",
-    "category": "不定代名詞",
+    "category": "代名詞",
     "appearanceCount": 1,
     "example": {
       "english": "<strong>Everybody</strong> likes music.",
