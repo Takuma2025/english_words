@@ -7458,6 +7458,16 @@ body.learning-mode .word-card-container {
     max-height: 500px;
 }
 
+/* 学習モード中はカードを確実にオーバーレイの上に表示 */
+body.learning-mode .word-card-container,
+body.learning-mode .word-card {
+    z-index: 100000 !important;
+}
+
+body.learning-mode .feedback-overlay {
+    z-index: 1 !important;
+}
+
 /* 学習モード中は下部のタブバーを非表示にして余白をなくす */
 body.learning-mode .bottom-nav {
     display: none;
