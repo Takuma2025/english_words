@@ -15370,6 +15370,12 @@ function hwQuizDrawStart(e) {
     hwQuizLastX = pos.x;
     hwQuizLastY = pos.y;
     
+    // タップした位置に点を描画（チョンとタップしただけでも描画されるように）
+    hwQuizCtx.fillStyle = '#000000';
+    hwQuizCtx.beginPath();
+    hwQuizCtx.arc(pos.x, pos.y, hwQuizCtx.lineWidth / 2, 0, Math.PI * 2);
+    hwQuizCtx.fill();
+    
     if (hwQuizDrawTimeout) {
         clearTimeout(hwQuizDrawTimeout);
         hwQuizDrawTimeout = null;
@@ -16017,6 +16023,14 @@ function setupHWQuizEvents() {
         };
     }
     
+    // チェックボックス
+    const hwCheckbox = document.getElementById('hwQuizCheckbox');
+    if (hwCheckbox) {
+        hwCheckbox.onclick = () => {
+            toggleHWQuizReview();
+        };
+    }
+    
     // デバッグトグル
     const debugToggle = document.getElementById('hwQuizDebugToggle');
     if (debugToggle) {
@@ -16067,6 +16081,8 @@ function switchHWInputMode(mode) {
     const canvasArea = document.getElementById('hwCanvasArea');
     const predictions = document.getElementById('hwQuizPredictions');
     const keyboard = document.getElementById('hwVirtualKeyboard');
+    const inputFixedBottom = document.querySelector('.hw-input-fixed-bottom');
+    const keyboardActions = inputFixedBottom ? inputFixedBottom.querySelector('.keyboard-actions') : null;
     
     if (mode === 'handwriting') {
         // 手書きモード
@@ -16075,6 +16091,8 @@ function switchHWInputMode(mode) {
         if (canvasArea) canvasArea.style.display = 'flex';
         if (predictions) predictions.style.display = 'flex';
         if (keyboard) keyboard.classList.add('hidden');
+        if (inputFixedBottom) inputFixedBottom.style.background = 'transparent';
+        if (keyboardActions) keyboardActions.style.background = 'transparent';
     } else {
         // タイピングモード
         if (handwritingBtn) handwritingBtn.classList.remove('active');
@@ -16082,6 +16100,8 @@ function switchHWInputMode(mode) {
         if (canvasArea) canvasArea.style.display = 'none';
         if (predictions) predictions.style.display = 'none';
         if (keyboard) keyboard.classList.remove('hidden');
+        if (inputFixedBottom) inputFixedBottom.style.background = '#d1d4d9';
+        if (keyboardActions) keyboardActions.style.background = '#d1d4d9';
     }
 }
 
@@ -16208,6 +16228,9 @@ function displayHWQuizQuestion() {
     if (meaningEl) {
         meaningEl.textContent = word.meaning;
     }
+    
+    // チェックボックスの状態を更新
+    updateHWQuizCheckbox();
     
     // 回答表示をクリア
     updateHWQuizAnswerDisplay();
@@ -16360,11 +16383,11 @@ function showHWQuizResult(isCorrect, word) {
     // モードトグルも表示したまま（キーボード・手書きエリアも表示したまま）
     
     // 画面全体のフィードバック表示（正解は青、不正解は赤）
-    const feedbackOverlay = document.getElementById('feedbackOverlay');
-    if (feedbackOverlay) {
-        feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
+    const hwFeedbackOverlay = document.getElementById('hwQuizFeedbackOverlay');
+    if (hwFeedbackOverlay) {
+        hwFeedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
         setTimeout(() => {
-            feedbackOverlay.classList.remove('active');
+            hwFeedbackOverlay.classList.remove('active');
         }, 400);
     }
     
@@ -16373,17 +16396,17 @@ function showHWQuizResult(isCorrect, word) {
         showSparkleEffect();
     }
     
-    // 解答欄の色を変更
+    // 解答欄の色を変更（背景は白のまま）
     if (answerDisplay) {
         if (isCorrect) {
             // 正解：青枠
             answerDisplay.style.borderColor = '#3182ce';
-            answerDisplay.style.backgroundColor = '#ebf8ff';
+            answerDisplay.style.backgroundColor = '#ffffff';
             answerDisplay.style.color = '#2b6cb0';
         } else {
             // 不正解：赤枠
             answerDisplay.style.borderColor = '#e53e3e';
-            answerDisplay.style.backgroundColor = '#fff5f5';
+            answerDisplay.style.backgroundColor = '#ffffff';
             answerDisplay.style.color = '#c53030';
         }
     }
@@ -16676,6 +16699,40 @@ function exitHWQuiz() {
     } else {
         // その他の場合はカテゴリー選択画面に戻る
         showCategorySelection();
+    }
+}
+
+/**
+ * 手書きクイズのチェック（ブックマーク）を切り替え
+ */
+function toggleHWQuizReview() {
+    if (hwQuizIndex >= hwQuizWords.length) return;
+    
+    const word = hwQuizWords[hwQuizIndex];
+    if (reviewWords.has(word.id)) {
+        reviewWords.delete(word.id);
+    } else {
+        reviewWords.add(word.id);
+    }
+    
+    saveReviewWords();
+    updateHWQuizCheckbox();
+}
+
+/**
+ * 手書きクイズのチェックボックスの表示を更新
+ */
+function updateHWQuizCheckbox() {
+    const hwCheckbox = document.getElementById('hwQuizCheckbox');
+    if (!hwCheckbox) return;
+    
+    if (hwQuizIndex >= hwQuizWords.length) return;
+    
+    const word = hwQuizWords[hwQuizIndex];
+    if (reviewWords.has(word.id)) {
+        hwCheckbox.classList.add('checked');
+    } else {
+        hwCheckbox.classList.remove('checked');
     }
 }
 

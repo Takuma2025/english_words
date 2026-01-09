@@ -12717,13 +12717,13 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 14px 12px;
+    padding: 16px 12px;
     background: #f1f5f9;
     border: 2px solid transparent;
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
-    gap: 4px;
+    gap: 6px;
     position: relative;
 }
 
@@ -12881,6 +12881,27 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     color: #1d4ed8;
 }
 
+.filter-checkbox-grid:has(input[type="checkbox"]:disabled) {
+    cursor: not-allowed;
+    pointer-events: none;
+    background: #e2e8f0;
+    border-color: #e2e8f0;
+}
+
+.filter-checkbox-grid:has(input[type="checkbox"]:disabled) .checkbox-label {
+    color: #9ca3af;
+}
+
+.filter-checkbox-grid:has(input[type="checkbox"]:disabled) input[type="checkbox"] {
+    background: #cbd5e1;
+    border-color: #cbd5e1;
+}
+
+.filter-checkbox-grid:has(input[type="checkbox"]:disabled) .filter-icon,
+.filter-checkbox-grid:has(input[type="checkbox"]:disabled) .filter-icon-bookmark {
+    opacity: 0.4;
+}
+
 .filter-checkbox {
     display: flex;
     align-items: center;
@@ -12905,19 +12926,20 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .filter-checkbox-all {
-    font-weight: 700;
+    font-weight: 600;
     width: 100%;
-    background: #ffffff;
-    border: 2px solid #1d4ed8;
-    padding: 12px 14px;
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    padding: 10px 14px;
 }
 
 .filter-checkbox-all:has(input:checked) {
-    background: #1d4ed8;
+    background: #eff6ff;
+    border-color: #1d4ed8;
 }
 
 .filter-checkbox-all:has(input:checked) .checkbox-label {
-    color: #ffffff;
+    color: #1d4ed8;
 }
 
 .filter-checkbox-all::before {
@@ -12957,32 +12979,47 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .filter-checkbox-all input[type="checkbox"] {
-    border-color: #1d4ed8;
+    border-color: #cbd5e1;
 }
 
 .filter-checkbox-all:has(input:checked) input[type="checkbox"] {
-    background: #ffffff;
-    border-color: #ffffff;
+    background: #1d4ed8;
+    border-color: #1d4ed8;
 }
 
 .filter-checkbox-all:has(input:checked) input[type="checkbox"]::after {
-    border-color: #1d4ed8;
+    border-color: #ffffff;
 }
 
 .filter-checkbox input[type="checkbox"]:disabled {
     cursor: not-allowed;
-    opacity: 0.4;
-    background: #fafafa;
+    opacity: 0.3;
+    background: #f1f5f9;
 }
 
 .filter-checkbox:has(input[type="checkbox"]:disabled) {
-    opacity: 0.5;
     cursor: not-allowed;
+    pointer-events: none;
+    background: #e2e8f0;
+    border-color: #e2e8f0;
+}
+
+.filter-checkbox:has(input[type="checkbox"]:disabled) .checkbox-label {
+    color: #9ca3af;
+}
+
+.filter-checkbox:has(input[type="checkbox"]:disabled) input[type="checkbox"] {
+    background: #cbd5e1;
+    border-color: #cbd5e1;
+}
+
+.filter-checkbox:has(input[type="checkbox"]:disabled) .filter-icon {
+    opacity: 0.4;
 }
 
 .filter-checkbox:has(input[type="checkbox"]:disabled):hover {
     border-color: #e2e8f0;
-    background: #ffffff;
+    background: #f8fafc;
 }
 
 .checkbox-label {
@@ -13002,7 +13039,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .filter-checkbox.filter-checkbox-all:has(input:checked) .checkbox-label {
-    color: #ffffff;
+    color: #1d4ed8;
 }
 
 .filter-icon {
@@ -13084,8 +13121,21 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         padding: 12px 8px;
     }
     
+    .learning-mode-radio .radio-option-mode-name {
+        font-size: 9px;
+        padding: 2px 8px;
+    }
+    
     .learning-mode-radio .radio-option-label {
-        font-size: 13px;
+        font-size: 12px;
+    }
+    
+    .learning-mode-radio .radio-option-label .arrow-small {
+        font-size: 10px;
+    }
+    
+    .learning-mode-radio .radio-option-label .lang-highlight {
+        font-size: 15px;
     }
     
     .learning-mode-radio .radio-option-description {
@@ -13119,13 +13169,13 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     }
     
     .order-radio .mode-icon-wrapper {
-        width: 40px;
-        height: 40px;
+        width: 48px;
+        height: 48px;
     }
     
     .order-radio .mode-icon {
-        width: 26px;
-        height: 26px;
+        width: 32px;
+        height: 32px;
     }
     
     .filter-checkbox {
@@ -13383,12 +13433,42 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     text-align: center;
 }
 
+.learning-mode-radio .radio-option-mode-name {
+    font-size: 10px;
+    font-weight: 700;
+    color: #3b82f6;
+    letter-spacing: 0.02em;
+    background: #eff6ff;
+    border: 1px solid #93c5fd;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.learning-mode-radio:has(input[type="radio"]:checked) .radio-option-mode-name {
+    color: #1d4ed8;
+    background: #dbeafe;
+    border-color: #3b82f6;
+}
+
 .learning-mode-radio .radio-option-label {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     color: #64748b;
     letter-spacing: -0.02em;
     white-space: nowrap;
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+}
+
+.learning-mode-radio .radio-option-label .arrow-small {
+    font-size: 12px;
+    margin: 0 1px;
+}
+
+.learning-mode-radio .radio-option-label .lang-highlight {
+    font-size: 17px;
+    font-weight: 800;
 }
 
 .learning-mode-radio:has(input[type="radio"]:checked) .radio-option-label {
@@ -14041,6 +14121,15 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     z-index: 10010;
 }
 
+/* 手書きクイズ用フィードバックオーバーレイ（画面全体に表示） */
+.handwriting-quiz-view .feedback-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    z-index: 9999;
+}
+
 /* 手書きクイズ用ヘッダー（英語→日本語モードと同じスタイルを使用） */
 .handwriting-quiz-view .unit-header-container {
     width: 100%;
@@ -14129,8 +14218,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 /* 入力モード切替行 */
 .hw-mode-toggle-row {
     display: flex;
-    justify-content: flex-end;
-    padding: 4px 0;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 12px;
     margin-top: 4px;
 }
 
@@ -14198,6 +14288,44 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     justify-content: center;
     gap: 8px;
     flex-shrink: 0;
+}
+
+/* 手書きクイズ用チェックボックス */
+.hw-quiz-checkbox {
+    width: 28px;
+    height: 28px;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.hw-quiz-checkbox svg {
+    color: #d1d5db;
+    transition: all 0.2s ease;
+}
+
+.hw-quiz-checkbox:hover {
+    border-color: #9ca3af;
+}
+
+.hw-quiz-checkbox:hover svg {
+    color: #9ca3af;
+}
+
+.hw-quiz-checkbox.checked {
+    background: #fbbf24;
+    border-color: #f59e0b;
+}
+
+.hw-quiz-checkbox.checked svg {
+    color: #ffffff;
 }
 
 /* hw-question-simple内のpos-inlineスタイル調整 */

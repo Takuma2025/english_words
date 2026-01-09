@@ -1420,7 +1420,8 @@
                                 </svg>
                             </div>
                             <div class="radio-option-content">
-                                <span class="radio-option-label">英語→日本語</span>
+                                <span class="radio-option-mode-name">カードモード</span>
+                                <span class="radio-option-label">英語<span class="arrow-small">→</span><span class="lang-highlight">日本語</span></span>
                                 <span class="radio-option-description">英単語を見て意味を答える</span>
                             </div>
                         </label>
@@ -1445,8 +1446,9 @@
                                 </svg>
                             </div>
                             <div class="radio-option-content">
-                                <span class="radio-option-label">日本語→英語</span>
-                                <span class="radio-option-description">日本語を見て手書き入力</span>
+                                <span class="radio-option-mode-name">タイピングモード</span>
+                                <span class="radio-option-label">日本語<span class="arrow-small">→</span><span class="lang-highlight">英語</span></span>
+                                <span class="radio-option-description">意味を見て英単語を入力</span>
                             </div>
                         </label>
                     </div>
@@ -1550,6 +1552,9 @@
 
     <!-- 手書き入力クイズ画面（日本語→英語モード専用） -->
     <div class="handwriting-quiz-view hidden" id="handwritingQuizView">
+        <!-- フィードバックオーバーレイ（正解/不正解時） -->
+        <div id="hwQuizFeedbackOverlay" class="feedback-overlay"></div>
+        
         <!-- ポーズオーバーレイ -->
         <div class="pause-overlay hidden" id="hwQuizPauseOverlay">
             <div class="pause-menu">
@@ -1605,8 +1610,13 @@
                     </div>
                 </div>
             </div>
-            <!-- 下段: 入力モード切替 -->
+            <!-- 下段: チェックボックスと入力モード切替 -->
             <div class="hw-mode-toggle-row">
+                <button class="hw-quiz-checkbox" id="hwQuizCheckbox" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </button>
                 <div class="input-list-mode-toggle hw-mode-toggle-small">
                     <button class="input-list-mode-btn active" id="hwModeTyping" data-mode="typing">
                         <svg class="mode-btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
