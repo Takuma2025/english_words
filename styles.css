@@ -155,7 +155,7 @@ textarea,
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 99;
+    z-index: 9999;
     opacity: 0;
     transition: opacity 0.3s ease;
     background-color: transparent;
@@ -172,6 +172,35 @@ textarea,
 
 .feedback-overlay.wrong {
     background-color: rgba(239, 68, 68, 0.3);
+}
+
+/* カードモード専用フィードバックオーバーレイ（カードの後ろに表示） */
+.card-feedback-overlay {
+    position: absolute;
+    top: -100vh;
+    left: -100vw;
+    width: 300vw;
+    height: 300vh;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-feedback-overlay.active {
+    opacity: 1;
+}
+
+.card-feedback-overlay.correct {
+    background-color: rgba(59, 130, 246, 0.3);
+}
+
+.card-feedback-overlay.wrong {
+    background-color: rgba(239, 68, 68, 0.3);
+}
+
+.card-feedback-overlay.mastered {
+    background-color: rgba(0, 0, 0, 0.25);
 }
 
 /* キラキラエフェクト */
@@ -7456,16 +7485,6 @@ body.learning-mode .card-area-wrapper {
 body.learning-mode .word-card-container {
     aspect-ratio: 3/4;
     max-height: 500px;
-}
-
-/* 学習モード中はカードを確実にオーバーレイの上に表示 */
-body.learning-mode .word-card-container,
-body.learning-mode .word-card {
-    z-index: 100000 !important;
-}
-
-body.learning-mode .feedback-overlay {
-    z-index: 1 !important;
 }
 
 /* 学習モード中は下部のタブバーを非表示にして余白をなくす */

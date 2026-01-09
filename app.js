@@ -2321,6 +2321,7 @@ const elements = {
     wordListSection: document.getElementById('wordListSection'),
     wordList: document.getElementById('wordList'),
     feedbackOverlay: document.getElementById('feedbackOverlay'),
+    cardFeedbackOverlay: document.getElementById('cardFeedbackOverlay'),
     modalOverlay: document.getElementById('modalOverlay'),
     modalTitle: document.getElementById('modalTitle'),
     modalMessage: document.getElementById('modalMessage'),
@@ -3045,6 +3046,11 @@ function showCategorySelection() {
     isInputModeActive = false;
     isSentenceModeActive = false;
     isReorderModeActive = false;
+    
+    // カードモード専用オーバーレイをリセット
+    if (elements.cardFeedbackOverlay) {
+        elements.cardFeedbackOverlay.classList.remove('active', 'correct', 'wrong', 'mastered');
+    }
     
     // 進捗ステップボタンを表示
     const progressStepButtons = document.querySelector('.progress-step-buttons');
@@ -10904,11 +10910,20 @@ function markMastered() {
     updateProgressSegments(); // 進捗バーのセグメントを更新
     updateVocabProgressBar(); // 英単語進捗バーを更新
 
-    // 画面全体のフィードバック表示（薄い水色）
-    elements.feedbackOverlay.className = `feedback-overlay mastered active`;
-    setTimeout(() => {
-        elements.feedbackOverlay.classList.remove('active');
-    }, 400);
+    // 画面全体のフィードバック表示
+    if (isInputModeActive && elements.feedbackOverlay) {
+        // 入力モード: グローバルオーバーレイを使用
+        elements.feedbackOverlay.className = `feedback-overlay mastered active`;
+        setTimeout(() => {
+            elements.feedbackOverlay.classList.remove('active');
+        }, 400);
+    } else if (!isInputModeActive && elements.cardFeedbackOverlay) {
+        // カードモード: カード専用オーバーレイを使用（カードの後ろに表示）
+        elements.cardFeedbackOverlay.className = `card-feedback-overlay mastered active`;
+        setTimeout(() => {
+            elements.cardFeedbackOverlay.classList.remove('active');
+        }, 400);
+    }
 
     // 上スワイプアニメーション
     elements.wordCard.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
@@ -11069,11 +11084,20 @@ function markAnswer(isCorrect, isTimeout = false) {
     updateProgressSegments(); // 進捗バーのセグメントを更新
     updateVocabProgressBar(); // 英単語進捗バーを更新
 
-    // 画面全体のフィードバック表示（薄い色）
-    elements.feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
-    setTimeout(() => {
-        elements.feedbackOverlay.classList.remove('active');
-    }, 400);
+    // 画面全体のフィードバック表示
+    if (isInputModeActive && elements.feedbackOverlay) {
+        // 入力モード: グローバルオーバーレイを使用
+        elements.feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
+        setTimeout(() => {
+            elements.feedbackOverlay.classList.remove('active');
+        }, 400);
+    } else if (!isInputModeActive && elements.cardFeedbackOverlay) {
+        // カードモード: カード専用オーバーレイを使用（カードの後ろに表示）
+        elements.cardFeedbackOverlay.className = `card-feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
+        setTimeout(() => {
+            elements.cardFeedbackOverlay.classList.remove('active');
+        }, 400);
+    }
     
     // 正解時にキラキラエフェクトを表示
     if (isCorrect) {
