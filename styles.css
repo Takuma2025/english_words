@@ -13107,7 +13107,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 @media (max-width: 600px) {
     .filter-sheet-content {
         padding: 16px 5px;
-        padding-bottom: 10px;
+        padding-bottom: 5px;
     }
     
     .filter-card-container {
@@ -14849,6 +14849,57 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 600;
     letter-spacing: 2px;
+}
+
+/* 差分ハイライト（正解表示用） */
+.diff-match {
+    color: inherit;
+}
+
+.diff-missing {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+.diff-wrong {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+/* 差分ハイライト（ユーザー入力表示用） */
+.diff-wrong-input {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+.diff-extra {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-radius: 2px;
+    padding: 0 1px;
+    text-decoration: line-through;
+}
+
+.diff-missing-slot {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.1em;
+    background: rgba(220, 38, 38, 0.15);
+    border-radius: 2px;
+    margin: 0 1px;
+    vertical-align: text-bottom;
+}
+
+.diff-empty {
+    color: #9ca3af;
+    font-style: italic;
+    font-size: 0.8em;
 }
 
 .hw-correct-answer-box .hw-audio-btn {

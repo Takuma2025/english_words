@@ -16382,6 +16382,209 @@ function submitHWQuizAnswer() {
 window.submitHWQuizAnswer = submitHWQuizAnswer;
 
 /**
+ * 差分ハイライトを生成（正解表示用）
+ * 正解の文字列で、ユーザーが間違えた/欠けている部分をハイライト
+ */
+function generateDiffHighlight(userInput, correctWord) {
+    const diff = computeDiff(userInput, correctWord);
+    let html = '';
+    
+    for (const item of diff) {
+        if (item.type === 'match') {
+            html += `<span class="diff-match">${item.char}</span>`;
+        } else if (item.type === 'missing') {
+            // ユーザーが入力しなかった文字（正解にはある）
+            html += `<span class="diff-missing">${item.char}</span>`;
+        } else if (item.type === 'wrong') {
+            // ユーザーが間違えた文字
+            html += `<span class="diff-wrong">${item.char}</span>`;
+        }
+    }
+    
+    return html;
+}
+
+/**
+ * ユーザー入力の差分ハイライト（解答欄表示用）
+ * 欠けている文字も赤いマーカーで表示
+ */
+function generateUserInputDiffHighlight(userInput, correctWord) {
+    if (!userInput) {
+        // 未入力の場合、正解の文字数分の赤いマーカーを表示
+        let html = '';
+        for (let i = 0; i < correctWord.length; i++) {
+            html += `<span class="diff-missing-slot"></span>`;
+        }
+        return html || '<span class="diff-empty">（未入力）</span>';
+    }
+    
+    const diff = computeFullDiff(userInput, correctWord);
+    let html = '';
+    
+    for (const item of diff) {
+        if (item.type === 'match') {
+            html += `<span class="diff-match">${item.char}</span>`;
+        } else if (item.type === 'wrong') {
+            // ユーザーが間違えた文字
+            html += `<span class="diff-wrong-input">${item.char}</span>`;
+        } else if (item.type === 'missing') {
+            // ユーザーが入力しなかった文字（空きスロット）
+            html += `<span class="diff-missing-slot"></span>`;
+        }
+    }
+    
+    return html;
+}
+
+/**
+ * 差分を計算（正解基準）
+ */
+function computeDiff(userInput, correctWord) {
+    const result = [];
+    const lcs = computeLCS(userInput, correctWord);
+    
+    let ui = 0, ci = 0, li = 0;
+    
+    while (ci < correctWord.length) {
+        if (li < lcs.length && ci === lcs[li].correctIndex) {
+            // LCSに含まれる文字（一致）
+            result.push({ type: 'match', char: correctWord[ci] });
+            ui = lcs[li].userIndex + 1;
+            li++;
+        } else {
+            // ユーザーが入力しなかった/間違えた文字
+            result.push({ type: 'missing', char: correctWord[ci] });
+        }
+        ci++;
+    }
+    
+    return result;
+}
+
+/**
+ * ユーザー入力の差分を計算（ユーザー入力基準）
+ */
+function computeUserDiff(userInput, correctWord) {
+    const result = [];
+    const lcs = computeLCS(userInput, correctWord);
+    
+    let li = 0;
+    
+    for (let ui = 0; ui < userInput.length; ui++) {
+        if (li < lcs.length && ui === lcs[li].userIndex) {
+            // LCSに含まれる文字（一致）
+            result.push({ type: 'match', char: userInput[ui] });
+            li++;
+        } else {
+            // 間違えた/余分な文字
+            result.push({ type: 'wrong', char: userInput[ui] });
+        }
+    }
+    
+    return result;
+}
+
+/**
+ * 完全な差分を計算（編集距離アルゴリズムを使用）
+ * 置換、挿入、削除を正確に判定
+ */
+function computeFullDiff(userInput, correctWord) {
+    const m = userInput.length;
+    const n = correctWord.length;
+    
+    // DPテーブルを作成（編集距離）
+    const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+    
+    // 初期化
+    for (let i = 0; i <= m; i++) dp[i][0] = i;
+    for (let j = 0; j <= n; j++) dp[0][j] = j;
+    
+    // DPテーブルを埋める
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (userInput[i - 1] === correctWord[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1];
+            } else {
+                dp[i][j] = 1 + Math.min(
+                    dp[i - 1][j],     // 削除（ユーザーが余分に入力）
+                    dp[i][j - 1],     // 挿入（ユーザーが入力しなかった）
+                    dp[i - 1][j - 1]  // 置換
+                );
+            }
+        }
+    }
+    
+    // バックトラックして差分を取得
+    const result = [];
+    let i = m, j = n;
+    
+    while (i > 0 || j > 0) {
+        if (i > 0 && j > 0 && userInput[i - 1] === correctWord[j - 1]) {
+            // 一致
+            result.unshift({ type: 'match', char: userInput[i - 1] });
+            i--;
+            j--;
+        } else if (i > 0 && j > 0 && dp[i][j] === dp[i - 1][j - 1] + 1) {
+            // 置換（間違った文字）
+            result.unshift({ type: 'wrong', char: userInput[i - 1] });
+            i--;
+            j--;
+        } else if (j > 0 && (i === 0 || dp[i][j] === dp[i][j - 1] + 1)) {
+            // 挿入（欠けている文字）
+            result.unshift({ type: 'missing', char: correctWord[j - 1] });
+            j--;
+        } else if (i > 0 && (j === 0 || dp[i][j] === dp[i - 1][j] + 1)) {
+            // 削除（余分な文字）
+            result.unshift({ type: 'wrong', char: userInput[i - 1] });
+            i--;
+        } else {
+            break;
+        }
+    }
+    
+    return result;
+}
+
+/**
+ * LCS（最長共通部分列）を計算
+ */
+function computeLCS(str1, str2) {
+    const m = str1.length;
+    const n = str2.length;
+    
+    // DPテーブルを作成
+    const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+    
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (str1[i - 1] === str2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+    
+    // バックトラックしてLCSを取得
+    const lcs = [];
+    let i = m, j = n;
+    
+    while (i > 0 && j > 0) {
+        if (str1[i - 1] === str2[j - 1]) {
+            lcs.unshift({ userIndex: i - 1, correctIndex: j - 1, char: str1[i - 1] });
+            i--;
+            j--;
+        } else if (dp[i - 1][j] > dp[i][j - 1]) {
+            i--;
+        } else {
+            j--;
+        }
+    }
+    
+    return lcs;
+}
+
+/**
  * 結果を表示
  */
 function showHWQuizResult(isCorrect, word) {
@@ -16420,14 +16623,25 @@ function showHWQuizResult(isCorrect, word) {
             answerDisplay.style.backgroundColor = '#ffffff';
             answerDisplay.style.color = '#2b6cb0';
         } else {
-            // 不正解：赤枠
+            // 不正解：赤枠、文字は黒
             answerDisplay.style.borderColor = '#e53e3e';
             answerDisplay.style.backgroundColor = '#ffffff';
-            answerDisplay.style.color = '#c53030';
+            answerDisplay.style.color = '#1a202c';
         }
     }
     
-    // 不正解の場合、正解を表示する欄を追加（プレースホルダーに挿入）
+    // 不正解の場合、入力欄に差分ハイライトを適用
+    if (!isCorrect && answerDisplay) {
+        const userInput = (hwQuizConfirmedText || "").trim().toLowerCase();
+        const correctWord = word.word.toLowerCase();
+        const userDiffHtml = generateUserInputDiffHighlight(userInput, correctWord);
+        const answerText = answerDisplay.querySelector('.hw-answer-text');
+        if (answerText) {
+            answerText.innerHTML = userDiffHtml;
+        }
+    }
+    
+    // 正解表示（通常表示）
     const placeholder = document.getElementById('hwQuizCorrectAnswerPlaceholder');
     if (!isCorrect && placeholder) {
         placeholder.innerHTML = `
