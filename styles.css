@@ -33,31 +33,24 @@
     display: none !important;
 }
 
-html {
+html, body {
     width: 100%;
     height: 100%;
-    height: -webkit-fill-available;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #ffffff;
-}
-
-body {
-    width: 100%;
-    height: 100%;
-    height: 100svh; /* iOS Safari対応: small viewport height */
-    min-height: -webkit-fill-available;
     margin: 0;
     padding: 0;
     overflow: hidden;
     background-color: #ffffff;
     overscroll-behavior: none;
     -webkit-overflow-scrolling: touch;
-    /* iOS全画面対応: 確実に画面全体をカバー */
+    /* PWA全画面対応 */
     position: fixed;
-    inset: 0;
-    /* フォント設定 */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+body {
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: #1f2937;
     line-height: 1.5;
@@ -267,7 +260,10 @@ textarea,
     width: 100%;
     height: 100%;
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 1;
     overflow: visible; /* position:fixedの赤シートを許可 */
     padding-top: calc(var(--header-height) + env(safe-area-inset-top));
@@ -8403,30 +8399,19 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* Bottom Nav */
 .bottom-nav {
-    height: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px));
+    height: var(--nav-height);
     background: #ffffff;
     border-top: 1px solid #e5e7eb;
     display: flex;
     justify-content: space-around;
-    align-items: flex-start;
-    padding-top: 8px;
+    align-items: center;
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     z-index: 100;
-}
-
-/* Safe Area用の背景延長（iOS下部のホームバー領域を確実にカバー） */
-.bottom-nav::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: env(safe-area-inset-bottom, 0px);
-    background: #ffffff;
-    z-index: -1;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: content-box; /* padding-bottomを高さに追加 */
 }
 
 .nav-item {
