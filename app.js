@@ -1171,6 +1171,14 @@ let currentLearningMode = 'card'; // 現在学習中のモード: 'card' また�
 let inputListViewMode = 'expand'; // 単語一覧の表示モード: 'flip' (フリップ) または 'expand' (展開)
 let reorderAnswerSubmitted = false; // 回答が送信済みかどうか
 let reorderSelectedWords = []; // 選択された単語の配列
+
+// 四択問題モード用変数
+let isChoiceQuestionModeActive = false; // 四択問題モードかどうか
+let choiceQuestionData = []; // 四択問題データ
+let currentChoiceQuestionIndex = 0; // 現在の四択問題のインデックス
+let choiceAnswerSubmitted = false; // 四択回答が送信済みかどうか
+let selectedChoiceIndex = -1; // 選択された選択肢のインデックス
+
 let reorderTouchData = { // タッチドラッグ用のデータ
     sourceElement: null, // 元の要素
     dragClone: null, // ドラッグ中のクローン要素
@@ -3034,10 +3042,12 @@ function showCategorySelection() {
     const cardHint = document.getElementById('cardHint');
     const handwritingQuizView = document.getElementById('handwritingQuizView');
     const cardTopSection = document.querySelector('.card-top-section');
+    const choiceMode = document.getElementById('choiceQuestionMode');
     if (wordCard) wordCard.classList.add('hidden');
     if (inputMode) inputMode.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.add('hidden');
     if (cardHint) cardHint.classList.add('hidden');
     if (handwritingQuizView) handwritingQuizView.classList.add('hidden');
     if (cardTopSection) cardTopSection.classList.add('hidden');
@@ -3046,6 +3056,8 @@ function showCategorySelection() {
     isInputModeActive = false;
     isSentenceModeActive = false;
     isReorderModeActive = false;
+    isChoiceQuestionModeActive = false;
+    document.body.classList.remove('choice-question-mode-active');
     
     // カードモード専用オーバーレイをリセット
     if (elements.cardFeedbackOverlay) {
@@ -3164,7 +3176,8 @@ function startCategory(category) {
     console.log('startCategory called with category:', category);
     selectedCategory = category;
     // モード用のボディクラスをいったんリセット
-    document.body.classList.remove('sentence-mode-active', 'reorder-mode-active');
+    document.body.classList.remove('sentence-mode-active', 'reorder-mode-active', 'choice-question-mode-active');
+    isChoiceQuestionModeActive = false;
     
     // 小学生で習った単語とカテゴリー別に覚える単語の場合は、elementaryWordDataを使用
     let categoryWords;
@@ -3280,6 +3293,23 @@ function startCategory(category) {
         }
         console.log('initReorderModeLearningを呼び出します');
         initReorderModeLearning(category);
+        return;
+    } else if (category === 'C問題対策 大問1整序英作文【四択問題】') {
+        // C問題対策 大問1整序英作文【四択問題】：四択問題モードで開始
+        console.log('四択問題モードを開始します。カテゴリー:', category);
+        // choiceQuestionsが読み込まれているか確認
+        if (typeof choiceQuestions === 'undefined') {
+            showAlert('エラー', '四択問題のデータファイルが読み込まれていません。ページを再読み込みしてください。');
+            console.error('choiceQuestions is undefined');
+            return;
+        }
+        if (!choiceQuestions || choiceQuestions.length === 0) {
+            showAlert('エラー', '四択問題のデータが空です。');
+            console.error('choiceQuestions is empty');
+            return;
+        }
+        console.log('initChoiceQuestionLearningを呼び出します');
+        initChoiceQuestionLearning(category);
         return;
     } else if (category === 'PartCディクテーション') {
         // PartCディクテーション：専用データが必要（現在は空）
@@ -3421,7 +3451,8 @@ function initInputModeLearning(category, words, startIndex = 0) {
         '条件英作文特訓コース',
         '大阪C問題対策英単語タイムアタック',
         '大阪C問題対策 英作写経ドリル',
-        '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+        '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】',
+        'C問題対策 大問1整序英作文【四択問題】'
     ];
     let displayTitle;
     if (scoreUpCategories.includes(category)) {
@@ -3460,13 +3491,17 @@ function initInputModeLearning(category, words, startIndex = 0) {
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
     const progressStepButtons = document.querySelector('.progress-step-buttons');
+    const choiceMode = document.getElementById('choiceQuestionMode');
     if (wordCard) wordCard.classList.add('hidden');
     if (inputMode) inputMode.classList.remove('hidden');
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.add('hidden');
     // モードフラグをリセット
     isSentenceModeActive = false;
     isReorderModeActive = false;
+    isChoiceQuestionModeActive = false;
+    document.body.classList.remove('choice-question-mode-active');
     if (cardHint) cardHint.classList.add('hidden');
     // 入力モードのときは進捗バーの「前の単語へ・次の単語へ」ボタンを表示
     if (progressStepButtons) progressStepButtons.classList.remove('hidden');
@@ -5658,7 +5693,8 @@ function initTimeAttackLearning(category, words) {
         '条件英作文特訓コース',
         '大阪C問題対策英単語タイムアタック',
         '大阪C問題対策 英作写経ドリル',
-        '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+        '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】',
+        'C問題対策 大問1整序英作文【四択問題】'
     ];
     let displayTitleTA;
     if (scoreUpCategoriesTA.includes(category)) {
@@ -5705,14 +5741,18 @@ function initTimeAttackLearning(category, words) {
     const cardHint = document.getElementById('cardHint');
     const statsBar = document.getElementById('statsBar');
     
+    const choiceMode = document.getElementById('choiceQuestionMode');
     if (inputMode) inputMode.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.add('hidden');
     if (wordCard) wordCard.classList.add('hidden'); // カウントダウン中は非表示
     if (cardHint) cardHint.classList.add('hidden'); // カウントダウン中は非表示
     // モードフラグをリセット
     isSentenceModeActive = false;
     isReorderModeActive = false;
+    isChoiceQuestionModeActive = false;
+    document.body.classList.remove('choice-question-mode-active');
     if (statsBar) statsBar.classList.add('hidden'); // カウントダウン中は非表示
     
     // 進捗バーのセグメントを生成
@@ -6062,7 +6102,8 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
             '条件英作文特訓コース',
             '大阪C問題対策英単語タイムアタック',
             '大阪C問題対策 英作写経ドリル',
-            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】',
+            'C問題対策 大問1整序英作文【四択問題】'
         ];
         let displayTitle;
         if (scoreUpCategories.includes(category)) {
@@ -6124,9 +6165,11 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     const progressStepRight = document.getElementById('progressStepRight');
     const sentenceNavigation = document.getElementById('sentenceNavigation');
     
+    const choiceMode = document.getElementById('choiceQuestionMode');
     if (inputMode) inputMode.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.add('hidden');
     if (wordCard) wordCard.classList.remove('hidden');
     if (wordCardContainer) wordCardContainer.classList.remove('hidden');
     if (inputListView) inputListView.classList.add('hidden');
@@ -6134,12 +6177,11 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     isInputModeActive = false;
     isSentenceModeActive = false;
     isReorderModeActive = false;
-    // 厳選例文・整序英作文モードのbodyクラスを削除（CSSでカードが非表示になるのを防ぐ）
+    isChoiceQuestionModeActive = false;
+    // 厳選例文・整序英作文・四択問題モードのbodyクラスを削除（CSSでカードが非表示になるのを防ぐ）
     document.body.classList.remove('sentence-mode-active');
     document.body.classList.remove('reorder-mode-active');
-    // 厳選例文・整序英作文モードのbodyクラスを削除（CSSでカードが非表示になるのを防ぐ）
-    document.body.classList.remove('sentence-mode-active');
-    document.body.classList.remove('reorder-mode-active');
+    document.body.classList.remove('choice-question-mode-active');
     
     // インプットモード用戻るボタンとポーズボタンの制御
     const inputBackBtn = document.getElementById('inputBackBtn');
@@ -6732,7 +6774,10 @@ function setupEventListeners() {
     if (progressStepLeft) {
         progressStepLeft.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (isReorderModeActive) {
+            if (isChoiceQuestionModeActive) {
+                // 四択問題モードのとき
+                moveToPrevChoiceQuestion();
+            } else if (isReorderModeActive) {
                 // 整序英作文モードのとき
                 moveToPrevReorderQuestion();
             } else if (isSentenceModeActive) {
@@ -6751,7 +6796,10 @@ function setupEventListeners() {
     if (progressStepRight) {
         progressStepRight.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (isReorderModeActive) {
+            if (isChoiceQuestionModeActive) {
+                // 四択問題モードのとき
+                moveToNextChoiceQuestion();
+            } else if (isReorderModeActive) {
                 // 整序英作文モードのとき
                 moveToNextReorderQuestion();
             } else if (isSentenceModeActive) {
@@ -10150,6 +10198,13 @@ function setupInputListModeToggle() {
         }
         // フィルターを適用して再描画（絞り込み状態を保持）
         applyInputFilter();
+        
+        // フリップモード：ヘッダーをスクロールコンテナ内に移動
+        const inputListHeader = document.querySelector('.input-list-header');
+        const inputListContainer = document.getElementById('inputListContainer');
+        if (inputListHeader && inputListContainer && !inputListContainer.contains(inputListHeader)) {
+            inputListContainer.insertBefore(inputListHeader, inputListContainer.firstChild);
+        }
     });
     
     expandBtn.addEventListener('click', () => {
@@ -10160,6 +10215,15 @@ function setupInputListModeToggle() {
         updateRedSheetToggleVisibility();
         // すべてめくるボタンを非表示
         if (flipAllBtn) flipAllBtn.classList.add('hidden');
+        
+        // 展開モード：ヘッダーを元の位置に戻す
+        const inputListHeader = document.querySelector('.input-list-header');
+        const inputListView = document.getElementById('inputListView');
+        const inputListContainer = document.getElementById('inputListContainer');
+        if (inputListHeader && inputListView && inputListContainer && inputListContainer.contains(inputListHeader)) {
+            inputListView.insertBefore(inputListHeader, inputListContainer);
+        }
+        
         // 現在の単語リストを再描画（フィルターを適用）
         applyInputFilter();
     });
@@ -11181,7 +11245,16 @@ function updateNavButtons() {
     const progressStepRight = document.getElementById('progressStepRight');
     if (!progressStepLeft || !progressStepRight) return;
     
-    if (isReorderModeActive) {
+    if (isChoiceQuestionModeActive) {
+        // 四択問題モードのとき
+        progressStepLeft.disabled = currentChoiceQuestionIndex === 0;
+        progressStepRight.disabled = currentChoiceQuestionIndex >= choiceQuestionData.length - 1;
+        // テキストを更新
+        const leftSpan = progressStepLeft.querySelector('span');
+        const rightSpan = progressStepRight.querySelector('span');
+        if (leftSpan) leftSpan.textContent = '前の問題へ';
+        if (rightSpan) rightSpan.textContent = '次の問題へ';
+    } else if (isReorderModeActive) {
         // 整序英作文モードのとき
         progressStepLeft.disabled = currentReorderIndex === 0;
         progressStepRight.disabled = currentReorderIndex >= reorderData.length - 1;
@@ -12249,6 +12322,16 @@ function createProgressSegments(total) {
             if (absoluteIndex >= currentRangeStart && absoluteIndex < currentRangeEnd) {
                 currentIndex = absoluteIndex;
                 
+                // 四択問題モードの場合
+                if (isChoiceQuestionModeActive) {
+                    currentChoiceQuestionIndex = absoluteIndex;
+                    choiceAnswerSubmitted = false;
+                    displayCurrentChoiceQuestion();
+                    updateStats();
+                    updateNavButtons();
+                    return;
+                }
+                
                 // 整序英作文モードの場合
                 if (isReorderModeActive) {
                     currentReorderIndex = absoluteIndex;
@@ -12290,7 +12373,9 @@ function createProgressSegments(total) {
     
     // セグメントの色を設定
     let currentQuestionIndex;
-    if (isReorderModeActive) {
+    if (isChoiceQuestionModeActive) {
+        currentQuestionIndex = currentChoiceQuestionIndex - currentRangeStart;
+    } else if (isReorderModeActive) {
         currentQuestionIndex = currentReorderIndex - currentRangeStart;
     } else if (isSentenceModeActive) {
         currentQuestionIndex = currentSentenceIndex - currentRangeStart;
@@ -12329,7 +12414,9 @@ function updateProgressSegments() {
         // 通常モードの場合
         total = currentRangeEnd - currentRangeStart;
         // モードに応じて現在のインデックスを取得
-        if (isReorderModeActive) {
+        if (isChoiceQuestionModeActive) {
+            currentQuestionIndex = currentChoiceQuestionIndex - currentRangeStart;
+        } else if (isReorderModeActive) {
             currentQuestionIndex = currentReorderIndex - currentRangeStart;
         } else if (isSentenceModeActive) {
             currentQuestionIndex = currentSentenceIndex - currentRangeStart;
@@ -12707,7 +12794,8 @@ function initSentenceModeLearning(category) {
             '条件英作文特訓コース',
             '大阪C問題対策英単語タイムアタック',
             '大阪C問題対策 英作写経ドリル',
-            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】'
+            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】',
+            'C問題対策 大問1整序英作文【四択問題】'
         ];
         let displayTitle;
         if (scoreUpCategories.includes(category)) {
@@ -12747,15 +12835,19 @@ function initSentenceModeLearning(category) {
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
     const progressStepButtons = document.querySelector('.progress-step-buttons');
+    const choiceMode = document.getElementById('choiceQuestionMode');
     if (wordCard) wordCard.classList.add('hidden');
     if (wordCardContainer) wordCardContainer.classList.add('hidden');
     if (inputMode) inputMode.classList.add('hidden');
     if (inputListView) inputListView.classList.add('hidden');
     if (reorderMode) reorderMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.remove('hidden');
     // モードフラグをリセット
     isInputModeActive = false;
     isReorderModeActive = false;
+    isChoiceQuestionModeActive = false;
+    document.body.classList.remove('choice-question-mode-active');
     if (cardHint) cardHint.classList.add('hidden');
     // 例文モードのときは進捗バーのボタンを表示（テキストは「前の問題へ・次の問題へ」に変更）
     if (progressStepButtons) progressStepButtons.classList.remove('hidden');
@@ -13456,14 +13548,18 @@ function initReorderModeLearning(category) {
     const reorderMode = document.getElementById('reorderMode');
     const cardHint = document.getElementById('cardHint');
     const progressStepButtons = document.querySelector('.progress-step-buttons');
+    const choiceMode = document.getElementById('choiceQuestionMode');
     if (wordCard) wordCard.classList.add('hidden');
     if (wordCardContainer) wordCardContainer.classList.add('hidden');
     if (inputMode) inputMode.classList.add('hidden');
     if (inputListView) inputListView.classList.add('hidden');
     if (sentenceMode) sentenceMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.add('hidden');
     if (reorderMode) reorderMode.classList.remove('hidden');
     if (cardHint) cardHint.classList.add('hidden');
     if (progressStepButtons) progressStepButtons.classList.remove('hidden');
+    isChoiceQuestionModeActive = false;
+    document.body.classList.remove('choice-question-mode-active');
     updateNavButtons(); // ボタンのテキストと状態を更新
     
     displayCurrentReorderQuestion();
@@ -14308,6 +14404,395 @@ function saveReorderProgress(questionId, isCorrect) {
     
     saveCategoryWords(selectedCategory, correctSet, wrongSet);
 }
+
+// ================================
+// 四択問題モード
+// ================================
+
+// 四択問題モードで学習を初期化
+function initChoiceQuestionLearning(category) {
+    // choiceQuestionsが定義されているか確認
+    if (typeof choiceQuestions === 'undefined') {
+        showAlert('エラー', '四択問題のデータファイルが読み込まれていません。ページを再読み込みしてください。');
+        console.error('choiceQuestions is undefined in initChoiceQuestionLearning');
+        return;
+    }
+    if (!choiceQuestions || choiceQuestions.length === 0) {
+        showAlert('エラー', '四択問題のデータが空です。');
+        console.error('choiceQuestions is empty in initChoiceQuestionLearning');
+        return;
+    }
+    
+    selectedCategory = category;
+    choiceQuestionData = choiceQuestions;
+    isChoiceQuestionModeActive = true;
+    isReorderModeActive = false;
+    isSentenceModeActive = false;
+    isInputModeActive = false;
+    document.body.classList.add('choice-question-mode-active');
+    document.body.classList.remove('reorder-mode-active', 'sentence-mode-active');
+    currentChoiceQuestionIndex = 0;
+    choiceAnswerSubmitted = false;
+    selectedChoiceIndex = -1;
+    
+    currentRangeStart = 0;
+    currentRangeEnd = choiceQuestionData.length;
+    currentIndex = 0;
+    
+    answeredWords.clear();
+    correctCount = 0;
+    wrongCount = 0;
+    questionStatus = new Array(choiceQuestionData.length).fill(null);
+    
+    // 前回の回答状況を読み込んで進捗バーに反映
+    if (category) {
+        const { correctSet, wrongSet } = loadCategoryWords(category);
+        choiceQuestionData.forEach((question, index) => {
+            if (wrongSet.has(question.id)) {
+                questionStatus[index] = 'wrong';
+            } else if (correctSet.has(question.id)) {
+                questionStatus[index] = 'correct';
+            }
+        });
+    }
+
+    elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
+    elements.mainContent.classList.remove('hidden');
+    
+    // タイトルを設定
+    if (elements.unitName) {
+        elements.unitName.textContent = 'C問題対策 大問1整序英作文【四択問題】';
+    }
+    
+    // テーマカラーを更新
+    updateThemeColor(true);
+    document.body.classList.add('learning-mode');
+    
+    // ヘッダーボタンを更新
+    updateHeaderButtons('learning', '', true);
+    
+    // 四択問題モードではメモボタンとテストボタンを非表示、×ボタンのみ表示
+    const memoPadBtn = document.getElementById('memoPadBtn');
+    const unitTestBtn = document.getElementById('unitTestBtn');
+    const unitPauseBtn = document.getElementById('unitPauseBtn');
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    if (memoPadBtn) memoPadBtn.classList.add('hidden');
+    if (unitTestBtn) unitTestBtn.classList.add('hidden');
+    if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
+    if (inputBackBtn) inputBackBtn.classList.add('hidden');
+    
+    // 各モードの表示制御
+    const cardMode = document.querySelector('.word-card-wrapper');
+    const inputMode = document.getElementById('inputMode');
+    const sentenceMode = document.getElementById('sentenceMode');
+    const reorderMode = document.getElementById('reorderMode');
+    const choiceMode = document.getElementById('choiceQuestionMode');
+    const cardHint = document.getElementById('cardHint');
+    const progressStepButtons = document.getElementById('progressStepButtons');
+    
+    if (cardMode) cardMode.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (sentenceMode) sentenceMode.classList.add('hidden');
+    if (reorderMode) reorderMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.remove('hidden');
+    if (cardHint) cardHint.classList.add('hidden');
+    if (progressStepButtons) progressStepButtons.classList.remove('hidden');
+    
+    // 進捗バーを初期化
+    initChoiceProgressBar();
+    
+    // 最初の問題を表示
+    displayCurrentChoiceQuestion();
+    
+    // スクロール位置をトップに戻す
+    window.scrollTo(0, 0);
+}
+
+// 四択問題の進捗バーを初期化
+function initChoiceProgressBar() {
+    const container = document.getElementById('choiceProgressBarContainer');
+    const rangeEl = document.getElementById('choiceProgressRange');
+    const progressText = document.getElementById('choiceProgressText');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // 最大20セグメント表示
+    const maxSegments = Math.min(choiceQuestionData.length, 20);
+    
+    for (let i = 0; i < maxSegments; i++) {
+        const segment = document.createElement('div');
+        segment.className = 'progress-segment';
+        container.appendChild(segment);
+    }
+    
+    // 問題番号の範囲を表示
+    if (rangeEl && choiceQuestionData.length > 0) {
+        const firstId = choiceQuestionData[0].id || 1;
+        const lastId = choiceQuestionData[Math.min(19, choiceQuestionData.length - 1)].id || Math.min(20, choiceQuestionData.length);
+        rangeEl.textContent = `No.${firstId}-${lastId}`;
+    }
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        progressText.textContent = `0/${choiceQuestionData.length}`;
+    }
+    
+    // 統計をリセット
+    const correctCountEl = document.getElementById('choiceCorrectCount');
+    const wrongCountEl = document.getElementById('choiceWrongCount');
+    if (correctCountEl) correctCountEl.textContent = '0';
+    if (wrongCountEl) wrongCountEl.textContent = '0';
+}
+
+// 四択問題の進捗バーを更新
+function updateChoiceProgressBar() {
+    const container = document.getElementById('choiceProgressBarContainer');
+    const progressText = document.getElementById('choiceProgressText');
+    
+    if (!container) return;
+    
+    const segments = container.querySelectorAll('.progress-segment');
+    let choiceCorrect = 0;
+    let choiceWrong = 0;
+    
+    segments.forEach((segment, index) => {
+        segment.classList.remove('current', 'correct', 'wrong');
+        
+        if (index < questionStatus.length) {
+            if (questionStatus[index] === 'correct') {
+                segment.classList.add('correct');
+                choiceCorrect++;
+            } else if (questionStatus[index] === 'wrong') {
+                segment.classList.add('wrong');
+                choiceWrong++;
+            }
+        }
+        
+        if (index === currentChoiceQuestionIndex) {
+            segment.classList.add('current');
+        }
+    });
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        const answered = choiceCorrect + choiceWrong;
+        progressText.textContent = `${answered}/${choiceQuestionData.length}`;
+    }
+    
+    // 統計を更新
+    const correctCountEl = document.getElementById('choiceCorrectCount');
+    const wrongCountEl = document.getElementById('choiceWrongCount');
+    if (correctCountEl) correctCountEl.textContent = choiceCorrect;
+    if (wrongCountEl) wrongCountEl.textContent = choiceWrong;
+}
+
+// 現在の四択問題を表示
+function displayCurrentChoiceQuestion() {
+    if (currentChoiceQuestionIndex < 0 || currentChoiceQuestionIndex >= choiceQuestionData.length) {
+        return;
+    }
+    
+    // 進捗バーを更新
+    updateChoiceProgressBar();
+    
+    const question = choiceQuestionData[currentChoiceQuestionIndex];
+    const questionNumberEl = document.getElementById('choiceQuestionNumber');
+    const questionTextEl = document.getElementById('choiceQuestionText');
+    const optionsContainer = document.getElementById('choiceOptionsContainer');
+    const explanationContainer = document.getElementById('choiceExplanationContainer');
+    const nextBtnContainer = document.getElementById('choiceNextBtnContainer');
+    
+    // 問題番号を表示
+    if (questionNumberEl) {
+        questionNumberEl.textContent = `問題 ${question.id}`;
+    }
+    
+    // 問題文を表示
+    if (questionTextEl) {
+        questionTextEl.textContent = question.question;
+    }
+    
+    // 選択肢を生成
+    if (optionsContainer) {
+        optionsContainer.innerHTML = '';
+        question.choices.forEach((choice, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-option-btn';
+            btn.dataset.choiceIndex = index;
+            btn.innerHTML = `
+                <span class="choice-label">${choice.label}</span>
+                <span class="choice-text">${choice.text}</span>
+            `;
+            btn.addEventListener('click', () => selectChoiceOption(index));
+            optionsContainer.appendChild(btn);
+        });
+    }
+    
+    // 解説と次へボタンを非表示
+    if (explanationContainer) {
+        explanationContainer.classList.add('hidden');
+        explanationContainer.classList.remove('correct-answer', 'wrong-answer');
+    }
+    if (nextBtnContainer) {
+        nextBtnContainer.classList.add('hidden');
+    }
+    
+    // 状態をリセット
+    choiceAnswerSubmitted = false;
+    selectedChoiceIndex = -1;
+    
+    // ステップボタンの状態を更新
+    updateNavButtons();
+}
+
+// 選択肢を選択
+function selectChoiceOption(index) {
+    if (choiceAnswerSubmitted) return;
+    
+    const optionsContainer = document.getElementById('choiceOptionsContainer');
+    if (!optionsContainer) return;
+    
+    // 選択状態をリセット
+    const allBtns = optionsContainer.querySelectorAll('.choice-option-btn');
+    allBtns.forEach(btn => btn.classList.remove('selected'));
+    
+    // 選択した選択肢をハイライト
+    const selectedBtn = optionsContainer.querySelector(`[data-choice-index="${index}"]`);
+    if (selectedBtn) {
+        selectedBtn.classList.add('selected');
+    }
+    
+    selectedChoiceIndex = index;
+    
+    // 自動的に回答を送信
+    submitChoiceAnswer();
+}
+
+// 四択問題の回答を送信
+function submitChoiceAnswer() {
+    if (choiceAnswerSubmitted || selectedChoiceIndex === -1) return;
+    
+    choiceAnswerSubmitted = true;
+    
+    const question = choiceQuestionData[currentChoiceQuestionIndex];
+    const isCorrect = selectedChoiceIndex === question.correctIndex;
+    
+    const optionsContainer = document.getElementById('choiceOptionsContainer');
+    const explanationContainer = document.getElementById('choiceExplanationContainer');
+    const resultIcon = document.getElementById('choiceResultIcon');
+    const resultText = document.getElementById('choiceResultText');
+    const explanationContent = document.getElementById('choiceExplanationContent');
+    const nextBtnContainer = document.getElementById('choiceNextBtnContainer');
+    
+    // すべての選択肢を無効化
+    const allBtns = optionsContainer.querySelectorAll('.choice-option-btn');
+    allBtns.forEach(btn => btn.classList.add('disabled'));
+    
+    // 正解・不正解のスタイルを適用
+    const selectedBtn = optionsContainer.querySelector(`[data-choice-index="${selectedChoiceIndex}"]`);
+    const correctBtn = optionsContainer.querySelector(`[data-choice-index="${question.correctIndex}"]`);
+    
+    if (isCorrect) {
+        if (selectedBtn) selectedBtn.classList.add('correct');
+        SoundEffects.playCorrect();
+        correctCount++;
+        questionStatus[currentChoiceQuestionIndex] = 'correct';
+    } else {
+        if (selectedBtn) selectedBtn.classList.add('wrong');
+        if (correctBtn) correctBtn.classList.add('correct');
+        SoundEffects.playWrong();
+        wrongCount++;
+        questionStatus[currentChoiceQuestionIndex] = 'wrong';
+    }
+    
+    // 進捗を保存
+    saveChoiceProgress(question.id, isCorrect);
+    
+    // 進捗バーを更新
+    updateChoiceProgressBar();
+    
+    // 解説を表示
+    if (explanationContainer) {
+        explanationContainer.classList.remove('hidden', 'correct-answer', 'wrong-answer');
+        explanationContainer.classList.add(isCorrect ? 'correct-answer' : 'wrong-answer');
+    }
+    
+    if (resultIcon) {
+        resultIcon.textContent = isCorrect ? '○' : '×';
+    }
+    
+    if (resultText) {
+        resultText.textContent = isCorrect ? '正解！' : `不正解 正解は「${question.correctLabel}」`;
+    }
+    
+    if (explanationContent) {
+        explanationContent.textContent = question.explanation;
+    }
+    
+    // 次の問題へボタンを表示
+    if (nextBtnContainer) {
+        nextBtnContainer.classList.remove('hidden');
+    }
+    
+    // 画面全体のフィードバック表示
+    if (elements.feedbackOverlay) {
+        elements.feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
+        setTimeout(() => {
+            elements.feedbackOverlay.classList.remove('active');
+        }, 400);
+    }
+}
+
+// 四択問題の進捗を保存
+function saveChoiceProgress(questionId, isCorrect) {
+    if (!selectedCategory) return;
+    
+    const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+    
+    if (isCorrect) {
+        correctSet.add(questionId);
+        wrongSet.delete(questionId);
+    } else {
+        wrongSet.add(questionId);
+        correctSet.delete(questionId);
+    }
+    
+    saveCategoryWords(selectedCategory, correctSet, wrongSet);
+}
+
+// 次の四択問題へ
+function moveToNextChoiceQuestion() {
+    if (currentChoiceQuestionIndex < choiceQuestionData.length - 1) {
+        currentChoiceQuestionIndex++;
+        currentIndex = currentChoiceQuestionIndex;
+        displayCurrentChoiceQuestion();
+    } else {
+        // 最後の問題の場合は完了画面を表示
+        showCompletionScreen();
+    }
+}
+
+// 前の四択問題へ
+function moveToPrevChoiceQuestion() {
+    if (currentChoiceQuestionIndex > 0) {
+        currentChoiceQuestionIndex--;
+        currentIndex = currentChoiceQuestionIndex;
+        displayCurrentChoiceQuestion();
+    }
+}
+
+// 四択問題の次へボタンイベント
+document.addEventListener('click', function(e) {
+    if (e.target.id === 'choiceNextBtn' || e.target.closest('#choiceNextBtn')) {
+        moveToNextChoiceQuestion();
+    }
+});
 
 // キーボードの大文字・小文字を更新
 function updateKeyboardCase(keyboard, isShift) {

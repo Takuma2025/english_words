@@ -456,6 +456,28 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
+                        <button class="category-card category-card-choice" data-category="C問題対策 大問1整序英作文【四択問題】">
+                            <div class="category-info">
+                                <div class="category-header exam-menu-header">
+                                    <div class="category-name">
+                                        <span class="exam-type-badge">公立C問題対策</span>
+                                        <span class="exam-type-badge exam-type-badge-pink">難関私立高校対策</span>
+                                        <span class="category-name-main">大問1整序英作文【四択問題】</span>
+                                    </div>
+                                </div>
+                                <div class="category-meta">4つの選択肢から正しい語順を選ぶ形式の整序英作文対策です。</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-C問題対策 大問1整序英作文【四択問題】" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-C問題対策 大問1整序英作文【四択問題】" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-C問題対策 大問1整序英作文【四択問題】">0/0問</div>
+                                </div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
                     </div>
                 </div>
                 <div class="osaka-image-container">
@@ -1120,6 +1142,83 @@
                         <div class="keyboard-actions">
                             <button class="keyboard-action-btn" id="reorderResetBtn">パス</button>
                             <button class="keyboard-action-btn keyboard-action-btn-primary" id="reorderSubmitBtn">解答</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 四択問題モード -->
+                    <div class="choice-question-mode hidden" id="choiceQuestionMode">
+                        <!-- 進捗バー -->
+                        <div class="progress-header choice-progress-header" id="choiceStatsBar">
+                            <div class="progress-bar-wrapper">
+                                <div class="progress-range-display" id="choiceProgressRange">No.1-20</div>
+                                <div class="progress-bar-container" id="choiceProgressBarContainer">
+                                    <!-- セグメントは動的に生成 -->
+                                </div>
+                            </div>
+                            <div class="hw-progress-bottom-row">
+                                <div class="progress-stats">
+                                    <div class="progress-stats-scores">
+                                        <span class="score-correct">
+                                            <span class="score-label">正解</span>
+                                            <span id="choiceCorrectCount">0</span>
+                                        </span>
+                                        <span class="score-wrong">
+                                            <span class="score-label">不正解</span>
+                                            <span id="choiceWrongCount">0</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="progress-nav-stats">
+                                    <div class="progress-stats-content">
+                                        <span class="progress-stats-label">進捗</span>
+                                        <span id="choiceProgressText">0/20</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 問題文 -->
+                        <div class="choice-question-container">
+                            <div class="choice-question-number" id="choiceQuestionNumber">問題 1</div>
+                            <div class="choice-question-text" id="choiceQuestionText">
+                                Please tell me (       ) help you.
+                            </div>
+                        </div>
+                        
+                        <!-- 選択肢 -->
+                        <div class="choice-options-container" id="choiceOptionsContainer">
+                            <button class="choice-option-btn" data-choice-index="0">
+                                <span class="choice-label">ア</span>
+                                <span class="choice-text">I can do what to me</span>
+                            </button>
+                            <button class="choice-option-btn" data-choice-index="1">
+                                <span class="choice-label">イ</span>
+                                <span class="choice-text">I can what to do me</span>
+                            </button>
+                            <button class="choice-option-btn" data-choice-index="2">
+                                <span class="choice-label">ウ</span>
+                                <span class="choice-text">me do what to I can</span>
+                            </button>
+                            <button class="choice-option-btn" data-choice-index="3">
+                                <span class="choice-label">エ</span>
+                                <span class="choice-text">me what I can do to</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 解説エリア -->
+                        <div class="choice-explanation-container hidden" id="choiceExplanationContainer">
+                            <div class="choice-explanation-header">
+                                <span class="choice-result-icon" id="choiceResultIcon"></span>
+                                <span class="choice-result-text" id="choiceResultText"></span>
+                            </div>
+                            <div class="choice-explanation-content" id="choiceExplanationContent">
+                                解説テキストがここに表示されます。
+                            </div>
+                        </div>
+                        
+                        <!-- 次の問題へボタン -->
+                        <div class="choice-next-btn-container hidden" id="choiceNextBtnContainer">
+                            <button class="keyboard-action-btn keyboard-action-btn-primary" id="choiceNextBtn">次の問題へ</button>
                         </div>
                     </div>
                     
@@ -1824,6 +1923,7 @@
     <script src="elementary_words.js"></script>
     <script src="sentence-data.js"></script>
     <script src="reorder-questions.js"></script>
+    <script src="choice-questions-data.js"></script>
     <script src="grammar-data.js"></script>
     <script src="school-data.js"></script>
     <script src="handwriting-recognition.js"></script>

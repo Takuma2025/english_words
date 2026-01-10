@@ -4615,17 +4615,22 @@ button.category-card:focus-visible {
 }
 
 /* 例文・整序モードではカードUIを隠す */
-/* 例文モード・整序英作文モードではカード関連要素を完全に非表示 */
+/* 例文モード・整序英作文モード・四択問題モードではカード関連要素を完全に非表示 */
 body.sentence-mode-active #wordCard,
 body.reorder-mode-active #wordCard,
+body.choice-question-mode-active #wordCard,
 body.sentence-mode-active #cardHint,
 body.reorder-mode-active #cardHint,
+body.choice-question-mode-active #cardHint,
 body.sentence-mode-active .word-card,
 body.reorder-mode-active .word-card,
+body.choice-question-mode-active .word-card,
 body.sentence-mode-active #wordCardContainer,
 body.reorder-mode-active #wordCardContainer,
+body.choice-question-mode-active #wordCardContainer,
 body.sentence-mode-active .word-card-container,
-body.reorder-mode-active .word-card-container {
+body.reorder-mode-active .word-card-container,
+body.choice-question-mode-active .word-card-container {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
@@ -4918,6 +4923,7 @@ body.reorder-mode-active .word-card-container {
     overflow-x: hidden;
     flex: 1;
     min-height: 0;
+    height: calc(100vh - var(--header-height, 56px) - env(safe-area-inset-top, 0px));
     width: 100% !important;
     max-width: none !important;
     margin: 0;
@@ -5096,8 +5102,20 @@ body.reorder-mode-active .word-card-container {
 
 /* フリップモード時のコンテナスタイル */
 #inputListContainer.flip-mode {
-    padding: 12px;
+    padding: 0;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
     overflow-x: hidden;
+    overflow-y: auto;
+    height: calc(100vh - var(--header-height, 56px) - env(safe-area-inset-top, 0px));
+}
+
+/* フリップモード内のカードにパディング */
+#inputListContainer.flip-mode > .input-list-item {
+    width: calc(100% - 40px);
+    max-width: 580px;
+    margin: 0 auto 12px auto;
 }
 
 .input-list-header.review-wrong-words {
@@ -7556,14 +7574,17 @@ body.learning-mode .app-main {
     padding-top: 0;
     padding-bottom: 0; /* 学習モードではナビが非表示なので余白不要 */
     overflow-x: visible !important;
+    overflow-y: hidden;
 }
 
 body.learning-mode .learning-view {
     overflow-x: visible !important;
     max-width: none !important;
     width: 100% !important;
-    overflow-y: auto;
+    overflow-y: visible;
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 body.learning-mode .card-area-wrapper {
@@ -15509,5 +15530,257 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
         padding: 10px;
         font-size: 13px;
         border-radius: 8px;
+    }
+}
+
+/* ================================
+   四択問題モード
+   ================================ */
+
+.choice-question-mode {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 16px 80px 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+    overflow-y: auto;
+    min-height: 0;
+    max-height: 100%;
+    box-sizing: border-box;
+}
+
+/* 四択問題モードがアクティブなときカードを非表示 */
+body.choice-question-mode-active .word-card-wrapper,
+body.choice-question-mode-active .action-hint,
+body.choice-question-mode-active .input-mode-nav {
+    display: none !important;
+}
+
+body.choice-question-mode-active .choice-question-mode {
+    display: flex !important;
+}
+
+/* 四択問題モードの進捗バー */
+.choice-progress-header {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 8px;
+}
+
+/* 問題コンテナ */
+.choice-question-container {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+}
+
+.choice-question-number {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.choice-question-text {
+    font-size: 20px;
+    font-weight: 500;
+    color: #1f2937;
+    line-height: 1.6;
+    text-align: left;
+    font-family: "Times New Roman", Georgia, serif;
+}
+
+/* 選択肢コンテナ */
+.choice-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 選択肢ボタン */
+.choice-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 16px 20px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.choice-option-btn:hover:not(.selected):not(.correct):not(.wrong) {
+    border-color: #3182ce;
+    background: #f0f7ff;
+}
+
+.choice-option-btn:active:not(.selected):not(.correct):not(.wrong) {
+    transform: scale(0.98);
+}
+
+.choice-option-btn.selected {
+    border-color: #3182ce;
+    background: #ebf5ff;
+}
+
+.choice-option-btn.correct {
+    border-color: #10b981;
+    background: #d1fae5;
+}
+
+.choice-option-btn.wrong {
+    border-color: #ef4444;
+    background: #fee2e2;
+}
+
+.choice-option-btn.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.choice-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #f3f4f6;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    flex-shrink: 0;
+}
+
+.choice-option-btn.selected .choice-label {
+    background: #3182ce;
+    color: #ffffff;
+}
+
+.choice-option-btn.correct .choice-label {
+    background: #10b981;
+    color: #ffffff;
+}
+
+.choice-option-btn.wrong .choice-label {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.choice-text {
+    font-size: 17px;
+    color: #1f2937;
+    font-family: "Times New Roman", Georgia, serif;
+    line-height: 1.4;
+}
+
+/* 解説エリア */
+.choice-explanation-container {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 16px 20px;
+    border-left: 4px solid #3182ce;
+}
+
+.choice-explanation-container.correct-answer {
+    border-left-color: #10b981;
+    background: #f0fdf4;
+}
+
+.choice-explanation-container.wrong-answer {
+    border-left-color: #ef4444;
+    background: #fef2f2;
+}
+
+.choice-explanation-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.choice-result-icon {
+    font-size: 24px;
+}
+
+.choice-result-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.choice-explanation-content {
+    font-size: 15px;
+    color: #4b5563;
+    line-height: 1.7;
+}
+
+/* 次の問題へボタン */
+.choice-next-btn-container {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0;
+}
+
+#choiceNextBtn {
+    width: 100%;
+    max-width: 300px;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 480px) {
+    .choice-question-mode {
+        padding: 12px;
+        gap: 12px;
+    }
+    
+    .choice-question-container {
+        padding: 16px;
+        border-radius: 12px;
+    }
+    
+    .choice-question-number {
+        font-size: 13px;
+    }
+    
+    .choice-question-text {
+        font-size: 18px;
+    }
+    
+    .choice-option-btn {
+        padding: 14px 16px;
+        gap: 10px;
+    }
+    
+    .choice-label {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+    }
+    
+    .choice-text {
+        font-size: 15px;
+    }
+    
+    .choice-explanation-container {
+        padding: 14px 16px;
+    }
+    
+    .choice-explanation-content {
+        font-size: 14px;
     }
 }
