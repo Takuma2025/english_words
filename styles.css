@@ -5505,8 +5505,8 @@ body.reorder-mode-active .word-card-container {
 .red-sheet-overlay {
     position: fixed;
     top: 150px;
-    left: 0;
-    width: 500px;
+    right: 0;
+    width: 100vw;
     height: 80vh;
     max-height: 800px;
     min-height: 300px;
@@ -5514,8 +5514,8 @@ body.reorder-mode-active .word-card-container {
     z-index: 500;
     cursor: grab;
     user-select: none;
-    border-radius: 12px;
-    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     pointer-events: auto;
     touch-action: none;
     mix-blend-mode: multiply;

@@ -10398,25 +10398,24 @@ function setupRedSheet() {
 
             currentRedSheetIndex = targetIndex;
             let topPosition = 150; // デフォルト値
-            let leftPosition = -400; // デフォルト値（左からひょっこり）
+            let leftPosition = 0; // デフォルト値
 
             if (targetMeaning) {
                 const rect = targetMeaning.getBoundingClientRect();
                 topPosition = rect.top; // 日本語の意味の上端から
-                // 左からひょっこり出てくる感じに（赤シートの右端が日本語をカバー）
-                const sheetWidth = 500; // CSSで設定した幅
-                leftPosition = rect.left - sheetWidth + rect.width + 20;
+                // 意味テキストの左端から右端まで隠す
+                leftPosition = rect.left - 10;
             } else if (meanings.length > 0) {
                 // 見つからない場合は一番最初の要素（フォールバック）
                 const rect = meanings[0].getBoundingClientRect();
                 topPosition = rect.top;
-                const sheetWidth = 500;
-                leftPosition = rect.left - sheetWidth + rect.width + 20;
+                leftPosition = rect.left - 10;
                 currentRedSheetIndex = 0;
             }
 
             redSheetOverlay.style.top = topPosition + 'px';
             redSheetOverlay.style.left = leftPosition + 'px';
+            redSheetOverlay.style.right = '0';
             
             redSheetOverlay.classList.remove('hidden');
             inputListView.classList.add('red-sheet-mode');
@@ -10445,7 +10444,7 @@ function setupRedSheet() {
     }
 }
 
-// 赤シートを次の単語に移動（画面スクロールで次の単語を赤シート位置に持ってくる）
+// 赤シートを次の単語に移動
 function moveRedSheetToNext() {
     const redSheetOverlay = document.getElementById('redSheetOverlay');
     const inputListView = document.getElementById('inputListView');
@@ -10456,34 +10455,64 @@ function moveRedSheetToNext() {
     // 次のインデックスに移動
     currentRedSheetIndex++;
     
-    // 最後まで行ったら最初に戻る
+    // 最後まで行ったら赤シートを消す（スクロールはしない）
     if (currentRedSheetIndex >= meanings.length) {
         currentRedSheetIndex = 0;
-        // 最初に戻る場合は一番上にスクロール
-        inputListView.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        
+        // 赤シートをフェードアウト
+        redSheetOverlay.style.transition = 'opacity 0.3s ease';
+        redSheetOverlay.style.opacity = '0';
+        
+        // フェードアウト完了後に赤シートを非表示にしてチェックボックスをオフ
+        setTimeout(() => {
+            redSheetOverlay.classList.add('hidden');
+            redSheetOverlay.style.opacity = '';
+            redSheetOverlay.style.transition = '';
+            inputListView.classList.remove('red-sheet-mode');
+            
+            // 下矢印ボタンを非表示
+            const redSheetNextBtn = document.getElementById('redSheetNextBtn');
+            if (redSheetNextBtn) {
+                redSheetNextBtn.classList.add('hidden');
+            }
+            
+            // チェックボックスをオフ
+            const redSheetToggle = document.getElementById('redSheetToggle');
+            const redSheetCheckbox = redSheetToggle?.querySelector('.red-sheet-checkbox');
+            if (redSheetCheckbox) {
+                redSheetCheckbox.checked = false;
+            }
+        }, 300);
         return;
     }
     
     const targetMeaning = meanings[currentRedSheetIndex];
     if (!targetMeaning) return;
     
-    // 赤シートの現在位置を取得
-    const redSheetTop = parseFloat(redSheetOverlay.style.top) || 150;
-    
-    // ターゲットの意味要素の現在位置を取得
+    // ターゲットの位置を取得
     const targetRect = targetMeaning.getBoundingClientRect();
     
-    // ターゲットが赤シートの位置に来るようにスクロール量を計算
-    const scrollAmount = targetRect.top - redSheetTop;
+    // 残り3つ以内（最後の3単語）かどうかをチェック
+    const remainingWords = meanings.length - currentRedSheetIndex;
     
-    // スクロール実行
-    inputListView.scrollBy({
-        top: scrollAmount,
-        behavior: 'smooth'
-    });
+    if (remainingWords <= 3) {
+        // 残り4つ以内は赤シートだけを移動（スクロールしない）
+        redSheetOverlay.style.transition = 'top 0.3s ease';
+        redSheetOverlay.style.top = targetRect.top + 'px';
+        redSheetOverlay.style.left = (targetRect.left - 10) + 'px';
+        setTimeout(() => {
+            redSheetOverlay.style.transition = '';
+        }, 300);
+    } else {
+        // 通常はスクロールして赤シートは固定位置に
+        const redSheetTop = parseFloat(redSheetOverlay.style.top) || 150;
+        const scrollAmount = targetRect.top - redSheetTop;
+        
+        inputListView.scrollBy({
+            top: scrollAmount,
+            behavior: 'smooth'
+        });
+    }
 }
 
 // 赤シートトグルの表示/非表示を切り替え
