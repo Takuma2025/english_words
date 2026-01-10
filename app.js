@@ -6134,6 +6134,12 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     isInputModeActive = false;
     isSentenceModeActive = false;
     isReorderModeActive = false;
+    // 厳選例文・整序英作文モードのbodyクラスを削除（CSSでカードが非表示になるのを防ぐ）
+    document.body.classList.remove('sentence-mode-active');
+    document.body.classList.remove('reorder-mode-active');
+    // 厳選例文・整序英作文モードのbodyクラスを削除（CSSでカードが非表示になるのを防ぐ）
+    document.body.classList.remove('sentence-mode-active');
+    document.body.classList.remove('reorder-mode-active');
     
     // インプットモード用戻るボタンとポーズボタンの制御
     const inputBackBtn = document.getElementById('inputBackBtn');
@@ -7137,10 +7143,14 @@ function setupEventListeners() {
                 return;
             }
             
-            // 学習を開始
-            // filterLearningMode === 'input'の場合は単語帳（展開）モード
-            // filterLearningMode === 'output'または'test'の場合は単語カードモード
-            if (filterLearningMode === 'input') {
+            // 英語→日本語モード（カードモード）の場合は常にカードモードで開始
+            // selectedQuizDirection === 'eng-to-jpn'ならカードモード確定
+            if (selectedQuizDirection === 'eng-to-jpn') {
+                console.log('[Filter] Starting card mode (eng-to-jpn)');
+                currentLearningMode = 'card';
+                selectedLearningMode = 'card';
+                initLearning(currentFilterCategory, wordsToLearn, 0, wordsToLearn.length, 0);
+            } else if (filterLearningMode === 'input') {
                 // 単語帳（展開）モードで開始
                 showInputModeDirectly(currentFilterCategory, wordsToLearn, currentFilterCourseTitle);
             } else {
@@ -10353,10 +10363,13 @@ function setupInputListFilter() {
 }
 
 // 赤シートモードのセットアップ
+let currentRedSheetIndex = 0; // 現在の赤シート位置のインデックス
+
 function setupRedSheet() {
     const redSheetToggle = document.getElementById('redSheetToggle');
     const redSheetCheckbox = redSheetToggle?.querySelector('.red-sheet-checkbox');
     const redSheetOverlay = document.getElementById('redSheetOverlay');
+    const redSheetNextBtn = document.getElementById('redSheetNextBtn');
     const inputListView = document.getElementById('inputListView');
     
     if (!redSheetCheckbox || !redSheetOverlay) return;
@@ -10368,19 +10381,22 @@ function setupRedSheet() {
             // 現在表示されている範囲内で、一番上の単語の日本語の意味を探す
             const meanings = document.querySelectorAll('.input-list-expand-meaning');
             let targetMeaning = null;
+            let targetIndex = 0;
             
             // ヘッダーの高さを考慮したオフセット（スティッキーなコントロールバーなど）
             const headerOffset = 150; 
 
-            for (const meaning of meanings) {
-                const rect = meaning.getBoundingClientRect();
+            for (let i = 0; i < meanings.length; i++) {
+                const rect = meanings[i].getBoundingClientRect();
                 // 画面内にあり、かつヘッダーより下にある最初の意味要素を見つける
                 if (rect.bottom > headerOffset) {
-                    targetMeaning = meaning;
+                    targetMeaning = meanings[i];
+                    targetIndex = i;
                     break;
                 }
             }
 
+            currentRedSheetIndex = targetIndex;
             let topPosition = 150; // デフォルト値
             let leftPosition = -400; // デフォルト値（左からひょっこり）
 
@@ -10396,6 +10412,7 @@ function setupRedSheet() {
                 topPosition = rect.top;
                 const sheetWidth = 500;
                 leftPosition = rect.left - sheetWidth + rect.width + 20;
+                currentRedSheetIndex = 0;
             }
 
             redSheetOverlay.style.top = topPosition + 'px';
@@ -10404,10 +10421,68 @@ function setupRedSheet() {
             redSheetOverlay.classList.remove('hidden');
             inputListView.classList.add('red-sheet-mode');
             setupRedSheetDrag(redSheetOverlay);
+            
+            // 下矢印ボタンを表示
+            if (redSheetNextBtn) {
+                redSheetNextBtn.classList.remove('hidden');
+            }
         } else {
             redSheetOverlay.classList.add('hidden');
             inputListView.classList.remove('red-sheet-mode');
+            
+            // 下矢印ボタンを非表示
+            if (redSheetNextBtn) {
+                redSheetNextBtn.classList.add('hidden');
+            }
         }
+    });
+    
+    // 下矢印ボタンのクリックイベント
+    if (redSheetNextBtn) {
+        redSheetNextBtn.addEventListener('click', () => {
+            moveRedSheetToNext();
+        });
+    }
+}
+
+// 赤シートを次の単語に移動（画面スクロールで次の単語を赤シート位置に持ってくる）
+function moveRedSheetToNext() {
+    const redSheetOverlay = document.getElementById('redSheetOverlay');
+    const inputListView = document.getElementById('inputListView');
+    const meanings = document.querySelectorAll('.input-list-expand-meaning');
+    
+    if (!redSheetOverlay || !inputListView || meanings.length === 0) return;
+    
+    // 次のインデックスに移動
+    currentRedSheetIndex++;
+    
+    // 最後まで行ったら最初に戻る
+    if (currentRedSheetIndex >= meanings.length) {
+        currentRedSheetIndex = 0;
+        // 最初に戻る場合は一番上にスクロール
+        inputListView.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        return;
+    }
+    
+    const targetMeaning = meanings[currentRedSheetIndex];
+    if (!targetMeaning) return;
+    
+    // 赤シートの現在位置を取得
+    const redSheetTop = parseFloat(redSheetOverlay.style.top) || 150;
+    
+    // ターゲットの意味要素の現在位置を取得
+    const targetRect = targetMeaning.getBoundingClientRect();
+    
+    // ターゲットが赤シートの位置に来るようにスクロール量を計算
+    const scrollAmount = targetRect.top - redSheetTop;
+    
+    // スクロール実行
+    inputListView.scrollBy({
+        top: scrollAmount,
+        behavior: 'smooth'
     });
 }
 
@@ -10507,12 +10582,15 @@ function resetRedSheet() {
     const redSheetToggle = document.getElementById('redSheetToggle');
     const redSheetCheckbox = redSheetToggle?.querySelector('.red-sheet-checkbox');
     const redSheetOverlay = document.getElementById('redSheetOverlay');
+    const redSheetNextBtn = document.getElementById('redSheetNextBtn');
     const inputListView = document.getElementById('inputListView');
     
     if (redSheetCheckbox) redSheetCheckbox.checked = false;
     if (redSheetOverlay) redSheetOverlay.classList.add('hidden');
+    if (redSheetNextBtn) redSheetNextBtn.classList.add('hidden');
     if (inputListView) inputListView.classList.remove('red-sheet-mode');
     if (redSheetToggle) redSheetToggle.classList.remove('sticky');
+    currentRedSheetIndex = 0;
 }
 
 // フィルターを適用して単語リストを再描画

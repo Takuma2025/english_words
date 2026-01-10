@@ -5529,6 +5529,41 @@ body.reorder-mode-active .word-card-container {
     display: none;
 }
 
+/* 赤シート下矢印ナビゲーションボタン */
+.red-sheet-next-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 510;
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.red-sheet-next-btn:active {
+    transform: translateX(-50%) scale(0.92);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3), 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.red-sheet-next-btn.hidden {
+    display: none;
+}
+
+.red-sheet-next-btn svg {
+    width: 32px;
+    height: 32px;
+}
+
 /* スマホ用の赤シートスタイル */
 @media (max-width: 640px) {
     .red-sheet-overlay {
