@@ -10452,11 +10452,37 @@ function moveRedSheetToNext() {
     
     if (!redSheetOverlay || !inputListView || meanings.length === 0) return;
     
-    // 次のインデックスに移動
-    currentRedSheetIndex++;
+    // 画面の表示領域を取得（ヘッダーを考慮）
+    const headerOffset = 150; // ヘッダー部分のオフセット
+    const viewportHeight = window.innerHeight;
     
-    // 最後まで行ったら赤シートを消す（スクロールはしない）
-    if (currentRedSheetIndex >= meanings.length) {
+    // 赤シートの現在位置を取得
+    const currentRedSheetTop = parseFloat(redSheetOverlay.style.top) || 0;
+    
+    // 現在隠している単語を特定（赤シートの位置に最も近い単語）
+    let currentWordIndex = -1;
+    for (let i = 0; i < meanings.length; i++) {
+        const rect = meanings[i].getBoundingClientRect();
+        if (rect.top <= currentRedSheetTop + 5) {
+            currentWordIndex = i;
+        } else {
+            break;
+        }
+    }
+    
+    // 赤シートの位置より下にある最初の単語を見つける
+    let nextIndex = -1;
+    for (let i = 0; i < meanings.length; i++) {
+        const rect = meanings[i].getBoundingClientRect();
+        // 赤シートより少し下にある単語を探す（5px余裕を持たせる）
+        if (rect.top > currentRedSheetTop + 5) {
+            nextIndex = i;
+            break;
+        }
+    }
+    
+    // 次の単語が見つからない場合は終了
+    if (nextIndex === -1) {
         currentRedSheetIndex = 0;
         
         // 赤シートをフェードアウト
@@ -10486,32 +10512,58 @@ function moveRedSheetToNext() {
         return;
     }
     
-    const targetMeaning = meanings[currentRedSheetIndex];
-    if (!targetMeaning) return;
+    const nextMeaning = meanings[nextIndex];
+    if (!nextMeaning) return;
     
-    // ターゲットの位置を取得
-    const targetRect = targetMeaning.getBoundingClientRect();
+    // 次の単語の位置を取得
+    const nextRect = nextMeaning.getBoundingClientRect();
     
-    // 残り3つ以内（最後の3単語）かどうかをチェック
-    const remainingWords = meanings.length - currentRedSheetIndex;
-    
-    if (remainingWords <= 3) {
-        // 残り4つ以内は赤シートだけを移動（スクロールしない）
+    // 次の単語が画面外ならスクロール（現在の単語を隠したまま上へ）
+    if (nextRect.top >= viewportHeight) {
+        // 現在隠している単語を取得
+        const currentMeaning = currentWordIndex >= 0 ? meanings[currentWordIndex] : meanings[0];
+        const currentRect = currentMeaning.getBoundingClientRect();
+        
+        // スクロール量を計算（現在の単語がヘッダー直下に来るように）
+        const scrollAmount = currentRect.top - headerOffset;
+        
+        // スクロール可能な最大量を計算（リスト最後で制限される場合用）
+        const scrollTop = inputListView.scrollTop;
+        const scrollHeight = inputListView.scrollHeight;
+        const clientHeight = inputListView.clientHeight;
+        const maxScrollAmount = scrollHeight - scrollTop - clientHeight;
+        
+        // 実際にスクロールする量（計算量と最大量の小さい方）
+        const actualScrollAmount = Math.min(scrollAmount, Math.max(0, maxScrollAmount));
+        
+        // 赤シートの新しい位置（現在の単語を隠したまま上へ）
+        const newRedSheetTop = currentRect.top - actualScrollAmount;
+        
+        // スクロールと赤シートのアニメーションを同時に開始
+        inputListView.scrollBy({
+            top: actualScrollAmount,
+            behavior: 'smooth'
+        });
+        
+        // 赤シートも同時にアニメーション（現在の単語を隠したまま）
         redSheetOverlay.style.transition = 'top 0.3s ease';
-        redSheetOverlay.style.top = targetRect.top + 'px';
-        redSheetOverlay.style.left = (targetRect.left - 10) + 'px';
+        redSheetOverlay.style.top = newRedSheetTop + 'px';
+        redSheetOverlay.style.left = (currentRect.left - 10) + 'px';
+        
         setTimeout(() => {
             redSheetOverlay.style.transition = '';
         }, 300);
-    } else {
-        // 通常はスクロールして赤シートは固定位置に
-        const redSheetTop = parseFloat(redSheetOverlay.style.top) || 150;
-        const scrollAmount = targetRect.top - redSheetTop;
         
-        inputListView.scrollBy({
-            top: scrollAmount,
-            behavior: 'smooth'
-        });
+        // インデックスは更新しない（次回のボタン押下で次の単語へ）
+    } else {
+        // 画面内なので赤シートを次の単語に移動
+        currentRedSheetIndex = nextIndex;
+        redSheetOverlay.style.transition = 'top 0.3s ease';
+        redSheetOverlay.style.top = nextRect.top + 'px';
+        redSheetOverlay.style.left = (nextRect.left - 10) + 'px';
+        setTimeout(() => {
+            redSheetOverlay.style.transition = '';
+        }, 300);
     }
 }
 
@@ -10651,48 +10703,74 @@ function applyInputFilter() {
                 } catch (e) {}
             }
         }
-    } else {
-        // 通常のカテゴリーの場合
-    const modes = ['card', 'input'];
-    const categoryCache = {};
-    
-    baseWords.forEach(word => {
-        const cat = word.category;
-        if (!categoryCache[cat]) {
-            const correctSet = new Set();
-            const wrongSet = new Set();
-            
-            modes.forEach(mode => {
-                const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
-                const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+    } else if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+        // 小学生で習った単語の場合は各単語のカテゴリーから進捗を読み込む
+        const modes = ['card', 'input'];
+        const categoryCache = {};
+        
+        baseWords.forEach(word => {
+            const cat = word.category;
+            if (!categoryCache[cat]) {
+                const correctSet = new Set();
+                const wrongSet = new Set();
                 
-                if (savedCorrect) {
-                    try {
-                        JSON.parse(savedCorrect).forEach(id => {
-                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
-                            correctSet.add(numId);
-                        });
-                    } catch (e) {}
-                }
+                modes.forEach(mode => {
+                    const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                    const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+                    
+                    if (savedCorrect) {
+                        try {
+                            JSON.parse(savedCorrect).forEach(id => {
+                                const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                                correctSet.add(numId);
+                            });
+                        } catch (e) {}
+                    }
+                    
+                    if (savedWrong) {
+                        try {
+                            JSON.parse(savedWrong).forEach(id => {
+                                const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                                wrongSet.add(numId);
+                            });
+                        } catch (e) {}
+                    }
+                });
                 
-                if (savedWrong) {
-                    try {
-                        JSON.parse(savedWrong).forEach(id => {
-                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
-                            wrongSet.add(numId);
-                        });
-                    } catch (e) {}
-                }
-            });
-            
-            categoryCache[cat] = { correctSet, wrongSet };
-        }
-    });
+                categoryCache[cat] = { correctSet, wrongSet };
+            }
+        });
         
         // カテゴリーキャッシュから全IDを収集
         Object.values(categoryCache).forEach(cache => {
             cache.correctSet.forEach(id => allCorrectIds.add(id));
             cache.wrongSet.forEach(id => allWrongIds.add(id));
+        });
+    } else {
+        // 通常のカテゴリーの場合は selectedCategory を使用（renderInputListView と同じ方式）
+        const modes = ['card', 'input'];
+        
+        modes.forEach(mode => {
+            const savedCorrect = localStorage.getItem(`correctWords-${selectedCategory}_${mode}`);
+            const savedWrong = localStorage.getItem(`wrongWords-${selectedCategory}_${mode}`);
+            
+            if (savedCorrect) {
+                try {
+                    JSON.parse(savedCorrect).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        allCorrectIds.add(numId);
+                    });
+                } catch (e) {}
+            }
+            
+            if (savedWrong) {
+                try {
+                    JSON.parse(savedWrong).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        allWrongIds.add(numId);
+                    });
+                } catch (e) {}
+            }
         });
     }
     

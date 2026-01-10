@@ -5535,24 +5535,25 @@ body.reorder-mode-active .word-card-container {
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    background: #fff;
     border: none;
-    color: white;
+    color: #dc2626;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     z-index: 510;
-    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .red-sheet-next-btn:active {
-    transform: translateX(-50%) scale(0.92);
-    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3), 0 1px 4px rgba(0, 0, 0, 0.1);
+    transform: translateX(-50%) scale(0.94);
+    background: #fef2f2;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
 }
 
 .red-sheet-next-btn.hidden {
@@ -5560,8 +5561,9 @@ body.reorder-mode-active .word-card-container {
 }
 
 .red-sheet-next-btn svg {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
+    stroke-width: 2.5;
 }
 
 /* スマホ用の赤シートスタイル */
