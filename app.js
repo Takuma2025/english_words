@@ -4869,6 +4869,9 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     currentFilterWords = categoryWords;
     currentFilterCourseTitle = courseTitle || category;
     
+    // フィルター画面の学習モードを初期化（常にoutputにリセット）
+    filterLearningMode = 'output';
+    
     // 学習モード（日本語→英語 / 英語→日本語）をデフォルトにリセット
     selectedQuizDirection = 'eng-to-jpn';
     isHandwritingMode = false;
@@ -5036,9 +5039,6 @@ function showWordFilterView(category, categoryWords, courseTitle) {
             filterProgressBar.classList.remove('filter-progress-complete');
         }
     }
-    
-    // フィルター画面の学習モードを初期化（常にoutputにリセット）
-    filterLearningMode = 'output';
     
     // 出題数選択セクションを更新
     updateQuestionCountSection();
@@ -12576,6 +12576,9 @@ function initSentenceModeLearning(category) {
     if (progressStepButtons) progressStepButtons.classList.remove('hidden');
     updateNavButtons(); // ボタンのテキストと状態を更新
     
+    // 進捗バーを初期化
+    initSentenceProgressBar();
+    
     displayCurrentSentence();
     // 進捗バーのセグメントを生成
     const total = currentRangeEnd - currentRangeStart;
@@ -12604,6 +12607,82 @@ function resetSentenceButtons() {
     }
 }
 
+// 厳選例文暗記モードの進捗バーを初期化
+function initSentenceProgressBar() {
+    const container = document.getElementById('sentenceProgressBarContainer');
+    const rangeEl = document.getElementById('sentenceProgressRange');
+    const progressText = document.getElementById('sentenceProgressText');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // 最大20セグメント表示
+    const maxSegments = Math.min(sentenceData.length, 20);
+    
+    for (let i = 0; i < maxSegments; i++) {
+        const segment = document.createElement('div');
+        segment.className = 'progress-segment';
+        container.appendChild(segment);
+    }
+    
+    // 問題番号の範囲を表示
+    if (rangeEl && sentenceData.length > 0) {
+        const firstId = sentenceData[0].id || 1;
+        const lastId = sentenceData[Math.min(19, sentenceData.length - 1)].id || Math.min(20, sentenceData.length);
+        rangeEl.textContent = `No.${firstId}-${lastId}`;
+    }
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        progressText.textContent = `0/${sentenceData.length}`;
+    }
+    
+    // 統計をリセット
+    const correctEl = document.getElementById('sentenceCorrectCount');
+    const wrongEl = document.getElementById('sentenceWrongCount');
+    if (correctEl) correctEl.textContent = '0';
+    if (wrongEl) wrongEl.textContent = '0';
+}
+
+// 厳選例文暗記モードの進捗バーを更新
+function updateSentenceProgressBar() {
+    const container = document.getElementById('sentenceProgressBarContainer');
+    const progressText = document.getElementById('sentenceProgressText');
+    const correctEl = document.getElementById('sentenceCorrectCount');
+    const wrongEl = document.getElementById('sentenceWrongCount');
+    
+    if (!container) return;
+    
+    const segments = container.querySelectorAll('.progress-segment');
+    let sentenceCorrect = 0;
+    let sentenceWrong = 0;
+    
+    segments.forEach((segment, i) => {
+        segment.classList.remove('current', 'correct', 'wrong');
+        
+        if (i === currentSentenceIndex) {
+            segment.classList.add('current');
+        } else if (questionStatus[i] === 'correct') {
+            segment.classList.add('correct');
+            sentenceCorrect++;
+        } else if (questionStatus[i] === 'wrong') {
+            segment.classList.add('wrong');
+            sentenceWrong++;
+        }
+    });
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        const answered = sentenceCorrect + sentenceWrong;
+        progressText.textContent = `${answered}/${sentenceData.length}`;
+    }
+    
+    // 統計を更新
+    if (correctEl) correctEl.textContent = String(sentenceCorrect);
+    if (wrongEl) wrongEl.textContent = String(sentenceWrong);
+}
+
 // 現在の例文を表示
 function displayCurrentSentence() {
     if (currentSentenceIndex >= sentenceData.length) {
@@ -12614,6 +12693,9 @@ function displayCurrentSentence() {
     const sentence = sentenceData[currentSentenceIndex];
     sentenceAnswerSubmitted = false;
     currentSelectedBlankIndex = -1; // 選択状態をリセット
+    
+    // 進捗バーを更新
+    updateSentenceProgressBar();
     
     // ヒントを非表示にリセット
     const hintContent = document.getElementById('sentenceHintContent');
@@ -13207,6 +13289,85 @@ function initReorderModeLearning(category) {
     }
     updateStats();
     updateNavState('learning');
+    
+    // 進捗バーを初期化
+    initReorderProgressBar();
+}
+
+// 整序英作文モードの進捗バーを初期化
+function initReorderProgressBar() {
+    const container = document.getElementById('reorderProgressBarContainer');
+    const rangeEl = document.getElementById('reorderProgressRange');
+    const progressText = document.getElementById('reorderProgressText');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // 最大20セグメント表示
+    const maxSegments = Math.min(reorderData.length, 20);
+    
+    for (let i = 0; i < maxSegments; i++) {
+        const segment = document.createElement('div');
+        segment.className = 'progress-segment';
+        container.appendChild(segment);
+    }
+    
+    // 問題番号の範囲を表示
+    if (rangeEl && reorderData.length > 0) {
+        const firstId = reorderData[0].id || 1;
+        const lastId = reorderData[Math.min(19, reorderData.length - 1)].id || Math.min(20, reorderData.length);
+        rangeEl.textContent = `No.${firstId}-${lastId}`;
+    }
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        progressText.textContent = `0/${reorderData.length}`;
+    }
+    
+    // 統計をリセット
+    const correctEl = document.getElementById('reorderCorrectCount');
+    const wrongEl = document.getElementById('reorderWrongCount');
+    if (correctEl) correctEl.textContent = '0';
+    if (wrongEl) wrongEl.textContent = '0';
+}
+
+// 整序英作文モードの進捗バーを更新
+function updateReorderProgressBar() {
+    const container = document.getElementById('reorderProgressBarContainer');
+    const progressText = document.getElementById('reorderProgressText');
+    const correctEl = document.getElementById('reorderCorrectCount');
+    const wrongEl = document.getElementById('reorderWrongCount');
+    
+    if (!container) return;
+    
+    const segments = container.querySelectorAll('.progress-segment');
+    let reorderCorrect = 0;
+    let reorderWrong = 0;
+    
+    segments.forEach((segment, i) => {
+        segment.classList.remove('current', 'correct', 'wrong');
+        
+        if (i === currentReorderIndex) {
+            segment.classList.add('current');
+        } else if (questionStatus[i] === 'correct') {
+            segment.classList.add('correct');
+            reorderCorrect++;
+        } else if (questionStatus[i] === 'wrong') {
+            segment.classList.add('wrong');
+            reorderWrong++;
+        }
+    });
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        const answered = reorderCorrect + reorderWrong;
+        progressText.textContent = `${answered}/${reorderData.length}`;
+    }
+    
+    // 統計を更新
+    if (correctEl) correctEl.textContent = String(reorderCorrect);
+    if (wrongEl) wrongEl.textContent = String(reorderWrong);
 }
 
 // 現在の整序英作文問題を表示
@@ -13214,6 +13375,9 @@ function displayCurrentReorderQuestion() {
     if (currentReorderIndex < 0 || currentReorderIndex >= reorderData.length) {
         return;
     }
+    
+    // 進捗バーを更新
+    updateReorderProgressBar();
     
     const question = reorderData[currentReorderIndex];
     const japaneseEl = document.getElementById('reorderJapanese');

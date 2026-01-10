@@ -787,6 +787,35 @@
                     
                     <!-- 厳選例文暗記モード -->
                     <div class="sentence-mode hidden" id="sentenceMode">
+                        <!-- 進捗バー -->
+                        <div class="progress-header sentence-progress-header" id="sentenceStatsBar">
+                            <div class="progress-bar-wrapper">
+                                <div class="progress-range-display" id="sentenceProgressRange">No.1-10</div>
+                                <div class="progress-bar-container" id="sentenceProgressBarContainer">
+                                    <!-- セグメントは動的に生成 -->
+                                </div>
+                            </div>
+                            <div class="hw-progress-bottom-row">
+                                <div class="progress-stats">
+                                    <div class="progress-stats-scores">
+                                        <span class="score-correct">
+                                            <span class="score-label">正解</span>
+                                            <span id="sentenceCorrectCount">0</span>
+                                        </span>
+                                        <span class="score-wrong">
+                                            <span class="score-label">不正解</span>
+                                            <span id="sentenceWrongCount">0</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="progress-nav-stats">
+                                    <div class="progress-stats-content">
+                                        <span class="progress-stats-label">進捗</span>
+                                        <span id="sentenceProgressText">0/60</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- 日本語訳 -->
                         <div class="sentence-japanese" id="sentenceJapanese">ナイル川は世界のほかのどの川よりも長いです。</div>
                         <!-- 空所がある英文 -->
@@ -1036,6 +1065,35 @@
                     
                     <!-- 整序英作文モード -->
                     <div class="reorder-mode hidden" id="reorderMode">
+                        <!-- 進捗バー -->
+                        <div class="progress-header reorder-progress-header" id="reorderStatsBar">
+                            <div class="progress-bar-wrapper">
+                                <div class="progress-range-display" id="reorderProgressRange">No.1-10</div>
+                                <div class="progress-bar-container" id="reorderProgressBarContainer">
+                                    <!-- セグメントは動的に生成 -->
+                                </div>
+                            </div>
+                            <div class="hw-progress-bottom-row">
+                                <div class="progress-stats">
+                                    <div class="progress-stats-scores">
+                                        <span class="score-correct">
+                                            <span class="score-label">正解</span>
+                                            <span id="reorderCorrectCount">0</span>
+                                        </span>
+                                        <span class="score-wrong">
+                                            <span class="score-label">不正解</span>
+                                            <span id="reorderWrongCount">0</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="progress-nav-stats">
+                                    <div class="progress-stats-content">
+                                        <span class="progress-stats-label">進捗</span>
+                                        <span id="reorderProgressText">0/100</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- 日本語表示 -->
                         <div class="reorder-japanese" id="reorderJapanese">教室では静かにしてください。</div>
                         

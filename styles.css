@@ -2904,7 +2904,7 @@ body.learning-mode .app-header {
     align-items: center;
     background: #ffffff;
     border: none;
-    border-radius: 10px;
+    border-radius: 0;
     padding: 16px;
     margin-bottom: 10px;
     width: 100%;
@@ -2986,7 +2986,7 @@ button.category-card:focus-visible {
 }
 
 .course-side-btn:active {
-    filter: brightness(0.7);
+    filter: brightness(0.85);
     transform: scale(0.92);
 }
 
@@ -2994,16 +2994,8 @@ button.category-card:focus-visible {
     background: #3b82f6;
 }
 
-.course-side-btn.input-btn:active {
-    background: #1d4ed8;
-}
-
 .course-side-btn.output-btn {
     background: #f9b916;
-}
-
-.course-side-btn.output-btn:active {
-    background: #d97706;
 }
 
 .accordion-indicator {
@@ -9306,11 +9298,23 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     flex-direction: column;
     padding: 20px 16px 0 16px;
+    padding-bottom: 200px; /* 下部固定キーボードのためのスペース */
     overflow: visible; /* ポップアップを隠さないように */
     min-height: 0;
     max-height: 100%;
     box-sizing: border-box;
     position: relative;
+}
+
+/* 厳選例文暗記モードの進捗バー */
+.sentence-progress-header {
+    margin-bottom: 16px;
+}
+
+/* 整序英作文モードの進捗バー */
+.reorder-progress-header {
+    margin-bottom: 16px;
+    padding: 0 16px;
 }
 
 .sentence-navigation {
@@ -9470,10 +9474,23 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: none;
 }
 
-/* 例文モード用の仮想キーボード */
+/* 例文モード用の仮想キーボード（下部固定） */
 .sentence-mode .virtual-keyboard {
-    margin-top: auto;
-    padding-top: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 10px 3px 6px 3px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    z-index: 500;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sentence-mode .keyboard-actions {
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
 }
 
 @media (max-width: 600px) {
