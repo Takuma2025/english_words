@@ -1381,11 +1381,25 @@ body.learning-mode .app-header {
 }
 
 @keyframes glowPulse {
-    0%, 100% {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    0% {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), 
+                    0 0 0 1px rgba(59, 130, 246, 0.5),
+                    0 0 4px 0px rgba(59, 130, 246, 0.3);
     }
-    50% {
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.4), 0 0 60px rgba(59, 130, 246, 0.2);
+    40% {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), 
+                    0 0 0 4px rgba(59, 130, 246, 0.3),
+                    0 0 12px 4px rgba(59, 130, 246, 0.15);
+    }
+    70% {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), 
+                    0 0 0 7px rgba(59, 130, 246, 0.12),
+                    0 0 20px 8px rgba(59, 130, 246, 0.05);
+    }
+    100% {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), 
+                    0 0 0 10px rgba(59, 130, 246, 0),
+                    0 0 28px 12px rgba(59, 130, 246, 0);
     }
 }
 
@@ -2262,9 +2276,9 @@ body.learning-mode .app-header {
 }
 
 .school-filter-tab-icon {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
     flex-shrink: 0;
 }
 
@@ -2377,14 +2391,16 @@ body.learning-mode .app-header {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding: 14px 16px;
+    padding: 12px 14px;
+    margin: 4px 8px;
     cursor: pointer;
-    border-bottom: 1px solid #f1f5f9;
+    border: 2px solid transparent;
+    border-radius: 10px;
     /* transitionを削除してスクロールパフォーマンスを向上 */
 }
 
 .school-list-item:last-child {
-    border-bottom: none;
+    /* 透明ボーダーは維持 */
 }
 
 .school-list-item-odd {
@@ -2397,7 +2413,6 @@ body.learning-mode .app-header {
 
 .school-list-item-undecided {
     background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-    border-bottom: 2px solid #e2e8f0;
 }
 
 .school-list-item-undecided .school-list-name {
@@ -2411,13 +2426,12 @@ body.learning-mode .app-header {
 
 /* 選択状態 */
 .school-list-item-selected {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
-    border-left: 4px solid #0055ca;
-    padding-left: 12px;
+    background: #eff6ff !important;
+    border-color: #1d4ed8;
 }
 
 .school-list-item-selected .school-list-name {
-    color: #1e40af !important;
+    color: #1d4ed8 !important;
 }
 
 .school-list-item-selected .school-list-meta {
@@ -2972,15 +2986,24 @@ button.category-card:focus-visible {
 }
 
 .course-side-btn:active {
-    filter: brightness(0.85);
+    filter: brightness(0.7);
+    transform: scale(0.92);
 }
 
 .course-side-btn.input-btn {
     background: #3b82f6;
 }
 
+.course-side-btn.input-btn:active {
+    background: #1d4ed8;
+}
+
 .course-side-btn.output-btn {
     background: #f9b916;
+}
+
+.course-side-btn.output-btn:active {
+    background: #d97706;
 }
 
 .accordion-indicator {

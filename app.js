@@ -5037,11 +5037,8 @@ function showWordFilterView(category, categoryWords, courseTitle) {
         }
     }
     
-    // フィルター画面の学習モードを初期化（デフォルトはoutput）
-    // 既存のモードが設定されていない場合のみ'output'に設定
-    if (!filterLearningMode || filterLearningMode === 'output') {
-        filterLearningMode = 'output';
-    }
+    // フィルター画面の学習モードを初期化（常にoutputにリセット）
+    filterLearningMode = 'output';
     
     // 出題数選択セクションを更新
     updateQuestionCountSection();
