@@ -14,7 +14,7 @@
 
 // 家族に関する単語
 const familyWords = [
-  { id: 10001, word: "family", meaning: "家族", partOfSpeech: "名詞", category: "家族", appearanceCount: 48 },
+  { id: 10001, word: "family", meaning: "家族", partOfSpeech: "名詞", category: "家族", appearanceCount: 48, kana: "*ファ*ミリー" },
   { id: 10003, word: "father", meaning: "父、父親", partOfSpeech: "名詞", category: "家族", appearanceCount: 4, kana: "*ファ*ーザー" },
   { id: 10004, word: "mother", meaning: "母、母親、お母さん", partOfSpeech: "名詞", category: "家族", appearanceCount: 1, kana: "*マ*ザー" },
   { id: 10005, word: "parent", meaning: "親　（parents:両親）", partOfSpeech: "名詞", category: "家族", appearanceCount: 1, kana: "*ペア*レント" },

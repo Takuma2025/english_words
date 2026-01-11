@@ -7750,6 +7750,12 @@ function displayInputMode(skipAnimationReset = false) {
     inputAnswerSubmitted = false;
     wordResponseStartTime = Date.now();
     
+    // 仮想キーボードの無効化を解除
+    const virtualKeyboard = document.getElementById('virtualKeyboard');
+    if (virtualKeyboard) {
+        virtualKeyboard.classList.remove('answer-submitted');
+    }
+    
     // No.を更新（カードモードと入力モードの両方）
     if (elements.wordNumber) {
         elements.wordNumber.textContent = `No.${word.id}`;
@@ -7835,7 +7841,7 @@ function displayInputMode(skipAnimationReset = false) {
     
     // 手書きモードかどうかで入力UIを切り替え
     const handwritingContainer = document.getElementById('handwritingInputContainer');
-    const virtualKeyboard = document.getElementById('virtualKeyboard');
+    // virtualKeyboard は上で既に取得済み
     
     if (isHandwritingMode) {
         // 手書きモード: letter-inputs を非表示にし、手書きUIを表示
@@ -8014,7 +8020,11 @@ function submitAnswer() {
         input.disabled = true;
     });
     
-    // 仮想キーボードのボタンは無効化しない（回答後も次へ進めるため）
+    // 仮想キーボードを視覚的に無効化（回答後は入力できないことを示す）
+    const virtualKeyboard = document.getElementById('virtualKeyboard');
+    if (virtualKeyboard) {
+        virtualKeyboard.classList.add('answer-submitted');
+    }
     
     // 1文字ごとに正解・不正解を表示（入力されていない部分も赤く表示、大文字小文字を区別）
     inputs.forEach((input, index) => {
@@ -8084,7 +8094,11 @@ function markAnswerAsDontKnow() {
         input.disabled = true;
     });
     
-    // 仮想キーボードのボタンは無効化しない
+    // 仮想キーボードを視覚的に無効化（回答後は入力できないことを示す）
+    const virtualKeyboard = document.getElementById('virtualKeyboard');
+    if (virtualKeyboard) {
+        virtualKeyboard.classList.add('answer-submitted');
+    }
     
     // 現在の問題の回答状況を記録（間違い扱い）
     const questionIndex = currentIndex - currentRangeStart;

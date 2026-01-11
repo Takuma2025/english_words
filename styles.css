@@ -4731,16 +4731,13 @@ body.choice-question-mode-active .word-card-container {
     .input-meaning-wrapper {
         margin-bottom: 0;
         gap: 4px;
-        align-items: baseline;
+        align-items: center;
     }
     .input-meaning-wrapper .pos-inline {
-        margin-top: -2px;
-        align-self: baseline;
-        margin-bottom: 0;
-        vertical-align: baseline;
-        font-weight: 700;
-        font-size: clamp(14px, 3.5vw, 20px);
-        font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
+        font-size: 11px;
+        min-width: 26px;
+        min-height: 26px;
+        height: 26px;
     }
     .input-meaning {
         font-size: clamp(18px, 5vw, 26px);
@@ -4806,16 +4803,13 @@ body.choice-question-mode-active .word-card-container {
     .input-meaning-wrapper {
         margin-bottom: 0;
         gap: 3px;
-        align-items: baseline;
+        align-items: center;
     }
     .input-meaning-wrapper .pos-inline {
-        margin-top: -2px;
-        align-self: baseline;
-        margin-bottom: 0;
-        vertical-align: baseline;
-        font-weight: 700;
-        font-size: clamp(13px, 3.5vw, 18px);
-        font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
+        font-size: 10px;
+        min-width: 24px;
+        min-height: 24px;
+        height: 24px;
     }
     .input-meaning {
         font-size: clamp(16px, 4.5vw, 24px);
@@ -6402,7 +6396,7 @@ body.choice-question-mode-active .word-card-container {
 
 .input-list-expand-word-row {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 6px;
     flex: 1;
 }
@@ -6412,6 +6406,8 @@ body.choice-question-mode-active .word-card-container {
     height: 28px;
     min-width: 28px;
     padding: 0;
+    align-self: flex-end;
+    margin-bottom: 5px;
 }
 
 .input-list-expand-word-row .audio-btn svg {
@@ -6740,7 +6736,7 @@ body.choice-question-mode-active .word-card-container {
 
 .input-meaning-wrapper {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: center;
     gap: 6px;
     flex-wrap: wrap;
@@ -6748,13 +6744,10 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-meaning-wrapper .pos-inline {
-    margin-top: -2px;
-    align-self: baseline;
-    margin-bottom: 0;
-    vertical-align: baseline;
-    font-weight: 700;
-    font-size: clamp(16px, 4vw, 22px);
-    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
+    align-self: center;
+    font-size: 11px;
+    min-width: 28px;
+    min-height: 28px;
 }
 
 .input-meaning {
@@ -7342,12 +7335,12 @@ body.choice-question-mode-active .word-card-container {
 
 /* 音声ボタンのスタイル */
 .audio-btn {
-    background: rgba(107, 114, 128, 0.1);
-    border: 1px solid rgba(107, 114, 128, 0.3);
+    background: #f3f4f6;
+    border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -7358,32 +7351,34 @@ body.choice-question-mode-active .word-card-container {
     margin: 0;
 }
 
+.audio-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
 .audio-btn:hover {
-    background: rgba(107, 114, 128, 0.2);
-    border-color: rgba(107, 114, 128, 0.5);
-    transform: scale(1.05);
+    background: #e5e7eb;
+    color: #4b5563;
+    transform: scale(1.08);
 }
 
 .audio-btn:active {
-    background: rgba(107, 114, 128, 0.3);
+    background: #d1d5db;
     transform: scale(0.95);
 }
 
 .audio-btn.playing {
-    background: rgba(56, 189, 248, 0.2);
-    border-color: #38bdf8;
-    color: #0ea5e9;
-    animation: pulse 1s ease-in-out infinite;
+    background: #dbeafe;
+    color: #3b82f6;
+    animation: audio-pulse 0.8s ease-in-out infinite;
 }
 
-@keyframes pulse {
+@keyframes audio-pulse {
     0%, 100% {
         transform: scale(1);
-        opacity: 1;
     }
     50% {
         transform: scale(1.1);
-        opacity: 0.8;
     }
 }
 
@@ -7392,26 +7387,45 @@ body.choice-question-mode-active .word-card-container {
     display: none !important;
 }
 
-/* カードモードの音声ボタン位置調整 */
+/* カードモードの音声ボタン位置調整 - 英単語の文字高さの中央に揃える */
 .english-word-wrapper .audio-btn {
-    align-self: baseline;
+    align-self: center;
+    width: 36px;
+    height: 36px;
     margin-top: 0;
+    margin-bottom: 0;
+}
+
+.english-word-wrapper .audio-btn svg {
+    width: 18px;
+    height: 18px;
 }
 
 /* 入力モードの音声ボタン */
 .correct-answer-container .audio-btn {
-    margin-top: 0;
+    width: 32px;
+    height: 32px;
 }
 
 @media (max-width: 600px) {
     .audio-btn {
-        width: 36px;
-        height: 36px;
+        width: 30px;
+        height: 30px;
     }
     
     .audio-btn svg {
-        width: 20px;
-        height: 20px;
+        width: 15px;
+        height: 15px;
+    }
+    
+    .english-word-wrapper .audio-btn {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .english-word-wrapper .audio-btn svg {
+        width: 16px;
+        height: 16px;
     }
 }
 
@@ -8123,7 +8137,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .english-word-wrapper {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: center;
     gap: 8px;
     margin-top: auto;
@@ -8137,10 +8151,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     font-weight: 600;
     font-size: clamp(32px, 8vw, 48px) !important;
     text-align: center;
-    display: inline-block;          /* テキスト幅に合わせる */
-    padding: 0 6px;                 /* 少し余白で読みやすく */
+    display: inline-flex;
+    align-items: center;
+    padding: 0 6px;
     color: #0f172a;
-    line-height: 1.2;
+    line-height: 1;
     word-break: break-word;
     letter-spacing: 0.3px;
     background-repeat: no-repeat;
@@ -8151,27 +8166,32 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .part-of-speech {
     text-align: center;
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 600;
-    color: #1f2937;
-    background: transparent;
-    border: 1px solid #1f2937;
-    padding: 4px 12px;
-    border-radius: 999px;
-    display: inline-block;
-    margin: 0 4px 8px 4px; /* 間隔調整 */
+    color: #6b7280;
+    background: #f3f4f6;
+    border: none;
+    padding: 0 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 4px 8px 4px;
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
+    height: 28px;
+    min-height: 28px;
+    min-width: 28px;
 }
 
 /* インライン表示の品詞（左横に表示） */
 .pos-inline {
-    font-size: clamp(14px, 3vw, 18px);
-    font-weight: 700;
-    color: #1f2937;
-    padding: 3px 6px 2px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 0 6px;
     border-radius: 4px;
-    border: 1px solid #1f2937;
-    background: transparent;
+    border: none;
+    background: #f3f4f6;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -8179,15 +8199,15 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     line-height: 1;
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
     flex-shrink: 0;
-    height: fit-content;
     position: relative;
+    height: 28px;
+    min-height: 28px;
+    min-width: 28px;
 }
 
 /* 英語単語のときの品詞位置調整 */
 .english-word-wrapper .pos-inline {
-    align-self: baseline;
-    margin-top: 0;
-    top: -0.18em;
+    align-self: center;
 }
 
 /* 入試頻出度表示 */
@@ -8222,19 +8242,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 意味のときの品詞位置調整 */
 .meaning-wrapper .pos-inline {
-    align-self: baseline;
-    margin-top: -2px;
-    margin-bottom: 0;
-    vertical-align: baseline;
-    font-weight: 700;
-    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
+    align-self: center;
 }
 
-.part-of-speech.verb { background-color: transparent; border-color: #1f2937; color: #1f2937; } /* 黒ボーダー */
-.part-of-speech.noun { background-color: transparent; border-color: #1f2937; color: #1f2937; } /* 黒ボーダー */
-.part-of-speech.adjective { background-color: transparent; border-color: #1f2937; color: #1f2937; } /* 黒ボーダー */
-.part-of-speech.adverb { background-color: transparent; border-color: #1f2937; color: #1f2937; } /* 黒ボーダー */
-.part-of-speech.other { background-color: transparent; border-color: #1f2937; color: #1f2937; } /* 黒ボーダー */
+.part-of-speech.verb { background-color: #f3f4f6; color: #6b7280; }
+.part-of-speech.noun { background-color: #f3f4f6; color: #6b7280; }
+.part-of-speech.adjective { background-color: #f3f4f6; color: #6b7280; }
+.part-of-speech.adverb { background-color: #f3f4f6; color: #6b7280; }
+.part-of-speech.other { background-color: #f3f4f6; color: #6b7280; }
 
 .pos-container {
     display: flex;
@@ -8408,7 +8423,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .meaning-wrapper {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
@@ -14442,10 +14457,32 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .hw-input-fixed-bottom.hw-input-disabled .virtual-keyboard,
 .hw-input-fixed-bottom.hw-input-disabled .hw-candidates {
     pointer-events: none;
+    opacity: 0.5;
 }
 
 .hw-input-fixed-bottom.hw-input-disabled {
-    /* 色は変えない */
+    /* 無効化時のスタイル */
+}
+
+/* キーボード入力モード: 解答後の無効化スタイル */
+.virtual-keyboard.answer-submitted {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.virtual-keyboard.answer-submitted .keyboard-key {
+    cursor: not-allowed;
+}
+
+.virtual-keyboard.answer-submitted .keyboard-action-btn:not(.keyboard-action-btn-primary) {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 解答ボタン（次へボタンになる）は有効なまま */
+.virtual-keyboard.answer-submitted .keyboard-action-btn-primary {
+    pointer-events: auto;
+    opacity: 1;
 }
 
 .hw-input-fixed-bottom .hw-canvas-area {
@@ -14510,7 +14547,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* hw-question-simple内のpos-inlineスタイル調整 */
 .hw-question-simple .pos-inline {
-    font-size: clamp(12px, 3vw, 16px);
+    /* 統一サイズを継承 */
 }
 
 .hw-question-simple .pos-inline:empty {
