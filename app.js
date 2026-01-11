@@ -1889,10 +1889,10 @@ function updateCategoryStars() {
                     wrongBar.style.width = `${wrongPercent}%`;
                 }
                 if (barContainer) {
+                    // 両方のCOMPLETEクラスを削除してから条件に応じて追加
+                    barContainer.classList.remove('category-progress-complete', 'category-progress-complete-input');
                     if (isComplete) {
                         barContainer.classList.add('category-progress-complete');
-                    } else {
-                        barContainer.classList.remove('category-progress-complete');
                     }
                 }
                 if (text) {
@@ -2130,10 +2130,10 @@ function updateCategoryStars() {
             wrongBar.style.width = `${wrongPercent}%`;
         }
         if (barContainer) {
+            // 両方のCOMPLETEクラスを削除してから条件に応じて追加
+            barContainer.classList.remove('category-progress-complete', 'category-progress-complete-input');
             if (isComplete) {
                 barContainer.classList.add('category-progress-complete');
-            } else {
-                barContainer.classList.remove('category-progress-complete');
             }
         }
         if (text) {
@@ -5006,11 +5006,48 @@ function showInputModeDirectly(category, words, courseTitle) {
     // フィルターをリセット
     resetInputFilter();
     
+    // シャッフル状態をリセット（通常の展開モードと同じ初期状態に）
+    isInputShuffled = false;
+    const shuffleBtn = document.getElementById('inputShuffleBtn');
+    if (shuffleBtn) {
+        shuffleBtn.classList.remove('active');
+    }
+    
+    // 単語一覧の表示モードを展開モードにリセット
+    inputListViewMode = 'expand';
+    const flipBtn = document.getElementById('inputListModeFlip');
+    const expandBtn = document.getElementById('inputListModeExpand');
+    const flipAllBtn = document.getElementById('inputFlipAllBtn');
+    if (flipBtn) flipBtn.classList.remove('active');
+    if (expandBtn) expandBtn.classList.add('active');
+    if (flipAllBtn) flipAllBtn.classList.add('hidden');
+    
+    // input-list-headerの表示を通常モードと同じにする
+    const inputListHeader = document.querySelector('.input-list-header');
+    if (inputListHeader) {
+        // review-wrong-wordsクラスを削除
+        inputListHeader.classList.remove('review-wrong-words');
+        // ヘッダーを表示
+        inputListHeader.style.display = '';
+    }
+    
+    // input-list-header-rowを表示（モードトグルボタン等）
+    const inputListHeaderRow = document.querySelector('.input-list-header-row');
+    if (inputListHeaderRow) {
+        inputListHeaderRow.style.display = '';
+    }
+    
+    // input-list-controls-rowを表示（シャッフル、フィルターボタン等）
+    const inputListControlsRow = document.querySelector('.input-list-controls-row');
+    if (inputListControlsRow) {
+        inputListControlsRow.style.display = '';
+    }
+    
     // 単語一覧を描画（大量の単語の場合はページネーションで処理）
     if (words.length > 500) {
         renderInputListViewPaginated(words);
     } else {
-    renderInputListView(words);
+        renderInputListView(words);
     }
 }
 
@@ -11227,6 +11264,21 @@ function markAnswer(isCorrect, isTimeout = false) {
             // 間違えた場合は正解リストから削除
             correctSet.delete(word.id);
             saveCategoryWords(categoryKeyWrong, correctSet, wrongSet);
+            
+            // すべてのモードの正解リストから削除（別モードで正解した記録も消す）
+            const allModes = ['card', 'input'];
+            allModes.forEach(mode => {
+                const correctKey = `correctWords-${categoryKeyWrong}_${mode}`;
+                const savedCorrect = localStorage.getItem(correctKey);
+                if (savedCorrect) {
+                    const correctList = JSON.parse(savedCorrect);
+                    const filteredList = correctList.filter(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        return numId !== word.id;
+                    });
+                    localStorage.setItem(correctKey, JSON.stringify(filteredList));
+                }
+            });
         }
         
         saveWrongWords();
@@ -12003,24 +12055,36 @@ function reviewWrongWords() {
         return;
     }
     
+    // 完了画面を先に閉じる
+    hideCompletion();
+    
     // 現在表示されている学習画面を非表示にする
     const handwritingQuizView = document.getElementById('handwritingQuizView');
     const inputMode = document.getElementById('inputMode');
     const cardTopSection = document.querySelector('.card-top-section');
     const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
     if (handwritingQuizView) handwritingQuizView.classList.add('hidden');
     if (inputMode) inputMode.classList.add('hidden');
     if (cardTopSection) cardTopSection.classList.add('hidden');
     if (wordCard) wordCard.classList.add('hidden');
+    if (wordCardContainer) wordCardContainer.classList.add('hidden');
     
-    // 先に復習画面を表示してから、完了画面を閉じる（一瞬他の画面が見えないようにする）
+    // テストモードのクラスをリセット
+    document.body.classList.remove('quiz-test-mode');
+    updateThemeColorForTest(false);
+    
+    // テストモード用の進捗表示を非表示
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress) testModeProgress.classList.add('hidden');
+    const hwTestModeProgress = document.getElementById('hwTestModeProgress');
+    if (hwTestModeProgress) hwTestModeProgress.classList.add('hidden');
+    
+    // 復習画面を表示（通常の展開モードと同じ処理）
     showInputModeDirectly(selectedCategory, wrongWordsInSession, currentFilterCourseTitle || selectedCategory);
-    
-    // 復習画面が表示された後で完了画面を閉じる
-    hideCompletion();
 }
 
-// 進捗バーのセグメントを生成（20問ずつ表示）
+// 進捗バーのセグメントを生成（問題数に応じて表示）
 function createProgressSegments(total) {
     // 共通のコンテナを使用
     const container = document.getElementById('progressBarContainer');
@@ -12030,12 +12094,18 @@ function createProgressSegments(total) {
     // 表示範囲を計算
     const displayStart = progressBarStartIndex;
     const displayEnd = Math.min(displayStart + PROGRESS_BAR_DISPLAY_COUNT, total);
+    const displayCount = displayEnd - displayStart;
+    
+    // 問題数に応じてセグメントの幅を計算（gapは2px）
+    const gapWidth = 2;
+    const segmentWidth = displayCount > 0 ? `calc((100% - ${(displayCount - 1) * gapWidth}px) / ${displayCount})` : '100%';
     
     container.innerHTML = '';
     for (let i = displayStart; i < displayEnd; i++) {
         const segment = document.createElement('div');
         segment.className = 'progress-segment';
         segment.dataset.index = i;
+        segment.style.width = segmentWidth;
         
         // アウトプットモード（カードモード）のときはクリック不可
         if (currentLearningMode !== 'input') {
@@ -15793,10 +15863,15 @@ function initHWQuizProgressSegments() {
     // 最大20セグメント表示
     const maxSegments = Math.min(hwQuizWords.length, 20);
     
+    // 問題数に応じてセグメントの幅を計算（gapは2px）
+    const gapWidth = 2;
+    const segmentWidth = maxSegments > 0 ? `calc((100% - ${(maxSegments - 1) * gapWidth}px) / ${maxSegments})` : '100%';
+    
     for (let i = 0; i < maxSegments; i++) {
         const segment = document.createElement('div');
         segment.className = 'progress-segment';
         segment.dataset.index = i;
+        segment.style.width = segmentWidth;
         if (i === 0) segment.classList.add('current');
         container.appendChild(segment);
     }
