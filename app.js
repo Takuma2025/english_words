@@ -5104,8 +5104,8 @@ function updateQuestionCountSection() {
 // 出題数選択オプションを更新
 function updateQuestionCountOptions(wordCount) {
     const questionCountValue = document.getElementById('questionCountValue');
-    const questionCountHandle = document.getElementById('questionCountHandle');
-    const questionCountTrack = document.querySelector('.question-count-swipe-track');
+    const questionCountMinus = document.getElementById('questionCountMinus');
+    const questionCountPlus = document.getElementById('questionCountPlus');
     
     if (!questionCountValue) return;
     
@@ -5113,14 +5113,12 @@ function updateQuestionCountOptions(wordCount) {
     questionCountValue.textContent = 'すべて';
     questionCountValue.dataset.count = wordCount;
     
-    // スワイプハンドルの位置を更新
-    if (questionCountTrack && questionCountHandle && wordCount >= 1) {
-        const trackWidth = questionCountTrack.offsetWidth;
-        const handleWidth = 22;
-        const minLeft = 1;
-        const maxLeft = trackWidth - handleWidth - 1;
-        // 最大値（すべて）なので右端に配置
-        questionCountHandle.style.left = maxLeft + 'px';
+    // ボタンの有効/無効状態を更新
+    if (questionCountMinus) {
+        questionCountMinus.disabled = wordCount <= 10;
+    }
+    if (questionCountPlus) {
+        questionCountPlus.disabled = true; // 最大値なので+は無効
     }
 }
 
@@ -6655,6 +6653,23 @@ function setupEventListeners() {
                 shuffleBtn.classList.remove('active');
             }
             
+            // 単語一覧の表示モードを展開モードにリセット
+            inputListViewMode = 'expand';
+            const flipBtn = document.getElementById('inputListModeFlip');
+            const expandBtn = document.getElementById('inputListModeExpand');
+            const flipAllBtn = document.getElementById('inputFlipAllBtn');
+            if (flipBtn) flipBtn.classList.remove('active');
+            if (expandBtn) expandBtn.classList.add('active');
+            if (flipAllBtn) flipAllBtn.classList.add('hidden');
+            
+            // フリップモードでヘッダーがコンテナ内にある場合は元の位置に戻す
+            const inputListHeader = document.querySelector('.input-list-header');
+            const inputListView = document.getElementById('inputListView');
+            const inputListContainer = document.getElementById('inputListContainer');
+            if (inputListHeader && inputListView && inputListContainer && inputListContainer.contains(inputListHeader)) {
+                inputListView.insertBefore(inputListHeader, inputListContainer);
+            }
+            
             if (elements.mainContent) {
                 elements.mainContent.classList.add('hidden');
             }
@@ -6922,15 +6937,10 @@ function setupEventListeners() {
         }
     });
     
-    // 出題数スライダーのイベントリスナー
+    // 出題数ボタンのイベントリスナー
     const questionCountValue = document.getElementById('questionCountValue');
-    const questionCountSwipe = document.getElementById('questionCountSwipe');
-    const questionCountHandle = document.getElementById('questionCountHandle');
-    const questionCountTrack = questionCountSwipe?.querySelector('.question-count-swipe-track');
-    
-    let swipeStartX = 0;
-    let swipeStartLeft = 0;
-    let isDragging = false;
+    const questionCountMinus = document.getElementById('questionCountMinus');
+    const questionCountPlus = document.getElementById('questionCountPlus');
     
     function updateQuestionCountDisplay(count, maxCount) {
         if (!questionCountValue) return;
@@ -6941,196 +6951,69 @@ function setupEventListeners() {
         if (count >= maxCount) {
             questionCountValue.textContent = 'すべて';
         } else {
-            questionCountValue.textContent = count + '語';
+            questionCountValue.textContent = count + '問';
+        }
+        
+        // ボタンの有効/無効状態を更新
+        if (questionCountMinus) {
+            questionCountMinus.disabled = count <= 10;
+        }
+        if (questionCountPlus) {
+            questionCountPlus.disabled = count >= maxCount;
         }
     }
     
-    function updateHandlePosition(count, maxCount, trackWidth) {
-        if (!questionCountHandle || !questionCountTrack) return;
+    function initQuestionCountButtons() {
+        const filteredWords = getFilteredWords();
+        const maxCount = filteredWords.length;
         
-        const handleWidth = 22;
-        const minLeft = 1;
-        const maxLeft = trackWidth - handleWidth - 1;
-        
-        // カウントを0-1の範囲に正規化（すべての場合は1.0）
-        let ratio = 0;
-        // 常に1語単位で調整
-            if (count >= maxCount) {
-                ratio = 1.0; // すべての場合は右端
-            } else {
-                ratio = Math.max(0, Math.min(1, (count - 1) / (maxCount - 1)));
-        }
-        const left = minLeft + (maxLeft - minLeft) * ratio;
-        
-        questionCountHandle.style.left = left + 'px';
-    }
-    
-    function getCountFromPosition(left, trackWidth, maxCount) {
-        const handleWidth = 22;
-        const minLeft = 1;
-        const maxLeft = trackWidth - handleWidth - 1;
-        const ratio = Math.max(0, Math.min(1, (left - minLeft) / (maxLeft - minLeft)));
-        
-        // 右端に近い場合（95%以上）は「すべて」を返す
-        if (ratio >= 0.95) {
-            return maxCount;
+        if (maxCount < 1) {
+            return;
         }
         
-        // 常に1語単位で調整
-            const count = Math.round(1 + ratio * (maxCount - 1));
-            return Math.min(maxCount, Math.max(1, count));
+        let currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
+        currentCount = Math.max(10, Math.min(maxCount, currentCount));
+        
+        updateQuestionCountDisplay(currentCount, maxCount);
     }
     
-    if (questionCountTrack && questionCountHandle) {
-        // 初期化
-        function initSwipeControl() {
+    // 初期化を実行
+    initQuestionCountButtons();
+    
+    // -ボタンのクリックイベント
+    if (questionCountMinus) {
+        questionCountMinus.addEventListener('click', () => {
             const filteredWords = getFilteredWords();
             const maxCount = filteredWords.length;
+            if (maxCount < 1) return;
             
-            if (maxCount < 1) {
-                if (questionCountSwipe) questionCountSwipe.style.display = 'none';
-                return;
-            }
-            
-            if (questionCountSwipe) questionCountSwipe.style.display = 'flex';
-            
-            const trackWidth = questionCountTrack.offsetWidth;
             let currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
-            // 常に最小1語
-            currentCount = Math.max(1, Math.min(maxCount, currentCount));
+            currentCount = Math.max(10, currentCount - 10);
             
             updateQuestionCountDisplay(currentCount, maxCount);
-            updateHandlePosition(currentCount, maxCount, trackWidth);
-        }
-        
-        // 初期化を実行
-        initSwipeControl();
-        
-        // リサイズ時にも再計算
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-            const filteredWords = getFilteredWords();
-            const maxCount = filteredWords.length;
-            if (maxCount >= 1) {
-                const trackWidth = questionCountTrack.offsetWidth;
-                const currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
-                updateHandlePosition(currentCount, maxCount, trackWidth);
-            }
-            }, 100);
         });
-        
-        // タッチイベント
-        questionCountTrack.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const touch = e.touches[0];
-            swipeStartX = touch.clientX;
-            swipeStartLeft = parseFloat(questionCountHandle.style.left) || 1;
-            isDragging = true;
-            questionCountHandle.classList.add('dragging');
-            
-            const filteredWords = getFilteredWords();
-            const maxCount = filteredWords.length;
-            if (maxCount < 1) return;
-        }, { passive: false });
-        
-        questionCountTrack.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-            
-            const touch = e.touches[0];
-            const deltaX = touch.clientX - swipeStartX;
-            const trackWidth = questionCountTrack.offsetWidth;
-            const handleWidth = 22;
-            const minLeft = 1;
-            const maxLeft = trackWidth - handleWidth - 1;
-            
-            let newLeft = swipeStartLeft + deltaX;
-            newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
-            questionCountHandle.style.left = newLeft + 'px';
-            
-            const filteredWords = getFilteredWords();
-            const maxCount = filteredWords.length;
-            if (maxCount >= 1) {
-                const newCount = getCountFromPosition(newLeft, trackWidth, maxCount);
-                updateQuestionCountDisplay(newCount, maxCount);
-            }
-        }, { passive: false });
-        
-        questionCountTrack.addEventListener('touchend', (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-            questionCountHandle.classList.remove('dragging');
-            
-            const filteredWords = getFilteredWords();
-            const maxCount = filteredWords.length;
-            if (maxCount >= 1) {
-                const trackWidth = questionCountTrack.offsetWidth;
-                const currentLeft = parseFloat(questionCountHandle.style.left) || 2;
-                const finalCount = getCountFromPosition(currentLeft, trackWidth, maxCount);
-                updateQuestionCountDisplay(finalCount, maxCount);
-                updateHandlePosition(finalCount, maxCount, trackWidth);
-            }
-        });
-        
-        // マウスイベント（デスクトップ対応）
-        questionCountTrack.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            swipeStartX = e.clientX;
-            swipeStartLeft = parseFloat(questionCountHandle.style.left) || 1;
-            isDragging = true;
-            questionCountHandle.classList.add('dragging');
-            
-            const filteredWords = getFilteredWords();
-            const maxCount = filteredWords.length;
-            if (maxCount < 1) return;
-        });
-        
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging || !questionCountTrack) return;
-            
-            const deltaX = e.clientX - swipeStartX;
-            const trackWidth = questionCountTrack.offsetWidth;
-            const handleWidth = 22;
-            const minLeft = 1;
-            const maxLeft = trackWidth - handleWidth - 1;
-            
-            let newLeft = swipeStartLeft + deltaX;
-            newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
-            questionCountHandle.style.left = newLeft + 'px';
-            
-            const filteredWords = getFilteredWords();
-            const maxCount = filteredWords.length;
-            if (maxCount >= 1) {
-                const newCount = getCountFromPosition(newLeft, trackWidth, maxCount);
-                updateQuestionCountDisplay(newCount, maxCount);
-            }
-        });
-        
-        document.addEventListener('mouseup', () => {
-            if (!isDragging) return;
-            isDragging = false;
-            questionCountHandle.classList.remove('dragging');
-            
-            const filteredWords = getFilteredWords();
-            const maxCount = filteredWords.length;
-            if (maxCount >= 1 && questionCountTrack) {
-                const trackWidth = questionCountTrack.offsetWidth;
-                const currentLeft = parseFloat(questionCountHandle.style.left) || 2;
-                const finalCount = getCountFromPosition(currentLeft, trackWidth, maxCount);
-                updateQuestionCountDisplay(finalCount, maxCount);
-                updateHandlePosition(finalCount, maxCount, trackWidth);
-            }
-        });
-        
-        // フィルター変更時に再初期化
-        const originalUpdateFilterInfo = updateFilterInfo;
-        updateFilterInfo = function() {
-            originalUpdateFilterInfo();
-            initSwipeControl();
-        };
     }
+    
+    // +ボタンのクリックイベント
+    if (questionCountPlus) {
+        questionCountPlus.addEventListener('click', () => {
+            const filteredWords = getFilteredWords();
+            const maxCount = filteredWords.length;
+            if (maxCount < 1) return;
+            
+            let currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
+            currentCount = Math.min(maxCount, currentCount + 10);
+            
+            updateQuestionCountDisplay(currentCount, maxCount);
+        });
+    }
+    
+    // フィルター変更時に再初期化
+    const originalUpdateFilterInfo = updateFilterInfo;
+    updateFilterInfo = function() {
+        originalUpdateFilterInfo();
+        initQuestionCountButtons();
+    };
     
     // 学習開始ボタン
     if (filterStartBtn) {

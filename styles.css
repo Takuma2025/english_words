@@ -161,17 +161,16 @@ textarea,
     background-color: transparent;
 }
 
-
 .feedback-overlay.active {
     opacity: 1;
 }
 
 .feedback-overlay.correct {
-    background-color: rgba(59, 130, 246, 0.3);
+    background-color: rgba(59, 130, 246, 0.15);
 }
 
 .feedback-overlay.wrong {
-    background-color: rgba(239, 68, 68, 0.3);
+    background-color: rgba(239, 68, 68, 0.15);
 }
 
 /* カードモード専用フィードバックオーバーレイ（カードの後ろに表示） */
@@ -4097,6 +4096,39 @@ button.category-card:focus-visible {
     padding-top: 0;
 }
 
+.progress-top-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0 8px;
+}
+
+.progress-top-row .progress-stats-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    background: #dbeafe;
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+.progress-top-row .progress-stats-label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 13px;
+}
+
+.progress-top-row #progressText,
+.progress-top-row [id$="ProgressText"] {
+    font-weight: 700;
+    font-size: 15px;
+    color: #3b82f6;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: -0.01em;
+}
+
 .progress-bar-wrapper {
     display: flex;
     align-items: center;
@@ -4429,19 +4461,19 @@ button.category-card:focus-visible {
 
 
 .progress-bar-container {
-    height: 24px;
-    background: transparent;
+    height: 8px;
+    background: #e5e7eb;
     border-radius: 0;
     overflow-x: auto;
     overflow-y: hidden;
-    margin-top: 14px;
-    margin-bottom: 8px;
+    margin-top: 0;
+    margin-bottom: 12px;
     display: flex;
     gap: 2px;
-    padding: 2px 12px 2px 2px; /* 右端に矢印分の余白 */
+    padding: 0;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+    scrollbar-width: none;
+    scrollbar-color: transparent transparent;
     cursor: grab;
     user-select: none;
     -webkit-user-select: none;
@@ -4475,18 +4507,18 @@ button.category-card:focus-visible {
     flex: 0 0 auto;
     width: calc((100% - 19 * 2px) / 20);
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    border: 3px solid transparent;
+    background: transparent;
+    border: none;
     border-radius: 0;
-    transition: background-color 0.3s ease, transform 0.1s ease, border-color 0.3s ease;
+    transition: background-color 0.2s ease;
     cursor: pointer;
     position: relative;
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 2px;
-    padding: 0 2px;
+    gap: 0;
+    padding: 0;
 }
 
 .progress-segment-disabled {
@@ -4495,33 +4527,24 @@ button.category-card:focus-visible {
 }
 
 .progress-segment-number {
-    color: #ffffff;
-    font-size: 10px;
-    font-weight: 500;
-    line-height: 1;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: none;
 }
 
 .progress-segment-number.progress-segment-flag {
-    color: #ffffff;
+    display: none;
 }
 
 .progress-segment-number.progress-segment-flag svg {
-    width: 12px;
-    height: 12px;
-    stroke: #ffffff;
+    display: none;
 }
 
 .progress-segment-number.progress-segment-flag svg path {
-    fill: #ffffff;
+    display: none;
 }
 
 
 .progress-segment:hover {
-    transform: scaleY(1.2);
+    opacity: 0.8;
 }
 
 .progress-segment.correct {
@@ -4537,17 +4560,8 @@ button.category-card:focus-visible {
     background: #22c55e !important;
 }
 
-.progress-segment.current:not(:has(.progress-segment-flag))::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #ffffff;
-    z-index: 10;
+.progress-segment.current::after {
+    display: none;
 }
 
 .progress-fill {
@@ -4705,8 +4719,8 @@ body.choice-question-mode-active .word-card-container {
         margin-bottom: 6px;
     }
     .progress-bar-container {
-        height: 20px;
-        padding: 2px 12px 2px 2px;
+        height: 8px;
+        padding: 0;
     }
     .input-result {
         bottom: 6px;
@@ -4780,8 +4794,8 @@ body.choice-question-mode-active .word-card-container {
         margin-bottom: 4px;
     }
     .progress-bar-container {
-        height: 18px;
-        padding: 2px 12px 2px 2px;
+        height: 8px;
+        padding: 0;
     }
     .input-result {
         bottom: 4px;
@@ -4927,7 +4941,7 @@ body.choice-question-mode-active .word-card-container {
     width: 100% !important;
     max-width: none !important;
     margin: 0;
-    background: #fafafa;
+    background: #ffffff;
 }
 
 .input-list-header {
@@ -6941,22 +6955,22 @@ body.choice-question-mode-active .word-card-container {
 .keyboard-key::before {
     content: attr(data-key);
     position: absolute;
-    bottom: calc(100% + 8px);
+    bottom: 100%;
     left: 50%;
     transform: translateX(-50%) scale(0);
     min-width: 32px;
     width: auto;
     padding: 8px 10px;
     height: auto;
-    background: #4b5563;
+    background: #ffffff;
     border-radius: 6px;
     font-size: 32px;
     font-weight: 500;
-    color: #ffffff;
+    color: #000000;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
     pointer-events: none;
     opacity: 0;
     transition: none;
@@ -6974,7 +6988,7 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .keyboard-key.key-pressed {
-    background: #c8c9cc;
+    background: #d1d5db;
     z-index: 9999;
 }
 
@@ -7042,7 +7056,7 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .keyboard-key:active {
-    background: #c8c9cc;
+    background: #d1d5db;
 }
 
 .keyboard-key-special {
@@ -7568,6 +7582,7 @@ body.learning-mode .app-container {
     overflow-x: visible !important;
     max-width: none !important;
     width: 100% !important;
+    background-color: #ffffff;
 }
 
 body.learning-mode .app-main {
@@ -7585,11 +7600,13 @@ body.learning-mode .learning-view {
     height: 100%;
     display: flex;
     flex-direction: column;
+    background-color: #ffffff;
 }
 
 body.learning-mode .card-area-wrapper {
     overflow-x: hidden;
     max-width: 100%;
+    background-color: #ffffff;
 }
 
 /* カードモード時（展開モード・文モード・整序モード以外）はスクロールを無効化 */
@@ -9362,6 +9379,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     max-height: 100%;
     box-sizing: border-box;
     position: relative;
+    background-color: #ffffff;
 }
 
 /* 厳選例文暗記モードの進捗バー */
@@ -9594,6 +9612,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     max-height: 100%;
     box-sizing: border-box;
     justify-content: flex-start; /* 上揃え */
+    background-color: #ffffff;
 }
 
 
@@ -12608,86 +12627,79 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 16px;
-}
-
-.question-count-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #334155;
 }
 
 .question-count-buttons {
     display: flex;
     align-items: center;
-    gap: 12px;
-}
-
-.question-count-swipe {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
     gap: 16px;
-    flex: 1;
 }
 
-.question-count-swipe-track {
-    flex: 1;
-    height: 28px;
-    background: #e2e8f0;
-    border-radius: 14px;
-    position: relative;
-    cursor: pointer;
-    touch-action: pan-x;
-    user-select: none;
-    border: 2px solid #cbd5e1;
-}
-
-.question-count-swipe-handle {
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    width: 22px;
-    height: 22px;
-    min-width: 22px;
-    min-height: 22px;
-    max-width: 22px;
-    max-height: 22px;
-    background: #1d4ed8;
+.question-count-btn {
+    width: 48px;
+    height: 48px;
     border: none;
-    border-radius: 50%;
-    transition: left 0.1s ease, box-shadow 0.2s ease;
+    border-radius: 12px;
+    font-size: 24px;
+    font-weight: 700;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    cursor: grab;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-.question-count-swipe-handle.dragging {
-    cursor: grabbing;
-    box-shadow: 0 0 0 6px rgba(29, 78, 216, 0.3), 0 0 12px rgba(29, 78, 216, 0.5);
+.question-count-minus {
+    background: #f3f4f6;
+    color: #374151;
+    box-shadow: 0 3px 0 #d1d5db;
 }
 
-.question-count-swipe-handle::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    background: #ffffff;
-    border-radius: 50%;
+.question-count-minus:hover {
+    background: #e5e7eb;
+}
+
+.question-count-minus:active {
+    transform: translateY(3px);
+    box-shadow: 0 0 0 #d1d5db;
+}
+
+.question-count-plus {
+    background: #3b82f6;
+    color: #ffffff;
+    box-shadow: 0 3px 0 #1d4ed8;
+}
+
+.question-count-plus:hover {
+    background: #2563eb;
+}
+
+.question-count-plus:active {
+    transform: translateY(3px);
+    box-shadow: 0 0 0 #1d4ed8;
+}
+
+.question-count-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .question-count-value {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 800;
-    color: #1d4ed8;
-    width: 80px;
+    color: #1f2937;
+    min-width: 80px;
     text-align: center;
     white-space: nowrap;
-    padding: 8px 0;
-    background: #ffffff;
-    border: 2px solid #1d4ed8;
+    padding: 8px 16px;
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
     border-radius: 8px;
 }
 
@@ -13317,28 +13329,33 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     font-weight: 700;
     letter-spacing: 0.02em;
     cursor: pointer;
-    transition: background 0.15s ease, transform 0.1s ease;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+    box-shadow: 0 4px 0 #1e3a8a;
+    position: relative;
+    top: 0;
 }
 
 .filter-start-btn:hover {
-    background: #1e40af;
+    background: #2563eb;
 }
 
 .filter-start-btn:active {
-    transform: scale(0.98);
-    background: #1e3a8a;
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #1e3a8a;
 }
 
 .filter-start-btn-orange {
-    background: #f9b916;
+    background: #f59e0b;
+    box-shadow: 0 4px 0 #b45309;
 }
 
 .filter-start-btn-orange:hover {
-    background: #f5a500;
+    background: #fbbf24;
 }
 
 .filter-start-btn-orange:active {
-    background: #e09800;
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #b45309;
 }
 
 /* 選択状態の表示 */
@@ -14198,7 +14215,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .handwriting-quiz-view {
     position: fixed;
     inset: 0;
-    background: #fafafa;
+    background: #ffffff;
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -15550,6 +15567,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     min-height: 0;
     max-height: 100%;
     box-sizing: border-box;
+    background-color: #ffffff;
 }
 
 /* 四択問題モードがアクティブなときカードを非表示 */

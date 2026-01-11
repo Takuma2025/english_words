@@ -587,21 +587,22 @@
                     <div class="card-top-section">
                         <!-- 進捗バー -->
                         <div class="progress-header" id="statsBar">
+                            <div class="progress-top-row">
+                                <div class="progress-stats-content">
+                                    <span class="progress-stats-label">進捗</span>
+                                    <span id="progressText">0/0</span>
+                                </div>
+                            </div>
                             <div class="progress-bar-wrapper">
-                                <div class="progress-range-display" id="progressRangeText">No.1-20</div>
                                 <div class="progress-bar-container" id="progressBarContainer">
                                     <!-- セグメントは動的に生成 -->
                                 </div>
                             </div>
-                            <div class="progress-nav-row">
+                            <div class="progress-nav-row" style="display: none;">
                                 <button class="progress-nav-arrow progress-nav-left" id="progressNavLeft" aria-label="前の範囲へ" style="display: none;">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                                 </button>
                                 <div class="progress-nav-stats">
-                                    <div class="progress-stats-content">
-                                        <span class="progress-stats-label">進捗</span>
-                                        <span id="progressText">0/0</span>
-                                    </div>
                                 </div>
                                 <button class="progress-nav-arrow progress-nav-right" id="progressNavRight" aria-label="次の範囲へ" style="display: none;">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -817,8 +818,13 @@
                     <div class="sentence-mode hidden" id="sentenceMode">
                         <!-- 進捗バー -->
                         <div class="progress-header sentence-progress-header" id="sentenceStatsBar">
+                            <div class="progress-top-row">
+                                <div class="progress-stats-content">
+                                    <span class="progress-stats-label">進捗</span>
+                                    <span id="sentenceProgressText">0/60</span>
+                                </div>
+                            </div>
                             <div class="progress-bar-wrapper">
-                                <div class="progress-range-display" id="sentenceProgressRange">No.1-10</div>
                                 <div class="progress-bar-container" id="sentenceProgressBarContainer">
                                     <!-- セグメントは動的に生成 -->
                                 </div>
@@ -834,12 +840,6 @@
                                             <span class="score-label">不正解</span>
                                             <span id="sentenceWrongCount">0</span>
                                         </span>
-                                    </div>
-                                </div>
-                                <div class="progress-nav-stats">
-                                    <div class="progress-stats-content">
-                                        <span class="progress-stats-label">進捗</span>
-                                        <span id="sentenceProgressText">0/60</span>
                                     </div>
                                 </div>
                             </div>
@@ -1095,8 +1095,13 @@
                     <div class="reorder-mode hidden" id="reorderMode">
                         <!-- 進捗バー -->
                         <div class="progress-header reorder-progress-header" id="reorderStatsBar">
+                            <div class="progress-top-row">
+                                <div class="progress-stats-content">
+                                    <span class="progress-stats-label">進捗</span>
+                                    <span id="reorderProgressText">0/100</span>
+                                </div>
+                            </div>
                             <div class="progress-bar-wrapper">
-                                <div class="progress-range-display" id="reorderProgressRange">No.1-10</div>
                                 <div class="progress-bar-container" id="reorderProgressBarContainer">
                                     <!-- セグメントは動的に生成 -->
                                 </div>
@@ -1112,12 +1117,6 @@
                                             <span class="score-label">不正解</span>
                                             <span id="reorderWrongCount">0</span>
                                         </span>
-                                    </div>
-                                </div>
-                                <div class="progress-nav-stats">
-                                    <div class="progress-stats-content">
-                                        <span class="progress-stats-label">進捗</span>
-                                        <span id="reorderProgressText">0/100</span>
                                     </div>
                                 </div>
                             </div>
@@ -1149,8 +1148,13 @@
                     <div class="choice-question-mode hidden" id="choiceQuestionMode">
                         <!-- 進捗バー -->
                         <div class="progress-header choice-progress-header" id="choiceStatsBar">
+                            <div class="progress-top-row">
+                                <div class="progress-stats-content">
+                                    <span class="progress-stats-label">進捗</span>
+                                    <span id="choiceProgressText">0/20</span>
+                                </div>
+                            </div>
                             <div class="progress-bar-wrapper">
-                                <div class="progress-range-display" id="choiceProgressRange">No.1-20</div>
                                 <div class="progress-bar-container" id="choiceProgressBarContainer">
                                     <!-- セグメントは動的に生成 -->
                                 </div>
@@ -1166,12 +1170,6 @@
                                             <span class="score-label">不正解</span>
                                             <span id="choiceWrongCount">0</span>
                                         </span>
-                                    </div>
-                                </div>
-                                <div class="progress-nav-stats">
-                                    <div class="progress-stats-content">
-                                        <span class="progress-stats-label">進捗</span>
-                                        <span id="choiceProgressText">0/20</span>
                                     </div>
                                 </div>
                             </div>
@@ -1696,11 +1694,10 @@
                 <div class="filter-section">
                     <div class="filter-section-title">出題数</div>
                     <div class="question-count-control" id="questionCountSection">
-                        <div class="question-count-swipe" id="questionCountSwipe">
-                            <div class="question-count-swipe-track">
-                                <div class="question-count-swipe-handle" id="questionCountHandle"></div>
-                            </div>
+                        <div class="question-count-buttons">
+                            <button class="question-count-btn question-count-minus" id="questionCountMinus">-</button>
                             <span class="question-count-value" id="questionCountValue">すべて</span>
+                            <button class="question-count-btn question-count-plus" id="questionCountPlus">+</button>
                         </div>
                     </div>
                 </div>
@@ -1743,14 +1740,20 @@
         
         <!-- 進捗バー（英語→日本語モードと同じ） -->
         <div class="progress-header" id="hwQuizStatsBar">
-            <!-- 上段: 進捗バー -->
+            <!-- 上段: 進捗表示 -->
+            <div class="progress-top-row">
+                <div class="progress-stats-content">
+                    <span class="progress-stats-label">進捗</span>
+                    <span id="hwQuizProgressText">0/10</span>
+                </div>
+            </div>
+            <!-- 進捗バー -->
             <div class="progress-bar-wrapper">
-                <div class="progress-range-display" id="hwQuizProgressRange">No.1-10</div>
                 <div class="progress-bar-container" id="hwQuizProgressBarContainer">
                     <!-- セグメントは動的に生成 -->
                 </div>
             </div>
-            <!-- 中段: 統計（中央揃え） -->
+            <!-- 統計（中央揃え） -->
             <div class="hw-progress-bottom-row">
                 <div class="progress-stats">
                     <div class="progress-stats-scores">
@@ -1762,12 +1765,6 @@
                             <span class="score-label">不正解</span>
                             <span id="hwQuizWrongCount">0</span>
                         </span>
-                    </div>
-                </div>
-                <div class="progress-nav-stats">
-                    <div class="progress-stats-content">
-                        <span class="progress-stats-label">進捗</span>
-                        <span id="hwQuizProgressText">0/10</span>
                     </div>
                 </div>
             </div>
