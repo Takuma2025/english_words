@@ -2577,10 +2577,21 @@ function speakWord(word, buttonElement) {
         window.speechSynthesis.cancel();
         currentSpeech = null;
     }
+    
+    // 既存のplayingクラスを全て削除
+    document.querySelectorAll('.audio-btn.playing').forEach(btn => {
+        btn.classList.remove('playing');
+    });
+    
+    // ボタンに再生中のスタイルを即座に追加
+    if (buttonElement) {
+        buttonElement.classList.add('playing');
+    }
 
     // Web Speech APIが利用可能か確認
     if (!('speechSynthesis' in window)) {
         console.log('[speakWord] speechSynthesis not available');
+        if (buttonElement) buttonElement.classList.remove('playing');
         showAlert('エラー', 'お使いのブラウザでは音声機能が利用できません。');
         return;
     }
@@ -2623,11 +2634,6 @@ function speakWord(word, buttonElement) {
             utterance.voice = voice;
         }
 
-        // ボタンに再生中のスタイルを追加
-        if (buttonElement) {
-            buttonElement.classList.add('playing');
-        }
-
         // 音声再生開始
         utterance.onstart = () => {
             currentSpeech = utterance;
@@ -2648,7 +2654,6 @@ function speakWord(word, buttonElement) {
             if (buttonElement) {
                 buttonElement.classList.remove('playing');
             }
-            // エラー時はアラートを表示しない（ユーザー体験を損なわないため）
         };
 
         // 音声を再生

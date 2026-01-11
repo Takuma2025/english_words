@@ -6744,18 +6744,18 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-meaning-wrapper .pos-inline {
-    align-self: center;
     font-size: 11px;
-    min-width: 28px;
-    min-height: 28px;
+    min-width: 24px;
+    padding: 4px 6px;
+    height: auto;
+    min-height: auto;
 }
 
 .input-meaning {
     font-size: clamp(22px, 6vw, 32px);
     font-weight: 700;
     color: #1f2937;
-    line-height: 1.4;
-    display: inline-block;
+    line-height: 1;
     font-family: "Noto Serif JP", "Shippori Mincho", "しっぽり明朝", "Hina Mincho", "ひな明朝", "Zen Old Mincho", "Sawarabi Mincho", "さわらび明朝", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     letter-spacing: 0.05em;
 }
@@ -7335,7 +7335,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* 音声ボタンのスタイル */
 .audio-btn {
-    background: #f3f4f6;
+    background-color: #e5e7eb;
     border: none;
     border-radius: 50%;
     width: 32px;
@@ -7345,7 +7345,7 @@ body.choice-question-mode-active .word-card-container {
     justify-content: center;
     cursor: pointer;
     color: #6b7280;
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease;
     flex-shrink: 0;
     padding: 0;
     margin: 0;
@@ -7356,29 +7356,49 @@ body.choice-question-mode-active .word-card-container {
     height: 16px;
 }
 
-.audio-btn:hover {
-    background: #e5e7eb;
-    color: #4b5563;
-    transform: scale(1.08);
+/* PCのみhover効果 */
+@media (hover: hover) {
+    .audio-btn:hover {
+        background-color: #d1d5db;
+        color: #4b5563;
+        transform: scale(1.08);
+    }
 }
 
 .audio-btn:active {
-    background: #d1d5db;
+    background-color: #93c5fd;
+    color: #1d4ed8;
     transform: scale(0.95);
 }
 
 .audio-btn.playing {
-    background: #dbeafe;
-    color: #3b82f6;
-    animation: audio-pulse 0.8s ease-in-out infinite;
+    background-color: #93c5fd !important;
+    color: #1d4ed8 !important;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-animation: audio-pulse 0.6s ease-in-out infinite;
+    animation: audio-pulse 0.6s ease-in-out infinite;
+}
+
+@-webkit-keyframes audio-pulse {
+    0%, 100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    50% {
+        -webkit-transform: scale(1.15);
+        transform: scale(1.15);
+    }
 }
 
 @keyframes audio-pulse {
     0%, 100% {
+        -webkit-transform: scale(1);
         transform: scale(1);
     }
     50% {
-        transform: scale(1.1);
+        -webkit-transform: scale(1.15);
+        transform: scale(1.15);
     }
 }
 
@@ -7411,11 +7431,31 @@ body.choice-question-mode-active .word-card-container {
     .audio-btn {
         width: 30px;
         height: 30px;
+        background-color: #e5e7eb !important;
+    }
+    
+    .audio-btn:hover:not(.playing) {
+        background-color: #e5e7eb !important;
+        transform: none !important;
     }
     
     .audio-btn svg {
         width: 15px;
         height: 15px;
+    }
+    
+    .audio-btn:active {
+        background-color: #93c5fd !important;
+        color: #1d4ed8 !important;
+    }
+    
+    .audio-btn.playing {
+        background-color: #93c5fd !important;
+        color: #1d4ed8 !important;
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        -webkit-animation: audio-pulse 0.6s ease-in-out infinite !important;
+        animation: audio-pulse 0.6s ease-in-out infinite !important;
     }
     
     .english-word-wrapper .audio-btn {
@@ -8433,10 +8473,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     font-size: clamp(20px, 5vw, 28px);
     font-weight: 700;
     color: #0f172a;
-    line-height: 1.6;
+    line-height: 28px;
     word-break: break-word;
     padding: 0 8px;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     letter-spacing: 0.05em;
 }
 
