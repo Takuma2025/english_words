@@ -6988,7 +6988,20 @@ function setupEventListeners() {
             if (maxCount < 1) return;
             
             let currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
-            currentCount = Math.max(10, currentCount - 10);
+            
+            // 10の倍数のキリの良い数字に調整
+            if (currentCount >= maxCount) {
+                // 「すべて」から押した場合は、10の倍数に切り捨て
+                currentCount = Math.floor(maxCount / 10) * 10;
+            } else if (currentCount % 10 === 0) {
+                // 既に10の倍数なら-10
+                currentCount = currentCount - 10;
+            } else {
+                // 10の倍数でなければ切り捨て
+                currentCount = Math.floor(currentCount / 10) * 10;
+            }
+            
+            currentCount = Math.max(10, currentCount);
             
             updateQuestionCountDisplay(currentCount, maxCount);
         });
@@ -7002,7 +7015,20 @@ function setupEventListeners() {
             if (maxCount < 1) return;
             
             let currentCount = parseInt(questionCountValue?.dataset.count) || maxCount;
-            currentCount = Math.min(maxCount, currentCount + 10);
+            
+            // 10の倍数のキリの良い数字に調整
+            if (currentCount % 10 === 0) {
+                // 既に10の倍数なら+10
+                currentCount = currentCount + 10;
+            } else {
+                // 10の倍数でなければ切り上げ
+                currentCount = Math.ceil(currentCount / 10) * 10;
+            }
+            
+            // 最大値を超えたら「すべて」に
+            if (currentCount >= maxCount) {
+                currentCount = maxCount;
+            }
             
             updateQuestionCountDisplay(currentCount, maxCount);
         });
