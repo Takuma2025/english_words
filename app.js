@@ -1620,10 +1620,16 @@ function updateCategoryStars() {
             let correctCountInCategory = 0;
             let wrongCountInCategory = 0;
             let totalWordsCount = 0;
+            // 入力モード用のカウンター
+            let inputModeCorrectCount = 0;
+            let inputModeWrongCount = 0;
             
             const modes = ['card', 'input'];
             const allCorrectSet = new Set();
             const allWrongSet = new Set();
+            // 入力モード専用のセット
+            const inputCorrectSet = new Set();
+            const inputWrongSet = new Set();
             
             // 各サブカテゴリーの単語を取得して進捗を計算
             elementarySubcategories.forEach(subcat => {
@@ -1645,6 +1651,10 @@ function updateCategoryStars() {
                             if (!allWrongSet.has(numId)) {
                                 allCorrectSet.add(numId);
                             }
+                            // 入力モードの場合は別途記録
+                            if (mode === 'input' && !inputWrongSet.has(numId)) {
+                                inputCorrectSet.add(numId);
+                            }
                         });
                     }
                     
@@ -1653,6 +1663,11 @@ function updateCategoryStars() {
                             const numId = typeof id === 'string' ? parseInt(id, 10) : id;
                             allWrongSet.add(numId);
                             allCorrectSet.delete(numId);
+                            // 入力モードの場合は別途記録
+                            if (mode === 'input') {
+                                inputWrongSet.add(numId);
+                                inputCorrectSet.delete(numId);
+                            }
                         });
                     }
                 });
@@ -1671,6 +1686,12 @@ function updateCategoryStars() {
                     } else if (allCorrectSet.has(word.id)) {
                         correctCountInCategory++;
                     }
+                    // 入力モードの進捗を別途カウント
+                    if (inputWrongSet.has(word.id)) {
+                        inputModeWrongCount++;
+                    } else if (inputCorrectSet.has(word.id)) {
+                        inputModeCorrectCount++;
+                    }
                 });
             });
             
@@ -1679,6 +1700,8 @@ function updateCategoryStars() {
             const wrongPercent = total === 0 ? 0 : (wrongCountInCategory / total) * 100;
             const completedCount = correctCountInCategory + wrongCountInCategory;
             const isComplete = total > 0 && wrongCountInCategory === 0 && correctCountInCategory === total;
+            // 入力モードで全問正解しているかを判定
+            const isInputModeComplete = total > 0 && inputModeWrongCount === 0 && inputModeCorrectCount === total;
             
             const correctBar = document.getElementById(`progress-correct-${category}`);
             const wrongBar = document.getElementById(`progress-wrong-${category}`);
@@ -1692,10 +1715,14 @@ function updateCategoryStars() {
                 wrongBar.style.width = `${wrongPercent}%`;
             }
             if (barContainer) {
-                if (isComplete) {
+                // 両方のCOMPLETEクラスを削除
+                barContainer.classList.remove('category-progress-complete', 'category-progress-complete-input');
+                if (isInputModeComplete) {
+                    // 入力モード（日本語→英語）で全問正解: 金色
+                    barContainer.classList.add('category-progress-complete-input');
+                } else if (isComplete) {
+                    // カードモード（英語→日本語）で全問正解: 青色
                     barContainer.classList.add('category-progress-complete');
-                } else {
-                    barContainer.classList.remove('category-progress-complete');
                 }
             }
             if (text) {
@@ -1710,11 +1737,17 @@ function updateCategoryStars() {
             // 全単語の進捗を計算（各単語の元のカテゴリーの進捗を確認）
             let correctCountInCategory = 0;
             let wrongCountInCategory = 0;
+            // 入力モード用のカウンター
+            let inputModeCorrectCount = 0;
+            let inputModeWrongCount = 0;
             
             // 全モードの進捗を合算
             const modes = ['card', 'input'];
             const allCorrectSet = new Set();
             const allWrongSet = new Set();
+            // 入力モード専用のセット
+            const inputCorrectSet = new Set();
+            const inputWrongSet = new Set();
             
             modes.forEach(mode => {
                 categoryWords.forEach(word => {
@@ -1729,6 +1762,10 @@ function updateCategoryStars() {
                             if (!allWrongSet.has(numId)) {
                                 allCorrectSet.add(numId);
                             }
+                            // 入力モードの場合は別途記録
+                            if (mode === 'input' && !inputWrongSet.has(numId)) {
+                                inputCorrectSet.add(numId);
+                            }
                         });
                     }
                     
@@ -1739,6 +1776,11 @@ function updateCategoryStars() {
                             allWrongSet.add(numId);
                             if (allCorrectSet.has(numId)) {
                                 allCorrectSet.delete(numId);
+                            }
+                            // 入力モードの場合は別途記録
+                            if (mode === 'input') {
+                                inputWrongSet.add(numId);
+                                inputCorrectSet.delete(numId);
                             }
                         });
                     }
@@ -1751,6 +1793,12 @@ function updateCategoryStars() {
                 } else if (allCorrectSet.has(word.id)) {
                     correctCountInCategory++;
                 }
+                // 入力モードの進捗を別途カウント
+                if (inputWrongSet.has(word.id)) {
+                    inputModeWrongCount++;
+                } else if (inputCorrectSet.has(word.id)) {
+                    inputModeCorrectCount++;
+                }
             });
             
             const total = categoryWords.length;
@@ -1758,6 +1806,8 @@ function updateCategoryStars() {
             const wrongPercent = total === 0 ? 0 : (wrongCountInCategory / total) * 100;
             const completedCount = correctCountInCategory + wrongCountInCategory;
             const isComplete = total > 0 && wrongCountInCategory === 0 && correctCountInCategory === total;
+            // 入力モードで全問正解しているかを判定
+            const isInputModeComplete = total > 0 && inputModeWrongCount === 0 && inputModeCorrectCount === total;
             
             const correctBar = document.getElementById(`progress-correct-${category}`);
             const wrongBar = document.getElementById(`progress-wrong-${category}`);
@@ -1772,10 +1822,14 @@ function updateCategoryStars() {
                 wrongBar.style.width = `${wrongPercent}%`;
             }
             if (barContainer) {
-                if (isComplete) {
+                // 両方のCOMPLETEクラスを削除
+                barContainer.classList.remove('category-progress-complete', 'category-progress-complete-input');
+                if (isInputModeComplete) {
+                    // 入力モード（日本語→英語）で全問正解: 金色
+                    barContainer.classList.add('category-progress-complete-input');
+                } else if (isComplete) {
+                    // カードモード（英語→日本語）で全問正解: 青色
                     barContainer.classList.add('category-progress-complete');
-                } else {
-                    barContainer.classList.remove('category-progress-complete');
                 }
             }
             if (text) {
@@ -1895,6 +1949,9 @@ function updateCategoryStars() {
             // 進捗率を計算（正解数、間違い数）
             let correctCountInCategory = 0;
             let wrongCountInCategory = 0;
+            // 入力モード用のカウンター
+            let inputModeCorrectCount = 0;
+            let inputModeWrongCount = 0;
             
             // レベル番号を取得
             const levelMap = {
@@ -1918,6 +1975,9 @@ function updateCategoryStars() {
             const modes = ['card', 'input'];
             const allCorrectSet = new Set();
             const allWrongSet = new Set();
+            // 入力モード専用のセット
+            const inputCorrectSet = new Set();
+            const inputWrongSet = new Set();
             let totalWordsCount = 0;
             
             // 各サブカテゴリーの単語を取得して進捗を計算
@@ -1940,6 +2000,10 @@ function updateCategoryStars() {
                             if (!allWrongSet.has(numId)) {
                                 allCorrectSet.add(numId);
                             }
+                            // 入力モードの場合は別途記録
+                            if (mode === 'input' && !inputWrongSet.has(numId)) {
+                                inputCorrectSet.add(numId);
+                            }
                         });
                     }
                     
@@ -1948,6 +2012,11 @@ function updateCategoryStars() {
                             const numId = typeof id === 'string' ? parseInt(id, 10) : id;
                             allWrongSet.add(numId);
                             allCorrectSet.delete(numId);
+                            // 入力モードの場合は別途記録
+                            if (mode === 'input') {
+                                inputWrongSet.add(numId);
+                                inputCorrectSet.delete(numId);
+                            }
                         });
                     }
                 });
@@ -1966,6 +2035,12 @@ function updateCategoryStars() {
                     } else if (allCorrectSet.has(word.id)) {
                         correctCountInCategory++;
                     }
+                    // 入力モードの進捗を別途カウント
+                    if (inputWrongSet.has(word.id)) {
+                        inputModeWrongCount++;
+                    } else if (inputCorrectSet.has(word.id)) {
+                        inputModeCorrectCount++;
+                    }
                 });
             });
             
@@ -1975,6 +2050,8 @@ function updateCategoryStars() {
             const wrongPercent = total === 0 ? 0 : (wrongCountInCategory / total) * 100;
             const completedCount = correctCountInCategory + wrongCountInCategory;
             const isComplete = total > 0 && wrongCountInCategory === 0 && correctCountInCategory === total;
+            // 入力モードで全問正解しているかを判定
+            const isInputModeComplete = total > 0 && inputModeWrongCount === 0 && inputModeCorrectCount === total;
 
             // 進捗バーとテキストを更新
             const correctBar = document.getElementById(`progress-correct-${category}`);
@@ -1989,10 +2066,14 @@ function updateCategoryStars() {
                 wrongBar.style.width = `${wrongPercent}%`;
             }
             if (barContainer) {
-                if (isComplete) {
+                // 両方のCOMPLETEクラスを削除
+                barContainer.classList.remove('category-progress-complete', 'category-progress-complete-input');
+                if (isInputModeComplete) {
+                    // 入力モード（日本語→英語）で全問正解: 金色
+                    barContainer.classList.add('category-progress-complete-input');
+                } else if (isComplete) {
+                    // カードモード（英語→日本語）で全問正解: 青色
                     barContainer.classList.add('category-progress-complete');
-                } else {
-                    barContainer.classList.remove('category-progress-complete');
                 }
             }
             if (text) {
@@ -2060,24 +2141,18 @@ function updateCategoryStars() {
         }
     });
     
-    // 細分化メニュー（日常生活でよく使う生活語彙、英文でよく登場する機能語）の進捗バーを更新
+    // 細分化メニューの進捗バーを更新
     updateSubcategoryProgressBars();
     
 }
 
 // 細分化メニューの進捗バーを更新
 function updateSubcategoryProgressBars() {
-    // 日常生活でよく使う生活語彙のサブカテゴリー（指定順）
-    const dailyLifeSubcategories = [
+    // カテゴリ別に覚える基本単語のサブカテゴリー
+    const elementarySubcategories = [
         '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器', '衣類', '単位',
         '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
         '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
-    ];
-    
-    // 英文でよく登場する機能語のサブカテゴリー
-    const functionWordSubcategories = [
-        '冠詞', '代名詞', '疑問詞',
-        '限定詞（数量）', '前置詞', '助動詞・助動詞的表現', '接続詞'
     ];
     
     // 共通の進捗バー更新関数
@@ -2169,13 +2244,8 @@ function updateSubcategoryProgressBars() {
         }
     }
     
-    // カテゴリ別に覚える基本単語のサブカテゴリー（日常生活でよく使う生活語彙と同じ）
-    const elementarySubcategories = dailyLifeSubcategories;
-    
-    // 各カテゴリーの進捗バーを更新
+    // カテゴリ別に覚える基本単語の進捗バーを更新
     updateProgressBar('カテゴリ別に覚える基本単語', elementarySubcategories);
-    updateProgressBar('日常生活でよく使う生活語彙', dailyLifeSubcategories);
-    updateProgressBar('英文でよく登場する機能語', functionWordSubcategories);
     
     // レベル別進捗バー更新関数（LEVEL1〜3用）
     function updateLevelProgressBar(categoryName, level, subcategories) {
@@ -3263,28 +3333,6 @@ function startCategory(category) {
             showAlert('エラー', '小学生で習った単語データが見つかりません。');
             return;
         }
-    } else if (category === '日常生活でよく使う生活語彙') {
-        // 生活語彙（カテゴリー別単語のみ）
-        console.log('Loading daily life vocabulary...');
-        if (typeof getDailyLifeVocabulary !== 'undefined' && typeof getDailyLifeVocabulary === 'function') {
-            categoryWords = getDailyLifeVocabulary();
-            console.log('getDailyLifeVocabulary returned:', categoryWords ? categoryWords.length : 'null/undefined', 'words');
-        } else {
-            console.error('No daily life vocabulary data available');
-            showAlert('エラー', '生活語彙データが見つかりません。');
-            return;
-        }
-    } else if (category === '英文でよく登場する機能語') {
-        // 機能語のみ
-        console.log('Loading function vocabulary...');
-        if (typeof getFunctionVocabulary !== 'undefined' && typeof getFunctionVocabulary === 'function') {
-            categoryWords = getFunctionVocabulary();
-            console.log('getFunctionVocabulary returned:', categoryWords ? categoryWords.length : 'null/undefined', 'words');
-        } else {
-            console.error('No function vocabulary data available');
-            showAlert('エラー', '機能語データが見つかりません。');
-            return;
-        }
     } else if (category === '大阪B問題対策 厳選例文暗記60【和文英訳対策】') {
         // 大阪B問題対策：厳選例文暗記モードで開始
         initSentenceModeLearning(category);
@@ -3553,346 +3601,6 @@ function initInputModeLearning(category, words, startIndex = 0) {
     }
     updateStats();
     updateNavState('learning');
-}
-
-// サブカテゴリー選択画面を表示
-function showSubcategorySelection(parentCategory, skipAnimation = false) {
-    // スクロール位置を一番上にリセット
-    window.scrollTo(0, 0);
-    const appMain = document.querySelector('.app-main');
-    if (appMain) appMain.scrollTop = 0;
-    
-    console.log('showSubcategorySelection called with:', parentCategory);
-    const courseSelection = document.getElementById('courseSelection');
-    const courseList = document.getElementById('courseList');
-    const courseTitle = document.getElementById('courseSelectionTitle');
-    const courseSelectionImage = document.getElementById('courseSelectionImage');
-    const courseSelectionDescription = document.getElementById('courseSelectionDescription');
-    
-    // タイトルを設定
-    courseTitle.textContent = parentCategory;
-    courseList.innerHTML = '';
-    
-    // 画像を非表示
-    if (courseSelectionImage) {
-        courseSelectionImage.style.display = 'none';
-    }
-    
-    // 説明文を設定
-    if (courseSelectionDescription) {
-        if (parentCategory === '日常生活でよく使う生活語彙') {
-            courseSelectionDescription.textContent = '日常生活でよく使う生活語彙のうち、名詞を中心にカテゴリー別にまとめています。';
-            courseSelectionDescription.style.display = 'block';
-        } else if (parentCategory === '英文でよく登場する機能語') {
-            courseSelectionDescription.textContent = '機能語とは、文の中の単語同士の関係性を示し、文法構造を支えるために、英文中に何度も登場する重要な単語のことで、具体的な意味や内容を表す単語ではありません。カテゴリー別にまとめています。';
-            courseSelectionDescription.style.display = 'block';
-        } else {
-            courseSelectionDescription.style.display = 'none';
-        }
-    }
-    
-    // 各機能語カテゴリーの説明
-    const functionWordDescriptions = {
-        '冠詞': 'aやtheなど名詞の前に置く冠詞を覚えましょう。',
-        '代名詞': 'Iやyouなど名詞の代わりに使う代名詞を覚えましょう。',
-        '疑問詞': 'whatやwhereなど疑問文を作る疑問詞を覚えましょう。',
-        '限定詞（数量）': 'manyやsomeなど数量を表す限定詞を覚えましょう。',
-        '前置詞': 'inやonなど名詞の前に置いて位置や関係を表す前置詞を覚えましょう。',
-        '助動詞・助動詞的表現': 'canやwillなど動詞の前に置いて意味を加える助動詞とhave toなどの助動詞的表現を覚えましょう。',
-        '接続詞': '文や語句をつなぐ、andやbutなどの等位接続詞やwhenやifなどの従属接続詞を覚えましょう。',
-        '関係代名詞': 'whichやthatなど名詞を修飾する関係代名詞を覚えましょう。',
-        '間投詞': 'hiやyesなどあいさつや返事を表す間投詞を覚えましょう。間投詞は機能語ではありませんがここで学びましょう。'
-    };
-    
-    // サブカテゴリーの定義
-    let subcategories = [];
-    let accordionContainer = null;
-    
-    if (parentCategory === '日常生活でよく使う生活語彙') {
-        subcategories = [
-            '家族',
-            '曜日・月・季節',
-            '時間・時間帯',
-            '数字',
-            '色',
-            '体',
-            '文房具',
-            '楽器',
-            '食べ物・飲み物',
-            'スポーツ',
-            '動物',
-            '教科',
-            '学校（の種類）',
-            '乗り物',
-            '町の施設',
-            '職業',
-            '国や地域',
-            '自然',
-            '天気',
-            '方角・方向'
-        ];
-        
-        // アコーディオンを作成
-        const accordion = document.createElement('div');
-        accordion.className = 'category-accordion';
-        accordion.id = 'elementarySubcategoryAccordion';
-        
-        const accordionHeader = document.createElement('button');
-        accordionHeader.className = 'category-accordion-header';
-        accordionHeader.id = 'elementarySubcategoryAccordionBtn';
-        
-        const accordionContent = document.createElement('div');
-        accordionContent.className = 'category-accordion-content';
-        accordionContent.id = 'elementarySubcategoryAccordionContent';
-        
-        accordionContainer = document.createElement('div');
-        accordionContainer.className = 'category-accordion-container';
-        
-        accordionHeader.innerHTML = `
-            <div class="category-info">
-                <div class="category-header">
-                    <div class="category-name">
-                        <svg class="category-icon" width="20" height="20" viewBox="0 0 24 24" fill="#3182ce" stroke="#3182ce" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                        カテゴリー別に覚える単語
-                    </div>
-                </div>
-                <div class="category-meta">基礎からカテゴリー別に学習</div>
-            </div>
-            <div class="category-accordion-arrow">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </div>
-        `;
-        
-        accordionHeader.addEventListener('click', (e) => {
-            e.stopPropagation();
-            accordion.classList.toggle('open');
-        });
-        
-        accordion.appendChild(accordionHeader);
-        accordionContent.appendChild(accordionContainer);
-        accordion.appendChild(accordionContent);
-        courseList.appendChild(accordion);
-    } else if (parentCategory === '英文でよく登場する機能語') {
-        subcategories = [
-            '冠詞',
-            '代名詞',
-            '疑問詞',
-            '限定詞（数量）',
-            '前置詞',
-            '助動詞・助動詞的表現',
-            '接続詞',
-            '関係代名詞',
-            '間投詞'
-        ];
-    }
-    
-    // サブカテゴリーを生成
-    subcategories.forEach((subcat, index) => {
-        const words = getVocabularyByCategory(subcat);
-        const wordCount = words ? words.length : 0;
-        
-        // 進捗を計算（全モードの進捗を合算）
-        let correctCount = 0;
-        let wrongCount = 0;
-        // 入力モード（日本語→英語）での完了状態を確認
-        let inputModeCorrectCount = 0;
-        let inputModeWrongCount = 0;
-        
-        if (words && words.length > 0) {
-            const modes = ['card', 'input'];
-            const allCorrectSet = new Set();
-            const allWrongSet = new Set();
-            
-            // 入力モード専用のセット
-            const inputCorrectSet = new Set();
-            const inputWrongSet = new Set();
-            
-            modes.forEach(mode => {
-                const savedCorrectWords = localStorage.getItem(`correctWords-${subcat}_${mode}`);
-                const savedWrongWords = localStorage.getItem(`wrongWords-${subcat}_${mode}`);
-                
-                if (savedCorrectWords) {
-                    JSON.parse(savedCorrectWords).forEach(id => {
-                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
-                        if (!allWrongSet.has(numId)) {
-                            allCorrectSet.add(numId);
-                        }
-                        // 入力モードの場合は別途記録
-                        if (mode === 'input' && !inputWrongSet.has(numId)) {
-                            inputCorrectSet.add(numId);
-                        }
-                    });
-                }
-                
-                if (savedWrongWords) {
-                    JSON.parse(savedWrongWords).forEach(id => {
-                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
-                        allWrongSet.add(numId);
-                        allCorrectSet.delete(numId);
-                        // 入力モードの場合は別途記録
-                        if (mode === 'input') {
-                            inputWrongSet.add(numId);
-                            inputCorrectSet.delete(numId);
-                        }
-                    });
-                }
-            });
-            
-            words.forEach(word => {
-                if (allWrongSet.has(word.id)) {
-                    wrongCount++;
-                } else if (allCorrectSet.has(word.id)) {
-                    correctCount++;
-                }
-                // 入力モードの進捗を別途カウント
-                if (inputWrongSet.has(word.id)) {
-                    inputModeWrongCount++;
-                } else if (inputCorrectSet.has(word.id)) {
-                    inputModeCorrectCount++;
-                }
-            });
-        }
-        const correctPercent = wordCount > 0 ? (correctCount / wordCount) * 100 : 0;
-        const wrongPercent = wordCount > 0 ? (wrongCount / wordCount) * 100 : 0;
-        
-        // COMPLETE!!の判定（間違いが0で正解数が総数と等しい場合）
-        const isComplete = wordCount > 0 && wrongCount === 0 && correctCount === wordCount;
-        // 入力モードで全問正解しているかを判定
-        const isInputModeComplete = wordCount > 0 && inputModeWrongCount === 0 && inputModeCorrectCount === wordCount;
-        
-        // モードに応じて異なるCOMPLETEクラスを適用
-        // 入力モードで全問正解している場合は金色を優先表示
-        let progressBarClass = 'category-progress-bar';
-        if (isInputModeComplete) {
-            // 入力モード（日本語→英語）で全問正解: 金色
-            progressBarClass = 'category-progress-bar category-progress-complete-input';
-        } else if (isComplete) {
-            // カードモードでのみ全問正解: 青色
-            progressBarClass = 'category-progress-bar category-progress-complete';
-        }
-        
-        // 番号を取得（1から始まる）
-        const number = index + 1;
-        
-        // 親カテゴリーに応じてバッジの色を決定
-        let badgeColor = '';
-        if (parentCategory === '日常生活でよく使う生活語彙') {
-            badgeColor = '#22c55e'; // かわいい緑
-        } else if (parentCategory === '英文でよく登場する機能語') {
-            badgeColor = '#9333ea'; // 紫
-        }
-        
-        // 説明文を取得
-        const description = functionWordDescriptions[subcat] || '';
-        
-        if (parentCategory === '日常生活でよく使う生活語彙' && accordionContainer) {
-            // アコーディオンアイテムを作成
-            const accordionItem = document.createElement('button');
-            accordionItem.className = 'category-accordion-item category-accordion-item-green';
-            
-            accordionItem.innerHTML = `
-                <div class="accordion-item-main">
-                    <svg class="accordion-item-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${badgeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    <span class="accordion-item-text">${subcat}</span>
-                    <svg class="accordion-item-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </div>
-            `;
-            
-            accordionItem.addEventListener('click', (e) => {
-                e.stopPropagation();
-                showCourseActionModal(subcat, words, subcat);
-            });
-            
-            accordionContainer.appendChild(accordionItem);
-        } else {
-            // カードを作成（機能語の場合）
-        const card = document.createElement('div');
-        card.className = 'category-card category-card-with-actions';
-        
-        card.innerHTML = `
-            <div class="category-info">
-                <div class="category-header">
-                    <div class="category-name"><span class="level-badge" style="background-color: ${badgeColor}">${number}</span> ${subcat}</div>
-                </div>
-                    ${description ? `<div class="category-meta">${description}</div>` : ''}
-                <div class="category-progress">
-                    <div class="${progressBarClass}">
-                        <div class="category-progress-correct" style="width: ${correctPercent}%"></div>
-                        <div class="category-progress-wrong" style="width: ${wrongPercent}%"></div>
-                    </div>
-                    <div class="category-progress-text">${correctCount}/${wordCount}語</div>
-                </div>
-            </div>
-                <div class="course-card-side-actions">
-                    <button type="button" class="course-side-btn input-btn">学習</button>
-                    <button type="button" class="course-side-btn output-btn">テスト</button>
-            </div>
-        `;
-        
-        // ボタンにイベントリスナーを追加
-        const inputBtn = card.querySelector('.input-btn');
-        const outputBtn = card.querySelector('.output-btn');
-            const categoryInfo = card.querySelector('.category-info');
-        
-        if (inputBtn) {
-            inputBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                // インプット：直接単語一覧を表示
-                showInputModeDirectly(subcat, words, subcat);
-            });
-        }
-        
-        if (outputBtn) {
-            outputBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                // アウトプット：フィルター画面を表示
-                showWordFilterView(subcat, words, subcat);
-            });
-        }
-            
-            // 左側の情報部分をクリックした時にモード選択モーダルを表示
-            if (categoryInfo) {
-                categoryInfo.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    showCourseActionModal(subcat, words, subcat);
-            });
-        }
-        
-        courseList.appendChild(card);
-        }
-    });
-    
-    // ヘッダーの戻るボタンを表示（先に設定）
-    updateHeaderButtons('course', parentCategory);
-    
-    // 画面遷移
-    const categorySelection = document.getElementById('categorySelection');
-    
-    if (categorySelection && courseSelection) {
-        // カテゴリー選択画面を即座に非表示
-        categorySelection.classList.add('hidden');
-        
-        // コース選択画面を表示
-        courseSelection.classList.remove('hidden');
-        
-        // アニメーションが必要な場合のみスライドイン
-        if (!skipAnimation) {
-            courseSelection.classList.add('slide-in-right');
-            setTimeout(() => {
-                courseSelection.classList.remove('slide-in-right');
-            }, 300);
-        }
-    }
-    
-    // ナビゲーション状態を更新
-    updateNavState('courseSelection');
-    
-    // 戻るボタン用にparentCategoryを保存
-    window.currentSubcategoryParent = parentCategory;
 }
 
 // カテゴリ別に覚える基本単語の画面を表示
@@ -4519,15 +4227,18 @@ function showCourseSelection(category, categoryWords) {
     // 小学生で習った単語とカテゴリー別に覚える単語の場合は、固定のサブコースを表示
     if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
         console.log('Detected elementary category, creating accordion sections...');
-        // 小学生で習った単語グループ（指定順）
+        // カテゴリー別に覚える基本単語グループ（指定順）
         const elementaryCourses = [
             '家族',
             '曜日・月・季節',
+            '時間・時間帯',
             '数字',
             '色',
             '体',
             '文房具',
             '楽器',
+            '衣類',
+            '単位',
             '食べ物・飲み物',
             'スポーツ',
             '動物',
@@ -4542,32 +4253,6 @@ function showCourseSelection(category, categoryWords) {
             '方角・方向'
         ];
 
-        // 機能語グループ
-        const functionWordCourses = [
-            '冠詞',
-            '代名詞',
-            '疑問詞',
-            '限定詞（数量）',
-            '前置詞',
-            '助動詞・助動詞的表現',
-            '接続詞',
-            '関係代名詞',
-            '間投詞'
-        ];
-
-        // 各機能語カテゴリーの説明
-        const functionWordDescriptions = {
-            '冠詞': 'aやtheなど名詞の前に置く冠詞を覚えましょう。',
-            '代名詞': 'Iやyouなど名詞の代わりに使う代名詞を覚えましょう。',
-            '疑問詞': 'whatやwhereなど疑問文を作る疑問詞を覚えましょう。',
-            '限定詞（数量）': 'manyやsomeなど数量を表す限定詞を覚えましょう。',
-            '前置詞': 'inやonなど名詞の前に置いて位置や関係を表す前置詞を覚えましょう。',
-            '助動詞・助動詞的表現': 'canやwillなど動詞の前に置いて意味を加える助動詞とhave toなどの助動詞的表現を覚えましょう。',
-            '接続詞': '文や語句をつなぐ、andやbutなどの等位接続詞やwhenやifなどの従属接続詞を覚えましょう。',
-            '関係代名詞': 'whichやthatなど名詞を修飾する関係代名詞を覚えましょう。',
-            '間投詞': 'hiやyesなどあいさつや返事を表す間投詞を覚えましょう。間投詞は機能語ではありませんがここで学びましょう。'
-        };
-
         // 各サブカテゴリーの進捗をキャッシュ（小学生で習った単語の場合は各単語のカテゴリーで保存されている）
         const progressCache = {};
         const mode = selectedLearningMode || 'card';
@@ -4579,10 +4264,8 @@ function showCourseSelection(category, categoryWords) {
             section.className = 'course-subsection';
 
             // グループ別にクラスを付与（スタイル用）
-            if (groupTitle === '日常生活でよく触れる生活語彙') {
+            if (groupTitle === 'カテゴリー別に覚える基本単語') {
                 section.classList.add('course-subsection-elementary');
-            } else if (groupTitle === '英文でよく登場する機能語') {
-                section.classList.add('course-subsection-function');
             }
 
             const headerBtn = document.createElement('button');
@@ -4598,19 +4281,11 @@ function showCourseSelection(category, categoryWords) {
             const body = document.createElement('div');
             body.className = 'course-subsection-body hidden';
 
-            // 「日常生活でよく触れる生活語彙」の場合のみ、説明テキスト（注釈）を先頭に表示
-            if (groupTitle === '日常生活でよく触れる生活語彙') {
+            // 「カテゴリー別に覚える基本単語」の場合のみ、説明テキスト（注釈）を先頭に表示
+            if (groupTitle === 'カテゴリー別に覚える基本単語') {
                 const note = document.createElement('p');
                 note.className = 'course-group-note';
-                note.textContent = '日常生活でよく触れる生活語彙のうち、基本的な名詞のみをまとめました。カテゴリー別に覚えましょう。';
-                body.appendChild(note);
-            }
-
-            // 「英文でよく登場する機能語」の場合のみ、説明テキスト（注釈）を先頭に表示
-            if (groupTitle === '英文でよく登場する機能語') {
-                const note = document.createElement('p');
-                note.className = 'course-group-note';
-                note.textContent = '機能語とは、具体的な意味や内容を表す単語ではないが、文の中の単語同士の関係性を示し、文法構造を支えるために、英文中に何度も登場する重要な単語のことです。カテゴリー別に覚えましょう。';
+                note.textContent = '基礎からカテゴリー別に覚える単語をまとめています。';
                 body.appendChild(note);
             }
 
@@ -4687,17 +4362,8 @@ function showCourseSelection(category, categoryWords) {
                 const isInputModeComplete = total > 0 && inputModeWrongCount === 0 && inputModeCorrectCount === total;
 
                 const numberMark = circledNumbers[index] || '';
-                const badgeLabel =
-                    groupTitle === '日常生活でよく触れる生活語彙' && numberMark
-                        ? '生活語彙'
-                        : groupTitle === '機能語' && numberMark
-                            ? '機能語'
-                            : '';
-
-                // 機能語グループの場合のみ説明を追加
-                const description = groupTitle === '英文でよく登場する機能語' && functionWordDescriptions[courseName] 
-                    ? functionWordDescriptions[courseName] 
-                    : '';
+                const badgeLabel = '';
+                const description = '';
 
                 const courseCard = createCourseCard(
                     courseName,
@@ -4727,9 +4393,7 @@ function showCourseSelection(category, categoryWords) {
 
         console.log('About to add course groups...');
         console.log('elementaryCourses:', elementaryCourses);
-        console.log('functionWordCourses:', functionWordCourses);
-        addCourseGroup('日常生活でよく触れる生活語彙', elementaryCourses);
-        addCourseGroup('英文でよく登場する機能語', functionWordCourses);
+        addCourseGroup('カテゴリー別に覚える基本単語', elementaryCourses);
         console.log('Course groups added to courseList');
     } else {
         // その他のカテゴリーは100刻みで表示
@@ -4999,28 +4663,43 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     }
     
     // 初回学習かどうかを判定（そのカテゴリーの単語に対してブックマーク、赤、青がすべてない場合）
-    // 小学生で習った単語の場合は各単語のカテゴリーから進捗を読み込む
+    // テスト設定モーダルではすべてのモード（card + input）の進捗を合算して読み込む
     let correctSet, wrongSet;
     if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
         correctSet = new Set();
         wrongSet = new Set();
-        const mode = selectedLearningMode || 'card';
+        const modes = ['card', 'input'];
         const categoryCache = {};
         categoryWords.forEach(word => {
             const cat = word.category;
             if (!categoryCache[cat]) {
-                const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
-                const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
-                categoryCache[cat] = {
-                    correct: savedCorrect ? new Set(JSON.parse(savedCorrect).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set(),
-                    wrong: savedWrong ? new Set(JSON.parse(savedWrong).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set()
-                };
+                categoryCache[cat] = { correct: new Set(), wrong: new Set() };
+                modes.forEach(mode => {
+                    const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                    const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+                    if (savedCorrect) {
+                        JSON.parse(savedCorrect).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            if (!categoryCache[cat].wrong.has(numId)) {
+                                categoryCache[cat].correct.add(numId);
+                            }
+                        });
+                    }
+                    if (savedWrong) {
+                        JSON.parse(savedWrong).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            categoryCache[cat].wrong.add(numId);
+                            categoryCache[cat].correct.delete(numId);
+                        });
+                    }
+                });
             }
             if (categoryCache[cat].correct.has(word.id)) correctSet.add(word.id);
             if (categoryCache[cat].wrong.has(word.id)) wrongSet.add(word.id);
         });
     } else {
-        const loaded = loadCategoryWords(category);
+        // すべてのモードの進捗を合算して読み込む
+        const loaded = loadCategoryWordsForProgress(category);
         correctSet = loaded.correctSet;
         wrongSet = loaded.wrongSet;
     }
@@ -5173,28 +4852,43 @@ function updateFilterInfo() {
 
 // フィルター条件に基づいて単語を取得
 function getFilteredWords() {
-    // 小学生で習った単語の場合は各単語のカテゴリーから進捗を読み込む
+    // テスト設定モーダルではすべてのモード（card + input）の進捗を合算して読み込む
     let correctSet, wrongSet;
     if (currentFilterCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
         correctSet = new Set();
         wrongSet = new Set();
-        const mode = selectedLearningMode || 'card';
+        const modes = ['card', 'input'];
         const categoryCache = {};
         currentFilterWords.forEach(word => {
             const cat = word.category;
             if (!categoryCache[cat]) {
-                const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
-                const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
-                categoryCache[cat] = {
-                    correct: savedCorrect ? new Set(JSON.parse(savedCorrect).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set(),
-                    wrong: savedWrong ? new Set(JSON.parse(savedWrong).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set()
-                };
+                categoryCache[cat] = { correct: new Set(), wrong: new Set() };
+                modes.forEach(mode => {
+                    const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                    const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+                    if (savedCorrect) {
+                        JSON.parse(savedCorrect).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            if (!categoryCache[cat].wrong.has(numId)) {
+                                categoryCache[cat].correct.add(numId);
+                            }
+                        });
+                    }
+                    if (savedWrong) {
+                        JSON.parse(savedWrong).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            categoryCache[cat].wrong.add(numId);
+                            categoryCache[cat].correct.delete(numId);
+                        });
+                    }
+                });
             }
             if (categoryCache[cat].correct.has(word.id)) correctSet.add(word.id);
             if (categoryCache[cat].wrong.has(word.id)) wrongSet.add(word.id);
         });
     } else {
-        const loaded = loadCategoryWords(currentFilterCategory);
+        // すべてのモードの進捗を合算して読み込む
+        const loaded = loadCategoryWordsForProgress(currentFilterCategory);
         correctSet = loaded.correctSet;
         wrongSet = loaded.wrongSet;
     }
@@ -6081,7 +5775,8 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     progressBarStartIndex = Math.min(progressBarStartIndex, Math.max(0, total - PROGRESS_BAR_DISPLAY_COUNT));
     
     // 前回の回答状況を読み込んで進捗バーに反映
-    if (category && category !== '間違い復習' && category !== '復習チェック' && category !== 'チェックした問題') {
+    // テストモード（アウトプットモード）では常に新しい状態で開始するため、読み込まない
+    if (currentLearningMode === 'input' && category && category !== '間違い復習' && category !== '復習チェック' && category !== 'チェックした問題') {
         if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
             // 各単語のカテゴリーから進捗を読み込む
             const mode = selectedLearningMode || 'card';
@@ -6722,17 +6417,11 @@ function setupEventListeners() {
                 elements.mainContent.classList.add('hidden');
             }
             
-            // 日常生活でよく使う生活語彙のサブカテゴリー（指定順）
-            const dailyLifeSubcategories = [
+            // カテゴリ別に覚える基本単語のサブカテゴリー
+            const elementarySubcategories = [
                 '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器', '衣類', '単位',
                 '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
                 '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
-            ];
-            
-            // 英文でよく登場する機能語のサブカテゴリー
-            const functionWordSubcategories = [
-                '冠詞', '代名詞', '疑問詞',
-                '限定詞（数量）', '前置詞', '助動詞・助動詞的表現', '接続詞', '関係代名詞', '間投詞'
             ];
             
             // レベル別の細分化メニューから来た場合は、レベル別の細分化メニューに戻る
@@ -6751,14 +6440,9 @@ function setupEventListeners() {
                 return;
             }
             
-            // カテゴリー別に覚える単語のサブカテゴリーの場合は親カテゴリーの細分化メニューに戻る（アニメーションなし）
-            if (selectedCategory && dailyLifeSubcategories.includes(selectedCategory)) {
-                // それ以外の場合は、カテゴリ別に覚える基本単語の画面に戻る
+            // カテゴリー別に覚える単語のサブカテゴリーの場合はカテゴリ別に覚える基本単語の画面に戻る
+            if (selectedCategory && elementarySubcategories.includes(selectedCategory)) {
                 showElementaryCategorySelection(true);
-                return;
-            }
-            if (selectedCategory && functionWordSubcategories.includes(selectedCategory)) {
-                showSubcategorySelection('英文でよく登場する機能語', true);
                 return;
             }
             
@@ -7430,6 +7114,21 @@ function setupEventListeners() {
             } else if (wordFilterView && !wordFilterView.classList.contains('hidden')) {
                 // フィルター画面からコース選択画面に戻る
                 wordFilterView.classList.add('hidden');
+                
+                // サブカテゴリー画面を再生成して進捗バーを更新
+                if (window.currentSubcategoryParent) {
+                    if (window.currentSubcategoryParent === 'レベル１ 超重要700語' || 
+                        window.currentSubcategoryParent === 'レベル２ 重要500語' || 
+                        window.currentSubcategoryParent === 'レベル３ 差がつく300語') {
+                        showLevelSubcategorySelection(window.currentSubcategoryParent, true);
+                        return;
+                    } else if (window.currentSubcategoryParent === 'カテゴリ別に覚える基本単語') {
+                        showElementaryCategorySelection(true);
+                        return;
+                    }
+                }
+                
+                // その他の場合は従来の処理
                 if (courseSelection) {
                     courseSelection.classList.remove('hidden');
                     // ヘッダーのタイトルを更新
@@ -8948,13 +8647,13 @@ function applyMarkers(word) {
         return;
     }
 
-    // カテゴリごとの進捗を取得（カテゴリがある場合）
+    // カテゴリごとの進捗を取得（両モードの進捗を合算）
     let categoryCorrectSet = correctWords;
     let categoryWrongSet = wrongWords;
     if (selectedCategory) {
         // 小学生で習った単語の場合は、その単語のカテゴリーから進捗を読み込む
         const categoryKey = (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') ? word.category : selectedCategory;
-        const categoryData = loadCategoryWords(categoryKey);
+        const categoryData = loadCategoryWordsForProgress(categoryKey);
         categoryCorrectSet = categoryData.correctSet;
         categoryWrongSet = categoryData.wrongSet;
     }
@@ -9141,6 +8840,12 @@ function renderInputListViewPaginated(words) {
         elements.mainContent.scrollTop = 0;
     }
     
+    // フリップモードでヘッダーがコンテナ内にある場合は先に元の位置に戻す
+    const inputListHeader = document.querySelector('.input-list-header');
+    if (inputListHeader && container.contains(inputListHeader)) {
+        listView.insertBefore(inputListHeader, container);
+    }
+    
     container.innerHTML = '';
     
     if (!Array.isArray(words) || words.length === 0) {
@@ -9319,6 +9024,12 @@ function renderInputListViewAsync(words) {
         elements.mainContent.scrollTop = 0;
     }
     
+    // フリップモードでヘッダーがコンテナ内にある場合は先に元の位置に戻す
+    const inputListHeader = document.querySelector('.input-list-header');
+    if (inputListHeader && container.contains(inputListHeader)) {
+        listView.insertBefore(inputListHeader, container);
+    }
+    
     container.innerHTML = '';
     
     if (!Array.isArray(words) || words.length === 0) {
@@ -9337,20 +9048,34 @@ function renderInputListViewAsync(words) {
         container.classList.remove('expand-mode');
     }
     
-    // 進捗マーカー用のセットを取得（小学生で習った単語の場合は各単語のカテゴリーから読み込む）
+    // 進捗マーカー用のセットを取得（両モードの進捗を合算）
     let progressCache = {};
     if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-        // 各カテゴリーの進捗をキャッシュ
-        const mode = selectedLearningMode || 'card';
+        // 各カテゴリーの進捗をキャッシュ（両モードの進捗を合算）
+        const modes = ['card', 'input'];
         words.forEach(word => {
             const cat = word.category;
             if (!progressCache[cat]) {
-                const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
-                const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
-                progressCache[cat] = {
-                    correct: savedCorrect ? new Set(JSON.parse(savedCorrect).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set(),
-                    wrong: savedWrong ? new Set(JSON.parse(savedWrong).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set()
-                };
+                progressCache[cat] = { correct: new Set(), wrong: new Set() };
+                modes.forEach(mode => {
+                    const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                    const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+                    if (savedCorrect) {
+                        JSON.parse(savedCorrect).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            if (!progressCache[cat].wrong.has(numId)) {
+                                progressCache[cat].correct.add(numId);
+                            }
+                        });
+                    }
+                    if (savedWrong) {
+                        JSON.parse(savedWrong).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            progressCache[cat].wrong.add(numId);
+                            progressCache[cat].correct.delete(numId);
+                        });
+                    }
+                });
             }
         });
     }
@@ -9358,7 +9083,8 @@ function renderInputListViewAsync(words) {
     let categoryCorrectSet = correctWords;
     let categoryWrongSet = wrongWords;
     if (selectedCategory && selectedCategory !== '小学生で習った単語とカテゴリー別に覚える単語') {
-        const sets = loadCategoryWords(selectedCategory);
+        // 両モードの進捗を合算して読み込む
+        const sets = loadCategoryWordsForProgress(selectedCategory);
         categoryCorrectSet = sets.correctSet;
         categoryWrongSet = sets.wrongSet;
     }
@@ -9705,6 +9431,12 @@ function renderInputListView(words) {
         elements.mainContent.scrollTop = 0;
     }
     
+    // フリップモードでヘッダーがコンテナ内にある場合は先に元の位置に戻す
+    const inputListHeader = document.querySelector('.input-list-header');
+    if (inputListHeader && container.contains(inputListHeader)) {
+        listView.insertBefore(inputListHeader, container);
+    }
+    
     container.innerHTML = '';
     
     if (!Array.isArray(words) || words.length === 0) {
@@ -9754,17 +9486,31 @@ function renderInputListView(words) {
             }
         }
     } else if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-        // 各カテゴリーの進捗をキャッシュ
-        const mode = selectedLearningMode || 'card';
+        // 各カテゴリーの進捗をキャッシュ（両モードの進捗を合算）
+        const modes = ['card', 'input'];
         words.forEach(word => {
             const cat = word.category;
             if (!progressCache[cat]) {
-                const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
-                const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
-                progressCache[cat] = {
-                    correct: savedCorrect ? new Set(JSON.parse(savedCorrect).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set(),
-                    wrong: savedWrong ? new Set(JSON.parse(savedWrong).map(id => typeof id === 'string' ? parseInt(id, 10) : id)) : new Set()
-                };
+                progressCache[cat] = { correct: new Set(), wrong: new Set() };
+                modes.forEach(mode => {
+                    const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                    const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+                    if (savedCorrect) {
+                        JSON.parse(savedCorrect).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            if (!progressCache[cat].wrong.has(numId)) {
+                                progressCache[cat].correct.add(numId);
+                            }
+                        });
+                    }
+                    if (savedWrong) {
+                        JSON.parse(savedWrong).forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            progressCache[cat].wrong.add(numId);
+                            progressCache[cat].correct.delete(numId);
+                        });
+                    }
+                });
             }
         });
     }
@@ -9772,7 +9518,8 @@ function renderInputListView(words) {
     let categoryCorrectSet = correctWords;
     let categoryWrongSet = wrongWords;
     if (selectedCategory && selectedCategory !== '小学生で習った単語とカテゴリー別に覚える単語' && selectedCategory !== '大阪府のすべての英単語') {
-        const sets = loadCategoryWords(selectedCategory);
+        // 両モードの進捗を合算して読み込む
+        const sets = loadCategoryWordsForProgress(selectedCategory);
         categoryCorrectSet = sets.correctSet;
         categoryWrongSet = sets.wrongSet;
     }
@@ -11262,10 +11009,28 @@ function markMastered() {
     // 小学生で習った単語、すべての単語の場合は、各単語のカテゴリーを使用
     const categoryKey = (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語' || selectedCategory === '大阪府のすべての英単語') ? word.category : selectedCategory;
     if (categoryKey) {
+        // 現在のモードで正解を保存
         const { correctSet, wrongSet } = loadCategoryWords(categoryKey);
         correctSet.add(word.id);
         wrongSet.delete(word.id);
         saveCategoryWords(categoryKey, correctSet, wrongSet);
+        
+        // すべてのモードの間違いリストから削除（別モードで間違えた記録も消す）
+        const allModes = ['card', 'input'];
+        allModes.forEach(mode => {
+            const wrongKey = `wrongWords-${categoryKey}_${mode}`;
+            const savedWrong = localStorage.getItem(wrongKey);
+            if (savedWrong) {
+                const wrongList = JSON.parse(savedWrong);
+                const filteredList = wrongList.filter(id => {
+                    const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                    return numId !== word.id;
+                });
+                if (filteredList.length !== wrongList.length) {
+                    localStorage.setItem(wrongKey, JSON.stringify(filteredList));
+                }
+            }
+        });
     }
     
     saveCorrectWords();
@@ -11422,11 +11187,28 @@ function markAnswer(isCorrect, isTimeout = false) {
         // 小学生で習った単語の場合は、各単語のカテゴリー（機能語の場合は「冠詞」「代名詞」など）を使用
         const categoryKey = (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') ? word.category : selectedCategory;
         if (categoryKey) {
+            // 現在のモードで正解を保存
             const { correctSet, wrongSet } = loadCategoryWords(categoryKey);
             correctSet.add(word.id);
-            // 正解した場合は間違いリストから削除
             wrongSet.delete(word.id);
             saveCategoryWords(categoryKey, correctSet, wrongSet);
+            
+            // すべてのモードの間違いリストから削除（別モードで間違えた記録も消す）
+            const allModes = ['card', 'input'];
+            allModes.forEach(mode => {
+                const wrongKey = `wrongWords-${categoryKey}_${mode}`;
+                const savedWrong = localStorage.getItem(wrongKey);
+                if (savedWrong) {
+                    const wrongList = JSON.parse(savedWrong);
+                    const filteredList = wrongList.filter(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        return numId !== word.id;
+                    });
+                    if (filteredList.length !== wrongList.length) {
+                        localStorage.setItem(wrongKey, JSON.stringify(filteredList));
+                    }
+                }
+            });
         }
         
         saveCorrectWords();

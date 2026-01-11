@@ -2775,7 +2775,7 @@ body.learning-mode .app-header {
     outline: none;
 }
 
-/* 日常生活でよく使う生活語彙（白） */
+/* カテゴリ別に覚える基本単語（白） */
 .category-accordion-item-green {
     background: #ffffff;
 }
@@ -2787,22 +2787,6 @@ body.learning-mode .app-header {
 
 .category-accordion-item-green:focus,
 .category-accordion-item-green:focus-visible {
-    background: #ffffff;
-    outline: none;
-}
-
-/* 英文でよく登場する機能語（白） */
-.category-accordion-item-purple {
-    background: #ffffff;
-}
-
-.category-accordion-item-purple:active {
-    transform: scale(0.99);
-    background: #ffffff;
-}
-
-.category-accordion-item-purple:focus,
-.category-accordion-item-purple:focus-visible {
     background: #ffffff;
     outline: none;
 }
@@ -3432,6 +3416,15 @@ button.category-card:focus-visible {
     position: relative;
 }
 
+/* 英語→日本語モード（カードモード）で全問正解した場合の青色COMPLETE表示 */
+.category-progress-bar.category-progress-complete {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    box-shadow: 
+        0 0 8px rgba(59, 130, 246, 0.4),
+        0 0 16px rgba(37, 99, 235, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
 .category-progress-bar.category-progress-complete::after {
     content: "COMPLETE!!";
     position: absolute;
@@ -3445,7 +3438,13 @@ button.category-card:focus-visible {
     letter-spacing: 1px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     z-index: 1;
+}
+
+.category-progress-bar.category-progress-complete .category-progress-correct,
+.category-progress-bar.category-progress-complete .category-progress-wrong {
+    background: transparent;
 }
 
 /* 日本語→英語モード（入力モード）で全問正解した場合の金色COMPLETE表示 */
@@ -3502,7 +3501,7 @@ button.category-card:focus-visible {
 .category-progress-correct {
     height: 100%;
     min-width: 0;
-    background: #3182ce;
+    background: #3b82f6;
     transition: width 0.25s ease;
     flex-shrink: 0;
 }
@@ -3979,7 +3978,7 @@ body.quiz-test-mode .progress-top-row {
 }
 
 .pause-quit-btn {
-    background: #fafafa;
+    background: #e5e7eb;
     color: #dc2626;
     border: none;
     padding: 14px 24px;
@@ -3992,11 +3991,11 @@ body.quiz-test-mode .progress-top-row {
 }
 
 .pause-quit-btn:hover {
-    background: #e5e7eb;
+    background: #d1d5db;
 }
 
 .pause-quit-btn:active {
-    background: #d1d5db;
+    background: #c4c7cc;
 }
 
 /* インプットモード用戻るボタン */
