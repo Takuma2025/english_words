@@ -3811,6 +3811,52 @@ button.category-card:focus-visible {
     position: relative;
 }
 
+/* テストモード時のヘッダースタイル（白背景） */
+body.quiz-test-mode .unit-header-container {
+    background: #ffffff;
+    justify-content: center;
+    margin-bottom: 0;
+}
+
+body.quiz-test-mode .unit-header-container .unit-name,
+body.quiz-test-mode .unit-header-container .input-back-btn,
+body.quiz-test-mode .unit-header-container .hw-back-btn,
+body.quiz-test-mode .unit-header-container .unit-test-btn,
+body.quiz-test-mode .unit-header-container .memo-pad-btn {
+    display: none !important;
+}
+
+body.quiz-test-mode .unit-header-container .test-mode-progress {
+    display: block !important;
+}
+
+body.quiz-test-mode .unit-header-container .unit-pause-btn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-top: calc(env(safe-area-inset-top) / 2);
+    color: #333333;
+}
+
+/* テストモード用の進捗表示（中央） */
+.test-mode-progress {
+    color: #333333;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.test-mode-progress.hidden {
+    display: none;
+}
+
+/* テストモード時は進捗バーの上の進捗テキストを非表示（ヘッダーに表示するため） */
+body.quiz-test-mode .progress-top-row {
+    display: none !important;
+}
+
+
 .unit-name {
     color: #ffffff;
     flex: 1;

@@ -2797,6 +2797,30 @@ function updateThemeColor(isLearningMode) {
     }
 }
 
+// テストモード用のテーマカラーを更新（白背景）
+function updateThemeColorForTest(isTestMode) {
+    const color = isTestMode ? '#ffffff' : '#0055ca';
+    
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    const statusBarStyleMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    
+    if (themeColorMeta) {
+        themeColorMeta.setAttribute('content', color);
+        
+        const parent = themeColorMeta.parentNode;
+        themeColorMeta.remove();
+        const newMeta = document.createElement('meta');
+        newMeta.name = 'theme-color';
+        newMeta.content = color;
+        parent.insertBefore(newMeta, parent.firstChild);
+    }
+    
+    // iOS用のステータスバースタイルも更新
+    if (statusBarStyleMeta) {
+        statusBarStyleMeta.setAttribute('content', isTestMode ? 'default' : 'black-translucent');
+    }
+}
+
 // フィードバックオーバーレイの位置を更新（タイトルコンテナのボーダーの下から開始）
 function updateFeedbackOverlayPosition() {
     if (!document.body.classList.contains('learning-mode')) return;
@@ -2982,6 +3006,20 @@ function showCategorySelection() {
     
     // 赤シートをリセット
     resetRedSheet();
+    
+    // テストモードのクラスをリセット
+    document.body.classList.remove('quiz-test-mode');
+    updateThemeColorForTest(false);
+    
+    // テストモード用の進捗表示を非表示
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress) testModeProgress.classList.add('hidden');
+    const hwTestModeProgress = document.getElementById('hwTestModeProgress');
+    if (hwTestModeProgress) hwTestModeProgress.classList.add('hidden');
+    
+    // 手書きクイズ画面を非表示
+    const hwQuizView = document.getElementById('handwritingQuizView');
+    if (hwQuizView) hwQuizView.classList.add('hidden');
     
     // タイマーを停止
     if (timerInterval) {
@@ -6215,6 +6253,16 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
         // ヘッダー更新（テストモード：×ボタン表示）
         updateHeaderButtons('learning', '', true);
+        
+        // テストモード用のUIを有効化（白背景ヘッダー、中央に進捗表示）
+        document.body.classList.add('quiz-test-mode');
+        const testModeProgress = document.getElementById('testModeProgress');
+        if (testModeProgress) {
+            testModeProgress.classList.remove('hidden');
+            testModeProgress.textContent = `1/${currentWords.length}`;
+        }
+        // ステータスバーを白に
+        updateThemeColorForTest(true);
     }
     
     // 例文モード用のナビゲーションボタンを非表示
@@ -12466,6 +12514,12 @@ function updateStats() {
         elements.progressText.textContent = `${currentPosition} / ${total}`;
     }
     
+    // テストモード用の進捗表示も更新
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress && document.body.classList.contains('quiz-test-mode')) {
+        testModeProgress.textContent = `${currentPosition}/${total}`;
+    }
+    
     // 正解数・不正解数・正解率の表示は常に非表示
     const progressStatsScores = document.querySelector('.progress-stats-scores');
     if (progressStatsScores) {
@@ -15909,11 +15963,23 @@ async function startHandwritingQuiz(category, words, courseTitle) {
         bindHWQuizSubmitButton();
     }
     
-    // 単元名を設定
+    // 単元名を設定（テストモードでは非表示）
     const unitName = document.getElementById('hwQuizUnitName');
     if (unitName) {
         unitName.textContent = courseTitle || '日本語→英語';
+        unitName.classList.add('hidden');
     }
+    
+    // テストモード用のUIを有効化（白背景ヘッダー、中央に進捗表示）
+    document.body.classList.add('quiz-test-mode');
+    document.body.classList.add('learning-mode');
+    const hwTestModeProgress = document.getElementById('hwTestModeProgress');
+    if (hwTestModeProgress) {
+        hwTestModeProgress.classList.remove('hidden');
+        hwTestModeProgress.textContent = `1/${words.length}`;
+    }
+    // ステータスバーを白に
+    updateThemeColorForTest(true);
     
     // 進捗セグメントを初期化
     initHWQuizProgressSegments();
@@ -15996,6 +16062,12 @@ function updateHWQuizStats() {
     if (correctEl) correctEl.textContent = hwQuizCorrectCount;
     if (wrongEl) wrongEl.textContent = hwQuizWrongCount;
     if (progressEl) progressEl.textContent = `${hwQuizIndex + 1}/${hwQuizWords.length}`;
+    
+    // テストモード用の進捗表示も更新
+    const hwTestModeProgress = document.getElementById('hwTestModeProgress');
+    if (hwTestModeProgress && document.body.classList.contains('quiz-test-mode')) {
+        hwTestModeProgress.textContent = `${hwQuizIndex + 1}/${hwQuizWords.length}`;
+    }
 }
 
 /**
@@ -17621,6 +17693,15 @@ function exitHWQuiz() {
     const hwQuizView = document.getElementById('handwritingQuizView');
     
     if (hwQuizView) hwQuizView.classList.add('hidden');
+    
+    // テストモードのクラスをリセット
+    document.body.classList.remove('quiz-test-mode');
+    document.body.classList.remove('learning-mode');
+    updateThemeColorForTest(false);
+    
+    // テストモード用の進捗表示を非表示
+    const hwTestModeProgress = document.getElementById('hwTestModeProgress');
+    if (hwTestModeProgress) hwTestModeProgress.classList.add('hidden');
     
     // リセット
     hwQuizWords = [];

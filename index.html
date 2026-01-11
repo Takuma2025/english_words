@@ -515,6 +515,8 @@
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                         </button>
                         <span class="unit-name" id="unitName">単元名</span>
+                        <!-- テストモード用の進捗表示（中央） -->
+                        <span class="test-mode-progress hidden" id="testModeProgress">1/18</span>
                         <div class="unit-header-actions">
                             <button class="memo-pad-btn" id="memoPadBtn" aria-label="メモ">
                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1726,10 +1728,12 @@
         
         <!-- 単元名と中断ボタンのコンテナ（英語→日本語モードと同じ） -->
         <div class="unit-header-container">
-            <button class="hw-back-btn" id="hwQuizBackBtn" aria-label="戻る">
+            <button class="hw-back-btn hidden" id="hwQuizBackBtn" aria-label="戻る">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
-            <span class="unit-name" id="hwQuizUnitName">日本語→英語</span>
+            <span class="unit-name hidden" id="hwQuizUnitName">日本語→英語</span>
+            <!-- テストモード用の進捗表示（中央） -->
+            <span class="test-mode-progress" id="hwTestModeProgress">1/18</span>
             <button class="unit-pause-btn" id="hwQuizPauseBtn" aria-label="中断">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
