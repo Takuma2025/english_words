@@ -264,6 +264,7 @@ const SoundEffects = {
 let answeredWords = new Set();
 let correctCount = 0;
 let wrongCount = 0;
+let consecutiveCorrect = 0; // 連続正解数
 let selectedCategory = null;
 let reviewWords = new Set(); // 復習用チェック（★）
 // 志望校データは school-data.js で管理
@@ -5806,6 +5807,7 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     answeredWords.clear();
     correctCount = 0;
     wrongCount = 0;
+    consecutiveCorrect = 0; // 連続正解数をリセット
     const total = end - start;
     questionStatus = new Array(total).fill(null); // 各問題の回答状況を初期化
     
@@ -11214,14 +11216,71 @@ function showSparkleEffect() {
 }
 
 // スワイプまたはボタンで正解/不正解をマーク
+// 連続正解メッセージを表示
+function showConsecutiveCorrectMessage(count) {
+    // メッセージとスタイルを決定
+    let message = '';
+    let colorClass = '';
+    
+    if (count >= 5) {
+        message = 'Perfect!';
+        colorClass = 'streak-perfect';
+    } else if (count === 4) {
+        message = 'Excellent!';
+        colorClass = 'streak-excellent';
+    } else if (count === 3) {
+        message = 'Fantastic!';
+        colorClass = 'streak-fantastic';
+    } else if (count === 2) {
+        message = 'Great!';
+        colorClass = 'streak-great';
+    } else if (count === 1) {
+        message = 'Good!';
+        colorClass = 'streak-good';
+    } else {
+        return; // 0以下は表示しない
+    }
+    
+    // 既存のメッセージを削除
+    const existing = document.querySelector('.streak-message');
+    if (existing) {
+        existing.remove();
+    }
+    
+    // メッセージ要素を作成
+    const msgEl = document.createElement('div');
+    msgEl.className = `streak-message ${colorClass}`;
+    msgEl.innerHTML = `
+        <span class="streak-text">${message}</span>
+        ${count >= 2 ? `<span class="streak-count">${count} combo</span>` : ''}
+    `;
+    
+    // body直下に追加（カード切り替えの影響を受けない）
+    document.body.appendChild(msgEl);
+    
+    // アニメーション後に削除
+    setTimeout(() => {
+        msgEl.classList.add('streak-message-fade');
+        setTimeout(() => {
+            msgEl.remove();
+        }, 400);
+    }, 1500);
+}
+
 function markAnswer(isCorrect, isTimeout = false) {
     if (currentIndex >= currentRangeEnd) return;
     
     // 効果音を再生（正解/不正解）
     if (isCorrect) {
         SoundEffects.playCorrect();
+        // 連続正解数を増やす
+        consecutiveCorrect++;
+        // 連続正解メッセージを表示
+        showConsecutiveCorrectMessage(consecutiveCorrect);
     } else {
         SoundEffects.playWrong();
+        // 連続正解をリセット
+        consecutiveCorrect = 0;
     }
 
     const word = currentWords[currentIndex];

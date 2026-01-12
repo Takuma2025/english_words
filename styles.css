@@ -4643,6 +4643,10 @@ body.quiz-test-mode .progress-top-row {
     width: calc(100% - 16px);
 }
 
+.word-card-container {
+    position: relative;
+}
+
 /* 入力モードの場合は下のパディングを調整 */
 .card-area-wrapper:has(.input-mode:not(.hidden)) {
     padding-top: 0;
@@ -15937,5 +15941,109 @@ body.choice-question-mode-active .choice-question-mode {
     
     .choice-explanation-content {
         font-size: 14px;
+    }
+}
+
+/* =====================================
+   連続正解メッセージ
+   ===================================== */
+
+.streak-message {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    animation: streakPopIn 0.3s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes streakPopIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+.streak-message-fade {
+    animation: streakFadeOut 0.4s ease-out forwards;
+}
+
+@keyframes streakFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.9);
+    }
+}
+
+.streak-text {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    -webkit-text-stroke: 4px #ffffff;
+    paint-order: stroke fill;
+}
+
+.streak-count {
+    font-size: 14px;
+    font-weight: 700;
+    -webkit-text-stroke: 2px #ffffff;
+    paint-order: stroke fill;
+}
+
+/* Good! - 1回目 (青) */
+.streak-good .streak-text,
+.streak-good .streak-count {
+    color: #2563eb;
+}
+
+/* Great! - 2連続 (緑) */
+.streak-great .streak-text,
+.streak-great .streak-count {
+    color: #16a34a;
+}
+
+/* Fantastic! - 3連続 (オレンジ) */
+.streak-fantastic .streak-text,
+.streak-fantastic .streak-count {
+    color: #ea580c;
+}
+
+/* Excellent! - 4連続 (紫) */
+.streak-excellent .streak-text,
+.streak-excellent .streak-count {
+    color: #9333ea;
+}
+
+/* Perfect! - 5連続以上 (金) */
+.streak-perfect .streak-text,
+.streak-perfect .streak-count {
+    color: #d97706;
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+    .streak-message {
+        top: 70px;
+    }
+    
+    .streak-text {
+        font-size: 24px;
+    }
+    
+    .streak-count {
+        font-size: 12px;
     }
 }
