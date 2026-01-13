@@ -9478,7 +9478,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     flex-direction: column;
     padding: 20px 16px 0 16px;
-    padding-bottom: 200px; /* 下部固定キーボードのためのスペース */
+    padding-bottom: 260px; /* 下部固定キーボード+ナビゲーションボタンのためのスペース */
     overflow: visible; /* ポップアップを隠さないように */
     min-height: 0;
     max-height: 100%;
@@ -9553,13 +9553,12 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .sentence-english {
     font-size: clamp(18px, 4.5vw, 24px);
-    font-weight: 600;
+    font-weight: 400;
     color: #1f2937;
     line-height: 1.7;
     margin-bottom: 18px; /* 日本語との縦間隔を詰める */
     text-align: left;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
+    font-family: "Times New Roman", Georgia, serif;
     word-spacing: 0.1em;
 }
 
@@ -9589,6 +9588,10 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     overflow: hidden;
     white-space: nowrap;
     line-height: 1;
+    position: relative;
+    z-index: 10;
+    -webkit-tap-highlight-color: rgba(59, 130, 246, 0.3);
+    touch-action: manipulation;
 }
 
 .sentence-blank:hover {
@@ -9672,6 +9675,74 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .sentence-mode .keyboard-actions {
     padding-bottom: max(10px, env(safe-area-inset-bottom));
+}
+
+/* 空欄ナビゲーションボタン */
+.blank-navigation {
+    position: fixed;
+    bottom: 220px; /* キーボードの上 */
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: transparent;
+    z-index: 501;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+    .blank-navigation {
+        bottom: 230px;
+        padding: 6px 12px;
+    }
+}
+
+.blank-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 16px;
+    background: #ffffff;
+    border: 2px solid #3b82f6;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #3b82f6;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.blank-nav-btn:hover:not(:disabled) {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+.blank-nav-btn:active:not(:disabled) {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+}
+
+.blank-nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    color: #9ca3af;
+}
+
+.blank-nav-btn svg {
+    flex-shrink: 0;
+}
+
+/* 回答後はナビゲーションを非表示 */
+.blank-navigation.hidden {
+    display: none;
 }
 
 @media (max-width: 600px) {
@@ -15699,14 +15770,13 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 20px 16px 80px 16px;
+    gap: 12px;
+    padding: 16px 16px 80px 16px;
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
-    overflow-y: auto;
-    min-height: 0;
-    max-height: 100%;
+    overflow-y: visible;
+    overflow: visible;
     box-sizing: border-box;
     background-color: #ffffff;
 }
@@ -15732,10 +15802,10 @@ body.choice-question-mode-active .choice-question-mode {
 /* 問題コンテナ */
 .choice-question-container {
     background: #ffffff;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e5e7eb;
+    border-radius: 0;
+    padding: 16px 0;
+    box-shadow: none;
+    border: none;
 }
 
 .choice-question-number {
@@ -15771,17 +15841,16 @@ body.choice-question-mode-active .choice-question-mode {
     width: 100%;
     padding: 16px 20px;
     background: #ffffff;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: none;
 }
 
 .choice-option-btn:hover:not(.selected):not(.correct):not(.wrong) {
-    border-color: #3182ce;
-    background: #f0f7ff;
+    background: #e5e7eb;
 }
 
 .choice-option-btn:active:not(.selected):not(.correct):not(.wrong) {
@@ -15789,18 +15858,17 @@ body.choice-question-mode-active .choice-question-mode {
 }
 
 .choice-option-btn.selected {
-    border-color: #3182ce;
-    background: #ebf5ff;
+    background: #dbeafe;
 }
 
 .choice-option-btn.correct {
-    border-color: #10b981;
-    background: #d1fae5;
+    background: #dbeafe;
+    border-color: #3182ce;
 }
 
 .choice-option-btn.wrong {
-    border-color: #ef4444;
     background: #fee2e2;
+    border-color: #ef4444;
 }
 
 .choice-option-btn.disabled {
@@ -15828,7 +15896,7 @@ body.choice-question-mode-active .choice-question-mode {
 }
 
 .choice-option-btn.correct .choice-label {
-    background: #10b981;
+    background: #3182ce;
     color: #ffffff;
 }
 
@@ -15853,8 +15921,8 @@ body.choice-question-mode-active .choice-question-mode {
 }
 
 .choice-explanation-container.correct-answer {
-    border-left-color: #10b981;
-    background: #f0fdf4;
+    border-left-color: #3182ce;
+    background: #eff6ff;
 }
 
 .choice-explanation-container.wrong-answer {
@@ -15898,6 +15966,9 @@ body.choice-question-mode-active .choice-question-mode {
     padding: 14px 24px;
     font-size: 16px;
     font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* レスポンシブ対応 */
@@ -15908,8 +15979,8 @@ body.choice-question-mode-active .choice-question-mode {
     }
     
     .choice-question-container {
-        padding: 16px;
-        border-radius: 12px;
+        padding: 12px 0;
+        border-radius: 0;
     }
     
     .choice-question-number {

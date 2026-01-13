@@ -12864,6 +12864,12 @@ function displayCurrentSentence() {
     sentenceAnswerSubmitted = false;
     currentSelectedBlankIndex = -1; // 選択状態をリセット
     
+    // ナビゲーションボタンを表示
+    const blankNav = document.getElementById('blankNavigation');
+    if (blankNav) {
+        blankNav.classList.remove('hidden');
+    }
+    
     // 進捗バーを更新
     updateSentenceProgressBar();
     
@@ -12896,13 +12902,22 @@ function displayCurrentSentence() {
         // 英文を単語に分割し、空所の位置を特定
         const words = sentence.english.split(' ');
         
+        // 使用済みの空欄インデックスを追跡
+        const usedBlankIndices = new Set();
+        
         words.forEach((word, idx) => {
             // 句読点を除去した単語で比較
             const wordWithoutPunct = word.replace(/[.,!?]/g, '');
-            // 空所かどうかを判定（blanks配列に含まれているか）
-            const blankInfo = sentence.blanks.find(b => b.word.toLowerCase() === wordWithoutPunct.toLowerCase());
+            // 空所かどうかを判定（blanks配列に含まれていて、まだ使用されていないもの）
+            const blankInfo = sentence.blanks.find(b => 
+                b.word.toLowerCase() === wordWithoutPunct.toLowerCase() && 
+                !usedBlankIndices.has(b.index)
+            );
             
             if (blankInfo) {
+                // この空欄を使用済みとしてマーク
+                usedBlankIndices.add(blankInfo.index);
+                
                 // 空所を作成
                 const blankSpan = document.createElement('span');
                 blankSpan.className = 'sentence-blank';
@@ -12947,10 +12962,16 @@ function displayCurrentSentence() {
             const calculatedWidth = Math.max(isMobile ? 50 : 60, (blank.word.length * charWidth) + padding + extraSpace);
             blank.element.style.width = `${calculatedWidth}px`;
             
-            blank.element.addEventListener('click', () => {
+            // タップ/クリックイベントを追加
+            const handleBlankTap = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 if (sentenceAnswerSubmitted) return;
                 selectSentenceBlank(blank.index);
-            });
+            };
+            
+            blank.element.addEventListener('touchstart', handleBlankTap, { passive: false });
+            blank.element.addEventListener('click', handleBlankTap);
         });
         
         // 最初の空所を選択
@@ -13063,6 +13084,48 @@ function setupSentenceKeyboard() {
         hintBtn.addEventListener('touchstart', handleHint, { passive: false });
         hintBtn.addEventListener('click', handleHint);
     }
+    
+    // 空欄ナビゲーションボタン
+    setupBlankNavButtons();
+}
+
+// 空欄ナビゲーションボタンの設定
+function setupBlankNavButtons() {
+    const prevBtn = document.getElementById('prevBlankBtn');
+    const nextBtn = document.getElementById('nextBlankBtn');
+    
+    if (prevBtn) {
+        // 既存のイベントリスナーをクローンして削除
+        const prevBtnClone = prevBtn.cloneNode(true);
+        prevBtn.parentNode.replaceChild(prevBtnClone, prevBtn);
+        const newPrevBtn = document.getElementById('prevBlankBtn');
+        
+        const handlePrev = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            moveToPreviousBlank();
+        };
+        newPrevBtn.addEventListener('touchstart', handlePrev, { passive: false });
+        newPrevBtn.addEventListener('click', handlePrev);
+    }
+    
+    if (nextBtn) {
+        // 既存のイベントリスナーをクローンして削除
+        const nextBtnClone = nextBtn.cloneNode(true);
+        nextBtn.parentNode.replaceChild(nextBtnClone, nextBtn);
+        const newNextBtn = document.getElementById('nextBlankBtn');
+        
+        const handleNext = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            moveToNextBlank();
+        };
+        newNextBtn.addEventListener('touchstart', handleNext, { passive: false });
+        newNextBtn.addEventListener('click', handleNext);
+    }
+    
+    // 初期状態を更新
+    updateBlankNavButtons();
 }
 
 // 空所を選択する
@@ -13079,6 +13142,65 @@ function selectSentenceBlank(blankIndex) {
     if (blank) {
         blank.element.classList.add('selected');
         currentSelectedBlankIndex = blankIndex;
+    }
+    
+    // ナビゲーションボタンの状態を更新
+    updateBlankNavButtons();
+}
+
+// 次の空欄へ移動
+function moveToNextBlank() {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive || sentenceBlanks.length === 0) return;
+    
+    // 現在選択中の空欄のインデックスを取得
+    const currentIndex = sentenceBlanks.findIndex(b => b.index === currentSelectedBlankIndex);
+    
+    // 次の空欄へ移動
+    if (currentIndex < sentenceBlanks.length - 1) {
+        selectSentenceBlank(sentenceBlanks[currentIndex + 1].index);
+    }
+}
+
+// 前の空欄へ移動
+function moveToPreviousBlank() {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive || sentenceBlanks.length === 0) return;
+    
+    // 現在選択中の空欄のインデックスを取得
+    const currentIndex = sentenceBlanks.findIndex(b => b.index === currentSelectedBlankIndex);
+    
+    // 前の空欄へ移動
+    if (currentIndex > 0) {
+        selectSentenceBlank(sentenceBlanks[currentIndex - 1].index);
+    }
+}
+
+// ナビゲーションボタンの状態を更新
+function updateBlankNavButtons() {
+    const prevBtn = document.getElementById('prevBlankBtn');
+    const nextBtn = document.getElementById('nextBlankBtn');
+    
+    if (!prevBtn || !nextBtn || sentenceBlanks.length === 0) return;
+    
+    const currentIndex = sentenceBlanks.findIndex(b => b.index === currentSelectedBlankIndex);
+    
+    // 前の空欄ボタン
+    if (currentIndex <= 0) {
+        prevBtn.disabled = true;
+    } else {
+        prevBtn.disabled = false;
+    }
+    
+    // 次の空欄ボタン
+    if (currentIndex >= sentenceBlanks.length - 1) {
+        nextBtn.disabled = true;
+    } else {
+        nextBtn.disabled = false;
+    }
+    
+    // 回答送信後は両方無効化
+    if (sentenceAnswerSubmitted) {
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
     }
 }
 
@@ -13207,6 +13329,12 @@ function handleSentencePass() {
         updateProgressSegments();
     }
     
+    // ナビゲーションボタンを非表示
+    const blankNav = document.getElementById('blankNavigation');
+    if (blankNav) {
+        blankNav.classList.add('hidden');
+    }
+    
     // 画面全体のフィードバック表示（薄い赤）
     if (elements.feedbackOverlay) {
         elements.feedbackOverlay.className = 'feedback-overlay wrong active';
@@ -13259,6 +13387,12 @@ function handleSentenceDecide() {
     updateStats();
     if (typeof updateProgressSegments === 'function') {
         updateProgressSegments();
+    }
+    
+    // ナビゲーションボタンを非表示
+    const blankNav = document.getElementById('blankNavigation');
+    if (blankNav) {
+        blankNav.classList.add('hidden');
     }
     
     // 画面全体のフィードバック表示（正解は薄い青、不正解は薄い赤）
