@@ -3795,6 +3795,12 @@ button.category-card:focus-visible {
     min-height: 0;
 }
 
+/* 厳選例文暗記・四択問題モードの背景を白に */
+body.sentence-mode-active .learning-view,
+body.choice-question-mode-active .learning-view {
+    background: #ffffff;
+}
+
 .unit-header-container {
     display: flex;
     justify-content: space-between;
@@ -9478,8 +9484,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     flex-direction: column;
     padding: 20px 16px 0 16px;
-    padding-bottom: 260px; /* 下部固定キーボード+ナビゲーションボタンのためのスペース */
-    overflow: visible; /* ポップアップを隠さないように */
+    padding-bottom: 0;
+    overflow: hidden; /* このモードのみスクロール無効 */
     min-height: 0;
     max-height: 100%;
     box-sizing: border-box;
@@ -9489,7 +9495,81 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 厳選例文暗記モードの進捗バー */
 .sentence-progress-header {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
+    padding: 0 16px;
+}
+
+/* テストモード時は進捗バーを日本語→英語モードと同じスタイルで表示 */
+body.quiz-test-mode.sentence-mode-active .progress-top-row,
+body.quiz-test-mode.choice-question-mode-active .progress-top-row {
+    display: none !important;
+}
+
+body.quiz-test-mode.sentence-mode-active .hw-progress-bottom-row,
+body.quiz-test-mode.choice-question-mode-active .hw-progress-bottom-row {
+    display: none !important;
+}
+
+/* 厳選例文暗記・四択問題モードのグレー線を削除 */
+body.sentence-mode-active .card-area-wrapper,
+body.choice-question-mode-active .card-area-wrapper {
+    border: none;
+    box-shadow: none;
+    background: #ffffff;
+}
+
+body.sentence-mode-active .app-main,
+body.choice-question-mode-active .app-main {
+    background: #ffffff;
+}
+
+/* ヘッダー下のmargin（グレー線）を削除 */
+body.sentence-mode-active .unit-header-container,
+body.choice-question-mode-active .unit-header-container {
+    margin-bottom: 0;
+    border-bottom: none;
+    box-shadow: none;
+}
+
+/* 進捗バーのセグメント背景色を設定 */
+body.sentence-mode-active .progress-bar-container,
+body.choice-question-mode-active .progress-bar-container {
+    background: transparent;
+    margin-bottom: 8px;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+}
+
+/* 未回答セグメントのデフォルト背景色（グレー）と均等幅 */
+body.sentence-mode-active .progress-segment,
+body.choice-question-mode-active .progress-segment {
+    background: #d1d5db;
+    flex: 1 1 0;
+}
+
+/* 正解（青）、不正解（赤）、現在（緑）のセグメント */
+body.sentence-mode-active .progress-segment.correct,
+body.choice-question-mode-active .progress-segment.correct {
+    background: #3b82f6;
+}
+
+body.sentence-mode-active .progress-segment.wrong,
+body.choice-question-mode-active .progress-segment.wrong {
+    background: #ef4444;
+}
+
+body.sentence-mode-active .progress-segment.current,
+body.choice-question-mode-active .progress-segment.current {
+    background: #22c55e !important;
+}
+
+/* 進捗バーのテキスト行を非表示（ヘッダーに表示するため） */
+body.sentence-mode-active .sentence-progress-header .progress-top-row,
+body.choice-question-mode-active .choice-progress-header .progress-top-row,
+body.sentence-mode-active .sentence-progress-header .hw-progress-bottom-row,
+body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row {
+    display: none;
 }
 
 /* 整序英作文モードの進捗バー */
@@ -9570,11 +9650,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 60px;
-    min-height: 40px;
-    height: 40px;
-    padding: 8px 12px;
-    margin: 4px;
+    width: 60px; /* 初期幅を統一 */
+    min-height: 36px;
+    height: 36px;
+    padding: 4px 8px;
+    margin: 3px;
     border: 1px solid #000000;
     border-radius: 4px;
     text-align: center;
@@ -9582,7 +9662,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     color: #1f2937;
     background: #ffffff;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: width 0.15s ease, background 0.2s, border-color 0.2s;
     vertical-align: middle;
     box-sizing: border-box;
     overflow: hidden;
@@ -9592,6 +9672,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     z-index: 10;
     -webkit-tap-highlight-color: rgba(59, 130, 246, 0.3);
     touch-action: manipulation;
+    font-family: "Times New Roman", Georgia, serif;
 }
 
 .sentence-blank:hover {
@@ -9768,11 +9849,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     }
     
     .sentence-blank {
-        min-width: 50px;
-        min-height: 36px;
-        height: 36px;
+        width: 50px; /* モバイル初期幅を統一 */
+        min-height: 32px;
+        height: 32px;
         padding: 3px 6px;
-        margin: 4px 2px;
+        margin: 2px;
     }
 }
 
@@ -15771,12 +15852,12 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 16px 16px 80px 16px;
+    padding: 16px 16px 0 16px;
+    padding-bottom: 0;
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
-    overflow-y: visible;
-    overflow: visible;
+    overflow: hidden; /* このモードのみスクロール無効 */
     box-sizing: border-box;
     background-color: #ffffff;
 }
@@ -15795,8 +15876,8 @@ body.choice-question-mode-active .choice-question-mode {
 /* 四択問題モードの進捗バー */
 .choice-progress-header {
     background: transparent;
-    padding: 0;
-    margin-bottom: 8px;
+    padding: 0 16px;
+    margin-bottom: 12px;
 }
 
 /* 問題コンテナ */
@@ -15974,7 +16055,7 @@ body.choice-question-mode-active .choice-question-mode {
 /* レスポンシブ対応 */
 @media (max-width: 480px) {
     .choice-question-mode {
-        padding: 12px;
+        padding: 12px 12px 0 12px;
         gap: 12px;
     }
     

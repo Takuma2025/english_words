@@ -12710,14 +12710,26 @@ function initSentenceModeLearning(category) {
     updateThemeColor(true);
     document.body.classList.add('learning-mode');
     
-    // ハンバーガーメニューと戻るボタンを非表示、ポーズボタンを表示（テストモード）
+    // ヘッダーをテストモードに更新（白背景、真ん中に進捗、右上に×ボタン）
     updateHeaderButtons('learning', '', true);
-
-    // インプットモード用戻るボタンとポーズボタンの制御
-    const inputBackBtn = document.getElementById('inputBackBtn');
+    
+    // テストモード用のUIを有効化（白背景ヘッダー、中央に進捗表示）
+    document.body.classList.add('quiz-test-mode');
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress) {
+        testModeProgress.classList.remove('hidden');
+        testModeProgress.textContent = `1/${sentenceData.length}`;
+    }
+    
+    // ×ボタン表示、その他非表示
+    const memoPadBtn = document.getElementById('memoPadBtn');
+    const unitTestBtn = document.getElementById('unitTestBtn');
     const unitPauseBtn = document.getElementById('unitPauseBtn');
-    if (inputBackBtn) inputBackBtn.classList.add('hidden');
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    if (memoPadBtn) memoPadBtn.classList.add('hidden');
+    if (unitTestBtn) unitTestBtn.classList.add('hidden');
     if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
+    if (inputBackBtn) inputBackBtn.classList.add('hidden');
 
     // カードモード、入力モード、整序英作文モードを非表示、例文モードを表示
     const wordCard = document.getElementById('wordCard');
@@ -12873,6 +12885,12 @@ function displayCurrentSentence() {
     // 進捗バーを更新
     updateSentenceProgressBar();
     
+    // テストモード用の進捗表示を更新
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress && document.body.classList.contains('quiz-test-mode')) {
+        testModeProgress.textContent = `${currentSentenceIndex + 1}/${sentenceData.length}`;
+    }
+    
     // ヒントを非表示にリセット
     const hintContent = document.getElementById('sentenceHintContent');
     const hintBtn = document.getElementById('sentenceHintBtn');
@@ -12922,15 +12940,13 @@ function displayCurrentSentence() {
                 const blankSpan = document.createElement('span');
                 blankSpan.className = 'sentence-blank';
                 blankSpan.dataset.blankIndex = blankInfo.index;
-                blankSpan.textContent = ' '.repeat(blankInfo.word.length); // 空欄をスペースで埋める
+                blankSpan.textContent = ''; // 初期状態は空
                 blankSpan.dataset.correctWord = blankInfo.word;
                 
-                // 単語の長さに応じて幅を計算（1文字あたり約14px + パディング24px + 余裕8px）
-                const charWidth = 14; // フォントサイズとフォントファミリーに基づく概算
-                const padding = 24; // 左右のパディング（12px × 2）
-                const extraSpace = 8; // 余裕
-                const calculatedWidth = Math.max(60, (blankInfo.word.length * charWidth) + padding + extraSpace);
-                blankSpan.style.width = `${calculatedWidth}px`;
+                // 初期幅を統一（すべて同じ幅）
+                const isMobile = window.innerWidth <= 600;
+                const initialWidth = isMobile ? 50 : 60; // 初期幅を固定
+                blankSpan.style.width = `${initialWidth}px`;
                 
                 englishEl.appendChild(blankSpan);
                 
@@ -12952,16 +12968,8 @@ function displayCurrentSentence() {
         // 空所をindex順にソート
         sentenceBlanks.sort((a, b) => a.index - b.index);
         
-        // 空所にタップイベントを追加し、幅を再計算
+        // 空所にタップイベントを追加
         sentenceBlanks.forEach(blank => {
-            // モバイル対応の幅計算
-            const isMobile = window.innerWidth <= 600;
-            const charWidth = isMobile ? 12 : 14; // モバイルでは文字幅が小さい
-            const padding = isMobile ? 12 : 24; // モバイルではパディングが小さい（左右各6px or 12px）
-            const extraSpace = isMobile ? 4 : 8;
-            const calculatedWidth = Math.max(isMobile ? 50 : 60, (blank.word.length * charWidth) + padding + extraSpace);
-            blank.element.style.width = `${calculatedWidth}px`;
-            
             // タップ/クリックイベントを追加
             const handleBlankTap = (e) => {
                 e.preventDefault();
@@ -13243,12 +13251,25 @@ function insertSentenceLetter(letter) {
         
         currentBlank.userInput += letterToInsert;
         
-        // 空所の表示を更新（入力済みの文字 + 残りのスペース）
-        const remainingLength = currentBlank.word.length - currentBlank.userInput.length;
-        currentBlank.element.textContent = currentBlank.userInput + (remainingLength > 0 ? ' '.repeat(remainingLength) : '');
+        // 空所の表示を更新
+        currentBlank.element.textContent = currentBlank.userInput;
+        
+        // 入力文字数に応じて幅を更新
+        updateBlankWidth(currentBlank.element, currentBlank.userInput.length);
         
         // 入力が完了しても自動的に次の空所には移動しない（ユーザーが手動で選択する必要がある）
     }
+}
+
+// 空欄の幅を入力文字数に応じて更新
+function updateBlankWidth(element, charCount) {
+    const isMobile = window.innerWidth <= 600;
+    const charWidth = isMobile ? 11 : 13; // 1文字あたりの幅
+    const padding = 16; // 左右のパディング
+    const minWidth = isMobile ? 50 : 60; // 最小幅
+    
+    const calculatedWidth = Math.max(minWidth, (charCount * charWidth) + padding);
+    element.style.width = `${calculatedWidth}px`;
 }
 
 // 例文モードで文字を削除
@@ -13272,8 +13293,10 @@ function removeSentenceLetter() {
     
     if (currentBlank && currentBlank.userInput.length > 0) {
         currentBlank.userInput = currentBlank.userInput.slice(0, -1);
-        const remainingLength = currentBlank.word.length - currentBlank.userInput.length;
-        currentBlank.element.textContent = currentBlank.userInput + (remainingLength > 0 ? ' '.repeat(remainingLength) : '');
+        currentBlank.element.textContent = currentBlank.userInput;
+        
+        // 入力文字数に応じて幅を更新
+        updateBlankWidth(currentBlank.element, currentBlank.userInput.length);
     }
 }
 
@@ -13325,9 +13348,8 @@ function handleSentencePass() {
     sentenceAnswerSubmitted = true;
     saveSentenceProgress(sentence.id, false);
     updateStats();
-    if (typeof updateProgressSegments === 'function') {
-        updateProgressSegments();
-    }
+    // 厳選例文暗記モード用の進捗バーを更新
+    updateSentenceProgressBar();
     
     // ナビゲーションボタンを非表示
     const blankNav = document.getElementById('blankNavigation');
@@ -13385,9 +13407,8 @@ function handleSentenceDecide() {
     sentenceAnswerSubmitted = true;
     saveSentenceProgress(sentence.id, isCorrect);
     updateStats();
-    if (typeof updateProgressSegments === 'function') {
-        updateProgressSegments();
-    }
+    // 厳選例文暗記モード用の進捗バーを更新
+    updateSentenceProgressBar();
     
     // ナビゲーションボタンを非表示
     const blankNav = document.getElementById('blankNavigation');
@@ -14502,6 +14523,14 @@ function initChoiceQuestionLearning(category) {
     // ヘッダーボタンを更新
     updateHeaderButtons('learning', '', true);
     
+    // テストモード用のUIを有効化（白背景ヘッダー、中央に進捗表示）
+    document.body.classList.add('quiz-test-mode');
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress) {
+        testModeProgress.classList.remove('hidden');
+        testModeProgress.textContent = `1/${choiceQuestionData.length}`;
+    }
+    
     // 四択問題モードではメモボタンとテストボタンを非表示、×ボタンのみ表示
     const memoPadBtn = document.getElementById('memoPadBtn');
     const unitTestBtn = document.getElementById('unitTestBtn');
@@ -14627,6 +14656,12 @@ function displayCurrentChoiceQuestion() {
     
     // 進捗バーを更新
     updateChoiceProgressBar();
+    
+    // テストモード用の進捗表示を更新
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress && document.body.classList.contains('quiz-test-mode')) {
+        testModeProgress.textContent = `${currentChoiceQuestionIndex + 1}/${choiceQuestionData.length}`;
+    }
     
     const question = choiceQuestionData[currentChoiceQuestionIndex];
     const questionNumberEl = document.getElementById('choiceQuestionNumber');
