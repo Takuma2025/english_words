@@ -2932,24 +2932,24 @@ function formatTitleWithLevelBadge(title) {
     const isElementarySubcategory = elementarySubcategories.some(sub => title.includes(sub));
     
     if (title.includes('LEVEL1') || title.includes('超重要') || title.includes('レベル１') || title.includes('レベル1')) {
-        return '<span class="level-badge level-badge-red">レベル１</span> ' + cleanTitle.replace(/超重要単語400/g, '超重要700語');
+        return '<span class="level-badge level-badge-header level-badge-red">Level1</span> ' + cleanTitle.replace(/超重要単語400/g, '超重要700語');
     } else if (title.includes('LEVEL2') || title.includes('重要500語') || title.includes('レベル２') || title.includes('レベル2')) {
-        return '<span class="level-badge level-badge-orange">レベル２</span> ' + cleanTitle.replace(/重要単語300/g, '重要500語');
+        return '<span class="level-badge level-badge-header level-badge-orange">Level2</span> ' + cleanTitle.replace(/重要単語300/g, '重要500語');
     } else if (title.includes('LEVEL3') || title.includes('差がつく') || title.includes('レベル３') || title.includes('レベル3')) {
-        return '<span class="level-badge level-badge-blue">レベル３</span> ' + cleanTitle.replace(/差がつく単語200/g, '差がつく300語');
+        return '<span class="level-badge level-badge-header level-badge-blue">Level3</span> ' + cleanTitle.replace(/差がつく単語200/g, '差がつく300語');
     } else if (title.includes('LEVEL4') || title.includes('私立高校入試レベル') || title.includes('レベル４') || title.includes('レベル4')) {
-        return '<span class="level-badge level-badge-purple">レベル４</span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-purple">Level4</span> ' + cleanTitle;
     } else if (title.includes('LEVEL5') || title.includes('難関私立高校入試レベル') || title.includes('レベル５') || title.includes('レベル5')) {
-        return '<span class="level-badge level-badge-dark">レベル５</span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-dark">Level5</span> ' + cleanTitle;
     } else if (title.includes('カテゴリ別') || title.includes('レベル０') || title.includes('レベル0')) {
         // カテゴリ別に覚える基本単語のメインカテゴリ
         if (title.includes('カテゴリ別に覚える基本単語') || title.includes('カテゴリー別に覚える単語') || title.includes('カテゴリー別360語')) {
-            return '<span class="level-badge level-badge-green">レベル0</span> カテゴリー別360語';
+            return '<span class="level-badge level-badge-header level-badge-green">Level0</span> カテゴリー別360語';
         } else {
             return cleanTitle;
         }
     } else if (isElementarySubcategory) {
-        return '<span class="level-badge level-badge-green">レベル0</span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-green">Level0</span> ' + cleanTitle;
     }
     return title;
 }
@@ -3017,13 +3017,13 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
         if (mode === 'course' && title) {
             // コース選択時：テキストを表示、画像を非表示
             if (title === 'カテゴリ別に覚える基本単語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-green">レベル0</span> カテゴリー別360語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">Level0</span> カテゴリー別360語';
             } else if (title === 'レベル１ 超重要700語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-red">レベル１</span> 超重要700語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">Level1</span> 超重要700語';
             } else if (title === 'レベル２ 重要500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-orange">レベル２</span> 重要500語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">Level2</span> 重要500語';
             } else if (title === 'レベル３ 差がつく300語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-blue">レベル３</span> 差がつく300語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">Level3</span> 差がつく300語';
             } else {
                 headerTitleText.textContent = title;
             }
@@ -7427,29 +7427,62 @@ function setupVirtualKeyboard() {
     
     // キーボードキーのタッチ/クリックイベント（タッチ優先で即座に反応）
     keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
-        const letter = key.dataset.key;
+        const initialLetter = key.dataset.key;
+        let touchHandled = false;
+        
+        // 視覚的フィードバック
+        const addPressedState = () => {
+            key.style.transform = 'scale(0.95)';
+            key.style.backgroundColor = '#d1d5db';
+        };
+        const removePressedState = () => {
+            key.style.transform = '';
+            key.style.backgroundColor = '';
+        };
         
         // スペースキーの特別処理
-        if (letter === ' ') {
-            const handleSpace = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                insertLetter(' ');
-            };
-            
-            key.addEventListener('touchstart', handleSpace, { passive: false });
-            key.addEventListener('click', handleSpace);
-        } else {
-            // 通常の文字キー
+        if (initialLetter === ' ') {
             key.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                insertLetter(letter);
+                touchHandled = true;
+                addPressedState();
+                insertLetter(' ');
             }, { passive: false });
             
+            key.addEventListener('touchend', () => {
+                removePressedState();
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            
             key.addEventListener('click', (e) => {
+                if (touchHandled) return;
                 e.preventDefault();
-                insertLetter(letter);
+                insertLetter(' ');
+            });
+        } else {
+            // 通常の文字キー - タップ時の現在のdata-keyを使用（大文字/小文字対応）
+            key.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                touchHandled = true;
+                addPressedState();
+                // タップ時点でのdata-keyを取得（Shift状態に応じて大文字/小文字）
+                const currentLetter = key.dataset.key;
+                insertLetter(currentLetter);
+            }, { passive: false });
+            
+            key.addEventListener('touchend', () => {
+                removePressedState();
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            
+            key.addEventListener('click', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                // クリック時点でのdata-keyを取得（Shift状態に応じて大文字/小文字）
+                const currentLetter = key.dataset.key;
+                insertLetter(currentLetter);
             });
         }
     });
@@ -7457,29 +7490,71 @@ function setupVirtualKeyboard() {
     // Shiftキー
     const shiftKey = document.getElementById('keyboardShift');
     if (shiftKey) {
-        const handleShift = (e) => {
+        let shiftTouchHandled = false;
+        
+        shiftKey.addEventListener('touchstart', (e) => {
             e.preventDefault();
             e.stopPropagation();
+            shiftTouchHandled = true;
             toggleShift();
-        };
+        }, { passive: false });
         
-        shiftKey.addEventListener('touchstart', handleShift, { passive: false });
-        shiftKey.addEventListener('click', handleShift);
+        shiftKey.addEventListener('touchend', () => {
+            setTimeout(() => { shiftTouchHandled = false; }, 100);
+        });
+        
+        shiftKey.addEventListener('click', (e) => {
+            if (shiftTouchHandled) return;
+            e.preventDefault();
+            toggleShift();
+        });
     }
     
-    // バックスペースキー
+    // バックスペースキー（長押し対応）
     const backspaceKey = document.getElementById('keyboardBackspace');
     if (backspaceKey) {
+        let backspaceInterval = null;
+        let backspaceTimeout = null;
+        
+        const startBackspaceRepeat = () => {
+            // 即座に1回削除
+            handleBackspace();
+            
+            // 300ms後に連続削除を開始
+            backspaceTimeout = setTimeout(() => {
+                backspaceInterval = setInterval(() => {
+                    handleBackspace();
+                }, 80); // 80msごとに削除
+            }, 300);
+        };
+        
+        const stopBackspaceRepeat = () => {
+            if (backspaceTimeout) {
+                clearTimeout(backspaceTimeout);
+                backspaceTimeout = null;
+            }
+            if (backspaceInterval) {
+                clearInterval(backspaceInterval);
+                backspaceInterval = null;
+            }
+        };
+        
         backspaceKey.addEventListener('touchstart', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            handleBackspace();
+            startBackspaceRepeat();
         }, { passive: false });
         
-        backspaceKey.addEventListener('click', (e) => {
+        backspaceKey.addEventListener('touchend', stopBackspaceRepeat);
+        backspaceKey.addEventListener('touchcancel', stopBackspaceRepeat);
+        
+        backspaceKey.addEventListener('mousedown', (e) => {
             e.preventDefault();
-            handleBackspace();
+            startBackspaceRepeat();
         });
+        
+        backspaceKey.addEventListener('mouseup', stopBackspaceRepeat);
+        backspaceKey.addEventListener('mouseleave', stopBackspaceRepeat);
     }
     
     // 解答ボタン（決定ボタン）
@@ -7578,30 +7653,18 @@ function insertLetter(letter) {
     const activeInput = Array.from(inputs).find(input => !input.value || document.activeElement === input);
     
     if (activeInput) {
-        // スペースの場合はそのまま、それ以外はShiftキーの状態に応じて大文字小文字を変換
-        let letterToInsert;
-        const wasShiftActive = isShiftActive; // 入力前のShift状態を保存
+        // 受け取った文字をそのまま使用（data-keyは既にShift状態に応じて更新されている）
+        const letterToInsert = letter;
+        console.log('[DEBUG insertLetter] letter:', letter, 'isShiftActive:', isShiftActive);
         
-        if (letter === ' ') {
-            letterToInsert = ' '; // スペースはそのまま
-        } else {
-            // Shiftキーがアクティブの場合は大文字、そうでなければ小文字
-            // letterはdata-keyから取得した小文字なので、toUpperCase()で大文字に変換
-            if (wasShiftActive) {
-                letterToInsert = String(letter).toUpperCase();
-                // ボタンを離したときにシフトを解除するためフラグを設定
-                window.pendingShiftReset = 'virtualKeyboard';
-            } else {
-                letterToInsert = String(letter).toLowerCase();
-            }
+        // Shiftキーがアクティブだった場合、入力後にリセット
+        if (isShiftActive && letter !== ' ') {
+            window.pendingShiftReset = 'virtualKeyboard';
         }
         
-        // 直接値を設定（inputイベントで小文字に変換されるのを防ぐ）
+        // 直接値を設定し、data属性にも保存
         activeInput.value = letterToInsert;
-        
-        // inputイベントを発火して次のフィールドにフォーカスを移動
-        const inputEvent = new Event('input', { bubbles: true });
-        activeInput.dispatchEvent(inputEvent);
+        activeInput.dataset.savedValue = letterToInsert;
         
         // 次のフィールドにフォーカス
         const nextInput = letterInputs.querySelector(`input[data-index="${parseInt(activeInput.dataset.index) + 1}"]`);
@@ -7664,6 +7727,7 @@ function handleBackspace() {
     if (activeInput && activeInput.classList.contains('letter-input')) {
         if (activeInput.value) {
             activeInput.value = '';
+            activeInput.dataset.savedValue = '';
         } else {
             // 前のフィールドに移動
             const currentIndex = parseInt(activeInput.dataset.index);
@@ -7672,6 +7736,7 @@ function handleBackspace() {
                 if (prevInput && !prevInput.disabled) {
                     prevInput.focus();
                     prevInput.value = '';
+                    prevInput.dataset.savedValue = '';
                 }
             }
         }
@@ -7681,6 +7746,7 @@ function handleBackspace() {
         if (filledInputs.length > 0) {
             const lastInput = filledInputs[filledInputs.length - 1];
             lastInput.value = '';
+            lastInput.dataset.savedValue = '';
             lastInput.focus();
         }
     }
@@ -7761,6 +7827,20 @@ function displayInputMode(skipAnimationReset = false) {
     const virtualKeyboard = document.getElementById('virtualKeyboard');
     if (virtualKeyboard) {
         virtualKeyboard.classList.remove('answer-submitted');
+    }
+    
+    // Shiftキーの状態をリセット（キーボードを小文字に）
+    if (isShiftActive) {
+        isShiftActive = false;
+        const shiftKey = document.getElementById('keyboardShift');
+        if (shiftKey) {
+            shiftKey.classList.remove('active');
+            shiftKey.dataset.shift = 'false';
+        }
+        if (virtualKeyboard) {
+            virtualKeyboard.classList.remove('shift-active');
+        }
+        updateKeyboardDisplay();
     }
     
     // No.を更新（カードモードと入力モードの両方）
@@ -7881,12 +7961,16 @@ function displayInputMode(skipAnimationReset = false) {
                 input.inputMode = 'none';
                 input.setAttribute('inputmode', 'none');
                 input.setAttribute('readonly', 'readonly');
+                input.setAttribute('autocapitalize', 'off');
+                input.setAttribute('autocorrect', 'off');
                 
                 // 入力時の処理（大文字小文字を保持）
                 input.addEventListener('input', (e) => {
                     const value = e.target.value;
                     // 大文字小文字を保持したまま設定（小文字に変換しない）
                     e.target.value = value;
+                    // data属性にも保存
+                    e.target.dataset.savedValue = value;
                     
                     // 次のフィールドにフォーカス
                     if (value && i < wordLength - 1) {
@@ -8015,10 +8099,16 @@ function submitAnswer() {
     
     if (!letterInputs || !inputResult || !resultMessage || !correctAnswer) return;
     
-    // 入力された文字を結合（大文字小文字を区別）
+    // 入力された文字を結合（data属性から取得して大文字小文字を保持）
     const inputs = letterInputs.querySelectorAll('.letter-input');
-    const userAnswer = Array.from(inputs).map(input => input.value.trim()).join('');
+    // 各入力フィールドの値を先にdata属性から取得して保存
+    const savedValues = Array.from(inputs).map(input => {
+        const saved = input.dataset.savedValue;
+        return (saved !== undefined && saved !== '') ? saved : input.value.trim();
+    });
+    const userAnswer = savedValues.join('');
     const correctWord = word.word;
+    console.log('[DEBUG submitAnswer] userAnswer:', userAnswer, 'correctWord:', correctWord, 'isCorrect:', userAnswer === correctWord);
     
     inputAnswerSubmitted = true;
     
@@ -8035,7 +8125,7 @@ function submitAnswer() {
     
     // 1文字ごとに正解・不正解を表示（入力されていない部分も赤く表示、大文字小文字を区別）
     inputs.forEach((input, index) => {
-        const userChar = input.value.trim();
+        const userChar = savedValues[index];
         const correctChar = word.word[index] || '';
         
         // 入力されていないフィールドは赤く表示
@@ -8049,6 +8139,9 @@ function submitAnswer() {
         } else {
             input.classList.add('wrong');
         }
+        
+        // 値を明示的に再設定（ブラウザによる変更を上書き）
+        input.value = userChar;
     });
     
     // 正解/不正解の判定（大文字小文字を区別）
@@ -13013,48 +13106,124 @@ function setupSentenceKeyboard() {
     // キーボードキーのイベント
     newKeyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
         const letter = key.dataset.key;
+        let touchHandled = false;
+        
+        // 視覚的フィードバック
+        const addPressedState = () => {
+            key.style.transform = 'scale(0.95)';
+            key.style.backgroundColor = '#d1d5db';
+        };
+        const removePressedState = () => {
+            key.style.transform = '';
+            key.style.backgroundColor = '';
+        };
         
         if (letter === ' ') {
-            const handleSpace = (e) => {
+            key.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                touchHandled = true;
+                addPressedState();
                 insertSentenceLetter(' ');
-            };
-            key.addEventListener('touchstart', handleSpace, { passive: false });
-            key.addEventListener('click', handleSpace);
+            }, { passive: false });
+            
+            key.addEventListener('touchend', () => {
+                removePressedState();
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            
+            key.addEventListener('click', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                insertSentenceLetter(' ');
+            });
         } else {
-            const handleLetter = (e) => {
+            key.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                touchHandled = true;
+                addPressedState();
                 insertSentenceLetter(letter);
-            };
-            key.addEventListener('touchstart', handleLetter, { passive: false });
-            key.addEventListener('click', handleLetter);
+            }, { passive: false });
+            
+            key.addEventListener('touchend', () => {
+                removePressedState();
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            
+            key.addEventListener('click', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                insertSentenceLetter(letter);
+            });
         }
     });
     
     // Shiftキー
     const shiftKey = document.getElementById('sentenceKeyboardShift');
     if (shiftKey) {
-        const handleShift = (e) => {
+        let shiftTouchHandled = false;
+        
+        shiftKey.addEventListener('touchstart', (e) => {
             e.preventDefault();
             e.stopPropagation();
+            shiftTouchHandled = true;
             toggleSentenceShift();
-        };
-        shiftKey.addEventListener('touchstart', handleShift, { passive: false });
-        shiftKey.addEventListener('click', handleShift);
+        }, { passive: false });
+        
+        shiftKey.addEventListener('touchend', () => {
+            setTimeout(() => { shiftTouchHandled = false; }, 100);
+        });
+        
+        shiftKey.addEventListener('click', (e) => {
+            if (shiftTouchHandled) return;
+            e.preventDefault();
+            toggleSentenceShift();
+        });
     }
     
-    // バックスペースキー
+    // バックスペースキー（長押し対応）
     const backspaceKey = document.getElementById('sentenceKeyboardBackspace');
     if (backspaceKey) {
-        const handleBackspace = (e) => {
+        let backspaceInterval = null;
+        let backspaceTimeout = null;
+        
+        const startBackspaceRepeat = () => {
+            removeSentenceLetter();
+            backspaceTimeout = setTimeout(() => {
+                backspaceInterval = setInterval(() => {
+                    removeSentenceLetter();
+                }, 80);
+            }, 300);
+        };
+        
+        const stopBackspaceRepeat = () => {
+            if (backspaceTimeout) {
+                clearTimeout(backspaceTimeout);
+                backspaceTimeout = null;
+            }
+            if (backspaceInterval) {
+                clearInterval(backspaceInterval);
+                backspaceInterval = null;
+            }
+        };
+        
+        backspaceKey.addEventListener('touchstart', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            removeSentenceLetter();
-        };
-        backspaceKey.addEventListener('touchstart', handleBackspace, { passive: false });
-        backspaceKey.addEventListener('click', handleBackspace);
+            startBackspaceRepeat();
+        }, { passive: false });
+        
+        backspaceKey.addEventListener('touchend', stopBackspaceRepeat);
+        backspaceKey.addEventListener('touchcancel', stopBackspaceRepeat);
+        
+        backspaceKey.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            startBackspaceRepeat();
+        });
+        
+        backspaceKey.addEventListener('mouseup', stopBackspaceRepeat);
+        backspaceKey.addEventListener('mouseleave', stopBackspaceRepeat);
     }
     
     // パスボタン
@@ -16695,30 +16864,11 @@ function autoInputHWQuizChar(char) {
 }
 
 /**
- * 文字のケースを正解の単語に合わせて調整
- * 最初の文字の場合、正解が大文字で始まるなら大文字に変換
+ * 文字のケースをそのまま返す（自動大文字化を無効化）
+ * ユーザーが入力した大文字/小文字をそのまま使用
  */
 function adjustCharCaseForAnswer(char) {
-    // 現在入力中の位置
-    const position = hwQuizConfirmedText.length;
-    
-    // 正解の単語を取得
-    const word = hwQuizWords && hwQuizWords[hwQuizIndex];
-    if (!word || !word.word) return char;
-    
-    const correctWord = word.word;
-    
-    // 対応する位置の正解文字を取得
-    if (position < correctWord.length) {
-        const correctChar = correctWord[position];
-        // 正解が大文字なら大文字に、小文字なら小文字に変換
-        if (correctChar === correctChar.toUpperCase() && correctChar !== correctChar.toLowerCase()) {
-            return char.toUpperCase();
-        } else {
-            return char.toLowerCase();
-        }
-    }
-    
+    // 入力された文字をそのまま返す（自動変換しない）
     return char;
 }
 
@@ -17049,53 +17199,151 @@ function setupHWVirtualKeyboard() {
         if (key._hwKeyboardEventSet) return;
         key._hwKeyboardEventSet = true;
         
-        key.addEventListener('click', (e) => {
-            if (hwQuizAnswerSubmitted) return;
-            e.preventDefault();
-            const keyValue = key.dataset.key;
+        let touchHandled = false;
+        
+        // 視覚的フィードバック
+        const addPressedState = () => {
+            key.style.transform = 'scale(0.95)';
+            key.style.backgroundColor = '#d1d5db';
+        };
+        const removePressedState = () => {
+            key.style.transform = '';
+            key.style.backgroundColor = '';
+        };
+        
+        // バックスペースキーの長押し対応
+        if (key.id === 'hwKeyboardBackspace') {
+            let backspaceInterval = null;
+            let backspaceTimeout = null;
             
-            if (key.id === 'hwKeyboardBackspace') {
-                // バックスペース
+            const doBackspace = () => {
+                if (hwQuizAnswerSubmitted) return;
                 if (hwQuizConfirmedText.length > 0) {
                     hwQuizConfirmedText = hwQuizConfirmedText.slice(0, -1);
                     updateHWQuizAnswerDisplay();
                 }
-            } else if (key.id === 'hwKeyboardShift') {
-                // シフトキー
+            };
+            
+            const startBackspaceRepeat = () => {
+                addPressedState();
+                doBackspace();
+                backspaceTimeout = setTimeout(() => {
+                    backspaceInterval = setInterval(doBackspace, 80);
+                }, 300);
+            };
+            
+            const stopBackspaceRepeat = () => {
+                removePressedState();
+                if (backspaceTimeout) {
+                    clearTimeout(backspaceTimeout);
+                    backspaceTimeout = null;
+                }
+                if (backspaceInterval) {
+                    clearInterval(backspaceInterval);
+                    backspaceInterval = null;
+                }
+            };
+            
+            key.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                touchHandled = true;
+                startBackspaceRepeat();
+            }, { passive: false });
+            
+            key.addEventListener('touchend', () => {
+                stopBackspaceRepeat();
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            key.addEventListener('touchcancel', stopBackspaceRepeat);
+            
+            key.addEventListener('mousedown', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                startBackspaceRepeat();
+            });
+            key.addEventListener('mouseup', stopBackspaceRepeat);
+            key.addEventListener('mouseleave', stopBackspaceRepeat);
+            
+            return; // バックスペースキーは処理完了
+        }
+        
+        // シフトキー
+        if (key.id === 'hwKeyboardShift') {
+            const doShift = () => {
+                if (hwQuizAnswerSubmitted) return;
                 hwKeyboardShiftActive = !hwKeyboardShiftActive;
                 key.classList.toggle('active', hwKeyboardShiftActive);
                 updateHWKeyboardCase();
-            } else if (keyValue) {
-                // スペースキーの場合、連続スペースを防ぐ
-                if (keyValue === ' ') {
-                    if (hwQuizConfirmedText.length > 0 && hwQuizConfirmedText.slice(-1) === ' ') {
-                        return; // 最後の文字がスペースなら追加しない
-                    }
-                    hwQuizConfirmedText += ' ';
-                    updateHWQuizAnswerDisplay();
+            };
+            
+            key.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                touchHandled = true;
+                doShift();
+            }, { passive: false });
+            
+            key.addEventListener('touchend', () => {
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            
+            key.addEventListener('click', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                doShift();
+            });
+            
+            return; // シフトキーは処理完了
+        }
+        
+        // 通常の文字キー
+        const handleKeyPress = () => {
+            if (hwQuizAnswerSubmitted) return;
+            const keyValue = key.dataset.key;
+            
+            if (!keyValue) return;
+            
+            // スペースキーの場合、連続スペースを防ぐ
+            if (keyValue === ' ') {
+                if (hwQuizConfirmedText.length > 0 && hwQuizConfirmedText.slice(-1) === ' ') {
                     return;
                 }
-                
-                // 通常のキー
-                let char = keyValue;
-                const wasShiftActive = hwKeyboardShiftActive;
-                if (wasShiftActive) {
-                    char = char.toUpperCase();
-                    // ボタンを離したときにシフトを解除するためフラグを設定
-                    window.pendingShiftReset = 'hwVirtualKeyboard';
-                }
-                // 正解の大文字/小文字に合わせて調整
-                const adjustedChar = adjustCharCaseForAnswer(char);
-                hwQuizConfirmedText += adjustedChar;
+                hwQuizConfirmedText += ' ';
                 updateHWQuizAnswerDisplay();
+                return;
             }
-        });
+            
+            // 通常のキー
+            let char = keyValue;
+            const wasShiftActive = hwKeyboardShiftActive;
+            if (wasShiftActive) {
+                char = char.toUpperCase();
+                window.pendingShiftReset = 'hwVirtualKeyboard';
+            }
+            const adjustedChar = adjustCharCaseForAnswer(char);
+            hwQuizConfirmedText += adjustedChar;
+            updateHWQuizAnswerDisplay();
+        };
         
-        // タッチイベント
         key.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            key.click();
+            e.stopPropagation();
+            touchHandled = true;
+            addPressedState();
+            handleKeyPress();
         }, { passive: false });
+        
+        key.addEventListener('touchend', () => {
+            removePressedState();
+            setTimeout(() => { touchHandled = false; }, 100);
+        });
+        
+        key.addEventListener('click', (e) => {
+            if (touchHandled) return;
+            e.preventDefault();
+            handleKeyPress();
+        });
     });
 }
 
@@ -17247,9 +17495,9 @@ function submitHWQuizAnswer() {
     console.log('[HWQuiz] Processing answer for:', word.word);
     hwQuizAnswerSubmitted = true;
     
-    // 未入力でも処理を続行
-    const userAnswer = (hwQuizConfirmedText || "").trim().toLowerCase();
-    const correctAnswer = (word.word || "").toLowerCase();
+    // 未入力でも処理を続行（大文字小文字を区別）
+    const userAnswer = (hwQuizConfirmedText || "").trim();
+    const correctAnswer = (word.word || "");
     const isCorrect = userAnswer !== "" && userAnswer === correctAnswer;
     
     console.log('[HWQuiz] User:', userAnswer || "(empty)", '| Correct:', correctAnswer, '| Result:', isCorrect);
@@ -17517,10 +17765,10 @@ function showHWQuizResult(isCorrect, word) {
         }
     }
     
-    // 不正解の場合、入力欄に差分ハイライトを適用
+    // 不正解の場合、入力欄に差分ハイライトを適用（大文字小文字を区別）
     if (!isCorrect && answerDisplay) {
-        const userInput = (hwQuizConfirmedText || "").trim().toLowerCase();
-        const correctWord = word.word.toLowerCase();
+        const userInput = (hwQuizConfirmedText || "").trim();
+        const correctWord = word.word;
         const userDiffHtml = generateUserInputDiffHighlight(userInput, correctWord);
         const answerText = answerDisplay.querySelector('.hw-answer-text');
         if (answerText) {
