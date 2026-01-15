@@ -446,6 +446,7 @@ body.learning-mode .app-header {
     display: none;
 }
 
+
 .header-title-image {
     height: 24px;
     width: auto;
@@ -3356,7 +3357,10 @@ button.category-card:focus-visible {
     color: #2563eb;
     margin-right: 8px; /* タイトルとの隙間を減らす */
     background: #eff6ff;
-    border-left: 3px solid #2563eb;
+    border-top: 2px solid #2563eb;
+    border-bottom: 2px solid #2563eb;
+    border-left: none;
+    border-right: none;
     box-shadow: none;
     transform: translateY(-2px); /* バッジをさらに上に持ち上げ */
 }
@@ -3373,33 +3377,49 @@ button.category-card:focus-visible {
     display: inline-block;
 }
 
-/* すべてのレベルで背景とスタイルを統一 */
-.level-badge-green, .level-badge-red, .level-badge-orange, 
-.level-badge-blue, .level-badge-purple, .level-badge-dark {
-    color: #2563eb !important;
-    background: #eff6ff !important;
-    border-left: 3px solid #2563eb !important;
-    border-top: none !important;
-    border-right: none !important;
-    border-bottom: none !important;
+/* すべてのレベルで背景とスタイルを統一（カード用） */
+.level-badge.level-badge-green,
+.level-badge.level-badge-red,
+.level-badge.level-badge-orange, 
+.level-badge.level-badge-blue,
+.level-badge.level-badge-purple,
+.level-badge.level-badge-dark {
+    color: #2563eb;
+    background: #eff6ff;
+    border-top: 2px solid #2563eb;
+    border-bottom: 2px solid #2563eb;
+    border-left: none;
+    border-right: none;
 }
 
 /* カテゴリーカード内の個別調整（Level 4, 5 も含めて統一） */
 .category-card[data-category*="LEVEL"] .level-badge {
-    color: #2563eb !important;
-    background: #eff6ff !important;
-    border-left: 3px solid #2563eb !important;
+    color: #2563eb;
+    background: #eff6ff;
+    border-top: 2px solid #2563eb;
+    border-bottom: 2px solid #2563eb;
+    border-left: none;
+    border-right: none;
 }
 
-/* ヘッダー用レベルバッジ（白・特大） */
-/* ヘッダー用レベルバッジ（白・左線・背景なし） */
-.level-badge-header {
-    background: transparent !important;
-    border-left: 2px solid #ffffff !important;
-    color: #ffffff !important;
+/* ヘッダー用レベルバッジ（白・上下線・背景なし） */
+/* 詳細度を上げて色バリアントを確実に上書き */
+.level-badge.level-badge-header,
+.level-badge.level-badge-header.level-badge-green,
+.level-badge.level-badge-header.level-badge-red,
+.level-badge.level-badge-header.level-badge-orange,
+.level-badge.level-badge-header.level-badge-blue,
+.level-badge.level-badge-header.level-badge-purple,
+.level-badge.level-badge-header.level-badge-dark {
+    background: transparent;
+    border-top: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    border-left: none;
+    border-right: none;
+    color: #ffffff;
     font-weight: 200;
     font-size: 10px;
-    padding: 2px 0 2px 8px;
+    padding: 2px 8px;
     border-radius: 0;
 }
 
@@ -3412,23 +3432,22 @@ button.category-card:focus-visible {
     width: 100%;
     padding: 10px 12px;
     font-size: 14px;
-    font-weight: 600;
-    color: #374151;
-    background: #ffffff;
-    border: 1.5px solid #d1d5db;
+    font-weight: 500;
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
     border-radius: 8px;
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ef4444' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     background-size: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .exam-type-select:focus {
     outline: none;
-    border-color: #d1d5db;
+    border-color: #f87171;
 }
 
 /* C問題対策バッジ（赤バージョン・LEVELバッジと同じスタイル） */
@@ -3461,12 +3480,36 @@ button.category-card:focus-visible {
     display: inline-block;
 }
 
-.level-badge-header b,
-.level-badge-header strong {
-    color: #ffffff !important;
+.level-badge.level-badge-header b,
+.level-badge.level-badge-header strong {
+    color: #ffffff;
     font-weight: 500;
     font-size: 18px;
     font-family: "Futura", "Century Gothic", sans-serif;
+}
+
+/* ヘッダータイトル内のバッジ - 最終的な上書き（全バリアント対応） */
+.header-title-text .level-badge,
+.header-title-text .level-badge.level-badge-green,
+.header-title-text .level-badge.level-badge-red,
+.header-title-text .level-badge.level-badge-orange,
+.header-title-text .level-badge.level-badge-blue,
+.header-title-text .level-badge.level-badge-purple,
+.header-title-text .level-badge.level-badge-dark,
+.header-title-text .level-badge.level-badge-header {
+    background: transparent;
+    border-top: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    border-left: none;
+    border-right: none;
+    color: #ffffff;
+    transform: none;
+}
+
+.header-title-text .level-badge b,
+.header-title-text .level-badge strong {
+    color: #ffffff;
+    font-size: 18px;
 }
 
 .category-word-count {
