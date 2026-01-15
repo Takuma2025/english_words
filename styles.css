@@ -5247,29 +5247,41 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: #e5e7eb;
-    border: none;
-    border-radius: 10px;
+    gap: 6px;
+    padding: 6px 10px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
     color: #6b7280;
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease;
+    transition: all 0.15s ease;
     flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.memo-pad-btn-inline .memo-btn-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
 }
 
 .memo-pad-btn-inline:hover {
-    background: #d1d5db;
-    color: #374151;
+    background: #f8fafc;
+    border-color: #94a3b8;
 }
 
 .memo-pad-btn-inline:active {
-    background: #9ca3af;
+    background: #f1f5f9;
 }
 
 .memo-pad-btn-inline.active {
-    background: #3b82f6;
-    color: #ffffff;
+    background: #eff6ff;
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.memo-pad-btn-inline.active .memo-btn-label {
+    color: #3b82f6;
 }
 
 .memo-pad-btn-inline.hidden {
@@ -5286,7 +5298,8 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
+    gap: 4px;
+    padding: 0 12px;
     height: 40px;
     background: #e5e7eb;
     border: none;
@@ -5295,6 +5308,8 @@ body.choice-question-mode-active .word-card-container {
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease;
     flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 600;
 }
 
 .input-list-settings-btn:hover {
@@ -5442,10 +5457,6 @@ body.choice-question-mode-active .word-card-container {
 
 .input-flip-all-btn.hidden {
     display: none;
-}
-
-.input-flip-all-btn {
-    margin-left: auto;
 }
 
 .input-shuffle-btn .btn-label,
@@ -5846,7 +5857,11 @@ body.choice-question-mode-active .word-card-container {
 /* コントロール行内の赤シートトグルは単語帳モードの時だけ表示 */
 .input-list-controls-row .red-sheet-toggle {
     display: flex;
-    margin-left: auto; /* 右揃え */
+}
+
+/* メモボタンを右寄せ（メモ用紙・英語→日本語・赤シートを右側に配置） */
+.input-list-controls-row .memo-pad-btn-inline {
+    margin-left: auto;
 }
 
 /* 単語カードモードの時は非表示 */
@@ -6566,6 +6581,14 @@ body.choice-question-mode-active .word-card-container {
     font-size: 12px;
 }
 
+/* コンパクトフリップモードの裏面の品詞の背景を小さく */
+.input-list-scroll.compact-mode.flip-mode .input-list-meaning-pos {
+    height: 20px;
+    min-height: 20px;
+    min-width: 20px;
+    padding: 0 4px;
+}
+
 .input-list-back {
     position: absolute;
     top: 0;
@@ -6660,6 +6683,7 @@ body.choice-question-mode-active .word-card-container {
     color: #0f172a;
     justify-content: center;
     text-align: center;
+    margin-top: 14px;
 }
 
 .flip-mode .input-list-back {
