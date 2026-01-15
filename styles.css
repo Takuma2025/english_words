@@ -5392,6 +5392,18 @@ body.choice-question-mode-active .word-card-container {
     color: #374151;
 }
 
+/* 無効状態のトグル */
+.settings-dropdown-item.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.settings-dropdown-item.disabled .settings-dropdown-label::after {
+    content: '（用例なし）';
+    font-size: 11px;
+    color: #9ca3af;
+    margin-left: 4px;
+}
 
 .input-list-controls-row {
     display: flex;

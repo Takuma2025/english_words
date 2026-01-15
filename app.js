@@ -10289,6 +10289,30 @@ function applyInputListSettings() {
     } else {
         inputListContainer.classList.remove('compact-mode');
     }
+    
+    // 用例の有無をチェックしてトグルの有効/無効を切り替え
+    updateExamplesToggleAvailability();
+}
+
+// 用例トグルの有効/無効を更新
+function updateExamplesToggleAvailability() {
+    const showExamplesCheckbox = document.getElementById('settingShowExamples');
+    const showExamplesItem = showExamplesCheckbox ? showExamplesCheckbox.closest('.settings-dropdown-item') : null;
+    const inputListContainer = document.getElementById('inputListContainer');
+    
+    if (!showExamplesCheckbox || !showExamplesItem || !inputListContainer) return;
+    
+    // 現在表示されている単語リストに用例があるかチェック
+    const exampleElements = inputListContainer.querySelectorAll('.input-list-example, .input-list-expand-example');
+    const hasExamples = exampleElements.length > 0;
+    
+    if (hasExamples) {
+        showExamplesCheckbox.disabled = false;
+        showExamplesItem.classList.remove('disabled');
+    } else {
+        showExamplesCheckbox.disabled = true;
+        showExamplesItem.classList.add('disabled');
+    }
 }
 
 // インプットモード用フィルターのセットアップ
