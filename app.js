@@ -2932,24 +2932,24 @@ function formatTitleWithLevelBadge(title) {
     const isElementarySubcategory = elementarySubcategories.some(sub => title.includes(sub));
     
     if (title.includes('LEVEL1') || title.includes('超重要') || title.includes('レベル１') || title.includes('レベル1')) {
-        return '<span class="level-badge level-badge-header level-badge-red">Level1</span> ' + cleanTitle.replace(/超重要単語400/g, '超重要700語');
+        return '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span> ' + cleanTitle.replace(/超重要単語400/g, '超重要700語');
     } else if (title.includes('LEVEL2') || title.includes('重要500語') || title.includes('レベル２') || title.includes('レベル2')) {
-        return '<span class="level-badge level-badge-header level-badge-orange">Level2</span> ' + cleanTitle.replace(/重要単語300/g, '重要500語');
+        return '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span> ' + cleanTitle.replace(/重要単語300/g, '重要500語');
     } else if (title.includes('LEVEL3') || title.includes('差がつく') || title.includes('レベル３') || title.includes('レベル3')) {
-        return '<span class="level-badge level-badge-header level-badge-blue">Level3</span> ' + cleanTitle.replace(/差がつく単語200/g, '差がつく300語');
+        return '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> ' + cleanTitle.replace(/差がつく単語200/g, '差がつく300語');
     } else if (title.includes('LEVEL4') || title.includes('私立高校入試レベル') || title.includes('レベル４') || title.includes('レベル4')) {
-        return '<span class="level-badge level-badge-header level-badge-purple">Level4</span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span> ' + cleanTitle;
     } else if (title.includes('LEVEL5') || title.includes('難関私立高校入試レベル') || title.includes('レベル５') || title.includes('レベル5')) {
-        return '<span class="level-badge level-badge-header level-badge-dark">Level5</span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span> ' + cleanTitle;
     } else if (title.includes('カテゴリ別') || title.includes('レベル０') || title.includes('レベル0')) {
         // カテゴリ別に覚える基本単語のメインカテゴリ
         if (title.includes('カテゴリ別に覚える基本単語') || title.includes('カテゴリー別に覚える単語') || title.includes('カテゴリー別360語')) {
-            return '<span class="level-badge level-badge-header level-badge-green">Level0</span> カテゴリー別360語';
+            return '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> カテゴリー別360語';
         } else {
             return cleanTitle;
         }
     } else if (isElementarySubcategory) {
-        return '<span class="level-badge level-badge-header level-badge-green">Level0</span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> ' + cleanTitle;
     }
     return title;
 }
@@ -3017,13 +3017,13 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
         if (mode === 'course' && title) {
             // コース選択時：テキストを表示、画像を非表示
             if (title === 'カテゴリ別に覚える基本単語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">Level0</span> カテゴリー別360語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> カテゴリー別360語';
             } else if (title === 'レベル１ 超重要700語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">Level1</span> 超重要700語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span> 超重要700語';
             } else if (title === 'レベル２ 重要500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">Level2</span> 重要500語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span> 重要500語';
             } else if (title === 'レベル３ 差がつく300語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">Level3</span> 差がつく300語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> 差がつく300語';
             } else {
                 headerTitleText.textContent = title;
             }
@@ -3769,9 +3769,9 @@ function showElementaryCategorySelection(skipAnimation = false) {
             <div class="category-info">
                 <div class="category-header">
                     <div class="category-name">
-                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#dcfce7" stroke="none" style="margin-right: 8px;">
+                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#eff6ff" stroke="none" style="margin-right: 8px;">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                            <text x="12" y="13" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
+                            <text x="12" y="13" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
                         </svg>
                         ${subcat}
                     </div>
@@ -3922,8 +3922,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
             '間投詞'
         ];
         levelCategory = 'LEVEL1 超重要単語400';
-        badgeColor = '#ef4444'; // 赤
-        badgeBgColor = '#fee2e2'; // 薄い赤
+        badgeColor = '#2563eb'; // 青
+        badgeBgColor = '#eff6ff'; // 薄い青
     } else if (parentCategory === 'レベル２ 重要500語') {
         subcategories = [
             '名詞',
@@ -3937,8 +3937,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
             '代名詞'
         ];
         levelCategory = 'LEVEL2 重要単語300';
-        badgeColor = '#f97316'; // オレンジ
-        badgeBgColor = '#ffedd5'; // 薄いオレンジ
+        badgeColor = '#2563eb'; // 青
+        badgeBgColor = '#eff6ff'; // 薄い青
     } else if (parentCategory === 'レベル３ 差がつく300語') {
         subcategories = [
             '名詞',
@@ -3950,8 +3950,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
             '関係代名詞'
         ];
         levelCategory = 'LEVEL3 差がつく単語200';
-        badgeColor = '#3b82f6'; // 青
-        badgeBgColor = '#dbeafe'; // 薄い青
+        badgeColor = '#2563eb'; // 青
+        badgeBgColor = '#eff6ff'; // 薄い青
     }
     
     // サブカテゴリーカードを生成
@@ -8880,6 +8880,23 @@ function getPartOfSpeechShort(pos) {
 }
 
 // 意味テキストを整形して表示（①②③付きは縦に揃えて表示）
+/**
+ * 例文中の特定の単語を太字にする
+ */
+function highlightTargetWord(sentence, targetWord) {
+    if (!sentence || !targetWord) return sentence;
+    const escaped = targetWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
+    // マッチした文字列をそのまま保持しつつ <strong> で囲む
+    let highlighted = sentence.replace(regex, (match) => `<strong>${match}</strong>`);
+    
+    // 例文が文（. ! ? で終わる）かつ先頭が小文字なら大文字化（タグはスキップ）
+    if (/[.!?]\s*$/.test(sentence)) {
+        highlighted = highlighted.replace(/^(\s*(?:<[^>]+>\s*)*)([a-z])/, (_m, prefix, first) => `${prefix}${first.toUpperCase()}`);
+    }
+    return highlighted;
+}
+
 function setMeaningContent(meaningElement, text) {
     if (!meaningElement) return;
     if (!text) {
@@ -9422,14 +9439,19 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             if (word.example.english) {
                 const exEn = document.createElement('div');
                 exEn.className = 'input-list-expand-example-en';
-                exEn.textContent = word.example.english;
+                const exampleEn = word.example.english;
+                if (exampleEn && word.word) {
+                    exEn.innerHTML = highlightTargetWord(exampleEn, word.word);
+                } else {
+                    exEn.textContent = exampleEn;
+                }
                 exampleBox.appendChild(exEn);
             }
             
             if (word.example.japanese) {
                 const exJa = document.createElement('div');
                 exJa.className = 'input-list-expand-example-ja';
-                exJa.textContent = word.example.japanese;
+                exJa.innerHTML = word.example.japanese;
                 exampleBox.appendChild(exJa);
             }
             
@@ -9830,14 +9852,7 @@ function renderInputListView(words) {
                     exEn.className = 'input-list-expand-example-en';
                     const exampleEn = word.example.english;
                     if (exampleEn && word.word) {
-                        const escaped = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                        const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
-                        const highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
-                        let finalText = highlighted;
-                        if (/[.!?]\s*$/.test(exampleEn)) {
-                            finalText = highlighted.replace(/^(\s*(?:<[^>]+>\s*)*)([a-z])/, (_m, prefix, first) => `${prefix}${first.toUpperCase()}`);
-                        }
-                        exEn.innerHTML = finalText;
+                        exEn.innerHTML = highlightTargetWord(exampleEn, word.word);
                     } else {
                         exEn.textContent = exampleEn;
                     }
@@ -9847,7 +9862,7 @@ function renderInputListView(words) {
                 if (word.example.japanese) {
                     const exJa = document.createElement('div');
                     exJa.className = 'input-list-expand-example-ja';
-                    exJa.textContent = word.example.japanese;
+                    exJa.innerHTML = word.example.japanese;
                     exampleBox.appendChild(exJa);
                 }
                 
@@ -11002,21 +11017,12 @@ function displayCurrentWord() {
             const exampleEn = word.example.english || '';
             // 用例中の今回の単語を太字にする（英語のみ）
             if (exampleEn && word.word) {
-                const escaped = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
-                const highlighted = exampleEn.replace(regex, `<strong>${word.word}</strong>`);
-                
-                // 例文が文（. ! ? で終わる）かつ先頭が小文字なら大文字化（strongなどのタグはスキップ）
-                let finalText = highlighted;
-                if (/[.!?]\s*$/.test(exampleEn)) {
-                    finalText = highlighted.replace(/^(\s*(?:<[^>]+>\s*)*)([a-z])/, (_m, prefix, first) => `${prefix}${first.toUpperCase()}`);
-                }
-                exampleEnglishEl.innerHTML = finalText;
+                exampleEnglishEl.innerHTML = highlightTargetWord(exampleEn, word.word);
             } else {
                 exampleEnglishEl.textContent = exampleEn;
             }
 
-            exampleJapaneseEl.textContent = word.example.japanese || '';
+            exampleJapaneseEl.innerHTML = word.example.japanese || '';
             
             // 用例テキストを初期状態で非表示にする
             if (exampleText) {
@@ -16772,7 +16778,7 @@ function flyCharFromSegment(char, segment) {
     const answerRect = answerDisplay.getBoundingClientRect();
     const currentText = hwQuizConfirmedText || '';
     const tempSpan = document.createElement('span');
-    tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:48px;font-weight:700;font-family:"Times New Roman",serif;letter-spacing:2px;';
+    tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:48px;font-weight:700;font-family:"SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;letter-spacing:2px;';
     tempSpan.textContent = currentText;
     document.body.appendChild(tempSpan);
     const textWidth = tempSpan.offsetWidth;
@@ -16821,7 +16827,7 @@ function autoInputHWQuizChar(char) {
     const currentText = hwQuizConfirmedText || '';
     // テキストの幅を一時的に計測
     const tempSpan = document.createElement('span');
-    tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:38px;font-weight:700;font-family:"Times New Roman",serif;letter-spacing:2px;';
+    tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:38px;font-weight:700;font-family:"SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;letter-spacing:2px;';
     tempSpan.textContent = currentText;
     document.body.appendChild(tempSpan);
     const textWidth = tempSpan.offsetWidth;

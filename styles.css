@@ -1,4 +1,5 @@
 :root {
+    --font-sans: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --bg: #0055ca;
     --panel: #0044a0;
     --border: #003380;
@@ -47,7 +48,7 @@ html, body {
 }
 
 body {
-    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-sans);
     color: #1f2937;
     line-height: 1.5;
     touch-action: pan-y;
@@ -1632,21 +1633,21 @@ body.learning-mode .app-header {
 }
 
 .vocab-progress-rate .progress-label {
-    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 14px;
     font-weight: 600;
     color: #06b6d4;
 }
 
 .vocab-progress-rate span#vocabProgressPercent {
-    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 24px;
     font-weight: 600;
     color: #06b6d4;
 }
 
 .vocab-progress-rate .percent-unit {
-    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-sans);
     font-size: 24px;
     font-weight: 600;
     color: #06b6d4;
@@ -3243,89 +3244,69 @@ button.category-card:focus-visible {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #dbeafe;
-    color: #3b82f6;
-    padding: 4px 10px;
-    border-radius: 0;
-    font-weight: 600;
-    margin-right: 8px;
-    font-size: 0.8em;
-    vertical-align: baseline;
+    padding: 2px 12px 2px 10px;
+    border-radius: 0px; /* 角丸なし：シャープに */
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 200;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #2563eb;
+    vertical-align: middle;
+    margin-right: 16px;
+    background: #eff6ff;
+    border-left: 3px solid #2563eb;
+    box-shadow: none;
 }
 
-.level-badge-green {
-    background: #dcfce7;
-    color: #22c55e;
+/* 数字部分 */
+.level-badge b, 
+.level-badge strong {
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-left: 6px;
+    font-family: "Futura-Bold", "Futura", "Century Gothic", "Inter", -apple-system, sans-serif;
+    display: inline-block;
 }
 
-.level-badge-red {
-    background: #fee2e2;
-    color: #ef4444;
+/* すべてのレベルで背景とスタイルを統一 */
+.level-badge-green, .level-badge-red, .level-badge-orange, 
+.level-badge-blue, .level-badge-purple, .level-badge-dark {
+    color: #2563eb !important;
+    background: #eff6ff !important;
+    border-left: 3px solid #2563eb !important;
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
 }
 
-.level-badge-orange {
-    background: #ffedd5;
-    color: #f97316;
+/* カテゴリーカード内の個別調整（Level 4, 5 も含めて統一） */
+.category-card[data-category*="LEVEL"] .level-badge {
+    color: #2563eb !important;
+    background: #eff6ff !important;
+    border-left: 3px solid #2563eb !important;
 }
 
-.level-badge-blue {
-    background: #dbeafe;
-    color: #3b82f6;
-}
-
-.level-badge-purple {
-    color: #7c3aed;
-}
-
-.level-badge-dark {
-    color: #b45309;
-}
-
-/* レベル4: 紫 */
-.category-card[data-category="LEVEL4 私立高校入試レベル"] .level-badge {
-    background: #f3e8ff;
-    color: #9333ea;
-}
-
-/* レベル5: ゴールド（最高難度） */
-.category-card[data-category="LEVEL5 難関私立高校入試レベル"] .level-badge {
-    background: #fef3c7;
-    color: #b8860b;
-}
-
-/* ヘッダー用レベルバッジ */
+/* ヘッダー用レベルバッジ（白・特大） */
+/* ヘッダー用レベルバッジ（白・左線・背景なし） */
 .level-badge-header {
-    font-weight: 600;
+    background: transparent !important;
+    border-left: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    font-weight: 200;
+    font-size: 10px;
+    padding: 2px 0 2px 8px;
+    border-radius: 0;
 }
 
-.level-badge-header.level-badge-green {
-    background: #dcfce7;
-    color: #22c55e;
-}
-
-.level-badge-header.level-badge-red {
-    background: #fee2e2;
-    color: #ef4444;
-}
-
-.level-badge-header.level-badge-orange {
-    background: #ffedd5;
-    color: #f97316;
-}
-
-.level-badge-header.level-badge-blue {
-    background: #dbeafe;
-    color: #3b82f6;
-}
-
-.level-badge-header.level-badge-purple {
-    background: #f3e8ff;
-    color: #9333ea;
-}
-
-.level-badge-header.level-badge-dark {
-    background: #fef3c7;
-    color: #b8860b;
+.level-badge-header b,
+.level-badge-header strong {
+    color: #ffffff !important;
+    font-weight: 800;
+    font-size: 18px;
+    font-family: "Futura-Bold", "Futura", "Century Gothic", sans-serif;
 }
 
 .category-word-count {
@@ -6291,7 +6272,7 @@ body.choice-question-mode-active .word-card-container {
     font-weight: 600;
     letter-spacing: 0.03em;
     color: #0f172a;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     word-break: break-word;
     overflow-wrap: break-word;
@@ -6328,7 +6309,7 @@ body.choice-question-mode-active .word-card-container {
 .input-list-example-en {
     font-size: 14px;
     color: #1f2937;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: 400;
     line-height: 1.5;
@@ -6499,7 +6480,7 @@ body.choice-question-mode-active .word-card-container {
     font-size: 32px;
     font-weight: 700;
     color: #111827;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     letter-spacing: 0.02em;
@@ -6617,7 +6598,7 @@ body.choice-question-mode-active .word-card-container {
 .input-list-expand-example-en {
     font-size: 14px;
     color: #1f2937;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: 400;
     line-height: 1.5;
@@ -6849,7 +6830,7 @@ body.choice-question-mode-active .word-card-container {
     height: 36px;
     font-size: 24px;
     font-weight: 700;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     text-align: center;
     border: none;
@@ -6858,7 +6839,7 @@ body.choice-question-mode-active .word-card-container {
     background-color: transparent;
     transition: all 0.2s;
     box-sizing: border-box;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     -webkit-user-select: text;
@@ -7374,7 +7355,7 @@ body.choice-question-mode-active .word-card-container {
     font-size: clamp(28px, 7vw, 42px);
     color: #3b82f6;
     font-weight: 700;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     line-height: 1.2;
@@ -7926,7 +7907,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
 
 /* 裏面の英単語表示（小さく上部に） */
 .english-word-back {
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-size: 14px;
     color: #6b7280;
@@ -8246,7 +8227,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .english-word {
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     font-size: clamp(32px, 8vw, 48px);
@@ -8512,7 +8493,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* カード裏面の英語表示 */
 .english-word-back {
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     font-size: 20px;
@@ -8617,8 +8598,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .example-english {
     margin-bottom: 0;
     font-size: 16px;
-    font-family: "Times New Roman", Georgia, serif;
-    font-weight: bold;
+    font-family: var(--font-sans);
 }
 
 .example-english strong {
@@ -8628,6 +8608,13 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .example-japanese {
     font-size: 15px;
+}
+
+.input-list-example-ja strong,
+.input-list-expand-example-ja strong,
+.example-japanese strong {
+    color: #ff9933;
+    font-weight: 700;
 }
 
 
@@ -9689,7 +9676,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     line-height: 1.7;
     margin-bottom: 18px; /* 日本語との縦間隔を詰める */
     text-align: left;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     word-spacing: 0.1em;
 }
@@ -9724,7 +9711,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     z-index: 10;
     -webkit-tap-highlight-color: rgba(59, 130, 246, 0.3);
     touch-action: manipulation;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
 }
 
@@ -9951,7 +9938,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 .reorder-punctuation {
     font-size: 17px;
     font-weight: 600;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     color: #1f2937;
@@ -9999,7 +9986,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     border: 1px solid #000000;
     font-size: 17px;
     font-weight: 600;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     cursor: pointer;
@@ -10047,7 +10034,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     border: 1px solid #000000;
     font-size: 17px;
     font-weight: 600;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     cursor: grab;
@@ -10085,7 +10072,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 .reorder-correct-answer {
     font-size: 20px;
     text-align: left;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     font-weight: 600;
@@ -12071,7 +12058,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     font-size: 56px;
@@ -14863,7 +14850,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     margin: 0 auto;
     padding: 4px 12px 4px 12px;
     background: #fff;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     border: 1.5px solid #444444;
     border-radius: 6px;
@@ -14871,7 +14858,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     font-weight: 700;
     color: #1a202c;
     letter-spacing: 2px;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     transition: border-color 0.2s ease, background-color 0.2s ease;
@@ -15033,7 +15020,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     position: fixed;
     font-size: 72px;
     font-weight: bold;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     color: #3182ce;
     opacity: 0.4;
     pointer-events: none;
@@ -15247,7 +15234,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 .hw-result-word span {
     font-size: 32px;
     font-weight: 400;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     color: #1a202c;
@@ -15316,7 +15303,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     font-size: 28px;
     font-weight: 700;
     color: #3182ce;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
     letter-spacing: 2px;
@@ -15966,7 +15953,7 @@ body.choice-question-mode-active .choice-question-mode {
     color: #1f2937;
     line-height: 1.6;
     text-align: left;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
 }
 
@@ -16052,7 +16039,7 @@ body.choice-question-mode-active .choice-question-mode {
 .choice-text {
     font-size: 17px;
     color: #1f2937;
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     line-height: 1.4;
 }
@@ -16264,10 +16251,9 @@ body.choice-question-mode-active .choice-question-mode {
     }
 }
 
-/* 英単語フォント統一（Times New Roman） */
+/* 英単語フォントのスタイル */
 body .english-word,
 body .english-word-back,
-body .example-english,
 body .letter-input,
 body .correct-word,
 body .hw-answer,
@@ -16277,15 +16263,21 @@ body .hw-result-word span,
 body .choice-text,
 body .input-list-word,
 body .input-list-expand-word,
-body .input-list-expand-example-en,
-body .input-list-example-en,
-body .sentence-english,
 body .sentence-blank {
-    font-family: "Times New Roman", Georgia, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
 }
 
-/* キーボードの文字は元のサンセリフ体に戻す */
+/* 用例・例文（単語のみを強調するため基本は通常ウェイト） */
+body .example-english,
+body .input-list-expand-example-en,
+body .input-list-example-en,
+body .sentence-english {
+    font-family: var(--font-sans);
+    font-weight: normal;
+}
+
+/* キーボードの文字 */
 .keyboard-key,
 .keyboard-key::before,
 .keyboard-key-special,
@@ -16298,5 +16290,5 @@ body .sentence-blank {
 .hw-backspace-btn,
 .hw-space-btn,
 .blank-nav-btn {
-    font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "MS PGothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    font-family: var(--font-sans) !important;
 }
