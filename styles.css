@@ -3265,12 +3265,12 @@ button.category-card:focus-visible {
 /* 数字部分 */
 .level-badge b, 
 .level-badge strong {
-    font-weight: 800;
+    font-weight: 500; /* 800から500へ：細く調整 */
     font-size: 22px;
     line-height: 1;
     letter-spacing: -0.02em;
-    margin-left: 4px; /* Levelとの間隔を詰める（6pxから変更） */
-    font-family: "Futura-Bold", "Futura", "Century Gothic", "Inter", -apple-system, sans-serif;
+    margin-left: 4px; /* Levelとの間隔を詰める */
+    font-family: "Futura", "Century Gothic", "Inter", -apple-system, sans-serif;
     display: inline-block;
 }
 
@@ -3307,9 +3307,9 @@ button.category-card:focus-visible {
 .level-badge-header b,
 .level-badge-header strong {
     color: #ffffff !important;
-    font-weight: 800;
+    font-weight: 500;
     font-size: 18px;
-    font-family: "Futura-Bold", "Futura", "Century Gothic", sans-serif;
+    font-family: "Futura", "Century Gothic", sans-serif;
 }
 
 .category-word-count {

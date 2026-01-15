@@ -584,41 +584,41 @@ const interjectionWords = [];
 
 // 前置詞
 const prepositionWords = [
-  { id: 20601, word: "in", meaning: "①（場所・位置）〜の中に［で］ ②（時）〜に ③（手段）〜で ④（所要時間）〜後に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1337, example: { english: "<strong>in</strong> the library", japanese: "図書館(<strong>の中</strong>)<strong>に</strong>" } },
-  { id: 20602, word: "on", meaning: "①（時・日）〜に ②（場所）〜の上に、〜に（接触） ③（状態）〜中で ④〜について", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 283, example: { english: "<strong>on</strong> the table", japanese: "テーブル(<strong>の上</strong>)<strong>に</strong>" } },
-  { id: 20603, word: "at", meaning: "①（場所・位置）〜に（で）②（時刻）〜に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 264, example: { english: "<strong>at</strong> the station", japanese: "駅(<strong>に</strong>)<strong>で</strong>" } },
-  { id: 20604, word: "by", meaning: "①（場所）〜のそばに ②〜によって ③（締切）〜までに", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 214, example: { english: "<strong>by</strong> the park", japanese: "公園<strong>のそばに</strong>" } },
-  { id: 20605, word: "for", meaning: "①〜のために ②〜に向かって ③〜にとって ④〜の間", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 507, example: { english: "<strong>for</strong> us", japanese: "私たちの<strong>ために</strong>" } },
-  { id: 20606, word: "with", meaning: "①〜と一緒に ②（道具）〜で、〜を使って ③〜のある、〜を身に付けて・所持して", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 322, example: { english: "<strong>with</strong> him", japanese: "彼<strong>と一緒に</strong>" } },
-  { id: 20607, word: "from", meaning: "〜から、〜出身の", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 271, example: { english: "<strong>from</strong> Canada", japanese: "カナダ<strong>出身の</strong>" } },
-  { id: 20608, word: "to", meaning: "（方向・到達点）〜へ・〜まで", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1449, example: { english: "<strong>to</strong> Tokyo", japanese: "東京<strong>へ</strong>" } },
-  { id: 20609, word: "of", meaning: "①（帰属）〜の ②（同格）〜という… ③（部分）〜の中の…", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 989, example: { english: "history <strong>of</strong> Japan", japanese: "日本<strong>の</strong>歴史" } },
-  { id: 20610, word: "about", meaning: "〜について、〜に関して（関する）、およそ、約〜", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 575, example: { english: "<strong>about</strong> music / about 40 years ago", japanese: "音楽<strong>について</strong> / <strong>約</strong>40年前" } },
-  { id: 20635, word: "as", meaning: "〜として", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 95, example: { english: "<strong>as</strong> a teacher", japanese: "教師<strong>として</strong>" } },
-  { id: 20611, word: "into", meaning: "〜の中へ", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 22, example: { english: "<strong>into</strong> the room", japanese: "部屋<strong>の中へ</strong>" } },
-  { id: 20612, word: "over", meaning: "①〜の上の方 ②〜じゅう、〜のいたるところに ③〜以上に、〜より多く", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 20, example: { english: "<strong>over</strong> the bridge", japanese: "橋<strong>の上</strong>" } },
-  { id: 20628, word: "above", meaning: "〜の上に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1, example: { english: "<strong>above</strong>your head", japanese: "頭<strong>の上</strong>" } },
-  { id: 20613, word: "under", meaning: "〜の下に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 20, example: { english: "<strong>under</strong> the table", japanese: "テーブル<strong>の下に</strong>" } },
-  { id: 20614, word: "between", meaning: "（2つ、2人）〜の間に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 33, example: { english: "<strong>between</strong> the two buildings", japanese: "2つの建物の<strong>間</strong>" } },
-  { id: 20615, word: "among", meaning: "（3つ、3人以上）〜の間に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 20, example: { english: "<strong>among</strong> the trees", japanese: "木々の<strong>間</strong>" } },
-  { id: 20616, word: "through", meaning: "①〜を通って ②（手段）〜を通じて", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 33, example: { english: "<strong>through</strong> the forest", japanese: "森<strong>を通って</strong>" } },
-  { id: 20617, word: "during", meaning: "（特定の期間）の間じゅう", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 21, example: { english: "<strong>during</strong> the summer", japanese: "夏<strong>の間</strong>" } },
-  { id: 20618, word: "before", meaning: "〜の前に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 59, example: { english: "<strong>before</strong> the meeting", japanese: "会議<strong>の前</strong>" } },
-  { id: 20619, word: "after", meaning: "〜のあとに（で）、〜してから", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 104, example: { english: "<strong>after</strong> the party", japanese: "パーティー<strong>のあと</strong>" } },
-  { id: 20620, word: "since", meaning: "～から、〜以来", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 9, example: { english: "<strong>since</strong> yesterday", japanese: "昨日<strong>から</strong>" } },
-  { id: 20621, word: "until", meaning: "〜までずっと", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 12, example: { english: "<strong>until</strong> tomorrow", japanese: "明日<strong>まで</strong>" } },
-  { id: 20622, word: "against", meaning: "〜に反対して、〜に対して", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1, example: { english: "<strong>against</strong> the law", japanese: "法律<strong>に反対して</strong>" } },
-  { id: 20623, word: "without", meaning: "〜なしで", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 57, example: { english: "<strong>without</strong> a word", japanese: "一言も<strong>言わずに</strong>" } },
-  { id: 20624, word: "along", meaning: "〜に沿って", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 16, example: { english: "walk <strong>along</strong> the river", japanese: "川<strong>に沿って</strong>歩く" } },
-  { id: 20625, word: "across", meaning: "〜を横切って、〜の向こう側に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 2, example: { english: "walk <strong>across</strong> the street", japanese: "通り<strong>を横切って</strong>歩く" } },
-  { id: 20626, word: "beside", meaning: "〜のそばに、〜の隣に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 7, example: { english: "sit <strong>beside</strong> me", japanese: "私の<strong>隣に</strong>座る" } },
-  { id: 20627, word: "below", meaning: "下に・下記に（へ/を/の）", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 12, example: { english: "the room <strong>below</strong>", japanese: "<strong>下の</strong>部屋" } },
-  { id: 20629, word: "toward", meaning: "〜の方へ、〜に向かって", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1, example: { english: "walk <strong>toward</strong> the station", japanese: "駅<strong>の方へ</strong>歩く" } },
-  { id: 20630, word: "behind", meaning: "〜の後ろに", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "behind the house", japanese: "家<strong>の後ろに</strong>" } },
-  { id: 20631, word: "beyond", meaning: "〜を越えて、〜の向こうに", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "beyond the mountain", japanese: "山<strong>を越えて</strong>" } },
-  { id: 20632, word: "plus", meaning: "〜に加えて、〜プラス", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "Two <strong>plus</strong> three is five.", japanese: "2<strong>プラス</strong>3は5です。" } },
-  { id: 20633, word: "till", meaning: "〜まで", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "from morning <strong>till</strong> night", japanese: "朝から夜<strong>まで</strong>" } },
-  { id: 20634, word: "within", meaning: "〜以内に（で）", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "within a few minutes", japanese: "数分<strong>以内で</strong>" } },
+  { id: 20601, word: "in", meaning: "①（場所・位置）〜の中に［で］ ②（時）〜に ③（手段）〜で ④（所要時間）〜後に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1337, example: { english: "<strong>in</strong> the library", japanese: "図書館(<strong>の中</strong>)(<strong>に</strong>)" } },
+  { id: 20602, word: "on", meaning: "①（時・日）〜に ②（場所）〜の上に、〜に（接触） ③（状態）〜中で ④〜について", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 283, example: { english: "<strong>on</strong> the table", japanese: "テーブル(<strong>の上</strong>)(<strong>に</strong>)" } },
+  { id: 20603, word: "at", meaning: "①（場所・位置）〜に（で）②（時刻）〜に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 264, example: { english: "<strong>at</strong> the station", japanese: "駅(<strong>に</strong>)(<strong>で</strong>)" } },
+  { id: 20604, word: "by", meaning: "①（場所）〜のそばに ②〜によって ③（締切）〜までに", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 214, example: { english: "<strong>by</strong> the park", japanese: "公園(<strong>のそばに</strong>)" } },
+  { id: 20605, word: "for", meaning: "①〜のために ②〜に向かって ③〜にとって ④〜の間", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 507, example: { english: "<strong>for</strong> us", japanese: "私たちの(<strong>ために</strong>)" } },
+  { id: 20606, word: "with", meaning: "①〜と一緒に ②（道具）〜で、〜を使って ③〜のある、〜を身に付けて・所持して", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 322, example: { english: "<strong>with</strong> him", japanese: "彼(<strong>と一緒に</strong>)" } },
+  { id: 20607, word: "from", meaning: "〜から、〜出身の", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 271, example: { english: "<strong>from</strong> Canada", japanese: "カナダ(<strong>出身の</strong>)" } },
+  { id: 20608, word: "to", meaning: "（方向・到達点）〜へ・〜まで", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1449, example: { english: "<strong>to</strong> Tokyo", japanese: "東京(<strong>へ</strong>)" } },
+  { id: 20609, word: "of", meaning: "①（帰属）〜の ②（同格）〜という… ③（部分）〜の中の…", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 989, example: { english: "history <strong>of</strong> Japan", japanese: "日本(<strong>の</strong>)歴史" } },
+  { id: 20610, word: "about", meaning: "〜について、〜に関して（関する）、およそ、約〜", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 575, example: { english: "<strong>about</strong> music / about 40 years ago", japanese: "音楽(<strong>について</strong>) / (<strong>約</strong>)40年前" } },
+  { id: 20635, word: "as", meaning: "〜として", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 95, example: { english: "<strong>as</strong> a teacher", japanese: "教師(<strong>として</strong>)" } },
+  { id: 20611, word: "into", meaning: "〜の中へ", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 22, example: { english: "<strong>into</strong> the room", japanese: "部屋(<strong>の中へ</strong>)" } },
+  { id: 20612, word: "over", meaning: "①〜の上の方 ②〜じゅう、〜のいたるところに ③〜以上に、〜より多く", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 20, example: { english: "<strong>over</strong> the bridge", japanese: "橋(<strong>の上</strong>)" } },
+  { id: 20628, word: "above", meaning: "〜の上に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1, example: { english: "<strong>above</strong>your head", japanese: "頭(<strong>の上</strong>)" } },
+  { id: 20613, word: "under", meaning: "〜の下に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 20, example: { english: "<strong>under</strong> the table", japanese: "テーブル(<strong>の下に</strong>)" } },
+  { id: 20614, word: "between", meaning: "（2つ、2人）〜の間に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 33, example: { english: "<strong>between</strong> the two buildings", japanese: "2つの建物の(<strong>間</strong>)" } },
+  { id: 20615, word: "among", meaning: "（3つ、3人以上）〜の間に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 20, example: { english: "<strong>among</strong> the trees", japanese: "木々の(<strong>間</strong>)" } },
+  { id: 20616, word: "through", meaning: "①〜を通って ②（手段）〜を通じて", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 33, example: { english: "<strong>through</strong> the forest", japanese: "森(<strong>を通って</strong>)" } },
+  { id: 20617, word: "during", meaning: "（特定の期間）の間じゅう", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 21, example: { english: "<strong>during</strong> the summer", japanese: "夏(<strong>の間</strong>)" } },
+  { id: 20618, word: "before", meaning: "〜の前に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 59, example: { english: "<strong>before</strong> the meeting", japanese: "会議(<strong>の前</strong>)" } },
+  { id: 20619, word: "after", meaning: "〜のあとに（で）、〜してから", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 104, example: { english: "<strong>after</strong> the party", japanese: "パーティー(<strong>のあと</strong>)" } },
+  { id: 20620, word: "since", meaning: "～から、〜以来", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 9, example: { english: "<strong>since</strong> yesterday", japanese: "昨日(<strong>から</strong>)" } },
+  { id: 20621, word: "until", meaning: "〜までずっと", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 12, example: { english: "<strong>until</strong> tomorrow", japanese: "明日(<strong>まで</strong>)" } },
+  { id: 20622, word: "against", meaning: "〜に反対して、〜に対して", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1, example: { english: "<strong>against</strong> the law", japanese: "法律(<strong>に反対して</strong>)" } },
+  { id: 20623, word: "without", meaning: "〜なしで", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 57, example: { english: "<strong>without</strong> a word", japanese: "一言も(<strong>言わずに</strong>)" } },
+  { id: 20624, word: "along", meaning: "〜に沿って", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 16, example: { english: "walk <strong>along</strong> the river", japanese: "川(<strong>に沿って</strong>)歩く" } },
+  { id: 20625, word: "across", meaning: "〜を横切って、〜の向こう側に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 2, example: { english: "walk <strong>across</strong> the street", japanese: "通り(<strong>を横切って</strong>)歩く" } },
+  { id: 20626, word: "beside", meaning: "〜のそばに、〜の隣に", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 7, example: { english: "sit <strong>beside</strong> me", japanese: "私の(<strong>隣に</strong>)座る" } },
+  { id: 20627, word: "below", meaning: "下に・下記に（へ/を/の）", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 12, example: { english: "the room <strong>below</strong>", japanese: "(<strong>下の</strong>)部屋" } },
+  { id: 20629, word: "toward", meaning: "〜の方へ、〜に向かって", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 1, example: { english: "walk <strong>toward</strong> the station", japanese: "駅(<strong>の方へ</strong>)歩く" } },
+  { id: 20630, word: "behind", meaning: "〜の後ろに", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "behind the house", japanese: "家(<strong>の後ろに</strong>)" } },
+  { id: 20631, word: "beyond", meaning: "〜を越えて、〜の向こうに", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "beyond the mountain", japanese: "山(<strong>を越えて</strong>)" } },
+  { id: 20632, word: "plus", meaning: "〜に加えて、〜プラス", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "Two <strong>plus</strong> three is five.", japanese: "2(<strong>プラス</strong>)3は5です。" } },
+  { id: 20633, word: "till", meaning: "〜まで", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "from morning <strong>till</strong> night", japanese: "朝から夜(<strong>まで</strong>)" } },
+  { id: 20634, word: "within", meaning: "〜以内に（で）", partOfSpeech: "前置詞", category: "前置詞", appearanceCount: 0, example: { english: "within a few minutes", japanese: "数分(<strong>以内で</strong>)" } },
 ];
 
 
@@ -637,96 +637,96 @@ const prepositionWords = [
 const level1ArticleWords = [
   { id: 20001, word: "a", meaning: "１つの〜、１人の〜", partOfSpeech: "冠詞", category: "LEVEL1 冠詞", appearanceCount: 1105, example: { english: "<strong>a</strong> bike", japanese: "（<strong>１台の</strong>）自転車" } },
   { id: 20002, word: "an", meaning: "１つの〜、１人の〜（母音の音の前で使う）", partOfSpeech: "冠詞", category: "LEVEL1 冠詞", appearanceCount: 119, example: { english: "<strong>an</strong> umbrella", japanese: "（<strong>1本の</strong>）かさ" } },
-  { id: 20003, word: "the", meaning: "その〜", partOfSpeech: "冠詞", category: "LEVEL1 冠詞", appearanceCount: 2988, example: { english: "Please open <strong>the</strong> window.", japanese: "<strong>その</strong>窓を開けてください。" } },
+  { id: 20003, word: "the", meaning: "その〜", partOfSpeech: "冠詞", category: "LEVEL1 冠詞", appearanceCount: 2988, example: { english: "Please open <strong>the</strong> window.", japanese: "(<strong>その</strong>)窓を開けてください。" } },
 ];
 
 // レベル1 代名詞
 const level1PronounWords = [
-  { id: 20101, word: "I", meaning: "私は(主格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 1441, example: { english: "<strong>I</strong> like baseball very much.", japanese: "<strong>私は</strong>野球が大好きです。" } },
-  { id: 20102, word: "my", meaning: "私の（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 324, example: { english: "<strong>my</strong> book", japanese: "<strong>私の</strong>本" } },
-  { id: 20103, word: "me", meaning: "私を/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 178, example: { english: "Please help <strong>me</strong>.", japanese: "<strong>私を</strong>助けてください。" } },
-  { id: 20104, word: "mine", meaning: "私のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 6, example: { english: "This pen is <strong>mine</strong>.", japanese: "このペンは<strong>私のもの</strong>です。" } },
-  { id: 20105, word: "you", meaning: "あなた（たち）［は/を/に］（主格・目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 923, example: { english: "I love <strong>you</strong>.", japanese: "私は<strong>あなたを</strong>愛しています。" } },
-  { id: 20106, word: "your", meaning: "あなた（たち）の（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 232, example: { english: "Is this <strong>your</strong> bag?", japanese: "これは<strong>あなたの</strong>かばんですか。" } },
-  { id: 20107, word: "yours", meaning: "あなた（たち）のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 9, example: { english: "This book is <strong>yours</strong>.", japanese: "この本は<strong>あなたのもの</strong>です。" } },
-  { id: 20108, word: "he", meaning: "彼は（主格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 600, example: { english: "<strong>He</strong> is an English teacher.", japanese: "<strong>彼は</strong>英語の先生です。" } },
-  { id: 20109, word: "his", meaning: "彼の（所有格）、彼のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 350, example: { english: "That is <strong>his</strong> car.", japanese: "あれは<strong>彼の</strong>車です。" } },
-  { id: 20110, word: "him", meaning: "彼を/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 200, example: { english: "I gave <strong>him</strong> a present.", japanese: "私は<strong>彼に</strong>プレゼントをあげました。" } },
-  { id: 20111, word: "she", meaning: "彼女は（主格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 400, example: { english: "<strong>She</strong> is my sister.", japanese: "<strong>彼女は</strong>私の姉です。" } },
-  { id: 20112, word: "her", meaning: "彼女の（所有格）、彼女を/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 300, example: { english: "I like <strong>her</strong> smile.", japanese: "私は<strong>彼女の</strong>笑顔が好きです。" } },
-  { id: 20113, word: "hers", meaning: "彼女のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 20, example: { english: "This bag is <strong>hers</strong>.", japanese: "このかばんは<strong>彼女のもの</strong>です。" } },
-  { id: 20114, word: "they", meaning: "彼ら（彼女ら・それら）は（主格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 500, example: { english: "<strong>They</strong> are students.", japanese: "<strong>彼らは</strong>学生です。" } },
-  { id: 20115, word: "their", meaning: "彼ら（彼女ら・それら）の（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 250, example: { english: "<strong>Their</strong> house is big.", japanese: "<strong>彼らの</strong>家は大きいです。" } },
-  { id: 20116, word: "them", meaning: "彼ら（彼女ら・それら）を/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 200, example: { english: "I met <strong>them</strong> yesterday.", japanese: "私は昨日<strong>彼らに</strong>会いました。" } },
-  { id: 20117, word: "theirs", meaning: "彼ら（彼女ら）のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 15, example: { english: "This dog is <strong>theirs</strong>.", japanese: "この犬は<strong>彼らのもの</strong>です。" } },
-  { id: 20118, word: "we", meaning: "私たちは（主格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 400, example: { english: "<strong>We</strong> are friends.", japanese: "<strong>私たちは</strong>友達です。" } },
-  { id: 20119, word: "our", meaning: "私たちの（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 200, example: { english: "This is <strong>our</strong> school.", japanese: "これは<strong>私たちの</strong>学校です。" } },
-  { id: 20120, word: "us", meaning: "私たちを/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 150, example: { english: "Please tell <strong>us</strong> the story.", japanese: "<strong>私たちに</strong>その話を聞かせてください。" } },
-  { id: 20121, word: "ours", meaning: "私たちのもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 20, example: { english: "This land is <strong>ours</strong>.", japanese: "この土地は<strong>私たちのもの</strong>です。" } },
-  { id: 20122, word: "it", meaning: "それは（主格）、それを/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 1000, example: { english: "<strong>It</strong> is a cat.", japanese: "<strong>それは</strong>猫です。" } },
-  { id: 20123, word: "its", meaning: "それの、その（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 100, example: { english: "The dog wagged <strong>its</strong> tail.", japanese: "その犬は<strong>しっぽを</strong>振りました。" } },
-  { id: 20124, word: "this", meaning: "これは、この", partOfSpeech: "代名詞・限定詞", category: "LEVEL1 代名詞", appearanceCount: 600, example: { english: "<strong>This</strong> is my pen.", japanese: "<strong>これは</strong>私のペンです。" } },
-  { id: 20125, word: "these", meaning: "これらは、これらの", partOfSpeech: "代名詞・限定詞", category: "LEVEL1 代名詞", appearanceCount: 100, example: { english: "<strong>These</strong> are my books.", japanese: "<strong>これらは</strong>私の本です。" } },
-  { id: 20126, word: "that", meaning: "あれは、あの、それは", partOfSpeech: "代名詞・限定詞", category: "LEVEL1 代名詞", appearanceCount: 800, example: { english: "<strong>That</strong> is a bird.", japanese: "<strong>あれは</strong>鳥です。" } },
-  { id: 20127, word: "those", meaning: "あれらは、あれらの", partOfSpeech: "代名詞・限定詞", category: "LEVEL1 代名詞", appearanceCount: 80, example: { english: "<strong>Those</strong> are my friends.", japanese: "<strong>あれらは</strong>私の友達です。" } },
+  { id: 20101, word: "I", meaning: "私は(主格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 1441, example: { english: "<strong>I</strong> like baseball very much.", japanese: "(<strong>私は</strong>)野球が大好きです。" } },
+  { id: 20102, word: "my", meaning: "私の（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 324, example: { english: "<strong>my</strong> book", japanese: "(<strong>私の</strong>)本" } },
+  { id: 20103, word: "me", meaning: "私を/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 178, example: { english: "Please help <strong>me</strong>.", japanese: "(<strong>私を</strong>)助けてください。" } },
+  { id: 20104, word: "mine", meaning: "私のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 6, example: { english: "This pen is <strong>mine</strong>.", japanese: "このペンは(<strong>私のもの</strong>)です。" } },
+  { id: 20105, word: "you", meaning: "あなた（たち）［は/を/に］（主格・目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 923, example: { english: "I love <strong>you</strong>.", japanese: "私は(<strong>あなたを</strong>)愛しています。" } },
+  { id: 20106, word: "your", meaning: "あなた（たち）の（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 232, example: { english: "Is this <strong>your</strong> bag?", japanese: "これは(<strong>あなたの</strong>)かばんですか。" } },
+  { id: 20107, word: "yours", meaning: "あなた（たち）のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 9, example: { english: "This book is <strong>yours</strong>.", japanese: "この本は(<strong>あなたのもの</strong>)です。" } },
+  { id: 20108, word: "he", meaning: "彼は（主格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 600, example: { english: "<strong>He</strong> is an English teacher.", japanese: "(<strong>彼は</strong>)英語の先生です。" } },
+  { id: 20109, word: "his", meaning: "彼の（所有格）、彼のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 350, example: { english: "That is <strong>his</strong> car.", japanese: "あれは(<strong>彼の</strong>)車です。" } },
+  { id: 20110, word: "him", meaning: "彼を/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 200, example: { english: "I gave <strong>him</strong> a present.", japanese: "私は(<strong>彼に</strong>)プレゼントをあげました。" } },
+  { id: 20111, word: "she", meaning: "彼女は（主格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 400, example: { english: "<strong>She</strong> is my sister.", japanese: "(<strong>彼女は</strong>)私の姉です。" } },
+  { id: 20112, word: "her", meaning: "彼女の（所有格）、彼女を/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 300, example: { english: "I like <strong>her</strong> smile.", japanese: "私は(<strong>彼女の</strong>)笑顔が好きです。" } },
+  { id: 20113, word: "hers", meaning: "彼女のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 20, example: { english: "This bag is <strong>hers</strong>.", japanese: "このかばんは(<strong>彼女のもの</strong>)です。" } },
+  { id: 20114, word: "they", meaning: "彼ら（彼女ら・それら）は（主格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 500, example: { english: "<strong>They</strong> are students.", japanese: "(<strong>彼らは</strong>)学生です。" } },
+  { id: 20115, word: "their", meaning: "彼ら（彼女ら・それら）の（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 250, example: { english: "<strong>Their</strong> house is big.", japanese: "(<strong>彼らの</strong>)家は大きいです。" } },
+  { id: 20116, word: "them", meaning: "彼ら（彼女ら・それら）を/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 200, example: { english: "I met <strong>them</strong> yesterday.", japanese: "私は昨日(<strong>彼らに</strong>)会いました。" } },
+  { id: 20117, word: "theirs", meaning: "彼ら（彼女ら）のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 15, example: { english: "This dog is <strong>theirs</strong>.", japanese: "この犬は(<strong>彼らのもの</strong>)です。" } },
+  { id: 20118, word: "we", meaning: "私たちは（主格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 400, example: { english: "<strong>We</strong> are friends.", japanese: "(<strong>私たちは</strong>)友達です。" } },
+  { id: 20119, word: "our", meaning: "私たちの（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 200, example: { english: "This is <strong>our</strong> school.", japanese: "これは(<strong>私たちの</strong>)学校です。" } },
+  { id: 20120, word: "us", meaning: "私たちを/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 150, example: { english: "Please tell <strong>us</strong> the story.", japanese: "(<strong>私たちに</strong>)その話を聞かせてください。" } },
+  { id: 20121, word: "ours", meaning: "私たちのもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 20, example: { english: "This land is <strong>ours</strong>.", japanese: "この土地は(<strong>私たちのもの</strong>)です。" } },
+  { id: 20122, word: "it", meaning: "それは（主格）、それを/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 1000, example: { english: "<strong>It</strong> is a cat.", japanese: "(<strong>それは</strong>)猫です。" } },
+  { id: 20123, word: "its", meaning: "それの、その（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 100, example: { english: "The dog wagged <strong>its</strong> tail.", japanese: "その犬は(<strong>しっぽを</strong>)振りました。" } },
+  { id: 20124, word: "this", meaning: "これは、この", partOfSpeech: "代名詞・限定詞", category: "LEVEL1 代名詞", appearanceCount: 600, example: { english: "<strong>This</strong> is my pen.", japanese: "(<strong>これは</strong>)私のペンです。" } },
+  { id: 20125, word: "these", meaning: "これらは、これらの", partOfSpeech: "代名詞・限定詞", category: "LEVEL1 代名詞", appearanceCount: 100, example: { english: "<strong>These</strong> are my books.", japanese: "(<strong>これらは</strong>)私の本です。" } },
+  { id: 20126, word: "that", meaning: "あれは、あの、それは", partOfSpeech: "代名詞・限定詞", category: "LEVEL1 代名詞", appearanceCount: 800, example: { english: "<strong>That</strong> is a bird.", japanese: "(<strong>あれは</strong>)鳥です。" } },
+  { id: 20127, word: "those", meaning: "あれらは、あれらの", partOfSpeech: "代名詞・限定詞", category: "LEVEL1 代名詞", appearanceCount: 80, example: { english: "<strong>Those</strong> are my friends.", japanese: "(<strong>あれらは</strong>)私の友達です。" } },
 ];
 
 // レベル1 動詞（手入力でデータを追加してください）
 const level1VerbWords = [
-  // 例: { id: 20301, word: "be", meaning: "〜である、〜です", partOfSpeech: "動詞", category: "LEVEL1 動詞", appearanceCount: 0, example: { english: "I <strong>am</strong> a student.", japanese: "私は学生<strong>です</strong>。" } },
+  // 例: { id: 20301, word: "be", meaning: "〜である、〜です", partOfSpeech: "動詞", category: "LEVEL1 動詞", appearanceCount: 0, example: { english: "I <strong>am</strong> a student.", japanese: "私は学生(<strong>です</strong>)。" } },
 ];
 
 // レベル1 名詞（手入力でデータを追加してください）
 const level1NounWords = [
-  // 例: { id: 20351, word: "book", meaning: "本", partOfSpeech: "名詞", category: "LEVEL1 名詞", appearanceCount: 0, example: { english: "This is a <strong>book</strong>.", japanese: "これは<strong>本</strong>です。" } },
+  // 例: { id: 20351, word: "book", meaning: "本", partOfSpeech: "名詞", category: "LEVEL1 名詞", appearanceCount: 0, example: { english: "This is a <strong>book</strong>.", japanese: "これは(<strong>本</strong>)です。" } },
 ];
 
 // レベル1 形容詞（手入力でデータを追加してください）
 const level1AdjectiveWords = [
-  // 例: { id: 20451, word: "good", meaning: "良い", partOfSpeech: "形容詞", category: "LEVEL1 形容詞", appearanceCount: 0, example: { english: "This is a <strong>good</strong> book.", japanese: "これは<strong>良い</strong>本です。" } },
+  // 例: { id: 20451, word: "good", meaning: "良い", partOfSpeech: "形容詞", category: "LEVEL1 形容詞", appearanceCount: 0, example: { english: "This is a <strong>good</strong> book.", japanese: "これは(<strong>良い</strong>)本です。" } },
 ];
 
 // レベル1 副詞（手入力でデータを追加してください）
 const level1AdverbWords = [
-  // 例: { id: 20551, word: "very", meaning: "とても", partOfSpeech: "副詞", category: "LEVEL1 副詞", appearanceCount: 0, example: { english: "This is <strong>very</strong> good.", japanese: "これは<strong>とても</strong>良いです。" } },
+  // 例: { id: 20551, word: "very", meaning: "とても", partOfSpeech: "副詞", category: "LEVEL1 副詞", appearanceCount: 0, example: { english: "This is <strong>very</strong> good.", japanese: "これは(<strong>とても</strong>)良いです。" } },
 ];
 
 // レベル1 前置詞（手入力でデータを追加してください）
 const level1PrepositionWords = [
-  // 例: { id: 20651, word: "in", meaning: "〜の中に", partOfSpeech: "前置詞", category: "LEVEL1 前置詞", appearanceCount: 0, example: { english: "The book is <strong>in</strong> the bag.", japanese: "本はかばん<strong>の中に</strong>あります。" } },
+  // 例: { id: 20651, word: "in", meaning: "〜の中に", partOfSpeech: "前置詞", category: "LEVEL1 前置詞", appearanceCount: 0, example: { english: "The book is <strong>in</strong> the bag.", japanese: "本はかばん(<strong>の中に</strong>)あります。" } },
 ];
 
 // レベル1 疑問詞
 const level1QuestionWords = [
-  { id: 20401, word: "what", meaning: "何、何の、どんな", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 211, example: { english: "<strong>What</strong> animal is that?", japanese: "あれは<strong>何の</strong>動物ですか。" } },
-  { id: 20402, word: "who", meaning: "だれ", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 126, example: { english: "<strong>Who</strong> is that man?", japanese: "あの男性は<strong>誰</strong>ですか。" } },
-  { id: 20403, word: "which", meaning: "どちら、どれ、どの", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 186, example: { english: "<strong>Which</strong> season do you like?", japanese: "あなたは<strong>どの</strong>季節が好きですか。" } },
-  { id: 20404, word: "when", meaning: "いつ", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 186, example: { english: "<strong>When</strong> did you arrive here?", japanese: "あなたは<strong>いつ</strong>ここに到着しましたか。" } },
-  { id: 20405, word: "where", meaning: "どこに（で）、どこへ", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 126, example: { english: "<strong>Where</strong> is the station?", japanese: "駅は<strong>どこに</strong>ありますか。" } },
-  { id: 20406, word: "why", meaning: "なぜ", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 47, example: { english: "<strong>Why</strong> do you like music?", japanese: "あなたは<strong>なぜ</strong>音楽が好きなのですか。" } },
-  { id: 20407, word: "how", meaning: "どのように（どうやって）、どれくらい", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 171, example: { english: "<strong>How</strong> does he go to school every day?", japanese: "彼は毎日<strong>どうやって</strong>学校に行きますか。" } },
-  { id: 20408, word: "whose", meaning: "だれの、だれのもの", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 5, example: { english: "<strong>Whose</strong> book is this?", japanese: "この本は<strong>誰の</strong>本ですか。" } },
-  { id: 20409, word: "how much", meaning: "いくら（値段・料金をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 6, example: { english: "<strong>How much</strong> is this notebook?", japanese: "このノートは<strong>いくら</strong>ですか。" } },
-  { id: 20410, word: "how many", meaning: "いくつ（数をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 6, example: { english: "<strong>How many</strong> books are there in the library?", japanese: "その図書館には本が<strong>何冊</strong>ありますか。" } },
-  { id: 20411, word: "how long", meaning: "どれくらいの間（期間をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 3, example: { english: "<strong>How long</strong> will you stay at the hotel?", japanese: "あなたはホテルに<strong>どのくらい</strong>滞在するつもりですか。" } },
-  { id: 20412, word: "how old", meaning: "何歳（年齢をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 3, example: { english: "<strong>How old</strong> is your father?", japanese: "あなたの父親は<strong>何歳</strong>ですか。" } },
-  { id: 20413, word: "how far", meaning: "どのくらいの距離（距離をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 1, example: { english: "<strong>How far</strong> is it from here to the station?", japanese: "ここから駅まで<strong>どのくらいの距離</strong>がありますか。" } },
+  { id: 20401, word: "what", meaning: "何、何の、どんな", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 211, example: { english: "<strong>What</strong> animal is that?", japanese: "あれは(<strong>何の</strong>)動物ですか。" } },
+  { id: 20402, word: "who", meaning: "だれ", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 126, example: { english: "<strong>Who</strong> is that man?", japanese: "あの男性は(<strong>だれ</strong>)ですか。" } },
+  { id: 20403, word: "which", meaning: "どちら、どれ、どの", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 186, example: { english: "<strong>Which</strong> season do you like?", japanese: "あなたは(<strong>どの</strong>)季節が好きですか。" } },
+  { id: 20404, word: "when", meaning: "いつ", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 186, example: { english: "<strong>When</strong> did you arrive here?", japanese: "あなたは(<strong>いつ</strong>)ここに到着しましたか。" } },
+  { id: 20405, word: "where", meaning: "どこに（で）、どこへ", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 126, example: { english: "<strong>Where</strong> is the station?", japanese: "駅は(<strong>どこに</strong>)ありますか。" } },
+  { id: 20406, word: "why", meaning: "なぜ", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 47, example: { english: "<strong>Why</strong> do you like music?", japanese: "あなたは(<strong>なぜ</strong>)音楽が好きなのですか。" } },
+  { id: 20407, word: "how", meaning: "どのように（どうやって）、どれくらい", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 171, example: { english: "<strong>How</strong> does he go to school every day?", japanese: "彼は毎日(<strong>どうやって</strong>)学校に行きますか。" } },
+  { id: 20408, word: "whose", meaning: "だれの、だれのもの", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 5, example: { english: "<strong>Whose</strong> book is this?", japanese: "この本は(<strong>だれの</strong>)本ですか。" } },
+  { id: 20409, word: "how much", meaning: "いくら（値段・料金をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 6, example: { english: "<strong>How much</strong> is this notebook?", japanese: "このノートは(<strong>いくら</strong>)ですか。" } },
+  { id: 20410, word: "how many", meaning: "いくつ（数をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 6, example: { english: "<strong>How many</strong> books are there in the library?", japanese: "その図書館には本が(<strong>何冊</strong>)ありますか。" } },
+  { id: 20411, word: "how long", meaning: "どれくらいの間（期間をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 3, example: { english: "<strong>How long</strong> will you stay at the hotel?", japanese: "あなたはホテルに(<strong>どのくらい</strong>)滞在するつもりですか。" } },
+  { id: 20412, word: "how old", meaning: "何歳（年齢をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 3, example: { english: "<strong>How old</strong> is your father?", japanese: "あなたの父親は(<strong>何歳</strong>)ですか。" } },
+  { id: 20413, word: "how far", meaning: "どのくらいの距離（距離をたずねる）", partOfSpeech: "疑問詞", category: "LEVEL1 疑問詞", appearanceCount: 1, example: { english: "<strong>How far</strong> is it from here to the station?", japanese: "ここから駅まで(<strong>どのくらいの距離</strong>)がありますか。" } },
 ];
 
 // レベル1 間投詞
 const level1InterjectionWords = [
-  { id: 21001, word: "hi", meaning: "やあ、こんにちは", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 176, example: { english: "<strong>Hi</strong>! How are you?", japanese: "<strong>やあ</strong>! お元気ですか。" } },
-  { id: 21002, word: "hello", meaning: "やあ、こんにちは", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 50, example: { english: "<strong>Hello</strong>, nice to meet you.", japanese: "<strong>こんにちは</strong>、はじめまして。" } },
-  { id: 21003, word: "hey", meaning: "やあ、おい、ちょっと", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 0, example: { english: "<strong>Hey</strong>, wait for me!", japanese: "<strong>おい</strong>、待って！" } },
-  { id: 21004, word: "bye", meaning: "さようなら", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 70, example: { english: "<strong>Bye</strong>, see you later.", japanese: "<strong>さようなら</strong>、またお会いしましょう。" } },
-  { id: 21005, word: "goodbye", meaning: "さようなら", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 2, example: { english: "<strong>Goodbye</strong>, see you later.", japanese: "<strong>さようなら</strong>、またお会いしましょう。" } },
-  { id: 21006, word: "oh", meaning: "ああ！、おお！", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 161, example: { english: "<strong>Oh</strong>, I see!", japanese: "<strong>ああ</strong>、わかりました！" } },
-  { id: 21007, word: "wow", meaning: "わあ、おお（驚きや喜び）", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 15, example: { english: "<strong>Wow</strong>, that's nice!", japanese: "<strong>わあ</strong>、それはいいですね！" } },
-  { id: 21008, word: "yes", meaning: "はい", partOfSpeech: "間投詞・副詞", category: "LEVEL1 間投詞", appearanceCount: 191, example: { english: "<strong>Yes</strong>, I am.", japanese: "<strong>はい</strong>、そうです。" } },
-  { id: 21009, word: "no", meaning: "いいえ、いや、だめだ", partOfSpeech: "間投詞・副詞", category: "LEVEL1 間投詞", appearanceCount: 73, example: { english: "<strong>No</strong>, I don't.", japanese: "<strong>いいえ</strong>、違います。" } },
-  { id: 21010, word: "OK", meaning: "わかりました、それでは、大丈夫な", partOfSpeech: "間投詞・形容詞", category: "LEVEL1 間投詞", appearanceCount: 70, example: { english: "<strong>OK</strong>, let's go.", japanese: "<strong>わかりました</strong>、行きましょう。" } },
-  { id: 21011, word: "well", meaning: "ええっと…（考え中）", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 151, example: { english: "<strong>Well</strong>, I'm not sure.", japanese: "<strong>ええっと…</strong>、わかりません。" } },
-  { id: 21014, word: "yeah", meaning: "うん、ああ（yesのくだけた表現）", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 5, example: { english: "<strong>Yeah</strong>, I think so.", japanese: "<strong>うん</strong>、そう思う。" } },
+  { id: 21001, word: "hi", meaning: "やあ、こんにちは", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 176, example: { english: "<strong>Hi</strong>! How are you?", japanese: "(<strong>やあ</strong>)! お元気ですか。" } },
+  { id: 21002, word: "hello", meaning: "やあ、こんにちは", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 50, example: { english: "<strong>Hello</strong>, nice to meet you.", japanese: "(<strong>こんにちは</strong>)、はじめまして。" } },
+  { id: 21003, word: "hey", meaning: "やあ、おい、ちょっと", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 0, example: { english: "<strong>Hey</strong>, wait for me!", japanese: "(<strong>おい</strong>)、待って！" } },
+  { id: 21004, word: "bye", meaning: "さようなら", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 70, example: { english: "<strong>Bye</strong>, see you later.", japanese: "(<strong>さようなら</strong>)、またお会いしましょう。" } },
+  { id: 21005, word: "goodbye", meaning: "さようなら", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 2, example: { english: "<strong>Goodbye</strong>, see you later.", japanese: "(<strong>さようなら</strong>)、またお会いしましょう。" } },
+  { id: 21006, word: "oh", meaning: "ああ！、おお！", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 161, example: { english: "<strong>Oh</strong>, I see!", japanese: "(<strong>ああ</strong>)、わかりました！" } },
+  { id: 21007, word: "wow", meaning: "わあ、おお（驚きや喜び）", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 15, example: { english: "<strong>Wow</strong>, that's nice!", japanese: "(<strong>わあ</strong>)、それはいいですね！" } },
+  { id: 21008, word: "yes", meaning: "はい", partOfSpeech: "間投詞・副詞", category: "LEVEL1 間投詞", appearanceCount: 191, example: { english: "<strong>Yes</strong>, I am.", japanese: "(<strong>はい</strong>)、そうです。" } },
+  { id: 21009, word: "no", meaning: "いいえ、いや、だめだ", partOfSpeech: "間投詞・副詞", category: "LEVEL1 間投詞", appearanceCount: 73, example: { english: "<strong>No</strong>, I don't.", japanese: "(<strong>いいえ</strong>)、違います。" } },
+  { id: 21010, word: "OK", meaning: "わかりました、それでは、大丈夫な", partOfSpeech: "間投詞・形容詞", category: "LEVEL1 間投詞", appearanceCount: 70, example: { english: "<strong>OK</strong>, let's go.", japanese: "(<strong>わかりました</strong>)、行きましょう。" } },
+  { id: 21011, word: "well", meaning: "ええっと…（考え中）", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 151, example: { english: "<strong>Well</strong>, I'm not sure.", japanese: "(<strong>ええっと…</strong>)、わかりません。" } },
+  { id: 21014, word: "yeah", meaning: "うん、ああ（yesのくだけた表現）", partOfSpeech: "間投詞", category: "LEVEL1 間投詞", appearanceCount: 5, example: { english: "<strong>Yeah</strong>, I think so.", japanese: "(<strong>うん</strong>)、そう思う。" } },
 ];
 
 // ============================================
@@ -736,93 +736,93 @@ const level1InterjectionWords = [
 
 // レベル2 動詞（手入力でデータを追加してください）
 const level2VerbWords = [
-  // 例: { id: 21301, word: "have", meaning: "持っている、〜がある", partOfSpeech: "動詞", category: "LEVEL2 動詞", appearanceCount: 0, example: { english: "I <strong>have</strong> a book.", japanese: "私は本を<strong>持っています</strong>。" } },
+  // 例: { id: 21301, word: "have", meaning: "持っている、〜がある", partOfSpeech: "動詞", category: "LEVEL2 動詞", appearanceCount: 0, example: { english: "I <strong>have</strong> a book.", japanese: "私は本を(<strong>持っています</strong>)。" } },
 ];
 
 // レベル2 名詞（手入力でデータを追加してください）
 const level2NounWords = [
-  // 例: { id: 21351, word: "school", meaning: "学校", partOfSpeech: "名詞", category: "LEVEL2 名詞", appearanceCount: 0, example: { english: "I go to <strong>school</strong>.", japanese: "私は<strong>学校</strong>に行きます。" } },
+  // 例: { id: 21351, word: "school", meaning: "学校", partOfSpeech: "名詞", category: "LEVEL2 名詞", appearanceCount: 0, example: { english: "I go to <strong>school</strong>.", japanese: "私は(<strong>学校</strong>)に行きます。" } },
 ];
 
 // レベル2 形容詞（手入力でデータを追加してください）
 const level2AdjectiveWords = [
-  // 例: { id: 21451, word: "big", meaning: "大きい", partOfSpeech: "形容詞", category: "LEVEL2 形容詞", appearanceCount: 0, example: { english: "This is a <strong>big</strong> house.", japanese: "これは<strong>大きい</strong>家です。" } },
+  // 例: { id: 21451, word: "big", meaning: "大きい", partOfSpeech: "形容詞", category: "LEVEL2 形容詞", appearanceCount: 0, example: { english: "This is a <strong>big</strong> house.", japanese: "これは(<strong>大きい</strong>)家です。" } },
 ];
 
 // レベル2 副詞（手入力でデータを追加してください）
 const level2AdverbWords = [
-  // 例: { id: 21551, word: "often", meaning: "しばしば", partOfSpeech: "副詞", category: "LEVEL2 副詞", appearanceCount: 0, example: { english: "I <strong>often</strong> go to the library.", japanese: "私は<strong>しばしば</strong>図書館に行きます。" } },
+  // 例: { id: 21551, word: "often", meaning: "しばしば", partOfSpeech: "副詞", category: "LEVEL2 副詞", appearanceCount: 0, example: { english: "I <strong>often</strong> go to the library.", japanese: "私は(<strong>しばしば</strong>)図書館に行きます。" } },
 ];
 
 // レベル2 前置詞（手入力でデータを追加してください）
 const level2PrepositionWords = [
-  // 例: { id: 21651, word: "on", meaning: "〜の上に", partOfSpeech: "前置詞", category: "LEVEL2 前置詞", appearanceCount: 0, example: { english: "The book is <strong>on</strong> the table.", japanese: "本は机<strong>の上に</strong>あります。" } },
+  // 例: { id: 21651, word: "on", meaning: "〜の上に", partOfSpeech: "前置詞", category: "LEVEL2 前置詞", appearanceCount: 0, example: { english: "The book is <strong>on</strong> the table.", japanese: "本は机(<strong>の上に</strong>)あります。" } },
 ];
 
 // レベル2 助動詞
 const level2AuxiliaryWords = [
-  { id: 20701, word: "can", meaning: "〜できる、〜してもよい", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 374, example: { english: "I <strong>can</strong> play the piano.", japanese: "私はピアノを<strong>弾けます</strong>。" } },
-  { id: 20702, word: "could", meaning: "（canの過去形）〜できた", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 100, example: { english: "My father <strong>could</strong> speak English well.", japanese: "父は英語を上手に話すことが<strong>できました</strong>。" } },
-  { id: 20703, word: "may", meaning: "〜かもしれない、〜してもよい", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 71, example: { english: "I <strong>may</strong> be late for the party.", japanese: "私はパーティーに遅れる<strong>かもしれません</strong>。" } },
-  { id: 20717, word: "might", meaning: "（mayの過去形）（ひょっとして）〜かもしれない", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 0, example: { english: "I <strong>might</strong> go to the party.", japanese: "ひょっとしてパーティーに行く<strong>かもしれません</strong>。" } },
-  { id: 20704, word: "must", meaning: "〜しなければならない", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 22, example: { english: "You <strong>must</strong> do your homework.", japanese: "あなたは宿題を<strong>しなければなりません</strong>。" } },
-  { id: 20705, word: "should", meaning: "〜すべきである", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 63, example: { english: "We <strong>should</strong> take a break.", japanese: "私たちは休憩を<strong>取るべきです</strong>。" } },
-  { id: 20706, word: "will", meaning: "〜するつもり、〜でしょう", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 323, example: { english: "I <strong>will</strong> go to the park next week.", japanese: "私は来週公園に<strong>行くつもりです</strong>。" } },
-  { id: 20707, word: "would", meaning: "（willの過去形）〜だろう、〜するつもりだ、(would like toで)〜したい", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 100, example: { english: "I <strong>would</strong> like to go abroad.", japanese: "私は海外に<strong>行きたいです</strong>。" } },
-  { id: 20708, word: "be able to", meaning: "〜することができる", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 8, example: { english: "I <strong>am able to</strong> play the piano.", japanese: "私はピアノを<strong>弾けます</strong>。" } },
-  { id: 20709, word: "be going to", meaning: "〜するつもり", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 14, example: { english: "I <strong>am going to</strong> go to the park next week.", japanese: "私は来週公園に<strong>行くつもりです</strong>。" } },
-  { id: 20710, word: "have to", meaning: "〜しなければならない、（don't have to～：～する必要はない）", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 22, example: { english: "I <strong>have to</strong> do my homework.", japanese: "私は宿題を<strong>しなければなりません</strong>。" } },
-  { id: 20711, word: "used to", meaning: "以前は～だった", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 2, example: { english: "This house <strong>used to</strong> be a shop.", japanese: "この家は以前は店<strong>でした</strong>。" } },
-  { id: 20711, word: "Will you～?", meaning: "〜してくれませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 15, example: { english: "<strong>Can you</strong> open the door?", japanese: "ドアを<strong>開けてくれませんか</strong>。" } },
-  { id: 20711, word: "Can you～?", meaning: "〜してくれませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 16, example: { english: "<strong>Can you</strong> open the door?", japanese: "ドアを<strong>開けてくれませんか</strong>。" } },
-  { id: 20712, word: "Would you～?", meaning: "〜していただけませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 2, example: { english: "<strong>Would you</strong> close the window?", japanese: "窓を<strong>閉めていただけませんか</strong>。" } },
-  { id: 20712, word: "Could you～?", meaning: "〜していただけませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 1, example: { english: "<strong>Would you</strong> close the window?", japanese: "窓を<strong>閉めていただけませんか</strong>。" } },
-  { id: 20713, word: "Would you like 〜 ?", meaning: "〜はいかがですか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 1, example: { english: "<strong>Would you like</strong> some cake?", japanese: "ケーキは<strong>いかがですか</strong>。" } },
-  { id: 20714, word: "Can I～?", meaning: "〜してもいいですか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 10, example: { english: "<strong>May I</strong> use the phone?", japanese: "電話を<strong>使ってもいいですか</strong>。" } },
-  { id: 20714, word: "May I～?", meaning: "〜してもいいですか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 0, example: { english: "<strong>May I</strong> use the phone?", japanese: "電話を<strong>使ってもいいですか</strong>。" } },
-  { id: 20715, word: "Shall I 〜 ?", meaning: "（私が）〜しましょうか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 2, example: { english: "<strong>Shall I</strong> open the window?", japanese: "窓を<strong>開けましょうか</strong>。" } },
-  { id: 20716, word: "Shall we 〜 ?", meaning: "（いっしょに）〜しませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 10, example: { english: "<strong>Shall we</strong> play tennis?", japanese: "（いっしょに）テニスを<strong>しませんか</strong>。" } },
+  { id: 20701, word: "can", meaning: "〜できる、〜してもよい", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 374, example: { english: "I <strong>can</strong> play the piano.", japanese: "私はピアノを(<strong>弾けます</strong>)。" } },
+  { id: 20702, word: "could", meaning: "（canの過去形）〜できた", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 100, example: { english: "My father <strong>could</strong> speak English well.", japanese: "父は英語を上手に話すことが(<strong>できました</strong>)。" } },
+  { id: 20703, word: "may", meaning: "〜かもしれない、〜してもよい", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 71, example: { english: "I <strong>may</strong> be late for the party.", japanese: "私はパーティーに遅れる(<strong>かもしれません</strong>)。" } },
+  { id: 20717, word: "might", meaning: "（mayの過去形）（ひょっとして）〜かもしれない", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 0, example: { english: "I <strong>might</strong> go to the party.", japanese: "ひょっとしてパーティーに行く(<strong>かもしれません</strong>)。" } },
+  { id: 20704, word: "must", meaning: "〜しなければならない", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 22, example: { english: "You <strong>must</strong> do your homework.", japanese: "あなたは宿題を(<strong>しなければなりません</strong>)。" } },
+  { id: 20705, word: "should", meaning: "〜すべきである", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 63, example: { english: "We <strong>should</strong> take a break.", japanese: "私たちは休憩を(<strong>取るべきです</strong>)。" } },
+  { id: 20706, word: "will", meaning: "〜するつもり、〜でしょう", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 323, example: { english: "I <strong>will</strong> go to the park next week.", japanese: "私は来週公園に(<strong>行くつもりです</strong>)。" } },
+  { id: 20707, word: "would", meaning: "（willの過去形）〜だろう、〜するつもりだ、(would like toで)〜したい", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 100, example: { english: "I <strong>would</strong> like to go abroad.", japanese: "私は海外に(<strong>行きたいです</strong>)。" } },
+  { id: 20708, word: "be able to", meaning: "〜することができる", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 8, example: { english: "I <strong>am able to</strong> play the piano.", japanese: "私はピアノを(<strong>弾けます</strong>)。" } },
+  { id: 20709, word: "be going to", meaning: "〜するつもり", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 14, example: { english: "I <strong>am going to</strong> go to the park next week.", japanese: "私は来週公園に(<strong>行くつもりです</strong>)。" } },
+  { id: 20710, word: "have to", meaning: "〜しなければならない、（don't have to～：～する必要はない）", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 22, example: { english: "I <strong>have to</strong> do my homework.", japanese: "私は宿題を(<strong>しなければなりません</strong>)。" } },
+  { id: 20711, word: "used to", meaning: "以前は～だった", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 2, example: { english: "This house <strong>used to</strong> be a shop.", japanese: "この家は以前は店(<strong>でした</strong>)。" } },
+  { id: 20711, word: "Will you～?", meaning: "〜してくれませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 15, example: { english: "<strong>Can you</strong> open the door?", japanese: "ドアを(<strong>開けてくれませんか</strong>)。" } },
+  { id: 20711, word: "Can you～?", meaning: "〜してくれませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 16, example: { english: "<strong>Can you</strong> open the door?", japanese: "ドアを(<strong>開けてくれませんか</strong>)。" } },
+  { id: 20712, word: "Would you～?", meaning: "〜していただけませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 2, example: { english: "<strong>Would you</strong> close the window?", japanese: "窓を(<strong>閉めていただけませんか</strong>)。" } },
+  { id: 20712, word: "Could you～?", meaning: "〜していただけませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 1, example: { english: "<strong>Would you</strong> close the window?", japanese: "窓を(<strong>閉めていただけませんか</strong>)。" } },
+  { id: 20713, word: "Would you like 〜 ?", meaning: "〜はいかがですか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 1, example: { english: "<strong>Would you like</strong> some cake?", japanese: "ケーキは(<strong>いかがですか</strong>)。" } },
+  { id: 20714, word: "Can I～?", meaning: "〜してもいいですか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 10, example: { english: "<strong>May I</strong> use the phone?", japanese: "電話を(<strong>使ってもいいですか</strong>)。" } },
+  { id: 20714, word: "May I～?", meaning: "〜してもいいですか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 0, example: { english: "<strong>May I</strong> use the phone?", japanese: "電話を(<strong>使ってもいいですか</strong>)。" } },
+  { id: 20715, word: "Shall I 〜 ?", meaning: "（私が）〜しましょうか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 2, example: { english: "<strong>Shall I</strong> open the window?", japanese: "窓を(<strong>開けましょうか</strong>)。" } },
+  { id: 20716, word: "Shall we 〜 ?", meaning: "（いっしょに）〜しませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 10, example: { english: "<strong>Shall we</strong> play tennis?", japanese: "（いっしょに）テニスを(<strong>しませんか</strong>)。" } },
 ];
 
 // レベル2 接続詞
 const level2ConjunctionWords = [
-  { id: 20801, word: "and", meaning: "〜と…、そして", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 823, example: { english: "apples <strong>and</strong> oranges", japanese: "りんご<strong>と</strong>オレンジ" } },
-  { id: 20802, word: "but", meaning: "しかし、だが", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 171, example: { english: "I was sick yesterday, <strong>but</strong> I went to school today.", japanese: "昨日病気だった<strong>が</strong>、今日は学校に行った。" } },
-  { id: 20803, word: "or", meaning: "〜かもしくは…", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 99, example: { english: "English <strong>or</strong> Japanese", japanese: "英語<strong>か</strong>日本語" } },
-  { id: 20804, word: "so", meaning: "だから", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 213, example: { english: "I'm tired, <strong>so</strong> I'm going to bed.", japanese: "疲れている<strong>から</strong>、寝る" } },
-  { id: 20818, word: "however", meaning: "しかし、けれども", partOfSpeech: "接続詞・副詞", category: "LEVEL2 接続詞", appearanceCount: 49, example: { english: "I wanted to go. <strong>however</strong>, I was too busy.", japanese: "行きたかったが、<strong>しかし</strong>忙しすぎた。" } },
-  { id: 20805, word: "because", meaning: "（理由や原因を説明して）〜なので、〜だから", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 95, example: { english: "I like summer <strong>because</strong> I can go to the beach.", japanese: "私は海に行ける<strong>から</strong>、夏が好きです." } },
-  { id: 20806, word: "if", meaning: "もし〜なら", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 113, example: { english: "<strong>If</strong> it is sunny tomorrow, we will play tennis.", japanese: "<strong>もし</strong>明日晴れた<strong>ら</strong>テニスをするつもりです。" } },
-  { id: 20807, word: "when", meaning: "〜のとき", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 250, example: { english: "Tom was watching TV <strong>when</strong> his mother came home.", japanese: "母が帰ってきた<strong>とき</strong>、トムはテレビを見ていました。" } },
-  { id: 20808, word: "while", meaning: "〜している間に、（after a while：しばらくの間）", partOfSpeech: "接続詞・名詞", category: "LEVEL2 接続詞", appearanceCount: 8, example: { english: "<strong>While</strong> I was eating breakfast, I was reading a newspaper.", japanese: "朝食を<strong>食べている間に</strong>、新聞を読んでいました。" } },
-  { id: 20809, word: "though", meaning: "〜けれども", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 27, example: { english: "I studied hard <strong>though</strong> I was tired.", japanese: "疲れていた<strong>けれども</strong>、私は勉強を頑張りました。" } },
-  { id: 20810, word: "although", meaning: "〜けれども", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 27, example: { english: "I studied hard <strong>although</strong> I was tired.", japanese: "疲れていた<strong>けれども</strong>、私は勉強を頑張りました。" } },
-  { id: 20811, word: "since", meaning: "〜から、～以来、〜なので", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 9, example: { english: "I have known him <strong>since</strong> I was a child.", japanese: "私は子供の頃<strong>から</strong>、彼を知っています。" } },
-  { id: 20812, word: "until", meaning: "〜するまでずっと", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 12, example: { english: "I must wait here <strong>until</strong> he comes back.", japanese: "彼が帰ってくる<strong>までずっと</strong>、ここで待たなければなりません。" } },
-  { id: 20813, word: "before", meaning: "〜の前に", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 59, example: { english: "I will go home <strong>before</strong> it is dark.", japanese: "暗くなる<strong>前に</strong>、家に帰るつもりです。" } },
-  { id: 20814, word: "after", meaning: "〜の後に", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 104, example: { english: "We met at the station <strong>after</strong> the party.", japanese: "私たちはパーティー<strong>のあと</strong>、駅で会いました。" } },
-  { id: 20815, word: "that", meaning: "（ひとまとまりの内容を表して）～ということ・もの", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 628, example: { english: "I know <strong>that</strong> he is a doctor.", japanese: "私は彼が医者である<strong>ということ</strong>を知っています。" } },
-  { id: 20816, word: "as soon as", meaning: "〜するとすぐに", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 2, example: { english: "I will play games <strong>as soon as</strong> I finish my homework.", japanese: "宿題を終え<strong>たらすぐに</strong>、ゲームをするつもりです。" } },
-  { id: 20817, word: "even if", meaning: "たとえ〜でも", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 6, example: { english: "I will go there <strong>even if</strong> it is raining.", japanese: "<strong>たとえ</strong>雨が降って<strong>いても</strong>、そこに行くつもりです。" } },
+  { id: 20801, word: "and", meaning: "〜と…、そして", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 823, example: { english: "apples <strong>and</strong> oranges", japanese: "りんご(<strong>と</strong>)オレンジ" } },
+  { id: 20802, word: "but", meaning: "しかし、だが", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 171, example: { english: "I was sick yesterday, <strong>but</strong> I went to school today.", japanese: "昨日病気だった(<strong>が</strong>)、今日は学校に行った。" } },
+  { id: 20803, word: "or", meaning: "〜かもしくは…", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 99, example: { english: "English <strong>or</strong> Japanese", japanese: "英語(<strong>か</strong>)日本語" } },
+  { id: 20804, word: "so", meaning: "だから", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 213, example: { english: "I'm tired, <strong>so</strong> I'm going to bed.", japanese: "疲れている(<strong>から</strong>)、寝る" } },
+  { id: 20818, word: "however", meaning: "しかし、けれども", partOfSpeech: "接続詞・副詞", category: "LEVEL2 接続詞", appearanceCount: 49, example: { english: "I wanted to go. <strong>however</strong>, I was too busy.", japanese: "行きたかったが、(<strong>しかし</strong>)忙しすぎた。" } },
+  { id: 20805, word: "because", meaning: "（理由や原因を説明して）〜なので、〜だから", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 95, example: { english: "I like summer <strong>because</strong> I can go to the beach.", japanese: "私は海に行ける(<strong>から</strong>)、夏が好きです." } },
+  { id: 20806, word: "if", meaning: "もし〜なら", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 113, example: { english: "<strong>If</strong> it is sunny tomorrow, we will play tennis.", japanese: "(<strong>もし</strong>)明日晴れた(<strong>ら</strong>)テニスをするつもりです。" } },
+  { id: 20807, word: "when", meaning: "〜のとき", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 250, example: { english: "Tom was watching TV <strong>when</strong> his mother came home.", japanese: "母が帰ってきた(<strong>とき</strong>)、トムはテレビを見ていました。" } },
+  { id: 20808, word: "while", meaning: "〜している間に、（after a while：しばらくの間）", partOfSpeech: "接続詞・名詞", category: "LEVEL2 接続詞", appearanceCount: 8, example: { english: "<strong>While</strong> I was eating breakfast, I was reading a newspaper.", japanese: "朝食を(<strong>食べている間に</strong>)、新聞を読んでいました。" } },
+  { id: 20809, word: "though", meaning: "〜けれども", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 27, example: { english: "I studied hard <strong>though</strong> I was tired.", japanese: "疲れていた(<strong>けれども</strong>)、私は勉強を頑張りました。" } },
+  { id: 20810, word: "although", meaning: "〜けれども", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 27, example: { english: "I studied hard <strong>although</strong> I was tired.", japanese: "疲れていた(<strong>けれども</strong>)、私は勉強を頑張りました。" } },
+  { id: 20811, word: "since", meaning: "〜から、～以来、〜なので", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 9, example: { english: "I have known him <strong>since</strong> I was a child.", japanese: "私は子供の頃(<strong>から</strong>)、彼を知っています。" } },
+  { id: 20812, word: "until", meaning: "〜するまでずっと", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 12, example: { english: "I must wait here <strong>until</strong> he comes back.", japanese: "彼が帰ってくる(<strong>までずっと</strong>)、ここで待たなければなりません。" } },
+  { id: 20813, word: "before", meaning: "〜の前に", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 59, example: { english: "I will go home <strong>before</strong> it is dark.", japanese: "暗くなる(<strong>前に</strong>)、家に帰るつもりです。" } },
+  { id: 20814, word: "after", meaning: "〜の後に", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 104, example: { english: "We met at the station <strong>after</strong> the party.", japanese: "私たちはパーティー(<strong>のあと</strong>)、駅で会いました。" } },
+  { id: 20815, word: "that", meaning: "（ひとまとまりの内容を表して）～ということ・もの", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 628, example: { english: "I know <strong>that</strong> he is a doctor.", japanese: "私は彼が医者である(<strong>ということ</strong>)を知っています。" } },
+  { id: 20816, word: "as soon as", meaning: "〜するとすぐに", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 2, example: { english: "I will play games <strong>as soon as</strong> I finish my homework.", japanese: "宿題を終え(<strong>たらすぐに</strong>)、ゲームをするつもりです。" } },
+  { id: 20817, word: "even if", meaning: "たとえ〜でも", partOfSpeech: "接続詞", category: "LEVEL2 接続詞", appearanceCount: 6, example: { english: "I will go there <strong>even if</strong> it is raining.", japanese: "(<strong>たとえ</strong>)雨が降って(<strong>いても</strong>)、そこに行くつもりです。" } },
 ];
 
 // レベル2 不定代名詞
 const level2IndefinitePronounWords = [
-  { id: 20201, word: "something", meaning: "何か（もの・こと）", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 36, example: { english: "I want <strong>something</strong> to drink.", japanese: "私は<strong>何か</strong>飲みものがほしいです。" } },
-  { id: 20202, word: "anything", meaning: "（否定文で）何も～ない、（疑問文で）何か", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 21, example: { english: "Do you have <strong>anything</strong> to eat?", japanese: "<strong>何か</strong>食べ物はありますか。" } },
-  { id: 20203, word: "nothing", meaning: "何も〜ない", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 8, example: { english: "There is <strong>nothing</strong> in the box.", japanese: "箱の中には<strong>何もありません</strong>。" } },
-  { id: 20204, word: "everything", meaning: "すべてのもの、すべてのこと", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 12, example: { english: "<strong>Everything</strong> is ready.", japanese: "<strong>すべてのこと</strong>が準備できています。" } },
-  { id: 20205, word: "everyone", meaning: "みんな、すべての人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 23, example: { english: "<strong>Everyone</strong> has a book.", japanese: "<strong>みんな</strong>本を持っています。" } },
-  { id: 20206, word: "someone", meaning: "だれか、ある人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 8, example: { english: "<strong>Someone</strong> is calling you.", japanese: "<strong>だれか</strong>があなたを呼んでいます。" } },
-  { id: 20207, word: "anyone", meaning: "（肯定文で）誰でも、（否定文で）誰も、（疑問文で）誰か", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 1, example: { english: "Can <strong>anyone</strong> help me?", japanese: "<strong>だれか</strong>手伝ってくれますか。" } },
-  { id: 20208, word: "everybody", meaning: "みんな、すべての人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 1, example: { english: "<strong>Everybody</strong> likes music.", japanese: "<strong>みんな</strong>音楽が好きです。" } },
-  { id: 20209, word: "somebody", meaning: "だれか、ある人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 0, example: { english: "<strong>Somebody</strong> is at the door.", japanese: "<strong>だれか</strong>がドアにいます。" } },
-  { id: 20210, word: "nobody", meaning: "だれも〜ない", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 0, example: { english: "<strong>Nobody</strong> knows the answer.", japanese: "<strong>だれも</strong>答えを知りません。" } },
+  { id: 20201, word: "something", meaning: "何か（もの・こと）", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 36, example: { english: "I want <strong>something</strong> to drink.", japanese: "私は(<strong>何か</strong>)飲みものがほしいです。" } },
+  { id: 20202, word: "anything", meaning: "（否定文で）何も～ない、（疑問文で）何か", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 21, example: { english: "Do you have <strong>anything</strong> to eat?", japanese: "(<strong>何か</strong>)食べ物はありますか。" } },
+  { id: 20203, word: "nothing", meaning: "何も〜ない", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 8, example: { english: "There is <strong>nothing</strong> in the box.", japanese: "箱の中には(<strong>何もありません</strong>)。" } },
+  { id: 20204, word: "everything", meaning: "すべてのもの、すべてのこと", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 12, example: { english: "<strong>Everything</strong> is ready.", japanese: "(<strong>すべてのこと</strong>)が準備できています。" } },
+  { id: 20205, word: "everyone", meaning: "みんな、すべての人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 23, example: { english: "<strong>Everyone</strong> has a book.", japanese: "(<strong>みんな</strong>)本を持っています。" } },
+  { id: 20206, word: "someone", meaning: "だれか、ある人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 8, example: { english: "<strong>Someone</strong> is calling you.", japanese: "(<strong>だれか</strong>)があなたを呼んでいます。" } },
+  { id: 20207, word: "anyone", meaning: "（肯定文で）誰でも、（否定文で）誰も、（疑問文で）誰か", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 1, example: { english: "Can <strong>anyone</strong> help me?", japanese: "(<strong>だれか</strong>)手伝ってくれますか。" } },
+  { id: 20208, word: "everybody", meaning: "みんな、すべての人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 1, example: { english: "<strong>Everybody</strong> likes music.", japanese: "(<strong>みんな</strong>)音楽が好きです。" } },
+  { id: 20209, word: "somebody", meaning: "だれか、ある人", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 0, example: { english: "<strong>Somebody</strong> is at the door.", japanese: "(<strong>だれか</strong>)がドアにいます。" } },
+  { id: 20210, word: "nobody", meaning: "だれも〜ない", partOfSpeech: "代名詞", category: "LEVEL2 代名詞", appearanceCount: 0, example: { english: "<strong>Nobody</strong> knows the answer.", japanese: "(<strong>だれも</strong>)答えを知りません。" } },
 ];
 
 // レベル2 数量を表す限定詞
 const level2QuantifierWords = [
-  { id: 20513, word: "several", meaning: "いくつかの、数個の", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 15, example: { english: "Ken bought <strong>several</strong> pens.", japanese: "ケンは<strong>いくつかの</strong>ペンを買いました。" } },
+  { id: 20513, word: "several", meaning: "いくつかの、数個の", partOfSpeech: "限定詞・形容詞", category: "LEVEL2 限定詞（数量）", appearanceCount: 15, example: { english: "Ken bought <strong>several</strong> pens.", japanese: "ケンは(<strong>いくつかの</strong>)ペンを買いました。" } },
 ];
 
 // ============================================
@@ -832,51 +832,51 @@ const level2QuantifierWords = [
 
 // レベル3 動詞（手入力でデータを追加してください）
 const level3VerbWords = [
-  // 例: { id: 22301, word: "understand", meaning: "理解する", partOfSpeech: "動詞", category: "LEVEL3 動詞", appearanceCount: 0, example: { english: "I <strong>understand</strong> English.", japanese: "私は英語を<strong>理解します</strong>。" } },
+  // 例: { id: 22301, word: "understand", meaning: "理解する", partOfSpeech: "動詞", category: "LEVEL3 動詞", appearanceCount: 0, example: { english: "I <strong>understand</strong> English.", japanese: "私は英語を(<strong>理解します</strong>)。" } },
 ];
 
 // レベル3 名詞（手入力でデータを追加してください）
 const level3NounWords = [
-  // 例: { id: 22351, word: "knowledge", meaning: "知識", partOfSpeech: "名詞", category: "LEVEL3 名詞", appearanceCount: 0, example: { english: "I have <strong>knowledge</strong> of English.", japanese: "私は英語の<strong>知識</strong>を持っています。" } },
+  // 例: { id: 22351, word: "knowledge", meaning: "知識", partOfSpeech: "名詞", category: "LEVEL3 名詞", appearanceCount: 0, example: { english: "I have <strong>knowledge</strong> of English.", japanese: "私は英語の(<strong>知識</strong>)を持っています。" } },
 ];
 
 // レベル3 形容詞（手入力でデータを追加してください）
 const level3AdjectiveWords = [
-  // 例: { id: 22451, word: "important", meaning: "重要な", partOfSpeech: "形容詞", category: "LEVEL3 形容詞", appearanceCount: 0, example: { english: "This is <strong>important</strong>.", japanese: "これは<strong>重要です</strong>。" } },
+  // 例: { id: 22451, word: "important", meaning: "重要な", partOfSpeech: "形容詞", category: "LEVEL3 形容詞", appearanceCount: 0, example: { english: "This is <strong>important</strong>.", japanese: "これは(<strong>重要です</strong>)。" } },
 ];
 
 // レベル3 副詞（手入力でデータを追加してください）
 const level3AdverbWords = [
-  // 例: { id: 22551, word: "carefully", meaning: "注意深く", partOfSpeech: "副詞", category: "LEVEL3 副詞", appearanceCount: 0, example: { english: "Please read <strong>carefully</strong>.", japanese: "<strong>注意深く</strong>読んでください。" } },
+  // 例: { id: 22551, word: "carefully", meaning: "注意深く", partOfSpeech: "副詞", category: "LEVEL3 副詞", appearanceCount: 0, example: { english: "Please read <strong>carefully</strong>.", japanese: "(<strong>注意深く</strong>)読んでください。" } },
 ];
 
 // レベル3 前置詞（手入力でデータを追加してください）
 const level3PrepositionWords = [
-  // 例: { id: 22651, word: "through", meaning: "〜を通って", partOfSpeech: "前置詞", category: "LEVEL3 前置詞", appearanceCount: 0, example: { english: "I walked <strong>through</strong> the park.", japanese: "私は公園を<strong>通って</strong>歩きました。" } },
+  // 例: { id: 22651, word: "through", meaning: "〜を通って", partOfSpeech: "前置詞", category: "LEVEL3 前置詞", appearanceCount: 0, example: { english: "I walked <strong>through</strong> the park.", japanese: "私は公園を(<strong>通って</strong>)歩きました。" } },
 ];
 
 // レベル3 接続詞（手入力でデータを追加してください）
 const level3ConjunctionWords = [
-  // 例: { id: 22751, word: "although", meaning: "〜けれども", partOfSpeech: "接続詞", category: "LEVEL3 接続詞", appearanceCount: 0, example: { english: "<strong>Although</strong> it was raining, I went out.", japanese: "雨が降っていた<strong>けれども</strong>、私は出かけました。" } },
+  // 例: { id: 22751, word: "although", meaning: "〜けれども", partOfSpeech: "接続詞", category: "LEVEL3 接続詞", appearanceCount: 0, example: { english: "<strong>Although</strong> it was raining, I went out.", japanese: "雨が降っていた(<strong>けれども</strong>)、私は出かけました。" } },
 ];
 
 //レベル3 再帰代名詞
 const level3RecursivePronounWords = [
-  { id: 20128, word: "myself", meaning: "私自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 1, example: { english: "I came here by<strong>myself</strong>.", japanese: "私は<strong>ひとりで</strong>ここに来ました。" } },
-  { id: 20129, word: "yourself", meaning: "あなた自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 0, example: { english: "Please help <strong>yourself</strong>.", japanese: "（飲食物などを）どうぞ<strong>ご自由にお取りください</strong>。" } },
+  { id: 20128, word: "myself", meaning: "私自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 1, example: { english: "I came here by<strong>myself</strong>.", japanese: "私は(<strong>ひとりで</strong>)ここに来ました。" } },
+  { id: 20129, word: "yourself", meaning: "あなた自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 0, example: { english: "Please help <strong>yourself</strong>.", japanese: "（飲食物などを）どうぞ(<strong>ご自由にお取りください</strong>)。" } },
   { id: 20130, word: "himself", meaning: "彼自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 2, example: { english: "\"She is very beautiful.\"he said to<strong>himself</strong>.", japanese: "「彼女は美しい」と彼は（<strong>心の中で</strong>）思いました。" } },
-  { id: 20131, word: "herself", meaning: "彼女自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 0, example: { english: "She made it <strong>herself</strong>.", japanese: "彼女はそれを<strong>自分で</strong>作りました。" } },
-  { id: 20132, word: "itself", meaning: "それ自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 0, example: { english: "The door opened by <strong>itself</strong>.", japanese: "ドアが<strong>ひとりでに</strong>開きました。" } },
-  { id: 20133, word: "ourselves", meaning: "私たち自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 0, example: { english: "We enjoyed <strong>ourselves</strong>.", japanese: "私たちは<strong>楽しみました</strong>。" } },
-  { id: 20134, word: "themselves", meaning: "彼ら（彼女ら）自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 0, example: { english: "They did it <strong>themselves</strong>.", japanese: "彼らはそれを<strong>自分たちで</strong>やりました。" } },
+  { id: 20131, word: "herself", meaning: "彼女自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 0, example: { english: "She made it <strong>herself</strong>.", japanese: "彼女はそれを(<strong>自分で</strong>)作りました。" } },
+  { id: 20132, word: "itself", meaning: "それ自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 0, example: { english: "The door opened by <strong>itself</strong>.", japanese: "ドアが(<strong>ひとりでに</strong>)開きました。" } },
+  { id: 20133, word: "ourselves", meaning: "私たち自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 0, example: { english: "We enjoyed <strong>ourselves</strong>.", japanese: "私たちは(<strong>楽しみました</strong>)。" } },
+  { id: 20134, word: "themselves", meaning: "彼ら（彼女ら）自身（を/に）", partOfSpeech: "代名詞", category: "LEVEL3 再帰代名詞", appearanceCount: 0, example: { english: "They did it <strong>themselves</strong>.", japanese: "彼らはそれを(<strong>自分たちで</strong>)やりました。" } },
 ];
 
 //レベル3 関係代名詞
 const level3RelativePronounWords = [
-  { id: 20901, word: "who", meaning: "〈人〉について、後ろから説明する働きを持つ", partOfSpeech: "関係代名詞", category: "LEVEL3 関係代名詞", appearanceCount: 126, example: { english: "The boy <strong>who</strong> is singing is my brother.", japanese: "<strong>歌っている</strong>少年は私の弟です。" } },
-  { id: 20902, word: "which", meaning: "〈物〉について、後ろから説明する働きを持つ", partOfSpeech: "関係代名詞", category: "LEVEL3 関係代名詞", appearanceCount: 186, example: { english: "This is the book <strong>which</strong> I bought yesterday.", japanese: "これが私が昨日<strong>買った</strong>本です。" } },
-  { id: 20903, word: "that", meaning: "〈人/物〉について、後ろから説明する働きを持つ", partOfSpeech: "関係代名詞", category: "LEVEL3 関係代名詞", appearanceCount: 628, example: { english: "He is the teacher <strong>that</strong> I respect.", japanese: "彼は私が<strong>尊敬している</strong>先生です。" } },
-  { id: 20904, word: "whose", meaning: "〈人/物〉について、後ろから説明する働きを持つ", partOfSpeech: "関係代名詞", category: "LEVEL3 関係代名詞", appearanceCount: 0, example: { english: "Look at tha house <strong>whose</strong> roof is red.", japanese: "あの屋根が<strong>赤い</strong>家を見てください。"}},
+  { id: 20901, word: "who", meaning: "〈人〉について、後ろから説明する働きを持つ", partOfSpeech: "関係代名詞", category: "LEVEL3 関係代名詞", appearanceCount: 126, example: { english: "The boy <strong>who</strong> is singing is my brother.", japanese: "(<strong>歌っている</strong>)少年は私の弟です。" } },
+  { id: 20902, word: "which", meaning: "〈物〉について、後ろから説明する働きを持つ", partOfSpeech: "関係代名詞", category: "LEVEL3 関係代名詞", appearanceCount: 186, example: { english: "This is the book <strong>which</strong> I bought yesterday.", japanese: "これが私が昨日(<strong>買った</strong>)本です。" } },
+  { id: 20903, word: "that", meaning: "〈人/物〉について、後ろから説明する働きを持つ", partOfSpeech: "関係代名詞", category: "LEVEL3 関係代名詞", appearanceCount: 628, example: { english: "He is the teacher <strong>that</strong> I respect.", japanese: "彼は私が(<strong>尊敬している</strong>)先生です。" } },
+  { id: 20904, word: "whose", meaning: "〈人/物〉について、後ろから説明する働きを持つ", partOfSpeech: "関係代名詞", category: "LEVEL3 関係代名詞", appearanceCount: 0, example: { english: "Look at tha house <strong>whose</strong> roof is red.", japanese: "あの屋根が(<strong>赤い</strong>)家を見てください。"}},
 ];
 
 // ============================================
