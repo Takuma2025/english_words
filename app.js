@@ -3769,7 +3769,7 @@ function showElementaryCategorySelection(skipAnimation = false) {
             <div class="category-info">
                 <div class="category-header">
                     <div class="category-name">
-                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#eff6ff" stroke="none" style="margin-right: 8px;">
+                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#eff6ff" stroke="#2563eb" stroke-width="1" style="margin-right: 8px;">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                             <text x="12" y="13" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
                         </svg>
@@ -4115,7 +4115,7 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
             <div class="category-info">
                 <div class="category-header">
                     <div class="category-name">
-                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="${badgeBgColor}" stroke="none" style="margin-right: 8px;">
+                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="${badgeBgColor}" stroke="${badgeColor}" stroke-width="1" style="margin-right: 8px;">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                             <text x="12" y="13" text-anchor="middle" fill="${badgeColor}" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
                         </svg>
