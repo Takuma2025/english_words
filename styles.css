@@ -3202,10 +3202,120 @@ button.category-card:focus-visible {
 
 
 
-/* スマホ向け：整序英作文と厳選例文暗記のレイアウト調整 */
-@media (max-width: 600px) {
+/* 志望校コンテナ下のスライディングバナー */
+.ad-banner-wrapper {
+    width: calc(100% - 32px);
+    margin: 0 auto 16px auto;
+    position: relative;
+}
 
-    /* 志望校コンテナのスマホ向け調整 */
+.ad-banner-slider-container {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    height: 60px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.ad-banner-slider {
+    display: flex;
+    width: 400%; /* 4スライド分 */
+    height: 100%;
+    animation: ad-slide 12s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.ad-banner-slide {
+    width: 25%; /* 1スライド分 */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    position: relative;
+    cursor: pointer;
+}
+
+.ad-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+}
+
+.ad-banner-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.05em;
+}
+
+.ad-banner-text {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* インジケーター（ドット） */
+.ad-banner-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.ad-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #d1d5db;
+    transition: all 0.3s ease;
+}
+
+.dot-1 { animation: dot-active-1 12s infinite; }
+.dot-2 { animation: dot-active-2 12s infinite; }
+.dot-3 { animation: dot-active-3 12s infinite; }
+
+@keyframes dot-active-1 {
+    0%, 30%, 100% { background: #3b82f6; transform: scale(1.2); }
+    33%, 96% { background: #d1d5db; transform: scale(1); }
+}
+
+@keyframes dot-active-2 {
+    0%, 30%, 66%, 100% { background: #d1d5db; transform: scale(1); }
+    33%, 63% { background: #f97316; transform: scale(1.2); }
+}
+
+@keyframes dot-active-3 {
+    0%, 63%, 100% { background: #d1d5db; transform: scale(1); }
+    66%, 96% { background: #7c3aed; transform: scale(1.2); }
+}
+
+/* バナー色バリエーション */
+.banner-blue {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+.banner-orange {
+    background: linear-gradient(135deg, #f97316, #fb923c);
+}
+
+.banner-purple {
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+}
+
+@keyframes ad-slide {
+    0%, 30% { transform: translateX(0); }
+    33%, 63% { transform: translateX(-25%); }
+    66%, 96% { transform: translateX(-50%); }
+    100% { transform: translateX(-75%); }
+}
+
+.ad-banner-slide:active {
+    opacity: 0.9;
+    transform: scale(0.995);
 }
 
 .exam-menu-image {
