@@ -3348,21 +3348,21 @@ button.category-card:focus-visible {
     align-items: center;
     justify-content: center;
     padding: 2px 8px 2px 8px;
-    border-radius: 0px; /* 角丸なし：シャープに */
+    border-radius: 0px;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-weight: 200;
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.15em;
     color: #2563eb;
-    margin-right: 8px; /* タイトルとの隙間を減らす */
+    margin-right: 8px;
     background: #eff6ff;
-    border-top: 2px solid #2563eb;
-    border-bottom: 2px solid #2563eb;
-    border-left: none;
+    border-left: 3px solid #2563eb;
+    border-top: none;
+    border-bottom: none;
     border-right: none;
     box-shadow: none;
-    transform: translateY(-2px); /* バッジをさらに上に持ち上げ */
+    transform: translateY(-2px);
 }
 
 /* 数字部分 */
@@ -3386,9 +3386,9 @@ button.category-card:focus-visible {
 .level-badge.level-badge-dark {
     color: #2563eb;
     background: #eff6ff;
-    border-top: 2px solid #2563eb;
-    border-bottom: 2px solid #2563eb;
-    border-left: none;
+    border-left: 3px solid #2563eb;
+    border-top: none;
+    border-bottom: none;
     border-right: none;
 }
 
@@ -3396,14 +3396,13 @@ button.category-card:focus-visible {
 .category-card[data-category*="LEVEL"] .level-badge {
     color: #2563eb;
     background: #eff6ff;
-    border-top: 2px solid #2563eb;
-    border-bottom: 2px solid #2563eb;
-    border-left: none;
+    border-left: 3px solid #2563eb;
+    border-top: none;
+    border-bottom: none;
     border-right: none;
 }
 
-/* ヘッダー用レベルバッジ（白・上下線・背景なし） */
-/* 詳細度を上げて色バリアントを確実に上書き */
+/* ヘッダー用レベルバッジ（白・左線・背景なし） */
 .level-badge.level-badge-header,
 .level-badge.level-badge-header.level-badge-green,
 .level-badge.level-badge-header.level-badge-red,
@@ -3412,9 +3411,9 @@ button.category-card:focus-visible {
 .level-badge.level-badge-header.level-badge-purple,
 .level-badge.level-badge-header.level-badge-dark {
     background: transparent;
-    border-top: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
-    border-left: none;
+    border-left: 3px solid #ffffff;
+    border-top: none;
+    border-bottom: none;
     border-right: none;
     color: #ffffff;
     font-weight: 200;
@@ -3498,9 +3497,9 @@ button.category-card:focus-visible {
 .header-title-text .level-badge.level-badge-dark,
 .header-title-text .level-badge.level-badge-header {
     background: transparent;
-    border-top: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
-    border-left: none;
+    border-left: 3px solid #ffffff;
+    border-top: none;
+    border-bottom: none;
     border-right: none;
     color: #ffffff;
     transform: none;
@@ -5277,6 +5276,123 @@ body.choice-question-mode-active .word-card-container {
     display: none;
 }
 
+/* 設定ボタンラッパー */
+.input-list-settings-wrapper {
+    position: relative;
+}
+
+/* 設定ボタン（歯車アイコン） */
+.input-list-settings-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 10px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.input-list-settings-btn:hover {
+    background: #d1d5db;
+    color: #374151;
+}
+
+.input-list-settings-btn:active {
+    background: #9ca3af;
+}
+
+.input-list-settings-btn.active {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+/* 設定ドロップダウン */
+.input-list-settings-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    min-width: 200px;
+    z-index: 1000;
+}
+
+.input-list-settings-dropdown.hidden {
+    display: none;
+}
+
+.settings-dropdown-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #6b7280;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.settings-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.settings-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.settings-dropdown-item input[type="checkbox"] {
+    display: none;
+}
+
+.settings-dropdown-toggle {
+    width: 44px;
+    height: 24px;
+    background: #e5e7eb;
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.2s ease;
+    flex-shrink: 0;
+}
+
+.settings-dropdown-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.settings-dropdown-item input[type="checkbox"]:checked + .settings-dropdown-toggle {
+    background: #3b82f6;
+}
+
+.settings-dropdown-item input[type="checkbox"]:checked + .settings-dropdown-toggle::after {
+    transform: translateX(20px);
+}
+
+.settings-dropdown-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+}
+
+
 .input-list-controls-row {
     display: flex;
     align-items: center;
@@ -6089,6 +6205,180 @@ body.choice-question-mode-active .word-card-container {
     cursor: pointer;
     margin-bottom: 12px;
     perspective: 1000px;
+}
+
+/* ========================================
+   フリップモード（単語カード）のコンパクト表示
+   フリップ機能を維持しつつ小さく表示
+   ======================================== */
+.input-list-scroll.compact-mode.flip-mode .input-list-item {
+    margin-bottom: 2px;
+}
+
+.input-list-scroll.compact-mode.flip-mode .input-list-inner {
+    min-height: 50px;
+}
+
+.input-list-scroll.compact-mode.flip-mode .input-list-front,
+.input-list-scroll.compact-mode.flip-mode .input-list-back {
+    min-height: 50px;
+    padding: 8px 10px;
+}
+
+.input-list-scroll.compact-mode.flip-mode .input-list-word {
+    font-size: 16px;
+}
+
+.input-list-scroll.compact-mode.flip-mode .input-list-meaning {
+    font-size: 14px;
+}
+
+.input-list-scroll.compact-mode.flip-mode .input-list-example {
+    display: none;
+}
+
+.input-list-scroll.compact-mode.flip-mode .input-list-number {
+    font-size: 9px;
+    padding: 2px 5px;
+}
+
+.input-list-scroll.compact-mode.flip-mode .input-list-appearance-box {
+    display: none;
+}
+
+.input-list-scroll.compact-mode.flip-mode .input-list-top-actions {
+    display: none;
+}
+
+.input-list-scroll.compact-mode.flip-mode .input-list-kana {
+    display: none;
+}
+
+.input-list-scroll.compact-mode.flip-mode .input-list-phonetic {
+    display: none;
+}
+
+.input-list-scroll.compact-mode.flip-mode .input-list-pos {
+    display: none;
+}
+
+/* 用例非表示モード */
+.input-list-scroll.hide-examples .input-list-example {
+    display: none;
+}
+
+.input-list-scroll.hide-examples .input-list-expand-example {
+    display: none;
+}
+
+/* ========================================
+   展開モード（単語帳）のコンパクト表示
+   順番: 番号 → チェック → 英単語 → 日本語
+   ======================================== */
+.input-list-scroll.compact-mode .input-list-item-expand {
+    padding: 4px 8px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0;
+    min-height: auto;
+    border-top: 1.5px solid #444444;
+    border-left: 1.5px solid #444444;
+    border-right: none;
+    border-bottom: none;
+}
+
+.input-list-scroll.compact-mode .input-list-item-expand:first-child {
+    border-top: 1.5px solid #444444;
+}
+
+.input-list-scroll.compact-mode .input-list-item-expand:last-child {
+    border-bottom: 1.5px solid #444444;
+}
+
+/* 1. 単語番号 */
+.input-list-scroll.compact-mode .input-list-expand-number {
+    font-size: 9px;
+    padding: 2px 4px;
+    position: static;
+    flex-shrink: 0;
+    order: 1;
+    margin-right: 4px;
+}
+
+/* 2. チェックマーク（英単語の真左） */
+.input-list-scroll.compact-mode .input-list-expand-checkbox {
+    position: static;
+    top: auto;
+    left: auto;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    order: 2;
+    margin-right: 4px;
+}
+
+/* 3. 英単語（::beforeで表示） */
+.input-list-scroll.compact-mode .input-list-item-expand::before {
+    content: attr(data-word);
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+    flex-shrink: 0;
+    min-width: 100px;
+    order: 3;
+}
+
+/* 4. 日本語の意味 */
+.input-list-scroll.compact-mode .input-list-expand-meaning {
+    font-size: 14px;
+    color: #ff9933;
+    font-weight: 600;
+    flex: 1;
+    text-align: left;
+    padding: 0;
+    margin: 0;
+    order: 4;
+}
+
+.input-list-scroll.compact-mode .input-list-expand-meaning-pos {
+    font-size: 10px;
+    padding: 1px 4px;
+    margin-right: 4px;
+}
+
+/* 非表示にする要素 */
+.input-list-scroll.compact-mode .input-list-expand-header {
+    display: none;
+}
+
+.input-list-scroll.compact-mode .input-list-expand-word-row {
+    display: none;
+}
+
+.input-list-scroll.compact-mode .input-list-expand-word-container {
+    display: none;
+}
+
+.input-list-scroll.compact-mode .input-list-expand-word {
+    display: none;
+}
+
+.input-list-scroll.compact-mode .input-list-expand-kana {
+    display: none;
+}
+
+.input-list-scroll.compact-mode .input-list-expand-top-actions {
+    display: none;
+}
+
+.input-list-scroll.compact-mode .input-list-expand-appearance-box {
+    display: none;
+}
+
+.input-list-scroll.compact-mode .input-list-expand-example {
+    display: none;
 }
 
 

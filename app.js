@@ -2831,6 +2831,7 @@ function init() {
         setupVolumeControl();
         initSpeechSynthesis(); // 音声合成を事前に初期化
         setupInputListModeToggle();
+        setupInputListSettings();
         setupInputListFilter();
         setupRedSheetStickyScroll();
         updateVocabProgressBar();
@@ -9369,6 +9370,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         if (inputListViewMode === 'expand') {
             const item = document.createElement('div');
             item.className = 'input-list-item-expand';
+            item.setAttribute('data-word', word.word);
             
         let isCorrect = false, isWrong = false;
         
@@ -9774,6 +9776,7 @@ function renderInputListView(words) {
         if (inputListViewMode === 'expand') {
             const item = document.createElement('div');
             item.className = 'input-list-item-expand';
+            item.setAttribute('data-word', word.word);
             
             // 進捗を取得
             let isCorrect, isWrong;
@@ -10199,6 +10202,92 @@ function setupInputListModeToggle() {
                 }
             }
         });
+    }
+}
+
+// 設定ボタンのセットアップ
+function setupInputListSettings() {
+    const settingsBtn = document.getElementById('inputListSettingsBtn');
+    const settingsDropdown = document.getElementById('inputListSettingsDropdown');
+    const showExamplesCheckbox = document.getElementById('settingShowExamples');
+    const compactModeCheckbox = document.getElementById('settingCompactMode');
+    const inputListContainer = document.getElementById('inputListContainer');
+    
+    if (!settingsBtn || !settingsDropdown) return;
+    
+    // localStorageから設定を読み込む
+    const savedShowExamples = localStorage.getItem('inputListShowExamples');
+    const savedCompactMode = localStorage.getItem('inputListCompactMode');
+    
+    // 初期状態を設定
+    if (savedShowExamples !== null) {
+        showExamplesCheckbox.checked = savedShowExamples === 'true';
+    }
+    if (savedCompactMode !== null) {
+        compactModeCheckbox.checked = savedCompactMode === 'true';
+    }
+    
+    // 初期状態をコンテナに適用
+    applyInputListSettings();
+    
+    // 設定ボタンのクリックでドロップダウン開閉
+    settingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = !settingsDropdown.classList.contains('hidden');
+        if (isOpen) {
+            settingsDropdown.classList.add('hidden');
+            settingsBtn.classList.remove('active');
+        } else {
+            settingsDropdown.classList.remove('hidden');
+            settingsBtn.classList.add('active');
+        }
+    });
+    
+    // ドロップダウン外クリックで閉じる
+    document.addEventListener('click', (e) => {
+        if (!settingsDropdown.contains(e.target) && !settingsBtn.contains(e.target)) {
+            settingsDropdown.classList.add('hidden');
+            settingsBtn.classList.remove('active');
+        }
+    });
+    
+    // 用例表示トグル
+    if (showExamplesCheckbox) {
+        showExamplesCheckbox.addEventListener('change', () => {
+            localStorage.setItem('inputListShowExamples', showExamplesCheckbox.checked);
+            applyInputListSettings();
+        });
+    }
+    
+    // コンパクトモードトグル
+    if (compactModeCheckbox) {
+        compactModeCheckbox.addEventListener('change', () => {
+            localStorage.setItem('inputListCompactMode', compactModeCheckbox.checked);
+            applyInputListSettings();
+        });
+    }
+}
+
+// 設定をコンテナに適用
+function applyInputListSettings() {
+    const inputListContainer = document.getElementById('inputListContainer');
+    const showExamplesCheckbox = document.getElementById('settingShowExamples');
+    const compactModeCheckbox = document.getElementById('settingCompactMode');
+    
+    if (!inputListContainer) return;
+    
+    // 用例表示/非表示
+    if (showExamplesCheckbox && !showExamplesCheckbox.checked) {
+        inputListContainer.classList.add('hide-examples');
+    } else {
+        inputListContainer.classList.remove('hide-examples');
+    }
+    
+    // コンパクトモード
+    if (compactModeCheckbox && compactModeCheckbox.checked) {
+        inputListContainer.classList.add('compact-mode');
+    } else {
+        inputListContainer.classList.remove('compact-mode');
     }
 }
 
@@ -10876,6 +10965,9 @@ function applyInputFilter() {
             container.innerHTML = '<div class="input-filter-empty">該当する単語がありません</div>';
         }
     }
+    
+    // 設定（コンパクトモード・用例表示）を適用
+    applyInputListSettings();
     
     // フィルター結果の件数を更新
     updateFilterCount(filteredWords.length, baseWords.length);
