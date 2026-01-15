@@ -3198,21 +3198,21 @@ button.category-card:focus-visible {
 .ad-banner-slider-container {
     width: 100%;
     overflow: hidden;
-    border-radius: 0px; /* 角丸なし */
+    border-radius: 0;
     height: 60px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     touch-action: pan-y;
 }
 
 .ad-banner-slider {
     display: flex;
-    width: 300%; /* 3スライド分（JSで制御するためループ用クローンは不要に） */
+    width: 300%; /* 3スライド分 */
     height: 100%;
     transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    gap: 8px; /* スライド間のギャップ */
 }
 
 .ad-banner-slide {
-    width: calc(100% / 3); /* 1スライド分 */
+    width: calc((100% - 16px) / 3); /* ギャップ分を考慮 */
     height: 100%;
     display: flex;
     align-items: center;
@@ -3220,6 +3220,8 @@ button.category-card:focus-visible {
     position: relative;
     cursor: pointer;
     flex-shrink: 0;
+    border-radius: 8px; /* 各スライドに角丸 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .ad-banner-content {
@@ -3267,20 +3269,20 @@ button.category-card:focus-visible {
 }
 
 .ad-dot.active.dot-1 { background: #3b82f6; }
-.ad-dot.active.dot-2 { background: #f97316; }
-.ad-dot.active.dot-3 { background: #7c3aed; }
+.ad-dot.active.dot-2 { background: #2563eb; }
+.ad-dot.active.dot-3 { background: #1d4ed8; }
 
-/* バナー色バリエーション */
+/* バナー色バリエーション（青系のみ、グラデーションなし） */
 .banner-blue {
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    background: #3b82f6;
 }
 
 .banner-orange {
-    background: linear-gradient(135deg, #f97316, #fb923c);
+    background: #2563eb;
 }
 
 .banner-purple {
-    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    background: #1d4ed8;
 }
 
 .ad-banner-slide:active {
@@ -3401,6 +3403,34 @@ button.category-card:focus-visible {
     border-radius: 0;
 }
 
+/* 入試対策フィルタ用セレクトボックス */
+.exam-filter-wrapper {
+    padding: 0 4px;
+}
+
+.exam-type-select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    background: #ffffff;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.exam-type-select:focus {
+    outline: none;
+    border-color: #d1d5db;
+}
+
 /* C問題対策バッジ（赤バージョン・LEVELバッジと同じスタイル） */
 .exam-badge {
     display: inline-flex;
@@ -3409,9 +3439,8 @@ button.category-card:focus-visible {
     padding: 2px 8px 2px 8px;
     border-radius: 0px;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-weight: 500;
+    font-weight: 200;
     font-size: 10px;
-    text-transform: uppercase;
     letter-spacing: 0.1em;
     color: #dc2626;
     margin-right: 8px;
@@ -3419,6 +3448,17 @@ button.category-card:focus-visible {
     border-left: 3px solid #dc2626;
     box-shadow: none;
     transform: translateY(-2px);
+}
+
+/* C問題対策バッジの「C」部分を大きく */
+.exam-badge b {
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-right: 4px;
+    font-family: "Futura", "Century Gothic", "Inter", -apple-system, sans-serif;
+    display: inline-block;
 }
 
 .level-badge-header b,

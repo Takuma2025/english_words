@@ -372,10 +372,18 @@
                         </button>
                     </div>
                     <div class="course-section hidden" id="courseScoreSection">
-                        <button class="category-card" data-category="英文法中学３年間の総復習">
+                        <div class="exam-filter-wrapper" style="margin-bottom: 12px;">
+                            <select id="examTypeFilter" class="exam-type-select">
+                                <option value="all">すべて</option>
+                                <option value="b">大阪府公立高校B問題対策</option>
+                                <option value="c">大阪府公立高校C問題対策</option>
+                                <option value="private">私立高校対策</option>
+                            </select>
+                        </div>
+                        <button class="category-card" data-category="英文法中学３年間の総復習" data-exam-type="all">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name">中学３年間の英文法</div>
+                                    <div class="category-name"><span style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #fef2f2; border-radius: 50%; margin-right: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M12 20v-8"/><path d="M12 12c-3.5 0-6-2.5-6-6 3.5 0 6 2.5 6 6z"/><path d="M12 12c3.5 0 6-2.5 6-6-3.5 0-6 2.5-6 6z"/></svg></span>中学３年間の英文法</div>
                                 </div>
                                 <div class="category-meta">中学英文法の総復習で基礎を固める単元別対策。</div>
                                 <div class="category-progress">
@@ -390,10 +398,28 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
-                        <button class="category-card" data-category="大阪C問題対策英単語タイムアタック">
+                        <button class="category-card" data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】" data-exam-type="b">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="exam-badge">C問題対策</span>英単語即答2秒タイムアタック</div>
+                                    <div class="category-name"><span class="exam-badge"><b>B</b>問題対策</span>厳選例文暗記60</div>
+                                </div>
+                                <div class="category-meta">B問題に毎年出題されるが、正答率が低く差がつきやすい和文英訳問題の対策です。</div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-大阪B問題対策 厳選例文暗記60【和文英訳対策】" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-大阪B問題対策 厳選例文暗記60【和文英訳対策】" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-大阪B問題対策 厳選例文暗記60【和文英訳対策】">0/0語</div>
+                                </div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
+                        <button class="category-card" data-category="大阪C問題対策英単語タイムアタック" data-exam-type="c">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="exam-badge"><b>C</b>問題対策</span>英単語即答2秒タイムアタック</div>
                                 </div>
                                 <div class="category-meta">大問2～大問5の長文をスピーディーに読めるようにするための特訓です。</div>
                                 <div class="category-progress">
@@ -408,10 +434,10 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
-                        <button class="category-card" data-category="大阪C問題対策 英作写経ドリル">
+                        <button class="category-card" data-category="大阪C問題対策 英作写経ドリル" data-exam-type="c">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="exam-badge">C問題対策</span>英作写経ドリル</div>
+                                    <div class="category-name"><span class="exam-badge"><b>C</b>問題対策</span>英作写経ドリル</div>
                                 </div>
                                 <div class="category-meta">模範解答を書き写して暗記することで、英作文で使える表現や作文の型を身につけます。</div>
                                 <div class="category-progress">
@@ -426,10 +452,10 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
-                        <button class="category-card category-card-seijo" data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】">
+                        <button class="category-card category-card-seijo" data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】" data-exam-type="c">
                             <div class="category-info">
                                 <div class="category-header exam-menu-header">
-                                    <div class="category-name"><span class="exam-badge">C問題対策</span>整序英作文100本ノック</div>
+                                    <div class="category-name"><span class="exam-badge"><b>C</b>問題対策</span>整序英作文100本ノック</div>
                                 </div>
                                 <div class="category-meta">毎年大問1で出題される整序英作文の予想問題を100問解きます。</div>
                                 <div class="category-progress">
@@ -444,10 +470,10 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
-                        <button class="category-card category-card-choice" data-category="C問題対策 大問1整序英作文【四択問題】">
+                        <button class="category-card category-card-choice" data-category="C問題対策 大問1整序英作文【四択問題】" data-exam-type="c">
                             <div class="category-info">
                                 <div class="category-header exam-menu-header">
-                                    <div class="category-name"><span class="exam-badge">C問題対策</span>大問1整序英作文【四択問題】</div>
+                                    <div class="category-name"><span class="exam-badge"><b>C</b>問題対策</span>大問1整序英作文【四択問題】</div>
                                 </div>
                                 <div class="category-meta">4つの選択肢から正しい語順を選ぶ形式の整序英作文対策です。</div>
                                 <div class="category-progress">

@@ -2877,6 +2877,28 @@ function init() {
     
     // ホーム画面に追加されていない場合のみオーバレイを表示
     checkAndShowInstallPrompt();
+    
+    // 入試対策フィルタのイベントリスナーを追加
+    const examTypeFilter = document.getElementById('examTypeFilter');
+    if (examTypeFilter) {
+        examTypeFilter.addEventListener('change', function() {
+            const selectedType = this.value;
+            const courseScoreSection = document.getElementById('courseScoreSection');
+            if (!courseScoreSection) return;
+            
+            const cards = courseScoreSection.querySelectorAll('.category-card[data-exam-type]');
+            cards.forEach(card => {
+                const cardType = card.getAttribute('data-exam-type');
+                if (selectedType === 'all') {
+                    card.style.display = '';
+                } else if (cardType === 'all' || cardType === selectedType) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
 }
 
 // ヘッダーボタンの表示/非表示を制御
