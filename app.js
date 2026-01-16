@@ -443,12 +443,11 @@ function animateProgressToGoal() {
     const sourceRect = sourceElement.getBoundingClientRect();
     const targetRect = targetElement.getBoundingClientRect();
     
-    // 玉の数（パフォーマンス向上のため、見た目の豪華さを維持しつつ最大50個に制限）
-    const maxVisualBalls = 50;
-    const ballCount = Math.min(learnedCount, maxVisualBalls);
-    
-    // 数が多い場合は発射間隔を調整（最大1秒以内に全弾発射）
-    const delay = Math.max(5, Math.min(60, 1000 / Math.max(1, ballCount)));
+    // 玉の数（制限なし）
+    const ballCount = learnedCount;
+    // 数が多い場合は発射間隔を短くして、演出時間を一定に保つ
+    const totalDuration = 1500; // 全弾発射にかける最大時間(ms)
+    const delay = Math.min(80, totalDuration / Math.max(1, ballCount));
     
     // 複数の玉を順番に発射
     for (let i = 0; i < ballCount; i++) {
@@ -462,138 +461,133 @@ function animateProgressToGoal() {
         const ball = document.createElement('div');
         ball.className = 'progress-fly-particle';
         
-        const size = 10 + Math.random() * 10;
-        const hue = Math.random() * 360;
+        // ランダムなサイズと色
+        const size = 12 + Math.random() * 8;
+        const hue = Math.random() * 360; // 0-360度（全色）
         
-        // パフォーマンス最適化: translate3dとwill-changeを使用
+        // 開始位置のオフセット
+        const offsetX = (Math.random() - 0.5) * 100;
+        const offsetY = (Math.random() - 0.5) * 50;
+        
         ball.style.cssText = `
             position: fixed;
             width: ${size}px;
             height: ${size}px;
             background: radial-gradient(circle at 35% 35%, 
-                hsl(${hue}, 100%, 95%) 0%, 
-                hsl(${hue}, 100%, 70%) 45%, 
-                hsl(${hue}, 100%, 40%) 100%);
+                hsl(${hue}, 100%, 90%) 0%, 
+                hsl(${hue}, 100%, 60%) 45%, 
+                hsl(${hue}, 100%, 35%) 100%);
             border-radius: 50%;
             z-index: 10000;
             pointer-events: none;
             box-shadow: 
-                0 0 ${size}px hsl(${hue}, 100%, 65%),
-                0 0 ${size * 2}px hsla(${hue}, 100%, 50%, 0.4);
-            left: 0;
-            top: 0;
-            will-change: transform, opacity;
-            opacity: 0;
-            transform: translate3d(${sourceRect.left + sourceRect.width / 2 - size/2}px, ${sourceRect.top + sourceRect.height / 2 - size/2}px, 0) scale(0);
+                0 0 ${size}px hsl(${hue}, 100%, 60%),
+                0 0 ${size/2}px white,
+                inset -2px -2px 4px rgba(0,0,0,0.2);
+            left: ${sourceRect.left + sourceRect.width / 2 - size/2 + offsetX}px;
+            top: ${sourceRect.top + sourceRect.height / 2 - size/2 + offsetY}px;
         `;
         document.body.appendChild(ball);
         
-        const startX = sourceRect.left + sourceRect.width / 2;
-        const startY = sourceRect.top + sourceRect.height / 2;
+        // アニメーション設定
+        const startX = sourceRect.left + sourceRect.width / 2 + offsetX;
+        const startY = sourceRect.top + sourceRect.height / 2 + offsetY;
         const endX = targetRect.left + targetRect.width / 2;
         const endY = targetRect.top + targetRect.height / 2;
         
-        const driftX = (Math.random() - 0.5) * 150;
-        const driftY = -30 - Math.random() * 120;
-        
-        const duration = 1500 + Math.random() * 500;
+        const duration = 1200 + Math.random() * 600;
         const startTime = performance.now();
+        
+        // 放物線のコントロールポイント
+        const controlX = (startX + endX) / 2 + (Math.random() - 0.5) * 200;
+        const controlY = Math.min(startY, endY) - 100 - Math.random() * 150;
         
         function animate(currentTime) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             
-            const tZoom = Math.pow(progress, 3);
-            const wobble = Math.sin(progress * Math.PI * 3) * (1 - progress) * 20;
-            const wobbleY = Math.cos(progress * Math.PI * 2) * (1 - progress) * 15;
+            // イージング: 吸い込まれるような加速
+            const t = progress;
+            const eased = t * t * t;
             
-            const driftEffect = Math.sin(Math.pow(progress, 0.5) * Math.PI);
-            const currentDriftX = driftX * driftEffect * (1 - tZoom);
-            const currentDriftY = driftY * driftEffect * (1 - tZoom);
+            // 二次ベジェ曲線
+            const currentX = (1-t)*(1-t)*startX + 2*(1-t)*t*controlX + t*t*endX;
+            const currentY = (1-t)*(1-t)*startY + 2*(1-t)*t*controlY + t*t*endY;
             
-            const mainX = startX + (endX - startX) * tZoom;
-            const mainY = startY + (endY - startY) * tZoom;
+            ball.style.left = `${currentX - size/2}px`;
+            ball.style.top = `${currentY - size/2}px`;
             
-            const currentX = mainX + currentDriftX + wobble;
-            const currentY = mainY + currentDriftY + wobbleY;
-            
-            // パフォーマンス最適化: translate3dを使用
-            let scale = 1;
-            let opacity = 0.9;
-            
-            if (progress < 0.2) {
-                opacity = progress * 5;
-                scale = progress * 5;
-            } else if (progress > 0.8) {
-                opacity = (1 - progress) * 5;
-                scale = (1 - progress) * 5;
+            // 軌跡エフェクト
+            if (Math.random() > 0.6) {
+                createTrail(currentX, currentY, hue, size);
             }
             
-            ball.style.transform = `translate3d(${currentX - size/2}px, ${currentY - size/2}px, 0) scale(${scale})`;
-            ball.style.opacity = opacity;
-            
-            // 軌跡の発生頻度を下げて負荷軽減
-            if (Math.random() > 0.9) {
-                createTrail(currentX, currentY, hue, size * 0.8);
-            }
+            // 拡大縮小と透明度
+            const scale = (1 - eased * 0.5) * (1 + Math.sin(t * 10) * 0.1);
+            ball.style.transform = `scale(${scale})`;
+            ball.style.opacity = 1 - (eased * 0.2);
             
             if (progress < 1) {
                 requestAnimationFrame(animate);
             } else {
                 createBurst(currentX, currentY, hue);
                 ball.remove();
-                if (isLast) flashTarget();
+                
+                if (isLast) {
+                    flashTarget();
+                }
             }
         }
         
         requestAnimationFrame(animate);
     }
     
-    // 軌跡の作成（軽量化）
+    // 軌跡の作成
     function createTrail(x, y, hue, size) {
         const trail = document.createElement('div');
         trail.style.cssText = `
             position: fixed;
             width: ${size * 0.6}px;
             height: ${size * 0.6}px;
-            background: hsl(${hue}, 100%, 70%);
+            background: hsl(${hue}, 100%, 75%);
             border-radius: 50%;
             z-index: 9999;
             pointer-events: none;
-            left: 0;
-            top: 0;
-            transform: translate3d(${x}px, ${y}px, 0);
-            opacity: 0.4;
+            left: ${x - size*0.3}px;
+            top: ${y - size*0.3}px;
+            opacity: 0.5;
             filter: blur(2px);
-            will-change: opacity, transform;
         `;
         document.body.appendChild(trail);
         
         trail.animate([
-            { transform: `translate3d(${x}px, ${y}px, 0) scale(1)`, opacity: 0.4 },
-            { transform: `translate3d(${x}px, ${y}px, 0) scale(0)`, opacity: 0 }
+            { transform: 'scale(1)', opacity: 0.5 },
+            { transform: 'scale(0)', opacity: 0 }
         ], {
-            duration: 300,
+            duration: 400,
             easing: 'ease-out'
         }).onfinish = () => trail.remove();
     }
     
     // 到着時の火花
     function createBurst(x, y, hue) {
-        for (let i = 0; i < 5; i++) {
+        const count = 8; // 火花の数を増やす
+        for (let i = 0; i < count; i++) {
             const spark = document.createElement('div');
-            const angle = Math.random() * Math.PI * 2;
-            const dist = 10 + Math.random() * 20;
+            const angle = (i / count) * Math.PI * 2 + (Math.random() * 0.5);
+            const dist = 20 + Math.random() * 30;
             
             spark.style.cssText = `
                 position: fixed;
-                width: 4px;
-                height: 4px;
-                background: hsl(${hue}, 100%, 70%);
+                width: 6px;
+                height: 6px;
+                background: white;
+                box-shadow: 0 0 8px hsl(${hue}, 100%, 70%);
                 border-radius: 50%;
                 z-index: 10001;
                 left: ${x}px;
                 top: ${y}px;
+                pointer-events: none;
             `;
             document.body.appendChild(spark);
             
@@ -601,22 +595,51 @@ function animateProgressToGoal() {
                 { transform: 'translate(0, 0) scale(1)', opacity: 1 },
                 { transform: `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px) scale(0)`, opacity: 0 }
             ], {
-                duration: 400,
+                duration: 600,
                 easing: 'ease-out'
             }).onfinish = () => spark.remove();
         }
     }
     
-    // 進捗バーのフラッシュ
+    // 進捗バーのフィニッシュ・フラッシュ（光の影演出）
     function flashTarget() {
         const progressBarWrapper = document.querySelector('.school-card-progress-bar-wrapper');
         const progressBar = document.getElementById('schoolProgressBar');
+        
         if (progressBarWrapper) {
-            progressBarWrapper.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.8), 0 0 50px rgba(255, 215, 0, 0.4)';
-            progressBarWrapper.style.transition = 'box-shadow 0.2s';
-            setTimeout(() => {
-                progressBarWrapper.style.boxShadow = '';
-            }, 500);
+            // 洗練された「光の影」と「広がる輝き」のアニメーション
+            progressBarWrapper.animate([
+                { 
+                    boxShadow: '0 0 0px rgba(255, 255, 255, 0)',
+                    transform: 'scale(1)',
+                    filter: 'brightness(1)'
+                },
+                { 
+                    boxShadow: '0 0 40px rgba(255, 255, 255, 0.9), 0 0 80px rgba(251, 191, 36, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.5)',
+                    transform: 'scale(1.04)',
+                    filter: 'brightness(1.6) saturate(1.2)'
+                },
+                { 
+                    boxShadow: '0 0 100px rgba(255, 255, 255, 0), 0 0 120px rgba(251, 191, 36, 0)',
+                    transform: 'scale(1)',
+                    filter: 'brightness(1)'
+                }
+            ], {
+                duration: 1000,
+                easing: 'ease-out'
+            });
+
+            // バー自体の発光
+            if (progressBar) {
+                progressBar.animate([
+                    { filter: 'brightness(1)' },
+                    { filter: 'brightness(2) contrast(1.2)' },
+                    { filter: 'brightness(1)' }
+                ], {
+                    duration: 1000,
+                    easing: 'ease-out'
+                });
+            }
         }
     }
 }
