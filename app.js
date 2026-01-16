@@ -8,6 +8,15 @@ let currentInputFilter = 'all'; // インプットモードのフィルター状
 let isInputShuffled = false; // インプットモードのシャッフル状態
 let learnedWordsAtStart = 0; // 進捗アニメーション用：学習開始時の覚えた語彙数
 let lastLearningCategory = null; // 最後に学習していたカテゴリ
+let isAnimatingProgress = false; // アニメーション重複防止フラグ
+
+// アプリ起動時に現在の語彙数を初期化（1回目から正確に判定するため）
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        learnedWordsAtStart = calculateTotalLearnedWords();
+        console.log('初期語彙数を保存:', learnedWordsAtStart);
+    }, 1000); // データの読み込み完了を待つ
+});
 
 // 効果音システム
 const SoundEffects = {
@@ -381,266 +390,197 @@ function calculateTotalWords() {
 
 // 進捗アニメーション: LEVELカードから志望校進捗バーへ飛ばす
 function animateProgressToGoal() {
-    console.log('animateProgressToGoal called', {
+    if (isAnimatingProgress) return;
+    
+    // 現在の状況を正確に把握
+    const currentLearnedWords = calculateTotalLearnedWords();
+    const learnedCount = currentLearnedWords - learnedWordsAtStart;
+    
+    console.log('animateProgressToGoal 判定:', {
         lastLearningCategory,
         learnedWordsAtStart,
-        currentLearnedWords: calculateTotalLearnedWords()
+        currentLearnedWords,
+        learnedCount
     });
     
-    // 志望校が設定されていない場合はアニメーションしない
+    // 志望校が設定されていない、または語彙が増えていない場合は中止
     const selectedSchool = loadSelectedSchool();
-    if (!selectedSchool) {
-        console.log('アニメーション中止: 志望校が設定されていない');
+    if (!selectedSchool || learnedCount <= 0) {
+        lastLearningCategory = null;
         return;
     }
     
-    // 学習開始時より覚えた語彙が増えていなければアニメーションしない
-    const currentLearnedWords = calculateTotalLearnedWords();
-    if (currentLearnedWords <= learnedWordsAtStart) {
-        console.log('アニメーション中止: 語彙が増えていない', { currentLearnedWords, learnedWordsAtStart });
-        return;
-    }
-    
-    // 最後に学習していたカテゴリまたは親カテゴリからLEVELを判定
+    // ソース要素（飛ばし元）を特定
     let sourceElement = null;
     const category = lastLearningCategory || '';
     const parentCategory = window.currentSubcategoryParent || '';
-    console.log('カテゴリからソース要素を判定:', { category, parentCategory });
-    
-    // カテゴリまたは親カテゴリからLEVELを判定
     const checkCategory = category + ' ' + parentCategory;
-    if (checkCategory.includes('超重要500語') || checkCategory.includes('LEVEL1') || checkCategory.includes('レベル１')) {
+    
+    console.log('カテゴリ判定:', { category, parentCategory, checkCategory });
+    
+    // LEVEL1〜5の判定
+    if (checkCategory.includes('レベル１') || checkCategory.includes('LEVEL1') || checkCategory.includes('超重要')) {
         sourceElement = document.getElementById('level1CardBtn');
-    } else if (checkCategory.includes('重要500語') || checkCategory.includes('LEVEL2') || checkCategory.includes('レベル２')) {
+    } else if (checkCategory.includes('レベル２') || checkCategory.includes('LEVEL2') || checkCategory.includes('重要500')) {
         sourceElement = document.getElementById('level2CardBtn');
-    } else if (checkCategory.includes('ハイレベル300語') || checkCategory.includes('LEVEL3') || checkCategory.includes('レベル３')) {
+    } else if (checkCategory.includes('レベル３') || checkCategory.includes('LEVEL3') || checkCategory.includes('ハイレベル')) {
         sourceElement = document.getElementById('level3CardBtn');
-    } else if (checkCategory.includes('LEVEL4') || checkCategory.includes('私立高校入試レベル')) {
-        sourceElement = document.querySelector('[data-category="LEVEL4 私立高校入試レベル"]');
-    } else if (checkCategory.includes('LEVEL5') || checkCategory.includes('難関私立高校入試レベル')) {
-        sourceElement = document.querySelector('[data-category="LEVEL5 難関私立高校入試レベル"]');
+    } else if (checkCategory.includes('LEVEL4') || checkCategory.includes('私立高校入試')) {
+        sourceElement = document.querySelector('[data-category*="LEVEL4"]');
+    } else if (checkCategory.includes('LEVEL5') || checkCategory.includes('難関私立')) {
+        sourceElement = document.querySelector('[data-category*="LEVEL5"]');
+    } else if (checkCategory.includes('カテゴリー別') || parentCategory.includes('カテゴリー別') || 
+               ['家族', '体', '食べ物', '動物', '自然', '場所', '時間', '数', '色', '形容詞', '動詞', '副詞', '前置詞', '接続詞'].some(cat => category.includes(cat))) {
+        // カテゴリー別単語の場合
+        sourceElement = document.querySelector('[data-category*="カテゴリー別"]') || 
+                       document.querySelector('[data-category*="小学生"]') ||
+                       document.getElementById('level1CardBtn'); // フォールバック
     }
-    console.log('ソース要素:', sourceElement);
     
-    // ソース要素がない場合はアニメーションしない
+    // それでも見つからない場合、学習していたカテゴリに最も近いカードを探す
     if (!sourceElement) {
-        console.log('アニメーション中止: ソース要素が見つからない');
-        return;
+        // 任意のLEVELカードをフォールバックとして使用
+        sourceElement = document.getElementById('level1CardBtn') || 
+                       document.getElementById('level2CardBtn') ||
+                       document.getElementById('level3CardBtn');
     }
     
-    // ターゲット要素（志望校進捗バー）
     const targetElement = document.getElementById('schoolProgressBar');
-    if (!targetElement) {
-        console.log('アニメーション中止: ターゲット要素が見つからない');
+    const progressWrapper = document.querySelector('.school-card-progress-bar-wrapper');
+    if (!sourceElement || !targetElement) {
+        console.log('アニメーション中止: 要素が見つかりません', { sourceElement, targetElement });
+        lastLearningCategory = null;
         return;
     }
-    
-    // 覚えた単語数を計算
-    const learnedCount = currentLearnedWords - learnedWordsAtStart;
-    console.log('アニメーション実行: 覚えた単語数', learnedCount);
-    
-    // 要素の位置を取得
+
+    isAnimatingProgress = true;
     const sourceRect = sourceElement.getBoundingClientRect();
     const targetRect = targetElement.getBoundingClientRect();
     
-    // 玉の数（制限なし）
-    const ballCount = learnedCount;
-    // 数が多い場合は発射間隔を短くして、演出時間を一定に保つ
-    const totalDuration = 1500; // 全弾発射にかける最大時間(ms)
-    const delay = Math.min(80, totalDuration / Math.max(1, ballCount));
+    // 洗練された線の数（5〜12本）
+    const lineCount = Math.min(Math.max(5, learnedCount), 12);
+    const staggerDelay = 50;
+    let completedCount = 0;
     
-    // 複数の玉を順番に発射
-    for (let i = 0; i < ballCount; i++) {
+    for (let i = 0; i < lineCount; i++) {
         setTimeout(() => {
-            createAndAnimateBall(sourceRect, targetRect, i === ballCount - 1);
-        }, i * delay);
+            createShootingLine(sourceRect, targetRect, () => {
+                completedCount++;
+                // 最初の線が到達したらバーのアニメーション開始
+                if (completedCount === 1) {
+                    animateProgressBarGlow(targetElement, progressWrapper);
+                }
+                // 全て完了したらフラグリセット
+                if (completedCount === lineCount) {
+                    setTimeout(() => {
+                        isAnimatingProgress = false;
+                        lastLearningCategory = null;
+                    }, 200);
+                }
+            });
+        }, i * staggerDelay);
     }
-    
-    // 1つの玉を作成してアニメーション
-    function createAndAnimateBall(sourceRect, targetRect, isLast) {
-        const ball = document.createElement('div');
-        ball.className = 'progress-fly-particle';
+
+    // 細い線を生成してシュンと飛ばす
+    function createShootingLine(sourceRect, targetRect, onComplete) {
+        const line = document.createElement('div');
+        const length = 30 + Math.random() * 20; // 30〜50px
+        const thickness = 2 + Math.random() * 1; // 2〜3px
         
-        // ランダムなサイズと色
-        const size = 12 + Math.random() * 8;
-        const hue = Math.random() * 360; // 0-360度（全色）
+        const sX = sourceRect.left + sourceRect.width / 2 + (Math.random() - 0.5) * 50;
+        const sY = sourceRect.top + sourceRect.height / 2 + (Math.random() - 0.5) * 30;
+        const eX = targetRect.left + Math.random() * targetRect.width;
+        const eY = targetRect.top + targetRect.height / 2;
         
-        // 開始位置のオフセット
-        const offsetX = (Math.random() - 0.5) * 100;
-        const offsetY = (Math.random() - 0.5) * 50;
-        
-        ball.style.cssText = `
+        // 細い線のデザイン
+        line.style.cssText = `
             position: fixed;
-            width: ${size}px;
-            height: ${size}px;
-            background: radial-gradient(circle at 35% 35%, 
-                hsl(${hue}, 100%, 90%) 0%, 
-                hsl(${hue}, 100%, 60%) 45%, 
-                hsl(${hue}, 100%, 35%) 100%);
-            border-radius: 50%;
+            width: ${length}px;
+            height: ${thickness}px;
+            left: ${sX}px;
+            top: ${sY}px;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(96, 165, 250, 0.5) 20%,
+                rgba(255, 255, 255, 0.95) 50%,
+                rgba(96, 165, 250, 0.5) 80%,
+                transparent 100%);
+            border-radius: ${thickness}px;
             z-index: 10000;
             pointer-events: none;
-            box-shadow: 
-                0 0 ${size}px hsl(${hue}, 100%, 60%),
-                0 0 ${size/2}px white,
-                inset -2px -2px 4px rgba(0,0,0,0.2);
-            left: ${sourceRect.left + sourceRect.width / 2 - size/2 + offsetX}px;
-            top: ${sourceRect.top + sourceRect.height / 2 - size/2 + offsetY}px;
+            opacity: 0;
+            box-shadow: 0 0 6px rgba(59, 130, 246, 0.6);
+            transform-origin: center center;
+            will-change: transform, opacity;
         `;
-        document.body.appendChild(ball);
+        document.body.appendChild(line);
         
-        // アニメーション設定
-        const startX = sourceRect.left + sourceRect.width / 2 + offsetX;
-        const startY = sourceRect.top + sourceRect.height / 2 + offsetY;
-        const endX = targetRect.left + targetRect.width / 2;
-        const endY = targetRect.top + targetRect.height / 2;
-        
-        const duration = 1200 + Math.random() * 600;
+        const duration = 700 + Math.random() * 300; // 700〜1000ms（ゆっくり）
         const startTime = performance.now();
         
-        // 放物線のコントロールポイント
-        const controlX = (startX + endX) / 2 + (Math.random() - 0.5) * 200;
-        const controlY = Math.min(startY, endY) - 100 - Math.random() * 150;
+        // コントロールポイント（緩やかなカーブ）
+        const ctrlX = sX + (eX - sX) * 0.5 + (Math.random() - 0.5) * 80;
+        const ctrlY = Math.min(sY, eY) - 30 - Math.random() * 40;
         
         function animate(currentTime) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             
-            // イージング: 吸い込まれるような加速
-            const t = progress;
-            const eased = t * t * t;
+            // ease-out（最初速く、終盤減速）
+            const t = 1 - Math.pow(1 - progress, 3);
             
             // 二次ベジェ曲線
-            const currentX = (1-t)*(1-t)*startX + 2*(1-t)*t*controlX + t*t*endX;
-            const currentY = (1-t)*(1-t)*startY + 2*(1-t)*t*controlY + t*t*endY;
+            const x = (1-t)*(1-t)*sX + 2*(1-t)*t*ctrlX + t*t*eX;
+            const y = (1-t)*(1-t)*sY + 2*(1-t)*t*ctrlY + t*t*eY;
             
-            ball.style.left = `${currentX - size/2}px`;
-            ball.style.top = `${currentY - size/2}px`;
+            // 進行方向を計算して回転
+            const nextT = Math.min(t + 0.1, 1);
+            const nextX = (1-nextT)*(1-nextT)*sX + 2*(1-nextT)*nextT*ctrlX + nextT*nextT*eX;
+            const nextY = (1-nextT)*(1-nextT)*sY + 2*(1-nextT)*nextT*ctrlY + nextT*nextT*eY;
+            const angle = Math.atan2(nextY - y, nextX - x) * 180 / Math.PI;
             
-            // 軌跡エフェクト
-            if (Math.random() > 0.6) {
-                createTrail(currentX, currentY, hue, size);
+            // フェードイン・アウト
+            let opacity = 1;
+            if (progress < 0.1) {
+                opacity = progress * 10;
+            } else if (progress > 0.7) {
+                opacity = (1 - progress) / 0.3;
             }
             
-            // 拡大縮小と透明度
-            const scale = (1 - eased * 0.5) * (1 + Math.sin(t * 10) * 0.1);
-            ball.style.transform = `scale(${scale})`;
-            ball.style.opacity = 1 - (eased * 0.2);
+            line.style.left = `${x - length/2}px`;
+            line.style.top = `${y - thickness/2}px`;
+            line.style.transform = `rotate(${angle}deg)`;
+            line.style.opacity = opacity;
             
             if (progress < 1) {
                 requestAnimationFrame(animate);
             } else {
-                createBurst(currentX, currentY, hue);
-                ball.remove();
-                
-                if (isLast) {
-                    flashTarget();
-                }
+                line.remove();
+                onComplete();
             }
         }
-        
         requestAnimationFrame(animate);
     }
     
-    // 軌跡の作成
-    function createTrail(x, y, hue, size) {
-        const trail = document.createElement('div');
-        trail.style.cssText = `
-            position: fixed;
-            width: ${size * 0.6}px;
-            height: ${size * 0.6}px;
-            background: hsl(${hue}, 100%, 75%);
-            border-radius: 50%;
-            z-index: 9999;
-            pointer-events: none;
-            left: ${x - size*0.3}px;
-            top: ${y - size*0.3}px;
-            opacity: 0.5;
-            filter: blur(2px);
-        `;
-        document.body.appendChild(trail);
+    // 進捗バーのグロー演出
+    function animateProgressBarGlow(bar, wrapper) {
+        if (!bar || !wrapper) return;
         
-        trail.animate([
-            { transform: 'scale(1)', opacity: 0.5 },
-            { transform: 'scale(0)', opacity: 0 }
-        ], {
-            duration: 400,
-            easing: 'ease-out'
-        }).onfinish = () => trail.remove();
-    }
-    
-    // 到着時の火花
-    function createBurst(x, y, hue) {
-        const count = 8; // 火花の数を増やす
-        for (let i = 0; i < count; i++) {
-            const spark = document.createElement('div');
-            const angle = (i / count) * Math.PI * 2 + (Math.random() * 0.5);
-            const dist = 20 + Math.random() * 30;
-            
-            spark.style.cssText = `
-                position: fixed;
-                width: 6px;
-                height: 6px;
-                background: white;
-                box-shadow: 0 0 8px hsl(${hue}, 100%, 70%);
-                border-radius: 50%;
-                z-index: 10001;
-                left: ${x}px;
-                top: ${y}px;
-                pointer-events: none;
-            `;
-            document.body.appendChild(spark);
-            
-            spark.animate([
-                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                { transform: `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px) scale(0)`, opacity: 0 }
-            ], {
-                duration: 600,
-                easing: 'ease-out'
-            }).onfinish = () => spark.remove();
-        }
-    }
-    
-    // 進捗バーのフィニッシュ・フラッシュ（光の影演出）
-    function flashTarget() {
-        const progressBarWrapper = document.querySelector('.school-card-progress-bar-wrapper');
-        const progressBar = document.getElementById('schoolProgressBar');
+        // バーにグロー効果を追加
+        bar.style.transition = 'box-shadow 0.3s ease-out';
+        bar.style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3)';
         
-        if (progressBarWrapper) {
-            // 洗練された「光の影」と「広がる輝き」のアニメーション
-            progressBarWrapper.animate([
-                { 
-                    boxShadow: '0 0 0px rgba(255, 255, 255, 0)',
-                    transform: 'scale(1)',
-                    filter: 'brightness(1)'
-                },
-                { 
-                    boxShadow: '0 0 40px rgba(255, 255, 255, 0.9), 0 0 80px rgba(251, 191, 36, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.5)',
-                    transform: 'scale(1.04)',
-                    filter: 'brightness(1.6) saturate(1.2)'
-                },
-                { 
-                    boxShadow: '0 0 100px rgba(255, 255, 255, 0), 0 0 120px rgba(251, 191, 36, 0)',
-                    transform: 'scale(1)',
-                    filter: 'brightness(1)'
-                }
-            ], {
-                duration: 1000,
-                easing: 'ease-out'
-            });
-
-            // バー自体の発光
-            if (progressBar) {
-                progressBar.animate([
-                    { filter: 'brightness(1)' },
-                    { filter: 'brightness(2) contrast(1.2)' },
-                    { filter: 'brightness(1)' }
-                ], {
-                    duration: 1000,
-                    easing: 'ease-out'
-                });
-            }
-        }
+        // ラッパーに微細な発光
+        wrapper.style.transition = 'box-shadow 0.3s ease-out';
+        wrapper.style.boxShadow = '0 0 15px rgba(59, 130, 246, 0.4)';
+        
+        // 0.8秒後にリセット
+        setTimeout(() => {
+            bar.style.transition = 'box-shadow 0.5s ease-out';
+            bar.style.boxShadow = '';
+            wrapper.style.transition = 'box-shadow 0.5s ease-out';
+            wrapper.style.boxShadow = '';
+        }, 800);
     }
 }
 
