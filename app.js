@@ -457,21 +457,21 @@ function animateProgressToGoal() {
     const sourceRect = sourceElement.getBoundingClientRect();
     const targetRect = targetElement.getBoundingClientRect();
     
-    // 洗練された線の数（5〜12本）
-    const lineCount = Math.min(Math.max(5, learnedCount), 12);
-    const staggerDelay = 50;
+    // カラフルな★の数（8〜20個）
+    const starCount = Math.min(Math.max(8, learnedCount * 2), 20);
+    const staggerDelay = 80;
     let completedCount = 0;
     
-    for (let i = 0; i < lineCount; i++) {
+    for (let i = 0; i < starCount; i++) {
         setTimeout(() => {
-            createShootingLine(sourceRect, targetRect, () => {
+            createFloatingStar(sourceRect, targetRect, () => {
                 completedCount++;
-                // 最初の線が到達したらバーのアニメーション開始
+                // 最初の★が到達したらバーのアニメーション開始
                 if (completedCount === 1) {
                     animateProgressBarGlow(targetElement, progressWrapper);
                 }
                 // 全て完了したらフラグリセット
-                if (completedCount === lineCount) {
+                if (completedCount === starCount) {
                     setTimeout(() => {
                         isAnimatingProgress = false;
                         lastLearningCategory = null;
@@ -481,81 +481,95 @@ function animateProgressToGoal() {
         }, i * staggerDelay);
     }
 
-    // 細い線を生成してシュンと飛ばす
-    function createShootingLine(sourceRect, targetRect, onComplete) {
-        const line = document.createElement('div');
-        const length = 30 + Math.random() * 20; // 30〜50px
-        const thickness = 2 + Math.random() * 1; // 2〜3px
+    // カラフルな★を生成してふわっと飛ばす
+    function createFloatingStar(sourceRect, targetRect, onComplete) {
+        const star = document.createElement('div');
+        const size = 14 + Math.random() * 10; // 14〜24px
+        const hue = Math.random() * 360; // 全色相
         
-        const sX = sourceRect.left + sourceRect.width / 2 + (Math.random() - 0.5) * 50;
-        const sY = sourceRect.top + sourceRect.height / 2 + (Math.random() - 0.5) * 30;
+        const sX = sourceRect.left + sourceRect.width / 2 + (Math.random() - 0.5) * 80;
+        const sY = sourceRect.top + sourceRect.height / 2 + (Math.random() - 0.5) * 40;
         const eX = targetRect.left + Math.random() * targetRect.width;
         const eY = targetRect.top + targetRect.height / 2;
         
-        // 細い線のデザイン
-        line.style.cssText = `
+        // ★のデザイン
+        star.innerHTML = '★';
+        star.style.cssText = `
             position: fixed;
-            width: ${length}px;
-            height: ${thickness}px;
+            width: ${size}px;
+            height: ${size}px;
             left: ${sX}px;
             top: ${sY}px;
-            background: linear-gradient(90deg, 
-                transparent 0%,
-                rgba(96, 165, 250, 0.5) 20%,
-                rgba(255, 255, 255, 0.95) 50%,
-                rgba(96, 165, 250, 0.5) 80%,
-                transparent 100%);
-            border-radius: ${thickness}px;
+            font-size: ${size}px;
+            line-height: 1;
+            color: hsl(${hue}, 100%, 60%);
+            text-shadow: 
+                -1px -1px 0 white,
+                1px -1px 0 white,
+                -1px 1px 0 white,
+                1px 1px 0 white,
+                0px -1px 0 white,
+                0px 1px 0 white,
+                -1px 0px 0 white,
+                1px 0px 0 white;
             z-index: 10000;
             pointer-events: none;
             opacity: 0;
-            box-shadow: 0 0 6px rgba(59, 130, 246, 0.6);
-            transform-origin: center center;
             will-change: transform, opacity;
         `;
-        document.body.appendChild(line);
+        document.body.appendChild(star);
         
-        const duration = 700 + Math.random() * 300; // 700〜1000ms（ゆっくり）
+        const duration = 1500 + Math.random() * 800; // 1500〜2300ms（ふわっと）
         const startTime = performance.now();
         
-        // コントロールポイント（緩やかなカーブ）
-        const ctrlX = sX + (eX - sX) * 0.5 + (Math.random() - 0.5) * 80;
-        const ctrlY = Math.min(sY, eY) - 30 - Math.random() * 40;
+        // ランダムな浮遊パラメータ
+        const wobbleX = (Math.random() - 0.5) * 200; // 横揺れ
+        const wobbleY = -80 - Math.random() * 120; // 上に浮く
+        const wobbleFreqX = 2 + Math.random() * 2; // 揺れの頻度
+        const wobbleFreqY = 1.5 + Math.random() * 1.5;
+        const rotationSpeed = (Math.random() - 0.5) * 720; // 回転
         
         function animate(currentTime) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             
-            // ease-out（最初速く、終盤減速）
-            const t = 1 - Math.pow(1 - progress, 3);
+            // ふわっとしたイージング
+            const t = progress < 0.5
+                ? 2 * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
             
-            // 二次ベジェ曲線
-            const x = (1-t)*(1-t)*sX + 2*(1-t)*t*ctrlX + t*t*eX;
-            const y = (1-t)*(1-t)*sY + 2*(1-t)*t*ctrlY + t*t*eY;
+            // ランダムな浮遊軌跡
+            const floatPhase = progress * Math.PI;
+            const randomX = Math.sin(progress * wobbleFreqX * Math.PI) * wobbleX * (1 - t);
+            const randomY = Math.sin(progress * wobbleFreqY * Math.PI) * wobbleY * (1 - t);
             
-            // 進行方向を計算して回転
-            const nextT = Math.min(t + 0.1, 1);
-            const nextX = (1-nextT)*(1-nextT)*sX + 2*(1-nextT)*nextT*ctrlX + nextT*nextT*eX;
-            const nextY = (1-nextT)*(1-nextT)*sY + 2*(1-nextT)*nextT*ctrlY + nextT*nextT*eY;
-            const angle = Math.atan2(nextY - y, nextX - x) * 180 / Math.PI;
+            // 基本軌跡 + 浮遊
+            const x = sX + (eX - sX) * t + randomX;
+            const y = sY + (eY - sY) * t + randomY;
             
-            // フェードイン・アウト
+            // 回転
+            const rotation = progress * rotationSpeed;
+            
+            // フェードイン・アウト + スケール
             let opacity = 1;
-            if (progress < 0.1) {
-                opacity = progress * 10;
-            } else if (progress > 0.7) {
-                opacity = (1 - progress) / 0.3;
+            let scale = 1;
+            if (progress < 0.15) {
+                opacity = progress / 0.15;
+                scale = 0.5 + (progress / 0.15) * 0.5;
+            } else if (progress > 0.8) {
+                opacity = (1 - progress) / 0.2;
+                scale = 1 - (progress - 0.8) * 2;
             }
             
-            line.style.left = `${x - length/2}px`;
-            line.style.top = `${y - thickness/2}px`;
-            line.style.transform = `rotate(${angle}deg)`;
-            line.style.opacity = opacity;
+            star.style.left = `${x - size/2}px`;
+            star.style.top = `${y - size/2}px`;
+            star.style.transform = `rotate(${rotation}deg) scale(${scale})`;
+            star.style.opacity = opacity;
             
             if (progress < 1) {
                 requestAnimationFrame(animate);
             } else {
-                line.remove();
+                star.remove();
                 onComplete();
             }
         }
