@@ -253,18 +253,23 @@ textarea,
 }
 
 .sparkle-star::before {
-    content: '\2605';
+    content: '✦';
     position: absolute;
     top: 0;
     left: 0;
-    font-size: 24px;
-    color: var(--star-color, #fbbf24);
+    font-size: 20px;
+    color: #ffffff;
     text-shadow: 
-        -1px -1px 0 #fff,
-        1px -1px 0 #fff,
-        -1px 1px 0 #fff,
-        1px 1px 0 #fff;
+        0 0 4px #22d3ee,
+        0 0 8px #22d3ee,
+        0 0 12px #67e8f9,
+        0 0 20px #67e8f9,
+        0 0 30px rgba(34, 211, 238, 0.5);
     line-height: 1;
+}
+
+.sparkle-star.star-5::before {
+    content: '★';
 }
 
 @keyframes sparkle-star-animation {
@@ -1467,6 +1472,7 @@ body.learning-mode .app-header {
 .school-card-name {
     font-size: 17px;
     font-weight: 700;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", "Noto Sans JP", sans-serif;
     color: #1e293b;
     line-height: 1.4;
     display: -webkit-box;
@@ -1583,6 +1589,7 @@ body.learning-mode .app-header {
 .school-progress-current strong,
 .school-progress-total strong {
     font-weight: 700;
+    font-size: 18px;
     color: #0055ca;
 }
 
@@ -3235,20 +3242,20 @@ button.category-card:focus-visible {
     width: 100%;
     overflow: hidden;
     border-radius: 0;
-    height: 60px;
+    height: 120px;
     touch-action: pan-y;
 }
 
 .ad-banner-slider {
     display: flex;
-    width: 300%; /* 3スライド分 */
+    width: 300%;
     height: 100%;
     transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    gap: 8px; /* スライド間のギャップ */
+    gap: 8px;
 }
 
 .ad-banner-slide {
-    width: calc((100% - 16px) / 3); /* ギャップ分を考慮 */
+    width: calc((100% - 16px) / 3);
     height: 100%;
     display: flex;
     align-items: center;
@@ -3256,8 +3263,7 @@ button.category-card:focus-visible {
     position: relative;
     cursor: pointer;
     flex-shrink: 0;
-    border-radius: 8px; /* 各スライドに角丸 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 0;
 }
 
 .ad-banner-content {
@@ -3269,11 +3275,10 @@ button.category-card:focus-visible {
 
 .ad-banner-badge {
     font-size: 10px;
-    font-weight: 800;
+    font-weight: 700;
     padding: 2px 6px;
-    border-radius: 0px; /* 角丸なし（シャープなデザインに統一） */
-    background: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.2);
     letter-spacing: 0.05em;
 }
 
@@ -3281,7 +3286,6 @@ button.category-card:focus-visible {
     font-size: 14px;
     font-weight: 600;
     letter-spacing: -0.01em;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* インジケーター（ドット） */
@@ -3297,24 +3301,20 @@ button.category-card:focus-visible {
     height: 6px;
     border-radius: 50%;
     background: #d1d5db;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .ad-dot.active {
-    transform: scale(1.3);
+    transform: scale(1.2);
 }
 
-.ad-dot.active.dot-1 { background: #3b82f6; }
-.ad-dot.active.dot-2 { background: #2563eb; }
+.ad-dot.active.dot-1 { background: #dc2626; }
+.ad-dot.active.dot-2 { background: #3b82f6; }
 .ad-dot.active.dot-3 { background: #1d4ed8; }
 
-/* バナー色バリエーション（青系のみ、グラデーションなし） */
+/* バナー色バリエーション */
 .banner-blue {
     background: #3b82f6;
-}
-
-.banner-orange {
-    background: #2563eb;
 }
 
 .banner-purple {
@@ -3322,8 +3322,83 @@ button.category-card:focus-visible {
 }
 
 .ad-banner-slide:active {
-    opacity: 0.9;
-    transform: scale(0.995);
+    opacity: 0.95;
+}
+
+/* C問題対策パック プロモスライド */
+.banner-promo {
+    background: #f5f5f5;
+    padding: 0;
+}
+
+.promo-slide-content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+}
+
+.promo-slide-text {
+    flex: 2;
+    padding: 12px 8px 12px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.promo-slide-tag {
+    display: inline-block;
+    width: fit-content;
+    font-size: 10px;
+    font-weight: 700;
+    color: #0066cc;
+    border: 1.5px solid #0066cc;
+    padding: 2px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+    background: transparent;
+}
+
+.promo-slide-subtitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0066cc;
+    margin-top: 6px;
+}
+
+.promo-slide-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #333333;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+}
+
+.promo-slide-accent {
+    color: #dc2626;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.promo-slide-price {
+    color: #dc2626;
+    font-size: 20px;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+.promo-slide-image {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.promo-slide-image img {
+    max-height: 110px;
+    object-fit: contain;
+    object-position: bottom;
 }
 
 /* サブカテゴリー画面下の大阪画像 */
@@ -3385,7 +3460,7 @@ button.category-card:focus-visible {
     padding: 2px 8px 2px 8px;
     border-radius: 0px;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-weight: 200;
+    font-weight: 700;
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.15em;
@@ -3400,7 +3475,7 @@ button.category-card:focus-visible {
 /* 数字部分 */
 .level-badge b, 
 .level-badge strong {
-    font-weight: 500; /* 800から500へ：細く調整 */
+    font-weight: 700; /* 太く調整 */
     font-size: 22px;
     line-height: 1;
     letter-spacing: -0.02em;
@@ -3439,7 +3514,7 @@ button.category-card:focus-visible {
     background: transparent;
     border: none;
     color: #ffffff;
-    font-weight: 200;
+    font-weight: 700;
     font-size: 10px;
     padding: 2px 8px;
     border-radius: 0;
@@ -3480,7 +3555,7 @@ button.category-card:focus-visible {
     padding: 2px 8px 2px 8px;
     border-radius: 0px;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-weight: 200;
+    font-weight: 700;
     font-size: 10px;
     letter-spacing: 0.1em;
     color: #dc2626;
@@ -3491,9 +3566,9 @@ button.category-card:focus-visible {
     transform: translateY(-2px);
 }
 
-/* C問題対策バッジの「C」部分を大きく */
+/* C問題対策バッジの「B」「C」部分を大きく */
 .exam-badge b {
-    font-weight: 500;
+    font-weight: 700;
     font-size: 22px;
     line-height: 1;
     letter-spacing: -0.02em;
@@ -3505,7 +3580,7 @@ button.category-card:focus-visible {
 .level-badge.level-badge-header b,
 .level-badge.level-badge-header strong {
     color: #ffffff;
-    font-weight: 500;
+    font-weight: 700;
     font-size: 18px;
     font-family: "Futura", "Century Gothic", sans-serif;
 }
@@ -3617,14 +3692,22 @@ button.category-card:focus-visible {
 }
 
 .category-stars {
-    font-size: 16px;
-    color: #fbbf24;
-    letter-spacing: 2px;
+    font-size: 14px;
+    color: #ffffff;
+    letter-spacing: 1px;
     margin-left: 4px;
+    text-shadow: 
+        0 0 4px #22d3ee,
+        0 0 8px #22d3ee,
+        0 0 12px #67e8f9;
 }
 
 .category-stars-purple {
-    color: #e91e63;
+    color: #ffffff;
+    text-shadow: 
+        0 0 4px #22d3ee,
+        0 0 8px #22d3ee,
+        0 0 12px #67e8f9;
 }
 
 .category-meta {

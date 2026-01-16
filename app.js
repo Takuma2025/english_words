@@ -457,10 +457,40 @@ function animateProgressToGoal() {
     const sourceRect = sourceElement.getBoundingClientRect();
     const targetRect = targetElement.getBoundingClientRect();
     
-    // カラフルな★の数（8〜20個）
+    // アニメーション中はタップを無効化するオーバーレイを追加
+    const blockingOverlay = document.createElement('div');
+    blockingOverlay.id = 'progressAnimationBlocker';
+    blockingOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: transparent;
+        pointer-events: auto;
+    `;
+    document.body.appendChild(blockingOverlay);
+    
+    // 白い★（シアンの光）の数（8〜20個）
     const starCount = Math.min(Math.max(8, learnedCount * 2), 20);
     const staggerDelay = 80;
     let completedCount = 0;
+    
+    // 進捗バーの現在値を保存（アニメーション前の値）
+    const schoolProgressCurrentEl = document.getElementById('schoolProgressCurrent');
+    const schoolProgressBarEl = document.getElementById('schoolProgressBar');
+    const schoolProgressPercentEl = document.getElementById('schoolProgressPercent');
+    
+    // 現在の表示値を取得
+    const oldLearnedWords = parseInt(schoolProgressCurrentEl?.textContent || '0', 10);
+    const oldBarWidth = parseFloat(schoolProgressBarEl?.style.width || '0');
+    const oldPercent = parseInt(schoolProgressPercentEl?.textContent || '0', 10);
+    
+    // 新しい値を計算（selectedSchoolは上で既に取得済み）
+    const newLearnedWords = calculateTotalLearnedWords();
+    const requiredWords = selectedSchool ? calculateRequiredWords(selectedSchool.hensachi, selectedSchool.name) : 0;
+    const newPercent = requiredWords > 0 ? Math.min(100, Math.round((newLearnedWords / requiredWords) * 100)) : 0;
     
     for (let i = 0; i < starCount; i++) {
         setTimeout(() => {
@@ -470,9 +500,28 @@ function animateProgressToGoal() {
                 if (completedCount === 1) {
                     animateProgressBarGlow(targetElement, progressWrapper);
                 }
-                // 全て完了したらフラグリセット
+                // 全て完了したら進捗バーを更新
                 if (completedCount === starCount) {
                     setTimeout(() => {
+                        // 進捗バーの値をアニメーションで更新
+                        animateProgressValues(
+                            oldLearnedWords, newLearnedWords,
+                            oldPercent, newPercent,
+                            schoolProgressCurrentEl, schoolProgressBarEl, schoolProgressPercentEl
+                        );
+                        
+                        // +○語のフローティングテキストを表示
+                        const addedWords = newLearnedWords - oldLearnedWords;
+                        if (addedWords > 0) {
+                            showFloatingAddedWords(addedWords, targetRect);
+                        }
+                        
+                        // タップブロックオーバーレイを削除（フローティングテキスト表示後に遅延）
+                        setTimeout(() => {
+                            const blocker = document.getElementById('progressAnimationBlocker');
+                            if (blocker) blocker.remove();
+                        }, 800);
+                        
                         isAnimatingProgress = false;
                         lastLearningCategory = null;
                     }, 200);
@@ -480,20 +529,48 @@ function animateProgressToGoal() {
             });
         }, i * staggerDelay);
     }
+    
+    // 進捗の数値をアニメーションで更新
+    function animateProgressValues(oldWords, newWords, oldPct, newPct, wordEl, barEl, pctEl) {
+        const duration = 600; // ms
+        const startTime = performance.now();
+        
+        function animate(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // イージング（easeOutCubic）
+            const t = 1 - Math.pow(1 - progress, 3);
+            
+            // 現在の値を計算
+            const currentWords = Math.round(oldWords + (newWords - oldWords) * t);
+            const currentPct = Math.round(oldPct + (newPct - oldPct) * t);
+            
+            // DOM更新
+            if (wordEl) wordEl.textContent = currentWords;
+            if (barEl) barEl.style.width = `${currentPct}%`;
+            if (pctEl) pctEl.textContent = `${currentPct}%`;
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            }
+        }
+        requestAnimationFrame(animate);
+    }
 
-    // カラフルな★を生成してふわっと飛ばす
+    // 白い★（シアンの光）を生成してふわっと飛ばす
     function createFloatingStar(sourceRect, targetRect, onComplete) {
         const star = document.createElement('div');
-        const size = 14 + Math.random() * 10; // 14〜24px
-        const hue = Math.random() * 360; // 全色相
+        const size = 22 + Math.random() * 16; // 22〜38px
         
         const sX = sourceRect.left + sourceRect.width / 2 + (Math.random() - 0.5) * 80;
         const sY = sourceRect.top + sourceRect.height / 2 + (Math.random() - 0.5) * 40;
         const eX = targetRect.left + Math.random() * targetRect.width;
         const eY = targetRect.top + targetRect.height / 2;
         
-        // ★のデザイン
-        star.innerHTML = '★';
+        // ★のデザイン（白い星＋シアンの光）- ランダムで形を選択
+        const starShapes = ['★', '✦'];
+        star.innerHTML = starShapes[Math.floor(Math.random() * starShapes.length)];
         star.style.cssText = `
             position: fixed;
             width: ${size}px;
@@ -502,16 +579,12 @@ function animateProgressToGoal() {
             top: ${sY}px;
             font-size: ${size}px;
             line-height: 1;
-            color: hsl(${hue}, 100%, 60%);
+            color: #ffffff;
             text-shadow: 
-                -1px -1px 0 white,
-                1px -1px 0 white,
-                -1px 1px 0 white,
-                1px 1px 0 white,
-                0px -1px 0 white,
-                0px 1px 0 white,
-                -1px 0px 0 white,
-                1px 0px 0 white;
+                0 0 4px #22d3ee,
+                0 0 8px #22d3ee,
+                0 0 12px #67e8f9,
+                0 0 20px #67e8f9;
             z-index: 10000;
             pointer-events: none;
             opacity: 0;
@@ -596,6 +669,46 @@ function animateProgressToGoal() {
             wrapper.style.boxShadow = '';
         }, 800);
     }
+    
+    // +○語のフローティングテキストを表示
+    function showFloatingAddedWords(count, targetRect) {
+        const floatingText = document.createElement('div');
+        floatingText.textContent = `+${count}語`;
+        floatingText.style.cssText = `
+            position: fixed;
+            left: ${targetRect.left + targetRect.width / 2}px;
+            top: ${targetRect.top - 10}px;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: 800;
+            color: #2563eb;
+            text-shadow: 
+                -2px -2px 0 #fff,
+                2px -2px 0 #fff,
+                -2px 2px 0 #fff,
+                2px 2px 0 #fff,
+                -2px 0 0 #fff,
+                2px 0 0 #fff,
+                0 -2px 0 #fff,
+                0 2px 0 #fff;
+            z-index: 10001;
+            pointer-events: none;
+            opacity: 1;
+            transition: transform 2s ease-out, opacity 2s ease-out;
+        `;
+        document.body.appendChild(floatingText);
+        
+        // アニメーション開始（上に上がりながらフェードアウト）
+        requestAnimationFrame(() => {
+            floatingText.style.transform = 'translateX(-50%) translateY(-60px)';
+            floatingText.style.opacity = '0';
+        });
+        
+        // 削除
+        setTimeout(() => {
+            floatingText.remove();
+        }, 2100);
+    }
 }
 
 // 英単語進捗バーを更新
@@ -663,17 +776,21 @@ function updateVocabProgressBar() {
     if (requiredProgressEl) requiredProgressEl.textContent = requiredProgress;
     
     // 志望校カード内の進捗バーを更新
+    // ただし、進捗アニメーションが予定されている場合はスキップ（アニメーション後に更新）
     const schoolProgressCurrentEl = document.getElementById('schoolProgressCurrent');
     const schoolProgressTotalEl = document.getElementById('schoolProgressTotal');
     const schoolProgressBarEl = document.getElementById('schoolProgressBar');
     const schoolProgressPercentEl = document.getElementById('schoolProgressPercent');
     
-    if (requiredWords > 0) {
+    if (requiredWords > 0 && !lastLearningCategory) {
         const schoolProgress = Math.min(100, Math.round((learnedWords / requiredWords) * 100));
         if (schoolProgressCurrentEl) schoolProgressCurrentEl.textContent = learnedWords;
         if (schoolProgressTotalEl) schoolProgressTotalEl.textContent = requiredWords;
         if (schoolProgressBarEl) schoolProgressBarEl.style.width = `${schoolProgress}%`;
         if (schoolProgressPercentEl) schoolProgressPercentEl.textContent = `${schoolProgress}%`;
+    } else if (requiredWords > 0 && lastLearningCategory) {
+        // アニメーション予定あり：必須語数だけ更新（語彙数・バー・%はアニメーション後）
+        if (schoolProgressTotalEl) schoolProgressTotalEl.textContent = requiredWords;
     }
     
     // 必須ラインに達したかどうかを判定
@@ -11761,31 +11878,29 @@ function showSparkleEffect() {
     container.className = 'sparkle-container';
     document.body.appendChild(container);
     
-    // カラフルな色の配列
-    const colors = ['#f472b6', '#a78bfa', '#60a5fa', '#34d399', '#fbbf24', '#fb923c', '#f87171'];
-    
-    // 星型キラキラを複数生成（少なめに）
-    const sparkleCount = 12;
+    // 星型キラキラを複数生成
+    const sparkleCount = 15;
     for (let i = 0; i < sparkleCount; i++) {
         setTimeout(() => {
             // ランダムな位置
             const x = Math.random() * window.innerWidth;
             const y = Math.random() * window.innerHeight;
             
-            // 星型キラキラ
+            // 星型キラキラ（白い星＋シアンの光）
             const star = document.createElement('div');
             star.className = 'sparkle-star';
+            // ランダムで★か✦を選択
+            if (Math.random() > 0.5) {
+                star.classList.add('star-5');
+            }
             star.style.left = x + 'px';
             star.style.top = y + 'px';
             star.style.animationDelay = (Math.random() * 0.2) + 's';
             // ランダムなサイズ（バラバラに）
             const size = 0.5 + Math.random() * 1.2;
             star.style.setProperty('--star-scale', size);
-            // ランダムなカラフル色を設定
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            star.style.setProperty('--star-color', color);
             container.appendChild(star);
-        }, i * 35);
+        }, i * 30);
     }
     
     // コンテナを削除
@@ -11831,7 +11946,6 @@ function showConsecutiveCorrectMessage(count) {
     msgEl.className = `streak-message ${colorClass}`;
     msgEl.innerHTML = `
         <span class="streak-text">${message}</span>
-        ${count >= 2 ? `<span class="streak-count">${count} combo</span>` : ''}
     `;
     
     // body直下に追加（カード切り替えの影響を受けない）
@@ -11852,14 +11966,8 @@ function markAnswer(isCorrect, isTimeout = false) {
     // 効果音を再生（正解/不正解）
     if (isCorrect) {
         SoundEffects.playCorrect();
-        // 連続正解数を増やす
-        consecutiveCorrect++;
-        // 連続正解メッセージを表示
-        showConsecutiveCorrectMessage(consecutiveCorrect);
     } else {
         SoundEffects.playWrong();
-        // 連続正解をリセット
-        consecutiveCorrect = 0;
     }
 
     const word = currentWords[currentIndex];
