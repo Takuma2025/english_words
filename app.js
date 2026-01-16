@@ -443,10 +443,12 @@ function animateProgressToGoal() {
     const sourceRect = sourceElement.getBoundingClientRect();
     const targetRect = targetElement.getBoundingClientRect();
     
-    // 玉の数（制限なし）
-    const ballCount = learnedCount;
-    // 数が多い場合は発射間隔を調整
-    const delay = Math.max(10, Math.min(60, 1000 / Math.max(1, ballCount)));
+    // 玉の数（パフォーマンス向上のため、見た目の豪華さを維持しつつ最大50個に制限）
+    const maxVisualBalls = 50;
+    const ballCount = Math.min(learnedCount, maxVisualBalls);
+    
+    // 数が多い場合は発射間隔を調整（最大1秒以内に全弾発射）
+    const delay = Math.max(5, Math.min(60, 1000 / Math.max(1, ballCount)));
     
     // 複数の玉を順番に発射
     for (let i = 0; i < ballCount; i++) {
@@ -460,10 +462,10 @@ function animateProgressToGoal() {
         const ball = document.createElement('div');
         ball.className = 'progress-fly-particle';
         
-        // ランダムなサイズと色（経験値オーブ風 - サイズを大きく修正）
         const size = 10 + Math.random() * 10;
         const hue = Math.random() * 360;
         
+        // パフォーマンス最適化: translate3dとwill-changeを使用
         ball.style.cssText = `
             position: fixed;
             width: ${size}px;
@@ -477,68 +479,61 @@ function animateProgressToGoal() {
             pointer-events: none;
             box-shadow: 
                 0 0 ${size}px hsl(${hue}, 100%, 65%),
-                0 0 ${size * 2}px hsla(${hue}, 100%, 50%, 0.4),
-                inset 0 0 ${size/2}px rgba(255, 255, 255, 0.5);
-            left: ${sourceRect.left + sourceRect.width / 2 - size/2}px;
-            top: ${sourceRect.top + sourceRect.height / 2 - size/2}px;
+                0 0 ${size * 2}px hsla(${hue}, 100%, 50%, 0.4);
+            left: 0;
+            top: 0;
+            will-change: transform, opacity;
             opacity: 0;
-            transform: scale(0);
+            transform: translate3d(${sourceRect.left + sourceRect.width / 2 - size/2}px, ${sourceRect.top + sourceRect.height / 2 - size/2}px, 0) scale(0);
         `;
         document.body.appendChild(ball);
         
-        // アニメーションパラメータ
         const startX = sourceRect.left + sourceRect.width / 2;
         const startY = sourceRect.top + sourceRect.height / 2;
         const endX = targetRect.left + targetRect.width / 2;
         const endY = targetRect.top + targetRect.height / 2;
         
-        // 個別の漂い（浮遊）オフセット
         const driftX = (Math.random() - 0.5) * 150;
-        const driftY = -30 - Math.random() * 120; // 少し上に浮かぶ
+        const driftY = -30 - Math.random() * 120;
         
-        const duration = 1800 + Math.random() * 800; // 少し長めに
+        const duration = 1500 + Math.random() * 500;
         const startTime = performance.now();
         
         function animate(currentTime) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             
-            // 吸引のイージング: 最初の40%はゆっくり、後半で一気に加速
             const tZoom = Math.pow(progress, 3);
-            
-            // 浮遊の揺らぎ（サイン波）
             const wobble = Math.sin(progress * Math.PI * 3) * (1 - progress) * 20;
             const wobbleY = Math.cos(progress * Math.PI * 2) * (1 - progress) * 15;
             
-            // 浮遊フェーズのオフセット（後半に向けて0に近づく）
             const driftEffect = Math.sin(Math.pow(progress, 0.5) * Math.PI);
             const currentDriftX = driftX * driftEffect * (1 - tZoom);
             const currentDriftY = driftY * driftEffect * (1 - tZoom);
             
-            // 基本の移動（開始点から終了点へ）
             const mainX = startX + (endX - startX) * tZoom;
             const mainY = startY + (endY - startY) * tZoom;
             
             const currentX = mainX + currentDriftX + wobble;
             const currentY = mainY + currentDriftY + wobbleY;
             
-            ball.style.left = `${currentX - size/2}px`;
-            ball.style.top = `${currentY - size/2}px`;
+            // パフォーマンス最適化: translate3dを使用
+            let scale = 1;
+            let opacity = 0.9;
             
-            // 出現時はフェードイン、最後は吸い込まれるように小さく
             if (progress < 0.2) {
-                ball.style.opacity = progress * 5;
-                ball.style.transform = `scale(${progress * 5})`;
+                opacity = progress * 5;
+                scale = progress * 5;
             } else if (progress > 0.8) {
-                ball.style.opacity = (1 - progress) * 5;
-                ball.style.transform = `scale(${(1 - progress) * 5})`;
-            } else {
-                ball.style.opacity = 0.9;
-                ball.style.transform = 'scale(1)';
+                opacity = (1 - progress) * 5;
+                scale = (1 - progress) * 5;
             }
             
-            // 軌跡の発生（浮遊感を出すため少し控えめに）
-            if (Math.random() > 0.8) {
+            ball.style.transform = `translate3d(${currentX - size/2}px, ${currentY - size/2}px, 0) scale(${scale})`;
+            ball.style.opacity = opacity;
+            
+            // 軌跡の発生頻度を下げて負荷軽減
+            if (Math.random() > 0.9) {
                 createTrail(currentX, currentY, hue, size * 0.8);
             }
             
@@ -554,7 +549,7 @@ function animateProgressToGoal() {
         requestAnimationFrame(animate);
     }
     
-    // 軌跡の作成
+    // 軌跡の作成（軽量化）
     function createTrail(x, y, hue, size) {
         const trail = document.createElement('div');
         trail.style.cssText = `
@@ -565,18 +560,20 @@ function animateProgressToGoal() {
             border-radius: 50%;
             z-index: 9999;
             pointer-events: none;
-            left: ${x}px;
-            top: ${y}px;
-            opacity: 0.6;
+            left: 0;
+            top: 0;
+            transform: translate3d(${x}px, ${y}px, 0);
+            opacity: 0.4;
             filter: blur(2px);
+            will-change: opacity, transform;
         `;
         document.body.appendChild(trail);
         
         trail.animate([
-            { transform: 'scale(1)', opacity: 0.6 },
-            { transform: 'scale(0)', opacity: 0 }
+            { transform: `translate3d(${x}px, ${y}px, 0) scale(1)`, opacity: 0.4 },
+            { transform: `translate3d(${x}px, ${y}px, 0) scale(0)`, opacity: 0 }
         ], {
-            duration: 400,
+            duration: 300,
             easing: 'ease-out'
         }).onfinish = () => trail.remove();
     }
