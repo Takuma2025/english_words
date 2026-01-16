@@ -6,6 +6,8 @@ let pendingGoalCelebration = false; // 学習完了後に目標達成画面を�
 let selectedStudyMode = 'input'; // 'input' or 'output' - インプット/アウトプットモード選択
 let currentInputFilter = 'all'; // インプットモードのフィルター状態: 'all', 'wrong', 'unlearned', 'bookmark', 'correct'
 let isInputShuffled = false; // インプットモードのシャッフル状態
+let learnedWordsAtStart = 0; // 進捗アニメーション用：学習開始時の覚えた語彙数
+let lastLearningCategory = null; // 最後に学習していたカテゴリ
 
 // 効果音システム
 const SoundEffects = {
@@ -375,6 +377,251 @@ function calculateTotalWords() {
         return getAllVocabulary().length;
     }
     return 1800; // デフォルト値
+}
+
+// 進捗アニメーション: LEVELカードから志望校進捗バーへ飛ばす
+function animateProgressToGoal() {
+    console.log('animateProgressToGoal called', {
+        lastLearningCategory,
+        learnedWordsAtStart,
+        currentLearnedWords: calculateTotalLearnedWords()
+    });
+    
+    // 志望校が設定されていない場合はアニメーションしない
+    const selectedSchool = loadSelectedSchool();
+    if (!selectedSchool) {
+        console.log('アニメーション中止: 志望校が設定されていない');
+        return;
+    }
+    
+    // 学習開始時より覚えた語彙が増えていなければアニメーションしない
+    const currentLearnedWords = calculateTotalLearnedWords();
+    if (currentLearnedWords <= learnedWordsAtStart) {
+        console.log('アニメーション中止: 語彙が増えていない', { currentLearnedWords, learnedWordsAtStart });
+        return;
+    }
+    
+    // 最後に学習していたカテゴリまたは親カテゴリからLEVELを判定
+    let sourceElement = null;
+    const category = lastLearningCategory || '';
+    const parentCategory = window.currentSubcategoryParent || '';
+    console.log('カテゴリからソース要素を判定:', { category, parentCategory });
+    
+    // カテゴリまたは親カテゴリからLEVELを判定
+    const checkCategory = category + ' ' + parentCategory;
+    if (checkCategory.includes('超重要500語') || checkCategory.includes('LEVEL1') || checkCategory.includes('レベル１')) {
+        sourceElement = document.getElementById('level1CardBtn');
+    } else if (checkCategory.includes('重要500語') || checkCategory.includes('LEVEL2') || checkCategory.includes('レベル２')) {
+        sourceElement = document.getElementById('level2CardBtn');
+    } else if (checkCategory.includes('ハイレベル300語') || checkCategory.includes('LEVEL3') || checkCategory.includes('レベル３')) {
+        sourceElement = document.getElementById('level3CardBtn');
+    } else if (checkCategory.includes('LEVEL4') || checkCategory.includes('私立高校入試レベル')) {
+        sourceElement = document.querySelector('[data-category="LEVEL4 私立高校入試レベル"]');
+    } else if (checkCategory.includes('LEVEL5') || checkCategory.includes('難関私立高校入試レベル')) {
+        sourceElement = document.querySelector('[data-category="LEVEL5 難関私立高校入試レベル"]');
+    }
+    console.log('ソース要素:', sourceElement);
+    
+    // ソース要素がない場合はアニメーションしない
+    if (!sourceElement) {
+        console.log('アニメーション中止: ソース要素が見つからない');
+        return;
+    }
+    
+    // ターゲット要素（志望校進捗バー）
+    const targetElement = document.getElementById('schoolProgressBar');
+    if (!targetElement) {
+        console.log('アニメーション中止: ターゲット要素が見つからない');
+        return;
+    }
+    
+    // 覚えた単語数を計算
+    const learnedCount = currentLearnedWords - learnedWordsAtStart;
+    console.log('アニメーション実行: 覚えた単語数', learnedCount);
+    
+    // 要素の位置を取得
+    const sourceRect = sourceElement.getBoundingClientRect();
+    const targetRect = targetElement.getBoundingClientRect();
+    
+    // 玉の数（制限なし）
+    const ballCount = learnedCount;
+    // 数が多い場合は発射間隔を調整
+    const delay = Math.max(10, Math.min(60, 1000 / Math.max(1, ballCount)));
+    
+    // 複数の玉を順番に発射
+    for (let i = 0; i < ballCount; i++) {
+        setTimeout(() => {
+            createAndAnimateBall(sourceRect, targetRect, i === ballCount - 1);
+        }, i * delay);
+    }
+    
+    // 1つの玉を作成してアニメーション
+    function createAndAnimateBall(sourceRect, targetRect, isLast) {
+        const ball = document.createElement('div');
+        ball.className = 'progress-fly-particle';
+        
+        // ランダムなサイズと色（経験値オーブ風 - サイズを大きく修正）
+        const size = 10 + Math.random() * 10;
+        const hue = Math.random() * 360;
+        
+        ball.style.cssText = `
+            position: fixed;
+            width: ${size}px;
+            height: ${size}px;
+            background: radial-gradient(circle at 35% 35%, 
+                hsl(${hue}, 100%, 95%) 0%, 
+                hsl(${hue}, 100%, 70%) 45%, 
+                hsl(${hue}, 100%, 40%) 100%);
+            border-radius: 50%;
+            z-index: 10000;
+            pointer-events: none;
+            box-shadow: 
+                0 0 ${size}px hsl(${hue}, 100%, 65%),
+                0 0 ${size * 2}px hsla(${hue}, 100%, 50%, 0.4),
+                inset 0 0 ${size/2}px rgba(255, 255, 255, 0.5);
+            left: ${sourceRect.left + sourceRect.width / 2 - size/2}px;
+            top: ${sourceRect.top + sourceRect.height / 2 - size/2}px;
+            opacity: 0;
+            transform: scale(0);
+        `;
+        document.body.appendChild(ball);
+        
+        // アニメーションパラメータ
+        const startX = sourceRect.left + sourceRect.width / 2;
+        const startY = sourceRect.top + sourceRect.height / 2;
+        const endX = targetRect.left + targetRect.width / 2;
+        const endY = targetRect.top + targetRect.height / 2;
+        
+        // 個別の漂い（浮遊）オフセット
+        const driftX = (Math.random() - 0.5) * 150;
+        const driftY = -30 - Math.random() * 120; // 少し上に浮かぶ
+        
+        const duration = 1800 + Math.random() * 800; // 少し長めに
+        const startTime = performance.now();
+        
+        function animate(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // 吸引のイージング: 最初の40%はゆっくり、後半で一気に加速
+            const tZoom = Math.pow(progress, 3);
+            
+            // 浮遊の揺らぎ（サイン波）
+            const wobble = Math.sin(progress * Math.PI * 3) * (1 - progress) * 20;
+            const wobbleY = Math.cos(progress * Math.PI * 2) * (1 - progress) * 15;
+            
+            // 浮遊フェーズのオフセット（後半に向けて0に近づく）
+            const driftEffect = Math.sin(Math.pow(progress, 0.5) * Math.PI);
+            const currentDriftX = driftX * driftEffect * (1 - tZoom);
+            const currentDriftY = driftY * driftEffect * (1 - tZoom);
+            
+            // 基本の移動（開始点から終了点へ）
+            const mainX = startX + (endX - startX) * tZoom;
+            const mainY = startY + (endY - startY) * tZoom;
+            
+            const currentX = mainX + currentDriftX + wobble;
+            const currentY = mainY + currentDriftY + wobbleY;
+            
+            ball.style.left = `${currentX - size/2}px`;
+            ball.style.top = `${currentY - size/2}px`;
+            
+            // 出現時はフェードイン、最後は吸い込まれるように小さく
+            if (progress < 0.2) {
+                ball.style.opacity = progress * 5;
+                ball.style.transform = `scale(${progress * 5})`;
+            } else if (progress > 0.8) {
+                ball.style.opacity = (1 - progress) * 5;
+                ball.style.transform = `scale(${(1 - progress) * 5})`;
+            } else {
+                ball.style.opacity = 0.9;
+                ball.style.transform = 'scale(1)';
+            }
+            
+            // 軌跡の発生（浮遊感を出すため少し控えめに）
+            if (Math.random() > 0.8) {
+                createTrail(currentX, currentY, hue, size * 0.8);
+            }
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                createBurst(currentX, currentY, hue);
+                ball.remove();
+                if (isLast) flashTarget();
+            }
+        }
+        
+        requestAnimationFrame(animate);
+    }
+    
+    // 軌跡の作成
+    function createTrail(x, y, hue, size) {
+        const trail = document.createElement('div');
+        trail.style.cssText = `
+            position: fixed;
+            width: ${size * 0.6}px;
+            height: ${size * 0.6}px;
+            background: hsl(${hue}, 100%, 70%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            left: ${x}px;
+            top: ${y}px;
+            opacity: 0.6;
+            filter: blur(2px);
+        `;
+        document.body.appendChild(trail);
+        
+        trail.animate([
+            { transform: 'scale(1)', opacity: 0.6 },
+            { transform: 'scale(0)', opacity: 0 }
+        ], {
+            duration: 400,
+            easing: 'ease-out'
+        }).onfinish = () => trail.remove();
+    }
+    
+    // 到着時の火花
+    function createBurst(x, y, hue) {
+        for (let i = 0; i < 5; i++) {
+            const spark = document.createElement('div');
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 10 + Math.random() * 20;
+            
+            spark.style.cssText = `
+                position: fixed;
+                width: 4px;
+                height: 4px;
+                background: hsl(${hue}, 100%, 70%);
+                border-radius: 50%;
+                z-index: 10001;
+                left: ${x}px;
+                top: ${y}px;
+            `;
+            document.body.appendChild(spark);
+            
+            spark.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: 400,
+                easing: 'ease-out'
+            }).onfinish = () => spark.remove();
+        }
+    }
+    
+    // 進捗バーのフラッシュ
+    function flashTarget() {
+        const progressBarWrapper = document.querySelector('.school-card-progress-bar-wrapper');
+        const progressBar = document.getElementById('schoolProgressBar');
+        if (progressBarWrapper) {
+            progressBarWrapper.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.8), 0 0 50px rgba(255, 215, 0, 0.4)';
+            progressBarWrapper.style.transition = 'box-shadow 0.2s';
+            setTimeout(() => {
+                progressBarWrapper.style.boxShadow = '';
+            }, 500);
+        }
+    }
 }
 
 // 英単語進捗バーを更新
@@ -3253,6 +3500,15 @@ function showCategorySelection() {
             updateCategoryStars();
             updateVocabProgressBar();
             
+            // 学習後にホームに戻った時、進捗アニメーションを実行
+            if (lastLearningCategory) {
+                setTimeout(() => {
+                    animateProgressToGoal();
+                    // アニメーション後にカテゴリをリセット
+                    lastLearningCategory = null;
+                }, 100);
+            }
+            
             // 目標達成のチェック（ホーム画面に戻った時）
             // データが確実に読み込まれるように少し遅延させる
             setTimeout(() => {
@@ -3348,6 +3604,10 @@ function startCategory(category) {
     // デバッグ用ログ
     console.log('startCategory called with category:', category);
     selectedCategory = category;
+    
+    // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
+    learnedWordsAtStart = calculateTotalLearnedWords();
+    lastLearningCategory = category;
     // モード用のボディクラスをいったんリセット
     document.body.classList.remove('sentence-mode-active', 'reorder-mode-active', 'choice-question-mode-active');
     isChoiceQuestionModeActive = false;
@@ -4683,6 +4943,11 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     const appMain = document.querySelector('.app-main');
     if (appMain) appMain.scrollTop = 0;
     
+    // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
+    learnedWordsAtStart = calculateTotalLearnedWords();
+    lastLearningCategory = category;
+    console.log('showWordFilterView: 学習開始', { category, learnedWordsAtStart });
+    
     currentFilterCategory = category;
     currentFilterWords = categoryWords;
     currentFilterCourseTitle = courseTitle || category;
@@ -5006,6 +5271,11 @@ function showInputModeDirectly(category, words, courseTitle) {
     const appMain = document.querySelector('.app-main');
     if (appMain) appMain.scrollTop = 0;
     
+    // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
+    learnedWordsAtStart = calculateTotalLearnedWords();
+    lastLearningCategory = category;
+    console.log('showInputModeDirectly: 学習開始', { category, learnedWordsAtStart });
+    
     // インプットモードに設定
     currentLearningMode = 'input';
     
@@ -5299,6 +5569,11 @@ function showLearningSubcategoryMenu(category) {
 
 // 学習メニューから学習を開始
 function startLearningFromMenu(category, subcategory) {
+    // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
+    learnedWordsAtStart = calculateTotalLearnedWords();
+    lastLearningCategory = category;
+    console.log('startLearningFromMenu: 学習開始', { category, learnedWordsAtStart });
+    
     let words = [];
     
     // カテゴリーに応じてレベルを決定
@@ -5508,6 +5783,11 @@ function createMethodCard(title, description, onClick, buttonType = 'default') {
 
 // タイムアタックモードで学習を初期化
 function initTimeAttackLearning(category, words) {
+    // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
+    learnedWordsAtStart = calculateTotalLearnedWords();
+    lastLearningCategory = category;
+    console.log('initTimeAttackLearning: 学習開始', { category, learnedWordsAtStart });
+    
     selectedCategory = category;
     currentWords = words;
     isInputModeActive = false;
@@ -6901,6 +7181,11 @@ function setupEventListeners() {
                 return;
             }
             
+            // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
+            learnedWordsAtStart = calculateTotalLearnedWords();
+            lastLearningCategory = currentFilterCategory;
+            console.log('filterStartBtn: 学習開始', { category: currentFilterCategory, learnedWordsAtStart });
+            
             // 出題順を取得
             const orderSequential = document.getElementById('orderSequential');
             const isSequential = orderSequential?.checked ?? true;
@@ -7269,6 +7554,16 @@ function setupEventListeners() {
                     // カテゴリー選択画面を左からスライドイン
                     categorySelection.classList.remove('hidden');
                     categorySelection.classList.add('slide-in-left');
+                    
+                    // 進捗バーを更新してアニメーションを実行
+                    updateCategoryStars();
+                    updateVocabProgressBar();
+                    if (lastLearningCategory) {
+                        setTimeout(() => {
+                            animateProgressToGoal();
+                            lastLearningCategory = null;
+                        }, 100);
+                    }
                     
                     setTimeout(() => {
                         courseSelection.classList.remove('slide-out-right');
@@ -10303,34 +10598,39 @@ function applyInputListSettings() {
 
 // 用例トグルの有効/無効を更新
 function updateExamplesToggleAvailability() {
-    const showExamplesCheckbox = document.getElementById('settingShowExamples');
-    const showExamplesItem = showExamplesCheckbox ? showExamplesCheckbox.closest('.settings-dropdown-item') : null;
-    const compactModeCheckbox = document.getElementById('settingCompactMode');
-    const inputListContainer = document.getElementById('inputListContainer');
-    
-    if (!showExamplesCheckbox || !showExamplesItem || !inputListContainer) return;
-    
-    // コンパクトモードがONの場合は無効化
-    if (compactModeCheckbox && compactModeCheckbox.checked) {
-        showExamplesCheckbox.disabled = true;
-        showExamplesItem.classList.add('disabled');
-        return;
-    }
-    
-    // 現在表示されている単語リストに用例があるかチェック
-    const exampleElements = inputListContainer.querySelectorAll('.input-list-example, .input-list-expand-example');
-    const hasExamples = exampleElements.length > 0;
-    
-    if (hasExamples) {
-        // 用例がある場合：有効化（チェック状態は変更しない）
-        showExamplesCheckbox.disabled = false;
-        showExamplesItem.classList.remove('disabled');
-    } else {
-        // 用例がない場合：無効化してグレーアウト
-        showExamplesCheckbox.disabled = true;
-        showExamplesItem.classList.add('disabled');
-        showExamplesCheckbox.checked = false;
-    }
+    // DOMの更新が完了するのを待つ
+    setTimeout(() => {
+        const showExamplesCheckbox = document.getElementById('settingShowExamples');
+        const showExamplesItem = showExamplesCheckbox ? showExamplesCheckbox.closest('.settings-dropdown-item') : null;
+        const compactModeCheckbox = document.getElementById('settingCompactMode');
+        const inputListContainer = document.getElementById('inputListContainer');
+        
+        if (!showExamplesCheckbox || !showExamplesItem || !inputListContainer) return;
+        
+        // コンパクトモードがONの場合は無効化
+        if (compactModeCheckbox && compactModeCheckbox.checked) {
+            showExamplesCheckbox.disabled = true;
+            showExamplesItem.classList.add('disabled');
+            return;
+        }
+        
+        // 現在表示されている単語リストに用例があるかチェック
+        const exampleElements = inputListContainer.querySelectorAll('.input-list-example, .input-list-expand-example');
+        const hasExamples = exampleElements.length > 0;
+        
+        if (hasExamples) {
+            // 用例がある場合：有効化してONにする
+            showExamplesCheckbox.disabled = false;
+            showExamplesItem.classList.remove('disabled');
+            showExamplesCheckbox.checked = true;
+            inputListContainer.classList.remove('hide-examples');
+        } else {
+            // 用例がない場合：無効化してグレーアウト
+            showExamplesCheckbox.disabled = true;
+            showExamplesItem.classList.add('disabled');
+            showExamplesCheckbox.checked = false;
+        }
+    }, 50);
 }
 
 // インプットモード用フィルターのセットアップ
@@ -16296,6 +16596,11 @@ let hwQuizWrongCount = 0;
  */
 async function startHandwritingQuiz(category, words, courseTitle) {
     console.log('[HWQuiz] Starting handwriting quiz with', words.length, 'words');
+    
+    // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
+    learnedWordsAtStart = calculateTotalLearnedWords();
+    lastLearningCategory = category;
+    console.log('startHandwritingQuiz: 学習開始', { category, learnedWordsAtStart });
     
     // 日本語→英語モードなので、selectedLearningModeを'input'に設定
     // これにより、進捗が_inputキーで保存される
