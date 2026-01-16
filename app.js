@@ -442,15 +442,17 @@ function updateVocabProgressBar() {
     if (requiredProgressEl) requiredProgressEl.textContent = requiredProgress;
     
     // 志望校カード内の進捗バーを更新
-    const schoolProgressPercentEl = document.getElementById('schoolProgressPercent');
-    const schoolProgressFractionEl = document.getElementById('schoolProgressFraction');
+    const schoolProgressCurrentEl = document.getElementById('schoolProgressCurrent');
+    const schoolProgressTotalEl = document.getElementById('schoolProgressTotal');
     const schoolProgressBarEl = document.getElementById('schoolProgressBar');
+    const schoolProgressPercentEl = document.getElementById('schoolProgressPercent');
     
     if (requiredWords > 0) {
         const schoolProgress = Math.min(100, Math.round((learnedWords / requiredWords) * 100));
-        if (schoolProgressPercentEl) schoolProgressPercentEl.textContent = `${schoolProgress}%`;
-        if (schoolProgressFractionEl) schoolProgressFractionEl.textContent = `${learnedWords}/${requiredWords}`;
+        if (schoolProgressCurrentEl) schoolProgressCurrentEl.textContent = learnedWords;
+        if (schoolProgressTotalEl) schoolProgressTotalEl.textContent = requiredWords;
         if (schoolProgressBarEl) schoolProgressBarEl.style.width = `${schoolProgress}%`;
+        if (schoolProgressPercentEl) schoolProgressPercentEl.textContent = `${schoolProgress}%`;
     }
     
     // 必須ラインに達したかどうかを判定
@@ -3826,7 +3828,7 @@ function showElementaryCategorySelection(skipAnimation = false) {
             <div class="category-info">
                 <div class="category-header">
                     <div class="category-name">
-                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#eff6ff" stroke="#2563eb" stroke-width="1" style="margin-right: 8px;">
+                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#dbeafe" stroke="none" style="margin-right: 8px;">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                             <text x="12" y="13" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
                         </svg>
@@ -4178,9 +4180,9 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
             <div class="category-info">
                 <div class="category-header">
                     <div class="category-name">
-                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="${badgeBgColor}" stroke="${badgeColor}" stroke-width="1" style="margin-right: 8px;">
+                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#dbeafe" stroke="none" style="margin-right: 8px;">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                            <text x="12" y="13" text-anchor="middle" fill="${badgeColor}" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
+                            <text x="12" y="13" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
                         </svg>
                         ${subcat}
                     </div>
@@ -10215,14 +10217,15 @@ function setupInputListSettings() {
     
     if (!settingsBtn || !settingsDropdown) return;
     
-    // localStorageから設定を読み込む
-    const savedShowExamples = localStorage.getItem('inputListShowExamples');
+    // localStorageから設定を読み込む（コンパクトモードのみ）
     const savedCompactMode = localStorage.getItem('inputListCompactMode');
     
-    // 初期状態を設定
-    if (savedShowExamples !== null) {
-        showExamplesCheckbox.checked = savedShowExamples === 'true';
+    // 用例トグルは常にON状態から開始（用例の有無で有効/無効が決まる）
+    if (showExamplesCheckbox) {
+        showExamplesCheckbox.checked = true;
     }
+    
+    // コンパクトモードのみlocalStorageから復元
     if (savedCompactMode !== null) {
         compactModeCheckbox.checked = savedCompactMode === 'true';
     }
@@ -10263,6 +10266,10 @@ function setupInputListSettings() {
     if (compactModeCheckbox) {
         compactModeCheckbox.addEventListener('change', () => {
             localStorage.setItem('inputListCompactMode', compactModeCheckbox.checked);
+            // コンパクトモードをONにしたら、用例表示を自動でOFFに
+            if (compactModeCheckbox.checked && showExamplesCheckbox) {
+                showExamplesCheckbox.checked = false;
+            }
             applyInputListSettings();
         });
     }
@@ -10298,20 +10305,31 @@ function applyInputListSettings() {
 function updateExamplesToggleAvailability() {
     const showExamplesCheckbox = document.getElementById('settingShowExamples');
     const showExamplesItem = showExamplesCheckbox ? showExamplesCheckbox.closest('.settings-dropdown-item') : null;
+    const compactModeCheckbox = document.getElementById('settingCompactMode');
     const inputListContainer = document.getElementById('inputListContainer');
     
     if (!showExamplesCheckbox || !showExamplesItem || !inputListContainer) return;
+    
+    // コンパクトモードがONの場合は無効化
+    if (compactModeCheckbox && compactModeCheckbox.checked) {
+        showExamplesCheckbox.disabled = true;
+        showExamplesItem.classList.add('disabled');
+        return;
+    }
     
     // 現在表示されている単語リストに用例があるかチェック
     const exampleElements = inputListContainer.querySelectorAll('.input-list-example, .input-list-expand-example');
     const hasExamples = exampleElements.length > 0;
     
     if (hasExamples) {
+        // 用例がある場合：有効化（チェック状態は変更しない）
         showExamplesCheckbox.disabled = false;
         showExamplesItem.classList.remove('disabled');
     } else {
+        // 用例がない場合：無効化してグレーアウト
         showExamplesCheckbox.disabled = true;
         showExamplesItem.classList.add('disabled');
+        showExamplesCheckbox.checked = false;
     }
 }
 

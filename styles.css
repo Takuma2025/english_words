@@ -383,7 +383,14 @@ body.learning-mode .app-header {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 2px;
     z-index: 1002;
+}
+
+.header-back-btn .back-btn-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
 }
 
 .header-back-btn.hidden {
@@ -1557,11 +1564,30 @@ body.learning-mode .app-header {
 /* 志望校進捗バー行 */
 .school-card-progress-row {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    gap: 6px;
     width: 100%;
     padding-top: 8px;
     border-top: 1px solid #e2e8f0;
+}
+
+.school-card-progress-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.school-progress-current strong,
+.school-progress-total strong {
+    font-weight: 700;
+    color: #0055ca;
+}
+
+.school-progress-divider {
+    color: #94a3b8;
 }
 
 .school-card-progress-fraction {
@@ -1569,6 +1595,13 @@ body.learning-mode .app-header {
     font-weight: 500;
     color: #64748b;
     flex-shrink: 0;
+}
+
+.school-card-progress-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
 }
 
 .school-card-progress-bar-wrapper {
@@ -1580,10 +1613,12 @@ body.learning-mode .app-header {
 }
 
 .school-card-progress-percent {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 700;
     color: #0055ca;
     flex-shrink: 0;
+    min-width: 50px;
+    text-align: right;
 }
 
 .school-card-progress-bar {
@@ -3356,11 +3391,8 @@ button.category-card:focus-visible {
     letter-spacing: 0.15em;
     color: #2563eb;
     margin-right: 8px;
-    background: #eff6ff;
-    border-left: 3px solid #2563eb;
-    border-top: none;
-    border-bottom: none;
-    border-right: none;
+    background: #dbeafe;
+    border: none;
     box-shadow: none;
     transform: translateY(-2px);
 }
@@ -3385,24 +3417,18 @@ button.category-card:focus-visible {
 .level-badge.level-badge-purple,
 .level-badge.level-badge-dark {
     color: #2563eb;
-    background: #eff6ff;
-    border-left: 3px solid #2563eb;
-    border-top: none;
-    border-bottom: none;
-    border-right: none;
+    background: #dbeafe;
+    border: none;
 }
 
 /* カテゴリーカード内の個別調整（Level 4, 5 も含めて統一） */
 .category-card[data-category*="LEVEL"] .level-badge {
     color: #2563eb;
-    background: #eff6ff;
-    border-left: 3px solid #2563eb;
-    border-top: none;
-    border-bottom: none;
-    border-right: none;
+    background: #dbeafe;
+    border: none;
 }
 
-/* ヘッダー用レベルバッジ（白・左線・背景なし） */
+/* ヘッダー用レベルバッジ（白・背景なし） */
 .level-badge.level-badge-header,
 .level-badge.level-badge-header.level-badge-green,
 .level-badge.level-badge-header.level-badge-red,
@@ -3411,10 +3437,7 @@ button.category-card:focus-visible {
 .level-badge.level-badge-header.level-badge-purple,
 .level-badge.level-badge-header.level-badge-dark {
     background: transparent;
-    border-left: 3px solid #ffffff;
-    border-top: none;
-    border-bottom: none;
-    border-right: none;
+    border: none;
     color: #ffffff;
     font-weight: 200;
     font-size: 10px;
@@ -3462,8 +3485,8 @@ button.category-card:focus-visible {
     letter-spacing: 0.1em;
     color: #dc2626;
     margin-right: 8px;
-    background: #fef2f2;
-    border-left: 3px solid #dc2626;
+    background: #fee2e2;
+    border: none;
     box-shadow: none;
     transform: translateY(-2px);
 }
@@ -3497,10 +3520,7 @@ button.category-card:focus-visible {
 .header-title-text .level-badge.level-badge-dark,
 .header-title-text .level-badge.level-badge-header {
     background: transparent;
-    border-left: 3px solid #ffffff;
-    border-top: none;
-    border-bottom: none;
-    border-right: none;
+    border: none;
     color: #ffffff;
     transform: none;
 }
@@ -4026,7 +4046,7 @@ body.choice-question-mode-active .learning-view {
 
 .unit-header-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     width: 100%;
     margin: 0;
@@ -4087,13 +4107,17 @@ body.quiz-test-mode .progress-top-row {
 
 .unit-name {
     color: #ffffff;
-    flex: 1;
-    text-align: left;
+    text-align: center;
     font-size: 14px;
     font-weight: 700;
 }
 
 .unit-header-actions {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-top: calc(env(safe-area-inset-top) / 2);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -4229,17 +4253,27 @@ body.quiz-test-mode .progress-top-row {
 
 /* インプットモード用戻るボタン */
 .input-back-btn {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-top: calc(env(safe-area-inset-top) / 2);
     background: none;
     border: none;
     padding: 4px;
-    margin: -4px;
-    margin-right: 8px;
     color: #ffffff;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 2px;
     flex-shrink: 0;
+}
+
+.input-back-btn .back-btn-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
 }
 
 .input-back-btn:hover {
@@ -5413,12 +5447,6 @@ body.choice-question-mode-active .word-card-container {
     pointer-events: none;
 }
 
-.settings-dropdown-item.disabled .settings-dropdown-label::after {
-    content: '（用例なし）';
-    font-size: 11px;
-    color: #9ca3af;
-    margin-left: 4px;
-}
 
 .input-list-controls-row {
     display: flex;
@@ -6598,10 +6626,10 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     gap: 4px;
     background: #ffffff;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
 }
 
 .input-list-meta {
@@ -8806,7 +8834,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-right: 6px;
+    white-space: nowrap;
     line-height: 1;
     font-family: "Meiryo", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "MS PGothic", sans-serif;
     flex-shrink: 0;
@@ -15116,6 +15144,11 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .hw-back-btn {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-top: calc(env(safe-area-inset-top) / 2);
     background: none;
     border: none;
     padding: 4px;
@@ -15124,7 +15157,14 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 2px;
     flex-shrink: 0;
+}
+
+.hw-back-btn .back-btn-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
 }
 
 .hw-back-btn:hover {
