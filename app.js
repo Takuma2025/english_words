@@ -3329,24 +3329,24 @@ function formatTitleWithLevelBadge(title) {
     const isElementarySubcategory = elementarySubcategories.some(sub => title.includes(sub));
     
     if (title.includes('LEVEL1') || title.includes('超重要') || title.includes('レベル１') || title.includes('レベル1')) {
-        return '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span> ' + cleanTitle.replace(/超重要単語400/g, '超重要500語');
+        return '<span class="level-badge level-badge-header level-badge-red">レベル<b>1</b></span> ' + cleanTitle.replace(/超重要単語400/g, '超重要500語');
     } else if (title.includes('LEVEL2') || title.includes('重要500語') || title.includes('レベル２') || title.includes('レベル2')) {
-        return '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span> ' + cleanTitle.replace(/重要単語300/g, '重要500語');
+        return '<span class="level-badge level-badge-header level-badge-orange">レベル<b>2</b></span> ' + cleanTitle.replace(/重要単語300/g, '重要500語');
     } else if (title.includes('LEVEL3') || title.includes('差がつく') || title.includes('レベル３') || title.includes('レベル3')) {
-        return '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> ' + cleanTitle.replace(/差がつく単語200/g, 'ハイレベル300語');
+        return '<span class="level-badge level-badge-header level-badge-blue">レベル<b>3</b></span> ' + cleanTitle.replace(/差がつく単語200/g, 'ハイレベル300語');
     } else if (title.includes('LEVEL4') || title.includes('私立高校入試レベル') || title.includes('レベル４') || title.includes('レベル4')) {
-        return '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-purple">レベル<b>4</b></span> ' + cleanTitle;
     } else if (title.includes('LEVEL5') || title.includes('難関私立高校入試レベル') || title.includes('レベル５') || title.includes('レベル5')) {
-        return '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-dark">レベル<b>5</b></span> ' + cleanTitle;
     } else if (title.includes('カテゴリ別') || title.includes('レベル０') || title.includes('レベル0')) {
         // カテゴリー別のメインカテゴリ
         if (title.includes('カテゴリー別') || title.includes('カテゴリー別に覚える単語') || title.includes('カテゴリー別')) {
-            return '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> カテゴリー別';
+            return '<span class="level-badge level-badge-header level-badge-green">レベル<b>0</b></span> カテゴリー別';
         } else {
             return cleanTitle;
         }
     } else if (isElementarySubcategory) {
-        return '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-green">レベル<b>0</b></span> ' + cleanTitle;
     }
     return title;
 }
@@ -3414,13 +3414,13 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
         if (mode === 'course' && title) {
             // コース選択時：テキストを表示、画像を非表示
             if (title === 'カテゴリー別') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> カテゴリー別';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">レベル<b>0</b></span> カテゴリー別';
             } else if (title === 'レベル１ 超重要500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span> 超重要500語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">レベル<b>1</b></span> 超重要500語';
             } else if (title === 'レベル２ 重要500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span> 重要500語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">レベル<b>2</b></span> 重要500語';
             } else if (title === 'レベル３ ハイレベル300語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> ハイレベル300語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">レベル<b>3</b></span> ハイレベル300語';
             } else {
                 headerTitleText.textContent = title;
             }
@@ -8884,12 +8884,89 @@ function updateNavState(state) {
     // ナビゲーションバーを削除したため、この関数は空
 }
 
+// スワイプフィードバックラベルを作成
+function createSwipeFeedbackLabels() {
+    // 既存のコンテナがあれば削除
+    const existing = document.querySelector('.swipe-feedback-container');
+    if (existing) existing.remove();
+    
+    const container = document.createElement('div');
+    container.className = 'swipe-feedback-container';
+    
+    const leftLabel = document.createElement('div');
+    leftLabel.className = 'swipe-feedback-label left';
+    leftLabel.textContent = 'できなかった';
+    leftLabel.id = 'swipeFeedbackLeft';
+    
+    const rightLabel = document.createElement('div');
+    rightLabel.className = 'swipe-feedback-label right';
+    rightLabel.textContent = 'できた';
+    rightLabel.id = 'swipeFeedbackRight';
+    
+    container.appendChild(leftLabel);
+    container.appendChild(rightLabel);
+    document.body.appendChild(container);
+    
+    return { leftLabel, rightLabel };
+}
+
+// スワイプフィードバックラベルの透明度を更新
+function updateSwipeFeedback(dx) {
+    const leftLabel = document.getElementById('swipeFeedbackLeft');
+    const rightLabel = document.getElementById('swipeFeedbackRight');
+    
+    if (!leftLabel || !rightLabel) return;
+    
+    const threshold = 30;
+    const maxDx = 100;
+    
+    if (dx > threshold) {
+        // 右スワイプ - できたを表示
+        const progress = Math.min((dx - threshold) / (maxDx - threshold), 1);
+        rightLabel.style.opacity = progress;
+        rightLabel.classList.toggle('visible', progress > 0.3);
+        leftLabel.classList.remove('visible');
+        leftLabel.style.opacity = 0;
+    } else if (dx < -threshold) {
+        // 左スワイプ - できなかったを表示
+        const progress = Math.min((Math.abs(dx) - threshold) / (maxDx - threshold), 1);
+        leftLabel.style.opacity = progress;
+        leftLabel.classList.toggle('visible', progress > 0.3);
+        rightLabel.classList.remove('visible');
+        rightLabel.style.opacity = 0;
+    } else {
+        // しきい値以下 - 両方非表示
+        leftLabel.classList.remove('visible');
+        rightLabel.classList.remove('visible');
+        leftLabel.style.opacity = 0;
+        rightLabel.style.opacity = 0;
+    }
+}
+
+// スワイプフィードバックを非表示
+function hideSwipeFeedback() {
+    const leftLabel = document.getElementById('swipeFeedbackLeft');
+    const rightLabel = document.getElementById('swipeFeedbackRight');
+    
+    if (leftLabel) {
+        leftLabel.classList.remove('visible');
+        leftLabel.style.opacity = 0;
+    }
+    if (rightLabel) {
+        rightLabel.classList.remove('visible');
+        rightLabel.style.opacity = 0;
+    }
+}
+
 // スワイプ検知の設定
 function setupSwipeDetection(card) {
     let startX = 0;
     let startY = 0;
     let isDragging = false;
     let animationFrameId = null;
+    
+    // フィードバックラベルを作成
+    createSwipeFeedbackLabels();
 
     const getPoint = (e) => {
         if (e.touches && e.touches[0]) {
@@ -8934,6 +9011,8 @@ function setupSwipeDetection(card) {
             card.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
             const opacityDrop = Math.min(Math.abs(dx) / 180, 0.18);
             card.style.opacity = `${1 - opacityDrop}`;
+            // スワイプフィードバックを更新
+            updateSwipeFeedback(dx);
             } else if (isMistakeMode && dy < -3 && Math.abs(dy) > Math.abs(dx)) {
                 // 上移動（完璧）- 裏面のみ
             card.style.transform = `translateY(${dy}px) scale(${1 + dy/1000})`;
@@ -8973,6 +9052,9 @@ function setupSwipeDetection(card) {
         
         isDragging = false;
         card.classList.remove('dragging');
+        
+        // スワイプフィードバックを非表示
+        hideSwipeFeedback();
 
         // 表面なら処理しない
         if (!card.classList.contains('flipped')) {
@@ -9476,17 +9558,6 @@ function renderInputListViewPaginated(words) {
     }
     
     container.innerHTML = '';
-    
-    if (!Array.isArray(words) || words.length === 0) {
-        listView.classList.add('hidden');
-        return;
-    }
-    
-    // シャッフルモードの場合は単語をシャッフル
-    if (isInputShuffled) {
-        words = [...words].sort(() => Math.random() - 0.5);
-    }
-    
     listView.classList.remove('hidden');
     
     // モードに応じてコンテナにクラスを追加
@@ -9496,6 +9567,31 @@ function renderInputListViewPaginated(words) {
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
+        // フリップモードではヘッダーをコンテナ内に移動
+        if (inputListHeader && !container.contains(inputListHeader)) {
+            container.insertBefore(inputListHeader, container.firstChild);
+        }
+    }
+    
+    if (!Array.isArray(words) || words.length === 0) {
+        // 単語がない場合もツールバーは表示したまま、メッセージを表示
+        const emptyMessage = document.createElement('div');
+        emptyMessage.style.cssText = 'display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #64748b;';
+        emptyMessage.innerHTML = `
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; opacity: 0.5;">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">該当する単語がありません</div>
+            <div style="font-size: 13px; opacity: 0.8;">絞り込み条件を変更してください</div>
+        `;
+        container.appendChild(emptyMessage);
+        return;
+    }
+    
+    // シャッフルモードの場合は単語をシャッフル
+    if (isInputShuffled) {
+        words = [...words].sort(() => Math.random() - 0.5);
     }
     
     // ページネーション用のデータを初期化
@@ -9660,12 +9756,6 @@ function renderInputListViewAsync(words) {
     }
     
     container.innerHTML = '';
-    
-    if (!Array.isArray(words) || words.length === 0) {
-        listView.classList.add('hidden');
-        return;
-    }
-    
     listView.classList.remove('hidden');
     
     // モードに応じてコンテナにクラスを追加
@@ -9675,6 +9765,26 @@ function renderInputListViewAsync(words) {
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
+        // フリップモードではヘッダーをコンテナ内に移動
+        if (inputListHeader && !container.contains(inputListHeader)) {
+            container.insertBefore(inputListHeader, container.firstChild);
+        }
+    }
+    
+    if (!Array.isArray(words) || words.length === 0) {
+        // 単語がない場合もツールバーは表示したまま、メッセージを表示
+        const emptyMessage = document.createElement('div');
+        emptyMessage.style.cssText = 'display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #64748b;';
+        emptyMessage.innerHTML = `
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; opacity: 0.5;">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">該当する単語がありません</div>
+            <div style="font-size: 13px; opacity: 0.8;">絞り込み条件を変更してください</div>
+        `;
+        container.appendChild(emptyMessage);
+        return;
     }
     
     // 進捗マーカー用のセットを取得（両モードの進捗を合算）
@@ -10073,17 +10183,6 @@ function renderInputListView(words) {
     }
     
     container.innerHTML = '';
-    
-    if (!Array.isArray(words) || words.length === 0) {
-        listView.classList.add('hidden');
-        return;
-    }
-    
-    // シャッフルモードの場合は単語をシャッフル
-    if (isInputShuffled) {
-        words = [...words].sort(() => Math.random() - 0.5);
-    }
-    
     listView.classList.remove('hidden');
     
     // モードに応じてコンテナにクラスを追加
@@ -10093,6 +10192,31 @@ function renderInputListView(words) {
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
+        // フリップモードではヘッダーをコンテナ内に移動
+        if (inputListHeader && !container.contains(inputListHeader)) {
+            container.insertBefore(inputListHeader, container.firstChild);
+        }
+    }
+    
+    if (!Array.isArray(words) || words.length === 0) {
+        // 単語がない場合もツールバーは表示したまま、メッセージを表示
+        const emptyMessage = document.createElement('div');
+        emptyMessage.style.cssText = 'display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #64748b;';
+        emptyMessage.innerHTML = `
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; opacity: 0.5;">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+            <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">該当する単語がありません</div>
+            <div style="font-size: 13px; opacity: 0.8;">絞り込み条件を変更してください</div>
+        `;
+        container.appendChild(emptyMessage);
+        return;
+    }
+    
+    // シャッフルモードの場合は単語をシャッフル
+    if (isInputShuffled) {
+        words = [...words].sort(() => Math.random() - 0.5);
     }
     
     // 進捗マーカー用のセットを取得
@@ -10652,9 +10776,10 @@ function setupInputListSettings() {
     if (compactModeCheckbox) {
         compactModeCheckbox.addEventListener('change', () => {
             localStorage.setItem('inputListCompactMode', compactModeCheckbox.checked);
-            // コンパクトモードをONにしたら、用例表示を自動でOFFに
-            if (compactModeCheckbox.checked && showExamplesCheckbox) {
+            // コンパクトモードを切り替えたら、用例表示を自動でOFFに
+            if (showExamplesCheckbox) {
                 showExamplesCheckbox.checked = false;
+                localStorage.setItem('inputListShowExamples', 'false');
             }
             applyInputListSettings();
         });
@@ -10710,11 +10835,15 @@ function updateExamplesToggleAvailability() {
         const hasExamples = exampleElements.length > 0;
         
         if (hasExamples) {
-            // 用例がある場合：有効化してONにする
+            // 用例がある場合：有効化（チェック状態は変更しない）
             showExamplesCheckbox.disabled = false;
             showExamplesItem.classList.remove('disabled');
-            showExamplesCheckbox.checked = true;
-            inputListContainer.classList.remove('hide-examples');
+            // チェック状態に応じてクラスを適用
+            if (showExamplesCheckbox.checked) {
+                inputListContainer.classList.remove('hide-examples');
+            } else {
+                inputListContainer.classList.add('hide-examples');
+            }
         } else {
             // 用例がない場合：無効化してグレーアウト
             showExamplesCheckbox.disabled = true;
@@ -11383,20 +11512,11 @@ function applyInputFilter() {
         }
     }
     
-    // フィルター結果を表示
-    if (filteredWords.length > 0) {
-        // 大量データの場合はページネーションを使用
-        if (filteredWords.length > 500) {
-            renderInputListViewPaginated(filteredWords);
-        } else {
-        renderInputListView(filteredWords);
-        }
+    // フィルター結果を表示（0件でもrenderInputListViewを呼び出してツールバーを維持）
+    if (filteredWords.length > 500) {
+        renderInputListViewPaginated(filteredWords);
     } else {
-        // フィルター結果が0件の場合
-        const container = document.getElementById('inputListContainer');
-        if (container) {
-            container.innerHTML = '<div class="input-filter-empty">該当する単語がありません</div>';
-        }
+        renderInputListView(filteredWords);
     }
     
     // 設定（コンパクトモード・用例表示）を適用
@@ -11429,10 +11549,10 @@ function updateFilterCount(filtered, total) {
         titleEl.textContent = '単語一覧';
     } else {
         const filterNames = {
-            'wrong': '覚えていない',
+            'wrong': 'できなかった',
             'unlearned': '未学習',
             'bookmark': 'チェックマーク',
-            'correct': '覚えた'
+            'correct': 'できた'
         };
         
         if (activeFilters.length === 1) {
@@ -11800,21 +11920,6 @@ function markMastered() {
     updateProgressSegments(); // 進捗バーのセグメントを更新
     updateVocabProgressBar(); // 英単語進捗バーを更新
 
-    // 画面全体のフィードバック表示
-    if (isInputModeActive && elements.feedbackOverlay) {
-        // 入力モード: グローバルオーバーレイを使用
-        elements.feedbackOverlay.className = `feedback-overlay mastered active`;
-        setTimeout(() => {
-            elements.feedbackOverlay.classList.remove('active');
-        }, 400);
-    } else if (!isInputModeActive && elements.cardFeedbackOverlay) {
-        // カードモード: カード専用オーバーレイを使用（カードの後ろに表示）
-        elements.cardFeedbackOverlay.className = `card-feedback-overlay mastered active`;
-        setTimeout(() => {
-            elements.cardFeedbackOverlay.classList.remove('active');
-        }, 400);
-    }
-
     // 上スワイプアニメーション
     elements.wordCard.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
     elements.wordCard.style.transform = `translateY(-120%) scale(0.8)`;
@@ -11869,6 +11974,22 @@ function markMastered() {
             displayCurrentWord();
         }
     }, 180);
+}
+
+// 正解/不正解フィードバック（画面背景色フラッシュ）を表示
+function showAnswerMark(isCorrect) {
+    // オーバーレイを作成
+    const overlay = document.createElement('div');
+    overlay.className = `answer-flash-overlay ${isCorrect ? 'correct' : 'wrong'}`;
+    document.body.appendChild(overlay);
+    
+    // フェードアウト後に削除
+    setTimeout(() => {
+        overlay.classList.add('fade-out');
+        setTimeout(() => {
+            overlay.remove();
+        }, 300);
+    }, 200);
 }
 
 // キラキラエフェクトを表示
@@ -12054,20 +12175,8 @@ function markAnswer(isCorrect, isTimeout = false) {
     updateProgressSegments(); // 進捗バーのセグメントを更新
     updateVocabProgressBar(); // 英単語進捗バーを更新
 
-    // 画面全体のフィードバック表示
-    if (isInputModeActive && elements.feedbackOverlay) {
-        // 入力モード: グローバルオーバーレイを使用
-        elements.feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
-        setTimeout(() => {
-            elements.feedbackOverlay.classList.remove('active');
-        }, 400);
-    } else if (!isInputModeActive && elements.cardFeedbackOverlay) {
-        // カードモード: カード専用オーバーレイを使用（カードの後ろに表示）
-        elements.cardFeedbackOverlay.className = `card-feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
-        setTimeout(() => {
-            elements.cardFeedbackOverlay.classList.remove('active');
-        }, 400);
-    }
+    // ○/×マークを表示
+    showAnswerMark(isCorrect);
     
     // 正解時にキラキラエフェクトを表示
     if (isCorrect) {
@@ -12236,7 +12345,7 @@ function showCompletion() {
     const completionGained = document.getElementById('completionGained');
     if (completionGained) {
         if (correctCount > 0) {
-            completionGained.textContent = `+${correctCount}語 覚えた！`;
+            completionGained.textContent = `+${correctCount}語 できた！`;
             completionGained.classList.remove('hidden');
         } else {
             completionGained.classList.add('hidden');
@@ -12271,7 +12380,7 @@ function showCompletion() {
     if (completionReviewBtn) {
         if (wrongCount > 0) {
             completionReviewBtn.classList.remove('hidden');
-            completionReviewBtn.innerHTML = `<svg class="completion-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> 覚えていない単語を復習（${wrongCount}語）`;
+            completionReviewBtn.innerHTML = `<svg class="completion-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> できなかった単語を復習（${wrongCount}語）`;
         } else {
             completionReviewBtn.classList.add('hidden');
         }
@@ -12816,7 +12925,7 @@ function reviewWrongWords() {
     
     // 間違えた単語がない場合は、完了画面を閉じずに通知を表示
     if (wrongWordsInSession.length === 0) {
-        showAlert('通知', '覚えていない単語はありません');
+        showAlert('通知', 'できなかった単語はありません');
         return;
     }
     
@@ -14120,13 +14229,8 @@ function handleSentencePass() {
         blankNav.classList.add('hidden');
     }
     
-    // 画面全体のフィードバック表示（薄い赤）
-    if (elements.feedbackOverlay) {
-        elements.feedbackOverlay.className = 'feedback-overlay wrong active';
-        setTimeout(() => {
-            elements.feedbackOverlay.classList.remove('active');
-        }, 400);
-    }
+    // ×マークを表示（パスは不正解扱い）
+    showAnswerMark(false);
     
     // 「次へ」ボタンを表示
     showSentenceNextButton();
@@ -14179,13 +14283,8 @@ function handleSentenceDecide() {
         blankNav.classList.add('hidden');
     }
     
-    // 画面全体のフィードバック表示（正解は薄い青、不正解は薄い赤）
-    if (elements.feedbackOverlay) {
-        elements.feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
-        setTimeout(() => {
-            elements.feedbackOverlay.classList.remove('active');
-        }, 400);
-    }
+    // ○/×マークを表示
+    showAnswerMark(isCorrect);
     
     // 「次へ」ボタンを表示
     showSentenceNextButton();
@@ -15138,13 +15237,8 @@ function handleReorderSubmit() {
         correctAnswerEl.classList.remove('hidden');
     }
     
-    // 画面背景を変更
-    if (elements.feedbackOverlay) {
-        elements.feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
-        setTimeout(() => {
-            elements.feedbackOverlay.classList.remove('active');
-        }, 500);
-    }
+    // ○/×マークを表示
+    showAnswerMark(isCorrect);
     
     // 統計を更新と効果音
     if (isCorrect) {
@@ -15565,13 +15659,8 @@ function submitChoiceAnswer() {
         nextBtnContainer.classList.remove('hidden');
     }
     
-    // 画面全体のフィードバック表示
-    if (elements.feedbackOverlay) {
-        elements.feedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
-        setTimeout(() => {
-            elements.feedbackOverlay.classList.remove('active');
-        }, 400);
-    }
+    // ○/×マークを表示
+    showAnswerMark(isCorrect);
 }
 
 // 四択問題の進捗を保存
@@ -18335,14 +18424,8 @@ function showHWQuizResult(isCorrect, word) {
     
     // モードトグルも表示したまま（キーボード・手書きエリアも表示したまま）
     
-    // 画面全体のフィードバック表示（正解は青、不正解は赤）
-    const hwFeedbackOverlay = document.getElementById('hwQuizFeedbackOverlay');
-    if (hwFeedbackOverlay) {
-        hwFeedbackOverlay.className = `feedback-overlay ${isCorrect ? 'correct' : 'wrong'} active`;
-        setTimeout(() => {
-            hwFeedbackOverlay.classList.remove('active');
-        }, 400);
-    }
+    // ○/×マークを表示
+    showAnswerMark(isCorrect);
     
     // 正解時にキラキラエフェクトを表示
     if (isCorrect && typeof showSparkleEffect === 'function') {

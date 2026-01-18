@@ -203,6 +203,92 @@ textarea,
     background-color: rgba(0, 0, 0, 0.25);
 }
 
+/* 正解/不正解フィードバック（画面背景色フラッシュ） */
+.answer-flash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0.4;
+    animation: flash-in 0.15s ease-out forwards;
+}
+
+.answer-flash-overlay.correct {
+    background-color: #3b82f6;
+}
+
+.answer-flash-overlay.wrong {
+    background-color: #ef4444;
+}
+
+@keyframes flash-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.4;
+    }
+}
+
+.answer-flash-overlay.fade-out {
+    animation: flash-out 0.3s ease-out forwards;
+}
+
+@keyframes flash-out {
+    0% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Tinderスタイルのスワイプフィードバックラベル */
+.swipe-feedback-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.swipe-feedback-label {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    padding: 20px 8px;
+    opacity: 0;
+    transition: opacity 0.1s ease;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    letter-spacing: 8px;
+    border-radius: 8px;
+}
+
+.swipe-feedback-label.right {
+    right: 8px;
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.15);
+}
+
+.swipe-feedback-label.left {
+    left: 8px;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.swipe-feedback-label.visible {
+    opacity: 1;
+}
+
 /* キラキラエフェクト */
 .sparkle-container {
     position: fixed;
@@ -3746,10 +3832,6 @@ button.category-card:focus-visible {
 /* 英語→日本語モード（カードモード）で全問正解した場合の青色COMPLETE表示 */
 .category-progress-bar.category-progress-complete {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
-    box-shadow: 
-        0 0 8px rgba(59, 130, 246, 0.4),
-        0 0 16px rgba(37, 99, 235, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .category-progress-bar.category-progress-complete::after {
@@ -3779,10 +3861,6 @@ button.category-card:focus-visible {
     background: linear-gradient(90deg, #ffd700 0%, #ffb300 15%, #ffd700 30%, #fff176 45%, #ffd700 60%, #ffb300 75%, #ffd700 90%, #ffb300 100%);
     background-size: 200% 100%;
     animation: categoryGoldShimmer 2s linear infinite;
-    box-shadow: 
-        0 0 8px rgba(255, 215, 0, 0.5),
-        0 0 16px rgba(255, 215, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .category-progress-bar.category-progress-complete-input::after {
@@ -13073,10 +13151,6 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 /* 英語→日本語モード（カードモード）: 青色グラデーションCOMPLETE表示 */
 .completion-progress-bar.completion-progress-complete-card {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
-    box-shadow: 
-        0 0 8px rgba(59, 130, 246, 0.4),
-        0 0 16px rgba(37, 99, 235, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .completion-progress-bar.completion-progress-complete-card::after {
@@ -13109,10 +13183,6 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     background: linear-gradient(90deg, #ffd700 0%, #ffb300 15%, #ffd700 30%, #fff176 45%, #ffd700 60%, #ffb300 75%, #ffd700 90%, #ffb300 100%);
     background-size: 200% 100%;
     animation: goldShimmer 2s linear infinite;
-    box-shadow: 
-        0 0 10px rgba(255, 215, 0, 0.5),
-        0 0 20px rgba(255, 215, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .completion-progress-bar.completion-progress-complete-input::after {

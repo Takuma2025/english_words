@@ -12,7 +12,7 @@
     <title>大阪府公立高校入試特化型英単語アプリ 大阪府英単語コンプリート</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="app.png" type="image/png">
@@ -251,7 +251,7 @@
                         <button class="category-card" id="elementaryCategoryCardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-green">Level<b>0</b></span> カテゴリー別</div>
+                                    <div class="category-name"><span class="level-badge level-badge-green">レベル<b>0</b></span> カテゴリー別</div>
                                 </div>
                                 <div class="category-meta">カテゴリー別に基本単語を覚えよう</div>
                                 <div class="category-progress">
@@ -269,7 +269,7 @@
                         <button class="category-card" id="level1CardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-red">Level<b>1</b></span> 超重要500語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-red">レベル<b>1</b></span> 超重要500語</div>
                                 </div>
                                 <div class="category-meta">中1レベルの単語を中心に入試頻出度の高い単語を覚えよう</div>
                                 <div class="category-progress">
@@ -287,7 +287,7 @@
                         <button class="category-card" id="level2CardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-orange">Level<b>2</b></span> 重要500語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-orange">レベル<b>2</b></span> 重要500語</div>
                                 </div>
                                 <div class="category-meta">中2～3レベルの単語を中心に入試頻出度の高い単語を覚えよう</div>
                                 <div class="category-progress">
@@ -305,7 +305,7 @@
                         <button class="category-card" id="level3CardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-blue">Level<b>3</b></span> ハイレベル300語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-blue">レベル<b>3</b></span> ハイレベル300語</div>
                                 </div>
                                 <div class="category-meta">差がつくハイレベルな単語を覚えよう</div>
                                 <div class="category-progress">
@@ -323,7 +323,7 @@
                         <button class="category-card" data-category="LEVEL4 私立高校入試レベル">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-purple">Level<b>4</b></span> 私立高校入試レベル</div>
+                                    <div class="category-name"><span class="level-badge level-badge-purple">レベル<b>4</b></span> 私立高校入試レベル</div>
                                 </div>
                                 <div class="category-meta">
                                     <span class="school-toggle" data-target="school-list-level4">私立高校入試<svg class="school-toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>に出題されるレベル
@@ -347,7 +347,7 @@
                         <button class="category-card" data-category="LEVEL5 難関私立高校入試レベル">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-dark">Level<b>5</b></span> 難関私立高校入試レベル</div>
+                                    <div class="category-name"><span class="level-badge level-badge-dark">レベル<b>5</b></span> 難関私立高校入試レベル</div>
                                 </div>
                                 <div class="category-meta">
                                     <span class="school-toggle" data-target="school-list-level5">難関私立高校入試<svg class="school-toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>に出題されるレベル
@@ -730,13 +730,13 @@
                                             <label class="filter-dropdown-item">
                                                 <input type="checkbox" id="inputFilterWrong" data-filter="wrong" checked>
                                                 <span class="filter-dropdown-checkbox"></span>
-                                                <span class="filter-dropdown-label">覚えていない</span>
+                                                <span class="filter-dropdown-label">できなかった</span>
                                                 <span class="filter-dropdown-icon filter-icon-red"></span>
                                             </label>
                                             <label class="filter-dropdown-item">
                                                 <input type="checkbox" id="inputFilterCorrect" data-filter="correct" checked>
                                                 <span class="filter-dropdown-checkbox"></span>
-                                                <span class="filter-dropdown-label">覚えた</span>
+                                                <span class="filter-dropdown-label">できた</span>
                                                 <span class="filter-dropdown-icon filter-icon-blue"></span>
                                             </label>
                                             <label class="filter-dropdown-item">
@@ -1281,14 +1281,14 @@
                     <div class="action-hint" id="cardHint">
                         <button class="hint-btn hint-left" id="wrongBtn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-                            覚えていない
+                            できなかった
                         </button>
                         <button class="hint-btn hint-center" id="masteredBtn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
                             もうOK！
                         </button>
                         <button class="hint-btn hint-right" id="correctBtn">
-                            覚えた
+                            できた
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                         </button>
                     </div>
@@ -1501,7 +1501,7 @@
             <div class="completion-header">
                 <div class="completion-title">学習結果</div>
             </div>
-            <div class="completion-gained hidden" id="completionGained">+0語 覚えた！</div>
+            <div class="completion-gained hidden" id="completionGained">+0語 できた！</div>
             <div class="completion-course-title" id="completionCourseTitle">カテゴリー名</div>
             <div class="completion-progress-container">
                 <div class="completion-progress-bar">
@@ -1512,16 +1512,16 @@
             </div>
             <div class="completion-stats">
                 <div class="completion-stat completion-stat-correct">
-                    <div class="completion-stat-label">覚えた</div>
+                    <div class="completion-stat-label">できた</div>
                     <div class="completion-stat-value" id="completionCorrectCount">0</div>
                 </div>
                 <div class="completion-stat completion-stat-wrong">
-                    <div class="completion-stat-label">覚えていない</div>
+                    <div class="completion-stat-label">できなかった</div>
                     <div class="completion-stat-value" id="completionWrongCount">0</div>
                 </div>
             </div>
             <div class="completion-actions">
-                <button class="completion-btn completion-btn-review hidden" id="completionReviewBtn">覚えていない単語を復習</button>
+                <button class="completion-btn completion-btn-review hidden" id="completionReviewBtn">できなかった単語を復習</button>
                 <button class="completion-btn completion-btn-back" id="completionBackBtn">ホーム画面に戻る</button>
             </div>
         </div>
@@ -1733,11 +1733,11 @@
                         </label>
                         <label class="filter-checkbox-grid">
                             <input type="checkbox" id="filterWrong" checked>
-                            <span class="checkbox-label">覚えていない <span class="filter-icon filter-icon-red"></span></span>
+                            <span class="checkbox-label">できなかった <span class="filter-icon filter-icon-red"></span></span>
                         </label>
                         <label class="filter-checkbox-grid">
                             <input type="checkbox" id="filterCorrect" checked>
-                            <span class="checkbox-label">覚えた <span class="filter-icon filter-icon-blue"></span></span>
+                            <span class="checkbox-label">できた <span class="filter-icon filter-icon-blue"></span></span>
                         </label>
                         <label class="filter-checkbox-grid">
                             <input type="checkbox" id="filterBookmark" checked>
