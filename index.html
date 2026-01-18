@@ -216,45 +216,6 @@
                     </div>
                 </div>
 
-                <!-- スライディングバナー広告 -->
-                <div class="ad-banner-wrapper">
-                    <div class="ad-banner-slider-container">
-                        <div class="ad-banner-slider">
-                            <!-- C問題対策パック -->
-                            <div class="ad-banner-slide banner-promo">
-                                <div class="promo-slide-content">
-                                    <div class="promo-slide-text">
-                                        <div class="promo-slide-tag">大阪府公立高校入試</div>
-                                        <div class="promo-slide-subtitle">志望校合格に必須！</div>
-                                        <div class="promo-slide-title"><span class="promo-slide-accent">C</span>問題対策パック <span class="promo-slide-price">1,980円</span></div>
-                                    </div>
-                                    <div class="promo-slide-image">
-                                        <!-- 後で人物画像を追加 -->
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ad-banner-slide banner-blue">
-                                <div class="ad-banner-content">
-                                    <span class="ad-banner-badge">EVENT</span>
-                                    <div class="ad-banner-text">期間限定！全問正解で特別称号をGET</div>
-                                </div>
-                            </div>
-                            <div class="ad-banner-slide banner-purple">
-                                <div class="ad-banner-content">
-                                    <span class="ad-banner-badge">INFO</span>
-                                    <div class="ad-banner-text">大阪府公立高校入試の最新傾向を公開中</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- インジケーター（ドット） -->
-                    <div class="ad-banner-dots">
-                        <div class="ad-dot dot-1 active"></div>
-                        <div class="ad-dot dot-2"></div>
-                        <div class="ad-dot dot-3"></div>
-                    </div>
-                </div>
-
                 <div class="course-tabs" id="courseTabs">
                     <button class="course-tab active" data-target="courseMasterSection">英単語マスターコース</button>
                     <button class="course-tab" data-target="courseScoreSection">入試得点力アップコース</button>
@@ -265,23 +226,22 @@
                         <div class="top-menu-row">
                             <button class="category-card top-menu-card ai-analysis-card" id="aiAnalysisCard">
                                 <div class="category-info">
-                                    <div class="category-name">AI分析 苦手・要復習</div>
+                                    <div class="category-name"><span class="ai-badge">AI分析</span> 苦手・要復習</div>
                                     <div class="ai-word-count-row">
                                         <span>苦手・要復習</span><span class="ai-count-value" id="aiReviewCount">--</span><span class="ai-count-unit">語</span>
                                     </div>
                                 </div>
                             </button>
                             <button class="category-card top-menu-card" id="allWordsCardBtn">
+                                <div class="all-words-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                    </svg>
+                                </div>
                                 <div class="category-info">
-                                    <div class="category-name">すべての単語</div>
-                                    <div class="category-meta">全単語をまとめて学習</div>
-                                    <div class="category-progress">
-                                        <div class="category-progress-bar">
-                                            <div class="category-progress-correct" id="progress-correct-大阪府のすべての英単語" style="width: 0%"></div>
-                                            <div class="category-progress-wrong" id="progress-wrong-大阪府のすべての英単語" style="width: 0%"></div>
-                                        </div>
-                                        <div class="category-progress-text" id="progress-text-大阪府のすべての英単語">0/0語</div>
-                                    </div>
+                                    <div class="category-name">単語一覧</div>
+                                    <div class="category-meta">すべての単語を一覧する</div>
                                 </div>
                             </button>
                         </div>

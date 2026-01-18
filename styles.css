@@ -1675,11 +1675,11 @@ body.learning-mode .app-header {
 }
 
 .school-card-progress-percent .progress-number {
-    font-size: 28px;
+    font-size: 22px;
 }
 
 .school-card-progress-percent .progress-unit {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .school-card-progress-bar {
@@ -3108,12 +3108,12 @@ body.learning-mode .app-header {
     align-items: center;
     justify-content: center;
     padding: 2px 8px;
-    background: #3b82f6;
-    color: #ffffff;
+    background: #dbeafe;
+    color: #2563eb;
     font-size: 12px;
     font-weight: 700;
-    border-radius: 4px;
-    margin-right: 8px;
+    border-radius: 0;
+    margin-right: 4px;
 }
 
 /* 上部メニュー横並び */
@@ -3134,6 +3134,23 @@ body.learning-mode .app-header {
 
 .top-menu-card .category-arrow {
     display: none;
+}
+
+#allWordsCardBtn {
+    align-items: center;
+    justify-content: center;
+}
+
+.all-words-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: #eff6ff;
+    border-radius: 10px;
+    flex-shrink: 0;
+    margin-right: 12px;
 }
 
 .ai-word-count-row {
@@ -3662,8 +3679,8 @@ button.category-card:focus-visible {
 }
 
 .osaka-footer-img {
-    width: 60%;
-    max-width: 200px;
+    width: 40%;
+    max-width: 120px;
     height: auto;
 }
 
@@ -14434,7 +14451,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .filter-start-btn:hover {
-    background: #2563eb;
+    background: #1d4ed8;
 }
 
 .filter-start-btn:active {
@@ -14448,7 +14465,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .filter-start-btn-orange:hover {
-    background: #fbbf24;
+    background: #f59e0b;
 }
 
 .filter-start-btn-orange:active {

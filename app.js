@@ -1921,14 +1921,8 @@ function startAllWordsLearning() {
             return;
         }
         
-        // オーバーレイで学習方法を選択（テストモードなし）
-        showStudyModeOverlay(
-            () => {
-                showInputModeDirectly('大阪府のすべての英単語', allWords, '大阪府のすべての英単語');
-            },
-            null,
-            { hideTest: true }
-        );
+        // 直接単語一覧を表示（学習方法選択なし）
+        showInputModeDirectly('大阪府のすべての英単語', allWords, 'すべての単語');
     } catch (error) {
         console.error('startAllWordsLearning error:', error);
         showAlert('エラー', '単語データの読み込みに失敗しました。');
@@ -10786,17 +10780,14 @@ function setupInputListSettings() {
     
     if (!settingsBtn || !settingsDropdown) return;
     
-    // localStorageから設定を読み込む（コンパクトモードのみ）
-    const savedCompactMode = localStorage.getItem('inputListCompactMode');
-    
     // 用例トグルは常にON状態から開始（用例の有無で有効/無効が決まる）
     if (showExamplesCheckbox) {
         showExamplesCheckbox.checked = true;
     }
     
-    // コンパクトモードのみlocalStorageから復元
-    if (savedCompactMode !== null) {
-        compactModeCheckbox.checked = savedCompactMode === 'true';
+    // コンパクトモードは常にOFFから開始
+    if (compactModeCheckbox) {
+        compactModeCheckbox.checked = false;
     }
     
     // 初期状態をコンテナに適用
