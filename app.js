@@ -549,10 +549,19 @@ function animateProgressToGoal() {
             // DOM更新
             if (wordEl) wordEl.textContent = currentWords;
             if (barEl) barEl.style.width = `${currentPct}%`;
-            if (pctEl) pctEl.textContent = `${currentPct}%`;
+            if (pctEl) pctEl.textContent = currentPct;
             
             if (progress < 1) {
                 requestAnimationFrame(animate);
+            } else {
+                // アニメーション完了時、100%なら進捗バーをキラキラに
+                if (barEl && newPct >= 100) {
+                    barEl.classList.add('complete');
+                    const completeText = document.getElementById('schoolCompleteText');
+                    const completeStars = document.getElementById('schoolCompleteStars');
+                    if (completeText) completeText.classList.remove('hidden');
+                    if (completeStars) completeStars.classList.remove('hidden');
+                }
             }
         }
         requestAnimationFrame(animate);
@@ -787,7 +796,22 @@ function updateVocabProgressBar() {
         if (schoolProgressCurrentEl) schoolProgressCurrentEl.textContent = learnedWords;
         if (schoolProgressTotalEl) schoolProgressTotalEl.textContent = requiredWords;
         if (schoolProgressBarEl) schoolProgressBarEl.style.width = `${schoolProgress}%`;
-        if (schoolProgressPercentEl) schoolProgressPercentEl.textContent = `${schoolProgress}%`;
+        if (schoolProgressPercentEl) schoolProgressPercentEl.textContent = schoolProgress;
+        
+        // 100%達成時の進捗バーキラキラ表示
+        const completeText = document.getElementById('schoolCompleteText');
+        const completeStars = document.getElementById('schoolCompleteStars');
+        if (schoolProgressBarEl) {
+            if (schoolProgress >= 100) {
+                schoolProgressBarEl.classList.add('complete');
+                if (completeText) completeText.classList.remove('hidden');
+                if (completeStars) completeStars.classList.remove('hidden');
+            } else {
+                schoolProgressBarEl.classList.remove('complete');
+                if (completeText) completeText.classList.add('hidden');
+                if (completeStars) completeStars.classList.add('hidden');
+            }
+        }
     } else if (requiredWords > 0 && lastLearningCategory) {
         // アニメーション予定あり：必須語数だけ更新（語彙数・バー・%はアニメーション後）
         if (schoolProgressTotalEl) schoolProgressTotalEl.textContent = requiredWords;
@@ -3329,24 +3353,24 @@ function formatTitleWithLevelBadge(title) {
     const isElementarySubcategory = elementarySubcategories.some(sub => title.includes(sub));
     
     if (title.includes('LEVEL1') || title.includes('超重要') || title.includes('レベル１') || title.includes('レベル1')) {
-        return '<span class="level-badge level-badge-header level-badge-red">レベル<b>1</b></span> ' + cleanTitle.replace(/超重要単語400/g, '超重要500語');
+        return '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span> ' + cleanTitle.replace(/超重要単語400/g, '超重要500語');
     } else if (title.includes('LEVEL2') || title.includes('重要500語') || title.includes('レベル２') || title.includes('レベル2')) {
-        return '<span class="level-badge level-badge-header level-badge-orange">レベル<b>2</b></span> ' + cleanTitle.replace(/重要単語300/g, '重要500語');
+        return '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span> ' + cleanTitle.replace(/重要単語300/g, '重要500語');
     } else if (title.includes('LEVEL3') || title.includes('差がつく') || title.includes('レベル３') || title.includes('レベル3')) {
-        return '<span class="level-badge level-badge-header level-badge-blue">レベル<b>3</b></span> ' + cleanTitle.replace(/差がつく単語200/g, 'ハイレベル300語');
+        return '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> ' + cleanTitle.replace(/差がつく単語200/g, 'ハイレベル300語');
     } else if (title.includes('LEVEL4') || title.includes('私立高校入試レベル') || title.includes('レベル４') || title.includes('レベル4')) {
-        return '<span class="level-badge level-badge-header level-badge-purple">レベル<b>4</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span> ' + cleanTitle;
     } else if (title.includes('LEVEL5') || title.includes('難関私立高校入試レベル') || title.includes('レベル５') || title.includes('レベル5')) {
-        return '<span class="level-badge level-badge-header level-badge-dark">レベル<b>5</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span> ' + cleanTitle;
     } else if (title.includes('カテゴリ別') || title.includes('レベル０') || title.includes('レベル0')) {
         // カテゴリー別のメインカテゴリ
         if (title.includes('カテゴリー別') || title.includes('カテゴリー別に覚える単語') || title.includes('カテゴリー別')) {
-            return '<span class="level-badge level-badge-header level-badge-green">レベル<b>0</b></span> カテゴリー別';
+            return '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> カテゴリー別';
         } else {
             return cleanTitle;
         }
     } else if (isElementarySubcategory) {
-        return '<span class="level-badge level-badge-header level-badge-green">レベル<b>0</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> ' + cleanTitle;
     }
     return title;
 }
@@ -3416,11 +3440,11 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
             if (title === 'カテゴリー別') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">レベル<b>0</b></span> カテゴリー別';
             } else if (title === 'レベル１ 超重要500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">レベル<b>1</b></span> 超重要500語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span> 超重要500語';
             } else if (title === 'レベル２ 重要500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">レベル<b>2</b></span> 重要500語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span> 重要500語';
             } else if (title === 'レベル３ ハイレベル300語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">レベル<b>3</b></span> ハイレベル300語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> ハイレベル300語';
             } else {
                 headerTitleText.textContent = title;
             }
@@ -4288,11 +4312,11 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     
     // タイトルを設定（バッジ付き）
     if (parentCategory === 'レベル１ 超重要500語') {
-        courseTitle.innerHTML = '<span class="level-badge level-badge-red">レベル１</span> 超重要500語';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-red">Level1</span> 超重要500語';
     } else if (parentCategory === 'レベル２ 重要500語') {
-        courseTitle.innerHTML = '<span class="level-badge level-badge-orange">レベル２</span> 重要500語';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-orange">Level2</span> 重要500語';
     } else if (parentCategory === 'レベル３ ハイレベル300語') {
-        courseTitle.innerHTML = '<span class="level-badge level-badge-blue">レベル３</span> ハイレベル300語';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-blue">Level3</span> ハイレベル300語';
     } else {
         courseTitle.textContent = parentCategory;
     }
@@ -8884,89 +8908,12 @@ function updateNavState(state) {
     // ナビゲーションバーを削除したため、この関数は空
 }
 
-// スワイプフィードバックラベルを作成
-function createSwipeFeedbackLabels() {
-    // 既存のコンテナがあれば削除
-    const existing = document.querySelector('.swipe-feedback-container');
-    if (existing) existing.remove();
-    
-    const container = document.createElement('div');
-    container.className = 'swipe-feedback-container';
-    
-    const leftLabel = document.createElement('div');
-    leftLabel.className = 'swipe-feedback-label left';
-    leftLabel.textContent = 'できなかった';
-    leftLabel.id = 'swipeFeedbackLeft';
-    
-    const rightLabel = document.createElement('div');
-    rightLabel.className = 'swipe-feedback-label right';
-    rightLabel.textContent = 'できた';
-    rightLabel.id = 'swipeFeedbackRight';
-    
-    container.appendChild(leftLabel);
-    container.appendChild(rightLabel);
-    document.body.appendChild(container);
-    
-    return { leftLabel, rightLabel };
-}
-
-// スワイプフィードバックラベルの透明度を更新
-function updateSwipeFeedback(dx) {
-    const leftLabel = document.getElementById('swipeFeedbackLeft');
-    const rightLabel = document.getElementById('swipeFeedbackRight');
-    
-    if (!leftLabel || !rightLabel) return;
-    
-    const threshold = 30;
-    const maxDx = 100;
-    
-    if (dx > threshold) {
-        // 右スワイプ - できたを表示
-        const progress = Math.min((dx - threshold) / (maxDx - threshold), 1);
-        rightLabel.style.opacity = progress;
-        rightLabel.classList.toggle('visible', progress > 0.3);
-        leftLabel.classList.remove('visible');
-        leftLabel.style.opacity = 0;
-    } else if (dx < -threshold) {
-        // 左スワイプ - できなかったを表示
-        const progress = Math.min((Math.abs(dx) - threshold) / (maxDx - threshold), 1);
-        leftLabel.style.opacity = progress;
-        leftLabel.classList.toggle('visible', progress > 0.3);
-        rightLabel.classList.remove('visible');
-        rightLabel.style.opacity = 0;
-    } else {
-        // しきい値以下 - 両方非表示
-        leftLabel.classList.remove('visible');
-        rightLabel.classList.remove('visible');
-        leftLabel.style.opacity = 0;
-        rightLabel.style.opacity = 0;
-    }
-}
-
-// スワイプフィードバックを非表示
-function hideSwipeFeedback() {
-    const leftLabel = document.getElementById('swipeFeedbackLeft');
-    const rightLabel = document.getElementById('swipeFeedbackRight');
-    
-    if (leftLabel) {
-        leftLabel.classList.remove('visible');
-        leftLabel.style.opacity = 0;
-    }
-    if (rightLabel) {
-        rightLabel.classList.remove('visible');
-        rightLabel.style.opacity = 0;
-    }
-}
-
 // スワイプ検知の設定
 function setupSwipeDetection(card) {
     let startX = 0;
     let startY = 0;
     let isDragging = false;
     let animationFrameId = null;
-    
-    // フィードバックラベルを作成
-    createSwipeFeedbackLabels();
 
     const getPoint = (e) => {
         if (e.touches && e.touches[0]) {
@@ -9011,8 +8958,6 @@ function setupSwipeDetection(card) {
             card.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
             const opacityDrop = Math.min(Math.abs(dx) / 180, 0.18);
             card.style.opacity = `${1 - opacityDrop}`;
-            // スワイプフィードバックを更新
-            updateSwipeFeedback(dx);
             } else if (isMistakeMode && dy < -3 && Math.abs(dy) > Math.abs(dx)) {
                 // 上移動（完璧）- 裏面のみ
             card.style.transform = `translateY(${dy}px) scale(${1 + dy/1000})`;
@@ -9052,9 +8997,6 @@ function setupSwipeDetection(card) {
         
         isDragging = false;
         card.classList.remove('dragging');
-        
-        // スワイプフィードバックを非表示
-        hideSwipeFeedback();
 
         // 表面なら処理しない
         if (!card.classList.contains('flipped')) {
@@ -12544,113 +12486,14 @@ function createConfetti(container) {
     }
 }
 
-// 目標達成の演出
+// 目標達成の演出（無効化）
 function showGoalAchievedCelebration(school) {
-    console.log('showGoalAchievedCelebration 呼び出されました', school);
-    const overlay = document.getElementById('goalAchievedOverlay');
-    const confettiContainer = document.getElementById('goalConfettiContainer');
-    const schoolNameEl = document.getElementById('goalAchievedSchool');
-    const closeBtn = document.getElementById('goalAchievedCloseBtn');
-    const progressBar = document.getElementById('goalAchievedProgressBar');
-    const progressCorrect = document.getElementById('goalAchievedProgressCorrect');
-    const progressWrong = document.getElementById('goalAchievedProgressWrong');
-    const progressText = document.getElementById('goalAchievedProgressText');
-    
-    if (!overlay) {
-        console.error('goalAchievedOverlay が見つかりません');
-        return;
-    }
-    
-    console.log('目標達成画面を表示します');
-    
-    // 学校名を設定
-    if (schoolNameEl && school) {
-        schoolNameEl.textContent = school.name;
-    }
-    
-    // 進捗バーを更新
-    if (school) {
-        const learnedWords = calculateTotalLearnedWords();
-        const requiredWords = calculateRequiredWords(school.hensachi, school.name);
-        const correctWords = Math.min(learnedWords, requiredWords);
-        const wrongWords = Math.max(0, requiredWords - learnedWords);
-        const progressPercent = requiredWords > 0 ? Math.round((correctWords / requiredWords) * 100) : 0;
-        
-        // 進捗バーの幅を更新
-        if (progressCorrect) {
-            progressCorrect.style.width = `${progressPercent}%`;
-        }
-        if (progressWrong) {
-            progressWrong.style.width = `${100 - progressPercent}%`;
-        }
-        
-        // テキストを更新（右下に表示）
-        if (progressText) {
-            progressText.textContent = `${correctWords}/${requiredWords}語`;
-        }
-        
-        // COMPLETE!!を表示
-        if (progressBar && learnedWords >= requiredWords) {
-            progressBar.classList.add('goal-achieved-progress-complete');
-        }
-    }
-    
-    // オーバーレイを表示
-    overlay.classList.remove('hidden');
-    
-    // 効果音を再生
-    SoundEffects.playComplete();
-    
-    // 少し遅延してshowクラスを追加（アニメーション用）
-    requestAnimationFrame(() => {
-        overlay.classList.add('show');
-    });
-    
-    // 花火を生成
-    if (confettiContainer) {
-        confettiContainer.innerHTML = '';
-        createFireworks(confettiContainer);
-    }
-    
-    // 閉じるボタン（最初は非表示）
-    if (closeBtn) {
-        closeBtn.classList.add('hidden');
-        closeBtn.onclick = () => {
-            SoundEffects.playTap();
-            hideGoalAchievedCelebration();
-        };
-        
-        // 花火終了後（約8.5秒後）にボタンをフェードイン表示
-        // 8発 × 700ms間隔 + 打ち上げ1600ms + 爆発2000ms ≒ 8500ms
-        setTimeout(() => {
-            closeBtn.classList.remove('hidden');
-            closeBtn.classList.add('fade-in');
-        }, 8500);
-    }
-    
-    // 背景クリックで閉じる（ボタン表示後のみ）
-    overlay.onclick = (e) => {
-        if (e.target === overlay && closeBtn && !closeBtn.classList.contains('hidden')) {
-            SoundEffects.playClose();
-            hideGoalAchievedCelebration();
-        }
-    };
+    // 機能削除済み
 }
 
-// 目標達成演出を閉じる
+// 目標達成演出を閉じる（無効化）
 function hideGoalAchievedCelebration() {
-    const overlay = document.getElementById('goalAchievedOverlay');
-    if (!overlay) return;
-    
-    overlay.classList.remove('show');
-    setTimeout(() => {
-        overlay.classList.add('hidden');
-        // コンテナをクリア
-        const confettiContainer = document.getElementById('goalConfettiContainer');
-        const sparkleContainer = document.getElementById('goalSparkleContainer');
-        if (confettiContainer) confettiContainer.innerHTML = '';
-        if (sparkleContainer) sparkleContainer.innerHTML = '';
-    }, 500);
+    // 機能削除済み
 }
 
 // 目標達成用の花火アニメーション（リアル版）

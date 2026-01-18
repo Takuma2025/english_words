@@ -12,7 +12,7 @@
     <title>大阪府公立高校入試特化型英単語アプリ 大阪府英単語コンプリート</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="app.png" type="image/png">
@@ -195,8 +195,21 @@
                                 <div class="school-card-progress-bar-row">
                                     <div class="school-card-progress-bar-wrapper">
                                         <div class="school-card-progress-bar" id="schoolProgressBar" style="width: 0%;"></div>
+                                        <div class="school-complete-stars hidden" id="schoolCompleteStars">
+                                            <span class="flowing-star">★</span>
+                                            <span class="flowing-star">✦</span>
+                                            <span class="flowing-star">★</span>
+                                            <span class="flowing-star">✦</span>
+                                            <span class="flowing-star">★</span>
+                                            <span class="flowing-star">✦</span>
+                                            <span class="flowing-star">★</span>
+                                            <span class="flowing-star">✦</span>
+                                        </div>
+                                        <div class="school-complete-text hidden" id="schoolCompleteText">
+                                            <span class="complete-word">COMPLETE!!</span>
+                                        </div>
                                     </div>
-                                    <span class="school-card-progress-percent" id="schoolProgressPercent">0%</span>
+                                    <span class="school-card-progress-percent"><span class="progress-number" id="schoolProgressPercent">0</span><span class="progress-unit">%</span></span>
                                 </div>
                             </div>
                         </div>
@@ -251,7 +264,7 @@
                         <button class="category-card" id="elementaryCategoryCardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-green">レベル<b>0</b></span> カテゴリー別</div>
+                                    <div class="category-name"><span class="level-badge level-badge-green">Level<b>0</b></span> カテゴリー別</div>
                                 </div>
                                 <div class="category-meta">カテゴリー別に基本単語を覚えよう</div>
                                 <div class="category-progress">
@@ -269,7 +282,7 @@
                         <button class="category-card" id="level1CardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-red">レベル<b>1</b></span> 超重要500語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-red">Level<b>1</b></span> 超重要500語</div>
                                 </div>
                                 <div class="category-meta">中1レベルの単語を中心に入試頻出度の高い単語を覚えよう</div>
                                 <div class="category-progress">
@@ -287,7 +300,7 @@
                         <button class="category-card" id="level2CardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-orange">レベル<b>2</b></span> 重要500語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-orange">Level<b>2</b></span> 重要500語</div>
                                 </div>
                                 <div class="category-meta">中2～3レベルの単語を中心に入試頻出度の高い単語を覚えよう</div>
                                 <div class="category-progress">
@@ -305,7 +318,7 @@
                         <button class="category-card" id="level3CardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-blue">レベル<b>3</b></span> ハイレベル300語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-blue">Level<b>3</b></span> ハイレベル300語</div>
                                 </div>
                                 <div class="category-meta">差がつくハイレベルな単語を覚えよう</div>
                                 <div class="category-progress">
@@ -347,7 +360,7 @@
                         <button class="category-card" data-category="LEVEL5 難関私立高校入試レベル">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-dark">レベル<b>5</b></span> 難関私立高校入試レベル</div>
+                                    <div class="category-name"><span class="level-badge level-badge-dark">Level<b>5</b></span> 難関私立高校入試レベル</div>
                                 </div>
                                 <div class="category-meta">
                                     <span class="school-toggle" data-target="school-list-level5">難関私立高校入試<svg class="school-toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span>に出題されるレベル
@@ -710,7 +723,7 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                                         </svg>
-                                        <span class="btn-label">絞り込み</span>
+                                        <span class="btn-label">絞る</span>
                                         <span class="filter-active-badge hidden" id="filterActiveBadge"></span>
                                     </button>
                                     <div class="input-filter-dropdown hidden" id="inputFilterDropdown">
@@ -1467,30 +1480,6 @@
             <p class="install-message" id="installMessage">このアプリをホーム画面に追加すると、より快適に学習できます。</p>
             <div class="install-instructions" id="installInstructions"></div>
             <button class="install-close-btn" id="installCloseBtn">閉じる</button>
-        </div>
-    </div>
-
-    <!-- 目標達成画面 -->
-    <div class="goal-achieved-overlay hidden" id="goalAchievedOverlay">
-        <div class="goal-confetti-container" id="goalConfettiContainer"></div>
-        <div class="goal-achieved-content">
-            <div class="goal-achieved-badge">
-                <svg class="goal-check-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="9 12 11.5 14.5 16 9" stroke="#3182ce"/>
-                </svg>
-            </div>
-            <div class="goal-achieved-title">志望校合格必須ライン到達</div>
-            <div class="goal-achieved-subtitle" id="goalAchievedSchool"></div>
-            <div class="goal-achieved-message">志望校合格に必要な英単語数をクリアしました</div>
-            <div class="goal-achieved-progress-container">
-                <div class="goal-achieved-progress-bar" id="goalAchievedProgressBar">
-                    <div class="goal-achieved-progress-correct" id="goalAchievedProgressCorrect"></div>
-                    <div class="goal-achieved-progress-wrong" id="goalAchievedProgressWrong"></div>
-                </div>
-                <div class="goal-achieved-progress-text" id="goalAchievedProgressText">0/0語</div>
-            </div>
-            <button class="goal-achieved-btn hidden" id="goalAchievedCloseBtn" type="button">閉じる</button>
         </div>
     </div>
 

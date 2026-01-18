@@ -246,48 +246,6 @@ textarea,
     }
 }
 
-/* Tinderスタイルのスワイプフィードバックラベル */
-.swipe-feedback-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-}
-
-.swipe-feedback-label {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: 'M PLUS Rounded 1c', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    padding: 20px 8px;
-    opacity: 0;
-    transition: opacity 0.1s ease;
-    writing-mode: vertical-rl;
-    text-orientation: upright;
-    letter-spacing: 8px;
-    border-radius: 8px;
-}
-
-.swipe-feedback-label.right {
-    right: 8px;
-    color: #3b82f6;
-    background: rgba(59, 130, 246, 0.15);
-}
-
-.swipe-feedback-label.left {
-    left: 8px;
-    color: #ef4444;
-    background: rgba(239, 68, 68, 0.15);
-}
-
-.swipe-feedback-label.visible {
-    opacity: 1;
-}
 
 /* キラキラエフェクト */
 .sparkle-container {
@@ -1703,15 +1661,25 @@ body.learning-mode .app-header {
     background: #e2e8f0;
     border-radius: 0;
     overflow: hidden;
+    position: relative;
 }
 
 .school-card-progress-percent {
-    font-size: 20px;
     font-weight: 700;
     color: #0055ca;
     flex-shrink: 0;
     min-width: 50px;
     text-align: right;
+    display: flex;
+    align-items: baseline;
+}
+
+.school-card-progress-percent .progress-number {
+    font-size: 28px;
+}
+
+.school-card-progress-percent .progress-unit {
+    font-size: 16px;
 }
 
 .school-card-progress-bar {
@@ -1719,6 +1687,137 @@ body.learning-mode .app-header {
     background: linear-gradient(90deg, #0055ca 0%, #0284c7 100%);
     border-radius: 0;
     transition: width 0.3s ease;
+}
+
+/* 100%達成時の進捗バー（水色と青のグラデーション・動く） */
+.school-card-progress-bar.complete {
+    background: linear-gradient(90deg, #3b82f6 0%, #0ea5e9 25%, #22d3ee 50%, #0ea5e9 75%, #3b82f6 100%);
+    background-size: 200% 100%;
+    animation: gradient-flow 2s linear infinite;
+    box-shadow: 
+        0 0 10px rgba(59, 130, 246, 0.6),
+        inset 0 0 8px rgba(255, 255, 255, 0.3);
+    overflow: visible;
+}
+
+@keyframes gradient-flow {
+    0% {
+        background-position: 0% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+/* COMPLETE!!テキスト */
+.school-complete-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.school-complete-text.hidden {
+    display: none;
+}
+
+.school-complete-text .complete-word {
+    font-size: 15px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 
+        1px 1px 2px rgba(59, 130, 246, 0.9),
+        -1px -1px 2px rgba(59, 130, 246, 0.9),
+        0 0 8px rgba(255, 255, 255, 0.8);
+    letter-spacing: 2px;
+}
+
+/* 流れる星のコンテナ */
+.school-complete-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.school-complete-stars.hidden {
+    display: none;
+}
+
+.school-complete-stars .flowing-star {
+    position: absolute;
+    font-size: 16px;
+    color: #ffffff;
+    text-shadow: 0 0 6px #67e8f9, 0 0 10px #3b82f6;
+    opacity: 0;
+}
+
+/* 左→右 */
+.school-complete-stars .flowing-star:nth-child(1) { top: 20%; left: 0; animation: star-left-right 6s ease-in-out infinite; }
+/* 右→左 */
+.school-complete-stars .flowing-star:nth-child(2) { top: 60%; right: 0; animation: star-right-left 7s ease-in-out infinite 1s; }
+/* 斜め左上→右下 */
+.school-complete-stars .flowing-star:nth-child(3) { top: 0; left: 10%; animation: star-diagonal-1 6.5s ease-in-out infinite 2s; }
+/* 斜め右上→左下 */
+.school-complete-stars .flowing-star:nth-child(4) { top: 0; right: 20%; animation: star-diagonal-2 7.5s ease-in-out infinite 3s; }
+/* 左→右（下側） */
+.school-complete-stars .flowing-star:nth-child(5) { top: 70%; left: 0; animation: star-left-right 6.2s ease-in-out infinite 1.5s; }
+/* 右→左（上側） */
+.school-complete-stars .flowing-star:nth-child(6) { top: 30%; right: 0; animation: star-right-left 6.8s ease-in-out infinite 2.5s; }
+/* 斜め左下→右上 */
+.school-complete-stars .flowing-star:nth-child(7) { bottom: 0; left: 30%; animation: star-diagonal-3 7.2s ease-in-out infinite 4s; }
+/* 斜め右下→左上 */
+.school-complete-stars .flowing-star:nth-child(8) { bottom: 0; right: 10%; animation: star-diagonal-4 6.4s ease-in-out infinite 5s; }
+
+@keyframes star-left-right {
+    0% { left: -10%; opacity: 0; transform: scale(0.7) rotate(0deg); }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { left: 110%; opacity: 0; transform: scale(1.1) rotate(360deg); }
+}
+
+@keyframes star-right-left {
+    0% { right: -10%; opacity: 0; transform: scale(0.8) rotate(0deg); }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { right: 110%; opacity: 0; transform: scale(1) rotate(-360deg); }
+}
+
+@keyframes star-diagonal-1 {
+    0% { top: -20%; left: -5%; opacity: 0; transform: scale(0.6) rotate(0deg); }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { top: 120%; left: 100%; opacity: 0; transform: scale(1.2) rotate(400deg); }
+}
+
+@keyframes star-diagonal-2 {
+    0% { top: -20%; right: -5%; opacity: 0; transform: scale(0.7) rotate(0deg); }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { top: 120%; right: 100%; opacity: 0; transform: scale(1) rotate(-380deg); }
+}
+
+@keyframes star-diagonal-3 {
+    0% { bottom: -20%; left: -5%; opacity: 0; transform: scale(0.8) rotate(0deg); }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { bottom: 120%; left: 90%; opacity: 0; transform: scale(1.1) rotate(350deg); }
+}
+
+@keyframes star-diagonal-4 {
+    0% { bottom: -20%; right: -5%; opacity: 0; transform: scale(0.9) rotate(0deg); }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { bottom: 120%; right: 90%; opacity: 0; transform: scale(0.8) rotate(-400deg); }
 }
 
 .vocab-progress-bar-label {
@@ -12806,192 +12905,6 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     .calendar-mark {
         font-size: 24px;
     }
-}
-
-/* 目標達成画面 */
-.goal-achieved-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 10003;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    padding: 20px;
-}
-
-.goal-achieved-overlay.hidden {
-    display: none;
-}
-
-.goal-achieved-overlay.show {
-    opacity: 1;
-}
-
-.goal-confetti-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.goal-achieved-content {
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 16px;
-    overflow: hidden;
-    max-width: 340px;
-    width: 100%;
-    text-align: center;
-    transform: scale(0.9) translateY(20px);
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    position: relative;
-    z-index: 10;
-    padding: 32px 24px;
-}
-
-.goal-achieved-overlay.show .goal-achieved-content {
-    transform: scale(1) translateY(0);
-}
-
-.goal-achieved-badge {
-    margin-bottom: 20px;
-    animation: badgeAppear 0.5s ease-out 0.2s both;
-}
-
-@keyframes badgeAppear {
-    0% {
-        transform: scale(0);
-        opacity: 0;
-    }
-    60% {
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.goal-achieved-title {
-    font-size: 24px;
-    font-weight: 800;
-    color: #1e40af;
-    margin-bottom: 8px;
-}
-
-.goal-achieved-subtitle {
-    font-size: 15px;
-    font-weight: 700;
-    color: #3182ce;
-    margin-bottom: 12px;
-}
-
-.goal-achieved-message {
-    font-size: 13px;
-    color: #64748b;
-    margin-bottom: 24px;
-    line-height: 1.6;
-}
-
-.goal-achieved-progress-container {
-    margin-bottom: 24px;
-}
-
-.goal-achieved-progress-bar {
-    height: 24px;
-    background: #e5e7eb;
-    border-radius: 0;
-    overflow: visible;
-    display: flex;
-    margin-bottom: 8px;
-    position: relative;
-}
-
-.goal-achieved-progress-bar.goal-achieved-progress-complete::after {
-    content: "COMPLETE!!";
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 900;
-    color: #ffffff;
-    letter-spacing: 1px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    text-transform: uppercase;
-    opacity: 0;
-    transform: scale(0.5);
-    animation: completePopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    z-index: 1;
-}
-
-.goal-achieved-progress-correct {
-    height: 100%;
-    background: #2563eb;
-    width: 0%;
-    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.goal-achieved-progress-wrong {
-    height: 100%;
-    background: #dc2626;
-    width: 0%;
-    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-    transition-delay: 0.3s;
-}
-
-.goal-achieved-progress-text {
-    font-size: 14px;
-    font-weight: 600;
-    color: #6b7280;
-    text-align: right;
-}
-
-.goal-achieved-btn {
-    width: 100%;
-    padding: 14px;
-    background: #0055ca;
-    color: #ffffff;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 0 #0044a0, inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.goal-achieved-btn.hidden {
-    display: none;
-}
-
-.goal-achieved-btn.fade-in {
-    display: block;
-    animation: goalBtnFadeIn 0.5s ease-out forwards;
-}
-
-@keyframes goalBtnFadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.goal-achieved-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #0044a0, inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* 花火アニメーション */
