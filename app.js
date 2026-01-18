@@ -1669,12 +1669,93 @@ function saveCategoryWords(category, correctSet, wrongSet) {
     localStorage.setItem(`wrongWords-${category}_${mode}`, JSON.stringify([...wrongSet]));
 }
 
+// 出た度（appearanceCount）を★の数（1-5）に変換
+function getStarRating(count) {
+    if (count >= 100) return 5;
+    if (count >= 50) return 4;
+    if (count >= 20) return 3;
+    if (count >= 5) return 2;
+    return 1;
+}
+
 // 単語の進捗保存用カテゴリーを取得（小学生で習った単語、すべての単語の場合はword.categoryを使用）
 function getProgressCategory(word) {
     if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語' || selectedCategory === '大阪府のすべての英単語') {
         return word.category;
     }
     return selectedCategory;
+}
+
+// 単語の進捗を手動で切り替える（青→赤→未学習→青...）
+function cycleWordProgress(word, numberEl, itemEl) {
+    const categoryKey = word.category; // すべての単語の場合は単語自身のカテゴリーを使用
+    const modes = ['card', 'input'];
+    
+    // 現在の状態を判定
+    const isCorrect = numberEl.classList.contains('marker-correct');
+    const isWrong = numberEl.classList.contains('marker-wrong');
+    
+    // 全モードの進捗を更新
+    modes.forEach(mode => {
+        const correctKey = `correctWords-${categoryKey}_${mode}`;
+        const wrongKey = `wrongWords-${categoryKey}_${mode}`;
+        
+        let correctSet = new Set();
+        let wrongSet = new Set();
+        
+        const savedCorrect = localStorage.getItem(correctKey);
+        const savedWrong = localStorage.getItem(wrongKey);
+        
+        if (savedCorrect) {
+            JSON.parse(savedCorrect).forEach(id => correctSet.add(typeof id === 'string' ? parseInt(id, 10) : id));
+        }
+        if (savedWrong) {
+            JSON.parse(savedWrong).forEach(id => wrongSet.add(typeof id === 'string' ? parseInt(id, 10) : id));
+        }
+        
+        if (isCorrect) {
+            // 青→赤
+            correctSet.delete(word.id);
+            wrongSet.add(word.id);
+        } else if (isWrong) {
+            // 赤→未学習
+            wrongSet.delete(word.id);
+        } else {
+            // 未学習→青
+            correctSet.add(word.id);
+        }
+        
+        localStorage.setItem(correctKey, JSON.stringify([...correctSet]));
+        localStorage.setItem(wrongKey, JSON.stringify([...wrongSet]));
+    });
+    
+    // UIを更新
+    numberEl.classList.remove('marker-correct', 'marker-wrong');
+    itemEl.classList.remove('marker-correct', 'marker-wrong');
+    
+    if (isCorrect) {
+        // 青→赤
+        numberEl.classList.add('marker-wrong');
+        itemEl.classList.add('marker-wrong');
+    } else if (isWrong) {
+        // 赤→未学習（何もつけない）
+    } else {
+        // 未学習→青
+        numberEl.classList.add('marker-correct');
+        itemEl.classList.add('marker-correct');
+    }
+    
+    // progressCacheを更新
+    if (progressCache['__all__']) {
+        if (isCorrect) {
+            progressCache['__all__'].correct.delete(word.id);
+            progressCache['__all__'].wrong.add(word.id);
+        } else if (isWrong) {
+            progressCache['__all__'].wrong.delete(word.id);
+        } else {
+            progressCache['__all__'].correct.add(word.id);
+        }
+    }
 }
 
 // 単語リスト全体の進捗を読み込む（小学生で習った単語の場合は各単語のカテゴリーから読み込む）
@@ -1840,14 +1921,13 @@ function startAllWordsLearning() {
             return;
         }
         
-        // オーバーレイで学習方法を選択
+        // オーバーレイで学習方法を選択（テストモードなし）
         showStudyModeOverlay(
             () => {
                 showInputModeDirectly('大阪府のすべての英単語', allWords, '大阪府のすべての英単語');
             },
-            () => {
-                showWordFilterView('大阪府のすべての英単語', allWords, '大阪府のすべての英単語');
-            }
+            null,
+            { hideTest: true }
         );
     } catch (error) {
         console.error('startAllWordsLearning error:', error);
@@ -5400,6 +5480,22 @@ function showInputModeDirectly(category, words, courseTitle) {
     currentFilterWords = words;
     currentFilterCategory = category;
     
+    // 「すべての単語」モードの場合、頻度フィルターと検索を表示
+    const isAllWords = category === '大阪府のすべての英単語';
+    const freqSection = document.getElementById('filterFrequencySection');
+    const wordSearchContainer = document.getElementById('wordSearchContainer');
+    const settingsBtn = document.getElementById('inputListSettingsBtn');
+    
+    if (isAllWords) {
+        if (freqSection) freqSection.classList.remove('hidden');
+        if (wordSearchContainer) wordSearchContainer.classList.remove('hidden');
+        if (settingsBtn) settingsBtn.style.display = 'none';
+    } else {
+        if (freqSection) freqSection.classList.add('hidden');
+        if (wordSearchContainer) wordSearchContainer.classList.add('hidden');
+        if (settingsBtn) settingsBtn.style.display = '';
+    }
+    
     // コース選択画面を非表示
     const courseSelection = document.getElementById('courseSelection');
     if (courseSelection) {
@@ -5756,7 +5852,7 @@ function startLearningFromMenu(category, subcategory) {
 }
 
 // 学習モード選択オーバーレイを表示
-function showStudyModeOverlay(onInput, onOutput) {
+function showStudyModeOverlay(onInput, onOutput, options = {}) {
     console.log('showStudyModeOverlay called', { onInput: !!onInput, onOutput: !!onOutput });
     // 既存のオーバーレイがあれば削除
     const existingOverlay = document.getElementById('studyModeOverlay');
@@ -5764,24 +5860,28 @@ function showStudyModeOverlay(onInput, onOutput) {
         existingOverlay.remove();
     }
     
+    const hideTest = options.hideTest || false;
+    
     // オーバーレイを作成
     const overlay = document.createElement('div');
     overlay.id = 'studyModeOverlay';
     overlay.className = 'study-mode-overlay';
     console.log('Overlay element created');
     
-    overlay.innerHTML = `
-        <div class="study-mode-container" style="width: calc(100% - 16px); max-width: 600px; margin: 0 auto;">
-            <div class="study-mode-title">学習方法を選択</div>
-            <div class="study-mode-buttons">
-                <button type="button" class="study-mode-choice-btn study-mode-input-btn">
-                    <span class="study-mode-choice-main">学習</span>
-                    <span class="study-mode-choice-sub">単語一覧を見て<br>学習する</span>
-                </button>
+    const testButtonHtml = hideTest ? '' : `
                 <button type="button" class="study-mode-choice-btn study-mode-output-btn">
                     <span class="study-mode-choice-main">テスト</span>
                     <span class="study-mode-choice-sub">覚えたかどうか<br>確認する</span>
-                </button>
+                </button>`;
+    
+    overlay.innerHTML = `
+        <div class="study-mode-container" style="width: calc(100% - 16px); max-width: 600px; margin: 0 auto;">
+            <div class="study-mode-title">学習方法を選択</div>
+            <div class="study-mode-buttons${hideTest ? ' single-button' : ''}">
+                <button type="button" class="study-mode-choice-btn study-mode-input-btn">
+                    <span class="study-mode-choice-main">学習</span>
+                    <span class="study-mode-choice-sub">単語一覧を見て<br>学習する</span>
+                </button>${testButtonHtml}
             </div>
             <button type="button" class="study-mode-cancel-btn">キャンセル</button>
         </div>
@@ -5803,10 +5903,12 @@ function showStudyModeOverlay(onInput, onOutput) {
     
     // テストボタン
     const outputBtn = overlay.querySelector('.study-mode-output-btn');
-    outputBtn.addEventListener('click', () => {
-        overlay.remove();
-        if (onOutput) onOutput();
-    });
+    if (outputBtn) {
+        outputBtn.addEventListener('click', () => {
+            overlay.remove();
+            if (onOutput) onOutput();
+        });
+    }
     
     // キャンセルボタン
     const cancelBtn = overlay.querySelector('.study-mode-cancel-btn');
@@ -9852,6 +9954,15 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
                 number.classList.add('marker-correct');
             }
         }
+        
+        // 「すべての単語」の場合は単語番号クリックで進捗変更可能
+        if (selectedCategory === '大阪府のすべての英単語') {
+            number.classList.add('clickable-number');
+            number.addEventListener('click', (e) => {
+                e.stopPropagation();
+                cycleWordProgress(word, number, item);
+            });
+        }
         item.appendChild(number);
         
         // チェックボックス（単語番号の右）
@@ -10014,6 +10125,15 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
                 number.classList.add('marker-correct');
                 item.classList.add('marker-correct');
             }
+        }
+        
+        // 「すべての単語」の場合は単語番号クリックで進捗変更可能
+        if (selectedCategory === '大阪府のすべての英単語') {
+            number.classList.add('clickable-number');
+            number.addEventListener('click', (e) => {
+                e.stopPropagation();
+                cycleWordProgress(word, number, item);
+            });
         }
         meta.appendChild(number);
         
@@ -10436,6 +10556,15 @@ function renderInputListView(words) {
                 number.classList.add('marker-correct');
                 item.classList.add('marker-correct');
             }
+            
+            // 「すべての単語」の場合は単語番号クリックで進捗変更可能
+            if (selectedCategory === '大阪府のすべての英単語') {
+                number.classList.add('clickable-number');
+                number.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    cycleWordProgress(word, number, item);
+                });
+            }
             meta.appendChild(number);
             
             // チェックボックス（単語番号の右）
@@ -10733,8 +10862,36 @@ function applyInputListSettings() {
     const inputListContainer = document.getElementById('inputListContainer');
     const showExamplesCheckbox = document.getElementById('settingShowExamples');
     const compactModeCheckbox = document.getElementById('settingCompactMode');
+    const settingsBtn = document.getElementById('inputListSettingsBtn');
     
     if (!inputListContainer) return;
+    
+    // 「すべての単語」の場合はコンパクトモードを強制
+    const isAllWords = selectedCategory === '大阪府のすべての英単語';
+    
+    // 頻度フィルターと検索コンテナの表示/非表示
+    const freqSection = document.getElementById('filterFrequencySection');
+    const wordSearchContainer = document.getElementById('wordSearchContainer');
+    
+    if (isAllWords) {
+        // 設定ボタンを非表示
+        if (settingsBtn) settingsBtn.style.display = 'none';
+        // 常にコンパクトモード
+        inputListContainer.classList.add('compact-mode');
+        inputListContainer.classList.add('hide-examples');
+        inputListContainer.classList.add('all-words-mode');
+        // 頻度フィルターと検索を表示
+        if (freqSection) freqSection.classList.remove('hidden');
+        if (wordSearchContainer) wordSearchContainer.classList.remove('hidden');
+        return;
+    } else {
+        // 設定ボタンを表示
+        if (settingsBtn) settingsBtn.style.display = '';
+        inputListContainer.classList.remove('all-words-mode');
+        // 頻度フィルターと検索を非表示
+        if (freqSection) freqSection.classList.add('hidden');
+        if (wordSearchContainer) wordSearchContainer.classList.add('hidden');
+    }
     
     // 用例表示/非表示
     if (showExamplesCheckbox && !showExamplesCheckbox.checked) {
@@ -10887,9 +11044,13 @@ function setupInputListFilter() {
         if (!filterActiveBadge) return;
         
         const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
+        const freqAllCheckbox = document.getElementById('inputFilterFreqAll');
+        const searchInput = document.getElementById('wordSearchInput');
+        const hasFreqFilter = freqAllCheckbox && !freqAllCheckbox.checked;
+        const hasSearch = searchInput && searchInput.value.trim() !== '';
         
-        if (allCheckbox && allCheckbox.checked) {
-            // すべて選択時はバッジ非表示
+        if (allCheckbox && allCheckbox.checked && !hasFreqFilter && !hasSearch) {
+            // すべて選択時かつ頻度フィルター/検索なしはバッジ非表示
             filterActiveBadge.classList.add('hidden');
             filterTrigger.classList.remove('active');
         } else if (typeof filteredCount === 'number') {
@@ -10901,6 +11062,58 @@ function setupInputListFilter() {
             filterActiveBadge.classList.add('hidden');
             filterTrigger.classList.remove('active');
         }
+    }
+    
+    // 頻度フィルターのセットアップ
+    const freqCheckboxes = document.querySelectorAll('[data-filter-freq]');
+    freqCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const filterType = checkbox.dataset.filterFreq;
+            const freqAllCheckbox = document.getElementById('inputFilterFreqAll');
+            const otherFreqCheckboxes = Array.from(freqCheckboxes).filter(cb => cb.dataset.filterFreq !== 'all');
+            
+            if (filterType === 'all') {
+                if (checkbox.checked) {
+                    otherFreqCheckboxes.forEach(cb => cb.checked = true);
+                } else {
+                    otherFreqCheckboxes.forEach(cb => cb.checked = false);
+                }
+            } else {
+                const allChecked = otherFreqCheckboxes.every(cb => cb.checked);
+                if (freqAllCheckbox) freqAllCheckbox.checked = allChecked;
+            }
+            applyInputFilter();
+        });
+    });
+    
+    // 単語検索のセットアップ（単語リストの上）
+    const wordSearchInput = document.getElementById('wordSearchInput');
+    const wordSearchClear = document.getElementById('wordSearchClear');
+    if (wordSearchInput) {
+        let searchTimeout;
+        wordSearchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            // クリアボタンの表示/非表示
+            if (wordSearchClear) {
+                if (wordSearchInput.value.trim() !== '') {
+                    wordSearchClear.classList.remove('hidden');
+                } else {
+                    wordSearchClear.classList.add('hidden');
+                }
+            }
+            searchTimeout = setTimeout(() => {
+                applyInputFilter();
+            }, 300);
+        });
+    }
+    if (wordSearchClear) {
+        wordSearchClear.addEventListener('click', () => {
+            if (wordSearchInput) {
+                wordSearchInput.value = '';
+                wordSearchClear.classList.add('hidden');
+                applyInputFilter();
+            }
+        });
     }
     
     // 旧フィルターボタン対応（互換性用）
@@ -11454,6 +11667,41 @@ function applyInputFilter() {
         }
     }
     
+    // 頻度フィルターを適用（すべての単語モードのみ）
+    if (selectedCategory === '大阪府のすべての英単語') {
+        const freqAllCheckbox = document.getElementById('inputFilterFreqAll');
+        if (freqAllCheckbox && !freqAllCheckbox.checked) {
+            const activeFreqs = [];
+            const freqCheckboxes = document.querySelectorAll('[data-filter-freq]:checked');
+            freqCheckboxes.forEach(cb => {
+                if (cb.dataset.filterFreq !== 'all') {
+                    activeFreqs.push(cb.dataset.filterFreq);
+                }
+            });
+            
+            if (activeFreqs.length > 0) {
+                filteredWords = filteredWords.filter(word => {
+                    const count = word.appearanceCount || 0;
+                    const stars = getStarRating(count);
+                    return activeFreqs.some(f => stars === parseInt(f));
+                });
+            } else {
+                filteredWords = [];
+            }
+        }
+        
+        // 単語検索を適用（新しい検索入力）
+        const searchInput = document.getElementById('wordSearchInput');
+        if (searchInput && searchInput.value.trim() !== '') {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            filteredWords = filteredWords.filter(word => {
+                const wordText = (word.word || '').toLowerCase();
+                const meaning = (word.meaning || '').toLowerCase();
+                return wordText.includes(searchTerm) || meaning.includes(searchTerm);
+            });
+        }
+    }
+    
     // フィルター結果を表示（0件でもrenderInputListViewを呼び出してツールバーを維持）
     if (filteredWords.length > 500) {
         renderInputListViewPaginated(filteredWords);
@@ -11470,7 +11718,12 @@ function applyInputFilter() {
     // バッジに絞り込んだ単語数を表示
     if (window.updateFilterBadge) {
         const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
-        if (allCheckbox && allCheckbox.checked) {
+        const freqAllCheckbox = document.getElementById('inputFilterFreqAll');
+        const searchInput = document.getElementById('wordSearchInput');
+        const hasFreqFilter = freqAllCheckbox && !freqAllCheckbox.checked;
+        const hasSearch = searchInput && searchInput.value.trim() !== '';
+        
+        if (allCheckbox && allCheckbox.checked && !hasFreqFilter && !hasSearch) {
             window.updateFilterBadge(null);
         } else {
             window.updateFilterBadge(filteredWords.length);
@@ -11521,6 +11774,16 @@ function resetInputFilter() {
     // ドロップダウン形式のフィルターもデフォルト（すべてON）に戻す
     const dropdownCheckboxes = document.querySelectorAll('.filter-dropdown-item input[type="checkbox"]');
     dropdownCheckboxes.forEach(cb => cb.checked = true);
+    
+    // 頻度フィルターもリセット
+    const freqCheckboxes = document.querySelectorAll('[data-filter-freq]');
+    freqCheckboxes.forEach(cb => cb.checked = true);
+    
+    // 検索入力をリセット
+    const searchInput = document.getElementById('wordSearchInput');
+    if (searchInput) searchInput.value = '';
+    const searchClear = document.getElementById('wordSearchClear');
+    if (searchClear) searchClear.classList.add('hidden');
 
     // ドロップダウンの開閉状態とバッジをリセット
     const filterDropdown = document.getElementById('inputFilterDropdown');

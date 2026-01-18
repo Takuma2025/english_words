@@ -261,6 +261,30 @@
                 </div>
                 <div class="category-list">
                     <div class="course-section" id="courseMasterSection">
+                        <!-- AI分析 & すべての単語 -->
+                        <div class="top-menu-row">
+                            <button class="category-card top-menu-card ai-analysis-card" id="aiAnalysisCard">
+                                <div class="category-info">
+                                    <div class="category-name">AI分析 苦手・要復習</div>
+                                    <div class="ai-word-count-row">
+                                        <span>苦手・要復習</span><span class="ai-count-value" id="aiReviewCount">--</span><span class="ai-count-unit">語</span>
+                                    </div>
+                                </div>
+                            </button>
+                            <button class="category-card top-menu-card" id="allWordsCardBtn">
+                                <div class="category-info">
+                                    <div class="category-name">すべての単語</div>
+                                    <div class="category-meta">全単語をまとめて学習</div>
+                                    <div class="category-progress">
+                                        <div class="category-progress-bar">
+                                            <div class="category-progress-correct" id="progress-correct-大阪府のすべての英単語" style="width: 0%"></div>
+                                            <div class="category-progress-wrong" id="progress-wrong-大阪府のすべての英単語" style="width: 0%"></div>
+                                        </div>
+                                        <div class="category-progress-text" id="progress-text-大阪府のすべての英単語">0/0語</div>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
                         <button class="category-card" id="elementaryCategoryCardBtn">
                             <div class="category-info">
                                 <div class="category-header">
@@ -375,22 +399,6 @@
                                         <div class="category-progress-wrong" id="progress-wrong-LEVEL5 難関私立高校入試レベル" style="width: 0%"></div>
                                     </div>
                                     <div class="category-progress-text" id="progress-text-LEVEL5 難関私立高校入試レベル">0/0語</div>
-                                </div>
-                            </div>
-                            <div class="category-arrow">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </button>
-                        <button class="category-card" id="allWordsCardBtn">
-                            <div class="category-info">
-                                <div class="category-name">すべての単語</div>
-                                <div class="category-meta">全単語をまとめて学習</div>
-                                <div class="category-progress">
-                                    <div class="category-progress-bar">
-                                        <div class="category-progress-correct" id="progress-correct-大阪府のすべての英単語" style="width: 0%"></div>
-                                        <div class="category-progress-wrong" id="progress-wrong-大阪府のすべての英単語" style="width: 0%"></div>
-                                    </div>
-                                    <div class="category-progress-text" id="progress-text-大阪府のすべての英単語">0/0語</div>
                                 </div>
                             </div>
                             <div class="category-arrow">
@@ -759,6 +767,39 @@
                                                 <svg class="filter-dropdown-bookmark" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="3" fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
                                             </label>
                                         </div>
+                                        <div class="filter-dropdown-section filter-frequency-section hidden" id="filterFrequencySection">
+                                            <div class="filter-dropdown-title">出た度で絞る</div>
+                                            <label class="filter-dropdown-item">
+                                                <input type="checkbox" id="inputFilterFreqAll" data-filter-freq="all" checked>
+                                                <span class="filter-dropdown-checkbox"></span>
+                                                <span class="filter-dropdown-label">すべて</span>
+                                            </label>
+                                            <label class="filter-dropdown-item">
+                                                <input type="checkbox" id="inputFilterFreq5" data-filter-freq="5" checked>
+                                                <span class="filter-dropdown-checkbox"></span>
+                                                <span class="filter-dropdown-label">★★★★★</span>
+                                            </label>
+                                            <label class="filter-dropdown-item">
+                                                <input type="checkbox" id="inputFilterFreq4" data-filter-freq="4" checked>
+                                                <span class="filter-dropdown-checkbox"></span>
+                                                <span class="filter-dropdown-label">★★★★☆</span>
+                                            </label>
+                                            <label class="filter-dropdown-item">
+                                                <input type="checkbox" id="inputFilterFreq3" data-filter-freq="3" checked>
+                                                <span class="filter-dropdown-checkbox"></span>
+                                                <span class="filter-dropdown-label">★★★☆☆</span>
+                                            </label>
+                                            <label class="filter-dropdown-item">
+                                                <input type="checkbox" id="inputFilterFreq2" data-filter-freq="2" checked>
+                                                <span class="filter-dropdown-checkbox"></span>
+                                                <span class="filter-dropdown-label">★★☆☆☆</span>
+                                            </label>
+                                            <label class="filter-dropdown-item">
+                                                <input type="checkbox" id="inputFilterFreq1" data-filter-freq="1" checked>
+                                                <span class="filter-dropdown-checkbox"></span>
+                                                <span class="filter-dropdown-label">★☆☆☆☆</span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                                 <button class="memo-pad-btn-inline" id="memoPadBtnInline" aria-label="メモ">
@@ -794,6 +835,10 @@
                                 <path d="M6 9l6 6 6-6"></path>
                             </svg>
                         </button>
+                        <div class="word-search-container hidden" id="wordSearchContainer">
+                            <input type="text" class="word-search-input" id="wordSearchInput" placeholder="英単語・日本語で検索...">
+                            <button class="word-search-clear hidden" id="wordSearchClear" type="button">✕</button>
+                        </div>
                         <div class="input-list-scroll" id="inputListContainer">
                             <!-- 動的に生成 -->
                         </div>
