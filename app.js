@@ -5508,10 +5508,14 @@ function showInputModeDirectly(category, words, courseTitle) {
     // メインコンテンツを表示
     elements.mainContent.classList.remove('hidden');
     
-    // テストへボタンを表示（インプットモードなので常に表示）
+    // テストへボタンを表示（インプットモードなので常に表示、ただし「すべての単語」では非表示）
     const unitTestBtn = document.getElementById('unitTestBtn');
     if (unitTestBtn) {
-        unitTestBtn.classList.remove('hidden');
+        if (category === '大阪府のすべての英単語') {
+            unitTestBtn.classList.add('hidden');
+        } else {
+            unitTestBtn.classList.remove('hidden');
+        }
     }
     
     // ヘッダーのメモボタンは非表示（インラインのメモボタンを使用）
@@ -5610,6 +5614,16 @@ function showInputModeDirectly(category, words, courseTitle) {
         renderInputListViewPaginated(words);
     } else {
         renderInputListView(words);
+    }
+    
+    // 「すべての単語」モードの場合はコンパクト表示を強制適用
+    if (category === '大阪府のすべての英単語') {
+        const inputListContainer = document.getElementById('inputListContainer');
+        if (inputListContainer) {
+            inputListContainer.classList.add('compact-mode');
+            inputListContainer.classList.add('hide-examples');
+            inputListContainer.classList.add('all-words-mode');
+        }
     }
 }
 
@@ -9611,10 +9625,6 @@ function renderInputListViewPaginated(words) {
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
-        // フリップモードではヘッダーをコンテナ内に移動
-        if (inputListHeader && !container.contains(inputListHeader)) {
-            container.insertBefore(inputListHeader, container.firstChild);
-        }
     }
     
     if (!Array.isArray(words) || words.length === 0) {
@@ -9809,10 +9819,6 @@ function renderInputListViewAsync(words) {
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
-        // フリップモードではヘッダーをコンテナ内に移動
-        if (inputListHeader && !container.contains(inputListHeader)) {
-            container.insertBefore(inputListHeader, container.firstChild);
-        }
     }
     
     if (!Array.isArray(words) || words.length === 0) {
@@ -10254,10 +10260,6 @@ function renderInputListView(words) {
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
-        // フリップモードではヘッダーをコンテナ内に移動
-        if (inputListHeader && !container.contains(inputListHeader)) {
-            container.insertBefore(inputListHeader, container.firstChild);
-        }
     }
     
     if (!Array.isArray(words) || words.length === 0) {
@@ -10724,15 +10726,9 @@ function setupInputListModeToggle() {
             const btnLabel = flipAllBtn.querySelector('.btn-label');
             if (btnLabel) btnLabel.textContent = '英語→日本語';
         }
+        
         // フィルターを適用して再描画（絞り込み状態を保持）
         applyInputFilter();
-        
-        // フリップモード：ヘッダーをスクロールコンテナ内に移動
-        const inputListHeader = document.querySelector('.input-list-header');
-        const inputListContainer = document.getElementById('inputListContainer');
-        if (inputListHeader && inputListContainer && !inputListContainer.contains(inputListHeader)) {
-            inputListContainer.insertBefore(inputListHeader, inputListContainer.firstChild);
-        }
     });
     
     expandBtn.addEventListener('click', () => {
@@ -10743,14 +10739,6 @@ function setupInputListModeToggle() {
         updateRedSheetToggleVisibility();
         // すべてめくるボタンを非表示
         if (flipAllBtn) flipAllBtn.classList.add('hidden');
-        
-        // 展開モード：ヘッダーを元の位置に戻す
-        const inputListHeader = document.querySelector('.input-list-header');
-        const inputListView = document.getElementById('inputListView');
-        const inputListContainer = document.getElementById('inputListContainer');
-        if (inputListHeader && inputListView && inputListContainer && inputListContainer.contains(inputListHeader)) {
-            inputListView.insertBefore(inputListHeader, inputListContainer);
-        }
         
         // 現在の単語リストを再描画（フィルターを適用）
         applyInputFilter();

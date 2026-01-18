@@ -6024,29 +6024,35 @@ body.choice-question-mode-active .word-card-container {
     padding-top: 8px;
 }
 
-/* 単語検索（単語リストの上） */
+/* 単語検索（単語リストの上・固定） */
 .word-search-container {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
+    padding: 12px 16px;
+    background: #f1f5f9;
     position: relative;
+    z-index: 100;
+    gap: 10px;
+    margin-bottom: 12px;
 }
 
 .word-search-container.hidden {
     display: none;
 }
 
+.word-search-icon {
+    color: #64748b;
+    flex-shrink: 0;
+}
+
 .word-search-input {
     flex: 1;
-    padding: 10px 36px 10px 14px;
+    padding: 12px 40px 12px 16px;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 15px;
+    border-radius: 10px;
+    font-size: 16px;
     outline: none;
     background: #ffffff;
-    transition: border-color 0.2s ease;
 }
 
 .word-search-input:focus {
@@ -6059,17 +6065,40 @@ body.choice-question-mode-active .word-card-container {
 
 .word-search-clear {
     position: absolute;
-    right: 20px;
-    background: none;
+    right: 24px;
+    background: #e2e8f0;
     border: none;
-    color: #94a3b8;
-    font-size: 16px;
+    color: #64748b;
+    font-size: 14px;
     cursor: pointer;
     padding: 4px 8px;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.word-search-clear:active {
+    background: #cbd5e1;
 }
 
 .word-search-clear.hidden {
     display: none;
+}
+
+/* すべての単語モードでコンパクト表示を強制 */
+.input-list-scroll.all-words-mode .input-list-item-expand {
+    padding: 8px 12px;
+}
+
+.input-list-scroll.all-words-mode .input-list-expand-word {
+    font-size: 18px;
+}
+
+.input-list-scroll.all-words-mode .input-list-expand-meaning {
+    font-size: 14px;
 }
 
 .filter-dropdown-title {
