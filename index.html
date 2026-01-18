@@ -222,29 +222,16 @@
                 </div>
                 <div class="category-list">
                     <div class="course-section" id="courseMasterSection">
-                        <!-- AI分析 & すべての単語 -->
-                        <div class="top-menu-row">
-                            <button class="category-card top-menu-card ai-analysis-card" id="aiAnalysisCard">
-                                <div class="category-info">
-                                    <div class="category-name"><span class="ai-badge">AI分析</span> 苦手・要復習</div>
-                                    <div class="ai-word-count-row">
-                                        <span>苦手・要復習</span><span class="ai-count-value" id="aiReviewCount">--</span><span class="ai-count-unit">語</span>
-                                    </div>
-                                </div>
-                            </button>
-                            <button class="category-card top-menu-card" id="allWordsCardBtn">
-                                <div class="all-words-icon">
-                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                                    </svg>
-                                </div>
-                                <div class="category-info">
-                                    <div class="category-name">単語一覧</div>
-                                    <div class="category-meta">すべての単語を一覧する</div>
-                                </div>
-                            </button>
-                        </div>
+                        <!-- AI分析 苦手・要復習 -->
+                        <button class="category-card ai-analysis-card" id="aiAnalysisCard">
+                            <div class="category-info">
+                                <div class="category-name"><span class="ai-badge">AI分析</span> 苦手・要復習</div>
+                                <div class="category-meta">AIが分析したあなたの苦手・要復習単語</div>
+                            </div>
+                            <div class="ai-word-count-right">
+                                <span class="ai-count-value" id="aiReviewCount">--</span><span class="ai-count-unit">語</span>
+                            </div>
+                        </button>
                         <button class="category-card" id="elementaryCategoryCardBtn">
                             <div class="category-info">
                                 <div class="category-header">
@@ -365,6 +352,34 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
+                        <!-- 不規則動詞の活用 & 単語一覧 -->
+                        <div class="bottom-menu-row">
+                            <button class="category-card bottom-menu-card" id="irregularVerbsCardBtn">
+                                <div class="irregular-verbs-icon">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                        <path d="M2 17l10 5 10-5"></path>
+                                        <path d="M2 12l10 5 10-5"></path>
+                                    </svg>
+                                </div>
+                                <div class="category-info">
+                                    <div class="category-name">不規則動詞の活用</div>
+                                    <div class="category-meta">原形・過去形・過去分詞</div>
+                                </div>
+                            </button>
+                            <button class="category-card bottom-menu-card" id="allWordsCardBtn">
+                                <div class="all-words-icon">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="category-info">
+                                    <div class="category-name">単語一覧</div>
+                                    <div class="category-meta">すべての単語を一覧する</div>
+                                </div>
+                            </button>
+                        </div>
                     </div>
                     <div class="course-section hidden" id="courseScoreSection">
                         <button class="category-card" data-category="英文法中学３年間の総復習" data-exam-type="all">
@@ -1971,6 +1986,278 @@
         <div class="hw-loading hidden" id="hwQuizLoading">
             <div class="hw-loading-spinner"></div>
             <span>読み込み中...</span>
+        </div>
+    </div>
+
+    <!-- 不規則動詞サブカテゴリーメニュー -->
+    <div class="iv-menu-view hidden" id="ivMenuView">
+        <header class="study-header">
+            <button class="study-back-btn" id="ivMenuBackBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h1 class="study-title">不規則変化</h1>
+            <div class="study-header-right"></div>
+        </header>
+        <div class="iv-menu-content">
+            <div class="iv-menu-section">
+                <h3 class="iv-menu-section-title">不規則動詞の活用</h3>
+                <div class="iv-menu-cards">
+                    <div class="category-card category-card-with-actions" data-category="verbs-beginner">
+                        <div class="category-info">
+                            <div class="category-header">
+                                <div class="category-name">
+                                    <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#dbeafe" stroke="none" style="margin-right: 8px;">
+                                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                                        <text x="12" y="13" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">1</text>
+                                    </svg>
+                                    不規則動詞（初級編）
+                                </div>
+                            </div>
+                            <div class="category-progress">
+                                <div class="category-progress-bar">
+                                    <div class="category-progress-correct" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" style="width: 0%"></div>
+                                </div>
+                                <div class="category-progress-text">0/20語</div>
+                            </div>
+                        </div>
+                        <div class="course-card-side-actions">
+                            <button type="button" class="course-side-btn input-btn" data-category="verbs-beginner" data-mode="study">学習</button>
+                            <button type="button" class="course-side-btn output-btn" data-category="verbs-beginner" data-mode="test">テスト</button>
+                        </div>
+                    </div>
+                    <div class="category-card category-card-with-actions" data-category="verbs-intermediate">
+                        <div class="category-info">
+                            <div class="category-header">
+                                <div class="category-name">
+                                    <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#dbeafe" stroke="none" style="margin-right: 8px;">
+                                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                                        <text x="12" y="13" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">2</text>
+                                    </svg>
+                                    不規則動詞（中級編）
+                                </div>
+                            </div>
+                            <div class="category-progress">
+                                <div class="category-progress-bar">
+                                    <div class="category-progress-correct" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" style="width: 0%"></div>
+                                </div>
+                                <div class="category-progress-text">0/20語</div>
+                            </div>
+                        </div>
+                        <div class="course-card-side-actions">
+                            <button type="button" class="course-side-btn input-btn" data-category="verbs-intermediate" data-mode="study">学習</button>
+                            <button type="button" class="course-side-btn output-btn" data-category="verbs-intermediate" data-mode="test">テスト</button>
+                        </div>
+                    </div>
+                    <div class="category-card category-card-with-actions" data-category="verbs-advanced">
+                        <div class="category-info">
+                            <div class="category-header">
+                                <div class="category-name">
+                                    <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#dbeafe" stroke="none" style="margin-right: 8px;">
+                                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                                        <text x="12" y="13" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">3</text>
+                                    </svg>
+                                    不規則動詞（上級編）
+                                </div>
+                            </div>
+                            <div class="category-progress">
+                                <div class="category-progress-bar">
+                                    <div class="category-progress-correct" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" style="width: 0%"></div>
+                                </div>
+                                <div class="category-progress-text">0/20語</div>
+                            </div>
+                        </div>
+                        <div class="course-card-side-actions">
+                            <button type="button" class="course-side-btn input-btn" data-category="verbs-advanced" data-mode="study">学習</button>
+                            <button type="button" class="course-side-btn output-btn" data-category="verbs-advanced" data-mode="test">テスト</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="iv-menu-section">
+                <h3 class="iv-menu-section-title">その他の不規則変化</h3>
+                <div class="iv-menu-cards">
+                    <div class="category-card category-card-with-actions" data-category="comparatives">
+                        <div class="category-info">
+                            <div class="category-header">
+                                <div class="category-name">
+                                    <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#dbeafe" stroke="none" style="margin-right: 8px;">
+                                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                                        <text x="12" y="13" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">4</text>
+                                    </svg>
+                                    比較級・最上級
+                                </div>
+                            </div>
+                            <div class="category-progress">
+                                <div class="category-progress-bar">
+                                    <div class="category-progress-correct" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" style="width: 0%"></div>
+                                </div>
+                                <div class="category-progress-text">0/10語</div>
+                            </div>
+                        </div>
+                        <div class="course-card-side-actions">
+                            <button type="button" class="course-side-btn input-btn" data-category="comparatives" data-mode="study">学習</button>
+                            <button type="button" class="course-side-btn output-btn" data-category="comparatives" data-mode="test">テスト</button>
+                        </div>
+                    </div>
+                    <div class="category-card category-card-with-actions" data-category="plurals">
+                        <div class="category-info">
+                            <div class="category-header">
+                                <div class="category-name">
+                                    <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#dbeafe" stroke="none" style="margin-right: 8px;">
+                                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                                        <text x="12" y="13" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">5</text>
+                                    </svg>
+                                    名詞の複数形
+                                </div>
+                            </div>
+                            <div class="category-progress">
+                                <div class="category-progress-bar">
+                                    <div class="category-progress-correct" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" style="width: 0%"></div>
+                                </div>
+                                <div class="category-progress-text">0/15語</div>
+                            </div>
+                        </div>
+                        <div class="course-card-side-actions">
+                            <button type="button" class="course-side-btn input-btn" data-category="plurals" data-mode="study">学習</button>
+                            <button type="button" class="course-side-btn output-btn" data-category="plurals" data-mode="test">テスト</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 不規則動詞 学習モード -->
+    <div class="iv-study-view hidden" id="ivStudyView">
+        <header class="study-header">
+            <button class="study-back-btn" id="ivStudyBackBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h1 class="study-title" id="ivStudyTitle">学習</h1>
+            <div class="study-header-right">
+                <button class="iv-test-btn" id="ivStudyTestBtn">テスト</button>
+            </div>
+        </header>
+        <div class="iv-study-controls">
+            <button class="memo-pad-btn-inline" id="ivMemoPadBtn" aria-label="メモ">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <span class="memo-btn-label">メモ</span>
+            </button>
+            <label class="red-sheet-toggle" id="ivRedsheetToggle">
+                <input type="checkbox" class="red-sheet-checkbox" id="ivRedsheetCheckbox">
+                <span class="red-sheet-slider"></span>
+                <span class="red-sheet-label">赤シート</span>
+            </label>
+        </div>
+        <div class="iv-study-table-container" id="ivStudyTableContainer">
+            <table class="iv-study-table">
+                <thead id="ivStudyTableHead">
+                    <!-- 動的に生成 -->
+                </thead>
+                <tbody id="ivStudyTableBody">
+                    <!-- 動的に生成 -->
+                </tbody>
+            </table>
+        </div>
+        <!-- 赤シートオーバーレイ -->
+        <div class="red-sheet-overlay hidden" id="ivRedsheetOverlay"></div>
+        <!-- 赤シート下矢印ナビゲーション -->
+        <button type="button" class="red-sheet-next-btn hidden" id="ivRedsheetNextBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9l6 6 6-6"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- 不規則動詞の活用画面（テストモード） -->
+    <div class="irregular-verbs-view hidden" id="irregularVerbsView">
+        <header class="study-header">
+            <button class="study-back-btn" id="irregularVerbsBackBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h1 class="study-title irregular-verbs-title">不規則動詞の活用</h1>
+            <div class="study-header-right"></div>
+        </header>
+        <div class="irregular-verbs-table-container">
+            <div class="irregular-verbs-instructions">
+                原形・過去形・過去分詞を入力して「採点」ボタンを押してください
+            </div>
+            <table class="irregular-verbs-table">
+                <thead>
+                    <tr>
+                        <th class="iv-col-num">No.</th>
+                        <th class="iv-col-meaning">意味</th>
+                        <th class="iv-col-base">原形</th>
+                        <th class="iv-col-past">過去形</th>
+                        <th class="iv-col-pp">過去分詞</th>
+                    </tr>
+                </thead>
+                <tbody id="irregularVerbsTableBody">
+                    <!-- 動的に生成 -->
+                </tbody>
+            </table>
+        </div>
+        <!-- 仮想キーボード -->
+        <div class="virtual-keyboard iv-keyboard" id="ivKeyboard">
+            <div class="keyboard-row">
+                <button class="keyboard-key" data-key="q">q</button>
+                <button class="keyboard-key" data-key="w">w</button>
+                <button class="keyboard-key" data-key="e">e</button>
+                <button class="keyboard-key" data-key="r">r</button>
+                <button class="keyboard-key" data-key="t">t</button>
+                <button class="keyboard-key" data-key="y">y</button>
+                <button class="keyboard-key" data-key="u">u</button>
+                <button class="keyboard-key" data-key="i">i</button>
+                <button class="keyboard-key" data-key="o">o</button>
+                <button class="keyboard-key" data-key="p">p</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="keyboard-key" data-key="a">a</button>
+                <button class="keyboard-key" data-key="s">s</button>
+                <button class="keyboard-key" data-key="d">d</button>
+                <button class="keyboard-key" data-key="f">f</button>
+                <button class="keyboard-key" data-key="g">g</button>
+                <button class="keyboard-key" data-key="h">h</button>
+                <button class="keyboard-key" data-key="j">j</button>
+                <button class="keyboard-key" data-key="k">k</button>
+                <button class="keyboard-key" data-key="l">l</button>
+                <button class="keyboard-key keyboard-key-space" data-key=" ">_</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="keyboard-key keyboard-key-shift" id="ivKeyboardShift" data-shift="false">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                </button>
+                <button class="keyboard-key" data-key="z">z</button>
+                <button class="keyboard-key" data-key="x">x</button>
+                <button class="keyboard-key" data-key="c">c</button>
+                <button class="keyboard-key" data-key="v">v</button>
+                <button class="keyboard-key" data-key="b">b</button>
+                <button class="keyboard-key" data-key="n">n</button>
+                <button class="keyboard-key" data-key="m">m</button>
+                <button class="keyboard-key" data-key="'">'</button>
+                <button class="keyboard-key keyboard-key-special" id="ivKeyboardBackspace">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="keyboard-actions">
+                <button class="keyboard-action-btn keyboard-action-btn-primary" id="ivKeyboardCheckBtn">採点</button>
+            </div>
         </div>
     </div>
 

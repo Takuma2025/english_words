@@ -3136,6 +3136,38 @@ body.learning-mode .app-header {
     display: none;
 }
 
+/* 下部メニュー横並び */
+.bottom-menu-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.bottom-menu-card {
+    flex: 1;
+    margin-bottom: 0 !important;
+}
+
+.bottom-menu-card .category-info {
+    flex: 1;
+}
+
+.bottom-menu-card .category-arrow {
+    display: none;
+}
+
+.irregular-verbs-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: #ecfdf5;
+    border-radius: 10px;
+    flex-shrink: 0;
+    margin-right: 12px;
+}
+
 #allWordsCardBtn {
     align-items: center;
     justify-content: center;
@@ -3153,16 +3185,30 @@ body.learning-mode .app-header {
     margin-right: 12px;
 }
 
-.ai-word-count-row {
+.ai-analysis-card {
+    justify-content: space-between;
+}
+
+.ai-word-count-right {
     display: flex;
     align-items: baseline;
-    gap: 4px;
-    margin-top: 8px;
-    padding: 6px 10px;
+    gap: 2px;
+    padding: 8px 12px;
     background: #f1f5f9;
-    border-radius: 6px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.ai-word-count-right .ai-count-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.ai-word-count-right .ai-count-unit {
     font-size: 12px;
     color: #64748b;
+    font-weight: 500;
 }
 
 .ai-count-value {
@@ -17102,4 +17148,466 @@ body .sentence-english {
 .hw-space-btn,
 .blank-nav-btn {
     font-family: var(--font-sans) !important;
+}
+
+/* 共通ヘッダー（不規則動詞用） */
+.study-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: #1d4ed8;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.study-back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0;
+}
+
+.study-title {
+    flex: 1;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.study-header-right {
+    width: 36px;
+}
+
+/* 不規則動詞サブカテゴリーメニュー */
+.iv-menu-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f8fafc;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.iv-menu-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.iv-menu-section {
+    margin-bottom: 24px;
+}
+
+.iv-menu-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #6b7280;
+    margin: 0 0 10px 0;
+    padding-left: 4px;
+}
+
+.iv-menu-cards {
+    display: flex;
+    flex-direction: column;
+}
+
+.iv-menu-cards .category-card.category-card-with-actions {
+    margin-bottom: 10px;
+}
+
+/* 学習モード */
+.iv-study-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f8fafc;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.iv-study-controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.iv-study-controls .red-sheet-toggle {
+    display: flex;
+}
+
+.iv-study-controls .memo-pad-btn-inline {
+    display: flex;
+}
+
+
+.iv-study-table-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    position: relative;
+}
+
+.iv-study-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.iv-study-table thead {
+    background: #f3f4f6;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.iv-study-table th {
+    padding: 10px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+    text-align: left;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.iv-study-table td {
+    padding: 10px 8px;
+    font-size: 14px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.iv-study-num {
+    width: 40px;
+    text-align: center;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.iv-study-meaning {
+    color: #374151;
+}
+
+.iv-study-word {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+.iv-study-answer {
+    color: #f97316;
+    font-weight: 700;
+}
+
+/* 赤シートアクティブ時 */
+.iv-study-table-container.redsheet-active .iv-study-answer {
+    background: #dc2626;
+    color: #dc2626;
+    border-radius: 4px;
+    user-select: none;
+}
+
+
+/* 列幅 - 学習モード */
+.iv-study-col-num { width: 40px; }
+.iv-study-col-meaning { width: 80px; }
+.iv-study-col-word { width: 80px; }
+.iv-study-col-base, .iv-study-col-past, .iv-study-col-pp { }
+.iv-study-col-comp, .iv-study-col-super { }
+.iv-study-col-singular { width: 100px; }
+.iv-study-col-plural { }
+
+/* 不規則動詞の活用画面（テストモード） */
+.irregular-verbs-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f8fafc;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.irregular-verbs-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #1d4ed8;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.iv-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 8px 12px;
+    margin: -8px;
+    margin-right: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.irregular-verbs-title {
+    font-size: 18px;
+    font-weight: 700;
+    flex: 1;
+    text-align: center;
+    margin-right: 60px;
+    border-radius: 20px;
+}
+
+.irregular-verbs-instructions {
+    padding: 10px 16px;
+    background: #e0e7ff;
+    color: #3730a3;
+    font-size: 13px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.irregular-verbs-table-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.irregular-verbs-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.irregular-verbs-table thead {
+    position: sticky;
+    top: 0;
+    background: #f1f5f9;
+    z-index: 10;
+}
+
+.irregular-verbs-table th {
+    padding: 10px 6px;
+    text-align: center;
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 2px solid #cbd5e1;
+    font-size: 12px;
+}
+
+.irregular-verbs-table td {
+    padding: 8px 4px;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: middle;
+}
+
+.iv-col-num {
+    width: 36px;
+}
+
+.iv-col-meaning {
+    width: 70px;
+}
+
+.iv-col-base,
+.iv-col-past,
+.iv-col-pp {
+    width: calc((100% - 36px - 70px) / 3);
+}
+
+.iv-col-word {
+    width: 80px;
+}
+
+.iv-col-comp,
+.iv-col-super {
+    width: calc((100% - 36px - 80px) / 2);
+}
+
+.iv-col-singular {
+    width: 100px;
+}
+
+.iv-col-plural {
+    width: calc(100% - 36px - 100px);
+}
+
+.irregular-verbs-table tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.irregular-verbs-table tbody tr.iv-row-correct {
+    background: #dcfce7;
+}
+
+.irregular-verbs-table tbody tr.iv-row-wrong {
+    background: #fee2e2;
+}
+
+.iv-meaning {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 13px;
+}
+
+.iv-input {
+    width: 100%;
+    padding: 6px 4px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 13px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.iv-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.iv-input.iv-correct {
+    background: #dcfce7;
+    border-color: #22c55e;
+    color: #166534;
+}
+
+.iv-input.iv-wrong {
+    background: #fee2e2;
+    border-color: #ef4444;
+    color: #dc2626;
+}
+
+.iv-input:disabled {
+    background: #f1f5f9;
+}
+
+.iv-answer {
+    font-size: 11px;
+    color: #dc2626;
+    margin-top: 2px;
+}
+
+.iv-check-btn {
+    padding: 6px 10px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.iv-check-btn:hover {
+    background: #2563eb;
+}
+
+.iv-check-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+.iv-result-icon {
+    font-size: 18px;
+}
+
+@media (max-width: 480px) {
+    .irregular-verbs-table th,
+    .irregular-verbs-table td {
+        padding: 6px 2px;
+    }
+    
+    .iv-input {
+        padding: 5px 2px;
+        font-size: 12px;
+    }
+    
+    .iv-meaning {
+        font-size: 12px;
+    }
+    
+    .iv-check-btn {
+        padding: 5px 6px;
+        font-size: 10px;
+    }
+}
+
+/* 不規則動詞用仮想キーボード */
+.iv-keyboard {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(600px, calc(100% - 16px));
+    z-index: 1100;
+    display: none;
+    background: rgba(255, 183, 77, 0.7);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.12);
+    padding: 14px;
+    border-radius: 14px;
+}
+
+.iv-keyboard.visible {
+    display: block;
+}
+
+.iv-keyboard .keyboard-actions {
+    background: transparent;
+    padding: 8px 0 0 0;
+}
+
+.iv-keyboard .keyboard-action-btn {
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .iv-keyboard {
+        width: calc(100% - 16px);
+        bottom: 8px;
+        padding: 10px;
+        border-radius: 12px;
+    }
+}
+
+.irregular-verbs-table-container {
+    padding-bottom: 20px;
+    transition: padding-bottom 0.2s;
+}
+
+.irregular-verbs-table-container.keyboard-open {
+    padding-bottom: 220px;
+}
+
+.iv-input:focus {
+    background: #fffc42;
+    border-color: #3b82f6;
 }

@@ -5460,6 +5460,22 @@ function showInputModeDirectly(category, words, courseTitle) {
     const appMain = document.querySelector('.app-main');
     if (appMain) appMain.scrollTop = 0;
     
+    // コンパクトモードをデフォルト（オフ）にリセット
+    const compactModeCheckbox = document.getElementById('settingCompactMode');
+    const showExamplesCheckbox = document.getElementById('settingShowExamples');
+    const inputListContainer = document.getElementById('inputListContainer');
+    if (compactModeCheckbox) {
+        compactModeCheckbox.checked = false;
+    }
+    if (showExamplesCheckbox) {
+        showExamplesCheckbox.checked = true;
+    }
+    if (inputListContainer) {
+        inputListContainer.classList.remove('compact-mode');
+        inputListContainer.classList.remove('hide-examples');
+        inputListContainer.classList.remove('all-words-mode');
+    }
+    
     // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
     learnedWordsAtStart = calculateTotalLearnedWords();
     lastLearningCategory = category;
@@ -6689,6 +6705,113 @@ function setupEventListeners() {
             e.preventDefault();
             e.stopPropagation();
             startAllWordsLearning();
+        });
+    }
+    
+    // 不規則動詞の活用カードボタン → サブカテゴリーメニューを表示
+    const irregularVerbsCardBtn = document.getElementById('irregularVerbsCardBtn');
+    if (irregularVerbsCardBtn) {
+        irregularVerbsCardBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            showIvMenuView();
+        });
+    }
+    
+    // サブカテゴリーメニューの戻るボタン
+    const ivMenuBackBtn = document.getElementById('ivMenuBackBtn');
+    if (ivMenuBackBtn) {
+        ivMenuBackBtn.addEventListener('click', () => {
+            hideIvMenuView();
+        });
+    }
+    
+    // 不規則変化サブカテゴリーのアクションボタン（学習・テスト）
+    const ivMenuView = document.getElementById('ivMenuView');
+    if (ivMenuView) {
+        ivMenuView.querySelectorAll('.course-side-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const category = btn.dataset.category;
+                const mode = btn.dataset.mode;
+                if (mode === 'study') {
+                    showIvStudyView(category);
+                } else if (mode === 'test') {
+                    showIvTestView(category);
+                }
+            });
+        });
+        // カードの白い部分（category-info）クリックでモード選択
+        ivMenuView.querySelectorAll('.category-card-with-actions .category-info').forEach(info => {
+            info.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const card = info.closest('.category-card-with-actions');
+                const category = card?.dataset.category;
+                if (category) {
+                    showIvModeSelection(category);
+                }
+            });
+        });
+    }
+    
+    // 学習モード画面の戻るボタン
+    const ivStudyBackBtn = document.getElementById('ivStudyBackBtn');
+    if (ivStudyBackBtn) {
+        ivStudyBackBtn.addEventListener('click', () => {
+            hideIvStudyView();
+        });
+    }
+    
+    // 学習モードの赤シートチェックボックス
+    const ivRedsheetCheckbox = document.getElementById('ivRedsheetCheckbox');
+    if (ivRedsheetCheckbox) {
+        ivRedsheetCheckbox.addEventListener('change', () => {
+            toggleIvRedsheet();
+        });
+    }
+    
+    // 学習モードのメモボタン
+    const ivMemoPadBtn = document.getElementById('ivMemoPadBtn');
+    if (ivMemoPadBtn) {
+        ivMemoPadBtn.addEventListener('click', () => {
+            const overlay = document.getElementById('memoPadOverlay');
+            const canvas = document.getElementById('memoPadCanvas');
+            if (overlay && canvas) {
+                if (!overlay.classList.contains('hidden') && !overlay.classList.contains('closing')) {
+                    // 開いている場合は閉じる
+                    overlay.classList.add('closing');
+                    overlay.classList.remove('opening');
+                    ivMemoPadBtn.classList.remove('active');
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                        overlay.classList.remove('closing');
+                    }, 300);
+                } else if (overlay.classList.contains('hidden')) {
+                    // 閉じている場合は開く
+                    overlay.classList.remove('hidden');
+                    overlay.classList.remove('closing');
+                    overlay.classList.add('opening');
+                    ivMemoPadBtn.classList.add('active');
+                    memoPadCanvas = canvas;
+                    initMemoPadCanvas();
+                }
+            }
+        });
+    }
+    
+    // 学習モードの赤シート下矢印ボタン
+    const ivRedsheetNextBtn = document.getElementById('ivRedsheetNextBtn');
+    if (ivRedsheetNextBtn) {
+        ivRedsheetNextBtn.addEventListener('click', () => {
+            moveIvRedsheetToNext();
+        });
+    }
+    
+    // 不規則動詞の活用画面（テストモード）の戻るボタン
+    const irregularVerbsBackBtn = document.getElementById('irregularVerbsBackBtn');
+    if (irregularVerbsBackBtn) {
+        irregularVerbsBackBtn.addEventListener('click', () => {
+            hideIrregularVerbsView();
         });
     }
     
@@ -10867,6 +10990,9 @@ function applyInputListSettings() {
         // 設定ボタンを表示
         if (settingsBtn) settingsBtn.style.display = '';
         inputListContainer.classList.remove('all-words-mode');
+        // コンパクトモードをリセット（チェックボックスの状態に基づいて後で再適用）
+        inputListContainer.classList.remove('compact-mode');
+        inputListContainer.classList.remove('hide-examples');
         // 頻度フィルターと検索を非表示
         if (freqSection) freqSection.classList.add('hidden');
         if (wordSearchContainer) wordSearchContainer.classList.add('hidden');
@@ -19218,3 +19344,1094 @@ document.addEventListener('touchstart', function(e) {
     }, { capture: true });
 })();
 
+// ========================
+// 不規則動詞の活用機能
+// ========================
+
+// 不規則動詞データ（初級編）
+const irregularVerbsBeginner = [
+    { meaning: "〜である", base: "be", past: "was, were", pp: "been" },
+    { meaning: "する", base: "do", past: "did", pp: "done" },
+    { meaning: "持っている", base: "have", past: "had", pp: "had" },
+    { meaning: "行く", base: "go", past: "went", pp: "gone" },
+    { meaning: "来る", base: "come", past: "came", pp: "come" },
+    { meaning: "見る", base: "see", past: "saw", pp: "seen" },
+    { meaning: "取る", base: "take", past: "took", pp: "taken" },
+    { meaning: "作る", base: "make", past: "made", pp: "made" },
+    { meaning: "得る", base: "get", past: "got", pp: "gotten" },
+    { meaning: "言う", base: "say", past: "said", pp: "said" },
+    { meaning: "知っている", base: "know", past: "knew", pp: "known" },
+    { meaning: "思う", base: "think", past: "thought", pp: "thought" },
+    { meaning: "与える", base: "give", past: "gave", pp: "given" },
+    { meaning: "書く", base: "write", past: "wrote", pp: "written" },
+    { meaning: "読む", base: "read", past: "read", pp: "read" },
+    { meaning: "話す", base: "speak", past: "spoke", pp: "spoken" },
+    { meaning: "聞く", base: "hear", past: "heard", pp: "heard" },
+    { meaning: "立つ", base: "stand", past: "stood", pp: "stood" },
+    { meaning: "座る", base: "sit", past: "sat", pp: "sat" },
+    { meaning: "走る", base: "run", past: "ran", pp: "run" }
+];
+
+// 不規則動詞データ（中級編）
+const irregularVerbsIntermediate = [
+    { meaning: "食べる", base: "eat", past: "ate", pp: "eaten" },
+    { meaning: "飲む", base: "drink", past: "drank", pp: "drunk" },
+    { meaning: "眠る", base: "sleep", past: "slept", pp: "slept" },
+    { meaning: "買う", base: "buy", past: "bought", pp: "bought" },
+    { meaning: "売る", base: "sell", past: "sold", pp: "sold" },
+    { meaning: "教える", base: "teach", past: "taught", pp: "taught" },
+    { meaning: "学ぶ", base: "learn", past: "learned", pp: "learned" },
+    { meaning: "感じる", base: "feel", past: "felt", pp: "felt" },
+    { meaning: "見つける", base: "find", past: "found", pp: "found" },
+    { meaning: "落ちる", base: "fall", past: "fell", pp: "fallen" },
+    { meaning: "飛ぶ", base: "fly", past: "flew", pp: "flown" },
+    { meaning: "泳ぐ", base: "swim", past: "swam", pp: "swum" },
+    { meaning: "歌う", base: "sing", past: "sang", pp: "sung" },
+    { meaning: "持ってくる", base: "bring", past: "brought", pp: "brought" },
+    { meaning: "建てる", base: "build", past: "built", pp: "built" },
+    { meaning: "送る", base: "send", past: "sent", pp: "sent" },
+    { meaning: "使う", base: "spend", past: "spent", pp: "spent" },
+    { meaning: "去る", base: "leave", past: "left", pp: "left" },
+    { meaning: "保つ", base: "keep", past: "kept", pp: "kept" },
+    { meaning: "意味する", base: "mean", past: "meant", pp: "meant" }
+];
+
+// 不規則動詞データ（上級編）
+const irregularVerbsAdvanced = [
+    { meaning: "〜になる", base: "become", past: "became", pp: "become" },
+    { meaning: "始める", base: "begin", past: "began", pp: "begun" },
+    { meaning: "壊す", base: "break", past: "broke", pp: "broken" },
+    { meaning: "選ぶ", base: "choose", past: "chose", pp: "chosen" },
+    { meaning: "切る", base: "cut", past: "cut", pp: "cut" },
+    { meaning: "描く", base: "draw", past: "drew", pp: "drawn" },
+    { meaning: "運転する", base: "drive", past: "drove", pp: "driven" },
+    { meaning: "忘れる", base: "forget", past: "forgot", pp: "forgotten" },
+    { meaning: "育つ", base: "grow", past: "grew", pp: "grown" },
+    { meaning: "置く", base: "put", past: "put", pp: "put" },
+    { meaning: "乗る", base: "ride", past: "rode", pp: "ridden" },
+    { meaning: "昇る", base: "rise", past: "rose", pp: "risen" },
+    { meaning: "震える", base: "shake", past: "shook", pp: "shaken" },
+    { meaning: "見せる", base: "show", past: "showed", pp: "shown" },
+    { meaning: "投げる", base: "throw", past: "threw", pp: "thrown" },
+    { meaning: "着る", base: "wear", past: "wore", pp: "worn" },
+    { meaning: "勝つ", base: "win", past: "won", pp: "won" },
+    { meaning: "盗む", base: "steal", past: "stole", pp: "stolen" },
+    { meaning: "起きる", base: "wake", past: "woke", pp: "woken" },
+    { meaning: "打つ", base: "hit", past: "hit", pp: "hit" }
+];
+
+// 不規則に変化する比較級・最上級
+const irregularComparatives = [
+    { word: "good", meaning: "良い", comparative: "better", superlative: "best" },
+    { word: "bad", meaning: "悪い", comparative: "worse", superlative: "worst" },
+    { word: "many", meaning: "多い（数）", comparative: "more", superlative: "most" },
+    { word: "much", meaning: "多い（量）", comparative: "more", superlative: "most" },
+    { word: "little", meaning: "少ない", comparative: "less", superlative: "least" },
+    { word: "far", meaning: "遠い", comparative: "farther", superlative: "farthest" },
+    { word: "old", meaning: "年上の", comparative: "older", superlative: "oldest" },
+    { word: "late", meaning: "遅い", comparative: "later", superlative: "latest" },
+    { word: "well", meaning: "上手に", comparative: "better", superlative: "best" },
+    { word: "ill", meaning: "病気の", comparative: "worse", superlative: "worst" }
+];
+
+// 不規則に変化する名詞の複数形
+const irregularPlurals = [
+    { singular: "man", meaning: "男性", plural: "men" },
+    { singular: "woman", meaning: "女性", plural: "women" },
+    { singular: "child", meaning: "子供", plural: "children" },
+    { singular: "foot", meaning: "足", plural: "feet" },
+    { singular: "tooth", meaning: "歯", plural: "teeth" },
+    { singular: "mouse", meaning: "ネズミ", plural: "mice" },
+    { singular: "goose", meaning: "ガチョウ", plural: "geese" },
+    { singular: "person", meaning: "人", plural: "people" },
+    { singular: "fish", meaning: "魚", plural: "fish" },
+    { singular: "sheep", meaning: "羊", plural: "sheep" },
+    { singular: "deer", meaning: "鹿", plural: "deer" },
+    { singular: "leaf", meaning: "葉", plural: "leaves" },
+    { singular: "knife", meaning: "ナイフ", plural: "knives" },
+    { singular: "life", meaning: "命・人生", plural: "lives" },
+    { singular: "wife", meaning: "妻", plural: "wives" }
+];
+
+// 現在選択中のカテゴリー
+let currentIvCategory = null;
+let ivRedsheetActive = false;
+let currentIvData = null;
+
+// サブカテゴリーメニューを表示
+function showIvMenuView() {
+    const view = document.getElementById('ivMenuView');
+    if (view) {
+        view.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+// サブカテゴリーメニューを非表示
+function hideIvMenuView() {
+    const view = document.getElementById('ivMenuView');
+    if (view) {
+        view.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+}
+
+// モード選択（学習 or テスト）
+function showIvModeSelection(category) {
+    currentIvCategory = category;
+    
+    // カテゴリータイトルを取得
+    const titles = {
+        'verbs-beginner': '不規則動詞（初級編）',
+        'verbs-intermediate': '不規則動詞（中級編）',
+        'verbs-advanced': '不規則動詞（上級編）',
+        'comparatives': '比較級・最上級',
+        'plurals': '名詞の複数形'
+    };
+    const title = titles[category] || category;
+    
+    // 学習モード選択オーバーレイを表示
+    const existingOverlay = document.getElementById('ivModeOverlay');
+    if (existingOverlay) existingOverlay.remove();
+    
+    const overlay = document.createElement('div');
+    overlay.id = 'ivModeOverlay';
+    overlay.className = 'study-mode-overlay';
+    overlay.innerHTML = `
+        <div class="study-mode-container" style="width: calc(100% - 16px); max-width: 600px; margin: 0 auto;">
+            <div class="study-mode-title">学習方法を選択</div>
+            <div class="study-mode-buttons">
+                <button type="button" class="study-mode-choice-btn study-mode-input-btn iv-mode-study-btn">
+                    <span class="study-mode-choice-main">学習</span>
+                    <span class="study-mode-choice-sub">単語一覧を見て<br>学習する</span>
+                </button>
+                <button type="button" class="study-mode-choice-btn study-mode-output-btn iv-mode-test-btn">
+                    <span class="study-mode-choice-main">テスト</span>
+                    <span class="study-mode-choice-sub">覚えたかどうか<br>確認する</span>
+                </button>
+            </div>
+            <button type="button" class="study-mode-cancel-btn">キャンセル</button>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    
+    // イベントリスナー
+    overlay.querySelector('.iv-mode-study-btn').addEventListener('click', () => {
+        overlay.remove();
+        showIvStudyView(category);
+    });
+    
+    overlay.querySelector('.iv-mode-test-btn').addEventListener('click', () => {
+        overlay.remove();
+        showIvTestView(category);
+    });
+    
+    overlay.querySelector('.study-mode-cancel-btn').addEventListener('click', () => {
+        overlay.remove();
+    });
+    
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.remove();
+    });
+}
+
+// 学習モードを表示
+function showIvStudyView(category) {
+    const view = document.getElementById('ivStudyView');
+    const titleEl = document.getElementById('ivStudyTitle');
+    const thead = document.getElementById('ivStudyTableHead');
+    const tbody = document.getElementById('ivStudyTableBody');
+    
+    if (!view || !tbody) return;
+    
+    // カテゴリータイトル
+    const titles = {
+        'verbs-beginner': '不規則動詞（初級編）',
+        'verbs-intermediate': '不規則動詞（中級編）',
+        'verbs-advanced': '不規則動詞（上級編）',
+        'comparatives': '比較級・最上級',
+        'plurals': '名詞の複数形'
+    };
+    titleEl.textContent = titles[category] || '学習';
+    
+    // データ取得
+    let data;
+    if (category === 'verbs-beginner') {
+        data = irregularVerbsBeginner;
+        currentIvData = { type: 'verbs', data };
+    } else if (category === 'verbs-intermediate') {
+        data = irregularVerbsIntermediate;
+        currentIvData = { type: 'verbs', data };
+    } else if (category === 'verbs-advanced') {
+        data = irregularVerbsAdvanced;
+        currentIvData = { type: 'verbs', data };
+    } else if (category === 'comparatives') {
+        data = irregularComparatives;
+        currentIvData = { type: 'comparatives', data };
+    } else if (category === 'plurals') {
+        data = irregularPlurals;
+        currentIvData = { type: 'plurals', data };
+    }
+    
+    // テーブル生成
+    tbody.innerHTML = '';
+    
+    if (currentIvData.type === 'verbs') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-study-col-num">No.</th>
+                <th class="iv-study-col-meaning">意味</th>
+                <th class="iv-study-col-base">原形</th>
+                <th class="iv-study-col-past">過去形</th>
+                <th class="iv-study-col-pp">過去分詞</th>
+            </tr>
+        `;
+        data.forEach((verb, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="iv-study-num">${index + 1}</td>
+                <td class="iv-study-meaning">${verb.meaning}</td>
+                <td class="iv-study-answer">${verb.base}</td>
+                <td class="iv-study-answer">${verb.past}</td>
+                <td class="iv-study-answer">${verb.pp}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else if (currentIvData.type === 'comparatives') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-study-col-num">No.</th>
+                <th class="iv-study-col-word">原級</th>
+                <th class="iv-study-col-meaning">意味</th>
+                <th class="iv-study-col-comp">比較級</th>
+                <th class="iv-study-col-super">最上級</th>
+            </tr>
+        `;
+        data.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="iv-study-num">${index + 1}</td>
+                <td class="iv-study-word">${item.word}</td>
+                <td class="iv-study-meaning">${item.meaning}</td>
+                <td class="iv-study-answer">${item.comparative}</td>
+                <td class="iv-study-answer">${item.superlative}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else if (currentIvData.type === 'plurals') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-study-col-num">No.</th>
+                <th class="iv-study-col-singular">単数形</th>
+                <th class="iv-study-col-meaning">意味</th>
+                <th class="iv-study-col-plural">複数形</th>
+            </tr>
+        `;
+        data.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="iv-study-num">${index + 1}</td>
+                <td class="iv-study-word">${item.singular}</td>
+                <td class="iv-study-meaning">${item.meaning}</td>
+                <td class="iv-study-answer">${item.plural}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+    
+    // 赤シートリセット
+    ivRedsheetActive = false;
+    const ivRedsheetCheckbox = document.getElementById('ivRedsheetCheckbox');
+    if (ivRedsheetCheckbox) ivRedsheetCheckbox.checked = false;
+    document.getElementById('ivStudyTableContainer')?.classList.remove('redsheet-active');
+    document.getElementById('ivRedsheetOverlay')?.classList.add('hidden');
+    
+    // サブカテゴリーメニューを隠す
+    hideIvMenuView();
+    
+    // 画面表示
+    view.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+// 学習モードを非表示
+function hideIvStudyView() {
+    const view = document.getElementById('ivStudyView');
+    if (view) {
+        view.classList.add('hidden');
+        document.body.style.overflow = '';
+        // サブカテゴリーメニューに戻る
+        showIvMenuView();
+    }
+}
+
+// 赤シートトグル（不規則動詞学習モード）
+function toggleIvRedsheet() {
+    const checkbox = document.getElementById('ivRedsheetCheckbox');
+    const overlay = document.getElementById('ivRedsheetOverlay');
+    const nextBtn = document.getElementById('ivRedsheetNextBtn');
+    const studyView = document.getElementById('ivStudyView');
+    
+    ivRedsheetActive = checkbox?.checked || false;
+    
+    if (ivRedsheetActive) {
+        // 現在表示されている範囲内で、一番上の回答部分を探す
+        const answers = document.querySelectorAll('.iv-study-answer');
+        let targetAnswer = null;
+        
+        for (const answer of answers) {
+            const rect = answer.getBoundingClientRect();
+            if (rect.top >= 100) {
+                targetAnswer = answer;
+                break;
+            }
+        }
+        
+        if (!targetAnswer && answers.length > 0) {
+            targetAnswer = answers[0];
+        }
+        
+        // オーバーレイの位置を設定
+        let topPosition = 150;
+        let leftPosition = 0;
+        
+        if (targetAnswer) {
+            const rect = targetAnswer.getBoundingClientRect();
+            topPosition = rect.top;
+            leftPosition = rect.left - 10; // 単語の左端に合わせる
+        }
+        
+        if (overlay) {
+            overlay.style.top = topPosition + 'px';
+            overlay.style.left = leftPosition + 'px';
+            overlay.style.right = '0';
+            overlay.classList.remove('hidden');
+        }
+        
+        studyView?.classList.add('red-sheet-mode');
+        setupIvRedsheetDrag(overlay);
+        
+        // 下矢印ボタンを表示
+        if (nextBtn) {
+            nextBtn.classList.remove('hidden');
+        }
+    } else {
+        overlay?.classList.add('hidden');
+        studyView?.classList.remove('red-sheet-mode');
+        
+        // 下矢印ボタンを非表示
+        if (nextBtn) {
+            nextBtn.classList.add('hidden');
+        }
+    }
+}
+
+// 赤シートを次の行に移動（不規則動詞学習モード）
+function moveIvRedsheetToNext() {
+    const overlay = document.getElementById('ivRedsheetOverlay');
+    const studyView = document.getElementById('ivStudyView');
+    const tableContainer = document.getElementById('ivStudyTableContainer');
+    const rows = document.querySelectorAll('.iv-study-table tbody tr');
+    
+    if (!overlay || !studyView || rows.length === 0) return;
+    
+    const viewportHeight = window.innerHeight;
+    const currentRedSheetTop = parseFloat(overlay.style.top) || 0;
+    
+    // 赤シートより下にある最初の行を探す
+    let nextRow = null;
+    let nextIndex = -1;
+    
+    for (let i = 0; i < rows.length; i++) {
+        const answer = rows[i].querySelector('.iv-study-answer');
+        if (answer) {
+            const rect = answer.getBoundingClientRect();
+            if (rect.top > currentRedSheetTop + 5) {
+                nextRow = rows[i];
+                nextIndex = i;
+                break;
+            }
+        }
+    }
+    
+    // 次の行が見つからない場合は終了（フェードアウト）
+    if (!nextRow) {
+        overlay.style.transition = 'opacity 0.3s ease';
+        overlay.style.opacity = '0';
+        
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+            overlay.style.opacity = '';
+            overlay.style.transition = '';
+            studyView.classList.remove('red-sheet-mode');
+            
+            const nextBtn = document.getElementById('ivRedsheetNextBtn');
+            if (nextBtn) {
+                nextBtn.classList.add('hidden');
+            }
+            
+            const checkbox = document.getElementById('ivRedsheetCheckbox');
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+            ivRedsheetActive = false;
+        }, 300);
+        return;
+    }
+    
+    const nextAnswer = nextRow.querySelector('.iv-study-answer');
+    if (!nextAnswer) return;
+    
+    const nextRect = nextAnswer.getBoundingClientRect();
+    
+    // 次の行が画面外ならスクロール
+    if (nextRect.top >= viewportHeight - 100) {
+        const scrollAmount = nextRect.top - viewportHeight + 200;
+        tableContainer?.scrollBy({
+            top: scrollAmount,
+            behavior: 'smooth'
+        });
+        
+        setTimeout(() => {
+            const updatedRect = nextAnswer.getBoundingClientRect();
+            overlay.style.transition = 'top 0.3s ease';
+            overlay.style.top = updatedRect.top + 'px';
+            overlay.style.left = (updatedRect.left - 10) + 'px';
+            setTimeout(() => {
+                overlay.style.transition = '';
+            }, 300);
+        }, 350);
+    } else {
+        overlay.style.transition = 'top 0.3s ease';
+        overlay.style.top = nextRect.top + 'px';
+        overlay.style.left = (nextRect.left - 10) + 'px';
+        setTimeout(() => {
+            overlay.style.transition = '';
+        }, 300);
+    }
+}
+
+// 赤シートのドラッグ設定（不規則動詞学習モード）
+function setupIvRedsheetDrag(overlay) {
+    if (!overlay) return;
+    
+    let isDragging = false;
+    let startY = 0;
+    let startTop = 0;
+    
+    const onStart = (e) => {
+        isDragging = true;
+        startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+        startTop = parseInt(overlay.style.top) || 150;
+        overlay.style.transition = 'none';
+    };
+    
+    const onMove = (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+        const deltaY = clientY - startY;
+        const newTop = Math.max(0, startTop + deltaY);
+        overlay.style.top = newTop + 'px';
+    };
+    
+    const onEnd = () => {
+        isDragging = false;
+        overlay.style.transition = '';
+    };
+    
+    overlay.addEventListener('mousedown', onStart);
+    overlay.addEventListener('touchstart', onStart, { passive: false });
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('mouseup', onEnd);
+    document.addEventListener('touchend', onEnd);
+}
+
+// テストモードを表示
+function showIvTestView(category) {
+    // サブカテゴリーメニューを隠す
+    hideIvMenuView();
+    
+    // データ取得
+    let data;
+    let type;
+    if (category === 'verbs-beginner') {
+        data = irregularVerbsBeginner;
+        type = 'verbs';
+    } else if (category === 'verbs-intermediate') {
+        data = irregularVerbsIntermediate;
+        type = 'verbs';
+    } else if (category === 'verbs-advanced') {
+        data = irregularVerbsAdvanced;
+        type = 'verbs';
+    } else if (category === 'comparatives') {
+        data = irregularComparatives;
+        type = 'comparatives';
+    } else if (category === 'plurals') {
+        data = irregularPlurals;
+        type = 'plurals';
+    }
+    
+    // カテゴリータイトル
+    const titles = {
+        'verbs-beginner': '不規則動詞（初級編）',
+        'verbs-intermediate': '不規則動詞（中級編）',
+        'verbs-advanced': '不規則動詞（上級編）',
+        'comparatives': '比較級・最上級',
+        'plurals': '名詞の複数形'
+    };
+    
+    // テスト画面を表示
+    showIrregularVerbsTestView(data, type, titles[category]);
+}
+
+// テスト画面を表示（汎用）
+function showIrregularVerbsTestView(data, type, title) {
+    const view = document.getElementById('irregularVerbsView');
+    const titleEl = view.querySelector('.irregular-verbs-title');
+    const tbody = document.getElementById('irregularVerbsTableBody');
+    const thead = view.querySelector('.irregular-verbs-table thead');
+    const instructions = view.querySelector('.irregular-verbs-instructions');
+    
+    if (!view || !tbody) return;
+    
+    // タイトル更新
+    if (titleEl) titleEl.textContent = title;
+    
+    // スコアリセット
+    irregularVerbsScore = { correct: 0, total: 0 };
+    
+    // テーブルヘッダーと内容を生成
+    tbody.innerHTML = '';
+    
+    if (type === 'verbs') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-col-num">No.</th>
+                <th class="iv-col-meaning">意味</th>
+                <th class="iv-col-base">原形</th>
+                <th class="iv-col-past">過去形</th>
+                <th class="iv-col-pp">過去分詞</th>
+            </tr>
+        `;
+        if (instructions) instructions.textContent = '原形・過去形・過去分詞を入力して「採点」ボタンを押してください';
+        
+        data.forEach((verb, index) => {
+            const tr = document.createElement('tr');
+            tr.id = `iv-row-${index}`;
+            tr.innerHTML = `
+                <td class="iv-num">${index + 1}</td>
+                <td class="iv-meaning">${verb.meaning}</td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-base-${index}" data-index="${index}" data-type="base" data-answer="${verb.base}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <div class="iv-answer hidden" id="iv-answer-base-${index}"></div>
+                </td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-past-${index}" data-index="${index}" data-type="past" data-answer="${verb.past}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <div class="iv-answer hidden" id="iv-answer-past-${index}"></div>
+                </td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-pp-${index}" data-index="${index}" data-type="pp" data-answer="${verb.pp}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <div class="iv-answer hidden" id="iv-answer-pp-${index}"></div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else if (type === 'comparatives') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-col-num">No.</th>
+                <th class="iv-col-word">原級</th>
+                <th class="iv-col-comp">比較級</th>
+                <th class="iv-col-super">最上級</th>
+            </tr>
+        `;
+        if (instructions) instructions.textContent = '比較級・最上級を入力して「採点」ボタンを押してください';
+        
+        data.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.id = `iv-row-${index}`;
+            tr.innerHTML = `
+                <td class="iv-num">${index + 1}</td>
+                <td class="iv-meaning">${item.word}<br><small>(${item.meaning})</small></td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-comp-${index}" data-index="${index}" data-type="comp" data-answer="${item.comparative}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <div class="iv-answer hidden" id="iv-answer-comp-${index}"></div>
+                </td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-super-${index}" data-index="${index}" data-type="super" data-answer="${item.superlative}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <div class="iv-answer hidden" id="iv-answer-super-${index}"></div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else if (type === 'plurals') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-col-num">No.</th>
+                <th class="iv-col-singular">単数形</th>
+                <th class="iv-col-plural">複数形</th>
+            </tr>
+        `;
+        if (instructions) instructions.textContent = '複数形を入力して「採点」ボタンを押してください';
+        
+        data.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.id = `iv-row-${index}`;
+            tr.innerHTML = `
+                <td class="iv-num">${index + 1}</td>
+                <td class="iv-meaning">${item.singular}<br><small>(${item.meaning})</small></td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-plural-${index}" data-index="${index}" data-type="plural" data-answer="${item.plural}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <div class="iv-answer hidden" id="iv-answer-plural-${index}"></div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+    
+    // 現在のテストデータを保存
+    currentIvTestData = { data, type };
+    
+    // 画面表示
+    view.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+// 現在のテストデータ
+let currentIvTestData = null;
+
+// 不規則動詞データ（50語）- 旧データ（互換性のため）
+const irregularVerbsData = [
+    { meaning: "〜である", base: "be", past: "was/were", pp: "been" },
+    { meaning: "〜になる", base: "become", past: "became", pp: "become" },
+    { meaning: "始める", base: "begin", past: "began", pp: "begun" },
+    { meaning: "壊す", base: "break", past: "broke", pp: "broken" },
+    { meaning: "持ってくる", base: "bring", past: "brought", pp: "brought" },
+    { meaning: "建てる", base: "build", past: "built", pp: "built" },
+    { meaning: "買う", base: "buy", past: "bought", pp: "bought" },
+    { meaning: "捕まえる", base: "catch", past: "caught", pp: "caught" },
+    { meaning: "選ぶ", base: "choose", past: "chose", pp: "chosen" },
+    { meaning: "来る", base: "come", past: "came", pp: "come" },
+    { meaning: "切る", base: "cut", past: "cut", pp: "cut" },
+    { meaning: "する", base: "do", past: "did", pp: "done" },
+    { meaning: "描く", base: "draw", past: "drew", pp: "drawn" },
+    { meaning: "飲む", base: "drink", past: "drank", pp: "drunk" },
+    { meaning: "運転する", base: "drive", past: "drove", pp: "driven" },
+    { meaning: "食べる", base: "eat", past: "ate", pp: "eaten" },
+    { meaning: "落ちる", base: "fall", past: "fell", pp: "fallen" },
+    { meaning: "感じる", base: "feel", past: "felt", pp: "felt" },
+    { meaning: "見つける", base: "find", past: "found", pp: "found" },
+    { meaning: "飛ぶ", base: "fly", past: "flew", pp: "flown" },
+    { meaning: "忘れる", base: "forget", past: "forgot", pp: "forgotten" },
+    { meaning: "得る", base: "get", past: "got", pp: "got/gotten" },
+    { meaning: "与える", base: "give", past: "gave", pp: "given" },
+    { meaning: "行く", base: "go", past: "went", pp: "gone" },
+    { meaning: "育てる", base: "grow", past: "grew", pp: "grown" },
+    { meaning: "持っている", base: "have", past: "had", pp: "had" },
+    { meaning: "聞く", base: "hear", past: "heard", pp: "heard" },
+    { meaning: "保つ", base: "keep", past: "kept", pp: "kept" },
+    { meaning: "知っている", base: "know", past: "knew", pp: "known" },
+    { meaning: "去る", base: "leave", past: "left", pp: "left" },
+    { meaning: "貸す", base: "lend", past: "lent", pp: "lent" },
+    { meaning: "させる", base: "let", past: "let", pp: "let" },
+    { meaning: "横たわる", base: "lie", past: "lay", pp: "lain" },
+    { meaning: "失う", base: "lose", past: "lost", pp: "lost" },
+    { meaning: "作る", base: "make", past: "made", pp: "made" },
+    { meaning: "意味する", base: "mean", past: "meant", pp: "meant" },
+    { meaning: "会う", base: "meet", past: "met", pp: "met" },
+    { meaning: "払う", base: "pay", past: "paid", pp: "paid" },
+    { meaning: "置く", base: "put", past: "put", pp: "put" },
+    { meaning: "読む", base: "read", past: "read", pp: "read" },
+    { meaning: "乗る", base: "ride", past: "rode", pp: "ridden" },
+    { meaning: "走る", base: "run", past: "ran", pp: "run" },
+    { meaning: "言う", base: "say", past: "said", pp: "said" },
+    { meaning: "見る", base: "see", past: "saw", pp: "seen" },
+    { meaning: "売る", base: "sell", past: "sold", pp: "sold" },
+    { meaning: "送る", base: "send", past: "sent", pp: "sent" },
+    { meaning: "見せる", base: "show", past: "showed", pp: "shown" },
+    { meaning: "歌う", base: "sing", past: "sang", pp: "sung" },
+    { meaning: "座る", base: "sit", past: "sat", pp: "sat" },
+    { meaning: "眠る", base: "sleep", past: "slept", pp: "slept" },
+    { meaning: "話す", base: "speak", past: "spoke", pp: "spoken" },
+    { meaning: "費やす", base: "spend", past: "spent", pp: "spent" },
+    { meaning: "立つ", base: "stand", past: "stood", pp: "stood" },
+    { meaning: "泳ぐ", base: "swim", past: "swam", pp: "swum" },
+    { meaning: "取る", base: "take", past: "took", pp: "taken" },
+    { meaning: "教える", base: "teach", past: "taught", pp: "taught" },
+    { meaning: "言う", base: "tell", past: "told", pp: "told" },
+    { meaning: "考える", base: "think", past: "thought", pp: "thought" },
+    { meaning: "投げる", base: "throw", past: "threw", pp: "thrown" },
+    { meaning: "理解する", base: "understand", past: "understood", pp: "understood" },
+    { meaning: "着る", base: "wear", past: "wore", pp: "worn" },
+    { meaning: "勝つ", base: "win", past: "won", pp: "won" },
+    { meaning: "書く", base: "write", past: "wrote", pp: "written" }
+];
+
+let irregularVerbsScore = { correct: 0, total: 0 };
+
+// 不規則動詞の活用画面を表示
+function showIrregularVerbsView() {
+    const view = document.getElementById('irregularVerbsView');
+    const tbody = document.getElementById('irregularVerbsTableBody');
+    
+    if (!view || !tbody) return;
+    
+    // スコアリセット
+    irregularVerbsScore = { correct: 0, total: 0 };
+    updateIrregularVerbsScore();
+    
+    // テーブル生成
+    tbody.innerHTML = '';
+    irregularVerbsData.forEach((verb, index) => {
+        const tr = document.createElement('tr');
+        tr.id = `iv-row-${index}`;
+        tr.innerHTML = `
+            <td class="iv-num">${index + 1}</td>
+            <td class="iv-meaning">${verb.meaning}</td>
+            <td>
+                <input type="text" class="iv-input" id="iv-base-${index}" data-index="${index}" data-type="base" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <div class="iv-answer hidden" id="iv-answer-base-${index}"></div>
+            </td>
+            <td>
+                <input type="text" class="iv-input" id="iv-past-${index}" data-index="${index}" data-type="past" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <div class="iv-answer hidden" id="iv-answer-past-${index}"></div>
+            </td>
+            <td>
+                <input type="text" class="iv-input" id="iv-pp-${index}" data-index="${index}" data-type="pp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <div class="iv-answer hidden" id="iv-answer-pp-${index}"></div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+    
+    // 画面表示
+    view.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+// 不規則動詞の活用画面（テストモード）を非表示
+function hideIrregularVerbsView() {
+    const view = document.getElementById('irregularVerbsView');
+    if (view) {
+        view.classList.add('hidden');
+        document.body.style.overflow = '';
+        // キーボードを隠す
+        hideIvKeyboard();
+        // サブカテゴリーメニューに戻る
+        showIvMenuView();
+    }
+}
+
+// 1問採点（汎用）
+function checkIrregularVerb(index) {
+    const row = document.getElementById(`iv-row-${index}`);
+    
+    // 既に採点済みの場合はスキップ
+    if (!row || row.classList.contains('iv-row-correct') || row.classList.contains('iv-row-wrong')) {
+        return;
+    }
+    
+    // 正解判定（複数回答対応）
+    const checkAnswer = (input, correctAnswers) => {
+        if (!input) return true;
+        const userAnswer = input.value.trim().toLowerCase();
+        const answers = correctAnswers.toLowerCase().split('/').map(a => a.trim());
+        return answers.includes(userAnswer);
+    };
+    
+    const type = currentIvTestData?.type || 'verbs';
+    let allCorrect = true;
+    
+    if (type === 'verbs') {
+        const baseInput = document.getElementById(`iv-base-${index}`);
+        const pastInput = document.getElementById(`iv-past-${index}`);
+        const ppInput = document.getElementById(`iv-pp-${index}`);
+        
+        const baseAnswer = document.getElementById(`iv-answer-base-${index}`);
+        const pastAnswer = document.getElementById(`iv-answer-past-${index}`);
+        const ppAnswer = document.getElementById(`iv-answer-pp-${index}`);
+        
+        const baseCorrect = checkAnswer(baseInput, baseInput?.dataset.answer || '');
+        const pastCorrect = checkAnswer(pastInput, pastInput?.dataset.answer || '');
+        const ppCorrect = checkAnswer(ppInput, ppInput?.dataset.answer || '');
+        
+        // 入力欄のスタイル更新
+        if (baseInput) {
+            baseInput.classList.add(baseCorrect ? 'iv-correct' : 'iv-wrong');
+            baseInput.disabled = true;
+            if (!baseCorrect && baseAnswer) {
+                baseAnswer.textContent = baseInput.dataset.answer;
+                baseAnswer.classList.remove('hidden');
+            }
+        }
+        if (pastInput) {
+            pastInput.classList.add(pastCorrect ? 'iv-correct' : 'iv-wrong');
+            pastInput.disabled = true;
+            if (!pastCorrect && pastAnswer) {
+                pastAnswer.textContent = pastInput.dataset.answer;
+                pastAnswer.classList.remove('hidden');
+            }
+        }
+        if (ppInput) {
+            ppInput.classList.add(ppCorrect ? 'iv-correct' : 'iv-wrong');
+            ppInput.disabled = true;
+            if (!ppCorrect && ppAnswer) {
+                ppAnswer.textContent = ppInput.dataset.answer;
+                ppAnswer.classList.remove('hidden');
+            }
+        }
+        
+        allCorrect = baseCorrect && pastCorrect && ppCorrect;
+    } else if (type === 'comparatives') {
+        const compInput = document.getElementById(`iv-comp-${index}`);
+        const superInput = document.getElementById(`iv-super-${index}`);
+        
+        const compAnswer = document.getElementById(`iv-answer-comp-${index}`);
+        const superAnswer = document.getElementById(`iv-answer-super-${index}`);
+        
+        const compCorrect = checkAnswer(compInput, compInput?.dataset.answer || '');
+        const superCorrect = checkAnswer(superInput, superInput?.dataset.answer || '');
+        
+        if (compInput) {
+            compInput.classList.add(compCorrect ? 'iv-correct' : 'iv-wrong');
+            compInput.disabled = true;
+            if (!compCorrect && compAnswer) {
+                compAnswer.textContent = compInput.dataset.answer;
+                compAnswer.classList.remove('hidden');
+            }
+        }
+        if (superInput) {
+            superInput.classList.add(superCorrect ? 'iv-correct' : 'iv-wrong');
+            superInput.disabled = true;
+            if (!superCorrect && superAnswer) {
+                superAnswer.textContent = superInput.dataset.answer;
+                superAnswer.classList.remove('hidden');
+            }
+        }
+        
+        allCorrect = compCorrect && superCorrect;
+    } else if (type === 'plurals') {
+        const pluralInput = document.getElementById(`iv-plural-${index}`);
+        const pluralAnswer = document.getElementById(`iv-answer-plural-${index}`);
+        
+        const pluralCorrect = checkAnswer(pluralInput, pluralInput?.dataset.answer || '');
+        
+        if (pluralInput) {
+            pluralInput.classList.add(pluralCorrect ? 'iv-correct' : 'iv-wrong');
+            pluralInput.disabled = true;
+            if (!pluralCorrect && pluralAnswer) {
+                pluralAnswer.textContent = pluralInput.dataset.answer;
+                pluralAnswer.classList.remove('hidden');
+            }
+        }
+        
+        allCorrect = pluralCorrect;
+    }
+    
+    // 行のスタイル更新
+    row.classList.add(allCorrect ? 'iv-row-correct' : 'iv-row-wrong');
+    
+    // スコア更新
+    irregularVerbsScore.total++;
+    if (allCorrect) {
+        irregularVerbsScore.correct++;
+    }
+    updateIrregularVerbsScore();
+}
+
+// スコア表示更新
+function updateIrregularVerbsScore() {
+    const correctEl = document.getElementById('irregularVerbsCorrect');
+    const totalEl = document.getElementById('irregularVerbsTotal');
+    if (correctEl) correctEl.textContent = irregularVerbsScore.correct;
+    if (totalEl) totalEl.textContent = irregularVerbsScore.total;
+}
+
+// 不規則動詞用仮想キーボード
+let ivCurrentInput = null;
+let ivShiftActive = false;
+
+// キーボードを表示
+function showIvKeyboard() {
+    const keyboard = document.getElementById('ivKeyboard');
+    const container = document.querySelector('.irregular-verbs-table-container');
+    if (keyboard) {
+        keyboard.classList.add('visible');
+    }
+    if (container) {
+        container.classList.add('keyboard-open');
+    }
+}
+
+// キーボードを非表示
+function hideIvKeyboard() {
+    const keyboard = document.getElementById('ivKeyboard');
+    const container = document.querySelector('.irregular-verbs-table-container');
+    if (keyboard) {
+        keyboard.classList.remove('visible');
+    }
+    if (container) {
+        container.classList.remove('keyboard-open');
+    }
+    ivCurrentInput = null;
+}
+
+// キーボードのセットアップ
+function setupIrregularVerbsKeyboard() {
+    const keyboard = document.getElementById('ivKeyboard');
+    if (!keyboard) return;
+    
+    // キー入力
+    keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        key.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (ivCurrentInput && !ivCurrentInput.disabled) {
+                let char = key.dataset.key;
+                // シフトが有効なら大文字に
+                if (ivShiftActive && char.length === 1 && char !== ' ' && char !== "'") {
+                    char = char.toUpperCase();
+                    // シフトをリセット
+                    toggleIvShift();
+                }
+                const start = ivCurrentInput.selectionStart;
+                const end = ivCurrentInput.selectionEnd;
+                const value = ivCurrentInput.value;
+                ivCurrentInput.value = value.slice(0, start) + char + value.slice(end);
+                ivCurrentInput.selectionStart = ivCurrentInput.selectionEnd = start + 1;
+                ivCurrentInput.focus();
+            }
+        });
+    });
+    
+    // シフトキー
+    const shiftBtn = document.getElementById('ivKeyboardShift');
+    if (shiftBtn) {
+        shiftBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleIvShift();
+        });
+    }
+    
+    // バックスペース
+    const backspaceBtn = document.getElementById('ivKeyboardBackspace');
+    if (backspaceBtn) {
+        backspaceBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (ivCurrentInput && !ivCurrentInput.disabled) {
+                const start = ivCurrentInput.selectionStart;
+                const end = ivCurrentInput.selectionEnd;
+                const value = ivCurrentInput.value;
+                if (start === end && start > 0) {
+                    ivCurrentInput.value = value.slice(0, start - 1) + value.slice(end);
+                    ivCurrentInput.selectionStart = ivCurrentInput.selectionEnd = start - 1;
+                } else if (start !== end) {
+                    ivCurrentInput.value = value.slice(0, start) + value.slice(end);
+                    ivCurrentInput.selectionStart = ivCurrentInput.selectionEnd = start;
+                }
+                ivCurrentInput.focus();
+            }
+        });
+    }
+    
+    // キーボード自体をクリックしても閉じないようにする
+    keyboard.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+    
+    // 採点ボタン
+    const checkBtn = document.getElementById('ivKeyboardCheckBtn');
+    if (checkBtn) {
+        checkBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (ivCurrentInput) {
+                const index = parseInt(ivCurrentInput.dataset.index);
+                if (!isNaN(index)) {
+                    checkIrregularVerb(index);
+                    // 次の未採点の行に移動
+                    moveToNextUncheckedRow(index);
+                }
+            }
+        });
+    }
+}
+
+// 次の未採点の行に移動
+function moveToNextUncheckedRow(currentIndex) {
+    const dataLength = currentIvTestData?.data?.length || irregularVerbsData.length;
+    for (let i = currentIndex + 1; i < dataLength; i++) {
+        const row = document.getElementById(`iv-row-${i}`);
+        if (row && !row.classList.contains('iv-row-correct') && !row.classList.contains('iv-row-wrong')) {
+            const firstInput = row.querySelector('.iv-input');
+            if (firstInput && !firstInput.disabled) {
+                firstInput.focus();
+                return;
+            }
+        }
+    }
+}
+
+// シフトキーをトグル
+function toggleIvShift() {
+    ivShiftActive = !ivShiftActive;
+    const shiftBtn = document.getElementById('ivKeyboardShift');
+    const keyboard = document.getElementById('ivKeyboard');
+    if (shiftBtn) {
+        shiftBtn.classList.toggle('active', ivShiftActive);
+    }
+    if (keyboard) {
+        keyboard.classList.toggle('shift-active', ivShiftActive);
+    }
+}
+
+// 次の入力欄に移動
+function moveToNextIvInput() {
+    if (!ivCurrentInput) return;
+    
+    const allInputs = Array.from(document.querySelectorAll('.iv-input:not(:disabled)'));
+    const currentIndex = allInputs.indexOf(ivCurrentInput);
+    
+    if (currentIndex !== -1 && currentIndex < allInputs.length - 1) {
+        allInputs[currentIndex + 1].focus();
+    }
+}
+
+// 入力欄フォーカス時の処理
+document.addEventListener('focusin', (e) => {
+    if (e.target.classList.contains('iv-input')) {
+        ivCurrentInput = e.target;
+        showIvKeyboard();
+        // 入力欄が見えるようにスクロール
+        setTimeout(() => {
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
+});
+
+// キーボード外をクリックしたらキーボードを閉じる
+document.addEventListener('click', (e) => {
+    const keyboard = document.getElementById('ivKeyboard');
+    const irregularVerbsView = document.getElementById('irregularVerbsView');
+    
+    if (!irregularVerbsView || irregularVerbsView.classList.contains('hidden')) return;
+    if (!keyboard || !keyboard.classList.contains('visible')) return;
+    
+    // 入力欄かキーボードをクリックした場合は閉じない
+    if (e.target.classList.contains('iv-input') || 
+        e.target.closest('.iv-keyboard') ||
+        e.target.closest('.iv-check-btn')) {
+        return;
+    }
+    
+    hideIvKeyboard();
+});
+
+// ページ読み込み時にキーボードセットアップ
+document.addEventListener('DOMContentLoaded', () => {
+    setupIrregularVerbsKeyboard();
+});
