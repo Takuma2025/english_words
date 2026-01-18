@@ -1613,7 +1613,7 @@ body.learning-mode .app-header {
 
 .school-card-progress-bar-wrapper {
     flex: 1;
-    height: 8px;
+    height: 20px;
     background: #e2e8f0;
     border-radius: 0;
     overflow: hidden;
@@ -2502,8 +2502,9 @@ body.learning-mode .app-header {
 }
 
 .school-list-name {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", "Noto Sans JP", sans-serif;
     color: #1e293b;
     flex: 1;
     line-height: 1.3;

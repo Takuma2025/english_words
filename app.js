@@ -472,8 +472,8 @@ function animateProgressToGoal() {
     `;
     document.body.appendChild(blockingOverlay);
     
-    // 白い★（シアンの光）の数（8〜20個）
-    const starCount = Math.min(Math.max(8, learnedCount * 2), 20);
+    // 白い★（シアンの光）の数（覚えた語数に比例、最小3個、最大30個）
+    const starCount = Math.min(Math.max(3, learnedCount), 30);
     const staggerDelay = 80;
     let completedCount = 0;
     
