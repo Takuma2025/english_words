@@ -1545,27 +1545,24 @@ function setupVolumeControl() {
         bgmVolumeSlider.value = bgmVolume;
         bgmVolumeValue.textContent = `${bgmVolume}%`;
         
-        // BGM音量を適用
-        if (bgmAudio) {
-            bgmAudio.volume = bgmVolume / 100;
-        }
-        if (resultBgmAudio) {
-            resultBgmAudio.volume = bgmVolume / 100;
-        }
-        
-        // 音量0以上ならBGMを有効化
-        bgmEnabled = bgmVolume > 0;
-        if (bgmEnabled && bgmAudio) {
-            playBgm();
-        }
-        
         // スライダーの変更イベント
         bgmVolumeSlider.addEventListener('input', (e) => {
             const value = parseInt(e.target.value);
             bgmVolumeValue.textContent = `${value}%`;
             localStorage.setItem('bgmVolume', value);
             
-            // BGM音量を更新
+            // audio要素を直接取得して音量を更新
+            const bgm = document.getElementById('bgmAudio');
+            const resultBgm = document.getElementById('resultBgmAudio');
+            
+            if (bgm) {
+                bgm.volume = value / 100;
+            }
+            if (resultBgm) {
+                resultBgm.volume = value / 100;
+            }
+            
+            // グローバル変数も更新
             if (bgmAudio) {
                 bgmAudio.volume = value / 100;
             }
@@ -11253,11 +11250,36 @@ function initBgm() {
     const savedBgmVolume = localStorage.getItem('bgmVolume');
     const bgmVolume = savedBgmVolume !== null ? parseInt(savedBgmVolume) : 30;
     
+    console.log('initBgm: volume =', bgmVolume);
+    
     if (bgmAudio) {
         bgmAudio.volume = bgmVolume / 100;
+        console.log('bgmAudio.volume set to', bgmAudio.volume);
+        
+        // BGMが終わったら5秒後に再度再生
+        bgmAudio.addEventListener('ended', () => {
+            if (bgmEnabled) {
+                setTimeout(() => {
+                    if (bgmEnabled && bgmAudio) {
+                        bgmAudio.currentTime = 0;
+                        bgmAudio.play().catch(e => {});
+                    }
+                }, 5000);
+            }
+        });
     }
     if (resultBgmAudio) {
         resultBgmAudio.volume = bgmVolume / 100;
+    }
+    
+    // スライダーの値も同期
+    const bgmVolumeSlider = document.getElementById('bgmVolumeSlider');
+    const bgmVolumeValue = document.getElementById('bgmVolumeValue');
+    if (bgmVolumeSlider) {
+        bgmVolumeSlider.value = bgmVolume;
+    }
+    if (bgmVolumeValue) {
+        bgmVolumeValue.textContent = `${bgmVolume}%`;
     }
     
     // 音量0より大きければBGMを有効化
@@ -11271,8 +11293,14 @@ function initBgm() {
     // ユーザーの最初の操作でBGMを開始（自動再生がブロックされた場合の対策）
     const startBgmOnInteraction = () => {
         if (bgmEnabled && !bgmStarted && bgmAudio) {
+            // 現在の音量を再適用
+            const currentVolume = localStorage.getItem('bgmVolume');
+            const vol = currentVolume !== null ? parseInt(currentVolume) : 30;
+            bgmAudio.volume = vol / 100;
+            
             bgmAudio.play().then(() => {
                 bgmStarted = true;
+                console.log('BGM started on user interaction');
             }).catch(e => {});
         }
         // 一度実行したらリスナーを削除
@@ -11293,6 +11321,12 @@ function playBgm() {
             resultBgmAudio.pause();
             resultBgmAudio.currentTime = 0;
         }
+        
+        // 現在の音量を適用
+        const savedBgmVolume = localStorage.getItem('bgmVolume');
+        const bgmVolume = savedBgmVolume !== null ? parseInt(savedBgmVolume) : 30;
+        bgmAudio.volume = bgmVolume / 100;
+        
         bgmAudio.play().then(() => {
             bgmStarted = true;
         }).catch(e => {
@@ -11315,6 +11349,12 @@ function playResultBgm() {
         if (bgmAudio) {
             bgmAudio.pause();
         }
+        
+        // 現在の音量を適用
+        const savedBgmVolume = localStorage.getItem('bgmVolume');
+        const bgmVolume = savedBgmVolume !== null ? parseInt(savedBgmVolume) : 30;
+        resultBgmAudio.volume = bgmVolume / 100;
+        
         resultBgmAudio.play().catch(e => {
             console.log('Result BGM autoplay blocked');
         });
