@@ -3833,13 +3833,18 @@ button.category-card:focus-visible {
 .category-name {
     display: flex; /* フレックスボックス化して位置を細かく制御 */
     align-items: center; /* 垂直方向の中央揃え */
-    font-family: "Meiryo", "メイリオ", "Hiragino Kaku Gothic ProN", sans-serif;
     font-size: 20px;
-    font-weight: 400;
+    font-weight: 700;
     color: #1e40af;
     margin-bottom: 0;
     letter-spacing: -0.02em;
     line-height: 1; /* 余計な上下の余白をカット */
+}
+
+/* サブカテゴリーカード（家族、曜日など）のタイトル */
+.category-card.category-card-with-actions .category-name {
+    font-family: "Meiryo", "メイリオ", "Hiragino Kaku Gothic ProN", sans-serif;
+    font-weight: 700;
 }
 
 .level-badge {
