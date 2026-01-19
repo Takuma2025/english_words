@@ -6237,16 +6237,16 @@ body.choice-question-mode-active .word-card-container {
     display: none;
 }
 
-/* コンパクト表示モードのスタイル */
-.input-list-scroll.compact-mode .input-list-item-expand {
+/* すべての単語モードでコンパクト表示の場合のみ小さいフォント */
+.input-list-scroll.all-words-mode.compact-mode .input-list-item-expand {
     padding: 8px 12px;
 }
 
-.input-list-scroll.compact-mode .input-list-expand-word {
+.input-list-scroll.all-words-mode.compact-mode .input-list-expand-word {
     font-size: 18px;
 }
 
-.input-list-scroll.compact-mode .input-list-expand-meaning {
+.input-list-scroll.all-words-mode.compact-mode .input-list-expand-meaning {
     font-size: 14px;
 }
 
@@ -17279,28 +17279,15 @@ body .sentence-english {
     background: #fff;
     color: #1f2937;
     border-bottom: 1px solid #e5e7eb;
-    position: relative;
 }
 
 .study-header.iv-test-header .study-title {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     color: #1f2937;
     font-size: 16px;
-    margin: 0;
 }
 
 .study-header.iv-test-header .study-header-left {
-    width: 36px;
-    flex-shrink: 0;
-}
-
-.study-header.iv-test-header .study-header-right {
-    width: 36px;
-    flex-shrink: 0;
-    margin-left: auto;
+    min-width: 36px;
 }
 
 .iv-test-close-btn {
@@ -17700,15 +17687,13 @@ body .sentence-english {
 
 .iv-input.iv-correct {
     background: #fff;
-    border-color: #3b82f6;
-    border-width: 2px;
+    border-color: #cbd5e1;
     color: #1f2937;
 }
 
 .iv-input.iv-wrong {
     background: #fff;
-    border-color: #ef4444;
-    border-width: 2px;
+    border-color: #cbd5e1;
     color: #1f2937;
 }
 
@@ -17767,23 +17752,23 @@ body .sentence-english {
     }
 }
 
-/* 不規則動詞用仮想キーボード（下部固定、常に表示） */
+/* 不規則動詞用仮想キーボード */
 .iv-keyboard {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(600px, calc(100% - 16px));
     z-index: 1100;
+    display: none;
+    background: rgba(255, 183, 77, 0.7);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.12);
+    padding: 14px;
+    border-radius: 14px;
+}
+
+.iv-keyboard.visible {
     display: block;
-    background: #d1d4d9;
-    padding: 10px 3px 6px 3px;
-    padding-bottom: max(6px, env(safe-area-inset-bottom));
-    border-radius: 0;
-    box-shadow: none;
-    border-top: none;
 }
 
 .iv-keyboard .keyboard-actions {
@@ -17797,19 +17782,283 @@ body .sentence-english {
 
 @media (max-width: 600px) {
     .iv-keyboard {
-        max-width: 100%;
-        padding: 10px 3px 6px 3px;
-        padding-bottom: max(6px, env(safe-area-inset-bottom));
+        width: calc(100% - 16px);
+        bottom: 8px;
+        padding: 10px;
+        border-radius: 12px;
     }
 }
 
-/* キーボード常時表示のため、常に余白を確保 */
-.irregularVerbsView .irregular-verbs-table-container,
-.irregular-verbs-view .irregular-verbs-table-container {
-    padding-bottom: 280px;
+.irregular-verbs-table-container {
+    padding-bottom: 20px;
+    transition: padding-bottom 0.2s;
+}
+
+.irregular-verbs-table-container.keyboard-open {
+    padding-bottom: 220px;
 }
 
 .iv-input:focus {
     background: #fffc42;
     border: 2px solid #3b82f6;
+}
+
+/* フローティング苦手・要復習ボタン */
+.floating-review-btn {
+    position: fixed;
+    bottom: 120px;
+    right: 0;
+    z-index: 1000;
+}
+
+.floating-review-btn.hidden {
+    display: none;
+}
+
+/* 縮小状態（タブ） */
+.floating-review-collapsed {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(0, 85, 202, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+    border-radius: 10px 0 0 10px;
+    box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.floating-review-collapsed:hover {
+    background: rgba(0, 72, 176, 0.9);
+}
+
+.floating-review-collapsed:active {
+    background: rgba(0, 61, 150, 0.95);
+}
+
+.floating-review-collapsed.hidden {
+    display: none;
+}
+
+.floating-review-ai-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 5px;
+    background: #fff;
+    color: #0055ca;
+    font-size: 10px;
+    font-weight: 800;
+    border-radius: 3px;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+.floating-review-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.floating-review-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.floating-review-count {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 1px 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.floating-review-hint {
+    font-size: 10px;
+    font-weight: 400;
+    opacity: 0.85;
+}
+
+/* 拡大状態（パネル） */
+.floating-review-expanded {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 280px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px 0 0 12px;
+    box-shadow: -4px 4px 16px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.floating-review-expanded.hidden {
+    display: none;
+}
+
+.floating-review-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    background: #0055ca;
+    color: #fff;
+}
+
+.floating-ai-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    background: #fff;
+    color: #0055ca;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 4px;
+}
+
+.floating-review-title {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.floating-review-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.floating-review-close:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.floating-review-body {
+    padding: 20px 16px;
+    text-align: center;
+}
+
+.floating-review-stat {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.floating-review-stat-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #0055ca;
+}
+
+.floating-review-stat-unit {
+    font-size: 16px;
+    font-weight: 500;
+    color: #718096;
+}
+
+.floating-review-desc {
+    font-size: 12px;
+    color: #718096;
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+}
+
+.floating-review-start-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 20px;
+    background: #0055ca;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.floating-review-start-btn:hover {
+    background: #0048b0;
+}
+
+.floating-review-start-btn:active {
+    background: #003d96;
+}
+
+/* はじめにカード（フル幅） */
+.intro-card-full {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.intro-card-full .intro-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: #eef2ff;
+    border-radius: 10px;
+    flex-shrink: 0;
+    margin-right: 12px;
+}
+
+/* 学習画面では非表示 */
+body.learning-mode .floating-review-btn {
+    display: none;
+}
+
+/* モバイル対応 */
+@media (max-width: 600px) {
+    .floating-review-btn {
+        bottom: 100px;
+        right: 0;
+    }
+    
+    .floating-review-expanded {
+        width: 260px;
+    }
+    
+    .floating-review-collapsed {
+        padding: 8px 12px;
+        gap: 6px;
+    }
+    
+    .floating-review-ai-badge {
+        font-size: 10px;
+        padding: 2px 5px;
+    }
+    
+    .floating-review-label {
+        font-size: 12px;
+    }
+    
+    .floating-review-count {
+        font-size: 12px;
+    }
+    
+    .floating-review-hint {
+        font-size: 9px;
+    }
 }

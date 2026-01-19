@@ -3850,6 +3850,9 @@ function showCategorySelection(slideIn = false) {
             }, 300);
         });
     });
+    
+    // フローティング要復習ボタンを表示（ホーム画面のみ）
+    showFloatingReviewBtn();
 }
 
 // ホーム画面に戻った時の目標達成チェック（学習完了・中断問わず）
@@ -3932,6 +3935,9 @@ function checkAndShowGoalAchievement() {
 
 // カテゴリーを選択してコース選択画面を表示
 function startCategory(category) {
+    // フローティング要復習ボタンを非表示（サブカテゴリー画面への遷移）
+    hideFloatingReviewBtn();
+    
     // デバッグ用ログ
     console.log('startCategory called with category:', category);
     selectedCategory = category;
@@ -4261,6 +4267,9 @@ function initInputModeLearning(category, words, startIndex = 0) {
 
 // カテゴリー別の画面を表示
 function showElementaryCategorySelection(skipAnimation = false) {
+    // フローティング要復習ボタンを非表示（サブカテゴリー画面）
+    hideFloatingReviewBtn();
+    
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
     const appMain = document.querySelector('.app-main');
@@ -4509,6 +4518,9 @@ function showElementaryCategorySelection(skipAnimation = false) {
 
 // レベル別細分化メニューを表示
 function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
+    // フローティング要復習ボタンを非表示（サブカテゴリー画面）
+    hideFloatingReviewBtn();
+    
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
     const appMain = document.querySelector('.app-main');
@@ -4868,6 +4880,9 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
 
 // コース選択画面を表示（100刻み）
 function showCourseSelection(category, categoryWords, slideIn = false) {
+    // フローティング要復習ボタンを非表示
+    hideFloatingReviewBtn();
+    
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
     const appMain = document.querySelector('.app-main');
@@ -5284,6 +5299,9 @@ let currentFilterCategory = '';
 let currentFilterCourseTitle = '';
 
 function showWordFilterView(category, categoryWords, courseTitle) {
+    // フローティング要復習ボタンを非表示
+    hideFloatingReviewBtn();
+    
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
     const appMain = document.querySelector('.app-main');
@@ -5612,6 +5630,9 @@ function getFilteredWords() {
 
 // インプットモードで直接単語一覧を表示
 function showInputModeDirectly(category, words, courseTitle) {
+    // フローティング要復習ボタンを非表示
+    hideFloatingReviewBtn();
+    
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
     const appMain = document.querySelector('.app-main');
@@ -5656,7 +5677,7 @@ function showInputModeDirectly(category, words, courseTitle) {
     if (isAllWords) {
         if (freqSection) freqSection.classList.remove('hidden');
         if (wordSearchContainer) wordSearchContainer.classList.remove('hidden');
-        // 設定ボタンは表示する
+        // 「すべての単語」でも設定ボタンを表示する
         if (settingsBtn) settingsBtn.style.display = '';
     } else {
         if (freqSection) freqSection.classList.add('hidden');
@@ -5788,8 +5809,20 @@ function showInputModeDirectly(category, words, courseTitle) {
         renderInputListView(words);
     }
     
-    // 「すべての単語」モードでもチェックボックスの設定を適用
-    applyInputListSettings();
+    // 「すべての単語」モードの場合はデフォルトでコンパクト表示をON（設定で切り替え可能）
+    if (category === '大阪府のすべての英単語') {
+        const compactModeCheckbox = document.getElementById('settingCompactMode');
+        const showExamplesCheckbox = document.getElementById('settingShowExamples');
+        // デフォルトでコンパクト表示ON、用例非表示
+        if (compactModeCheckbox) {
+            compactModeCheckbox.checked = true;
+        }
+        if (showExamplesCheckbox) {
+            showExamplesCheckbox.checked = false;
+        }
+        // 設定を適用
+        applyInputListSettings();
+    }
 }
 
 // コースカード左側クリック時のモード選択モーダル（直接関数版）
@@ -8169,6 +8202,9 @@ function setupEventListeners() {
                             lastLearningCategory = null;
                         }, 100);
                     }
+                    
+                    // フローティング要復習ボタンを表示（ホーム画面に戻る）
+                    showFloatingReviewBtn();
                     
                     setTimeout(() => {
                         courseSelection.classList.remove('slide-out-right');
@@ -11101,3 +11137,9962 @@ function setupInputListModeToggle() {
             if (btnLabel) btnLabel.textContent = '英語→日本語';
         }
         
+        // フィルターを適用して再描画（絞り込み状態を保持）
+        applyInputFilter();
+    });
+    
+    expandBtn.addEventListener('click', () => {
+        if (inputListViewMode === 'expand') return;
+        inputListViewMode = 'expand';
+        expandBtn.classList.add('active');
+        flipBtn.classList.remove('active');
+        updateRedSheetToggleVisibility();
+        // すべてめくるボタンを非表示
+        if (flipAllBtn) flipAllBtn.classList.add('hidden');
+        
+        // 現在の単語リストを再描画（フィルターを適用）
+        applyInputFilter();
+    });
+    
+    // すべてめくるボタンのイベント
+    if (flipAllBtn) {
+        flipAllBtn.addEventListener('click', () => {
+            const container = document.getElementById('inputListContainer');
+            if (!container) return;
+            const items = container.querySelectorAll('.input-list-item');
+            const btnLabel = flipAllBtn.querySelector('.btn-label');
+            
+            // 現在の状態を確認（最初のアイテムで判断）
+            const firstItem = items[0];
+            const isCurrentlyFlipped = firstItem && firstItem.classList.contains('flipped');
+            
+            items.forEach(item => {
+                if (isCurrentlyFlipped) {
+                    item.classList.remove('flipped');
+                } else {
+                    item.classList.add('flipped');
+                }
+            });
+            
+            // ボタンのラベルを切り替え
+            if (btnLabel) {
+                if (isCurrentlyFlipped) {
+                    btnLabel.textContent = '英語→日本語';
+                } else {
+                    btnLabel.textContent = '日本語→英語';
+                }
+            }
+        });
+    }
+}
+
+// 設定ボタンのセットアップ
+function setupInputListSettings() {
+    const settingsBtn = document.getElementById('inputListSettingsBtn');
+    const settingsDropdown = document.getElementById('inputListSettingsDropdown');
+    const showExamplesCheckbox = document.getElementById('settingShowExamples');
+    const compactModeCheckbox = document.getElementById('settingCompactMode');
+    const inputListContainer = document.getElementById('inputListContainer');
+    
+    if (!settingsBtn || !settingsDropdown) return;
+    
+    // 用例トグルは常にON状態から開始（用例の有無で有効/無効が決まる）
+    if (showExamplesCheckbox) {
+        showExamplesCheckbox.checked = true;
+    }
+    
+    // コンパクトモードは常にOFFから開始
+    if (compactModeCheckbox) {
+        compactModeCheckbox.checked = false;
+    }
+    
+    // 初期状態をコンテナに適用
+    applyInputListSettings();
+    
+    // 設定ボタンのクリックでドロップダウン開閉
+    settingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = !settingsDropdown.classList.contains('hidden');
+        if (isOpen) {
+            settingsDropdown.classList.add('hidden');
+            settingsBtn.classList.remove('active');
+        } else {
+            settingsDropdown.classList.remove('hidden');
+            settingsBtn.classList.add('active');
+        }
+    });
+    
+    // ドロップダウン外クリックで閉じる
+    document.addEventListener('click', (e) => {
+        if (!settingsDropdown.contains(e.target) && !settingsBtn.contains(e.target)) {
+            settingsDropdown.classList.add('hidden');
+            settingsBtn.classList.remove('active');
+        }
+    });
+    
+    // 用例表示トグル
+    if (showExamplesCheckbox) {
+        showExamplesCheckbox.addEventListener('change', () => {
+            localStorage.setItem('inputListShowExamples', showExamplesCheckbox.checked);
+            applyInputListSettings();
+        });
+    }
+    
+    // コンパクトモードトグル
+    if (compactModeCheckbox) {
+        compactModeCheckbox.addEventListener('change', () => {
+            localStorage.setItem('inputListCompactMode', compactModeCheckbox.checked);
+            // コンパクトモードを切り替えたら、用例表示を自動でOFFに
+            if (showExamplesCheckbox) {
+                showExamplesCheckbox.checked = false;
+                localStorage.setItem('inputListShowExamples', 'false');
+            }
+            applyInputListSettings();
+        });
+    }
+}
+
+// 設定をコンテナに適用
+function applyInputListSettings() {
+    const inputListContainer = document.getElementById('inputListContainer');
+    const showExamplesCheckbox = document.getElementById('settingShowExamples');
+    const compactModeCheckbox = document.getElementById('settingCompactMode');
+    const settingsBtn = document.getElementById('inputListSettingsBtn');
+    
+    if (!inputListContainer) return;
+    
+    const isAllWords = selectedCategory === '大阪府のすべての英単語';
+    
+    // 頻度フィルターと検索コンテナの表示/非表示
+    const freqSection = document.getElementById('filterFrequencySection');
+    const wordSearchContainer = document.getElementById('wordSearchContainer');
+    
+    if (isAllWords) {
+        // 「すべての単語」でも設定ボタンを表示
+        if (settingsBtn) settingsBtn.style.display = '';
+        inputListContainer.classList.add('all-words-mode');
+        // 頻度フィルターと検索を表示
+        if (freqSection) freqSection.classList.remove('hidden');
+        if (wordSearchContainer) wordSearchContainer.classList.remove('hidden');
+    } else {
+        // 設定ボタンを表示
+        if (settingsBtn) settingsBtn.style.display = '';
+        inputListContainer.classList.remove('all-words-mode');
+        // 頻度フィルターと検索を非表示
+        if (freqSection) freqSection.classList.add('hidden');
+        if (wordSearchContainer) wordSearchContainer.classList.add('hidden');
+    }
+    
+    // コンパクトモードをリセット（チェックボックスの状態に基づいて後で再適用）
+    inputListContainer.classList.remove('compact-mode');
+    inputListContainer.classList.remove('hide-examples');
+    
+    // 用例表示/非表示
+    if (showExamplesCheckbox && !showExamplesCheckbox.checked) {
+        inputListContainer.classList.add('hide-examples');
+    } else {
+        inputListContainer.classList.remove('hide-examples');
+    }
+    
+    // コンパクトモード
+    if (compactModeCheckbox && compactModeCheckbox.checked) {
+        inputListContainer.classList.add('compact-mode');
+    } else {
+        inputListContainer.classList.remove('compact-mode');
+    }
+    
+    // 用例の有無をチェックしてトグルの有効/無効を切り替え
+    updateExamplesToggleAvailability();
+}
+
+// 用例トグルの有効/無効を更新
+function updateExamplesToggleAvailability() {
+    // DOMの更新が完了するのを待つ
+    setTimeout(() => {
+        const showExamplesCheckbox = document.getElementById('settingShowExamples');
+        const showExamplesItem = showExamplesCheckbox ? showExamplesCheckbox.closest('.settings-dropdown-item') : null;
+        const compactModeCheckbox = document.getElementById('settingCompactMode');
+        const inputListContainer = document.getElementById('inputListContainer');
+        
+        if (!showExamplesCheckbox || !showExamplesItem || !inputListContainer) return;
+        
+        // コンパクトモードがONの場合は無効化
+        if (compactModeCheckbox && compactModeCheckbox.checked) {
+            showExamplesCheckbox.disabled = true;
+            showExamplesItem.classList.add('disabled');
+            return;
+        }
+        
+        // データ全体から用例があるかチェック（ページネーションでも正しく動作するように）
+        let hasExamples = false;
+        const wordsToCheck = currentFilterWords || currentCourseWords || [];
+        for (const word of wordsToCheck) {
+            if (word.example && word.example.trim() !== '') {
+                hasExamples = true;
+                break;
+            }
+        }
+        
+        if (hasExamples) {
+            // 用例がある場合：有効化（チェック状態は変更しない）
+            showExamplesCheckbox.disabled = false;
+            showExamplesItem.classList.remove('disabled');
+            // チェック状態に応じてクラスを適用
+            if (showExamplesCheckbox.checked) {
+                inputListContainer.classList.remove('hide-examples');
+            } else {
+                inputListContainer.classList.add('hide-examples');
+            }
+        } else {
+            // 用例がない場合：無効化してグレーアウト
+            showExamplesCheckbox.disabled = true;
+            showExamplesItem.classList.add('disabled');
+            showExamplesCheckbox.checked = false;
+        }
+    }, 50);
+}
+
+// インプットモード用フィルターのセットアップ
+function setupInputListFilter() {
+    // 新しいドロップダウン形式のフィルター
+    const filterTrigger = document.getElementById('inputFilterTrigger');
+    const filterDropdown = document.getElementById('inputFilterDropdown');
+    const filterCheckboxes = document.querySelectorAll('.filter-dropdown-item input[type="checkbox"]');
+    const filterActiveBadge = document.getElementById('filterActiveBadge');
+    
+    if (filterTrigger && filterDropdown) {
+        // トリガーボタンのクリックでドロップダウン開閉
+        filterTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = filterDropdown.classList.contains('show');
+            if (isOpen) {
+                filterDropdown.classList.remove('show');
+                // 絞り込み中かどうかを確認してactiveを維持
+                const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
+                if (allCheckbox && !allCheckbox.checked) {
+                    // 絞り込み中はactiveを維持
+                    filterTrigger.classList.add('active');
+                } else {
+                    filterTrigger.classList.remove('active');
+                }
+            } else {
+                filterDropdown.classList.remove('hidden');
+                // 少し遅延してアニメーションを適用
+                requestAnimationFrame(() => {
+                    filterDropdown.classList.add('show');
+                    filterTrigger.classList.add('active');
+                });
+            }
+        });
+        
+        // ドロップダウン外クリックで閉じる
+        document.addEventListener('click', (e) => {
+            if (!filterDropdown.contains(e.target) && !filterTrigger.contains(e.target)) {
+                filterDropdown.classList.remove('show');
+                // 絞り込み中かどうかを確認してactiveを維持
+                const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
+                if (allCheckbox && !allCheckbox.checked) {
+                    // 絞り込み中はactiveを維持
+                    filterTrigger.classList.add('active');
+                } else {
+                    filterTrigger.classList.remove('active');
+                }
+            }
+        });
+        
+        // チェックボックスの変更イベント
+        filterCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const filterType = checkbox.dataset.filter;
+                const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
+                const otherCheckboxes = Array.from(filterCheckboxes).filter(cb => cb.dataset.filter !== 'all');
+                
+                if (filterType === 'all') {
+                    // 「すべて」をクリックした場合
+                    if (checkbox.checked) {
+                        // すべてをチェック
+                        otherCheckboxes.forEach(cb => cb.checked = true);
+                    } else {
+                        // すべてのチェックを外す
+                        otherCheckboxes.forEach(cb => cb.checked = false);
+                    }
+                } else {
+                    // 個別のチェックボックスの場合
+                    const allChecked = otherCheckboxes.every(cb => cb.checked);
+                    const noneChecked = otherCheckboxes.every(cb => !cb.checked);
+                    
+                    if (allChecked) {
+                        // すべてチェックされている場合は「すべて」もチェック
+                        if (allCheckbox) allCheckbox.checked = true;
+                    } else {
+                        // そうでない場合は「すべて」のチェックを外す
+                        if (allCheckbox) allCheckbox.checked = false;
+                    }
+                }
+                
+                // バッジを更新
+                updateFilterBadge();
+                
+                // フィルターを適用
+                applyInputFilter();
+            });
+        });
+    }
+    
+    // バッジ更新関数（グローバルに公開）
+    window.updateFilterBadge = function(filteredCount) {
+        if (!filterActiveBadge) return;
+        
+        const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
+        const freqAllCheckbox = document.getElementById('inputFilterFreqAll');
+        const searchInput = document.getElementById('wordSearchInput');
+        const hasFreqFilter = freqAllCheckbox && !freqAllCheckbox.checked;
+        const hasSearch = searchInput && searchInput.value.trim() !== '';
+        
+        if (allCheckbox && allCheckbox.checked && !hasFreqFilter && !hasSearch) {
+            // すべて選択時かつ頻度フィルター/検索なしはバッジ非表示
+            filterActiveBadge.classList.add('hidden');
+            filterTrigger.classList.remove('active');
+        } else if (typeof filteredCount === 'number') {
+            // 絞り込んだ単語数を表示
+            filterActiveBadge.textContent = filteredCount;
+            filterActiveBadge.classList.remove('hidden');
+            filterTrigger.classList.add('active');
+        } else {
+            filterActiveBadge.classList.add('hidden');
+            filterTrigger.classList.remove('active');
+        }
+    }
+    
+    // 頻度フィルターのセットアップ
+    const freqCheckboxes = document.querySelectorAll('[data-filter-freq]');
+    freqCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const filterType = checkbox.dataset.filterFreq;
+            const freqAllCheckbox = document.getElementById('inputFilterFreqAll');
+            const otherFreqCheckboxes = Array.from(freqCheckboxes).filter(cb => cb.dataset.filterFreq !== 'all');
+            
+            if (filterType === 'all') {
+                if (checkbox.checked) {
+                    otherFreqCheckboxes.forEach(cb => cb.checked = true);
+                } else {
+                    otherFreqCheckboxes.forEach(cb => cb.checked = false);
+                }
+            } else {
+                const allChecked = otherFreqCheckboxes.every(cb => cb.checked);
+                if (freqAllCheckbox) freqAllCheckbox.checked = allChecked;
+            }
+            applyInputFilter();
+        });
+    });
+    
+    // 単語検索のセットアップ（単語リストの上）
+    const wordSearchInput = document.getElementById('wordSearchInput');
+    const wordSearchClear = document.getElementById('wordSearchClear');
+    if (wordSearchInput) {
+        let searchTimeout;
+        wordSearchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            // クリアボタンの表示/非表示
+            if (wordSearchClear) {
+                if (wordSearchInput.value.trim() !== '') {
+                    wordSearchClear.classList.remove('hidden');
+                } else {
+                    wordSearchClear.classList.add('hidden');
+                }
+            }
+            searchTimeout = setTimeout(() => {
+                applyInputFilter();
+            }, 300);
+        });
+    }
+    if (wordSearchClear) {
+        wordSearchClear.addEventListener('click', () => {
+            if (wordSearchInput) {
+                wordSearchInput.value = '';
+                wordSearchClear.classList.add('hidden');
+                applyInputFilter();
+            }
+        });
+    }
+    
+    // 旧フィルターボタン対応（互換性用）
+    const filterBtns = document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn)');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-close-icon')) return;
+            const filterType = btn.dataset.filter;
+            if (filterType === 'all') {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            } else {
+                const allBtn = document.querySelector('.input-filter-btn[data-filter="all"]');
+                if (allBtn) allBtn.classList.remove('active');
+                btn.classList.toggle('active');
+            }
+            applyInputFilter();
+        });
+    });
+    
+    // 赤シートボタンのセットアップ
+    setupRedSheet();
+    updateRedSheetToggleVisibility();
+    
+    // シャッフルボタンのセットアップ
+    const shuffleBtn = document.getElementById('inputShuffleBtn');
+    if (shuffleBtn) {
+        shuffleBtn.addEventListener('click', () => {
+            const container = document.getElementById('inputListContainer');
+            
+            // シャッフルアニメーション開始
+            shuffleBtn.classList.add('shuffling');
+            if (container) {
+                container.classList.add('shuffle-animating');
+            }
+            
+            // アニメーション後にシャッフル実行
+            setTimeout(() => {
+                isInputShuffled = !isInputShuffled;
+                shuffleBtn.classList.toggle('active', isInputShuffled);
+                
+                // フィルターを再適用してリストを更新
+                applyInputFilter();
+                
+                // フェードインアニメーション
+                if (container) {
+                    container.classList.remove('shuffle-animating');
+                    container.classList.add('shuffle-fade-in');
+                    setTimeout(() => {
+                        container.classList.remove('shuffle-fade-in');
+                    }, 300);
+                }
+                
+                // ボタンのアニメーション終了
+                shuffleBtn.classList.remove('shuffling');
+            }, 400);
+        });
+    }
+}
+
+// 赤シートモードのセットアップ
+let currentRedSheetIndex = 0; // 現在の赤シート位置のインデックス
+
+function setupRedSheet() {
+    const redSheetToggle = document.getElementById('redSheetToggle');
+    const redSheetCheckbox = redSheetToggle?.querySelector('.red-sheet-checkbox');
+    const redSheetOverlay = document.getElementById('redSheetOverlay');
+    const redSheetNextBtn = document.getElementById('redSheetNextBtn');
+    const inputListView = document.getElementById('inputListView');
+    
+    if (!redSheetCheckbox || !redSheetOverlay) return;
+    
+    redSheetCheckbox.addEventListener('change', () => {
+        const isActive = redSheetCheckbox.checked;
+        
+        if (isActive) {
+            // 現在表示されている範囲内で、一番上の単語の日本語の意味を探す
+            const meanings = document.querySelectorAll('.input-list-expand-meaning');
+            let targetMeaning = null;
+            let targetIndex = 0;
+            
+            // ヘッダーの高さを考慮したオフセット（スティッキーなコントロールバーなど）
+            const headerOffset = 150; 
+
+            for (let i = 0; i < meanings.length; i++) {
+                const rect = meanings[i].getBoundingClientRect();
+                // 画面内にあり、かつヘッダーより下にある最初の意味要素を見つける
+                if (rect.bottom > headerOffset) {
+                    targetMeaning = meanings[i];
+                    targetIndex = i;
+                    break;
+                }
+            }
+
+            currentRedSheetIndex = targetIndex;
+            let topPosition = 150; // デフォルト値
+            let leftPosition = 0; // デフォルト値
+
+            if (targetMeaning) {
+                const rect = targetMeaning.getBoundingClientRect();
+                topPosition = rect.top; // 日本語の意味の上端から
+                // 意味テキストの左端から右端まで隠す
+                leftPosition = rect.left - 10;
+            } else if (meanings.length > 0) {
+                // 見つからない場合は一番最初の要素（フォールバック）
+                const rect = meanings[0].getBoundingClientRect();
+                topPosition = rect.top;
+                leftPosition = rect.left - 10;
+                currentRedSheetIndex = 0;
+            }
+
+            redSheetOverlay.style.top = topPosition + 'px';
+            redSheetOverlay.style.left = leftPosition + 'px';
+            redSheetOverlay.style.right = '0';
+            
+            redSheetOverlay.classList.remove('hidden');
+            inputListView.classList.add('red-sheet-mode');
+            setupRedSheetDrag(redSheetOverlay);
+            
+            // 下矢印ボタンを表示
+            if (redSheetNextBtn) {
+                redSheetNextBtn.classList.remove('hidden');
+            }
+        } else {
+            redSheetOverlay.classList.add('hidden');
+            inputListView.classList.remove('red-sheet-mode');
+            
+            // 下矢印ボタンを非表示
+            if (redSheetNextBtn) {
+                redSheetNextBtn.classList.add('hidden');
+            }
+        }
+    });
+    
+    // 下矢印ボタンのクリックイベント
+    if (redSheetNextBtn) {
+        redSheetNextBtn.addEventListener('click', () => {
+            moveRedSheetToNext();
+        });
+    }
+}
+
+// 赤シートを次の単語に移動
+function moveRedSheetToNext() {
+    const redSheetOverlay = document.getElementById('redSheetOverlay');
+    const inputListView = document.getElementById('inputListView');
+    const meanings = document.querySelectorAll('.input-list-expand-meaning');
+    
+    if (!redSheetOverlay || !inputListView || meanings.length === 0) return;
+    
+    // 画面の表示領域を取得（ヘッダーを考慮）
+    const headerOffset = 150; // ヘッダー部分のオフセット
+    const viewportHeight = window.innerHeight;
+    
+    // 赤シートの現在位置を取得
+    const currentRedSheetTop = parseFloat(redSheetOverlay.style.top) || 0;
+    
+    // 現在隠している単語を特定（赤シートの位置に最も近い単語）
+    let currentWordIndex = -1;
+    for (let i = 0; i < meanings.length; i++) {
+        const rect = meanings[i].getBoundingClientRect();
+        if (rect.top <= currentRedSheetTop + 5) {
+            currentWordIndex = i;
+        } else {
+            break;
+        }
+    }
+    
+    // 赤シートの位置より下にある最初の単語を見つける
+    let nextIndex = -1;
+    for (let i = 0; i < meanings.length; i++) {
+        const rect = meanings[i].getBoundingClientRect();
+        // 赤シートより少し下にある単語を探す（5px余裕を持たせる）
+        if (rect.top > currentRedSheetTop + 5) {
+            nextIndex = i;
+            break;
+        }
+    }
+    
+    // 次の単語が見つからない場合は終了
+    if (nextIndex === -1) {
+        currentRedSheetIndex = 0;
+        
+        // 赤シートをフェードアウト
+        redSheetOverlay.style.transition = 'opacity 0.3s ease';
+        redSheetOverlay.style.opacity = '0';
+        
+        // フェードアウト完了後に赤シートを非表示にしてチェックボックスをオフ
+        setTimeout(() => {
+            redSheetOverlay.classList.add('hidden');
+            redSheetOverlay.style.opacity = '';
+            redSheetOverlay.style.transition = '';
+            inputListView.classList.remove('red-sheet-mode');
+            
+            // 下矢印ボタンを非表示
+            const redSheetNextBtn = document.getElementById('redSheetNextBtn');
+            if (redSheetNextBtn) {
+                redSheetNextBtn.classList.add('hidden');
+            }
+            
+            // チェックボックスをオフ
+            const redSheetToggle = document.getElementById('redSheetToggle');
+            const redSheetCheckbox = redSheetToggle?.querySelector('.red-sheet-checkbox');
+            if (redSheetCheckbox) {
+                redSheetCheckbox.checked = false;
+            }
+        }, 300);
+        return;
+    }
+    
+    const nextMeaning = meanings[nextIndex];
+    if (!nextMeaning) return;
+    
+    // 次の単語の位置を取得
+    const nextRect = nextMeaning.getBoundingClientRect();
+    
+    // 次の単語が画面外ならスクロール（現在の単語を隠したまま上へ）
+    if (nextRect.top >= viewportHeight) {
+        // 現在隠している単語を取得
+        const currentMeaning = currentWordIndex >= 0 ? meanings[currentWordIndex] : meanings[0];
+        const currentRect = currentMeaning.getBoundingClientRect();
+        
+        // スクロール量を計算（現在の単語がヘッダー直下に来るように）
+        const scrollAmount = currentRect.top - headerOffset;
+        
+        // スクロール可能な最大量を計算（リスト最後で制限される場合用）
+        const scrollTop = inputListView.scrollTop;
+        const scrollHeight = inputListView.scrollHeight;
+        const clientHeight = inputListView.clientHeight;
+        const maxScrollAmount = scrollHeight - scrollTop - clientHeight;
+        
+        // 実際にスクロールする量（計算量と最大量の小さい方）
+        const actualScrollAmount = Math.min(scrollAmount, Math.max(0, maxScrollAmount));
+        
+        // 赤シートの新しい位置（現在の単語を隠したまま上へ）
+        const newRedSheetTop = currentRect.top - actualScrollAmount;
+        
+        // スクロールと赤シートのアニメーションを同時に開始
+        inputListView.scrollBy({
+            top: actualScrollAmount,
+            behavior: 'smooth'
+        });
+        
+        // 赤シートも同時にアニメーション（現在の単語を隠したまま）
+        redSheetOverlay.style.transition = 'top 0.3s ease';
+        redSheetOverlay.style.top = newRedSheetTop + 'px';
+        redSheetOverlay.style.left = (currentRect.left - 10) + 'px';
+        
+        setTimeout(() => {
+            redSheetOverlay.style.transition = '';
+        }, 300);
+        
+        // インデックスは更新しない（次回のボタン押下で次の単語へ）
+    } else {
+        // 画面内なので赤シートを次の単語に移動
+        currentRedSheetIndex = nextIndex;
+        redSheetOverlay.style.transition = 'top 0.3s ease';
+        redSheetOverlay.style.top = nextRect.top + 'px';
+        redSheetOverlay.style.left = (nextRect.left - 10) + 'px';
+        setTimeout(() => {
+            redSheetOverlay.style.transition = '';
+        }, 300);
+    }
+}
+
+// 赤シートトグルの表示/非表示を切り替え
+function updateRedSheetToggleVisibility() {
+    const redSheetToggle = document.getElementById('redSheetToggle');
+    if (!redSheetToggle) return;
+    
+    // 展開モードのときだけ表示
+    if (inputListViewMode === 'expand') {
+        redSheetToggle.classList.add('visible');
+        redSheetToggle.classList.remove('hidden');
+    } else {
+        redSheetToggle.classList.remove('visible');
+        redSheetToggle.classList.add('hidden');
+        // フリップモードに切り替えたときは赤シートをリセット
+        resetRedSheet();
+    }
+}
+
+// 赤シートトグルのスティッキー動作をセットアップ
+function setupRedSheetStickyScroll() {
+    const inputListView = document.getElementById('inputListView');
+    const redSheetToggle = document.getElementById('redSheetToggle');
+    const inputListHeaderRow = document.querySelector('.input-list-header-row');
+    
+    if (!inputListView || !redSheetToggle) return;
+    
+    // スクロール位置を監視（inputListViewがスクロールコンテナ）
+    inputListView.addEventListener('scroll', () => {
+        if (!redSheetToggle.classList.contains('visible')) return;
+        
+        // ヘッダー行の位置を取得
+        if (inputListHeaderRow) {
+            const headerRect = inputListHeaderRow.getBoundingClientRect();
+            // ヘッダーが画面上部より上に出たらスティッキーにする
+            if (headerRect.bottom < 60) {
+                redSheetToggle.classList.add('sticky');
+            } else {
+                redSheetToggle.classList.remove('sticky');
+            }
+        }
+    });
+}
+
+// 赤シートドラッグ機能
+function setupRedSheetDrag(overlay) {
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let startLeft = 0;
+    let startTop = 0;
+    
+    const onPointerDown = (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startLeft = overlay.offsetLeft;
+        startTop = overlay.offsetTop;
+        overlay.style.cursor = 'grabbing';
+        overlay.setPointerCapture(e.pointerId);
+    };
+    
+    const onPointerMove = (e) => {
+        if (!isDragging) return;
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+        // 自由に動かせる
+        const newLeft = startLeft + deltaX;
+        const newTop = startTop + deltaY;
+        overlay.style.left = newLeft + 'px';
+        overlay.style.top = newTop + 'px';
+    };
+    
+    const onPointerUp = (e) => {
+        isDragging = false;
+        overlay.style.cursor = 'grab';
+        overlay.releasePointerCapture(e.pointerId);
+    };
+    
+    // 既存のリスナーを削除してから追加
+    overlay.removeEventListener('pointerdown', overlay._onPointerDown);
+    overlay.removeEventListener('pointermove', overlay._onPointerMove);
+    overlay.removeEventListener('pointerup', overlay._onPointerUp);
+    
+    overlay._onPointerDown = onPointerDown;
+    overlay._onPointerMove = onPointerMove;
+    overlay._onPointerUp = onPointerUp;
+    
+    overlay.addEventListener('pointerdown', onPointerDown);
+    overlay.addEventListener('pointermove', onPointerMove);
+    overlay.addEventListener('pointerup', onPointerUp);
+}
+
+// 赤シートをリセット
+function resetRedSheet() {
+    const redSheetToggle = document.getElementById('redSheetToggle');
+    const redSheetCheckbox = redSheetToggle?.querySelector('.red-sheet-checkbox');
+    const redSheetOverlay = document.getElementById('redSheetOverlay');
+    const redSheetNextBtn = document.getElementById('redSheetNextBtn');
+    const inputListView = document.getElementById('inputListView');
+    
+    if (redSheetCheckbox) redSheetCheckbox.checked = false;
+    if (redSheetOverlay) redSheetOverlay.classList.add('hidden');
+    if (redSheetNextBtn) redSheetNextBtn.classList.add('hidden');
+    if (inputListView) inputListView.classList.remove('red-sheet-mode');
+    if (redSheetToggle) redSheetToggle.classList.remove('sticky');
+    currentRedSheetIndex = 0;
+}
+
+// フィルターを適用して単語リストを再描画
+function applyInputFilter() {
+    const baseWords = currentCourseWords && currentCourseWords.length > 0 ? currentCourseWords : currentWords;
+    if (!baseWords || baseWords.length === 0) return;
+    
+    // 単語の状態を取得するためのキャッシュを作成
+    let allCorrectIds = new Set();
+    let allWrongIds = new Set();
+    
+    // 「すべての単語」の場合は全カテゴリーの進捗を読み込む
+    if (selectedCategory === '大阪府のすべての英単語') {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (key.startsWith('correctWords-') || key.startsWith('wrongWords-'))) {
+                try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    if (Array.isArray(data)) {
+                        data.forEach(id => {
+                            const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                            if (key.startsWith('correctWords-')) {
+                                allCorrectIds.add(numId);
+                            } else {
+                                allWrongIds.add(numId);
+                            }
+                        });
+                    }
+                } catch (e) {}
+            }
+        }
+    } else if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
+        // 小学生で習った単語の場合は各単語のカテゴリーから進捗を読み込む
+        const modes = ['card', 'input'];
+        const categoryCache = {};
+        
+        baseWords.forEach(word => {
+            const cat = word.category;
+            if (!categoryCache[cat]) {
+                const correctSet = new Set();
+                const wrongSet = new Set();
+                
+                modes.forEach(mode => {
+                    const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                    const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+                    
+                    if (savedCorrect) {
+                        try {
+                            JSON.parse(savedCorrect).forEach(id => {
+                                const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                                correctSet.add(numId);
+                            });
+                        } catch (e) {}
+                    }
+                    
+                    if (savedWrong) {
+                        try {
+                            JSON.parse(savedWrong).forEach(id => {
+                                const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                                wrongSet.add(numId);
+                            });
+                        } catch (e) {}
+                    }
+                });
+                
+                categoryCache[cat] = { correctSet, wrongSet };
+            }
+        });
+        
+        // カテゴリーキャッシュから全IDを収集
+        Object.values(categoryCache).forEach(cache => {
+            cache.correctSet.forEach(id => allCorrectIds.add(id));
+            cache.wrongSet.forEach(id => allWrongIds.add(id));
+        });
+    } else {
+        // 通常のカテゴリーの場合は selectedCategory を使用（renderInputListView と同じ方式）
+        const modes = ['card', 'input'];
+        
+        modes.forEach(mode => {
+            const savedCorrect = localStorage.getItem(`correctWords-${selectedCategory}_${mode}`);
+            const savedWrong = localStorage.getItem(`wrongWords-${selectedCategory}_${mode}`);
+            
+            if (savedCorrect) {
+                try {
+                    JSON.parse(savedCorrect).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        allCorrectIds.add(numId);
+                    });
+                } catch (e) {}
+            }
+            
+            if (savedWrong) {
+                try {
+                    JSON.parse(savedWrong).forEach(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        allWrongIds.add(numId);
+                    });
+                } catch (e) {}
+            }
+        });
+    }
+    
+    // アクティブなフィルターを取得（新しいドロップダウン形式を優先）
+    let activeFilters = [];
+    const filterCheckboxes = document.querySelectorAll('.filter-dropdown-item input[type="checkbox"]:checked');
+    
+    if (filterCheckboxes.length > 0) {
+        // 新しいドロップダウン形式
+        activeFilters = Array.from(filterCheckboxes).map(cb => cb.dataset.filter);
+    } else {
+        // 旧ボタン形式（互換性用）
+        activeFilters = Array.from(document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn).active'))
+            .map(btn => btn.dataset.filter);
+    }
+    
+    let filteredWords = baseWords;
+    
+    // 何もチェックされていない場合は空の結果
+    if (activeFilters.length === 0) {
+        filteredWords = [];
+    }
+    // 「すべて」が選択されている場合は全単語を表示
+    else if (activeFilters.includes('all')) {
+        filteredWords = baseWords;
+    } else {
+        // 複数のフィルターの和集合を取る
+        const filteredSets = [];
+        
+        activeFilters.forEach(filter => {
+            let filteredSet = new Set();
+            
+            switch (filter) {
+                case 'wrong':
+                    // 覚えていない単語（間違えた）
+                    baseWords.forEach(word => {
+                        if (allWrongIds.has(word.id)) {
+                            filteredSet.add(word.id);
+                        }
+                    });
+                    break;
+                case 'unlearned':
+                    // 未学習の単語（正解も不正解もない）
+                    baseWords.forEach(word => {
+                        if (!allCorrectIds.has(word.id) && !allWrongIds.has(word.id)) {
+                            filteredSet.add(word.id);
+                        }
+                    });
+                    break;
+                case 'bookmark':
+                    // チェック済み（ブックマーク）の単語
+                    baseWords.forEach(word => {
+                        if (reviewWords.has(word.id)) {
+                            filteredSet.add(word.id);
+                        }
+                    });
+                    break;
+                case 'correct':
+                    // 覚えた単語（正解して、かつ間違えていない）
+                    baseWords.forEach(word => {
+                        if (allCorrectIds.has(word.id) && !allWrongIds.has(word.id)) {
+                            filteredSet.add(word.id);
+                        }
+                    });
+                    break;
+            }
+            
+            if (filteredSet.size > 0) {
+                filteredSets.push(filteredSet);
+            }
+        });
+        
+        // すべてのフィルターセットの和集合を取る
+        if (filteredSets.length > 0) {
+            const unionSet = new Set();
+            filteredSets.forEach(set => {
+                set.forEach(id => unionSet.add(id));
+            });
+            filteredWords = baseWords.filter(word => unionSet.has(word.id));
+        } else {
+            filteredWords = [];
+        }
+    }
+    
+    // 頻度フィルターを適用（すべての単語モードのみ）
+    if (selectedCategory === '大阪府のすべての英単語') {
+        const freqAllCheckbox = document.getElementById('inputFilterFreqAll');
+        if (freqAllCheckbox && !freqAllCheckbox.checked) {
+            const activeFreqs = [];
+            const freqCheckboxes = document.querySelectorAll('[data-filter-freq]:checked');
+            freqCheckboxes.forEach(cb => {
+                if (cb.dataset.filterFreq !== 'all') {
+                    activeFreqs.push(cb.dataset.filterFreq);
+                }
+            });
+            
+            if (activeFreqs.length > 0) {
+                filteredWords = filteredWords.filter(word => {
+                    const count = word.appearanceCount || 0;
+                    const stars = getStarRating(count);
+                    return activeFreqs.some(f => stars === parseInt(f));
+                });
+            } else {
+                filteredWords = [];
+            }
+        }
+        
+        // 単語検索を適用（新しい検索入力）
+        const searchInput = document.getElementById('wordSearchInput');
+        if (searchInput && searchInput.value.trim() !== '') {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            filteredWords = filteredWords.filter(word => {
+                const wordText = (word.word || '').toLowerCase();
+                const meaning = (word.meaning || '').toLowerCase();
+                return wordText.includes(searchTerm) || meaning.includes(searchTerm);
+            });
+        }
+    }
+    
+    // フィルター結果を表示（0件でもrenderInputListViewを呼び出してツールバーを維持）
+    if (filteredWords.length > 500) {
+        renderInputListViewPaginated(filteredWords);
+    } else {
+        renderInputListView(filteredWords);
+    }
+    
+    // 設定（コンパクトモード・用例表示）を適用
+    applyInputListSettings();
+    
+    // フィルター結果の件数を更新
+    updateFilterCount(filteredWords.length, baseWords.length);
+    
+    // バッジに絞り込んだ単語数を表示
+    if (window.updateFilterBadge) {
+        const allCheckbox = document.querySelector('.filter-dropdown-item input[data-filter="all"]');
+        const freqAllCheckbox = document.getElementById('inputFilterFreqAll');
+        const searchInput = document.getElementById('wordSearchInput');
+        const hasFreqFilter = freqAllCheckbox && !freqAllCheckbox.checked;
+        const hasSearch = searchInput && searchInput.value.trim() !== '';
+        
+        if (allCheckbox && allCheckbox.checked && !hasFreqFilter && !hasSearch) {
+            window.updateFilterBadge(null);
+        } else {
+            window.updateFilterBadge(filteredWords.length);
+        }
+    }
+}
+
+// フィルター結果の件数を表示
+function updateFilterCount(filtered, total) {
+    const titleEl = document.querySelector('.input-list-title');
+    if (!titleEl) return;
+    
+    // アクティブなフィルターボタンからフィルターを取得
+    const activeFilters = Array.from(document.querySelectorAll('.input-filter-btn:not(.red-sheet-btn).active'))
+        .map(btn => btn.dataset.filter);
+    
+    if (activeFilters.includes('all') || activeFilters.length === 0) {
+        titleEl.textContent = '単語一覧';
+    } else {
+        const filterNames = {
+            'wrong': 'できなかった',
+            'unlearned': '未学習',
+            'bookmark': 'チェックマーク',
+            'correct': 'できた'
+        };
+        
+        if (activeFilters.length === 1) {
+            titleEl.textContent = `${filterNames[activeFilters[0]]}（${filtered}語）`;
+        } else {
+            const filterLabels = activeFilters.map(f => filterNames[f]).join('・');
+            titleEl.textContent = `${filterLabels}（${filtered}語）`;
+        }
+    }
+}
+
+// フィルターをリセット
+function resetInputFilter() {
+    currentInputFilter = 'all';
+    const filterBtns = document.querySelectorAll('.input-filter-btn');
+    filterBtns.forEach(btn => {
+        if (btn.dataset.filter === 'all') {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // ドロップダウン形式のフィルターもデフォルト（すべてON）に戻す
+    const dropdownCheckboxes = document.querySelectorAll('.filter-dropdown-item input[type="checkbox"]');
+    dropdownCheckboxes.forEach(cb => cb.checked = true);
+    
+    // 頻度フィルターもリセット
+    const freqCheckboxes = document.querySelectorAll('[data-filter-freq]');
+    freqCheckboxes.forEach(cb => cb.checked = true);
+    
+    // 検索入力をリセット
+    const searchInput = document.getElementById('wordSearchInput');
+    if (searchInput) searchInput.value = '';
+    const searchClear = document.getElementById('wordSearchClear');
+    if (searchClear) searchClear.classList.add('hidden');
+
+    // ドロップダウンの開閉状態とバッジをリセット
+    const filterDropdown = document.getElementById('inputFilterDropdown');
+    if (filterDropdown) {
+        filterDropdown.classList.add('hidden');
+        filterDropdown.classList.remove('show');
+    }
+
+    const filterTrigger = document.getElementById('inputFilterTrigger');
+    if (filterTrigger) {
+        filterTrigger.classList.remove('active');
+    }
+
+    const filterActiveBadge = document.getElementById('filterActiveBadge');
+    if (filterActiveBadge) {
+        filterActiveBadge.textContent = '';
+        filterActiveBadge.classList.add('hidden');
+    }
+
+    if (typeof window.updateFilterBadge === 'function') {
+        window.updateFilterBadge(null);
+    }
+}
+
+// 現在の単語を表示
+function displayCurrentWord() {
+    if (currentIndex >= currentRangeEnd) {
+        // 学習完了時は完了画面を表示
+        showCompletion();
+        return;
+    }
+
+    const word = currentWords[currentIndex];
+    wordResponseStartTime = Date.now();
+    isCardRevealed = false;
+    elements.wordCard.classList.remove('flipped');
+    elements.wordCard.style.transform = '';
+    elements.wordCard.style.opacity = '';
+    
+    // カードが元に戻ったとき、ボタンを非表示
+    const actionHint = document.getElementById('cardHint');
+    if (actionHint) {
+        actionHint.style.display = 'none';
+    }
+
+    // 単語番号は元のIDを使用（シャッフル後も元の番号を表示）
+    elements.wordNumber.textContent = `No.${word.id}`;
+    
+    // チェックボックスの状態を更新
+    if (elements.wordCheckbox) {
+        if (reviewWords.has(word.id)) {
+            elements.wordCheckbox.classList.add('checked');
+        } else {
+            elements.wordCheckbox.classList.remove('checked');
+        }
+    }
+    const wordCheckboxBack = document.getElementById('wordCheckboxBack');
+    if (wordCheckboxBack) {
+        if (reviewWords.has(word.id)) {
+            wordCheckboxBack.classList.add('checked');
+        } else {
+            wordCheckboxBack.classList.remove('checked');
+        }
+    }
+    
+    // 品詞を一文字に変換
+    const posShort = getPartOfSpeechShort(word.partOfSpeech || '');
+    const posClass = getPartOfSpeechClass(word.partOfSpeech || '');
+    
+    // 英単語と品詞を一緒に表示（品詞を左横に）- アウトプットモードでは非表示
+    const englishWordWrapper = elements.englishWord.parentElement;
+    let posElementFront = document.getElementById('posInlineFront');
+    if (posShort && currentLearningMode === 'input') {
+        if (!posElementFront) {
+            posElementFront = document.createElement('span');
+            posElementFront.id = 'posInlineFront';
+            posElementFront.className = `pos-inline part-of-speech ${posClass}`;
+            englishWordWrapper.insertBefore(posElementFront, elements.englishWord);
+        }
+        posElementFront.textContent = posShort;
+        posElementFront.className = `pos-inline part-of-speech ${posClass}`;
+        posElementFront.style.display = '';
+    } else {
+        if (posElementFront) {
+            posElementFront.style.display = 'none';
+        }
+    }
+    
+    elements.englishWord.textContent = word.word;
+    applyMarkers(word);
+    
+    // 入試頻出度を表示（カードモード）- アウトプットモードでは非表示
+    const appearanceCountEl = document.getElementById('wordAppearanceCount');
+    if (appearanceCountEl) {
+        appearanceCountEl.style.display = 'none';
+    }
+    
+    // 裏面の意味と品詞を一緒に表示（品詞を左横に）
+    const meaningWrapper = elements.meaning.parentElement;
+    let posElementBack = document.getElementById('posInlineBack');
+    
+    if (posShort) {
+        if (!posElementBack) {
+            posElementBack = document.createElement('span');
+            posElementBack.id = 'posInlineBack';
+            posElementBack.className = `pos-inline part-of-speech ${posClass}`;
+            meaningWrapper.insertBefore(posElementBack, elements.meaning);
+        }
+        posElementBack.textContent = posShort;
+        posElementBack.className = `pos-inline part-of-speech ${posClass}`;
+        posElementBack.style.display = '';
+    } else {
+        if (posElementBack) {
+            posElementBack.style.display = 'none';
+        }
+    }
+    
+    // スタイルリセット
+    elements.wordNumber.style.backgroundColor = '';
+    elements.wordNumber.style.color = '';
+
+    // 裏面に英単語を表示（アウトプットモードのみ）
+    const englishWordBack = document.getElementById('englishWordBack');
+    if (englishWordBack) {
+        if (currentLearningMode !== 'input') {
+            englishWordBack.textContent = word.word;
+            englishWordBack.style.display = '';
+        } else {
+            englishWordBack.style.display = 'none';
+        }
+    }
+
+    // 意味を表示（①②③があれば行ごとに整形）
+    setMeaningContent(elements.meaning, word.meaning);
+    
+    // 用例を表示（あれば）※アウトプットモードでは非表示
+    const exampleContainer = document.getElementById('exampleContainer');
+    const exampleEnglishEl = document.getElementById('exampleEnglish');
+    const exampleJapaneseEl = document.getElementById('exampleJapanese');
+    const exampleLabel = exampleContainer ? exampleContainer.querySelector('.example-label') : null;
+    const exampleText = exampleContainer ? exampleContainer.querySelector('.example-text') : null;
+    if (exampleContainer && exampleEnglishEl && exampleJapaneseEl) {
+        // アウトプットモードでは用例を表示しない
+        if (currentLearningMode !== 'input' && word.example && (word.example.english || word.example.japanese)) {
+            exampleContainer.style.display = 'none';
+        } else if (currentLearningMode === 'input' && word.example && (word.example.english || word.example.japanese)) {
+            exampleContainer.style.display = '';
+
+            const exampleEn = word.example.english || '';
+            // 用例中の今回の単語を太字にする（英語のみ）
+            if (exampleEn && word.word) {
+                exampleEnglishEl.innerHTML = highlightTargetWord(exampleEn, word.word);
+            } else {
+                exampleEnglishEl.textContent = exampleEn;
+            }
+
+            exampleJapaneseEl.innerHTML = word.example.japanese || '';
+            
+            // 用例テキストを初期状態で非表示にする
+            if (exampleText) {
+                exampleText.style.display = 'none';
+            }
+            
+            // 用例ラベルのクリックイベントを設定（一度だけ）
+            if (exampleLabel && exampleText && !exampleLabel.dataset.listenerAdded) {
+                exampleLabel.dataset.listenerAdded = 'true';
+                exampleLabel.addEventListener('click', (e) => {
+                    e.stopPropagation(); // カードのフリップを防ぐ
+                    const textEl = exampleContainer.querySelector('.example-text');
+                    if (textEl) {
+                        if (textEl.style.display === 'none') {
+                            textEl.style.display = 'flex';
+                            exampleLabel.textContent = '用例を閉じる';
+                        } else {
+                            textEl.style.display = 'none';
+                            exampleLabel.textContent = '用例を見る';
+                        }
+                    }
+                });
+            }
+            
+            // 初期状態のラベルテキストを設定
+            if (exampleLabel && exampleText) {
+                if (exampleText.style.display === 'none' || !exampleText.style.display) {
+                    exampleLabel.textContent = '用例を見る';
+                } else {
+                    exampleLabel.textContent = '用例を閉じる';
+                }
+            }
+        } else {
+            exampleContainer.style.display = 'none';
+            exampleEnglishEl.textContent = '';
+            exampleJapaneseEl.textContent = '';
+        }
+    }
+
+    // elements.cardHint.textContent = 'タップでカードをひっくり返す'; // ヒントはCSSで固定表示に変更したためJS制御不要
+    updateStarButton();
+    updateStats();
+    updateNavButtons(); // ボタン状態更新
+    updateCardStack(); // カードスタック表示更新
+    
+    // タイムアタックモードの場合、単語開始時間をリセット
+    if (isTimeAttackMode) {
+        stopWordTimer();
+        startWordTimer();
+        updateTimerDisplay();
+        
+        // タイムアタックモードのボタンテキストを確認
+        const correctBtn = document.getElementById('correctBtn');
+        const wrongBtn = document.getElementById('wrongBtn');
+        const masteredBtn = document.getElementById('masteredBtn');
+        if (correctBtn && !correctBtn.textContent.includes('正解')) {
+            correctBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>正解';
+        }
+        if (wrongBtn && !wrongBtn.textContent.includes('不正解')) {
+            wrongBtn.innerHTML = '不正解<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+        }
+        if (masteredBtn) {
+            masteredBtn.style.display = 'none'; // 「もうOK！」ボタンを非表示
+        }
+    } else {
+        // 通常モードの場合はボタンを元に戻す
+        const masteredBtn = document.getElementById('masteredBtn');
+        if (masteredBtn) {
+            masteredBtn.style.display = ''; // 「もうOK！」ボタンを表示
+        }
+    }
+    
+    // 日本語モードの場合のみ自動で音声を再生（0.3秒遅延）
+    // インプットモード（眺める用）の場合は自動再生しない
+    if (!isInputModeActive && selectedLearningMode !== 'input' && currentLearningMode !== 'input') {
+        setTimeout(() => {
+            speakWord(word.word, null);
+        }, 300);
+    }
+}
+
+// ナビゲーションボタンの状態更新
+function updateNavButtons() {
+    const progressStepLeft = document.getElementById('progressStepLeft');
+    const progressStepRight = document.getElementById('progressStepRight');
+    if (!progressStepLeft || !progressStepRight) return;
+    
+    if (isChoiceQuestionModeActive) {
+        // 四択問題モードのとき
+        progressStepLeft.disabled = currentChoiceQuestionIndex === 0;
+        progressStepRight.disabled = currentChoiceQuestionIndex >= choiceQuestionData.length - 1;
+        // テキストを更新
+        const leftSpan = progressStepLeft.querySelector('span');
+        const rightSpan = progressStepRight.querySelector('span');
+        if (leftSpan) leftSpan.textContent = '前の問題へ';
+        if (rightSpan) rightSpan.textContent = '次の問題へ';
+    } else if (isReorderModeActive) {
+        // 整序英作文モードのとき
+        progressStepLeft.disabled = currentReorderIndex === 0;
+        progressStepRight.disabled = currentReorderIndex >= reorderData.length - 1;
+        // テキストを更新
+        const leftSpan = progressStepLeft.querySelector('span');
+        const rightSpan = progressStepRight.querySelector('span');
+        if (leftSpan) leftSpan.textContent = '前の問題へ';
+        if (rightSpan) rightSpan.textContent = '次の問題へ';
+    } else if (isSentenceModeActive) {
+        // 例文モードのとき
+        progressStepLeft.disabled = currentSentenceIndex === 0;
+        progressStepRight.disabled = currentSentenceIndex >= sentenceData.length - 1;
+        // テキストを更新
+        const leftSpan = progressStepLeft.querySelector('span');
+        const rightSpan = progressStepRight.querySelector('span');
+        if (leftSpan) leftSpan.textContent = '前の問題へ';
+        if (rightSpan) rightSpan.textContent = '次の問題へ';
+    } else {
+        // 通常モードのとき
+        progressStepLeft.disabled = currentIndex <= currentRangeStart;
+        progressStepRight.disabled = currentIndex >= currentRangeEnd - 1;
+        // テキストを更新
+        const leftSpan = progressStepLeft.querySelector('span');
+        const rightSpan = progressStepRight.querySelector('span');
+        if (leftSpan) leftSpan.textContent = '前の単語へ';
+        if (rightSpan) rightSpan.textContent = '次の単語へ';
+    }
+}
+
+// 完璧としてマーク（上スワイプ）
+function markMastered() {
+    if (currentIndex >= currentRangeEnd) return;
+
+    const word = currentWords[currentIndex];
+    answeredWords.add(word.id);
+    
+    // 現在の問題の回答状況を記録（正解）
+    const questionIndex = currentIndex - currentRangeStart;
+    if (questionIndex >= 0 && questionIndex < questionStatus.length) {
+        questionStatus[questionIndex] = 'correct';
+    }
+    
+    // 正解としてカウント
+    correctCount++;
+    correctWords.add(word.id);
+    
+    // カテゴリごとの進捗を更新
+    // 小学生で習った単語、すべての単語の場合は、各単語のカテゴリーを使用
+    const categoryKey = (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語' || selectedCategory === '大阪府のすべての英単語') ? word.category : selectedCategory;
+    if (categoryKey) {
+        // 現在のモードで正解を保存
+        const { correctSet, wrongSet } = loadCategoryWords(categoryKey);
+        correctSet.add(word.id);
+        wrongSet.delete(word.id);
+        saveCategoryWords(categoryKey, correctSet, wrongSet);
+        
+        // すべてのモードの間違いリストから削除（別モードで間違えた記録も消す）
+        const allModes = ['card', 'input'];
+        allModes.forEach(mode => {
+            const wrongKey = `wrongWords-${categoryKey}_${mode}`;
+            const savedWrong = localStorage.getItem(wrongKey);
+            if (savedWrong) {
+                const wrongList = JSON.parse(savedWrong);
+                const filteredList = wrongList.filter(id => {
+                    const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                    return numId !== word.id;
+                });
+                if (filteredList.length !== wrongList.length) {
+                    localStorage.setItem(wrongKey, JSON.stringify(filteredList));
+                }
+            }
+        });
+    }
+    
+    saveCorrectWords();
+    
+    // 完璧なので間違いリストから削除
+    if (wrongWords.has(word.id)) {
+        wrongWords.delete(word.id);
+        saveWrongWords();
+    }
+
+    applyMarkers(word);
+    updateStats();
+    updateProgressSegments(); // 進捗バーのセグメントを更新
+    updateVocabProgressBar(); // 英単語進捗バーを更新
+
+    // 上スワイプアニメーション
+    elements.wordCard.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+    elements.wordCard.style.transform = `translateY(-120%) scale(0.8)`;
+    elements.wordCard.style.opacity = '0.2';
+
+    setTimeout(() => {
+        elements.wordCard.style.transition = '';
+        elements.wordCard.style.transform = '';
+        elements.wordCard.style.opacity = '';
+        currentIndex++;
+        
+        // タイムアタックモードの場合、使用時間を減算
+        if (isTimeAttackMode) {
+            stopWordTimer();
+            const elapsed = (Date.now() - wordStartTime) / 1000;
+            totalTimeRemaining = Math.max(0, totalTimeRemaining - elapsed);
+            if (totalTimeRemaining <= 0) {
+                handleTimeUp();
+                return;
+            }
+        }
+        
+        // 進捗を保存
+        if (
+            selectedCategory &&
+            selectedCategory !== '復習チェック' &&
+            selectedCategory !== '間違い復習' &&
+            selectedCategory !== '大阪C問題対策英単語タイムアタック'
+        ) {
+            saveProgress(selectedCategory, currentIndex);
+        }
+        // 最後の単語の場合は完了画面を表示
+        if (currentIndex >= currentRangeEnd) {
+            if (isTimeAttackMode) {
+                // タイムアタックモードの完了処理
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                stopWordTimer();
+                const remainingTime = totalTimeRemaining;
+                const minutes = Math.floor(remainingTime / 60);
+                const seconds = Math.floor(remainingTime % 60);
+                showAlert('クリア！', `全問解ききりました！\n残り時間: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}\n正解数: ${correctCount}\n間違い数: ${wrongCount}`);
+                setTimeout(() => {
+                    showCategorySelection();
+                }, 2000);
+            } else {
+                showCompletion();
+            }
+        } else {
+            displayCurrentWord();
+        }
+    }, 180);
+}
+
+// 正解/不正解フィードバック（画面背景色フラッシュ）を表示
+function showAnswerMark(isCorrect) {
+    // オーバーレイを作成
+    const overlay = document.createElement('div');
+    overlay.className = `answer-flash-overlay ${isCorrect ? 'correct' : 'wrong'}`;
+    document.body.appendChild(overlay);
+    
+    // フェードアウト後に削除
+    setTimeout(() => {
+        overlay.classList.add('fade-out');
+        setTimeout(() => {
+            overlay.remove();
+        }, 300);
+    }, 200);
+}
+
+// キラキラエフェクトを表示
+function showSparkleEffect() {
+    // コンテナを作成
+    const container = document.createElement('div');
+    container.className = 'sparkle-container';
+    document.body.appendChild(container);
+    
+    // 星型キラキラを複数生成
+    const sparkleCount = 15;
+    for (let i = 0; i < sparkleCount; i++) {
+        setTimeout(() => {
+            // ランダムな位置
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            
+            // 星型キラキラ（白い星＋シアンの光）
+            const star = document.createElement('div');
+            star.className = 'sparkle-star';
+            // ランダムで★か✦を選択
+            if (Math.random() > 0.5) {
+                star.classList.add('star-5');
+            }
+            star.style.left = x + 'px';
+            star.style.top = y + 'px';
+            star.style.animationDelay = (Math.random() * 0.2) + 's';
+            // ランダムなサイズ（バラバラに）
+            const size = 0.5 + Math.random() * 1.2;
+            star.style.setProperty('--star-scale', size);
+            container.appendChild(star);
+        }, i * 30);
+    }
+    
+    // コンテナを削除
+    setTimeout(() => {
+        container.remove();
+    }, 1200);
+}
+
+// スワイプまたはボタンで正解/不正解をマーク
+// 連続正解メッセージを表示
+function showConsecutiveCorrectMessage(count) {
+    // メッセージとスタイルを決定
+    let message = '';
+    let colorClass = '';
+    
+    if (count >= 5) {
+        message = 'Perfect!';
+        colorClass = 'streak-perfect';
+    } else if (count === 4) {
+        message = 'Excellent!';
+        colorClass = 'streak-excellent';
+    } else if (count === 3) {
+        message = 'Fantastic!';
+        colorClass = 'streak-fantastic';
+    } else if (count === 2) {
+        message = 'Great!';
+        colorClass = 'streak-great';
+    } else if (count === 1) {
+        message = 'Good!';
+        colorClass = 'streak-good';
+    } else {
+        return; // 0以下は表示しない
+    }
+    
+    // 既存のメッセージを削除
+    const existing = document.querySelector('.streak-message');
+    if (existing) {
+        existing.remove();
+    }
+    
+    // メッセージ要素を作成
+    const msgEl = document.createElement('div');
+    msgEl.className = `streak-message ${colorClass}`;
+    msgEl.innerHTML = `
+        <span class="streak-text">${message}</span>
+    `;
+    
+    // body直下に追加（カード切り替えの影響を受けない）
+    document.body.appendChild(msgEl);
+    
+    // アニメーション後に削除
+    setTimeout(() => {
+        msgEl.classList.add('streak-message-fade');
+        setTimeout(() => {
+            msgEl.remove();
+        }, 400);
+    }, 1500);
+}
+
+function markAnswer(isCorrect, isTimeout = false) {
+    if (currentIndex >= currentRangeEnd) return;
+    
+    // 効果音を再生（正解/不正解）
+    if (isCorrect) {
+        SoundEffects.playCorrect();
+    } else {
+        SoundEffects.playWrong();
+    }
+
+    const word = currentWords[currentIndex];
+    answeredWords.add(word.id);
+    const responseMs = wordResponseStartTime ? (Date.now() - wordResponseStartTime) : null;
+    
+
+    // 現在の問題の回答状況を記録
+    const questionIndex = currentIndex - currentRangeStart;
+    if (questionIndex >= 0 && questionIndex < questionStatus.length) {
+        questionStatus[questionIndex] = isCorrect ? 'correct' : 'wrong';
+    }
+
+    if (isCorrect) {
+        correctCount++;
+        correctWords.add(word.id);
+        
+        // カテゴリごとの進捗を更新
+        // 小学生で習った単語の場合は、各単語のカテゴリー（機能語の場合は「冠詞」「代名詞」など）を使用
+        const categoryKey = (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') ? word.category : selectedCategory;
+        if (categoryKey) {
+            // 現在のモードで正解を保存
+            const { correctSet, wrongSet } = loadCategoryWords(categoryKey);
+            correctSet.add(word.id);
+            wrongSet.delete(word.id);
+            saveCategoryWords(categoryKey, correctSet, wrongSet);
+            
+            // すべてのモードの間違いリストから削除（別モードで間違えた記録も消す）
+            const allModes = ['card', 'input'];
+            allModes.forEach(mode => {
+                const wrongKey = `wrongWords-${categoryKey}_${mode}`;
+                const savedWrong = localStorage.getItem(wrongKey);
+                if (savedWrong) {
+                    const wrongList = JSON.parse(savedWrong);
+                    const filteredList = wrongList.filter(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        return numId !== word.id;
+                    });
+                    if (filteredList.length !== wrongList.length) {
+                        localStorage.setItem(wrongKey, JSON.stringify(filteredList));
+                    }
+                }
+            });
+        }
+        
+        saveCorrectWords();
+        
+    } else {
+        wrongCount++;
+        // 間違えた場合は間違いリストに追加
+        wrongWords.add(word.id);
+        
+        // カテゴリごとの進捗を更新
+        // 小学生で習った単語、すべての単語の場合は、各単語のカテゴリーを使用
+        const categoryKeyWrong = (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語' || selectedCategory === '大阪府のすべての英単語') ? word.category : selectedCategory;
+        if (categoryKeyWrong) {
+            const { correctSet, wrongSet } = loadCategoryWords(categoryKeyWrong);
+            wrongSet.add(word.id);
+            // 間違えた場合は正解リストから削除
+            correctSet.delete(word.id);
+            saveCategoryWords(categoryKeyWrong, correctSet, wrongSet);
+            
+            // すべてのモードの正解リストから削除（別モードで正解した記録も消す）
+            const allModes = ['card', 'input'];
+            allModes.forEach(mode => {
+                const correctKey = `correctWords-${categoryKeyWrong}_${mode}`;
+                const savedCorrect = localStorage.getItem(correctKey);
+                if (savedCorrect) {
+                    const correctList = JSON.parse(savedCorrect);
+                    const filteredList = correctList.filter(id => {
+                        const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                        return numId !== word.id;
+                    });
+                    localStorage.setItem(correctKey, JSON.stringify(filteredList));
+                }
+            });
+        }
+        
+        saveWrongWords();
+    }
+
+    applyMarkers(word);
+    updateStats();
+    updateProgressSegments(); // 進捗バーのセグメントを更新
+    updateVocabProgressBar(); // 英単語進捗バーを更新
+
+    // ○/×マークを表示
+    showAnswerMark(isCorrect);
+    
+    // 正解時にキラキラエフェクトを表示
+    if (isCorrect) {
+        showSparkleEffect();
+    }
+
+    // 入力モードの場合はカードアニメーションをスキップ
+    if (isInputModeActive) {
+        // 入力モードでは自動で進まない（ユーザーが次へボタンを押すまで待つ）
+        return;
+    }
+
+    // アニメーション中なら処理しない
+    if (isCardAnimating) return;
+    isCardAnimating = true;
+
+    const cardInner = elements.wordCard ? elements.wordCard.querySelector('.card-inner') : null;
+    
+    // 既にカードが非表示（スワイプで即座に消された場合）かどうか確認
+    const isAlreadyHidden = elements.wordCard.style.opacity === '0';
+    
+    // スワイプと同じ方向にスライドアウト（覚えた=左、覚えていない=右）
+    if (!isAlreadyHidden) {
+        const slideDirection = isCorrect ? -1 : 1; // 左=-1, 右=1
+        elements.wordCard.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+        elements.wordCard.style.transform = `translateX(${slideDirection * 120}%) scale(0.8)`;
+        elements.wordCard.style.opacity = '0.2';
+    }
+
+    setTimeout(() => {
+        // カードを表面に戻す（非表示状態で）
+        elements.wordCard.style.transition = 'none';
+        if (cardInner) {
+            cardInner.style.transition = 'none';
+            cardInner.style.transform = 'rotateY(0deg)';
+        }
+        elements.wordCard.classList.remove('flipped');
+        elements.wordCard.style.transform = '';
+        elements.wordCard.style.opacity = '0';
+        elements.wordCard.offsetHeight; // 強制リフロー
+        
+        currentIndex++;
+        
+        // タイムアタックモードの場合、使用時間を減算
+        if (isTimeAttackMode) {
+            const elapsed = (Date.now() - wordStartTime) / 1000;
+            totalTimeRemaining = Math.max(0, totalTimeRemaining - elapsed);
+            if (totalTimeRemaining <= 0) {
+                handleTimeUp();
+                isCardAnimating = false;
+                return;
+            }
+        }
+        
+        // 進捗を保存
+        if (
+            selectedCategory &&
+            selectedCategory !== '復習チェック' &&
+            selectedCategory !== '間違い復習' &&
+            selectedCategory !== '大阪C問題対策英単語タイムアタック'
+        ) {
+            saveProgress(selectedCategory, currentIndex);
+        }
+        
+        // 進捗バーを更新
+        updateProgressSegments();
+        updateNavButtons();
+        
+        // 最後の単語の場合は完了画面を表示
+        if (currentIndex >= currentRangeEnd) {
+            elements.wordCard.style.opacity = '';
+            elements.wordCard.style.transition = '';
+            if (cardInner) {
+                cardInner.style.transition = '';
+                cardInner.style.transform = '';
+            }
+            isCardAnimating = false;
+            
+            if (isTimeAttackMode) {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                const remainingTime = totalTimeRemaining;
+                const minutes = Math.floor(remainingTime / 60);
+                const seconds = Math.floor(remainingTime % 60);
+                showAlert('クリア！', `全問解ききりました！\n残り時間: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}\n正解数: ${correctCount}\n間違い数: ${wrongCount}`);
+                setTimeout(() => {
+                    showCategorySelection();
+                }, 2000);
+            } else {
+                showCompletion();
+            }
+        } else {
+            // 内容を更新
+            displayCurrentWord();
+            
+            // displayCurrentWord()でopacityがリセットされるので、再度非表示に設定
+            elements.wordCard.style.opacity = '0';
+            
+            // カード内部の回転アニメーションを復元
+            if (cardInner) {
+                cardInner.style.transition = '';
+                cardInner.style.transform = '';
+            }
+            
+            // 下からふわっと浮いてくる
+            requestAnimationFrame(() => {
+                elements.wordCard.style.transition = 'opacity 0.35s ease-out, transform 0.35s ease-out';
+                elements.wordCard.style.opacity = '';
+                elements.wordCard.classList.add('float-up');
+                
+                setTimeout(() => {
+                    elements.wordCard.classList.remove('float-up');
+                    elements.wordCard.style.transition = '';
+                    isCardAnimating = false;
+                }, 450);
+            });
+        }
+    }, isAlreadyHidden ? 0 : 400);
+}
+
+// 完了画面を表示
+function showCompletion() {
+    // 完了音を再生
+    SoundEffects.playComplete();
+    
+    const completionOverlay = document.getElementById('completionOverlay');
+    if (!completionOverlay) {
+        // フォールバック：旧方式
+        showCategorySelection();
+        return;
+    }
+    
+    // 前回のアニメーション状態を完全にリセット
+    const completionProgressBar = document.querySelector('.completion-progress-bar');
+    if (completionProgressBar) {
+        // すべてのCOMPLETEクラスを確実に削除
+        completionProgressBar.classList.remove('completion-progress-complete', 'completion-progress-complete-card', 'completion-progress-complete-input');
+        // 強制リフローで確実に反映
+        completionProgressBar.offsetHeight;
+    }
+    
+    // オーバーレイを非表示にして、アニメーションをリセット
+    completionOverlay.classList.remove('show');
+    completionOverlay.classList.add('hidden');
+    // 強制リフロー
+    completionOverlay.offsetHeight;
+    
+    // カテゴリー名を設定
+    const completionCourseTitle = document.getElementById('completionCourseTitle');
+    if (completionCourseTitle) {
+        completionCourseTitle.textContent = currentFilterCourseTitle || selectedCategory || '';
+    }
+    
+    // 統計を設定
+    const completionCorrectCount = document.getElementById('completionCorrectCount');
+    const completionWrongCount = document.getElementById('completionWrongCount');
+    if (completionCorrectCount) completionCorrectCount.textContent = correctCount;
+    if (completionWrongCount) completionWrongCount.textContent = wrongCount;
+    
+    // 今回の学習範囲の総数
+    const total = currentWords.length;
+    
+    // +◯語覚えた表示
+    const completionGained = document.getElementById('completionGained');
+    if (completionGained) {
+        if (correctCount > 0) {
+            completionGained.textContent = `+${correctCount}語 できた！`;
+            completionGained.classList.remove('hidden');
+        } else {
+            completionGained.classList.add('hidden');
+        }
+    }
+    
+    // コンプリート判定（今回の学習範囲で全問正解したか）
+    const confettiContainer = document.getElementById('confettiContainer');
+    
+    // 今回の学習で間違いがなく、全問正解した場合にコンプリート
+    const isComplete = total > 0 && correctCount === total && wrongCount === 0;
+    
+    // 紙吹雪をクリア
+    if (confettiContainer) {
+        confettiContainer.innerHTML = '';
+    }
+    
+    // 進捗テキストを設定
+    const completionProgressText = document.getElementById('completionProgressText');
+    if (completionProgressText) {
+        completionProgressText.textContent = `${correctCount + wrongCount}/${total}語`;
+    }
+    
+    // 進捗バーを初期化（0%）
+    const completionProgressCorrect = document.getElementById('completionProgressCorrect');
+    const completionProgressWrong = document.getElementById('completionProgressWrong');
+    if (completionProgressCorrect) completionProgressCorrect.style.width = '0%';
+    if (completionProgressWrong) completionProgressWrong.style.width = '0%';
+    
+    // 復習ボタンの表示/非表示
+    const completionReviewBtn = document.getElementById('completionReviewBtn');
+    if (completionReviewBtn) {
+        if (wrongCount > 0) {
+            completionReviewBtn.classList.remove('hidden');
+            completionReviewBtn.innerHTML = `<svg class="completion-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> できなかった単語を復習（${wrongCount}語）`;
+        } else {
+            completionReviewBtn.classList.add('hidden');
+        }
+    }
+    
+    // オーバーレイを表示
+    completionOverlay.classList.remove('hidden');
+    
+    // アニメーション開始
+    requestAnimationFrame(() => {
+        completionOverlay.classList.add('show');
+        
+        // 少し遅れて進捗バーをアニメーション
+        setTimeout(() => {
+            const correctPercent = total > 0 ? (correctCount / total) * 100 : 0;
+            const wrongPercent = total > 0 ? (wrongCount / total) * 100 : 0;
+            
+            if (completionProgressCorrect) {
+                completionProgressCorrect.style.width = `${correctPercent}%`;
+            }
+            if (completionProgressWrong) {
+                completionProgressWrong.style.width = `${wrongPercent}%`;
+            }
+            
+            // 進捗バーのアニメーション完了後にCOMPLETEを表示
+            if (isComplete && completionProgressBar) {
+                // 進捗バーのアニメーションが完了するのを待つ
+                // correctアニメーション: 1秒、wrongアニメーション: 1秒（0.3秒遅延）
+                // COMPLETEの場合はwrongがないので、correctのみで1秒
+                const animationTime = 1000; // correctアニメーションの時間
+                setTimeout(() => {
+                    // すべてのCOMPLETEクラスを確実に削除（念のため）
+                    completionProgressBar.classList.remove('completion-progress-complete', 'completion-progress-complete-card', 'completion-progress-complete-input');
+                    // 強制リフローで確実に反映
+                    void completionProgressBar.offsetHeight;
+                    // 少し待ってからモードに応じたクラスを追加（アニメーションを確実に再実行）
+                    requestAnimationFrame(() => {
+                        // モードに応じて異なるCOMPLETE表示クラスを追加
+                        // 英語→日本語モード（カードモード）: 青色でシンプル
+                        // 日本語→英語モード（キーボード/手書き入力）: 豪華な金色グラデーション
+                        if (selectedQuizDirection === 'jpn-to-eng') {
+                            // 日本語→英語モード（入力モード）: 豪華なCOMPLETE表示
+                            completionProgressBar.classList.add('completion-progress-complete-input');
+                        } else {
+                            // 英語→日本語モード（カードモード）: 青色のCOMPLETE表示
+                            completionProgressBar.classList.add('completion-progress-complete-card');
+                        }
+                    });
+                }, animationTime + 100); // 少し余裕を持たせる
+            }
+        }, 300);
+        
+        // コンプリート時は紙吹雪を表示
+        if (isComplete && confettiContainer) {
+            createConfetti(confettiContainer);
+        }
+        
+        // 目標達成チェック（学習完了時に判定して、ホーム画面に戻った時に表示）
+        const selectedSchool = loadSelectedSchool();
+        if (selectedSchool) {
+            const learnedWords = calculateTotalLearnedWords();
+            const requiredWords = calculateRequiredWords(selectedSchool.hensachi, selectedSchool.name);
+            const hasReachedRequired = requiredWords > 0 && learnedWords >= requiredWords;
+            
+            console.log('学習完了時の目標達成チェック:', {
+                learnedWords,
+                requiredWords,
+                hasReachedRequired,
+                hasReachedGoalBefore
+            });
+            
+            if (hasReachedRequired && !hasReachedGoalBefore) {
+                console.log('目標達成を検出！ホーム画面に戻った時に表示します');
+                pendingGoalCelebration = true;
+            }
+        }
+    });
+}
+
+// 紙吹雪を生成
+function createConfetti(container) {
+    const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
+    const confettiCount = 60;
+    
+    for (let i = 0; i < confettiCount; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 細長い長方形の紙吹雪
+            const width = Math.random() * 6 + 4;
+            const height = Math.random() * 12 + 8;
+            confetti.style.width = width + 'px';
+            confetti.style.height = height + 'px';
+            confetti.style.borderRadius = '1px';
+            
+            // アニメーション時間
+            const duration = Math.random() * 2 + 3;
+            confetti.style.animationDuration = duration + 's';
+            confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+            
+            // 横揺れの強さ（左右ランダム）
+            const swayDirection = Math.random() > 0.5 ? 1 : -1;
+            const swayAmount1 = (Math.random() * 40 + 20) * swayDirection;
+            const swayAmount2 = (Math.random() * 35 + 15) * -swayDirection;
+            const swayAmount3 = (Math.random() * 30 + 15) * swayDirection;
+            const swayAmount4 = (Math.random() * 25 + 10) * -swayDirection;
+            
+            // 回転角度
+            const rotateStart = Math.random() * 360;
+            const rotateEnd = rotateStart + (Math.random() * 720 + 360) * (Math.random() > 0.5 ? 1 : -1);
+            
+            // ランダムなキーフレームポイント（各紙吹雪で異なる高さで揺れる）
+            const p1 = 15 + Math.random() * 10;  // 15-25%
+            const p2 = 35 + Math.random() * 10;  // 35-45%
+            const p3 = 55 + Math.random() * 10;  // 55-65%
+            const p4 = 75 + Math.random() * 10;  // 75-85%
+            
+            // 個別のキーフレームアニメーション（linearでスムーズに）
+            const keyframes = `
+                @keyframes confettiFall${i} {
+                    0% {
+                        transform: translateY(0) translateX(0) rotate(${rotateStart}deg) rotateX(0deg);
+                        opacity: 1;
+                    }
+                    ${p1}% {
+                        transform: translateY(${p1}vh) translateX(${swayAmount1}px) rotate(${rotateStart + (rotateEnd - rotateStart) * (p1/100)}deg) rotateX(${90 * (p1/25)}deg);
+                    }
+                    ${p2}% {
+                        transform: translateY(${p2}vh) translateX(${swayAmount2}px) rotate(${rotateStart + (rotateEnd - rotateStart) * (p2/100)}deg) rotateX(${180 * (p2/45)}deg);
+                    }
+                    ${p3}% {
+                        transform: translateY(${p3}vh) translateX(${swayAmount3}px) rotate(${rotateStart + (rotateEnd - rotateStart) * (p3/100)}deg) rotateX(${270 * (p3/65)}deg);
+                    }
+                    ${p4}% {
+                        transform: translateY(${p4}vh) translateX(${swayAmount4}px) rotate(${rotateStart + (rotateEnd - rotateStart) * (p4/100)}deg) rotateX(${360 * (p4/85)}deg);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translateY(105vh) translateX(${swayAmount1 * 0.3}px) rotate(${rotateEnd}deg) rotateX(450deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            const style = document.createElement('style');
+            style.textContent = keyframes;
+            document.head.appendChild(style);
+            
+            confetti.style.animationName = `confettiFall${i}`;
+            confetti.style.animationTimingFunction = 'linear';
+            container.appendChild(confetti);
+            
+            // アニメーション終了後に削除
+            setTimeout(() => {
+                confetti.remove();
+                style.remove();
+            }, (duration + 0.5) * 1000);
+        }, i * 25);
+    }
+}
+
+// 目標達成の演出（無効化）
+function showGoalAchievedCelebration(school) {
+    // 機能削除済み
+}
+
+// 目標達成演出を閉じる（無効化）
+function hideGoalAchievedCelebration() {
+    // 機能削除済み
+}
+
+// 目標達成用の花火アニメーション（リアル版）
+function createFireworks(container) {
+    const rect = container.getBoundingClientRect();
+    const W = rect.width;
+    const H = rect.height;
+    
+    const colorSets = [
+        ['#ff4757', '#ff6b81', '#ff8a9b'], // 赤
+        ['#ffa502', '#ffbe4d', '#ffd580'], // オレンジ
+        ['#2ed573', '#5ce08a', '#8beba6'], // 緑
+        ['#1e90ff', '#54a9ff', '#8ac4ff'], // 青
+        ['#a55eea', '#bb7ff0', '#d4a5f5'], // 紫
+        ['#fd79a8', '#fe9bb8', '#ffbdd0'], // ピンク
+        ['#00d2d3', '#4de0e1', '#80e9ea'], // シアン
+        ['#fdcb6e', '#fed990', '#fee6b3'], // 黄
+    ];
+    
+    // 打ち上げ花火を1つ作成
+    function launchFirework(startX) {
+        const targetY = H * (0.2 + Math.random() * 0.15);
+        const colors = colorSets[Math.floor(Math.random() * colorSets.length)];
+        
+        // ロケット
+        const rocket = document.createElement('div');
+        rocket.className = 'fw-rocket';
+        rocket.style.left = startX + 'px';
+        rocket.style.top = H + 'px';
+        container.appendChild(rocket);
+        
+        // 打ち上げ時間（ゆっくり）
+        const launchDuration = 1200 + Math.random() * 400;
+        
+        // 打ち上げアニメーション
+        const launchAnim = rocket.animate([
+            { top: H + 'px' },
+            { top: targetY + 'px' }
+        ], {
+            duration: launchDuration,
+            easing: 'ease-out',
+            fill: 'forwards'
+        });
+        
+        // 軌跡を追加
+        const trailElements = [];
+        let trailInterval = setInterval(() => {
+            const t = document.createElement('div');
+            t.className = 'fw-trail';
+            t.style.left = (startX + (Math.random() - 0.5) * 6) + 'px';
+            const progress = launchAnim.currentTime / launchDuration;
+            const yPos = H - (H - targetY) * progress;
+            t.style.top = yPos + 'px';
+            t.style.background = `rgba(255, 240, 200, ${0.9 - progress * 0.5})`;
+            container.appendChild(t);
+            trailElements.push(t);
+            
+            t.animate([
+                { opacity: 0.9, transform: 'scale(1.2)' },
+                { opacity: 0, transform: 'scale(0.3)' }
+            ], { duration: 500, fill: 'forwards' }).onfinish = () => t.remove();
+        }, 50);
+        
+        launchAnim.onfinish = () => {
+            clearInterval(trailInterval);
+            rocket.remove();
+            trailElements.forEach(t => t.remove());
+            
+            // 爆発
+            explode(startX, targetY, colors);
+        };
+    }
+    
+    // 爆発
+    function explode(cx, cy, colors) {
+        const mainCount = 40;
+        const innerCount = 20;
+        
+        // メインの爆発（外側・大きく）
+        for (let i = 0; i < mainCount; i++) {
+            const angle = (Math.PI * 2 / mainCount) * i + (Math.random() - 0.5) * 0.2;
+            const speed = 180 + Math.random() * 80;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            createParticle(cx, cy, angle, speed, color, 8 + Math.random() * 4, 2000);
+        }
+        
+        // 内側の爆発
+        for (let i = 0; i < innerCount; i++) {
+            const angle = (Math.PI * 2 / innerCount) * i + Math.random() * 0.3;
+            const speed = 80 + Math.random() * 50;
+            const color = colors[0];
+            
+            createParticle(cx, cy, angle, speed, color, 6 + Math.random() * 3, 1600);
+        }
+        
+        // 白いスパーク（大きめ）
+        for (let i = 0; i < 25; i++) {
+            const spark = document.createElement('div');
+            spark.className = 'fw-spark';
+            spark.style.width = '4px';
+            spark.style.height = '4px';
+            spark.style.left = cx + 'px';
+            spark.style.top = cy + 'px';
+            container.appendChild(spark);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 40 + Math.random() * 60;
+            const endX = Math.cos(angle) * dist;
+            const endY = Math.sin(angle) * dist;
+            
+            spark.animate([
+                { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                { transform: `translate(${endX}px, ${endY}px) scale(0)`, opacity: 0 }
+            ], { duration: 700, easing: 'ease-out', fill: 'forwards' }).onfinish = () => spark.remove();
+        }
+    }
+    
+    // パーティクル（重力で落下）
+    function createParticle(cx, cy, angle, speed, color, size, duration) {
+        const p = document.createElement('div');
+        p.className = 'fw-particle';
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.background = color;
+        p.style.left = cx + 'px';
+        p.style.top = cy + 'px';
+        container.appendChild(p);
+        
+        const vx = Math.cos(angle) * speed;
+        const vy = Math.sin(angle) * speed;
+        const gravity = 60;
+        
+        // 物理演算でキーフレーム生成
+        const frames = [];
+        const steps = 25;
+        for (let i = 0; i <= steps; i++) {
+            const t = i / steps;
+            const time = t * (duration / 1000);
+            const x = vx * time * 0.7;
+            const y = vy * time * 0.7 + 0.5 * gravity * time * time;
+            const scale = 1 - t * 0.6;
+            const opacity = 1 - t * 0.9;
+            frames.push({
+                transform: `translate(${x}px, ${y}px) scale(${scale})`,
+                opacity: opacity
+            });
+        }
+        
+        p.animate(frames, {
+            duration: duration,
+            easing: 'ease-out',
+            fill: 'forwards'
+        }).onfinish = () => p.remove();
+        
+        // 尾を引く
+        let tailCount = 0;
+        const tailInterval = setInterval(() => {
+            tailCount++;
+            if (tailCount > 10) {
+                clearInterval(tailInterval);
+                return;
+            }
+            
+            const progress = tailCount / 10;
+            const time = progress * (duration / 1000) * 0.4;
+            const tx = cx + vx * time * 0.7;
+            const ty = cy + vy * time * 0.7 + 0.5 * gravity * time * time;
+            
+            const tail = document.createElement('div');
+            tail.className = 'fw-particle';
+            tail.style.width = (size * 0.5) + 'px';
+            tail.style.height = (size * 0.5) + 'px';
+            tail.style.background = color;
+            tail.style.left = tx + 'px';
+            tail.style.top = ty + 'px';
+            container.appendChild(tail);
+            
+            tail.animate([
+                { opacity: 0.7, transform: 'scale(1)' },
+                { opacity: 0, transform: 'scale(0.3)' }
+            ], { duration: 400, fill: 'forwards' }).onfinish = () => tail.remove();
+        }, 80);
+    }
+    
+    // 8発の花火を打ち上げ（ゆっくり間隔）
+    const launchPositions = [0.3, 0.7, 0.5, 0.25, 0.75, 0.4, 0.6, 0.5];
+    launchPositions.forEach((xRatio, i) => {
+            setTimeout(() => {
+            launchFirework(W * xRatio + (Math.random() - 0.5) * 30);
+        }, i * 700);
+    });
+}
+
+// 完了画面を閉じる
+function hideCompletion() {
+    const completionOverlay = document.getElementById('completionOverlay');
+    if (completionOverlay) {
+        completionOverlay.classList.remove('show');
+        setTimeout(() => {
+            completionOverlay.classList.add('hidden');
+            // アニメーション関連のクラスを削除して、次回の表示時に確実に再実行されるようにする
+            const completionProgressBar = document.querySelector('.completion-progress-bar');
+            if (completionProgressBar) {
+                completionProgressBar.classList.remove('completion-progress-complete', 'completion-progress-complete-card', 'completion-progress-complete-input');
+            }
+        }, 300);
+    }
+}
+
+// 単元メニュー（コース選択画面）に戻る
+function returnToCourseSelection() {
+    const category = selectedCategory;
+    
+    // 学習モードをリセット
+    document.body.classList.remove('learning-mode');
+    updateThemeColor(false);
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent) {
+        mainContent.classList.add('hidden');
+    }
+    
+    // カテゴリーに応じて単語データを取得
+    let categoryWords;
+    if (category === '小学生で習った単語とカテゴリー別に覚える単語') {
+        // vocabulary-data.jsから取得（優先）
+        if (typeof getElementaryVocabulary !== 'undefined' && typeof getElementaryVocabulary === 'function') {
+            categoryWords = getElementaryVocabulary();
+        } else if (typeof elementaryWordData !== 'undefined') {
+            // 既存のelementaryWordDataとの互換性
+            categoryWords = elementaryWordData;
+        } else {
+            showCategorySelection();
+            return;
+        }
+    } else if (category === 'LEVEL1 超重要単語400' || category === 'LEVEL2 重要単語300' || category === 'LEVEL3 差がつく単語200' || 
+               category === 'LEVEL4 私立高校入試レベル' || category === 'LEVEL5 難関私立高校入試レベル') {
+        // レベル別単語：vocabulary-data.jsから取得
+        if (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function') {
+            const allWords = getAllVocabulary();
+            categoryWords = allWords.filter(word => word.category === category);
+    } else {
+            showCategorySelection();
+            return;
+        }
+    } else {
+        // vocabulary-data.jsから取得を試みる
+        if (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function') {
+            const allWords = getAllVocabulary();
+            categoryWords = allWords.filter(word => word.category === category);
+        } else {
+            // フォールバック：wordDataから検索
+            categoryWords = wordData.filter(word => word.category === category);
+        }
+    }
+    
+    if (!categoryWords || categoryWords.length === 0) {
+        showCategorySelection();
+        return;
+    }
+    
+    // コース選択画面を表示
+    showCourseSelection(category, categoryWords);
+}
+
+// 覚えていない単語を復習
+function reviewWrongWords() {
+    // 今回のセッションで間違えた単語を取得（questionStatusを使用）
+    const wrongWordsInSession = currentWords.filter((word, index) => {
+        return questionStatus[index] === 'wrong';
+    });
+    
+    // 間違えた単語がない場合は、完了画面を閉じずに通知を表示
+    if (wrongWordsInSession.length === 0) {
+        showAlert('通知', 'できなかった単語はありません');
+        return;
+    }
+    
+    // 完了画面を先に閉じる
+    hideCompletion();
+    
+    // 現在表示されている学習画面を非表示にする
+    const handwritingQuizView = document.getElementById('handwritingQuizView');
+    const inputMode = document.getElementById('inputMode');
+    const cardTopSection = document.querySelector('.card-top-section');
+    const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
+    if (handwritingQuizView) handwritingQuizView.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (cardTopSection) cardTopSection.classList.add('hidden');
+    if (wordCard) wordCard.classList.add('hidden');
+    if (wordCardContainer) wordCardContainer.classList.add('hidden');
+    
+    // テストモードのクラスをリセット
+    document.body.classList.remove('quiz-test-mode');
+    updateThemeColorForTest(false);
+    
+    // テストモード用の進捗表示を非表示
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress) testModeProgress.classList.add('hidden');
+    const hwTestModeProgress = document.getElementById('hwTestModeProgress');
+    if (hwTestModeProgress) hwTestModeProgress.classList.add('hidden');
+    
+    // 復習画面を表示（通常の展開モードと同じ処理）
+    showInputModeDirectly(selectedCategory, wrongWordsInSession, currentFilterCourseTitle || selectedCategory);
+}
+
+// 進捗バーのセグメントを生成（問題数に応じて表示）
+function createProgressSegments(total) {
+    // 共通のコンテナを使用
+    const container = document.getElementById('progressBarContainer');
+    
+    if (!container) return;
+    
+    // 表示範囲を計算
+    const displayStart = progressBarStartIndex;
+    const displayEnd = Math.min(displayStart + PROGRESS_BAR_DISPLAY_COUNT, total);
+    const displayCount = displayEnd - displayStart;
+    
+    // 問題数に応じてセグメントの幅を計算（gapは2px）
+    const gapWidth = 2;
+    const segmentWidth = displayCount > 0 ? `calc((100% - ${(displayCount - 1) * gapWidth}px) / ${displayCount})` : '100%';
+    
+    container.innerHTML = '';
+    for (let i = displayStart; i < displayEnd; i++) {
+        const segment = document.createElement('div');
+        segment.className = 'progress-segment';
+        segment.dataset.index = i;
+        segment.style.width = segmentWidth;
+        
+        // アウトプットモード（カードモード）のときはクリック不可
+        if (currentLearningMode !== 'input') {
+            segment.classList.add('progress-segment-disabled');
+        }
+        
+        // 最後のセグメントの場合はフラッグマークを追加
+        if (i === total - 1) {
+            const flagSpan = document.createElement('span');
+            flagSpan.className = 'progress-segment-number progress-segment-flag';
+            flagSpan.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" fill="#ffffff"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>';
+            segment.appendChild(flagSpan);
+        }
+        
+        segment.addEventListener('click', () => {
+            // アウトプットモード（カードモード）のときは移動できない
+            if (currentLearningMode !== 'input') {
+                return;
+            }
+            
+            const targetIndex = parseInt(segment.dataset.index);
+            const absoluteIndex = currentRangeStart + targetIndex;
+            if (absoluteIndex >= currentRangeStart && absoluteIndex < currentRangeEnd) {
+                currentIndex = absoluteIndex;
+                
+                // 四択問題モードの場合
+                if (isChoiceQuestionModeActive) {
+                    currentChoiceQuestionIndex = absoluteIndex;
+                    choiceAnswerSubmitted = false;
+                    displayCurrentChoiceQuestion();
+                    updateStats();
+                    updateNavButtons();
+                    return;
+                }
+                
+                // 整序英作文モードの場合
+                if (isReorderModeActive) {
+                    currentReorderIndex = absoluteIndex;
+                    reorderAnswerSubmitted = false;
+                    displayCurrentReorderQuestion();
+                    updateStats();
+                    updateNavButtons();
+                    return;
+                }
+                
+                // 例文モードの場合
+                if (isSentenceModeActive) {
+                    currentSentenceIndex = absoluteIndex;
+                    sentenceAnswerSubmitted = false;
+                    displayCurrentSentence();
+                    updateStats();
+                    updateNavButtons();
+                    return;
+                }
+                
+                // 通常モードの場合
+                isCardRevealed = false;
+                inputAnswerSubmitted = false;
+                if (elements.wordCard) {
+                    elements.wordCard.classList.remove('flipped');
+                }
+                // currentLearningMode === 'input'の場合はカードモードとして表示
+                if (isInputModeActive && currentLearningMode !== 'input') {
+                    displayInputMode();
+                } else {
+                    displayCurrentWord();
+                }
+                updateStats();
+                updateNavButtons();
+            }
+        });
+        container.appendChild(segment);
+    }
+    
+    // セグメントの色を設定
+    let currentQuestionIndex;
+    if (isChoiceQuestionModeActive) {
+        currentQuestionIndex = currentChoiceQuestionIndex - currentRangeStart;
+    } else if (isReorderModeActive) {
+        currentQuestionIndex = currentReorderIndex - currentRangeStart;
+    } else if (isSentenceModeActive) {
+        currentQuestionIndex = currentSentenceIndex - currentRangeStart;
+    } else {
+        currentQuestionIndex = currentIndex - currentRangeStart;
+    }
+    const segments = container.querySelectorAll('.progress-segment');
+    segments.forEach((segment) => {
+        const segmentIndex = parseInt(segment.dataset.index);
+        segment.classList.remove('correct', 'wrong', 'current');
+        
+        // 現在の問題をハイライト（タイムアタックモードのときは表示しない）
+        if (!isTimeAttackMode && segmentIndex === currentQuestionIndex) {
+            segment.classList.add('current');
+        }
+        
+        // 回答状況に応じて色を設定（タイムアタックモードでも色をつける）
+        if (questionStatus[segmentIndex] === 'correct') {
+            segment.classList.add('correct');
+        } else if (questionStatus[segmentIndex] === 'wrong') {
+            segment.classList.add('wrong');
+        }
+    });
+    
+    // 矢印ボタンの状態を更新
+    updateProgressNavButtons(total);
+}
+
+// 進捗バーのセグメントを更新
+function updateProgressSegments() {
+    // テストモードかどうかを判定
+    let total;
+    let currentQuestionIndex;
+    
+    {
+        // 通常モードの場合
+        total = currentRangeEnd - currentRangeStart;
+        // モードに応じて現在のインデックスを取得
+        if (isChoiceQuestionModeActive) {
+            currentQuestionIndex = currentChoiceQuestionIndex - currentRangeStart;
+        } else if (isReorderModeActive) {
+            currentQuestionIndex = currentReorderIndex - currentRangeStart;
+        } else if (isSentenceModeActive) {
+            currentQuestionIndex = currentSentenceIndex - currentRangeStart;
+        } else {
+            currentQuestionIndex = currentIndex - currentRangeStart;
+        }
+    }
+    
+    // 共通のコンテナを使用
+    const container = document.getElementById('progressBarContainer');
+    
+    if (!container) return;
+    
+    const segments = container.querySelectorAll('.progress-segment');
+    
+    segments.forEach((segment) => {
+        const segmentIndex = parseInt(segment.dataset.index);
+        segment.classList.remove('correct', 'wrong', 'current');
+        
+        // 回答状況に応じて色を設定（タイムアタックモードでも色をつける）
+        if (questionStatus[segmentIndex] === 'correct') {
+            segment.classList.add('correct');
+        } else if (questionStatus[segmentIndex] === 'wrong') {
+            segment.classList.add('wrong');
+        }
+        
+        // 現在の問題をハイライト（タイムアタックモードのときは表示しない）
+        // currentクラスを最後に追加して、correct/wrongと併用できるようにする
+        if (!isTimeAttackMode && segmentIndex === currentQuestionIndex) {
+            segment.classList.add('current');
+        }
+    });
+    
+    // 表示範囲のテキストを更新
+    updateProgressRangeText(total);
+}
+
+// 進捗バーの表示範囲テキストと矢印ボタンの状態を更新
+function updateProgressNavButtons(total) {
+    // 表示範囲のテキストを更新
+    updateProgressRangeText(total);
+    
+    // 矢印ボタンの表示/非表示と状態を更新
+    const progressNavLeft = document.getElementById('progressNavLeft');
+    const progressNavRight = document.getElementById('progressNavRight');
+    
+    if (progressNavLeft) {
+        const canGoLeft = progressBarStartIndex > 0;
+        progressNavLeft.style.display = canGoLeft ? 'flex' : 'none';
+        progressNavLeft.disabled = !canGoLeft;
+    }
+    
+    if (progressNavRight) {
+        const canGoRight = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT < total;
+        progressNavRight.style.display = canGoRight ? 'flex' : 'none';
+        progressNavRight.disabled = !canGoRight;
+    }
+}
+
+// 進捗バーの表示範囲テキストを更新
+function updateProgressRangeText(total) {
+    const rangeText = document.getElementById('progressRangeText');
+    if (!rangeText) return;
+    
+    const displayStart = progressBarStartIndex + 1; // 1から始まる番号
+    const displayEnd = Math.min(progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT, total);
+    
+    rangeText.textContent = `No.${displayStart}-${displayEnd}`;
+}
+
+// 進捗バーを左にスクロール
+function scrollProgressBarLeft() {
+    const total = currentRangeEnd - currentRangeStart;
+    if (progressBarStartIndex > 0) {
+        // 20個ずつ前の範囲に移動
+        progressBarStartIndex = Math.max(0, progressBarStartIndex - PROGRESS_BAR_DISPLAY_COUNT);
+        createProgressSegments(total);
+        updateProgressSegments(); // セグメントの色を更新
+        updateNavButtons(); // ボタン状態を更新
+    }
+}
+
+// 進捗バーを右にスクロール（次の20個へ）
+function scrollProgressBarRight() {
+    const total = currentRangeEnd - currentRangeStart;
+    if (progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT < total) {
+        // 20個ずつ次の範囲に移動
+        progressBarStartIndex = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT;
+        createProgressSegments(total);
+        updateProgressSegments(); // セグメントの色を更新
+        updateNavButtons(); // ボタン状態を更新
+    }
+}
+
+// カードスタックを更新（残り枚数に応じて表示）
+function updateCardStack() {
+    const remainingCards = currentRangeEnd - currentIndex;
+    
+    const stack1 = document.getElementById('cardStack1');
+    const stack2 = document.getElementById('cardStack2');
+    const stack3 = document.getElementById('cardStack3');
+    const stack4 = document.getElementById('cardStack4');
+    const stack5 = document.getElementById('cardStack5');
+    
+    if (stack1) {
+        stack1.classList.toggle('hidden', remainingCards <= 1);
+    }
+    if (stack2) {
+        stack2.classList.toggle('hidden', remainingCards <= 2);
+    }
+    if (stack3) {
+        stack3.classList.toggle('hidden', remainingCards <= 3);
+    }
+    if (stack4) {
+        stack4.classList.toggle('hidden', remainingCards <= 4);
+    }
+    if (stack5) {
+        stack5.classList.toggle('hidden', remainingCards <= 5);
+    }
+}
+
+// 統計を更新
+function updateStats() {
+    let total;
+    let currentPosition;
+    let relativeIndex;
+    
+    {
+        // 通常モードの場合
+        total = currentRangeEnd - currentRangeStart;
+        // 現在見ている英単語の位置（1から始まる）
+        currentPosition = currentIndex + 1;
+        relativeIndex = currentIndex - currentRangeStart;
+    }
+    
+    // 共通の進捗テキストを更新
+    if (elements.progressText) {
+        elements.progressText.textContent = `${currentPosition} / ${total}`;
+    }
+    
+    // テストモード用の進捗表示も更新
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress && document.body.classList.contains('quiz-test-mode')) {
+        testModeProgress.textContent = `${currentPosition}/${total}`;
+    }
+    
+    // 正解数・不正解数・正解率の表示は常に非表示
+    const progressStatsScores = document.querySelector('.progress-stats-scores');
+    if (progressStatsScores) {
+        progressStatsScores.style.display = 'none';
+    }
+    
+    // タイムアタックモードの場合、タイマー表示を更新（内部処理のみ、表示はしない）
+    if (isTimeAttackMode) {
+        updateTimerDisplay();
+    }
+    
+    // 進捗バーのセグメントを生成
+    const container = document.getElementById('progressBarContainer');
+    
+    // totalが0より大きい場合、セグメントを生成
+    if (total > 0 && container) {
+        // 現在のインデックスが表示範囲外に出たか確認
+        const displayStart = progressBarStartIndex;
+        const displayEnd = progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT;
+        
+        if (relativeIndex < displayStart || relativeIndex >= displayEnd) {
+            // 現在のインデックスが含まれる範囲に切り替え
+            progressBarStartIndex = Math.floor(relativeIndex / PROGRESS_BAR_DISPLAY_COUNT) * PROGRESS_BAR_DISPLAY_COUNT;
+            // totalを超えないようにする
+            progressBarStartIndex = Math.min(progressBarStartIndex, Math.max(0, total - 1));
+            createProgressSegments(total);
+        }
+        
+        // セグメント数が合わない場合は生成（表示範囲の20個分のみ）
+        const expectedSegmentCount = Math.min(PROGRESS_BAR_DISPLAY_COUNT, total - progressBarStartIndex);
+        if (container.children.length !== expectedSegmentCount) {
+            createProgressSegments(total);
+        }
+        
+        // セグメントの色を更新
+        updateProgressSegments();
+    }
+}
+
+// リセット
+function resetApp() {
+    showConfirm('学習をリセットしますか？').then(result => {
+        if (result) {
+            if (selectedCategory && selectedCategory !== '復習チェック' && selectedCategory !== '間違い復習') {
+                resetProgress(selectedCategory);
+            }
+            if (selectedCategory) {
+                startCategory(selectedCategory);
+            } else {
+                showCategorySelection();
+            }
+        }
+    });
+}
+
+// 学習履歴を消す
+function clearLearningHistory() {
+    showConfirm('全ての学習履歴を消去しますか？\n（正解・間違い・復習チェック・進捗が全て消えます）').then(result => {
+        if (result) {
+            // 全ての学習履歴をクリア
+            correctWords.clear();
+            wrongWords.clear();
+            reviewWords.clear();
+            
+            // localStorageからも削除
+            localStorage.removeItem('correctWords');
+            localStorage.removeItem('wrongWords');
+            localStorage.removeItem('reviewWords');
+            localStorage.removeItem('learningProgress');
+            
+            // カテゴリーごとの進捗も削除
+            const categories = ['小学生で習った単語とカテゴリー別に覚える単語', 'LEVEL1 超重要単語400', 'LEVEL2 重要単語300', 'LEVEL3 差がつく単語200', 'LEVEL4 私立高校入試レベル', 'LEVEL5 難関私立高校入試レベル'];
+            categories.forEach(category => {
+                localStorage.removeItem(`correctWords-${category}`);
+                localStorage.removeItem(`wrongWords-${category}`);
+            });
+            
+            // すべてのlocalStorageキーを確認して、カテゴリー関連のものを削除
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('correctWords-') || key.startsWith('wrongWords-') || key.startsWith('ivCorrect-') || key.startsWith('ivWrong-'))) {
+                    keysToRemove.push(key);
+                }
+            }
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+            
+            
+            // 画面を更新
+            if (elements.categorySelection && !elements.categorySelection.classList.contains('hidden')) {
+                loadData();
+                updateCategoryStars();
+            }
+            
+            // 進捗バーを更新
+            updateVocabProgressBar();
+            
+            showAlert('通知', '学習履歴を消去しました。');
+        }
+    });
+}
+
+// シャッフル
+
+// ホーム画面追加オーバレイを表示（インストールされていない場合のみ毎回表示）
+function checkAndShowInstallPrompt() {
+    // PWAとして既にインストールされているかチェック
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        return; // インストール済みの場合は表示しない
+    }
+    
+    // 少し遅延して表示（ページ読み込み後）
+    setTimeout(() => {
+        showInstallOverlay();
+    }, 1000);
+}
+
+function showInstallOverlay() {
+    const overlay = document.getElementById('installOverlay');
+    const message = document.getElementById('installMessage');
+    const instructions = document.getElementById('installInstructions');
+    const closeBtn = document.getElementById('installCloseBtn');
+    
+    if (!overlay || !message || !instructions || !closeBtn) return;
+    
+    // iOSかAndroidかを判定
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    
+    if (isIOS) {
+        // iOS用の説明
+        message.textContent = 'このアプリをホーム画面に追加すると、より快適に学習できます。';
+        const shareImgPath = new URL('share.png', window.location.href).href;
+        instructions.innerHTML = `
+            <ol>
+                <li>画面下部の共有ボタン <img src="${shareImgPath}" alt="共有" style="width: 20px; height: 20px; vertical-align: middle; display: inline-block; margin: 0 4px;"> をタップ</li>
+                <li>「ホーム画面に追加」を選択</li>
+                <li>「追加」をタップ</li>
+            </ol>
+        `;
+    } else if (isAndroid) {
+        // Android用の説明
+        message.textContent = 'このアプリをホーム画面に追加すると、より快適に学習できます。';
+        instructions.innerHTML = `
+            <ol>
+                <li>ブラウザのメニュー <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg> を開く</li>
+                <li>「ホーム画面に追加」または「アプリをインストール」を選択</li>
+                <li>確認画面で「追加」をタップ</li>
+            </ol>
+        `;
+    } else {
+        // その他のデバイス
+        message.textContent = 'このアプリをホーム画面に追加すると、より快適に学習できます。';
+        instructions.innerHTML = `
+            <ol>
+                <li>ブラウザのメニューから「ホーム画面に追加」を選択</li>
+                <li>確認画面で「追加」をクリック</li>
+            </ol>
+        `;
+    }
+    
+    // 閉じるボタンのイベント
+    closeBtn.onclick = () => {
+        closeInstallOverlay();
+    };
+    
+    // オーバレイの背景クリックで閉じる
+    overlay.onclick = (e) => {
+        if (e.target === overlay) {
+            closeInstallOverlay();
+        }
+    };
+    
+    // 表示
+    overlay.classList.remove('hidden');
+    setTimeout(() => {
+        overlay.classList.add('active');
+    }, 10);
+}
+
+function closeInstallOverlay() {
+    SoundEffects.playClose();
+    const overlay = document.getElementById('installOverlay');
+    if (!overlay) return;
+    
+    overlay.classList.remove('active');
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+    }, 300);
+}
+
+// 厳選例文暗記モードで学習を初期化
+function initSentenceModeLearning(category) {
+    selectedCategory = category;
+    sentenceData = sentenceMemorizationData;
+    isSentenceModeActive = true;
+    isInputModeActive = false; // 入力モードを無効化
+    document.body.classList.add('sentence-mode-active');
+    document.body.classList.remove('reorder-mode-active');
+    currentSentenceIndex = 0;
+    sentenceAnswerSubmitted = false;
+    
+    currentRangeStart = 0;
+    currentRangeEnd = sentenceData.length;
+    currentIndex = 0;
+    
+    answeredWords.clear();
+    correctCount = 0;
+    wrongCount = 0;
+    questionStatus = new Array(sentenceData.length).fill(null);
+    
+    // 前回の回答状況を読み込んで進捗バーに反映
+    if (category) {
+        const { correctSet, wrongSet } = loadCategoryWords(category);
+        sentenceData.forEach((sentence, index) => {
+            if (wrongSet.has(sentence.id)) {
+                questionStatus[index] = 'wrong';
+            } else if (correctSet.has(sentence.id)) {
+                questionStatus[index] = 'correct';
+            }
+        });
+    }
+
+    elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
+    elements.mainContent.classList.remove('hidden');
+    if (elements.unitName) {
+        // 入試得点力アップコースの場合はカテゴリー名を直接使用
+        const scoreUpCategories = [
+            '英文法中学３年間の総復習',
+            '大阪B問題対策 厳選例文暗記60【和文英訳対策】',
+            '条件英作文特訓コース',
+            '大阪C問題対策英単語タイムアタック',
+            '大阪C問題対策 英作写経ドリル',
+            '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】',
+            'C問題対策 大問1整序英作文【四択問題】'
+        ];
+        let displayTitle;
+        if (scoreUpCategories.includes(category)) {
+            // 入試得点力アップコースの場合はカテゴリー名をそのまま使用
+            displayTitle = category;
+        } else {
+            // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
+            displayTitle = currentFilterCourseTitle || category;
+        }
+        const formattedTitle = formatTitleWithLevelBadge(displayTitle);
+        if (formattedTitle !== displayTitle) {
+            elements.unitName.innerHTML = formattedTitle;
+        } else {
+        elements.unitName.textContent = displayTitle;
+        }
+    }
+    
+    // テーマカラーを先に更新（クラス追加の前に）
+    updateThemeColor(true);
+    document.body.classList.add('learning-mode');
+    
+    // ヘッダーをテストモードに更新（白背景、真ん中に進捗、右上に×ボタン）
+    updateHeaderButtons('learning', '', true);
+    
+    // テストモード用のUIを有効化（白背景ヘッダー、中央に進捗表示）
+    document.body.classList.add('quiz-test-mode');
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress) {
+        testModeProgress.classList.remove('hidden');
+        testModeProgress.textContent = `1/${sentenceData.length}`;
+    }
+    
+    // ×ボタン表示、その他非表示
+    const memoPadBtn = document.getElementById('memoPadBtn');
+    const unitTestBtn = document.getElementById('unitTestBtn');
+    const unitPauseBtn = document.getElementById('unitPauseBtn');
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    if (memoPadBtn) memoPadBtn.classList.add('hidden');
+    if (unitTestBtn) unitTestBtn.classList.add('hidden');
+    if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
+    if (inputBackBtn) inputBackBtn.classList.add('hidden');
+
+    // カードモード、入力モード、整序英作文モードを非表示、例文モードを表示
+    const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
+    const inputMode = document.getElementById('inputMode');
+    const inputListView = document.getElementById('inputListView');
+    const sentenceMode = document.getElementById('sentenceMode');
+    const reorderMode = document.getElementById('reorderMode');
+    const cardHint = document.getElementById('cardHint');
+    const progressStepButtons = document.querySelector('.progress-step-buttons');
+    const choiceMode = document.getElementById('choiceQuestionMode');
+    if (wordCard) wordCard.classList.add('hidden');
+    if (wordCardContainer) wordCardContainer.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (inputListView) inputListView.classList.add('hidden');
+    if (reorderMode) reorderMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.add('hidden');
+    if (sentenceMode) sentenceMode.classList.remove('hidden');
+    // モードフラグをリセット
+    isInputModeActive = false;
+    isReorderModeActive = false;
+    isChoiceQuestionModeActive = false;
+    document.body.classList.remove('choice-question-mode-active');
+    if (cardHint) cardHint.classList.add('hidden');
+    // 例文モードのときは進捗バーのボタンを表示（テキストは「前の問題へ・次の問題へ」に変更）
+    if (progressStepButtons) progressStepButtons.classList.remove('hidden');
+    updateNavButtons(); // ボタンのテキストと状態を更新
+    
+    // 進捗バーを初期化
+    initSentenceProgressBar();
+    
+    displayCurrentSentence();
+    // 進捗バーのセグメントを生成
+    const total = currentRangeEnd - currentRangeStart;
+    if (total > 0) {
+        createProgressSegments(total);
+    }
+    updateStats();
+    updateNavState('learning');
+    setupSentenceKeyboard();
+    
+    // ボタンの状態をリセット
+    resetSentenceButtons();
+}
+
+// 例文モードのボタンをリセット
+function resetSentenceButtons() {
+    const decideBtn = document.getElementById('sentenceKeyboardDecide');
+    const passBtn = document.getElementById('sentenceKeyboardPass');
+    
+    if (decideBtn) {
+        decideBtn.textContent = '解答';
+    }
+    
+    if (passBtn) {
+        passBtn.style.display = '';
+    }
+}
+
+// 厳選例文暗記モードの進捗バーを初期化
+function initSentenceProgressBar() {
+    const container = document.getElementById('sentenceProgressBarContainer');
+    const rangeEl = document.getElementById('sentenceProgressRange');
+    const progressText = document.getElementById('sentenceProgressText');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // 最大20セグメント表示
+    const maxSegments = Math.min(sentenceData.length, 20);
+    
+    for (let i = 0; i < maxSegments; i++) {
+        const segment = document.createElement('div');
+        segment.className = 'progress-segment';
+        container.appendChild(segment);
+    }
+    
+    // 問題番号の範囲を表示
+    if (rangeEl && sentenceData.length > 0) {
+        const firstId = sentenceData[0].id || 1;
+        const lastId = sentenceData[Math.min(19, sentenceData.length - 1)].id || Math.min(20, sentenceData.length);
+        rangeEl.textContent = `No.${firstId}-${lastId}`;
+    }
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        progressText.textContent = `0/${sentenceData.length}`;
+    }
+    
+    // 統計をリセット
+    const correctEl = document.getElementById('sentenceCorrectCount');
+    const wrongEl = document.getElementById('sentenceWrongCount');
+    if (correctEl) correctEl.textContent = '0';
+    if (wrongEl) wrongEl.textContent = '0';
+}
+
+// 厳選例文暗記モードの進捗バーを更新
+function updateSentenceProgressBar() {
+    const container = document.getElementById('sentenceProgressBarContainer');
+    const progressText = document.getElementById('sentenceProgressText');
+    const correctEl = document.getElementById('sentenceCorrectCount');
+    const wrongEl = document.getElementById('sentenceWrongCount');
+    
+    if (!container) return;
+    
+    const segments = container.querySelectorAll('.progress-segment');
+    let sentenceCorrect = 0;
+    let sentenceWrong = 0;
+    
+    segments.forEach((segment, i) => {
+        segment.classList.remove('current', 'correct', 'wrong');
+        
+        if (i === currentSentenceIndex) {
+            segment.classList.add('current');
+        } else if (questionStatus[i] === 'correct') {
+            segment.classList.add('correct');
+            sentenceCorrect++;
+        } else if (questionStatus[i] === 'wrong') {
+            segment.classList.add('wrong');
+            sentenceWrong++;
+        }
+    });
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        const answered = sentenceCorrect + sentenceWrong;
+        progressText.textContent = `${answered}/${sentenceData.length}`;
+    }
+    
+    // 統計を更新
+    if (correctEl) correctEl.textContent = String(sentenceCorrect);
+    if (wrongEl) wrongEl.textContent = String(sentenceWrong);
+}
+
+// 現在の例文を表示
+function displayCurrentSentence() {
+    if (currentSentenceIndex >= sentenceData.length) {
+        showCompletion();
+        return;
+    }
+
+    const sentence = sentenceData[currentSentenceIndex];
+    sentenceAnswerSubmitted = false;
+    currentSelectedBlankIndex = -1; // 選択状態をリセット
+    
+    // ナビゲーションボタンを表示
+    const blankNav = document.getElementById('blankNavigation');
+    if (blankNav) {
+        blankNav.classList.remove('hidden');
+    }
+    
+    // 進捗バーを更新
+    updateSentenceProgressBar();
+    
+    // テストモード用の進捗表示を更新
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress && document.body.classList.contains('quiz-test-mode')) {
+        testModeProgress.textContent = `${currentSentenceIndex + 1}/${sentenceData.length}`;
+    }
+    
+    // ヒントを非表示にリセット
+    const hintContent = document.getElementById('sentenceHintContent');
+    const hintBtn = document.getElementById('sentenceHintBtn');
+    if (hintContent) {
+        hintContent.classList.add('hidden');
+    }
+    // 矢印を▶にリセット
+    if (hintBtn) {
+        const arrowElement = hintBtn.querySelector('.hint-arrow');
+        if (arrowElement) {
+            arrowElement.textContent = '▶';
+        }
+    }
+    
+    // 日本語訳を表示
+    const japaneseEl = document.getElementById('sentenceJapanese');
+    if (japaneseEl) {
+        japaneseEl.textContent = sentence.japanese;
+    }
+    
+    // 英文を構築（空所を含む）
+    const englishEl = document.getElementById('sentenceEnglish');
+    if (englishEl) {
+        englishEl.innerHTML = '';
+        sentenceBlanks = [];
+        
+        // 英文を単語に分割し、空所の位置を特定
+        const words = sentence.english.split(' ');
+        
+        // 使用済みの空欄インデックスを追跡
+        const usedBlankIndices = new Set();
+        
+        words.forEach((word, idx) => {
+            // 句読点を除去した単語で比較
+            const wordWithoutPunct = word.replace(/[.,!?]/g, '');
+            // 空所かどうかを判定（blanks配列に含まれていて、まだ使用されていないもの）
+            const blankInfo = sentence.blanks.find(b => 
+                b.word.toLowerCase() === wordWithoutPunct.toLowerCase() && 
+                !usedBlankIndices.has(b.index)
+            );
+            
+            if (blankInfo) {
+                // この空欄を使用済みとしてマーク
+                usedBlankIndices.add(blankInfo.index);
+                
+                // 空所を作成
+                const blankSpan = document.createElement('span');
+                blankSpan.className = 'sentence-blank';
+                blankSpan.dataset.blankIndex = blankInfo.index;
+                blankSpan.textContent = ''; // 初期状態は空
+                blankSpan.dataset.correctWord = blankInfo.word;
+                
+                // 初期幅を統一（すべて同じ幅）
+                const isMobile = window.innerWidth <= 600;
+                const initialWidth = isMobile ? 50 : 60; // 初期幅を固定
+                blankSpan.style.width = `${initialWidth}px`;
+                
+                englishEl.appendChild(blankSpan);
+                
+                sentenceBlanks.push({
+                    index: blankInfo.index,
+                    word: blankInfo.word,
+                    userInput: '',
+                    element: blankSpan
+                });
+            } else {
+                // 通常の単語
+                const partSpan = document.createElement('span');
+                partSpan.className = 'sentence-part';
+                partSpan.textContent = word + (idx < words.length - 1 ? ' ' : '');
+                englishEl.appendChild(partSpan);
+            }
+        });
+        
+        // 空所をindex順にソート
+        sentenceBlanks.sort((a, b) => a.index - b.index);
+        
+        // 空所にタップイベントを追加
+        sentenceBlanks.forEach(blank => {
+            // タップ/クリックイベントを追加
+            const handleBlankTap = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (sentenceAnswerSubmitted) return;
+                selectSentenceBlank(blank.index);
+            };
+            
+            blank.element.addEventListener('touchstart', handleBlankTap, { passive: false });
+            blank.element.addEventListener('click', handleBlankTap);
+        });
+        
+        // 最初の空所を選択
+        if (sentenceBlanks.length > 0) {
+            selectSentenceBlank(sentenceBlanks[0].index);
+        }
+    }
+    
+    // ナビゲーションボタンの状態を更新（進捗バーのボタンを使用）
+    updateNavButtons();
+    
+    // 進捗バーの更新
+    if (typeof updateProgressSegments === 'function') {
+        updateProgressSegments();
+    }
+    
+    // ボタンの状態をリセット
+    resetSentenceButtons();
+}
+
+// 例文モード用のキーボード設定
+function setupSentenceKeyboard() {
+    const keyboard = document.getElementById('sentenceKeyboard');
+    if (!keyboard) return;
+    
+    // 既存のイベントリスナーを削除するために、キーボードをクローンして置き換える
+    const keyboardClone = keyboard.cloneNode(true);
+    keyboard.parentNode.replaceChild(keyboardClone, keyboard);
+    const newKeyboard = document.getElementById('sentenceKeyboard');
+    
+    // キーボードキーのイベント
+    newKeyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        const letter = key.dataset.key;
+        let touchHandled = false;
+        
+        // 視覚的フィードバック
+        const addPressedState = () => {
+            key.style.transform = 'scale(0.95)';
+            key.style.backgroundColor = '#d1d5db';
+        };
+        const removePressedState = () => {
+            key.style.transform = '';
+            key.style.backgroundColor = '';
+        };
+        
+        if (letter === ' ') {
+            key.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                touchHandled = true;
+                addPressedState();
+                insertSentenceLetter(' ');
+            }, { passive: false });
+            
+            key.addEventListener('touchend', () => {
+                removePressedState();
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            
+            key.addEventListener('click', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                insertSentenceLetter(' ');
+            });
+        } else {
+            key.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                touchHandled = true;
+                addPressedState();
+                insertSentenceLetter(letter);
+            }, { passive: false });
+            
+            key.addEventListener('touchend', () => {
+                removePressedState();
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            
+            key.addEventListener('click', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                insertSentenceLetter(letter);
+            });
+        }
+    });
+    
+    // Shiftキー
+    const shiftKey = document.getElementById('sentenceKeyboardShift');
+    if (shiftKey) {
+        let shiftTouchHandled = false;
+        
+        shiftKey.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            shiftTouchHandled = true;
+            toggleSentenceShift();
+        }, { passive: false });
+        
+        shiftKey.addEventListener('touchend', () => {
+            setTimeout(() => { shiftTouchHandled = false; }, 100);
+        });
+        
+        shiftKey.addEventListener('click', (e) => {
+            if (shiftTouchHandled) return;
+            e.preventDefault();
+            toggleSentenceShift();
+        });
+    }
+    
+    // バックスペースキー（長押し対応）
+    const backspaceKey = document.getElementById('sentenceKeyboardBackspace');
+    if (backspaceKey) {
+        let backspaceInterval = null;
+        let backspaceTimeout = null;
+        
+        const startBackspaceRepeat = () => {
+            removeSentenceLetter();
+            backspaceTimeout = setTimeout(() => {
+                backspaceInterval = setInterval(() => {
+                    removeSentenceLetter();
+                }, 80);
+            }, 300);
+        };
+        
+        const stopBackspaceRepeat = () => {
+            if (backspaceTimeout) {
+                clearTimeout(backspaceTimeout);
+                backspaceTimeout = null;
+            }
+            if (backspaceInterval) {
+                clearInterval(backspaceInterval);
+                backspaceInterval = null;
+            }
+        };
+        
+        backspaceKey.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            startBackspaceRepeat();
+        }, { passive: false });
+        
+        backspaceKey.addEventListener('touchend', stopBackspaceRepeat);
+        backspaceKey.addEventListener('touchcancel', stopBackspaceRepeat);
+        
+        backspaceKey.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            startBackspaceRepeat();
+        });
+        
+        backspaceKey.addEventListener('mouseup', stopBackspaceRepeat);
+        backspaceKey.addEventListener('mouseleave', stopBackspaceRepeat);
+    }
+    
+    // パスボタン
+    const passBtn = document.getElementById('sentenceKeyboardPass');
+    if (passBtn) {
+        const handlePass = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSentencePass();
+        };
+        passBtn.addEventListener('touchstart', handlePass, { passive: false });
+        passBtn.addEventListener('click', handlePass);
+    }
+    
+    // 解答ボタン
+    const decideBtn = document.getElementById('sentenceKeyboardDecide');
+    if (decideBtn) {
+        const handleDecide = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSentenceDecide();
+        };
+        decideBtn.addEventListener('touchstart', handleDecide, { passive: false });
+        decideBtn.addEventListener('click', handleDecide);
+    }
+    
+    // ヒントボタン
+    const hintBtn = document.getElementById('sentenceHintBtn');
+    if (hintBtn) {
+        const handleHint = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSentenceHint();
+        };
+        hintBtn.addEventListener('touchstart', handleHint, { passive: false });
+        hintBtn.addEventListener('click', handleHint);
+    }
+    
+    // 空欄ナビゲーションボタン
+    setupBlankNavButtons();
+}
+
+// 空欄ナビゲーションボタンの設定
+function setupBlankNavButtons() {
+    const prevBtn = document.getElementById('prevBlankBtn');
+    const nextBtn = document.getElementById('nextBlankBtn');
+    
+    if (prevBtn) {
+        // 既存のイベントリスナーをクローンして削除
+        const prevBtnClone = prevBtn.cloneNode(true);
+        prevBtn.parentNode.replaceChild(prevBtnClone, prevBtn);
+        const newPrevBtn = document.getElementById('prevBlankBtn');
+        
+        const handlePrev = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            moveToPreviousBlank();
+        };
+        newPrevBtn.addEventListener('touchstart', handlePrev, { passive: false });
+        newPrevBtn.addEventListener('click', handlePrev);
+    }
+    
+    if (nextBtn) {
+        // 既存のイベントリスナーをクローンして削除
+        const nextBtnClone = nextBtn.cloneNode(true);
+        nextBtn.parentNode.replaceChild(nextBtnClone, nextBtn);
+        const newNextBtn = document.getElementById('nextBlankBtn');
+        
+        const handleNext = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            moveToNextBlank();
+        };
+        newNextBtn.addEventListener('touchstart', handleNext, { passive: false });
+        newNextBtn.addEventListener('click', handleNext);
+    }
+    
+    // 初期状態を更新
+    updateBlankNavButtons();
+}
+
+// 空所を選択する
+function selectSentenceBlank(blankIndex) {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
+    
+    // すべての空所の選択状態を解除
+    sentenceBlanks.forEach(blank => {
+        blank.element.classList.remove('selected');
+    });
+    
+    // 指定された空所を選択
+    const blank = sentenceBlanks.find(b => b.index === blankIndex);
+    if (blank) {
+        blank.element.classList.add('selected');
+        currentSelectedBlankIndex = blankIndex;
+    }
+    
+    // ナビゲーションボタンの状態を更新
+    updateBlankNavButtons();
+}
+
+// 次の空欄へ移動
+function moveToNextBlank() {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive || sentenceBlanks.length === 0) return;
+    
+    // 現在選択中の空欄のインデックスを取得
+    const currentIndex = sentenceBlanks.findIndex(b => b.index === currentSelectedBlankIndex);
+    
+    // 次の空欄へ移動
+    if (currentIndex < sentenceBlanks.length - 1) {
+        selectSentenceBlank(sentenceBlanks[currentIndex + 1].index);
+    }
+}
+
+// 前の空欄へ移動
+function moveToPreviousBlank() {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive || sentenceBlanks.length === 0) return;
+    
+    // 現在選択中の空欄のインデックスを取得
+    const currentIndex = sentenceBlanks.findIndex(b => b.index === currentSelectedBlankIndex);
+    
+    // 前の空欄へ移動
+    if (currentIndex > 0) {
+        selectSentenceBlank(sentenceBlanks[currentIndex - 1].index);
+    }
+}
+
+// ナビゲーションボタンの状態を更新
+function updateBlankNavButtons() {
+    const prevBtn = document.getElementById('prevBlankBtn');
+    const nextBtn = document.getElementById('nextBlankBtn');
+    
+    if (!prevBtn || !nextBtn || sentenceBlanks.length === 0) return;
+    
+    const currentIndex = sentenceBlanks.findIndex(b => b.index === currentSelectedBlankIndex);
+    
+    // 前の空欄ボタン
+    if (currentIndex <= 0) {
+        prevBtn.disabled = true;
+    } else {
+        prevBtn.disabled = false;
+    }
+    
+    // 次の空欄ボタン
+    if (currentIndex >= sentenceBlanks.length - 1) {
+        nextBtn.disabled = true;
+    } else {
+        nextBtn.disabled = false;
+    }
+    
+    // 回答送信後は両方無効化
+    if (sentenceAnswerSubmitted) {
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+    }
+}
+
+// 例文モードで文字を入力
+function insertSentenceLetter(letter) {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
+    
+    // 選択中の空所を取得
+    let currentBlank = sentenceBlanks.find(b => b.index === currentSelectedBlankIndex);
+    
+    // 選択中の空所がない場合は、最初の未入力の空所を選択（最初の入力時のみ）
+    if (!currentBlank) {
+        currentBlank = sentenceBlanks.find(b => !b.userInput || b.userInput.length < b.word.length);
+        if (currentBlank) {
+            selectSentenceBlank(currentBlank.index);
+        } else {
+            // すべての空所が埋まっている場合は何もしない
+            return;
+        }
+    }
+    
+    // 選択中の空所が入力完了している場合は何もしない（ユーザーが手動で次の空所を選択する必要がある）
+    if (currentBlank.userInput.length >= currentBlank.word.length) {
+        return;
+    }
+    
+    if (currentBlank && currentBlank.userInput.length < currentBlank.word.length) {
+        let letterToInsert;
+        if (letter === ' ') {
+            letterToInsert = ' ';
+        } else {
+            if (isShiftActive) {
+                letterToInsert = String(letter).toUpperCase();
+                // ボタンを離したときにシフトを解除するためフラグを設定
+                window.pendingShiftReset = 'sentenceKeyboard';
+            } else {
+                letterToInsert = String(letter).toLowerCase();
+            }
+        }
+        
+        currentBlank.userInput += letterToInsert;
+        
+        // 空所の表示を更新
+        currentBlank.element.textContent = currentBlank.userInput;
+        
+        // 入力文字数に応じて幅を更新
+        updateBlankWidth(currentBlank.element, currentBlank.userInput.length);
+        
+        // 入力が完了しても自動的に次の空所には移動しない（ユーザーが手動で選択する必要がある）
+    }
+}
+
+// 空欄の幅を入力文字数に応じて更新
+function updateBlankWidth(element, charCount) {
+    const isMobile = window.innerWidth <= 600;
+    const charWidth = isMobile ? 11 : 13; // 1文字あたりの幅
+    const padding = 16; // 左右のパディング
+    const minWidth = isMobile ? 50 : 60; // 最小幅
+    
+    const calculatedWidth = Math.max(minWidth, (charCount * charWidth) + padding);
+    element.style.width = `${calculatedWidth}px`;
+}
+
+// 例文モードで文字を削除
+function removeSentenceLetter() {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
+    
+    // 選択中の空所から文字を削除
+    let currentBlank = sentenceBlanks.find(b => b.index === currentSelectedBlankIndex);
+    
+    // 選択中の空所がない、または空の場合は最後に入力した空所を探す
+    if (!currentBlank || currentBlank.userInput.length === 0) {
+        for (let i = sentenceBlanks.length - 1; i >= 0; i--) {
+            const blank = sentenceBlanks[i];
+            if (blank.userInput.length > 0) {
+                currentBlank = blank;
+                selectSentenceBlank(blank.index);
+                break;
+            }
+        }
+    }
+    
+    if (currentBlank && currentBlank.userInput.length > 0) {
+        currentBlank.userInput = currentBlank.userInput.slice(0, -1);
+        currentBlank.element.textContent = currentBlank.userInput;
+        
+        // 入力文字数に応じて幅を更新
+        updateBlankWidth(currentBlank.element, currentBlank.userInput.length);
+    }
+}
+
+// 例文モードでShiftキーをトグル
+function toggleSentenceShift() {
+    isShiftActive = !isShiftActive;
+    const shiftKey = document.getElementById('sentenceKeyboardShift');
+    const keyboard = document.getElementById('sentenceKeyboard');
+    if (shiftKey) {
+        if (isShiftActive) {
+            shiftKey.classList.add('active');
+        } else {
+            shiftKey.classList.remove('active');
+        }
+    }
+    // キーボードにshift-activeクラスを追加/削除（ポップアップ用）
+    if (keyboard) {
+        keyboard.classList.toggle('shift-active', isShiftActive);
+        // キーボードの表示を更新（大文字/小文字）
+        keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+            const letter = key.dataset.key;
+            if (letter && letter !== ' ') {
+                if (isShiftActive) {
+                    key.textContent = letter.toUpperCase();
+                    key.dataset.key = letter.toUpperCase();
+                } else {
+                    key.textContent = letter.toLowerCase();
+                    key.dataset.key = letter.toLowerCase();
+                }
+            }
+        });
+    }
+}
+
+// 例文モードでパス
+function handleSentencePass() {
+    if (sentenceAnswerSubmitted || !isSentenceModeActive) return;
+    
+    const sentence = sentenceData[currentSentenceIndex];
+    wrongCount++;
+    questionStatus[currentSentenceIndex] = 'wrong';
+    
+    // 正解を表示
+    sentenceBlanks.forEach(blank => {
+        blank.element.textContent = blank.word;
+        blank.element.classList.add('wrong');
+    });
+    
+    sentenceAnswerSubmitted = true;
+    saveSentenceProgress(sentence.id, false);
+    updateStats();
+    // 厳選例文暗記モード用の進捗バーを更新
+    updateSentenceProgressBar();
+    
+    // ナビゲーションボタンを非表示
+    const blankNav = document.getElementById('blankNavigation');
+    if (blankNav) {
+        blankNav.classList.add('hidden');
+    }
+    
+    // ×マークを表示（パスは不正解扱い）
+    showAnswerMark(false);
+    
+    // 「次へ」ボタンを表示
+    showSentenceNextButton();
+}
+
+// 例文モードで解答
+function handleSentenceDecide() {
+    if (!isSentenceModeActive) return;
+    
+    // 既に解答済みの場合は次へ進む
+    if (sentenceAnswerSubmitted) {
+        goToNextSentence();
+        return;
+    }
+    
+    const sentence = sentenceData[currentSentenceIndex];
+    let isCorrect = true;
+    
+    // すべての空所が正しいかチェック
+    sentenceBlanks.forEach(blank => {
+        if (blank.userInput.toLowerCase().trim() !== blank.word.toLowerCase()) {
+            isCorrect = false;
+            blank.element.classList.add('wrong');
+        } else {
+            blank.element.classList.add('correct');
+        }
+        blank.element.textContent = blank.word;
+    });
+    
+    // 効果音を再生
+    if (isCorrect) {
+        SoundEffects.playCorrect();
+        correctCount++;
+        questionStatus[currentSentenceIndex] = 'correct';
+    } else {
+        SoundEffects.playWrong();
+        wrongCount++;
+        questionStatus[currentSentenceIndex] = 'wrong';
+    }
+    
+    sentenceAnswerSubmitted = true;
+    saveSentenceProgress(sentence.id, isCorrect);
+    updateStats();
+    // 厳選例文暗記モード用の進捗バーを更新
+    updateSentenceProgressBar();
+    
+    // ナビゲーションボタンを非表示
+    const blankNav = document.getElementById('blankNavigation');
+    if (blankNav) {
+        blankNav.classList.add('hidden');
+    }
+    
+    // ○/×マークを表示
+    showAnswerMark(isCorrect);
+    
+    // 「次へ」ボタンを表示
+    showSentenceNextButton();
+}
+
+// 例文モードで次の問題に進む
+function goToNextSentence() {
+    if (currentSentenceIndex < sentenceData.length - 1) {
+        currentSentenceIndex++;
+        currentIndex = currentSentenceIndex;
+        displayCurrentSentence();
+    } else {
+        // 最後の問題の場合は完了画面を表示
+        showCompletion();
+    }
+}
+
+// 例文モードで「次へ」ボタンを表示
+function showSentenceNextButton() {
+    const decideBtn = document.getElementById('sentenceKeyboardDecide');
+    const passBtn = document.getElementById('sentenceKeyboardPass');
+    
+    if (decideBtn) {
+        decideBtn.textContent = '次へ';
+    }
+    
+    if (passBtn) {
+        passBtn.style.display = 'none';
+    }
+}
+
+// 例文モードでヒントを表示/非表示
+function toggleSentenceHint() {
+    const hintContent = document.getElementById('sentenceHintContent');
+    const hintBtn = document.getElementById('sentenceHintBtn');
+    if (!hintContent || !hintBtn) return;
+    
+    const arrowElement = hintBtn.querySelector('.hint-arrow');
+    
+    if (hintContent.classList.contains('hidden')) {
+        // ヒントを表示
+        const sentence = sentenceData[currentSentenceIndex];
+        if (!sentence) return;
+        
+        // データからヒントを取得
+        if (sentence.hint) {
+            hintContent.textContent = sentence.hint;
+        } else {
+            // ヒントがデータにない場合は動的に生成（フォールバック）
+            let hintText = 'ヒント：\n';
+            sentence.blanks.forEach((blank, index) => {
+                if (blank.word && blank.word.length > 0) {
+                    const firstLetter = blank.word[0];
+                    const remainingLength = blank.word.length - 1;
+                    hintText += `${index + 1}. ${firstLetter}${'_'.repeat(remainingLength)} (${blank.word.length}文字)\n`;
+                }
+            });
+            hintContent.textContent = hintText.trim();
+        }
+        
+        hintContent.classList.remove('hidden');
+        // 矢印を▼に変更
+        if (arrowElement) {
+            arrowElement.textContent = '▼';
+        }
+    } else {
+        // ヒントを非表示
+        hintContent.classList.add('hidden');
+        // 矢印を▶に変更
+        if (arrowElement) {
+            arrowElement.textContent = '▶';
+        }
+    }
+}
+
+// 例文の進捗を保存
+function saveSentenceProgress(sentenceId, isCorrect) {
+    if (!selectedCategory) return;
+    
+    const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+    
+    if (isCorrect) {
+        correctSet.add(sentenceId);
+        wrongSet.delete(sentenceId);
+    } else {
+        wrongSet.add(sentenceId);
+        correctSet.delete(sentenceId);
+    }
+    
+    saveCategoryWords(selectedCategory, correctSet, wrongSet);
+}
+
+// 整序英作文モードで学習を初期化
+function initReorderModeLearning(category) {
+    // reorderQuestionsが定義されているか確認（念のため再確認）
+    if (typeof reorderQuestions === 'undefined') {
+        showAlert('エラー', '整序英作文の問題データファイルが読み込まれていません。ページを再読み込みしてください。');
+        console.error('reorderQuestions is undefined in initReorderModeLearning');
+        return;
+    }
+    if (!reorderQuestions || reorderQuestions.length === 0) {
+        showAlert('エラー', '整序英作文の問題データが空です。');
+        console.error('reorderQuestions is empty in initReorderModeLearning');
+        return;
+    }
+    
+    selectedCategory = category;
+    reorderData = reorderQuestions;
+    isReorderModeActive = true;
+    isSentenceModeActive = false;
+    isInputModeActive = false;
+    document.body.classList.add('reorder-mode-active');
+    document.body.classList.remove('sentence-mode-active');
+    currentReorderIndex = 0;
+    reorderAnswerSubmitted = false;
+    
+    currentRangeStart = 0;
+    currentRangeEnd = reorderData.length;
+    currentIndex = 0;
+    
+    answeredWords.clear();
+    correctCount = 0;
+    wrongCount = 0;
+    questionStatus = new Array(reorderData.length).fill(null);
+    
+    // 前回の回答状況を読み込んで進捗バーに反映
+    if (category) {
+        const { correctSet, wrongSet } = loadCategoryWords(category);
+        reorderData.forEach((question, index) => {
+            if (wrongSet.has(question.id)) {
+                questionStatus[index] = 'wrong';
+            } else if (correctSet.has(question.id)) {
+                questionStatus[index] = 'correct';
+            }
+        });
+    }
+
+    elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
+    elements.mainContent.classList.remove('hidden');
+    // サブタイトルから【整序英作文(記号選択)対策】を削除
+    const displayTitle = category.replace('【整序英作文(記号選択)対策】', '').trim();
+    if (elements.unitName) {
+        // コース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
+        const unitDisplayTitle = currentFilterCourseTitle || displayTitle;
+        elements.unitName.textContent = unitDisplayTitle;
+    }
+    
+    // テーマカラーを先に更新（クラス追加の前に）
+    updateThemeColor(true);
+    document.body.classList.add('learning-mode');
+    
+    // ハンバーガーメニューと戻るボタンを非表示、ポーズボタンを表示（テストモード）
+    updateHeaderButtons('learning', '', true);
+
+    // インプットモード用戻るボタンとポーズボタンの制御
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    const unitPauseBtn = document.getElementById('unitPauseBtn');
+    if (inputBackBtn) inputBackBtn.classList.add('hidden');
+    if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
+
+    // 他のモードを非表示、整序英作文モードを表示
+    const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
+    const inputMode = document.getElementById('inputMode');
+    const inputListView = document.getElementById('inputListView');
+    const sentenceMode = document.getElementById('sentenceMode');
+    const reorderMode = document.getElementById('reorderMode');
+    const cardHint = document.getElementById('cardHint');
+    const progressStepButtons = document.querySelector('.progress-step-buttons');
+    const choiceMode = document.getElementById('choiceQuestionMode');
+    if (wordCard) wordCard.classList.add('hidden');
+    if (wordCardContainer) wordCardContainer.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (inputListView) inputListView.classList.add('hidden');
+    if (sentenceMode) sentenceMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.add('hidden');
+    if (reorderMode) reorderMode.classList.remove('hidden');
+    if (cardHint) cardHint.classList.add('hidden');
+    if (progressStepButtons) progressStepButtons.classList.remove('hidden');
+    isChoiceQuestionModeActive = false;
+    document.body.classList.remove('choice-question-mode-active');
+    updateNavButtons(); // ボタンのテキストと状態を更新
+    
+    displayCurrentReorderQuestion();
+    // 進捗バーのセグメントを生成
+    const total = currentRangeEnd - currentRangeStart;
+    if (total > 0) {
+        createProgressSegments(total);
+    }
+    updateStats();
+    updateNavState('learning');
+    
+    // 進捗バーを初期化
+    initReorderProgressBar();
+}
+
+// 整序英作文モードの進捗バーを初期化
+function initReorderProgressBar() {
+    const container = document.getElementById('reorderProgressBarContainer');
+    const rangeEl = document.getElementById('reorderProgressRange');
+    const progressText = document.getElementById('reorderProgressText');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // 最大20セグメント表示
+    const maxSegments = Math.min(reorderData.length, 20);
+    
+    for (let i = 0; i < maxSegments; i++) {
+        const segment = document.createElement('div');
+        segment.className = 'progress-segment';
+        container.appendChild(segment);
+    }
+    
+    // 問題番号の範囲を表示
+    if (rangeEl && reorderData.length > 0) {
+        const firstId = reorderData[0].id || 1;
+        const lastId = reorderData[Math.min(19, reorderData.length - 1)].id || Math.min(20, reorderData.length);
+        rangeEl.textContent = `No.${firstId}-${lastId}`;
+    }
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        progressText.textContent = `0/${reorderData.length}`;
+    }
+    
+    // 統計をリセット
+    const correctEl = document.getElementById('reorderCorrectCount');
+    const wrongEl = document.getElementById('reorderWrongCount');
+    if (correctEl) correctEl.textContent = '0';
+    if (wrongEl) wrongEl.textContent = '0';
+}
+
+// 整序英作文モードの進捗バーを更新
+function updateReorderProgressBar() {
+    const container = document.getElementById('reorderProgressBarContainer');
+    const progressText = document.getElementById('reorderProgressText');
+    const correctEl = document.getElementById('reorderCorrectCount');
+    const wrongEl = document.getElementById('reorderWrongCount');
+    
+    if (!container) return;
+    
+    const segments = container.querySelectorAll('.progress-segment');
+    let reorderCorrect = 0;
+    let reorderWrong = 0;
+    
+    segments.forEach((segment, i) => {
+        segment.classList.remove('current', 'correct', 'wrong');
+        
+        if (i === currentReorderIndex) {
+            segment.classList.add('current');
+        } else if (questionStatus[i] === 'correct') {
+            segment.classList.add('correct');
+            reorderCorrect++;
+        } else if (questionStatus[i] === 'wrong') {
+            segment.classList.add('wrong');
+            reorderWrong++;
+        }
+    });
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        const answered = reorderCorrect + reorderWrong;
+        progressText.textContent = `${answered}/${reorderData.length}`;
+    }
+    
+    // 統計を更新
+    if (correctEl) correctEl.textContent = String(reorderCorrect);
+    if (wrongEl) wrongEl.textContent = String(reorderWrong);
+}
+
+// 現在の整序英作文問題を表示
+function displayCurrentReorderQuestion() {
+    if (currentReorderIndex < 0 || currentReorderIndex >= reorderData.length) {
+        return;
+    }
+    
+    // 進捗バーを更新
+    updateReorderProgressBar();
+    
+    const question = reorderData[currentReorderIndex];
+    const japaneseEl = document.getElementById('reorderJapanese');
+    const answerAreaEl = document.getElementById('reorderAnswerArea');
+    const wordsAreaEl = document.getElementById('reorderWordsArea');
+    const correctAnswerEl = document.getElementById('reorderCorrectAnswer');
+    
+    if (japaneseEl) japaneseEl.textContent = question.japanese;
+    
+    // 解答エリアをクリアして空欄を生成
+    if (answerAreaEl) {
+        answerAreaEl.innerHTML = '';
+        // 単語数分の空欄を作成（ピリオドまたは?を除く）
+        const lastChar = question.correctOrder[question.correctOrder.length - 1];
+        const blankCount = question.correctOrder.length - 1; // 最後の記号を除く
+        for (let i = 0; i < blankCount; i++) {
+            const blankBox = document.createElement('div');
+            blankBox.className = 'reorder-blank-box';
+            blankBox.dataset.blankIndex = i;
+            blankBox.addEventListener('dragover', handleReorderBlankDragOver);
+            blankBox.addEventListener('dragleave', handleReorderBlankDragLeave);
+            blankBox.addEventListener('drop', handleReorderBlankDrop);
+            // タッチイベントも追加
+            blankBox.addEventListener('touchmove', (e) => {
+                if (reorderTouchData.draggingElement) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            answerAreaEl.appendChild(blankBox);
+        }
+        
+        // 最後にピリオドまたは?を表示
+        if (lastChar === '.' || lastChar === '?') {
+            const punctuationEl = document.createElement('span');
+            punctuationEl.className = 'reorder-punctuation';
+            punctuationEl.textContent = lastChar;
+            answerAreaEl.appendChild(punctuationEl);
+        }
+    }
+    
+    // 単語選択エリアをクリアして再生成
+    if (wordsAreaEl) {
+        wordsAreaEl.innerHTML = '';
+        // 単語をシャッフルして表示
+        const shuffledWords = [...question.words].sort(() => Math.random() - 0.5);
+        shuffledWords.forEach((word, index) => {
+            const wordBox = document.createElement('div');
+            wordBox.className = 'reorder-word-box';
+            wordBox.textContent = word;
+            wordBox.draggable = true;
+            wordBox.dataset.word = word;
+            wordBox.dataset.originalIndex = index;
+            wordBox.addEventListener('dragstart', handleReorderDragStart);
+            wordBox.addEventListener('dragend', handleReorderDragEnd);
+            // タッチイベントを追加
+            wordBox.addEventListener('touchstart', handleReorderTouchStart, { passive: false });
+            wordBox.addEventListener('touchmove', handleReorderTouchMove, { passive: false });
+            wordBox.addEventListener('touchend', handleReorderTouchEnd, { passive: false });
+            wordsAreaEl.appendChild(wordBox);
+        });
+        
+        // 単語エリアにドロップイベントを追加（空欄から戻すため）
+        wordsAreaEl.addEventListener('dragover', handleReorderWordsAreaDragOver);
+        wordsAreaEl.addEventListener('dragleave', handleReorderWordsAreaDragLeave);
+        wordsAreaEl.addEventListener('drop', handleReorderWordsAreaDrop);
+        // タッチイベントも追加
+        wordsAreaEl.addEventListener('touchmove', (e) => {
+            if (reorderTouchData.draggingElement) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    }
+    
+    // 結果表示を非表示
+    if (correctAnswerEl) {
+        correctAnswerEl.classList.add('hidden');
+    }
+    
+    // 画面背景をリセット
+    if (elements.feedbackOverlay) {
+        elements.feedbackOverlay.classList.remove('active', 'correct', 'wrong');
+    }
+    
+    // 状態をリセット
+    reorderSelectedWords = [];
+    reorderAnswerSubmitted = false;
+    
+    // 進捗バーを更新
+    updateProgressSegments();
+    updateStats();
+    updateNavButtons();
+}
+
+// ドラッグ開始
+function handleReorderDragStart(e) {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', e.target.dataset.word);
+    e.target.classList.add('dragging');
+}
+
+// ドラッグ終了
+function handleReorderDragEnd(e) {
+    e.target.classList.remove('dragging');
+}
+
+// 空欄内の単語のドラッグ開始
+function handleReorderAnswerDragStart(e) {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', e.target.dataset.word);
+    e.dataTransfer.setData('from-blank', e.target.dataset.blankIndex);
+    e.target.classList.add('dragging');
+    // ドラッグ中フラグを設定（クリックイベントと区別するため）
+    e.target.dataset.isDragging = 'true';
+}
+
+// 空欄内の単語のドラッグ終了
+function handleReorderAnswerDragEnd(e) {
+    e.target.classList.remove('dragging');
+    delete e.target.dataset.isDragging;
+}
+
+// 単語エリアへのドラッグオーバー
+function handleReorderWordsAreaDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const wordsArea = document.getElementById('reorderWordsArea');
+    if (wordsArea) {
+        wordsArea.classList.add('drag-over');
+    }
+}
+
+// 単語エリアからのドラッグリーブ
+function handleReorderWordsAreaDragLeave(e) {
+    const wordsArea = document.getElementById('reorderWordsArea');
+    if (wordsArea && !wordsArea.contains(e.relatedTarget)) {
+        wordsArea.classList.remove('drag-over');
+    }
+}
+
+// 単語エリアへのドロップ（空欄から戻す）
+function handleReorderWordsAreaDrop(e) {
+    e.preventDefault();
+    const wordsArea = document.getElementById('reorderWordsArea');
+    if (wordsArea) {
+        wordsArea.classList.remove('drag-over');
+    }
+    
+    const word = e.dataTransfer.getData('text/plain');
+    const fromBlankIndex = e.dataTransfer.getData('from-blank');
+    if (!word || fromBlankIndex === '') return; // 空欄から来たもののみ処理
+    
+    // 元の空欄から削除
+    const fromBlankBox = document.querySelector(`.reorder-blank-box[data-blank-index="${fromBlankIndex}"]`);
+    if (fromBlankBox) {
+        const answerBox = fromBlankBox.querySelector('.reorder-answer-box');
+        if (answerBox && answerBox.dataset.word === word) {
+            answerBox.remove();
+            adjustBlankBoxSize(fromBlankBox);
+        }
+    }
+    
+    // 単語ボックスを表示
+    const wordBoxes = document.querySelectorAll('.reorder-word-box');
+    wordBoxes.forEach(box => {
+        if (box.dataset.word === word && box.classList.contains('used')) {
+            box.classList.remove('used');
+            box.style.display = '';
+        }
+    });
+    
+    updateReorderSelectedWords();
+}
+
+// ドラッグオーバー（空欄）
+function handleReorderBlankDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    e.currentTarget.classList.add('drag-over');
+}
+
+// ドラッグリーブ（空欄）
+function handleReorderBlankDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+}
+
+// タッチ開始（単語ボックスと空欄内の単語）
+function handleReorderTouchStart(e) {
+    if (!isReorderModeActive || reorderTouchData.isDragging) return;
+    e.preventDefault();
+    
+    const touch = e.touches[0];
+    const element = e.currentTarget;
+    
+    reorderTouchData.sourceElement = element;
+    reorderTouchData.word = element.dataset.word;
+    reorderTouchData.fromBlankIndex = element.dataset.blankIndex || null;
+    reorderTouchData.isDragging = true;
+    
+    // 元の要素の位置とサイズを取得
+    const rect = element.getBoundingClientRect();
+    
+    // クローンのサイズを保存（パフォーマンス最適化）
+    reorderTouchData.cloneWidth = rect.width;
+    reorderTouchData.cloneHeight = rect.height;
+    
+    // クローンを作成
+    const clone = element.cloneNode(true);
+    clone.className = element.className + ' touch-dragging';
+    clone.style.position = 'fixed';
+    clone.style.zIndex = '10000';
+    clone.style.pointerEvents = 'none';
+    clone.style.opacity = '0.9';
+    clone.style.width = rect.width + 'px';
+    clone.style.height = rect.height + 'px';
+    clone.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.3)';
+    clone.style.left = '0';
+    clone.style.top = '0';
+    clone.style.transform = 'translate(' + (touch.clientX - rect.width / 2) + 'px, ' + (touch.clientY - rect.height / 2) + 'px)';
+    clone.style.willChange = 'transform'; // パフォーマンス最適化
+    
+    document.body.appendChild(clone);
+    reorderTouchData.dragClone = clone;
+    
+    // 元の要素を半透明に
+    element.style.opacity = '0.3';
+}
+
+// タッチ開始（空欄内の単語）
+function handleReorderAnswerTouchStart(e) {
+    handleReorderTouchStart(e);
+}
+
+// タッチ移動
+function handleReorderTouchMove(e) {
+    if (!reorderTouchData.isDragging || !reorderTouchData.dragClone) return;
+    e.preventDefault();
+    
+    const touch = e.touches[0];
+    const clone = reorderTouchData.dragClone;
+    
+    // キャンセル済みのrequestAnimationFrameがあればキャンセル
+    if (reorderTouchData.rafId !== null) {
+        cancelAnimationFrame(reorderTouchData.rafId);
+    }
+    
+    // requestAnimationFrameを使ってスムーズに更新
+    reorderTouchData.rafId = requestAnimationFrame(() => {
+        // 指の中心に配置（transformを使用してパフォーマンス向上）
+        const x = touch.clientX - reorderTouchData.cloneWidth / 2;
+        const y = touch.clientY - reorderTouchData.cloneHeight / 2;
+        clone.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+        
+        // ドロップ先を検出（クローンの下の要素を取得）
+        // クローンを一時的に非表示にして、下の要素を正確に取得
+        const originalDisplay = clone.style.display;
+        clone.style.display = 'none';
+        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        clone.style.display = originalDisplay;
+        
+        // すべてのdrag-overを削除
+        document.querySelectorAll('.reorder-blank-box, .reorder-words-area').forEach(el => {
+            el.classList.remove('drag-over');
+        });
+        
+        if (elementBelow) {
+            // 空欄を検出
+            const blankBox = elementBelow.closest('.reorder-blank-box');
+            if (blankBox) {
+                blankBox.classList.add('drag-over');
+            } else {
+                // 単語エリアを検出
+                const wordsArea = elementBelow.closest('.reorder-words-area');
+                if (wordsArea && reorderTouchData.fromBlankIndex !== null) {
+                    wordsArea.classList.add('drag-over');
+                }
+            }
+        }
+        
+        reorderTouchData.rafId = null;
+    });
+}
+
+// タッチ終了
+function handleReorderTouchEnd(e) {
+    if (!reorderTouchData.isDragging) return;
+    e.preventDefault();
+    
+    // 進行中のrequestAnimationFrameをキャンセル
+    if (reorderTouchData.rafId !== null) {
+        cancelAnimationFrame(reorderTouchData.rafId);
+        reorderTouchData.rafId = null;
+    }
+    
+    const touch = e.changedTouches[0];
+    
+    // クローンを一時的に非表示にして、下の要素を正確に取得
+    if (reorderTouchData.dragClone) {
+        const originalDisplay = reorderTouchData.dragClone.style.display;
+        reorderTouchData.dragClone.style.display = 'none';
+        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        reorderTouchData.dragClone.style.display = originalDisplay;
+        
+        // すべてのdrag-overを削除
+        document.querySelectorAll('.reorder-blank-box, .reorder-words-area').forEach(el => {
+            el.classList.remove('drag-over');
+        });
+        
+        let dropped = false;
+        
+        if (elementBelow) {
+            // 空欄にドロップ
+            const blankBox = elementBelow.closest('.reorder-blank-box');
+            if (blankBox) {
+                handleReorderBlankTouchDrop(blankBox, reorderTouchData.word, reorderTouchData.fromBlankIndex);
+                dropped = true;
+            } else {
+                // 単語エリアにドロップ
+                const wordsArea = elementBelow.closest('.reorder-words-area');
+                if (wordsArea && reorderTouchData.fromBlankIndex !== null) {
+                    handleReorderWordsAreaTouchDrop(wordsArea, reorderTouchData.word, reorderTouchData.fromBlankIndex);
+                    dropped = true;
+                }
+            }
+        }
+    }
+    
+    // クリーンアップ
+    if (reorderTouchData.dragClone) {
+        reorderTouchData.dragClone.remove();
+        reorderTouchData.dragClone = null;
+    }
+    
+    if (reorderTouchData.sourceElement) {
+        reorderTouchData.sourceElement.style.opacity = '';
+        reorderTouchData.sourceElement = null;
+    }
+    
+    // リセット
+    reorderTouchData.isDragging = false;
+    reorderTouchData.offsetX = 0;
+    reorderTouchData.offsetY = 0;
+    reorderTouchData.fromBlankIndex = null;
+    reorderTouchData.word = null;
+    reorderTouchData.cloneWidth = 0;
+    reorderTouchData.cloneHeight = 0;
+    reorderTouchData.rafId = null;
+}
+
+// タッチドロップ（空欄）
+function handleReorderBlankTouchDrop(blankBox, word, fromBlankIndex) {
+    if (!word) return;
+    const targetIndex = blankBox.dataset.blankIndex;
+    
+    // 同じ空欄に同じ語をタップ/ドロップしただけなら何もしない（重複生成を防ぐ）
+    if ((fromBlankIndex !== null && fromBlankIndex !== '' && fromBlankIndex === targetIndex)) {
+        return;
+    }
+    
+    // 既に単語が入っている場合は、その単語を元の場所に戻す
+    const existingBox = blankBox.querySelector('.reorder-answer-box');
+    if (existingBox) {
+        if (existingBox.dataset.word === word) {
+            // 同一語を同じ空欄に重ねる場合は変更なし
+            return;
+        }
+        const existingWord = existingBox.dataset.word;
+        existingBox.remove();
+        // 元の単語ボックスを表示
+        const wordBoxes = document.querySelectorAll('.reorder-word-box');
+        wordBoxes.forEach(box => {
+            if (box.dataset.word === existingWord && box.classList.contains('used')) {
+                box.classList.remove('used');
+                box.style.display = '';
+            }
+        });
+        // 空欄のサイズをリセット
+        adjustBlankBoxSize(blankBox);
+    }
+    
+    // 他の空欄から移動してきた場合は、元の空欄から削除
+    if (fromBlankIndex !== null && fromBlankIndex !== '') {
+        const fromBlankBox = document.querySelector(`.reorder-blank-box[data-blank-index="${fromBlankIndex}"]`);
+        if (fromBlankBox) {
+            const movingBox = fromBlankBox.querySelector('.reorder-answer-box');
+            if (movingBox && movingBox.dataset.word === word) {
+                movingBox.remove();
+                adjustBlankBoxSize(fromBlankBox);
+            }
+        }
+    } else {
+        // 下の単語エリアからドラッグしてきた場合
+        const wordBoxes = document.querySelectorAll('.reorder-word-box');
+        wordBoxes.forEach(box => {
+            if (box.dataset.word === word && !box.classList.contains('used')) {
+                box.classList.add('used');
+                box.style.display = 'none';
+            }
+        });
+    }
+    
+    // 空欄に単語を追加
+    const answerBox = document.createElement('div');
+    answerBox.className = 'reorder-answer-box';
+    answerBox.textContent = word;
+    answerBox.dataset.word = word;
+    answerBox.dataset.blankIndex = blankBox.dataset.blankIndex;
+    answerBox.draggable = true;
+    
+    // ドラッグイベントを設定
+    answerBox.addEventListener('dragstart', handleReorderAnswerDragStart);
+    answerBox.addEventListener('dragend', handleReorderAnswerDragEnd);
+    // タッチイベントを追加
+    answerBox.addEventListener('touchstart', handleReorderAnswerTouchStart, { passive: false });
+    answerBox.addEventListener('touchmove', handleReorderTouchMove, { passive: false });
+    answerBox.addEventListener('touchend', handleReorderTouchEnd, { passive: false });
+    
+    // クリックで削除して元の場所に戻す
+    const handleAnswerBoxClick = (e) => {
+        // ドラッグ中でない場合のみ削除
+        if (e.target.dataset.isDragging === 'true' || reorderTouchData.draggingElement) {
+            return;
+        }
+        e.stopPropagation();
+        const wordToRemove = answerBox.dataset.word;
+        answerBox.remove();
+        const wordBoxes = document.querySelectorAll('.reorder-word-box');
+        wordBoxes.forEach(box => {
+            if (box.dataset.word === wordToRemove && box.classList.contains('used')) {
+                box.classList.remove('used');
+                box.style.display = '';
+            }
+        });
+        updateReorderSelectedWords();
+        // 空欄のサイズをリセット
+        adjustBlankBoxSize(blankBox);
+    };
+    
+    answerBox.addEventListener('click', handleAnswerBoxClick);
+    
+    blankBox.appendChild(answerBox);
+    // 単語の長さに応じて空欄のサイズを調整
+    adjustBlankBoxSize(blankBox, answerBox);
+    
+    // 選択された単語を更新
+    updateReorderSelectedWords();
+}
+
+// タッチドロップ（単語エリア）
+function handleReorderWordsAreaTouchDrop(wordsArea, word, fromBlankIndex) {
+    if (!word || fromBlankIndex === null || fromBlankIndex === '') return;
+    
+    // 元の空欄から削除
+    const fromBlankBox = document.querySelector(`.reorder-blank-box[data-blank-index="${fromBlankIndex}"]`);
+    if (fromBlankBox) {
+        const answerBox = fromBlankBox.querySelector('.reorder-answer-box');
+        if (answerBox && answerBox.dataset.word === word) {
+            answerBox.remove();
+            adjustBlankBoxSize(fromBlankBox);
+        }
+    }
+    
+    // 単語ボックスを表示
+    const wordBoxes = document.querySelectorAll('.reorder-word-box');
+    wordBoxes.forEach(box => {
+        if (box.dataset.word === word && box.classList.contains('used')) {
+            box.classList.remove('used');
+            box.style.display = '';
+        }
+    });
+    
+    updateReorderSelectedWords();
+}
+
+// ドロップ（空欄）
+function handleReorderBlankDrop(e) {
+    e.preventDefault();
+    const blankBox = e.currentTarget;
+    blankBox.classList.remove('drag-over');
+    
+    const word = e.dataTransfer.getData('text/plain');
+    const fromBlankIndex = e.dataTransfer.getData('from-blank');
+    const targetIndex = blankBox.dataset.blankIndex;
+    if (!word) return;
+    
+    // 同じ空欄に同じ語をドロップしただけなら何もしない（重複生成を防ぐ）
+    if (fromBlankIndex && fromBlankIndex === targetIndex) {
+        return;
+    }
+    
+    // 既に単語が入っている場合は、その単語を元の場所に戻す
+    const existingBox = blankBox.querySelector('.reorder-answer-box');
+    if (existingBox) {
+        if (existingBox.dataset.word === word) {
+            // 同一語を同じ空欄に重ねる場合は変更なし
+            return;
+        }
+        const existingWord = existingBox.dataset.word;
+        existingBox.remove();
+        // 元の単語ボックスを表示
+        const wordBoxes = document.querySelectorAll('.reorder-word-box');
+        wordBoxes.forEach(box => {
+            if (box.dataset.word === existingWord && box.classList.contains('used')) {
+                box.classList.remove('used');
+                box.style.display = '';
+            }
+        });
+        // 空欄のサイズをリセット
+        adjustBlankBoxSize(blankBox);
+    }
+    
+    // 他の空欄から移動してきた場合は、元の空欄から削除
+    if (fromBlankIndex !== '') {
+        const fromBlankBox = document.querySelector(`.reorder-blank-box[data-blank-index="${fromBlankIndex}"]`);
+        if (fromBlankBox) {
+            const movingBox = fromBlankBox.querySelector('.reorder-answer-box');
+            if (movingBox && movingBox.dataset.word === word) {
+                movingBox.remove();
+                adjustBlankBoxSize(fromBlankBox);
+            }
+        }
+    } else {
+        // 下の単語エリアからドラッグしてきた場合
+        const wordBoxes = document.querySelectorAll('.reorder-word-box');
+        wordBoxes.forEach(box => {
+            if (box.dataset.word === word && !box.classList.contains('used')) {
+                box.classList.add('used');
+                box.style.display = 'none';
+            }
+        });
+    }
+    
+    // 空欄に単語を追加
+    const answerBox = document.createElement('div');
+    answerBox.className = 'reorder-answer-box';
+    answerBox.textContent = word;
+    answerBox.dataset.word = word;
+    answerBox.dataset.blankIndex = blankBox.dataset.blankIndex;
+    answerBox.draggable = true;
+    
+    // ドラッグイベントを設定
+    answerBox.addEventListener('dragstart', handleReorderAnswerDragStart);
+    answerBox.addEventListener('dragend', handleReorderAnswerDragEnd);
+    // タッチイベントを追加
+    answerBox.addEventListener('touchstart', handleReorderAnswerTouchStart, { passive: false });
+    answerBox.addEventListener('touchmove', handleReorderTouchMove, { passive: false });
+    answerBox.addEventListener('touchend', handleReorderTouchEnd, { passive: false });
+    
+    // クリックで削除して元の場所に戻す
+    const handleAnswerBoxClick = (e) => {
+        // ドラッグ中でない場合のみ削除
+        if (e.target.dataset.isDragging === 'true' || reorderTouchData.draggingElement) {
+            return;
+        }
+        e.stopPropagation();
+        const wordToRemove = answerBox.dataset.word;
+        answerBox.remove();
+        const wordBoxes = document.querySelectorAll('.reorder-word-box');
+        wordBoxes.forEach(box => {
+            if (box.dataset.word === wordToRemove && box.classList.contains('used')) {
+                box.classList.remove('used');
+                box.style.display = '';
+            }
+        });
+        updateReorderSelectedWords();
+        // 空欄のサイズをリセット
+        adjustBlankBoxSize(blankBox);
+    };
+    
+    answerBox.addEventListener('click', handleAnswerBoxClick);
+    
+    blankBox.appendChild(answerBox);
+    // 単語の長さに応じて空欄のサイズを調整
+    adjustBlankBoxSize(blankBox, answerBox);
+    
+    // 選択された単語を更新
+    updateReorderSelectedWords();
+}
+
+// 空欄のサイズを単語に合わせて調整
+function adjustBlankBoxSize(blankBox, answerBox = null) {
+    if (!blankBox) return;
+    
+    if (answerBox) {
+        // 単語が入っている場合、単語の幅に合わせて空欄を拡張
+        // 一度表示してから幅を測定
+        setTimeout(() => {
+            const wordWidth = answerBox.scrollWidth;
+            const minWidth = 60;
+            const padding = 16; // 左右のパディング合計
+            const newWidth = Math.max(minWidth, wordWidth + padding);
+            blankBox.style.width = newWidth + 'px';
+        }, 0);
+    } else {
+        // 単語が入っていない場合、最小サイズに戻す
+        blankBox.style.width = 'auto';
+    }
+}
+
+// 選択された単語を更新
+function updateReorderSelectedWords() {
+    const blankBoxes = document.querySelectorAll('.reorder-blank-box');
+    reorderSelectedWords = Array.from(blankBoxes).map(blankBox => {
+        const answerBox = blankBox.querySelector('.reorder-answer-box');
+        return answerBox ? answerBox.dataset.word : null;
+    }).filter(word => word !== null);
+}
+
+// リセットボタン
+function handleReorderReset() {
+    const answerArea = document.getElementById('reorderAnswerArea');
+    const wordBoxes = document.querySelectorAll('.reorder-word-box');
+    
+    // すべての空欄から単語を削除
+    const blankBoxes = document.querySelectorAll('.reorder-blank-box');
+    blankBoxes.forEach(blankBox => {
+        const answerBox = blankBox.querySelector('.reorder-answer-box');
+        if (answerBox) {
+            answerBox.remove();
+        }
+        // 空欄のサイズをリセット
+        adjustBlankBoxSize(blankBox);
+    });
+    
+    // すべての単語ボックスを表示
+    wordBoxes.forEach(box => {
+        box.classList.remove('used');
+        box.style.display = '';
+    });
+    
+    reorderSelectedWords = [];
+    reorderAnswerSubmitted = false;
+    
+    const correctAnswerEl = document.getElementById('reorderCorrectAnswer');
+    if (correctAnswerEl) {
+        correctAnswerEl.classList.add('hidden');
+    }
+}
+
+// 解答ボタン
+function handleReorderSubmit() {
+    if (reorderAnswerSubmitted) {
+        // 既に解答済みの場合は次の問題へ
+        moveToNextReorderQuestion();
+        return;
+    }
+    
+    const question = reorderData[currentReorderIndex];
+    const blankBoxes = document.querySelectorAll('.reorder-blank-box');
+    const userAnswerWords = Array.from(blankBoxes).map(blankBox => {
+        const answerBox = blankBox.querySelector('.reorder-answer-box');
+        return answerBox ? answerBox.dataset.word.toLowerCase() : null;
+    }).filter(word => word !== null);
+    // correctOrderから最後のピリオドを除いて、小文字に変換
+    const correctAnswerWords = question.correctOrder.slice(0, -1).map(word => word.toLowerCase());
+    
+    // 単語の順序を比較
+    const isCorrect = userAnswerWords.length === correctAnswerWords.length &&
+        userAnswerWords.every((word, index) => word === correctAnswerWords[index]);
+    
+    // 結果を表示
+    const correctAnswerEl = document.getElementById('reorderCorrectAnswer');
+    
+    if (correctAnswerEl) {
+        correctAnswerEl.textContent = question.correctAnswer;
+        correctAnswerEl.className = 'reorder-correct-answer';
+        correctAnswerEl.classList.remove('hidden');
+    }
+    
+    // ○/×マークを表示
+    showAnswerMark(isCorrect);
+    
+    // 統計を更新と効果音
+    if (isCorrect) {
+        SoundEffects.playCorrect();
+        correctCount++;
+        questionStatus[currentReorderIndex] = 'correct';
+    } else {
+        SoundEffects.playWrong();
+        wrongCount++;
+        questionStatus[currentReorderIndex] = 'wrong';
+    }
+    
+    // 進捗を保存
+    saveReorderProgress(question.id, isCorrect);
+    
+    reorderAnswerSubmitted = true;
+    updateStats();
+    updateProgressSegments();
+    
+    // 解答ボタンのテキストを変更
+    const submitBtn = document.getElementById('reorderSubmitBtn');
+    if (submitBtn) {
+        submitBtn.textContent = '次の問題へ';
+    }
+}
+
+// 次の問題へ
+function moveToNextReorderQuestion() {
+    if (currentReorderIndex < reorderData.length - 1) {
+        currentReorderIndex++;
+        currentIndex = currentReorderIndex;
+        displayCurrentReorderQuestion();
+        
+        const submitBtn = document.getElementById('reorderSubmitBtn');
+        if (submitBtn) {
+            submitBtn.textContent = '解答';
+        }
+    }
+}
+
+// 前の問題へ
+function moveToPrevReorderQuestion() {
+    if (currentReorderIndex > 0) {
+        currentReorderIndex--;
+        currentIndex = currentReorderIndex;
+        displayCurrentReorderQuestion();
+        
+        const submitBtn = document.getElementById('reorderSubmitBtn');
+        if (submitBtn) {
+            submitBtn.textContent = '解答';
+        }
+    }
+}
+
+// 整序英作文の進捗を保存
+function saveReorderProgress(questionId, isCorrect) {
+    if (!selectedCategory) return;
+    
+    const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+    
+    if (isCorrect) {
+        correctSet.add(questionId);
+        wrongSet.delete(questionId);
+    } else {
+        wrongSet.add(questionId);
+        correctSet.delete(questionId);
+    }
+    
+    saveCategoryWords(selectedCategory, correctSet, wrongSet);
+}
+
+// ================================
+// 四択問題モード
+// ================================
+
+// 四択問題モードで学習を初期化
+function initChoiceQuestionLearning(category) {
+    // choiceQuestionsが定義されているか確認
+    if (typeof choiceQuestions === 'undefined') {
+        showAlert('エラー', '四択問題のデータファイルが読み込まれていません。ページを再読み込みしてください。');
+        console.error('choiceQuestions is undefined in initChoiceQuestionLearning');
+        return;
+    }
+    if (!choiceQuestions || choiceQuestions.length === 0) {
+        showAlert('エラー', '四択問題のデータが空です。');
+        console.error('choiceQuestions is empty in initChoiceQuestionLearning');
+        return;
+    }
+    
+    selectedCategory = category;
+    choiceQuestionData = choiceQuestions;
+    isChoiceQuestionModeActive = true;
+    isReorderModeActive = false;
+    isSentenceModeActive = false;
+    isInputModeActive = false;
+    document.body.classList.add('choice-question-mode-active');
+    document.body.classList.remove('reorder-mode-active', 'sentence-mode-active');
+    currentChoiceQuestionIndex = 0;
+    choiceAnswerSubmitted = false;
+    selectedChoiceIndex = -1;
+    
+    currentRangeStart = 0;
+    currentRangeEnd = choiceQuestionData.length;
+    currentIndex = 0;
+    
+    answeredWords.clear();
+    correctCount = 0;
+    wrongCount = 0;
+    questionStatus = new Array(choiceQuestionData.length).fill(null);
+    
+    // 前回の回答状況を読み込んで進捗バーに反映
+    if (category) {
+        const { correctSet, wrongSet } = loadCategoryWords(category);
+        choiceQuestionData.forEach((question, index) => {
+            if (wrongSet.has(question.id)) {
+                questionStatus[index] = 'wrong';
+            } else if (correctSet.has(question.id)) {
+                questionStatus[index] = 'correct';
+            }
+        });
+    }
+
+    elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
+    elements.mainContent.classList.remove('hidden');
+    
+    // タイトルを設定
+    if (elements.unitName) {
+        elements.unitName.textContent = 'C問題対策 大問1整序英作文【四択問題】';
+    }
+    
+    // テーマカラーを更新
+    updateThemeColor(true);
+    document.body.classList.add('learning-mode');
+    
+    // ヘッダーボタンを更新
+    updateHeaderButtons('learning', '', true);
+    
+    // テストモード用のUIを有効化（白背景ヘッダー、中央に進捗表示）
+    document.body.classList.add('quiz-test-mode');
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress) {
+        testModeProgress.classList.remove('hidden');
+        testModeProgress.textContent = `1/${choiceQuestionData.length}`;
+    }
+    
+    // 四択問題モードではメモボタンとテストボタンを非表示、×ボタンのみ表示
+    const memoPadBtn = document.getElementById('memoPadBtn');
+    const unitTestBtn = document.getElementById('unitTestBtn');
+    const unitPauseBtn = document.getElementById('unitPauseBtn');
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    if (memoPadBtn) memoPadBtn.classList.add('hidden');
+    if (unitTestBtn) unitTestBtn.classList.add('hidden');
+    if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
+    if (inputBackBtn) inputBackBtn.classList.add('hidden');
+    
+    // 各モードの表示制御
+    const cardMode = document.querySelector('.word-card-wrapper');
+    const inputMode = document.getElementById('inputMode');
+    const sentenceMode = document.getElementById('sentenceMode');
+    const reorderMode = document.getElementById('reorderMode');
+    const choiceMode = document.getElementById('choiceQuestionMode');
+    const cardHint = document.getElementById('cardHint');
+    const progressStepButtons = document.getElementById('progressStepButtons');
+    
+    if (cardMode) cardMode.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (sentenceMode) sentenceMode.classList.add('hidden');
+    if (reorderMode) reorderMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.remove('hidden');
+    if (cardHint) cardHint.classList.add('hidden');
+    if (progressStepButtons) progressStepButtons.classList.remove('hidden');
+    
+    // 進捗バーを初期化
+    initChoiceProgressBar();
+    
+    // 最初の問題を表示
+    displayCurrentChoiceQuestion();
+    
+    // スクロール位置をトップに戻す
+    window.scrollTo(0, 0);
+}
+
+// 四択問題の進捗バーを初期化
+function initChoiceProgressBar() {
+    const container = document.getElementById('choiceProgressBarContainer');
+    const rangeEl = document.getElementById('choiceProgressRange');
+    const progressText = document.getElementById('choiceProgressText');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // 最大20セグメント表示
+    const maxSegments = Math.min(choiceQuestionData.length, 20);
+    
+    for (let i = 0; i < maxSegments; i++) {
+        const segment = document.createElement('div');
+        segment.className = 'progress-segment';
+        container.appendChild(segment);
+    }
+    
+    // 問題番号の範囲を表示
+    if (rangeEl && choiceQuestionData.length > 0) {
+        const firstId = choiceQuestionData[0].id || 1;
+        const lastId = choiceQuestionData[Math.min(19, choiceQuestionData.length - 1)].id || Math.min(20, choiceQuestionData.length);
+        rangeEl.textContent = `No.${firstId}-${lastId}`;
+    }
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        progressText.textContent = `0/${choiceQuestionData.length}`;
+    }
+    
+    // 統計をリセット
+    const correctCountEl = document.getElementById('choiceCorrectCount');
+    const wrongCountEl = document.getElementById('choiceWrongCount');
+    if (correctCountEl) correctCountEl.textContent = '0';
+    if (wrongCountEl) wrongCountEl.textContent = '0';
+}
+
+// 四択問題の進捗バーを更新
+function updateChoiceProgressBar() {
+    const container = document.getElementById('choiceProgressBarContainer');
+    const progressText = document.getElementById('choiceProgressText');
+    
+    if (!container) return;
+    
+    const segments = container.querySelectorAll('.progress-segment');
+    let choiceCorrect = 0;
+    let choiceWrong = 0;
+    
+    segments.forEach((segment, index) => {
+        segment.classList.remove('current', 'correct', 'wrong');
+        
+        if (index < questionStatus.length) {
+            if (questionStatus[index] === 'correct') {
+                segment.classList.add('correct');
+                choiceCorrect++;
+            } else if (questionStatus[index] === 'wrong') {
+                segment.classList.add('wrong');
+                choiceWrong++;
+            }
+        }
+        
+        if (index === currentChoiceQuestionIndex) {
+            segment.classList.add('current');
+        }
+    });
+    
+    // 進捗テキストを更新
+    if (progressText) {
+        const answered = choiceCorrect + choiceWrong;
+        progressText.textContent = `${answered}/${choiceQuestionData.length}`;
+    }
+    
+    // 統計を更新
+    const correctCountEl = document.getElementById('choiceCorrectCount');
+    const wrongCountEl = document.getElementById('choiceWrongCount');
+    if (correctCountEl) correctCountEl.textContent = choiceCorrect;
+    if (wrongCountEl) wrongCountEl.textContent = choiceWrong;
+}
+
+// 現在の四択問題を表示
+function displayCurrentChoiceQuestion() {
+    if (currentChoiceQuestionIndex < 0 || currentChoiceQuestionIndex >= choiceQuestionData.length) {
+        return;
+    }
+    
+    // 進捗バーを更新
+    updateChoiceProgressBar();
+    
+    // テストモード用の進捗表示を更新
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress && document.body.classList.contains('quiz-test-mode')) {
+        testModeProgress.textContent = `${currentChoiceQuestionIndex + 1}/${choiceQuestionData.length}`;
+    }
+    
+    const question = choiceQuestionData[currentChoiceQuestionIndex];
+    const questionNumberEl = document.getElementById('choiceQuestionNumber');
+    const questionTextEl = document.getElementById('choiceQuestionText');
+    const optionsContainer = document.getElementById('choiceOptionsContainer');
+    const explanationContainer = document.getElementById('choiceExplanationContainer');
+    const nextBtnContainer = document.getElementById('choiceNextBtnContainer');
+    
+    // 問題番号を表示
+    if (questionNumberEl) {
+        questionNumberEl.textContent = `問題 ${question.id}`;
+    }
+    
+    // 問題文を表示
+    if (questionTextEl) {
+        questionTextEl.textContent = question.question;
+    }
+    
+    // 選択肢を生成
+    if (optionsContainer) {
+        optionsContainer.innerHTML = '';
+        question.choices.forEach((choice, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-option-btn';
+            btn.dataset.choiceIndex = index;
+            btn.innerHTML = `
+                <span class="choice-label">${choice.label}</span>
+                <span class="choice-text">${choice.text}</span>
+            `;
+            btn.addEventListener('click', () => selectChoiceOption(index));
+            optionsContainer.appendChild(btn);
+        });
+    }
+    
+    // 解説と次へボタンを非表示
+    if (explanationContainer) {
+        explanationContainer.classList.add('hidden');
+        explanationContainer.classList.remove('correct-answer', 'wrong-answer');
+    }
+    if (nextBtnContainer) {
+        nextBtnContainer.classList.add('hidden');
+    }
+    
+    // 状態をリセット
+    choiceAnswerSubmitted = false;
+    selectedChoiceIndex = -1;
+    
+    // ステップボタンの状態を更新
+    updateNavButtons();
+}
+
+// 選択肢を選択
+function selectChoiceOption(index) {
+    if (choiceAnswerSubmitted) return;
+    
+    const optionsContainer = document.getElementById('choiceOptionsContainer');
+    if (!optionsContainer) return;
+    
+    // 選択状態をリセット
+    const allBtns = optionsContainer.querySelectorAll('.choice-option-btn');
+    allBtns.forEach(btn => btn.classList.remove('selected'));
+    
+    // 選択した選択肢をハイライト
+    const selectedBtn = optionsContainer.querySelector(`[data-choice-index="${index}"]`);
+    if (selectedBtn) {
+        selectedBtn.classList.add('selected');
+    }
+    
+    selectedChoiceIndex = index;
+    
+    // 自動的に回答を送信
+    submitChoiceAnswer();
+}
+
+// 四択問題の回答を送信
+function submitChoiceAnswer() {
+    if (choiceAnswerSubmitted || selectedChoiceIndex === -1) return;
+    
+    choiceAnswerSubmitted = true;
+    
+    const question = choiceQuestionData[currentChoiceQuestionIndex];
+    const isCorrect = selectedChoiceIndex === question.correctIndex;
+    
+    const optionsContainer = document.getElementById('choiceOptionsContainer');
+    const explanationContainer = document.getElementById('choiceExplanationContainer');
+    const resultIcon = document.getElementById('choiceResultIcon');
+    const resultText = document.getElementById('choiceResultText');
+    const explanationContent = document.getElementById('choiceExplanationContent');
+    const nextBtnContainer = document.getElementById('choiceNextBtnContainer');
+    
+    // すべての選択肢を無効化
+    const allBtns = optionsContainer.querySelectorAll('.choice-option-btn');
+    allBtns.forEach(btn => btn.classList.add('disabled'));
+    
+    // 正解・不正解のスタイルを適用
+    const selectedBtn = optionsContainer.querySelector(`[data-choice-index="${selectedChoiceIndex}"]`);
+    const correctBtn = optionsContainer.querySelector(`[data-choice-index="${question.correctIndex}"]`);
+    
+    if (isCorrect) {
+        if (selectedBtn) selectedBtn.classList.add('correct');
+        SoundEffects.playCorrect();
+        correctCount++;
+        questionStatus[currentChoiceQuestionIndex] = 'correct';
+    } else {
+        if (selectedBtn) selectedBtn.classList.add('wrong');
+        if (correctBtn) correctBtn.classList.add('correct');
+        SoundEffects.playWrong();
+        wrongCount++;
+        questionStatus[currentChoiceQuestionIndex] = 'wrong';
+    }
+    
+    // 進捗を保存
+    saveChoiceProgress(question.id, isCorrect);
+    
+    // 進捗バーを更新
+    updateChoiceProgressBar();
+    
+    // 解説を表示
+    if (explanationContainer) {
+        explanationContainer.classList.remove('hidden', 'correct-answer', 'wrong-answer');
+        explanationContainer.classList.add(isCorrect ? 'correct-answer' : 'wrong-answer');
+    }
+    
+    if (resultIcon) {
+        resultIcon.textContent = isCorrect ? '○' : '×';
+    }
+    
+    if (resultText) {
+        resultText.textContent = isCorrect ? '正解！' : `不正解 正解は「${question.correctLabel}」`;
+    }
+    
+    if (explanationContent) {
+        explanationContent.textContent = question.explanation;
+    }
+    
+    // 次の問題へボタンを表示
+    if (nextBtnContainer) {
+        nextBtnContainer.classList.remove('hidden');
+    }
+    
+    // ○/×マークを表示
+    showAnswerMark(isCorrect);
+}
+
+// 四択問題の進捗を保存
+function saveChoiceProgress(questionId, isCorrect) {
+    if (!selectedCategory) return;
+    
+    const { correctSet, wrongSet } = loadCategoryWords(selectedCategory);
+    
+    if (isCorrect) {
+        correctSet.add(questionId);
+        wrongSet.delete(questionId);
+    } else {
+        wrongSet.add(questionId);
+        correctSet.delete(questionId);
+    }
+    
+    saveCategoryWords(selectedCategory, correctSet, wrongSet);
+}
+
+// 次の四択問題へ
+function moveToNextChoiceQuestion() {
+    if (currentChoiceQuestionIndex < choiceQuestionData.length - 1) {
+        currentChoiceQuestionIndex++;
+        currentIndex = currentChoiceQuestionIndex;
+        displayCurrentChoiceQuestion();
+    } else {
+        // 最後の問題の場合は完了画面を表示
+        showCompletionScreen();
+    }
+}
+
+// 前の四択問題へ
+function moveToPrevChoiceQuestion() {
+    if (currentChoiceQuestionIndex > 0) {
+        currentChoiceQuestionIndex--;
+        currentIndex = currentChoiceQuestionIndex;
+        displayCurrentChoiceQuestion();
+    }
+}
+
+// 四択問題の次へボタンイベント
+document.addEventListener('click', function(e) {
+    if (e.target.id === 'choiceNextBtn' || e.target.closest('#choiceNextBtn')) {
+        moveToNextChoiceQuestion();
+    }
+});
+
+// キーボードの大文字・小文字を更新
+function updateKeyboardCase(keyboard, isShift) {
+    keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        const keyValue = key.dataset.key;
+        if (keyValue && keyValue.length === 1 && keyValue.match(/[a-z]/)) {
+            key.textContent = isShift ? keyValue.toUpperCase() : keyValue;
+        }
+    });
+}
+
+// 英文法中学３年間の総復習 目次ページを表示
+function showGrammarTableOfContents() {
+    // フローティング要復習ボタンを非表示
+    hideFloatingReviewBtn();
+    
+    // カテゴリー選択画面を非表示
+    if (elements.categorySelection) {
+        elements.categorySelection.classList.add('hidden');
+    }
+    
+    // コース選択画面を非表示
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) {
+        courseSelection.classList.add('hidden');
+    }
+    
+    // 目次ページを表示
+    const grammarTOCView = document.getElementById('grammarTableOfContentsView');
+    if (grammarTOCView) {
+        grammarTOCView.classList.remove('hidden');
+    }
+    
+    // スクロール位置をトップに戻す
+    window.scrollTo(0, 0);
+    
+    
+    // 左上のタイトルを更新
+    if (elements.unitName) {
+        elements.unitName.textContent = '中学３年間の英文法';
+    }
+    
+    // ハンバーガーメニューを非表示、戻るボタンを表示、中断ボタンを非表示
+    updateHeaderButtons('back');
+    
+    // 各章のチェックボタンの状態を更新
+    updateGrammarChapterCheckboxes();
+}
+
+// 各章のチェックボタンの状態を更新
+function updateGrammarChapterCheckboxes() {
+    // すべての章のチェックボタンを取得
+    document.querySelectorAll('.chapter-checkbox').forEach(checkbox => {
+        const chapterNumber = parseInt(checkbox.dataset.chapter, 10);
+        if (isGrammarChapterCompleted(chapterNumber)) {
+            checkbox.classList.add('completed');
+        } else {
+            checkbox.classList.remove('completed');
+        }
+    });
+}
+
+// 章が完了しているかチェック
+function isGrammarChapterCompleted(chapterNumber) {
+    // localStorageから進捗を取得
+    const progressKey = `grammar-chapter-${chapterNumber}-progress`;
+    const progress = localStorage.getItem(progressKey);
+    if (!progress) return false;
+    
+    try {
+        const progressData = JSON.parse(progress);
+        // 章のデータを取得
+        let chapterData = null;
+        if (typeof grammarData !== 'undefined' && grammarData) {
+            chapterData = grammarData.find(data => data.chapter === chapterNumber);
+        }
+        if (!chapterData) return false;
+        
+        // セクション構造がある場合
+        if (chapterData.sections && chapterData.sections.length > 0) {
+            // すべてのセクションのすべての問題が正解しているかチェック
+            for (let sectionIndex = 0; sectionIndex < chapterData.sections.length; sectionIndex++) {
+                const section = chapterData.sections[sectionIndex];
+                if (section.exercises && section.exercises.length > 0) {
+                    for (let exerciseIndex = 0; exerciseIndex < section.exercises.length; exerciseIndex++) {
+                        const exerciseKey = `${chapterNumber}-section${sectionIndex}-ex${exerciseIndex}`;
+                        if (!progressData[exerciseKey] || !progressData[exerciseKey].allCorrect) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        } else {
+            // 従来の構造の場合
+            if (chapterData.exercises && chapterData.exercises.length > 0) {
+                for (let exerciseIndex = 0; exerciseIndex < chapterData.exercises.length; exerciseIndex++) {
+                    const exerciseKey = `${chapterNumber}-${exerciseIndex}`;
+                    if (!progressData[exerciseKey] || !progressData[exerciseKey].allCorrect) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    } catch (e) {
+        return false;
+    }
+}
+
+// 英文法解説ページを表示
+function showGrammarChapter(chapterNumber) {
+    // 現在の章番号を設定
+    currentGrammarChapterNumber = chapterNumber;
+    
+    // 状態変数をリセット
+    grammarExerciseBlanks = [];
+    grammarExerciseAnswerSubmitted = {};
+    grammarRedoButtons = {};
+    currentGrammarSelectedBlankIndex = -1;
+    currentGrammarSelectedExerciseIndex = -1;
+    currentGrammarExerciseIndex = -1;
+    currentGrammarExercises = [];
+    
+    // 目次ページを非表示
+    const grammarTOCView = document.getElementById('grammarTableOfContentsView');
+    if (grammarTOCView) {
+        grammarTOCView.classList.add('hidden');
+    }
+    
+    // 解説ページを表示
+    const grammarChapterView = document.getElementById('grammarChapterView');
+    if (grammarChapterView) {
+        grammarChapterView.classList.remove('hidden');
+    }
+    
+    // スクロール位置をトップに戻す
+    window.scrollTo(0, 0);
+    
+    // キーボードを非表示に
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        keyboard.classList.add('hidden');
+    }
+    
+    // grammarDataから該当する章のデータを取得
+    let chapterData = null;
+    if (typeof grammarData !== 'undefined' && grammarData) {
+        chapterData = grammarData.find(data => data.chapter === chapterNumber);
+    }
+    
+    
+    // 左上のタイトルを更新
+    if (elements.unitName) {
+        if (chapterData && chapterData.title) {
+            elements.unitName.textContent = chapterData.title;
+        } else {
+            elements.unitName.textContent = `第${chapterNumber}章`;
+        }
+    }
+    
+    // ハンバーガーメニューを非表示、戻るボタンを表示、中断ボタンを非表示
+    updateHeaderButtons('back');
+    
+    // フィードバックオーバーレイの位置を更新（少し遅延させてDOMが更新されるのを待つ）
+    setTimeout(() => {
+        updateFeedbackOverlayPosition();
+    }, 0);
+    
+    // 章のタイトルを設定
+    const chapterTitleEl = document.getElementById('grammarChapterTitle');
+    if (chapterTitleEl) {
+        if (chapterData && chapterData.title) {
+            chapterTitleEl.textContent = chapterData.title;
+        } else {
+            chapterTitleEl.textContent = `第${chapterNumber}章`;
+        }
+    }
+    
+    // 解説内容を設定
+    const chapterContentEl = document.getElementById('grammarChapterContent');
+    if (chapterContentEl) {
+        if (chapterData && chapterData.explanation) {
+            // HTML形式で保存されている場合はそのまま、テキストの場合は段落タグで囲む
+            chapterContentEl.innerHTML = chapterData.explanation || '<p>解説を準備中です。</p>';
+        } else {
+            chapterContentEl.innerHTML = '<p>解説を準備中です。</p>';
+        }
+    }
+    
+    // セクション構造がある場合はセクションを表示、ない場合は従来の表示
+    const sectionsContainer = document.getElementById('grammarSectionsContainer');
+    if (sectionsContainer) {
+        sectionsContainer.innerHTML = '';
+        
+        if (chapterData && chapterData.sections && chapterData.sections.length > 0) {
+            // セクション構造で表示
+            chapterData.sections.forEach((section, sectionIndex) => {
+                displayGrammarSection(section, sectionIndex);
+            });
+            // すべてのセクションを表示した後、キーボードを設定（最後に1回だけ）
+            setupGrammarExerciseKeyboard();
+            // キーボードを初期状態で非表示
+            const keyboard = document.getElementById('grammarExerciseKeyboard');
+            if (keyboard) {
+                keyboard.classList.add('hidden');
+            }
+        } else {
+            // 従来の構造（POINTと演習問題を1つずつ表示）
+            const grammarExerciseSection = document.getElementById('grammarExerciseSection');
+            if (grammarExerciseSection) {
+                grammarExerciseSection.style.display = 'block';
+            }
+            
+            // POINTボックスを設定
+            const pointContentEl = document.getElementById('grammarPointContent');
+            if (pointContentEl) {
+                if (chapterData && chapterData.point) {
+                    pointContentEl.innerHTML = chapterData.point || '<p>POINTを準備中です。</p>';
+                } else {
+                    pointContentEl.innerHTML = '<p>POINTを準備中です。</p>';
+                }
+            }
+            
+            // 演習問題を設定
+            if (chapterData && chapterData.exercises && chapterData.exercises.length > 0) {
+                currentGrammarExercises = chapterData.exercises;
+                displayAllGrammarExercises(chapterData.exercises);
+            } else {
+                currentGrammarExercises = [];
+                const exerciseContentEl = document.getElementById('grammarExerciseContent');
+                if (exerciseContentEl) {
+                    exerciseContentEl.innerHTML = '<p>演習問題を準備中です。</p>';
+                }
+            }
+        }
+    }
+}
+
+// 文法セクションを表示
+function displayGrammarSection(section, sectionIndex) {
+    const sectionsContainer = document.getElementById('grammarSectionsContainer');
+    if (!sectionsContainer) return;
+    
+    // セクションコンテナを作成
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'grammar-section';
+    sectionDiv.dataset.sectionIndex = sectionIndex;
+    
+    // セクションタイトル（青背景の四角に数字、その横にタイトル）
+    const sectionTitle = document.createElement('h3');
+    sectionTitle.className = 'grammar-section-title';
+    const sectionNumber = document.createElement('span');
+    sectionNumber.className = 'grammar-section-number';
+    sectionNumber.textContent = sectionIndex + 1;
+    sectionTitle.appendChild(sectionNumber);
+    const sectionTitleText = document.createElement('span');
+    sectionTitleText.className = 'grammar-section-title-text';
+    sectionTitleText.textContent = section.title || '';
+    sectionTitle.appendChild(sectionTitleText);
+    sectionDiv.appendChild(sectionTitle);
+    
+    // POINTボックス
+    if (section.point) {
+        const pointBox = document.createElement('div');
+        pointBox.className = 'grammar-point-box';
+        const pointLabel = document.createElement('div');
+        pointLabel.className = 'grammar-point-label';
+        pointLabel.textContent = 'POINT';
+        pointBox.appendChild(pointLabel);
+        const pointContent = document.createElement('div');
+        pointContent.className = 'grammar-point-content';
+        pointContent.innerHTML = section.point;
+        pointBox.appendChild(pointContent);
+        sectionDiv.appendChild(pointBox);
+    }
+    
+    // 演習問題セクション
+    if (section.exercises && section.exercises.length > 0) {
+        const exerciseSection = document.createElement('div');
+        exerciseSection.className = 'grammar-exercise-section';
+        const exerciseTitle = document.createElement('h3');
+        exerciseTitle.className = 'grammar-exercise-title';
+        exerciseTitle.textContent = '演習問題';
+        exerciseSection.appendChild(exerciseTitle);
+        const exerciseContent = document.createElement('div');
+        exerciseContent.className = 'grammar-exercise-content';
+        exerciseContent.dataset.sectionIndex = sectionIndex;
+        exerciseSection.appendChild(exerciseContent);
+        sectionDiv.appendChild(exerciseSection);
+        
+        // 演習問題を表示
+        displayGrammarSectionExercises(section.exercises, sectionIndex, exerciseContent);
+    }
+    
+    sectionsContainer.appendChild(sectionDiv);
+}
+
+// セクションの演習問題を表示
+function displayGrammarSectionExercises(exercises, sectionIndex, exerciseContentEl) {
+    if (!exerciseContentEl) return;
+    
+    // このセクション用の状態をクリア（念のため）
+    // 注意: showGrammarChapterの最初で全体をリセットしているので、これは冗長だが安全のため
+    
+    exercises.forEach((exercise, exerciseIndex) => {
+        // グローバルなインデックスを計算（セクションごとに連番を振る）
+        const globalExerciseIndex = `${sectionIndex}-${exerciseIndex}`;
+        
+        // 問題のコンテナを作成
+        const exerciseItem = document.createElement('div');
+        exerciseItem.className = 'grammar-exercise-item';
+        exerciseItem.dataset.exerciseIndex = globalExerciseIndex;
+        exerciseItem.dataset.sectionIndex = sectionIndex;
+        exerciseItem.dataset.localIndex = exerciseIndex;
+        exerciseItem.dataset.exerciseData = JSON.stringify(exercise); // 問題データを保持
+        
+        // 問題番号
+        const exerciseNumber = document.createElement('div');
+        exerciseNumber.className = 'grammar-exercise-item-number';
+        exerciseNumber.textContent = `問題 ${exerciseIndex + 1}`;
+        exerciseItem.appendChild(exerciseNumber);
+        
+        // 日本語訳
+        const japaneseEl = document.createElement('div');
+        japaneseEl.className = 'sentence-japanese';
+        japaneseEl.textContent = exercise.japanese;
+        exerciseItem.appendChild(japaneseEl);
+        
+        // 英文を構築（空所を含む）
+        const englishEl = document.createElement('div');
+        englishEl.className = 'sentence-english';
+        englishEl.dataset.exerciseIndex = globalExerciseIndex;
+        englishEl.dataset.sectionIndex = sectionIndex;
+        englishEl.dataset.localIndex = exerciseIndex;
+        
+        const exerciseBlanks = [];
+        const words = exercise.english.split(' ');
+        
+        words.forEach((word, idx) => {
+            const wordWithoutPunct = word.replace(/[.,!?]/g, '');
+            const blankInfo = exercise.blanks.find(b => b.word.toLowerCase() === wordWithoutPunct.toLowerCase());
+            
+            if (blankInfo) {
+                const blankSpan = document.createElement('span');
+                blankSpan.className = 'sentence-blank';
+                blankSpan.dataset.blankIndex = blankInfo.index;
+                blankSpan.dataset.exerciseIndex = globalExerciseIndex;
+                blankSpan.dataset.sectionIndex = sectionIndex;
+                blankSpan.dataset.localIndex = exerciseIndex;
+                blankSpan.textContent = ' '.repeat(blankInfo.word.length);
+                blankSpan.dataset.correctWord = blankInfo.word;
+                
+                const charWidth = 14;
+                const padding = 24;
+                const extraSpace = 8;
+                const calculatedWidth = Math.max(60, (blankInfo.word.length * charWidth) + padding + extraSpace);
+                blankSpan.style.width = `${calculatedWidth}px`;
+                
+                englishEl.appendChild(blankSpan);
+                
+                exerciseBlanks.push({
+                    index: blankInfo.index,
+                    word: blankInfo.word,
+                    userInput: '',
+                    element: blankSpan,
+                    exerciseIndex: globalExerciseIndex,
+                    sectionIndex: sectionIndex,
+                    localIndex: exerciseIndex
+                });
+            } else {
+                const partSpan = document.createElement('span');
+                partSpan.className = 'sentence-part';
+                partSpan.textContent = word + (idx < words.length - 1 ? ' ' : '');
+                englishEl.appendChild(partSpan);
+            }
+        });
+        
+        exerciseBlanks.sort((a, b) => a.index - b.index);
+        
+        // 空所にタップイベントを追加
+        exerciseBlanks.forEach(blank => {
+            const isMobile = window.innerWidth <= 600;
+            const charWidth = isMobile ? 12 : 14;
+            const padding = isMobile ? 12 : 24;
+            const extraSpace = isMobile ? 4 : 8;
+            const calculatedWidth = Math.max(isMobile ? 50 : 60, (blank.word.length * charWidth) + padding + extraSpace);
+            blank.element.style.width = `${calculatedWidth}px`;
+            
+            blank.element.addEventListener('click', () => {
+                if (grammarExerciseAnswerSubmitted[globalExerciseIndex]) return;
+                selectGrammarExerciseBlank(blank.index, globalExerciseIndex);
+                // キーボードを表示
+                const keyboard = document.getElementById('grammarExerciseKeyboard');
+                if (keyboard) {
+                    keyboard.classList.remove('hidden');
+                }
+            });
+        });
+        
+        grammarExerciseBlanks.push({
+            exerciseIndex: globalExerciseIndex,
+            sectionIndex: sectionIndex,
+            localIndex: exerciseIndex,
+            blanks: exerciseBlanks
+        });
+        
+        exerciseItem.appendChild(englishEl);
+        
+        // 解きなおすボタン（初期は非表示）
+        const redoBtn = document.createElement('button');
+        redoBtn.className = 'grammar-exercise-redo-btn hidden';
+        redoBtn.textContent = '解きなおす';
+        redoBtn.dataset.exerciseIndex = globalExerciseIndex;
+        redoBtn.addEventListener('click', () => resetGrammarExercise(globalExerciseIndex));
+        exerciseItem.appendChild(redoBtn);
+        grammarRedoButtons[globalExerciseIndex] = redoBtn;
+        
+        exerciseContentEl.appendChild(exerciseItem);
+    });
+    
+    // キーボードを初期状態で非表示（空欄タップ時に表示）
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        keyboard.classList.add('hidden');
+    }
+}
+
+// 英文法演習問題を表示（すべての問題を縦に並べて表示）
+let currentGrammarExerciseIndex = -1; // 現在選択中の問題のインデックス
+let currentGrammarExercises = [];
+let grammarExerciseBlanks = []; // 各問題の空所データを保持 {exerciseIndex: 0, blanks: [...]}
+let grammarExerciseAnswerSubmitted = {}; // 各問題の採点済みフラグ {exerciseIndex: true/false}
+let currentGrammarSelectedBlankIndex = -1;
+let currentGrammarSelectedExerciseIndex = -1; // 現在選択中の問題のインデックス
+let grammarKeyboardOutsideHandlerAttached = false;
+let grammarRedoButtons = {}; // 各問題の解きなおすボタンを保持
+let currentGrammarChapterNumber = -1; // 現在表示中の章番号
+
+// すべての問題を表示
+function displayAllGrammarExercises(exercises) {
+    const exerciseContentEl = document.getElementById('grammarExerciseContent');
+    if (!exerciseContentEl) return;
+    
+    exerciseContentEl.innerHTML = '';
+    grammarExerciseBlanks = [];
+    grammarExerciseAnswerSubmitted = {};
+    currentGrammarSelectedBlankIndex = -1;
+    currentGrammarSelectedExerciseIndex = -1;
+    grammarRedoButtons = {};
+    
+    exercises.forEach((exercise, exerciseIndex) => {
+        // 問題のコンテナを作成
+        const exerciseItem = document.createElement('div');
+        exerciseItem.className = 'grammar-exercise-item';
+        exerciseItem.dataset.exerciseIndex = exerciseIndex;
+        exerciseItem.dataset.exerciseData = JSON.stringify(exercise); // 問題データを保持
+        
+        // 問題番号
+        const exerciseNumber = document.createElement('div');
+        exerciseNumber.className = 'grammar-exercise-item-number';
+        exerciseNumber.textContent = `問題 ${exerciseIndex + 1}`;
+        exerciseItem.appendChild(exerciseNumber);
+        
+        // 日本語訳
+        const japaneseEl = document.createElement('div');
+        japaneseEl.className = 'sentence-japanese';
+        japaneseEl.textContent = exercise.japanese;
+        exerciseItem.appendChild(japaneseEl);
+        
+        // 英文を構築（空所を含む）
+        const englishEl = document.createElement('div');
+        englishEl.className = 'sentence-english';
+        englishEl.dataset.exerciseIndex = exerciseIndex;
+        
+        const exerciseBlanks = [];
+        const words = exercise.english.split(' ');
+        
+        words.forEach((word, idx) => {
+            const wordWithoutPunct = word.replace(/[.,!?]/g, '');
+            const blankInfo = exercise.blanks.find(b => b.word.toLowerCase() === wordWithoutPunct.toLowerCase());
+            
+            if (blankInfo) {
+                const blankSpan = document.createElement('span');
+                blankSpan.className = 'sentence-blank';
+                blankSpan.dataset.blankIndex = blankInfo.index;
+                blankSpan.dataset.exerciseIndex = exerciseIndex;
+                blankSpan.textContent = ' '.repeat(blankInfo.word.length);
+                blankSpan.dataset.correctWord = blankInfo.word;
+                
+                const charWidth = 14;
+                const padding = 24;
+                const extraSpace = 8;
+                const calculatedWidth = Math.max(60, (blankInfo.word.length * charWidth) + padding + extraSpace);
+                blankSpan.style.width = `${calculatedWidth}px`;
+                
+                englishEl.appendChild(blankSpan);
+                
+                exerciseBlanks.push({
+                    index: blankInfo.index,
+                    word: blankInfo.word,
+                    userInput: '',
+                    element: blankSpan,
+                    exerciseIndex: exerciseIndex
+                });
+            } else {
+                const partSpan = document.createElement('span');
+                partSpan.className = 'sentence-part';
+                partSpan.textContent = word + (idx < words.length - 1 ? ' ' : '');
+                englishEl.appendChild(partSpan);
+            }
+        });
+        
+        exerciseBlanks.sort((a, b) => a.index - b.index);
+        
+        // 空所にタップイベントを追加
+        exerciseBlanks.forEach(blank => {
+            const isMobile = window.innerWidth <= 600;
+            const charWidth = isMobile ? 12 : 14;
+            const padding = isMobile ? 12 : 24;
+            const extraSpace = isMobile ? 4 : 8;
+            const calculatedWidth = Math.max(isMobile ? 50 : 60, (blank.word.length * charWidth) + padding + extraSpace);
+            blank.element.style.width = `${calculatedWidth}px`;
+            
+            blank.element.addEventListener('click', () => {
+                if (grammarExerciseAnswerSubmitted[exerciseIndex]) return;
+                selectGrammarExerciseBlank(blank.index, exerciseIndex);
+                // キーボードを表示
+                const keyboard = document.getElementById('grammarExerciseKeyboard');
+                if (keyboard) {
+                    keyboard.classList.remove('hidden');
+                }
+            });
+        });
+        
+        grammarExerciseBlanks.push({
+            exerciseIndex: exerciseIndex,
+            blanks: exerciseBlanks
+        });
+        
+        exerciseItem.appendChild(englishEl);
+        
+        // 解きなおすボタン（初期は非表示）
+        const redoBtn = document.createElement('button');
+        redoBtn.className = 'keyboard-action-btn grammar-exercise-redo-btn hidden';
+        redoBtn.textContent = '解きなおす';
+        redoBtn.dataset.exerciseIndex = exerciseIndex;
+        redoBtn.addEventListener('click', () => resetGrammarExercise(exerciseIndex));
+        exerciseItem.appendChild(redoBtn);
+        grammarRedoButtons[exerciseIndex] = redoBtn;
+        
+        exerciseContentEl.appendChild(exerciseItem);
+    });
+    
+    // キーボードを初期状態で非表示（空欄タップ時に表示）
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        keyboard.classList.add('hidden');
+    }
+    
+    // キーボードを設定
+    setupGrammarExerciseKeyboard();
+}
+
+// 旧関数（互換性のため残すが使用しない）
+function displayGrammarExercise(exercise, index, total) {
+    if (!exercise) return;
+    
+    grammarExerciseAnswerSubmitted = false;
+    currentGrammarSelectedBlankIndex = -1;
+    currentGrammarExerciseIndex = index;
+    
+    // ヒントを非表示にリセット
+    const hintContent = document.getElementById('grammarExerciseHintContent');
+    const hintBtn = document.getElementById('grammarExerciseHintBtn');
+    if (hintContent) {
+        hintContent.classList.add('hidden');
+    }
+    if (hintBtn) {
+        const arrowElement = hintBtn.querySelector('.hint-arrow');
+        if (arrowElement) {
+            arrowElement.textContent = '▶';
+        }
+    }
+    
+    // 日本語訳を表示
+    const japaneseEl = document.getElementById('grammarExerciseJapanese');
+    if (japaneseEl) {
+        japaneseEl.textContent = exercise.japanese;
+    }
+    
+    // 英文を構築（空所を含む）
+    const englishEl = document.getElementById('grammarExerciseEnglish');
+    if (englishEl) {
+        englishEl.innerHTML = '';
+        grammarExerciseBlanks = [];
+        
+        // 英文を単語に分割し、空所の位置を特定
+        const words = exercise.english.split(' ');
+        
+        words.forEach((word, idx) => {
+            // 句読点を除去した単語で比較
+            const wordWithoutPunct = word.replace(/[.,!?]/g, '');
+            // 空所かどうかを判定（blanks配列に含まれているか）
+            const blankInfo = exercise.blanks.find(b => b.word.toLowerCase() === wordWithoutPunct.toLowerCase());
+            
+            if (blankInfo) {
+                // 空所を作成
+                const blankSpan = document.createElement('span');
+                blankSpan.className = 'sentence-blank';
+                blankSpan.dataset.blankIndex = blankInfo.index;
+                blankSpan.textContent = ' '.repeat(blankInfo.word.length);
+                blankSpan.dataset.correctWord = blankInfo.word;
+                
+                // 単語の長さに応じて幅を計算
+                const charWidth = 14;
+                const padding = 24;
+                const extraSpace = 8;
+                const calculatedWidth = Math.max(60, (blankInfo.word.length * charWidth) + padding + extraSpace);
+                blankSpan.style.width = `${calculatedWidth}px`;
+                
+                englishEl.appendChild(blankSpan);
+                
+                grammarExerciseBlanks.push({
+                    index: blankInfo.index,
+                    word: blankInfo.word,
+                    userInput: '',
+                    element: blankSpan
+                });
+            } else {
+                // 通常の単語
+                const partSpan = document.createElement('span');
+                partSpan.className = 'sentence-part';
+                partSpan.textContent = word + (idx < words.length - 1 ? ' ' : '');
+                englishEl.appendChild(partSpan);
+            }
+        });
+        
+        // 空所をindex順にソート
+        grammarExerciseBlanks.sort((a, b) => a.index - b.index);
+        
+        // 空所にタップイベントを追加
+        grammarExerciseBlanks.forEach(blank => {
+            const isMobile = window.innerWidth <= 600;
+            const charWidth = isMobile ? 12 : 14;
+            const padding = isMobile ? 12 : 24;
+            const extraSpace = isMobile ? 4 : 8;
+            const calculatedWidth = Math.max(isMobile ? 50 : 60, (blank.word.length * charWidth) + padding + extraSpace);
+            blank.element.style.width = `${calculatedWidth}px`;
+            
+            blank.element.addEventListener('click', () => {
+                if (grammarExerciseAnswerSubmitted) return;
+                selectGrammarExerciseBlank(blank.index);
+                // キーボードを表示
+                const keyboard = document.getElementById('grammarExerciseKeyboard');
+                if (keyboard) {
+                    keyboard.classList.remove('hidden');
+                }
+            });
+        });
+    }
+    
+    // ヒントを設定
+    if (exercise.hint && hintContent) {
+        hintContent.textContent = exercise.hint;
+    }
+    
+    // キーボードを初期状態で非表示にする
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        keyboard.classList.add('hidden');
+    }
+    
+    // キーボードを設定
+    setupGrammarExerciseKeyboard();
+}
+
+// 演習問題の空所を選択
+function selectGrammarExerciseBlank(blankIndex, exerciseIndex) {
+    currentGrammarSelectedBlankIndex = blankIndex;
+    currentGrammarSelectedExerciseIndex = exerciseIndex;
+    
+    // すべての空所から選択状態を削除
+    grammarExerciseBlanks.forEach(exerciseData => {
+        exerciseData.blanks.forEach(blank => {
+            blank.element.classList.remove('selected');
+        });
+    });
+    
+    // 選択された空所にクラスを追加
+    const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === exerciseIndex);
+    if (exerciseData) {
+        const selectedBlank = exerciseData.blanks.find(b => b.index === blankIndex);
+        if (selectedBlank) {
+            selectedBlank.element.classList.add('selected');
+        }
+    }
+}
+
+// 演習問題に文字を入力
+function insertGrammarExerciseLetter(letter) {
+    if (currentGrammarSelectedBlankIndex === -1 || currentGrammarSelectedExerciseIndex === -1) return;
+    
+    const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === currentGrammarSelectedExerciseIndex);
+    if (!exerciseData) return;
+    
+    const selectedBlank = exerciseData.blanks.find(b => b.index === currentGrammarSelectedBlankIndex);
+    if (!selectedBlank) return;
+    
+    selectedBlank.userInput += letter;
+    selectedBlank.element.textContent = selectedBlank.userInput + ' '.repeat(Math.max(0, selectedBlank.word.length - selectedBlank.userInput.length));
+}
+
+// 演習問題のバックスペース
+function handleGrammarExerciseBackspace() {
+    if (currentGrammarSelectedBlankIndex === -1 || currentGrammarSelectedExerciseIndex === -1) return;
+    
+    const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === currentGrammarSelectedExerciseIndex);
+    if (!exerciseData) return;
+    
+    const selectedBlank = exerciseData.blanks.find(b => b.index === currentGrammarSelectedBlankIndex);
+    if (!selectedBlank || selectedBlank.userInput.length === 0) return;
+    
+    selectedBlank.userInput = selectedBlank.userInput.slice(0, -1);
+    selectedBlank.element.textContent = selectedBlank.userInput + ' '.repeat(Math.max(0, selectedBlank.word.length - selectedBlank.userInput.length));
+}
+
+// 解きなおす：入力と状態をリセット
+function resetGrammarExercise(exerciseIndex) {
+    const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === exerciseIndex);
+    if (!exerciseData) return;
+    const exerciseItem = document.querySelector(`.grammar-exercise-item[data-exercise-index="${exerciseIndex}"]`);
+    const redoBtn = grammarRedoButtons[exerciseIndex];
+
+    // 状態リセット
+    grammarExerciseAnswerSubmitted[exerciseIndex] = false;
+    currentGrammarSelectedBlankIndex = -1;
+    currentGrammarSelectedExerciseIndex = -1;
+
+    // 入力と表示リセット
+    exerciseData.blanks.forEach(blank => {
+        blank.userInput = '';
+        blank.element.textContent = ' '.repeat(blank.word.length);
+        blank.element.classList.remove('correct', 'wrong', 'selected');
+    });
+
+    // 解説を非表示に戻す
+    if (exerciseItem) {
+        const explanationEl = exerciseItem.querySelector('.exercise-explanation');
+        if (explanationEl) {
+            explanationEl.remove();
+        }
+    }
+
+    // 解きなおすボタンを隠す
+    if (redoBtn) {
+        redoBtn.classList.add('hidden');
+    }
+
+    // キーボードを閉じる
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        keyboard.classList.add('hidden');
+    }
+}
+
+// 演習問題用キーボード設定
+function setupGrammarExerciseKeyboard() {
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (!keyboard) return;
+    
+    // 既存のイベントリスナーを削除するために、キーボードをクローンして置き換える
+    const keyboardClone = keyboard.cloneNode(true);
+    keyboard.parentNode.replaceChild(keyboardClone, keyboard);
+    const newKeyboard = document.getElementById('grammarExerciseKeyboard');
+    
+    // Shift状態を保持する変数
+    let isShift = false;
+    
+    // Shiftキー
+    const shiftKey = document.getElementById('grammarExerciseKeyboardShift');
+    if (shiftKey) {
+        const handleShift = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            isShift = !isShift;
+            shiftKey.dataset.shift = isShift.toString();
+            updateGrammarExerciseKeyboardCase(newKeyboard, isShift);
+        };
+        shiftKey.addEventListener('touchstart', handleShift, { passive: false });
+        shiftKey.addEventListener('click', handleShift);
+    }
+    
+    // Shift状態を解除する関数
+    const resetShiftState = () => {
+        if (isShift) {
+            isShift = false;
+            if (shiftKey) {
+                shiftKey.dataset.shift = 'false';
+                updateGrammarExerciseKeyboardCase(newKeyboard, false);
+            }
+        }
+    };
+    
+    // キーボードキーのイベント
+    newKeyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        const letter = key.dataset.key;
+        
+        if (letter === ' ') {
+            const handleSpace = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                insertGrammarExerciseLetter(' ');
+            };
+            key.addEventListener('touchstart', handleSpace, { passive: false });
+            key.addEventListener('click', handleSpace);
+        } else if (key.dataset.shiftKey) {
+            // アポストロフィ/アンダーバーキー
+            const handleApostrophe = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // Shift状態を再確認
+                const currentShift = shiftKey && shiftKey.dataset.shift === 'true';
+                const charToInsert = currentShift ? key.dataset.shiftKey : letter;
+                insertGrammarExerciseLetter(charToInsert);
+            };
+            key.addEventListener('touchstart', handleApostrophe, { passive: false });
+            key.addEventListener('click', handleApostrophe);
+        } else {
+            const handleLetter = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // Shift状態を再確認して大文字・小文字を切り替え
+                const currentShift = shiftKey && shiftKey.dataset.shift === 'true';
+                const charToInsert = (currentShift && letter.match(/[a-z]/)) ? letter.toUpperCase() : letter;
+                insertGrammarExerciseLetter(charToInsert);
+                // 大文字を入力した場合は、ボタンを離したときにシフトを解除するためフラグを設定
+                if (currentShift && letter.match(/[a-z]/) && charToInsert === letter.toUpperCase()) {
+                    window.pendingShiftReset = 'grammarExerciseKeyboard';
+                    window.grammarExerciseResetShiftState = resetShiftState;
+                }
+            };
+            key.addEventListener('touchstart', handleLetter, { passive: false });
+            key.addEventListener('click', handleLetter);
+        }
+    });
+    
+    // バックスペースキー
+    const backspaceKey = document.getElementById('grammarExerciseKeyboardBackspace');
+    if (backspaceKey) {
+        const handleBackspace = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleGrammarExerciseBackspace();
+        };
+        backspaceKey.addEventListener('touchstart', handleBackspace, { passive: false });
+        backspaceKey.addEventListener('click', handleBackspace);
+    }
+    
+    // 採点キー（キーボード内）
+    const decideKey = document.getElementById('grammarExerciseKeyboardDecide');
+    if (decideKey) {
+        const handleDecide = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (currentGrammarSelectedExerciseIndex !== -1) {
+                submitGrammarExerciseAnswer(currentGrammarSelectedExerciseIndex);
+            }
+        };
+        decideKey.addEventListener('touchstart', handleDecide, { passive: false });
+        decideKey.addEventListener('click', handleDecide);
+    }
+
+    // キーボード外クリックで閉じる（1回だけ登録）
+    if (!grammarKeyboardOutsideHandlerAttached) {
+        document.addEventListener('click', (e) => {
+            const kb = document.getElementById('grammarExerciseKeyboard');
+            if (!kb || kb.classList.contains('hidden')) return;
+            const isKeyboard = kb.contains(e.target);
+            const isBlank = e.target.classList && e.target.classList.contains('sentence-blank');
+            if (!isKeyboard && !isBlank) {
+                kb.classList.add('hidden');
+                currentGrammarSelectedBlankIndex = -1;
+                currentGrammarSelectedExerciseIndex = -1;
+            }
+        });
+        grammarKeyboardOutsideHandlerAttached = true;
+    }
+}
+
+// 演習問題のキーボードの大文字・小文字を更新
+function updateGrammarExerciseKeyboardCase(keyboard, isShift) {
+    // キーボードにshift-activeクラスを追加/削除（ポップアップ用）
+    keyboard.classList.toggle('shift-active', isShift);
+    
+    keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        const keyValue = key.dataset.key;
+        if (keyValue && keyValue.length === 1 && keyValue.match(/[a-z]/i)) {
+            const newValue = isShift ? keyValue.toUpperCase() : keyValue.toLowerCase();
+            key.textContent = newValue;
+            key.dataset.key = newValue; // ポップアップ用にdata-keyも更新
+        }
+        // アポストロフィ/アンダーバーの切り替え
+        if (key.dataset.shiftKey) {
+            key.textContent = isShift ? key.dataset.shiftKey : key.dataset.key;
+        }
+    });
+}
+
+// 演習問題の解答を提出
+function submitGrammarExerciseAnswer(exerciseIndex) {
+    if (grammarExerciseAnswerSubmitted[exerciseIndex]) return;
+    
+    const exerciseData = grammarExerciseBlanks.find(e => e.exerciseIndex === exerciseIndex);
+    if (!exerciseData) return;
+    const exerciseItem = document.querySelector(`.grammar-exercise-item[data-exercise-index="${exerciseIndex}"]`);
+    
+    // 問題データを取得（セクション構造の場合はdata-exercise-dataから、従来の場合はcurrentGrammarExercisesから）
+    let exercise = null;
+    if (exerciseItem && exerciseItem.dataset.exerciseData) {
+        exercise = JSON.parse(exerciseItem.dataset.exerciseData);
+    } else if (currentGrammarExercises && currentGrammarExercises[exerciseIndex]) {
+        exercise = currentGrammarExercises[exerciseIndex];
+    }
+    
+    const redoBtn = grammarRedoButtons[exerciseIndex];
+    
+    let allCorrect = true;
+    exerciseData.blanks.forEach(blank => {
+        // 大文字・小文字を区別して比較
+        const isCorrect = blank.userInput.trim() === blank.word;
+        if (isCorrect) {
+            blank.element.classList.add('correct');
+            blank.element.classList.remove('wrong', 'selected');
+        } else {
+            blank.element.classList.add('wrong');
+            blank.element.classList.remove('correct', 'selected');
+            allCorrect = false;
+        }
+    });
+    
+    grammarExerciseAnswerSubmitted[exerciseIndex] = true;
+    
+    // キーボードを非表示にする
+    const keyboard = document.getElementById('grammarExerciseKeyboard');
+    if (keyboard) {
+        // 常時表示とするため非表示にはしない
+        keyboard.classList.remove('hidden');
+    }
+    
+    // 選択状態をリセット
+    currentGrammarSelectedBlankIndex = -1;
+    currentGrammarSelectedExerciseIndex = -1;
+    
+    // 解説の表示
+    if (exerciseItem) {
+        let explanationEl = exerciseItem.querySelector('.exercise-explanation');
+        if (!explanationEl) {
+            explanationEl = document.createElement('div');
+            explanationEl.className = 'exercise-explanation';
+            exerciseItem.appendChild(explanationEl);
+        }
+        const explanationText = exercise && exercise.explanation ? exercise.explanation : '解説を準備中です。';
+        explanationEl.textContent = explanationText;
+
+        // 解説の直下に「解きなおす」を移動
+        if (redoBtn) {
+            explanationEl.insertAdjacentElement('afterend', redoBtn);
+        }
+    }
+
+    // 間違いがあれば「解きなおす」を表示
+    if (!allCorrect && redoBtn) {
+        redoBtn.classList.remove('hidden');
+    }
+    
+    // 進捗を保存
+    if (currentGrammarChapterNumber > 0) {
+        saveGrammarExerciseProgress(currentGrammarChapterNumber, exerciseIndex, allCorrect, exerciseItem);
+    }
+}
+
+// 文法問題の進捗を保存
+function saveGrammarExerciseProgress(chapterNumber, exerciseIndex, allCorrect, exerciseItem) {
+    const progressKey = `grammar-chapter-${chapterNumber}-progress`;
+    let progress = {};
+    try {
+        const saved = localStorage.getItem(progressKey);
+        if (saved) {
+            progress = JSON.parse(saved);
+        }
+    } catch (e) {
+        progress = {};
+    }
+    
+    // 問題のキーを生成（セクション構造の場合はsectionIndexとexerciseIndexを含む）
+    let exerciseKey = '';
+    if (exerciseItem && exerciseItem.dataset.sectionIndex !== undefined) {
+        const sectionIndex = exerciseItem.dataset.sectionIndex;
+        const localIndex = exerciseItem.dataset.localIndex;
+        exerciseKey = `${chapterNumber}-section${sectionIndex}-ex${localIndex}`;
+    } else {
+        // 従来の構造の場合
+        exerciseKey = `${chapterNumber}-${exerciseIndex}`;
+    }
+    
+    // 進捗を保存
+    progress[exerciseKey] = {
+        allCorrect: allCorrect,
+        timestamp: Date.now()
+    };
+    
+    localStorage.setItem(progressKey, JSON.stringify(progress));
+    
+    // 章が完了したかチェックして、目次ページのチェックボタンを更新
+    if (isGrammarChapterCompleted(chapterNumber)) {
+        // 目次ページが表示されている場合は、チェックボタンを更新
+        const grammarTOCView = document.getElementById('grammarTableOfContentsView');
+        if (grammarTOCView && !grammarTOCView.classList.contains('hidden')) {
+            updateGrammarChapterCheckboxes();
+        }
+    }
+}
+
+// =============================================
+// 手書き入力クイズモード（日本語→英語専用）
+// =============================================
+
+// 解答ボタンを現在のDOMにバインドするヘルパー
+function bindHWQuizSubmitButton() {
+    const btn = document.querySelector('.hw-answer-btn');
+    if (!btn) return;
+    const handler = (e) => {
+        e.preventDefault();
+        submitHWQuizAnswer();
+    };
+    btn.onclick = handler;
+    btn.ontouchend = handler;
+}
+
+// 手書きクイズの状態管理
+let hwQuizWords = [];
+let hwQuizIndex = 0;
+let hwQuizCategory = '';
+let hwQuizCourseTitle = '';
+let hwQuizAnswerSubmitted = false;
+let hwQuizConfirmedText = '';
+let hwQuizCanvas = null;
+let hwQuizCtx = null;
+let hwQuizIsDrawing = false;
+let hwQuizLastX = 0;
+let hwQuizLastY = 0;
+let hwQuizDrawTimeout = null;
+let hwQuizResults = []; // 各問題の結果を記録: 'correct', 'wrong', null
+let hwQuizCorrectCount = 0;
+let hwQuizWrongCount = 0;
+
+/**
+ * 手書きクイズモードを開始
+ */
+async function startHandwritingQuiz(category, words, courseTitle) {
+    console.log('[HWQuiz] Starting handwriting quiz with', words.length, 'words');
+    
+    // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
+    learnedWordsAtStart = calculateTotalLearnedWords();
+    lastLearningCategory = category;
+    console.log('startHandwritingQuiz: 学習開始', { category, learnedWordsAtStart });
+    
+    // 日本語→英語モードなので、selectedLearningModeを'input'に設定
+    // これにより、進捗が_inputキーで保存される
+    selectedLearningMode = 'input';
+    
+    hwQuizWords = words;
+    hwQuizIndex = 0;
+    hwQuizCategory = category;
+    hwQuizCourseTitle = courseTitle;
+    hwQuizResults = new Array(words.length).fill(null);
+    hwQuizCorrectCount = 0;
+    hwQuizWrongCount = 0;
+    hwQuizInputMode = 'typing'; // デフォルトはタイピングモード
+    hwKeyboardShiftActive = false;
+    
+    // 手書きクイズ画面を表示
+    const hwQuizView = document.getElementById('handwritingQuizView');
+    const categorySelection = document.getElementById('categorySelection');
+    
+    if (categorySelection) categorySelection.classList.add('hidden');
+    if (hwQuizView) hwQuizView.classList.remove('hidden');
+    
+    // UIを初期化
+    const mainEl = hwQuizView.querySelector('.hw-main');
+    if (mainEl) {
+        mainEl.innerHTML = `
+            <!-- 問題（シンプル表示） -->
+            <div class="hw-question-simple">
+                <span class="pos-inline part-of-speech" id="hwQuizPos"></span>
+                <span class="hw-question-meaning" id="hwQuizMeaning">意味</span>
+            </div>
+            
+            <!-- 回答エリア -->
+            <div class="hw-answer-area">
+                <div class="hw-answer" id="hwQuizAnswerDisplay">
+                    <span class="hw-answer-text"></span>
+                </div>
+                <!-- 正解表示用のプレースホルダー -->
+                <div id="hwQuizCorrectAnswerPlaceholder"></div>
+            </div>
+            
+            <!-- 結果表示 -->
+            <div class="hw-result hidden" id="hwQuizResult">
+                <div class="hw-result-badge" id="hwQuizResultIcon"></div>
+                <div class="hw-result-word">
+                    <span id="hwQuizCorrectWord"></span>
+                    <button class="hw-audio-btn" id="hwQuizAudioBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    // 下部固定エリアを初期化
+    const inputFixedEl = hwQuizView.querySelector('.hw-input-fixed-bottom');
+    if (inputFixedEl) {
+        inputFixedEl.innerHTML = `
+            <!-- キャンバス（手書きモード用） -->
+            <div class="hw-canvas-area" id="hwCanvasArea">
+                <div class="hw-canvas-wrapper">
+                    <div class="hw-canvas-label">手書き入力欄</div>
+                    <div class="hw-canvas-lines"></div>
+                    <canvas id="hwQuizCanvas" class="hw-canvas" width="500" height="180"></canvas>
+                </div>
+                <!-- 手書きモード用のボタン -->
+                <div class="hw-canvas-buttons">
+                    <button class="hw-space-btn" id="hwQuizHandwritingSpaceBtn" type="button">
+                        <span>空白</span>
+                    </button>
+                    <button class="hw-backspace-btn" id="hwQuizBackspaceBtn" type="button">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                            <line x1="18" y1="9" x2="12" y2="15"></line>
+                            <line x1="12" y1="9" x2="18" y2="15"></line>
+                        </svg>
+                        <span>1文字消す</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 認識候補 -->
+            <div class="hw-candidates" id="hwQuizPredictions"></div>
+            
+            <!-- 仮想キーボード（タイピングモード用） -->
+            <div class="virtual-keyboard hidden" id="hwVirtualKeyboard">
+                <div class="keyboard-row">
+                    <button class="keyboard-key" data-key="q">q</button>
+                    <button class="keyboard-key" data-key="w">w</button>
+                    <button class="keyboard-key" data-key="e">e</button>
+                    <button class="keyboard-key" data-key="r">r</button>
+                    <button class="keyboard-key" data-key="t">t</button>
+                    <button class="keyboard-key" data-key="y">y</button>
+                    <button class="keyboard-key" data-key="u">u</button>
+                    <button class="keyboard-key" data-key="i">i</button>
+                    <button class="keyboard-key" data-key="o">o</button>
+                    <button class="keyboard-key" data-key="p">p</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="keyboard-key" data-key="a">a</button>
+                    <button class="keyboard-key" data-key="s">s</button>
+                    <button class="keyboard-key" data-key="d">d</button>
+                    <button class="keyboard-key" data-key="f">f</button>
+                    <button class="keyboard-key" data-key="g">g</button>
+                    <button class="keyboard-key" data-key="h">h</button>
+                    <button class="keyboard-key" data-key="j">j</button>
+                    <button class="keyboard-key" data-key="k">k</button>
+                    <button class="keyboard-key" data-key="l">l</button>
+                    <button class="keyboard-key keyboard-key-space" data-key=" ">_</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="keyboard-key keyboard-key-shift" id="hwKeyboardShift" data-shift="false">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                    </button>
+                    <button class="keyboard-key" data-key="z">z</button>
+                    <button class="keyboard-key" data-key="x">x</button>
+                    <button class="keyboard-key" data-key="c">c</button>
+                    <button class="keyboard-key" data-key="v">v</button>
+                    <button class="keyboard-key" data-key="b">b</button>
+                    <button class="keyboard-key" data-key="n">n</button>
+                    <button class="keyboard-key" data-key="m">m</button>
+                    <button class="keyboard-key" data-key="'">'</button>
+                    <button class="keyboard-key keyboard-key-special" id="hwKeyboardBackspace">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                            <line x1="18" y1="9" x2="12" y2="15"></line>
+                            <line x1="12" y1="9" x2="18" y2="15"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 解答ボタン -->
+            <div class="keyboard-actions">
+                <button class="keyboard-action-btn" id="hwQuizPassBtn" type="button">パス</button>
+                <button class="keyboard-action-btn keyboard-action-btn-primary hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答</button>
+            </div>
+        `;
+
+        bindHWQuizSubmitButton();
+    }
+    
+    // 単元名を設定（テストモードでは非表示）
+    const unitName = document.getElementById('hwQuizUnitName');
+    if (unitName) {
+        unitName.textContent = courseTitle || '日本語→英語';
+        unitName.classList.add('hidden');
+    }
+    
+    // テストモード用のUIを有効化（白背景ヘッダー、中央に進捗表示）
+    document.body.classList.add('quiz-test-mode');
+    document.body.classList.add('learning-mode');
+    const hwTestModeProgress = document.getElementById('hwTestModeProgress');
+    if (hwTestModeProgress) {
+        hwTestModeProgress.classList.remove('hidden');
+        hwTestModeProgress.textContent = `1/${words.length}`;
+    }
+    // ステータスバーを白に
+    updateThemeColorForTest(true);
+    
+    // 進捗セグメントを初期化
+    initHWQuizProgressSegments();
+    
+    // キャンバスを初期化
+    initHWQuizCanvas();
+    
+    // イベントリスナーを設定
+    setupHWQuizEvents();
+    
+    // 最初の問題を表示
+    displayHWQuizQuestion();
+    
+    // モデルをロード
+    await loadHWQuizModel();
+}
+
+/**
+ * 進捗セグメントを初期化
+ */
+function initHWQuizProgressSegments() {
+    const container = document.getElementById('hwQuizProgressBarContainer');
+    const rangeEl = document.getElementById('hwQuizProgressRange');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // 最大20セグメント表示
+    const maxSegments = Math.min(hwQuizWords.length, 20);
+    
+    // 問題数に応じてセグメントの幅を計算（gapは2px）
+    const gapWidth = 2;
+    const segmentWidth = maxSegments > 0 ? `calc((100% - ${(maxSegments - 1) * gapWidth}px) / ${maxSegments})` : '100%';
+    
+    for (let i = 0; i < maxSegments; i++) {
+        const segment = document.createElement('div');
+        segment.className = 'progress-segment';
+        segment.dataset.index = i;
+        segment.style.width = segmentWidth;
+        if (i === 0) segment.classList.add('current');
+        container.appendChild(segment);
+    }
+    
+    // 範囲テキストを設定
+    if (rangeEl && hwQuizWords.length > 0) {
+        const firstWord = hwQuizWords[0];
+        const lastWord = hwQuizWords[hwQuizWords.length - 1];
+        rangeEl.textContent = `No.${firstWord.id}-${lastWord.id}`;
+    }
+    
+    // 統計をリセット
+    updateHWQuizStats();
+}
+
+/**
+ * 進捗セグメントを更新
+ */
+function updateHWQuizProgressSegments() {
+    const container = document.getElementById('hwQuizProgressBarContainer');
+    if (!container) return;
+    
+    const segments = container.querySelectorAll('.progress-segment');
+    segments.forEach((segment, i) => {
+        segment.classList.remove('current', 'correct', 'wrong');
+        
+        if (i === hwQuizIndex) {
+            segment.classList.add('current');
+        } else if (hwQuizResults[i] === 'correct') {
+            segment.classList.add('correct');
+        } else if (hwQuizResults[i] === 'wrong') {
+            segment.classList.add('wrong');
+        }
+    });
+}
+
+/**
+ * 統計を更新
+ */
+function updateHWQuizStats() {
+    const correctEl = document.getElementById('hwQuizCorrectCount');
+    const wrongEl = document.getElementById('hwQuizWrongCount');
+    const progressEl = document.getElementById('hwQuizProgressText');
+    
+    if (correctEl) correctEl.textContent = hwQuizCorrectCount;
+    if (wrongEl) wrongEl.textContent = hwQuizWrongCount;
+    if (progressEl) progressEl.textContent = `${hwQuizIndex + 1}/${hwQuizWords.length}`;
+    
+    // テストモード用の進捗表示も更新
+    const hwTestModeProgress = document.getElementById('hwTestModeProgress');
+    if (hwTestModeProgress && document.body.classList.contains('quiz-test-mode')) {
+        hwTestModeProgress.textContent = `${hwQuizIndex + 1}/${hwQuizWords.length}`;
+    }
+}
+
+/**
+ * モデルをロード
+ */
+async function loadHWQuizModel() {
+    const loadingEl = document.getElementById('hwQuizLoading');
+    if (loadingEl) loadingEl.classList.add('hidden');
+    
+    const predictions = document.getElementById('hwQuizPredictions');
+    
+    if (!window.handwritingRecognition) {
+        console.error('[HWQuiz] HandwritingRecognition not found');
+        return;
+    }
+    
+    if (window.handwritingRecognition.isModelLoaded) {
+        if (predictions) {
+            predictions.innerHTML = '';
+        }
+        return;
+    }
+    
+    try {
+        const result = await window.handwritingRecognition.loadModel();
+        if (predictions) {
+            if (result) {
+                predictions.innerHTML = '';
+            } else {
+                const errorDetail = window.handwritingRecognition.getLastError ? 
+                    window.handwritingRecognition.getLastError() : 'エラー';
+                predictions.innerHTML = `<span class="hw-candidates-placeholder">${errorDetail}</span>`;
+            }
+        }
+    } catch (error) {
+        console.error('[HWQuiz] Model load error:', error);
+    }
+}
+
+/**
+ * キャンバスを初期化
+ */
+let hwQuizCanvasInitialized = false;
+
+function initHWQuizCanvas() {
+    hwQuizCanvas = document.getElementById('hwQuizCanvas');
+    if (!hwQuizCanvas) {
+        console.error('[HWQuiz] Canvas not found');
+        return;
+    }
+    
+    hwQuizCtx = hwQuizCanvas.getContext('2d');
+    
+    // 状態をリセット
+    hwQuizIsDrawing = false;
+    hwQuizIsRecognizing = false;
+    
+    clearHWQuizCanvas();
+    
+    // 既に初期化済みならイベント登録をスキップ
+    if (hwQuizCanvasInitialized) {
+        console.log('[HWQuiz] Canvas already initialized, context refreshed');
+        return;
+    }
+    
+    console.log('[HWQuiz] Initializing canvas events');
+    
+    // 描画イベント（マウス）
+    hwQuizCanvas.addEventListener('mousedown', hwQuizDrawStart);
+    hwQuizCanvas.addEventListener('mousemove', hwQuizDrawMove);
+    hwQuizCanvas.addEventListener('mouseup', hwQuizDrawEnd);
+    hwQuizCanvas.addEventListener('mouseleave', hwQuizDrawEnd);
+    
+    // 描画イベント（タッチ）
+    hwQuizCanvas.addEventListener('touchstart', hwQuizDrawStart, { passive: false });
+    hwQuizCanvas.addEventListener('touchmove', hwQuizDrawMove, { passive: false });
+    hwQuizCanvas.addEventListener('touchend', hwQuizDrawEnd);
+    hwQuizCanvas.addEventListener('touchcancel', hwQuizDrawEnd);
+    
+    hwQuizCanvasInitialized = true;
+}
+
+/**
+ * キャンバスをクリア
+ * 【精度向上ポイント】線の太さをEMNISTの学習データに合わせる
+ * EMNISTは28x28ピクセルで線の太さは約2-3ピクセル
+ * キャンバスが200x200の場合、200/28 ≈ 7.14 なので線幅10-12が適切
+ */
+function clearHWQuizCanvas() {
+    if (!hwQuizCtx || !hwQuizCanvas) return;
+    hwQuizCtx.fillStyle = '#ffffff';
+    hwQuizCtx.fillRect(0, 0, hwQuizCanvas.width, hwQuizCanvas.height);
+    hwQuizCtx.strokeStyle = '#000000'; // 黒で描画（反転前提）
+    // 認識済みセグメント数をリセット
+    hwQuizRecognizedSegments = 0;
+    // キャンバスサイズに応じて線幅を動的調整（細め）
+    const scaleFactor = hwQuizCanvas.width / 28;
+    hwQuizCtx.lineWidth = Math.max(3, Math.round(scaleFactor * 0.8));
+    hwQuizCtx.lineCap = 'round';
+    hwQuizCtx.lineJoin = 'round';
+}
+
+/**
+ * 描画開始
+ */
+function hwQuizDrawStart(e) {
+    if (hwQuizAnswerSubmitted) return;
+    
+    // キャンバスコンテキストがない場合は再初期化
+    if (!hwQuizCtx || !hwQuizCanvas) {
+        hwQuizCanvas = document.getElementById('hwQuizCanvas');
+        if (hwQuizCanvas) {
+            hwQuizCtx = hwQuizCanvas.getContext('2d');
+            clearHWQuizCanvas();
+        }
+        if (!hwQuizCtx) return;
+    }
+    
+    e.preventDefault();
+    hwQuizIsDrawing = true;
+    
+    const pos = getHWQuizPos(e);
+    hwQuizLastX = pos.x;
+    hwQuizLastY = pos.y;
+    
+    // タップした位置に点を描画（チョンとタップしただけでも描画されるように）
+    hwQuizCtx.fillStyle = '#000000';
+    hwQuizCtx.beginPath();
+    hwQuizCtx.arc(pos.x, pos.y, hwQuizCtx.lineWidth / 2, 0, Math.PI * 2);
+    hwQuizCtx.fill();
+    
+    if (hwQuizDrawTimeout) {
+        clearTimeout(hwQuizDrawTimeout);
+        hwQuizDrawTimeout = null;
+    }
+}
+
+/**
+ * 描画中
+ */
+function hwQuizDrawMove(e) {
+    if (!hwQuizIsDrawing) return;
+    if (!hwQuizCtx) return;
+    e.preventDefault();
+    
+    const pos = getHWQuizPos(e);
+    
+    hwQuizCtx.beginPath();
+    hwQuizCtx.moveTo(hwQuizLastX, hwQuizLastY);
+    hwQuizCtx.lineTo(pos.x, pos.y);
+    hwQuizCtx.stroke();
+    
+    hwQuizLastX = pos.x;
+    hwQuizLastY = pos.y;
+}
+
+/**
+ * 描画終了
+ */
+function hwQuizDrawEnd(e) {
+    if (!hwQuizIsDrawing) return;
+    hwQuizIsDrawing = false;
+    
+    // 描画停止後、自動認識（短い遅延で）
+    if (hwQuizDrawTimeout) clearTimeout(hwQuizDrawTimeout);
+    hwQuizDrawTimeout = setTimeout(() => {
+        recognizeHWQuizCanvas();
+    }, 300);
+}
+
+/**
+ * キャンバス座標を取得
+ */
+function getHWQuizPos(e) {
+    const rect = hwQuizCanvas.getBoundingClientRect();
+    const scaleX = hwQuizCanvas.width / rect.width;
+    const scaleY = hwQuizCanvas.height / rect.height;
+    
+    let clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+    }
+    
+    return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+    };
+}
+
+// 認識処理中フラグ
+let hwQuizIsRecognizing = false;
+
+/**
+ * キャンバスを認識して自動入力
+ */
+async function recognizeHWQuizCanvas() {
+    if (hwQuizAnswerSubmitted) return;
+    if (!window.handwritingRecognition?.isModelLoaded) {
+        return;
+    }
+    
+    // 既に認識処理中なら何もしない
+    if (hwQuizIsRecognizing) {
+        return;
+    }
+    
+    hwQuizIsRecognizing = true;
+    
+    try {
+        // 現在のセグメントを検出（キャンバス上に残っているもの）
+        const segments = window.handwritingRecognition.segmentCharacters(hwQuizCanvas);
+        
+        if (!segments || segments.length === 0) {
+            hwQuizIsRecognizing = false;
+            return;
+        }
+        
+        // 最大3マス同時並行で認識
+        const maxSegments = Math.min(segments.length, 3);
+        const recognitionPromises = [];
+        
+        for (let i = 0; i < maxSegments; i++) {
+            recognitionPromises.push(
+                recognizeSingleSegment(segments[i]).then(result => ({
+                    result,
+                    segment: segments[i],
+                    index: i
+                }))
+            );
+        }
+        
+        // 全ての認識を並列実行
+        const results = await Promise.all(recognitionPromises);
+        
+        // 左から順にソート
+        results.sort((a, b) => a.segment.x - b.segment.x);
+        
+        // 順番に飛ばす（少し遅延を入れて）
+        for (let i = 0; i < results.length; i++) {
+            const { result, segment } = results[i];
+            setTimeout(() => {
+                if (result && result.char && result.confidence > 0.3) {
+                    // 認識成功
+                    flyCharFromSegment(result.char, segment);
+                } else {
+                    // 認識失敗 - ?マークを表示
+                    showRecognitionError(segment);
+                }
+            }, i * 100); // 100msずつ遅延
+        }
+        
+    } catch (error) {
+        console.error('[HWQuiz] Recognition error:', error);
+    }
+    
+    hwQuizIsRecognizing = false;
+}
+
+/**
+ * 単一セグメントを認識
+ */
+async function recognizeSingleSegment(segment) {
+    const canvas = document.getElementById('hwQuizCanvas');
+    if (!canvas) return null;
+    
+    // セグメントを正方形キャンバスに描画
+    const segCanvas = document.createElement('canvas');
+    const size = Math.max(segment.width, segment.height) + 20;
+    segCanvas.width = size;
+    segCanvas.height = size;
+    const segCtx = segCanvas.getContext('2d');
+    
+    // 白で塗りつぶし
+    segCtx.fillStyle = '#ffffff';
+    segCtx.fillRect(0, 0, size, size);
+    
+    // セグメントを中央に配置
+    const offsetX = (size - segment.width) / 2;
+    const offsetY = (size - segment.height) / 2;
+    segCtx.drawImage(
+        canvas,
+        segment.x, segment.y, segment.width, segment.height,
+        offsetX, offsetY, segment.width, segment.height
+    );
+    
+    // 認識
+    const result = await window.handwritingRecognition.predict(segCanvas);
+    
+    if (result && result.topK && result.topK.length > 0) {
+        return {
+            char: result.topK[0].label,
+            confidence: result.topK[0].probability
+        };
+    }
+    
+    return null;
+}
+
+/**
+ * セグメント境界線を描画
+ */
+function drawSegmentLine(segmentEndX) {
+    if (!hwQuizCtx || !hwQuizCanvas) return;
+    
+    // 薄いグレーの縦線を描画
+    hwQuizCtx.save();
+    hwQuizCtx.strokeStyle = 'rgba(150, 150, 150, 0.5)';
+    hwQuizCtx.lineWidth = 1;
+    hwQuizCtx.setLineDash([4, 4]); // 点線
+    hwQuizCtx.beginPath();
+    hwQuizCtx.moveTo(segmentEndX + 5, 0);
+    hwQuizCtx.lineTo(segmentEndX + 5, hwQuizCanvas.height);
+    hwQuizCtx.stroke();
+    hwQuizCtx.restore();
+}
+
+/**
+ * 認識失敗時に?マークを表示
+ */
+function showRecognitionError(segment) {
+    const canvas = document.getElementById('hwQuizCanvas');
+    if (!canvas) return;
+    
+    const canvasRect = canvas.getBoundingClientRect();
+    const scaleX = canvasRect.width / canvas.width;
+    const scaleY = canvasRect.height / canvas.height;
+    
+    // セグメント部分を消去
+    hwQuizCtx.fillStyle = '#ffffff';
+    hwQuizCtx.fillRect(segment.x - 2, segment.y - 2, segment.width + 4, segment.height + 4);
+    
+    // ?マークを表示
+    const errorMark = document.createElement('div');
+    errorMark.textContent = '?';
+    errorMark.style.position = 'fixed';
+    errorMark.style.left = (canvasRect.left + (segment.x + segment.width / 2) * scaleX) + 'px';
+    errorMark.style.top = (canvasRect.top + (segment.y + segment.height / 2) * scaleY) + 'px';
+    errorMark.style.transform = 'translate(-50%, -50%)';
+    errorMark.style.fontSize = '48px';
+    errorMark.style.fontWeight = 'bold';
+    errorMark.style.color = '#ef4444';
+    errorMark.style.pointerEvents = 'none';
+    errorMark.style.zIndex = '2000';
+    errorMark.style.transition = 'all 0.5s ease-out';
+    document.body.appendChild(errorMark);
+    
+    // フェードアウト
+    setTimeout(() => {
+        errorMark.style.opacity = '0';
+        errorMark.style.transform = 'translate(-50%, -50%) scale(1.5)';
+    }, 100);
+    
+    // 削除
+    setTimeout(() => {
+        errorMark.remove();
+    }, 600);
+}
+
+/**
+ * セグメント位置から文字を処理
+ */
+function flyCharFromSegment(char, segment) {
+    const canvas = document.getElementById('hwQuizCanvas');
+    const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
+    
+    if (!canvas || !answerDisplay) {
+        const adjustedChar = adjustCharCaseForAnswer(char);
+        hwQuizConfirmedText += adjustedChar;
+        updateHWQuizAnswerDisplay();
+        return;
+    }
+    
+    // セグメント部分をキャプチャ
+    const padding = 3;
+    const captureX = Math.max(0, segment.x - padding);
+    const captureY = Math.max(0, segment.y - padding);
+    const captureWidth = Math.min(canvas.width - captureX, segment.width + padding * 2);
+    const captureHeight = Math.min(canvas.height - captureY, segment.height + padding * 2);
+    
+    const captureCanvas = document.createElement('canvas');
+    captureCanvas.width = captureWidth;
+    captureCanvas.height = captureHeight;
+    const captureCtx = captureCanvas.getContext('2d');
+    captureCtx.drawImage(canvas, captureX, captureY, captureWidth, captureHeight, 0, 0, captureWidth, captureHeight);
+    
+    // 白い背景を透明にする
+    const imageData = captureCtx.getImageData(0, 0, captureWidth, captureHeight);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        // 白に近いピクセル（RGB各230以上）を透明に
+        if (data[i] > 230 && data[i + 1] > 230 && data[i + 2] > 230) {
+            data[i + 3] = 0; // アルファを0に
+        }
+    }
+    captureCtx.putImageData(imageData, 0, 0);
+    
+    // キャンバスからセグメント部分を即座に消去（新しい文字が書けるように）
+    hwQuizCtx.fillStyle = '#ffffff';
+    hwQuizCtx.fillRect(captureX - 2, captureY - 2, captureWidth + 4, captureHeight + 4);
+    
+    // 書いた文字そのものを飛ばすアニメーション
+    const canvasRect = canvas.getBoundingClientRect();
+    const scaleX = canvasRect.width / canvas.width;
+    const scaleY = canvasRect.height / canvas.height;
+    
+    // 飛ぶ画像要素を作成
+    const flyingImg = document.createElement('img');
+    flyingImg.src = captureCanvas.toDataURL();
+    flyingImg.style.position = 'fixed';
+    flyingImg.style.left = (canvasRect.left + captureX * scaleX + captureWidth * scaleX / 2) + 'px';
+    flyingImg.style.top = (canvasRect.top + captureY * scaleY + captureHeight * scaleY / 2) + 'px';
+    flyingImg.style.width = (captureWidth * scaleX) + 'px';
+    flyingImg.style.height = (captureHeight * scaleY) + 'px';
+    flyingImg.style.transform = 'translate(-50%, -50%)';
+    flyingImg.style.pointerEvents = 'none';
+    flyingImg.style.zIndex = '2000';
+    flyingImg.style.transition = 'all 0.35s ease-in-out';
+    document.body.appendChild(flyingImg);
+    
+    // 回答欄の位置を計算
+    const answerRect = answerDisplay.getBoundingClientRect();
+    const currentText = hwQuizConfirmedText || '';
+    const tempSpan = document.createElement('span');
+    tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:48px;font-weight:700;font-family:"SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;letter-spacing:2px;';
+    tempSpan.textContent = currentText;
+    document.body.appendChild(tempSpan);
+    const textWidth = tempSpan.offsetWidth;
+    tempSpan.remove();
+    
+    const targetX = answerRect.left + answerRect.width / 2 + textWidth / 2;
+    const targetY = answerRect.top + answerRect.height / 2;
+    
+    // 飛ばす
+    requestAnimationFrame(() => {
+        flyingImg.style.left = targetX + 'px';
+        flyingImg.style.top = targetY + 'px';
+        flyingImg.style.width = '30px';
+        flyingImg.style.height = '30px';
+        flyingImg.style.opacity = '0.5';
+    });
+    
+    // アニメーション完了後に文字を追加して画像を削除
+    setTimeout(() => {
+        const adjustedChar = adjustCharCaseForAnswer(char);
+        hwQuizConfirmedText += adjustedChar;
+        updateHWQuizAnswerDisplay();
+        flyingImg.remove();
+    }, 350);
+}
+
+/**
+ * 文字を自動入力（飛ぶアニメーション付き）
+ */
+function autoInputHWQuizChar(char) {
+    const canvas = document.getElementById('hwQuizCanvas');
+    const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
+    
+    if (!canvas || !answerDisplay) {
+        addHWQuizChar(char);
+        return;
+    }
+    
+    // キャンバスの中心座標を取得
+    const canvasRect = canvas.getBoundingClientRect();
+    const startX = canvasRect.left + canvasRect.width / 2;
+    const startY = canvasRect.top + canvasRect.height / 2;
+    
+    // 回答欄の次の文字位置を計算（中央揃えなので、現在のテキストの右端）
+    const answerRect = answerDisplay.getBoundingClientRect();
+    const currentText = hwQuizConfirmedText || '';
+    // テキストの幅を一時的に計測
+    const tempSpan = document.createElement('span');
+    tempSpan.style.cssText = 'position:absolute;visibility:hidden;font-size:38px;font-weight:700;font-family:"SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;letter-spacing:2px;';
+    tempSpan.textContent = currentText;
+    document.body.appendChild(tempSpan);
+    const textWidth = tempSpan.offsetWidth;
+    tempSpan.remove();
+    
+    // 中央揃えなので、テキストの右端の位置を計算
+    const centerX = answerRect.left + answerRect.width / 2;
+    const endX = centerX + textWidth / 2 + 10; // テキスト右端 + 少し余白
+    const endY = answerRect.top + answerRect.height / 2;
+    
+    // 飛ぶ文字を作成
+    const flyingChar = document.createElement('div');
+    flyingChar.className = 'hw-flying-char';
+    flyingChar.textContent = char;
+    flyingChar.style.left = startX + 'px';
+    flyingChar.style.top = startY + 'px';
+    document.body.appendChild(flyingChar);
+    
+    // キャンバスを即座にクリア
+    clearHWQuizCanvas();
+    
+    // ポップアップ後に飛ばす
+    setTimeout(() => {
+        flyingChar.classList.add('flying');
+        flyingChar.style.left = endX + 'px';
+        flyingChar.style.top = endY + 'px';
+        flyingChar.style.transform = 'translate(-50%, -50%) scale(0.5)';
+        flyingChar.style.fontSize = '38px';
+    }, 200);
+    
+    // 文字を追加して飛ぶ文字を削除
+    setTimeout(() => {
+        const adjustedChar = adjustCharCaseForAnswer(char);
+        hwQuizConfirmedText += adjustedChar;
+        updateHWQuizAnswerDisplay();
+        flyingChar.remove();
+        
+        // 予測をクリア
+        const container = document.getElementById('hwQuizPredictions');
+        if (container) {
+            container.innerHTML = '';
+        }
+    }, 700);
+}
+
+/**
+ * 文字のケースをそのまま返す（自動大文字化を無効化）
+ * ユーザーが入力した大文字/小文字をそのまま使用
+ */
+function adjustCharCaseForAnswer(char) {
+    // 入力された文字をそのまま返す（自動変換しない）
+    return char;
+}
+
+/**
+ * 文字を追加（手動用フォールバック）
+ */
+function addHWQuizChar(char) {
+    const adjustedChar = adjustCharCaseForAnswer(char);
+    hwQuizConfirmedText += adjustedChar;
+    updateHWQuizAnswerDisplay();
+    clearHWQuizCanvas();
+    
+    // 予測をクリア
+    const container = document.getElementById('hwQuizPredictions');
+    if (container) {
+        container.innerHTML = '';
+    }
+}
+
+/**
+ * 回答表示を更新
+ */
+function updateHWQuizAnswerDisplay() {
+    const display = document.getElementById('hwQuizAnswerDisplay');
+    if (display) {
+        const textEl = display.querySelector('.hw-answer-text');
+        if (textEl) {
+            textEl.textContent = hwQuizConfirmedText;
+        } else {
+        display.textContent = hwQuizConfirmedText;
+        }
+    }
+}
+
+// 現在の入力モード（handwriting または typing）
+let hwQuizInputMode = 'typing';
+let hwKeyboardShiftActive = false;
+
+/**
+ * イベントリスナーを設定
+ */
+function setupHWQuizEvents() {
+    // 入力モード切替ボタン
+    const handwritingBtn = document.getElementById('hwModeHandwriting');
+    const typingBtn = document.getElementById('hwModeTyping');
+    
+    if (handwritingBtn) {
+        handwritingBtn.onclick = () => switchHWInputMode('handwriting');
+    }
+    if (typingBtn) {
+        typingBtn.onclick = () => switchHWInputMode('typing');
+    }
+    
+    // 仮想キーボードのイベント設定
+    setupHWVirtualKeyboard();
+    
+    // 戻るボタン
+    const backBtn = document.getElementById('hwQuizBackBtn');
+    if (backBtn) {
+        backBtn.onclick = () => {
+            exitHWQuiz();
+        };
+    }
+    
+    // ×ボタン（ポーズ表示）
+    const pauseBtn = document.getElementById('hwQuizPauseBtn');
+    if (pauseBtn) {
+        pauseBtn.onclick = () => {
+            const pauseOverlay = document.getElementById('hwQuizPauseOverlay');
+            if (pauseOverlay) {
+                pauseOverlay.classList.remove('hidden');
+            }
+        };
+    }
+    
+    // ポーズ：学習を続ける
+    const pauseContinueBtn = document.getElementById('hwQuizPauseContinueBtn');
+    if (pauseContinueBtn) {
+        pauseContinueBtn.onclick = () => {
+            const pauseOverlay = document.getElementById('hwQuizPauseOverlay');
+            if (pauseOverlay) {
+                pauseOverlay.classList.add('hidden');
+            }
+        };
+    }
+    
+    // ポーズ：中断する
+    const pauseQuitBtn = document.getElementById('hwQuizPauseQuitBtn');
+    if (pauseQuitBtn) {
+        pauseQuitBtn.onclick = () => {
+            const pauseOverlay = document.getElementById('hwQuizPauseOverlay');
+            if (pauseOverlay) {
+                pauseOverlay.classList.add('hidden');
+            }
+            exitHWQuiz();
+        };
+    }
+    
+    // ポーズオーバーレイの背景クリックで閉じる
+    const pauseOverlay = document.getElementById('hwQuizPauseOverlay');
+    if (pauseOverlay) {
+        pauseOverlay.onclick = (e) => {
+            if (e.target === pauseOverlay) {
+                pauseOverlay.classList.add('hidden');
+            }
+        };
+    }
+    
+    
+    // バックスペースボタン（長押し対応）
+    const backspaceBtn = document.getElementById('hwQuizBackspaceBtn');
+    if (backspaceBtn && !backspaceBtn._hwEventsAttached) {
+        backspaceBtn._hwEventsAttached = true;
+        let backspaceInterval = null;
+        let backspaceTimeout = null;
+        let isTouching = false;
+        
+        const doBackspace = () => {
+            if (hwQuizAnswerSubmitted) return;
+            if (hwQuizConfirmedText.length > 0) {
+                hwQuizConfirmedText = hwQuizConfirmedText.slice(0, -1);
+                updateHWQuizAnswerDisplay();
+            }
+        };
+        
+        const startBackspace = () => {
+            doBackspace();
+            // 200ms後に連続削除開始
+            backspaceTimeout = setTimeout(() => {
+                backspaceInterval = setInterval(doBackspace, 60);
+            }, 200);
+        };
+        
+        const stopBackspace = () => {
+            if (backspaceTimeout) {
+                clearTimeout(backspaceTimeout);
+                backspaceTimeout = null;
+            }
+            if (backspaceInterval) {
+                clearInterval(backspaceInterval);
+                backspaceInterval = null;
+            }
+        };
+        
+        // タッチイベント
+        backspaceBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isTouching = true;
+            startBackspace();
+        }, { passive: false });
+        backspaceBtn.addEventListener('touchend', () => {
+            stopBackspace();
+            setTimeout(() => { isTouching = false; }, 100);
+        });
+        backspaceBtn.addEventListener('touchcancel', () => {
+            stopBackspace();
+            setTimeout(() => { isTouching = false; }, 100);
+        });
+        
+        // マウスイベント（タッチ中は無視）
+        backspaceBtn.addEventListener('mousedown', (e) => {
+            if (isTouching) return;
+            e.preventDefault();
+            startBackspace();
+        });
+        backspaceBtn.addEventListener('mouseup', () => {
+            if (isTouching) return;
+            stopBackspace();
+        });
+        backspaceBtn.addEventListener('mouseleave', () => {
+            if (isTouching) return;
+            stopBackspace();
+        });
+    }
+    
+    // スペースボタン
+    const spaceBtn = document.getElementById('hwQuizSpaceBtn');
+    if (spaceBtn) {
+        spaceBtn.onclick = () => {
+            if (hwQuizAnswerSubmitted) return;
+            // 連続スペースを防ぐ（最後の文字がスペースなら追加しない）
+            if (hwQuizConfirmedText.length > 0 && hwQuizConfirmedText.slice(-1) === ' ') {
+                return;
+            }
+            hwQuizConfirmedText += ' ';
+            updateHWQuizAnswerDisplay();
+        };
+    }
+    
+    // 手書きモード用のスペースボタン
+    const handwritingSpaceBtn = document.getElementById('hwQuizHandwritingSpaceBtn');
+    if (handwritingSpaceBtn) {
+        handwritingSpaceBtn.onclick = () => {
+            if (hwQuizAnswerSubmitted) return;
+            // 連続スペースを防ぐ（最後の文字がスペースなら追加しない）
+            if (hwQuizConfirmedText.length > 0 && hwQuizConfirmedText.slice(-1) === ' ') {
+                return;
+            }
+            hwQuizConfirmedText += ' ';
+            updateHWQuizAnswerDisplay();
+        };
+    }
+    
+    // 回答ボタン（個別にバインド）
+    
+    // 次へボタン
+    const nextBtn = document.getElementById('hwQuizNextBtn');
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            goToNextHWQuizQuestion();
+        };
+    }
+    
+    // 音声ボタン
+    const audioBtn = document.getElementById('hwQuizAudioBtn');
+    if (audioBtn) {
+        audioBtn.onclick = () => {
+            const word = hwQuizWords[hwQuizIndex];
+            if (word) {
+                speakWord(word.word);
+            }
+        };
+    }
+    
+    // パスボタン
+    const passBtn = document.getElementById('hwQuizPassBtn');
+    if (passBtn) {
+        passBtn.onclick = () => {
+            handleHWQuizPass();
+        };
+    }
+    
+    // チェックボックス
+    const hwCheckbox = document.getElementById('hwQuizCheckbox');
+    if (hwCheckbox) {
+        hwCheckbox.onclick = () => {
+            toggleHWQuizReview();
+        };
+    }
+    
+    // デバッグトグル
+    const debugToggle = document.getElementById('hwQuizDebugToggle');
+    if (debugToggle) {
+        debugToggle.onchange = () => {
+            const debugContent = document.getElementById('hwQuizDebugContent');
+            if (debugContent) {
+                debugContent.classList.toggle('hidden', !debugToggle.checked);
+            }
+        };
+    }
+    
+    // デバッグ設定
+    const debugInvert = document.getElementById('hwQuizDebugInvert');
+    const debugTrim = document.getElementById('hwQuizDebugTrim');
+    const debugCenter = document.getElementById('hwQuizDebugCenter');
+    
+    if (debugInvert) {
+        debugInvert.onchange = () => {
+            if (window.handwritingRecognition) {
+                window.handwritingRecognition.debugSettings.invert = debugInvert.checked;
+            }
+        };
+    }
+    if (debugTrim) {
+        debugTrim.onchange = () => {
+            if (window.handwritingRecognition) {
+                window.handwritingRecognition.debugSettings.trim = debugTrim.checked;
+            }
+        };
+    }
+    if (debugCenter) {
+        debugCenter.onchange = () => {
+            if (window.handwritingRecognition) {
+                window.handwritingRecognition.debugSettings.center = debugCenter.checked;
+            }
+        };
+    }
+}
+
+/**
+ * 入力モードを切り替え
+ */
+function switchHWInputMode(mode) {
+    hwQuizInputMode = mode;
+    
+    const handwritingBtn = document.getElementById('hwModeHandwriting');
+    const typingBtn = document.getElementById('hwModeTyping');
+    const canvasArea = document.getElementById('hwCanvasArea');
+    const predictions = document.getElementById('hwQuizPredictions');
+    const keyboard = document.getElementById('hwVirtualKeyboard');
+    const inputFixedBottom = document.querySelector('.hw-input-fixed-bottom');
+    const keyboardActions = inputFixedBottom ? inputFixedBottom.querySelector('.keyboard-actions') : null;
+    
+    if (mode === 'handwriting') {
+        // 手書きモード
+        if (handwritingBtn) handwritingBtn.classList.add('active');
+        if (typingBtn) typingBtn.classList.remove('active');
+        if (canvasArea) canvasArea.style.display = 'flex';
+        if (predictions) predictions.style.display = 'flex';
+        if (keyboard) keyboard.classList.add('hidden');
+        if (inputFixedBottom) inputFixedBottom.style.background = 'transparent';
+        if (keyboardActions) keyboardActions.style.background = 'transparent';
+    } else {
+        // タイピングモード
+        if (handwritingBtn) handwritingBtn.classList.remove('active');
+        if (typingBtn) typingBtn.classList.add('active');
+        if (canvasArea) canvasArea.style.display = 'none';
+        if (predictions) predictions.style.display = 'none';
+        if (keyboard) keyboard.classList.remove('hidden');
+        if (inputFixedBottom) inputFixedBottom.style.background = '#d1d4d9';
+        if (keyboardActions) keyboardActions.style.background = '#d1d4d9';
+    }
+}
+
+// Note: The toggle buttons now use input-list-mode-btn class for styling
+
+/**
+ * 仮想キーボードのイベント設定
+ */
+function setupHWVirtualKeyboard() {
+    const keyboard = document.getElementById('hwVirtualKeyboard');
+    if (!keyboard) return;
+    
+    // キーボードのキーにイベントを設定
+    const keys = keyboard.querySelectorAll('.keyboard-key');
+    keys.forEach(key => {
+        // 既にイベントが設定されている場合はスキップ
+        if (key._hwKeyboardEventSet) return;
+        key._hwKeyboardEventSet = true;
+        
+        let touchHandled = false;
+        
+        // 視覚的フィードバック
+        const addPressedState = () => {
+            key.style.transform = 'scale(0.95)';
+            key.style.backgroundColor = '#d1d5db';
+        };
+        const removePressedState = () => {
+            key.style.transform = '';
+            key.style.backgroundColor = '';
+        };
+        
+        // バックスペースキーの長押し対応
+        if (key.id === 'hwKeyboardBackspace') {
+            let backspaceInterval = null;
+            let backspaceTimeout = null;
+            
+            const doBackspace = () => {
+                if (hwQuizAnswerSubmitted) return;
+                if (hwQuizConfirmedText.length > 0) {
+                    hwQuizConfirmedText = hwQuizConfirmedText.slice(0, -1);
+                    updateHWQuizAnswerDisplay();
+                }
+            };
+            
+            const startBackspaceRepeat = () => {
+                addPressedState();
+                doBackspace();
+                backspaceTimeout = setTimeout(() => {
+                    backspaceInterval = setInterval(doBackspace, 80);
+                }, 300);
+            };
+            
+            const stopBackspaceRepeat = () => {
+                removePressedState();
+                if (backspaceTimeout) {
+                    clearTimeout(backspaceTimeout);
+                    backspaceTimeout = null;
+                }
+                if (backspaceInterval) {
+                    clearInterval(backspaceInterval);
+                    backspaceInterval = null;
+                }
+            };
+            
+            key.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                touchHandled = true;
+                startBackspaceRepeat();
+            }, { passive: false });
+            
+            key.addEventListener('touchend', () => {
+                stopBackspaceRepeat();
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            key.addEventListener('touchcancel', stopBackspaceRepeat);
+            
+            key.addEventListener('mousedown', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                startBackspaceRepeat();
+            });
+            key.addEventListener('mouseup', stopBackspaceRepeat);
+            key.addEventListener('mouseleave', stopBackspaceRepeat);
+            
+            return; // バックスペースキーは処理完了
+        }
+        
+        // シフトキー
+        if (key.id === 'hwKeyboardShift') {
+            const doShift = () => {
+                if (hwQuizAnswerSubmitted) return;
+                hwKeyboardShiftActive = !hwKeyboardShiftActive;
+                key.classList.toggle('active', hwKeyboardShiftActive);
+                updateHWKeyboardCase();
+            };
+            
+            key.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                touchHandled = true;
+                doShift();
+            }, { passive: false });
+            
+            key.addEventListener('touchend', () => {
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            
+            key.addEventListener('click', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                doShift();
+            });
+            
+            return; // シフトキーは処理完了
+        }
+        
+        // 通常の文字キー
+        const handleKeyPress = () => {
+            if (hwQuizAnswerSubmitted) return;
+            const keyValue = key.dataset.key;
+            
+            if (!keyValue) return;
+            
+            // スペースキーの場合、連続スペースを防ぐ
+            if (keyValue === ' ') {
+                if (hwQuizConfirmedText.length > 0 && hwQuizConfirmedText.slice(-1) === ' ') {
+                    return;
+                }
+                hwQuizConfirmedText += ' ';
+                updateHWQuizAnswerDisplay();
+                return;
+            }
+            
+            // 通常のキー
+            let char = keyValue;
+            const wasShiftActive = hwKeyboardShiftActive;
+            if (wasShiftActive) {
+                char = char.toUpperCase();
+                window.pendingShiftReset = 'hwVirtualKeyboard';
+            }
+            const adjustedChar = adjustCharCaseForAnswer(char);
+            hwQuizConfirmedText += adjustedChar;
+            updateHWQuizAnswerDisplay();
+        };
+        
+        key.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            touchHandled = true;
+            addPressedState();
+            handleKeyPress();
+        }, { passive: false });
+        
+        key.addEventListener('touchend', () => {
+            removePressedState();
+            setTimeout(() => { touchHandled = false; }, 100);
+        });
+        
+        key.addEventListener('click', (e) => {
+            if (touchHandled) return;
+            e.preventDefault();
+            handleKeyPress();
+        });
+    });
+}
+
+/**
+ * キーボードの大文字/小文字表示を更新
+ */
+function updateHWKeyboardCase() {
+    const keyboard = document.getElementById('hwVirtualKeyboard');
+    if (!keyboard) return;
+    
+    // キーボードにshift-activeクラスを追加/削除（ポップアップ用）
+    keyboard.classList.toggle('shift-active', hwKeyboardShiftActive);
+    
+    const keys = keyboard.querySelectorAll('.keyboard-key');
+    keys.forEach(key => {
+        const keyValue = key.dataset.key;
+        if (keyValue && keyValue.length === 1 && keyValue.match(/[a-z]/i)) {
+            const newValue = hwKeyboardShiftActive ? keyValue.toUpperCase() : keyValue.toLowerCase();
+            key.textContent = newValue;
+            key.dataset.key = newValue; // ポップアップ用にdata-keyも更新
+        }
+    });
+}
+
+/**
+ * 問題を表示
+ */
+function displayHWQuizQuestion() {
+    const word = hwQuizWords[hwQuizIndex];
+    if (!word) return;
+    
+    hwQuizAnswerSubmitted = false;
+    hwQuizConfirmedText = '';
+    hwQuizIsDrawing = false;
+    hwQuizIsRecognizing = false;
+    
+    // 入力エリアの無効化を解除
+    const inputFixedBottom = document.getElementById('hwInputFixedBottom');
+    if (inputFixedBottom) {
+        inputFixedBottom.classList.remove('hw-input-disabled');
+    }
+    
+    // 進捗セグメントと統計を更新
+    updateHWQuizProgressSegments();
+    updateHWQuizStats();
+    
+    // 品詞（インプットモードと同じスタイル）
+    const posEl = document.getElementById('hwQuizPos');
+    if (posEl) {
+        const posShort = getPartOfSpeechShort(word.partOfSpeech || '');
+        const posClass = getPartOfSpeechClass(word.partOfSpeech || '');
+        posEl.textContent = posShort;
+        posEl.className = `pos-inline part-of-speech ${posClass}`;
+    }
+    
+    // 意味
+    const meaningEl = document.getElementById('hwQuizMeaning');
+    if (meaningEl) {
+        meaningEl.textContent = word.meaning;
+    }
+    
+    // チェックボックスの状態を更新
+    updateHWQuizCheckbox();
+    
+    // 回答表示をクリア
+    updateHWQuizAnswerDisplay();
+    
+    // キャンバスコンテキストを再取得してクリア
+    hwQuizCanvas = document.getElementById('hwQuizCanvas');
+    if (hwQuizCanvas) {
+        hwQuizCtx = hwQuizCanvas.getContext('2d');
+    }
+    clearHWQuizCanvas();
+    
+    // 予測をクリア
+    const predictions = document.getElementById('hwQuizPredictions');
+    if (predictions) {
+        predictions.innerHTML = '';
+    }
+    
+    // UIをリセット
+    const result = document.getElementById('hwQuizResult');
+    const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
+    const modeToggle = document.querySelector('.hw-mode-toggle-row');
+    
+    if (result) result.classList.add('hidden');
+    if (answerDisplay) {
+        answerDisplay.classList.remove('correct', 'wrong');
+        answerDisplay.style.borderColor = '';
+        answerDisplay.style.backgroundColor = '';
+        answerDisplay.style.color = '';
+    }
+    if (modeToggle) modeToggle.style.display = '';
+    if (inputFixedBottom) inputFixedBottom.style.display = '';
+    
+    // 現在の入力モードに応じて表示を切り替え
+    switchHWInputMode(hwQuizInputMode);
+    
+    // キャンバスを再初期化（2回目以降も動作するように）
+    initHWQuizCanvas();
+    
+    // 正解表示をクリア
+    const placeholder = document.getElementById('hwQuizCorrectAnswerPlaceholder');
+    if (placeholder) placeholder.innerHTML = '';
+    
+    // 追加した要素を削除
+    const nextBtnContainer = document.getElementById('hwQuizNextBtnContainer');
+    if (nextBtnContainer) nextBtnContainer.remove();
+    
+    // keyboard-actionsをパス・解答ボタンに復元
+    const keyboardActions = inputFixedBottom ? inputFixedBottom.querySelector('.keyboard-actions') : null;
+    if (keyboardActions) {
+        keyboardActions.innerHTML = `
+            <button class="keyboard-action-btn" id="hwQuizPassBtn" type="button">パス</button>
+            <button class="keyboard-action-btn keyboard-action-btn-primary hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答</button>
+        `;
+        
+        // パスボタンのイベントを再設定
+        const passBtn = document.getElementById('hwQuizPassBtn');
+        if (passBtn) {
+            passBtn.onclick = () => handleHWQuizPass();
+        }
+    }
+    
+    // 念のため再バインド
+    bindHWQuizSubmitButton();
+    
+}
+
+/**
+ * 回答を送信
+ */
+function submitHWQuizAnswer() {
+    console.log('[HWQuiz] submitHWQuizAnswer called!!');
+    
+    if (hwQuizAnswerSubmitted) {
+        console.log('[HWQuiz] Already submitted, returning');
+        return;
+    }
+    
+    const word = hwQuizWords[hwQuizIndex];
+    if (!word) {
+        console.log('[HWQuiz] No word found at index', hwQuizIndex);
+        return;
+    }
+    
+    try {
+
+    console.log('[HWQuiz] Processing answer for:', word.word);
+    hwQuizAnswerSubmitted = true;
+    
+    // 未入力でも処理を続行（大文字小文字を区別）
+    const userAnswer = (hwQuizConfirmedText || "").trim();
+    const correctAnswer = (word.word || "");
+    const isCorrect = userAnswer !== "" && userAnswer === correctAnswer;
+    
+    console.log('[HWQuiz] User:', userAnswer || "(empty)", '| Correct:', correctAnswer, '| Result:', isCorrect);
+    
+    // 結果を記録
+    if (!hwQuizResults) hwQuizResults = {};
+    hwQuizResults[hwQuizIndex] = isCorrect ? 'correct' : 'wrong';
+    if (isCorrect) {
+        hwQuizCorrectCount++;
+    } else {
+        hwQuizWrongCount++;
+    }
+    
+    // 進捗セグメントと統計を更新
+    updateHWQuizProgressSegments();
+    updateHWQuizStats();
+    
+    // 効果音
+    if (isCorrect) {
+        if (typeof SoundEffects !== 'undefined' && SoundEffects.playCorrect) {
+        SoundEffects.playCorrect();
+        }
+        if (typeof correctWords !== 'undefined') correctWords.add(word.id);
+        if (typeof wrongWords !== 'undefined') wrongWords.delete(word.id);
+    } else {
+        if (typeof SoundEffects !== 'undefined' && SoundEffects.playWrong) {
+        SoundEffects.playWrong();
+        }
+        if (typeof wrongWords !== 'undefined') wrongWords.add(word.id);
+    }
+    
+    // 進捗保存
+    if (typeof saveCategoryWords === 'function' && typeof correctWords !== 'undefined' && typeof wrongWords !== 'undefined') {
+        saveCategoryWords(hwQuizCategory, correctWords, wrongWords);
+    }
+    
+    // 結果を表示
+    showHWQuizResult(isCorrect, word);
+    
+    } catch (error) {
+        console.error('[HWQuiz] Error:', error);
+    }
+}
+
+// グローバルに登録（念のため）
+window.submitHWQuizAnswer = submitHWQuizAnswer;
+
+/**
+ * 差分ハイライトを生成（正解表示用）
+ * 正解の文字列で、ユーザーが間違えた/欠けている部分をハイライト
+ */
+function generateDiffHighlight(userInput, correctWord) {
+    const diff = computeDiff(userInput, correctWord);
+    let html = '';
+    
+    for (const item of diff) {
+        if (item.type === 'match') {
+            html += `<span class="diff-match">${item.char}</span>`;
+        } else if (item.type === 'missing') {
+            // ユーザーが入力しなかった文字（正解にはある）
+            html += `<span class="diff-missing">${item.char}</span>`;
+        } else if (item.type === 'wrong') {
+            // ユーザーが間違えた文字
+            html += `<span class="diff-wrong">${item.char}</span>`;
+        }
+    }
+    
+    return html;
+}
+
+/**
+ * ユーザー入力の差分ハイライト（解答欄表示用）
+ * 欠けている文字も赤いマーカーで表示
+ */
+function generateUserInputDiffHighlight(userInput, correctWord) {
+    if (!userInput) {
+        // 未入力の場合、正解の文字数分の赤いマーカーを表示
+        let html = '';
+        for (let i = 0; i < correctWord.length; i++) {
+            html += `<span class="diff-missing-slot"></span>`;
+        }
+        return html || '<span class="diff-empty">（未入力）</span>';
+    }
+    
+    const diff = computeFullDiff(userInput, correctWord);
+    let html = '';
+    
+    for (const item of diff) {
+        if (item.type === 'match') {
+            html += `<span class="diff-match">${item.char}</span>`;
+        } else if (item.type === 'wrong') {
+            // ユーザーが間違えた文字
+            html += `<span class="diff-wrong-input">${item.char}</span>`;
+        } else if (item.type === 'missing') {
+            // ユーザーが入力しなかった文字（空きスロット）
+            html += `<span class="diff-missing-slot"></span>`;
+        }
+    }
+    
+    return html;
+}
+
+/**
+ * 差分を計算（正解基準）
+ */
+function computeDiff(userInput, correctWord) {
+    const result = [];
+    const lcs = computeLCS(userInput, correctWord);
+    
+    let ui = 0, ci = 0, li = 0;
+    
+    while (ci < correctWord.length) {
+        if (li < lcs.length && ci === lcs[li].correctIndex) {
+            // LCSに含まれる文字（一致）
+            result.push({ type: 'match', char: correctWord[ci] });
+            ui = lcs[li].userIndex + 1;
+            li++;
+        } else {
+            // ユーザーが入力しなかった/間違えた文字
+            result.push({ type: 'missing', char: correctWord[ci] });
+        }
+        ci++;
+    }
+    
+    return result;
+}
+
+/**
+ * ユーザー入力の差分を計算（ユーザー入力基準）
+ */
+function computeUserDiff(userInput, correctWord) {
+    const result = [];
+    const lcs = computeLCS(userInput, correctWord);
+    
+    let li = 0;
+    
+    for (let ui = 0; ui < userInput.length; ui++) {
+        if (li < lcs.length && ui === lcs[li].userIndex) {
+            // LCSに含まれる文字（一致）
+            result.push({ type: 'match', char: userInput[ui] });
+            li++;
+        } else {
+            // 間違えた/余分な文字
+            result.push({ type: 'wrong', char: userInput[ui] });
+        }
+    }
+    
+    return result;
+}
+
+/**
+ * 完全な差分を計算
+ * ユーザー入力の各文字を順番に処理し、正解と比較
+ * 入力文字を先に表示、不足分を末尾に追加
+ */
+function computeFullDiff(userInput, correctWord) {
+    const result = [];
+    const maxLen = Math.max(userInput.length, correctWord.length);
+    
+    for (let i = 0; i < maxLen; i++) {
+        const userChar = userInput[i];
+        const correctChar = correctWord[i];
+        
+        if (userChar && correctChar) {
+            // 両方に文字がある
+            if (userChar === correctChar) {
+                result.push({ type: 'match', char: userChar });
+            } else {
+                result.push({ type: 'wrong', char: userChar });
+            }
+        } else if (userChar && !correctChar) {
+            // ユーザーが余分に入力（正解より長い）
+            result.push({ type: 'wrong', char: userChar });
+        } else if (!userChar && correctChar) {
+            // ユーザーが入力しなかった（正解より短い）
+            result.push({ type: 'missing', char: correctChar });
+        }
+    }
+    
+    return result;
+}
+
+/**
+ * LCS（最長共通部分列）を計算
+ */
+function computeLCS(str1, str2) {
+    const m = str1.length;
+    const n = str2.length;
+    
+    // DPテーブルを作成
+    const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+    
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (str1[i - 1] === str2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+    
+    // バックトラックしてLCSを取得
+    const lcs = [];
+    let i = m, j = n;
+    
+    while (i > 0 && j > 0) {
+        if (str1[i - 1] === str2[j - 1]) {
+            lcs.unshift({ userIndex: i - 1, correctIndex: j - 1, char: str1[i - 1] });
+            i--;
+            j--;
+        } else if (dp[i - 1][j] > dp[i][j - 1]) {
+            i--;
+        } else {
+            j--;
+        }
+    }
+    
+    return lcs;
+}
+
+/**
+ * 結果を表示
+ */
+function showHWQuizResult(isCorrect, word) {
+    console.log('[HWQuiz] showHWQuizResult called, isCorrect:', isCorrect);
+    
+    const answerDisplay = document.getElementById('hwQuizAnswerDisplay');
+    const modeToggle = document.querySelector('.hw-mode-toggle-row');
+    const inputFixedBottom = document.getElementById('hwInputFixedBottom');
+    
+    // 入力エリアを無効化（視覚的フィードバック）
+    if (inputFixedBottom) {
+        inputFixedBottom.classList.add('hw-input-disabled');
+    }
+    
+    // モードトグルも表示したまま（キーボード・手書きエリアも表示したまま）
+    
+    // ○/×マークを表示
+    showAnswerMark(isCorrect);
+    
+    // 正解時にキラキラエフェクトを表示
+    if (isCorrect && typeof showSparkleEffect === 'function') {
+        showSparkleEffect();
+    }
+    
+    // 解答欄の色を変更（背景は白のまま）
+    if (answerDisplay) {
+        if (isCorrect) {
+            // 正解：青枠
+            answerDisplay.style.borderColor = '#3182ce';
+            answerDisplay.style.backgroundColor = '#ffffff';
+            answerDisplay.style.color = '#2b6cb0';
+        } else {
+            // 不正解：赤枠、文字は黒
+            answerDisplay.style.borderColor = '#e53e3e';
+            answerDisplay.style.backgroundColor = '#ffffff';
+            answerDisplay.style.color = '#1a202c';
+        }
+    }
+    
+    // 不正解の場合、入力欄に差分ハイライトを適用（大文字小文字を区別）
+    if (!isCorrect && answerDisplay) {
+        const userInput = (hwQuizConfirmedText || "").trim();
+        const correctWord = word.word;
+        const userDiffHtml = generateUserInputDiffHighlight(userInput, correctWord);
+        const answerText = answerDisplay.querySelector('.hw-answer-text');
+        if (answerText) {
+            answerText.innerHTML = userDiffHtml;
+        }
+    }
+    
+    // 正解表示（通常表示）
+    const placeholder = document.getElementById('hwQuizCorrectAnswerPlaceholder');
+    if (!isCorrect && placeholder) {
+        placeholder.innerHTML = `
+            <div class="hw-correct-answer-box" id="hwQuizCorrectAnswerBox">
+                <span class="hw-correct-word">${word.word}</span>
+            </div>
+        `;
+    }
+    
+    // 既存のkeyboard-actionsを次へボタンに置き換え
+    const keyboardActions = inputFixedBottom ? inputFixedBottom.querySelector('.keyboard-actions') : null;
+    if (keyboardActions) {
+        keyboardActions.innerHTML = `<button class="keyboard-action-btn keyboard-action-btn-primary" id="hwQuizNextBtnNew">次へ</button>`;
+        
+        // 次へボタンのイベント
+        const nextBtn = document.getElementById('hwQuizNextBtnNew');
+        if (nextBtn) {
+            nextBtn.onclick = () => goToNextHWQuizQuestion();
+        }
+    }
+    
+    // 答え表示時に音声を自動再生（効果音の後に遅延して再生）
+    const wordToSpeak = word.word;
+    console.log('[Audio] showHWQuizResult - scheduling speech for:', wordToSpeak);
+    setTimeout(function() {
+        console.log('[Audio] showHWQuizResult - calling speakWord for:', wordToSpeak);
+        speakWord(wordToSpeak);
+    }, 600);
+}
+
+/**
+ * パスボタンの処理
+ */
+function handleHWQuizPass() {
+    if (hwQuizAnswerSubmitted) return;
+    
+    const word = hwQuizWords[hwQuizIndex];
+    if (!word) return;
+    
+    // 不正解として記録
+    hwQuizResults[hwQuizIndex] = 'wrong';
+    hwQuizWrongCount++;
+    hwQuizAnswerSubmitted = true;
+    
+    // 進捗セグメントと統計を更新
+    updateHWQuizProgressSegments();
+    updateHWQuizStats();
+    
+    // 効果音
+    if (typeof SoundEffects !== 'undefined' && SoundEffects.playWrong) {
+        SoundEffects.playWrong();
+    }
+    
+    // 間違いとして保存
+    if (typeof wrongWords !== 'undefined') wrongWords.add(word.id);
+    
+    // 進捗保存
+    if (typeof saveCategoryWords === 'function' && typeof correctWords !== 'undefined' && typeof wrongWords !== 'undefined') {
+        saveCategoryWords(hwQuizCategory, correctWords, wrongWords);
+    }
+    
+    // 結果を表示（不正解として）
+    showHWQuizResult(false, word);
+}
+
+/**
+ * 次の問題へ
+ */
+function goToNextHWQuizQuestion() {
+    hwQuizIndex++;
+    
+    if (hwQuizIndex >= hwQuizWords.length) {
+        // クイズ完了
+        showHWQuizCompletion();
+    } else {
+        displayHWQuizQuestion();
+    }
+}
+
+/**
+ * クイズ完了画面
+ */
+function showHWQuizCompletion() {
+    // 手書きモードの変数をグローバル変数に反映（showCompletionで使用するため）
+    correctCount = hwQuizCorrectCount || 0;
+    wrongCount = hwQuizWrongCount || 0;
+    currentWords = hwQuizWords || [];
+    selectedCategory = hwQuizCategory || selectedCategory;
+    currentFilterCourseTitle = hwQuizCourseTitle || currentFilterCourseTitle;
+    
+    // questionStatusを手書きモードの結果から設定（復習ボタン用）
+    questionStatus = (hwQuizResults || []).map(result => result === 'correct' ? 'correct' : 'wrong');
+    
+    // 学習画面は非表示にせず、完了画面のオーバーレイだけを表示
+    // （完了画面が閉じられた時にホーム画面に戻る）
+    showCompletion();
+}
+
+/**
+ * クイズをやり直す
+ */
+function restartHWQuiz() {
+    hwQuizIndex = 0;
+    hwQuizConfirmedText = '';
+    hwQuizCorrectCount = 0;
+    hwQuizWrongCount = 0;
+    hwQuizResults = {};
+    hwQuizAnswerSubmitted = false;
+    
+    // メインコンテンツを復元
+    const main = document.querySelector('.hw-main');
+    if (main) {
+        main.innerHTML = `
+            <!-- 問題（シンプル表示） -->
+            <div class="hw-question-simple">
+                <span class="pos-inline part-of-speech" id="hwQuizPos"></span>
+                <span class="hw-question-meaning" id="hwQuizMeaning">意味</span>
+            </div>
+            
+            <!-- 回答エリア -->
+            <div class="hw-answer-area">
+                <div class="hw-answer" id="hwQuizAnswerDisplay">
+                    <span class="hw-answer-text"></span>
+                </div>
+                <!-- 正解表示用のプレースホルダー -->
+                <div id="hwQuizCorrectAnswerPlaceholder"></div>
+            </div>
+            
+            <!-- 結果表示 -->
+            <div class="hw-result hidden" id="hwQuizResult">
+                <div class="hw-result-badge" id="hwQuizResultIcon"></div>
+                <div class="hw-result-word">
+                    <span id="hwQuizCorrectWord"></span>
+                    <button class="hw-audio-btn" id="hwQuizAudioBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    // 下部固定エリアを復元
+    const inputFixed = document.getElementById('hwInputFixedBottom');
+    if (inputFixed) {
+        inputFixed.innerHTML = `
+            <!-- キャンバス（手書きモード用） -->
+            <div class="hw-canvas-area" id="hwCanvasArea">
+                <div class="hw-canvas-wrapper">
+                    <div class="hw-canvas-label">手書き入力欄</div>
+                    <div class="hw-canvas-lines"></div>
+                    <canvas id="hwQuizCanvas" class="hw-canvas" width="500" height="180"></canvas>
+                </div>
+                <!-- 手書きモード用のボタン -->
+                <div class="hw-canvas-buttons">
+                    <button class="hw-space-btn" id="hwQuizHandwritingSpaceBtn" type="button">
+                        <span>空白</span>
+                    </button>
+                    <button class="hw-backspace-btn" id="hwQuizBackspaceBtn" type="button">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                            <line x1="18" y1="9" x2="12" y2="15"></line>
+                            <line x1="12" y1="9" x2="18" y2="15"></line>
+                        </svg>
+                        <span>1文字消す</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 認識候補 -->
+            <div class="hw-candidates" id="hwQuizPredictions"></div>
+            
+            <!-- 仮想キーボード（タイピングモード用） -->
+            <div class="virtual-keyboard hidden" id="hwVirtualKeyboard">
+                <div class="keyboard-row">
+                    <button class="keyboard-key" data-key="q">q</button>
+                    <button class="keyboard-key" data-key="w">w</button>
+                    <button class="keyboard-key" data-key="e">e</button>
+                    <button class="keyboard-key" data-key="r">r</button>
+                    <button class="keyboard-key" data-key="t">t</button>
+                    <button class="keyboard-key" data-key="y">y</button>
+                    <button class="keyboard-key" data-key="u">u</button>
+                    <button class="keyboard-key" data-key="i">i</button>
+                    <button class="keyboard-key" data-key="o">o</button>
+                    <button class="keyboard-key" data-key="p">p</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="keyboard-key" data-key="a">a</button>
+                    <button class="keyboard-key" data-key="s">s</button>
+                    <button class="keyboard-key" data-key="d">d</button>
+                    <button class="keyboard-key" data-key="f">f</button>
+                    <button class="keyboard-key" data-key="g">g</button>
+                    <button class="keyboard-key" data-key="h">h</button>
+                    <button class="keyboard-key" data-key="j">j</button>
+                    <button class="keyboard-key" data-key="k">k</button>
+                    <button class="keyboard-key" data-key="l">l</button>
+                    <button class="keyboard-key keyboard-key-space" data-key=" ">_</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="keyboard-key keyboard-key-shift" id="hwKeyboardShift" data-shift="false">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                </button>
+                    <button class="keyboard-key" data-key="z">z</button>
+                    <button class="keyboard-key" data-key="x">x</button>
+                    <button class="keyboard-key" data-key="c">c</button>
+                    <button class="keyboard-key" data-key="v">v</button>
+                    <button class="keyboard-key" data-key="b">b</button>
+                    <button class="keyboard-key" data-key="n">n</button>
+                    <button class="keyboard-key" data-key="m">m</button>
+                    <button class="keyboard-key" data-key="'">'</button>
+                    <button class="keyboard-key keyboard-key-special" id="hwKeyboardBackspace">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                        <line x1="18" y1="9" x2="12" y2="15"></line>
+                        <line x1="12" y1="9" x2="18" y2="15"></line>
+                    </svg>
+                </button>
+                </div>
+            </div>
+            
+            <!-- 解答ボタン -->
+            <div class="keyboard-actions">
+                <button class="keyboard-action-btn" id="hwQuizPassBtn" type="button">パス</button>
+                <button class="keyboard-action-btn keyboard-action-btn-primary hw-answer-btn" type="button" onclick="submitHWQuizAnswer()">解答</button>
+            </div>
+            
+            <!-- 結果表示 -->
+            <div class="hw-result hidden" id="hwQuizResult">
+                <div class="hw-result-badge" id="hwQuizResultIcon"></div>
+                <div class="hw-result-word">
+                    <span id="hwQuizCorrectWord"></span>
+                    <button class="hw-audio-btn" id="hwQuizAudioBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    // 進捗セグメントを再初期化
+    initHWQuizProgressSegments();
+    
+    // キャンバスを再初期化
+    hwQuizCanvasInitialized = false;
+    initHWQuizCanvas();
+    
+    // イベントを再設定
+    setupHWQuizEvents();
+    bindHWQuizSubmitButton();
+    
+    // 最初の問題を表示
+    displayHWQuizQuestion();
+}
+
+/**
+ * クイズを終了
+ */
+function exitHWQuiz() {
+    const hwQuizView = document.getElementById('handwritingQuizView');
+    
+    if (hwQuizView) hwQuizView.classList.add('hidden');
+    
+    // テストモードのクラスをリセット
+    document.body.classList.remove('quiz-test-mode');
+    document.body.classList.remove('learning-mode');
+    updateThemeColorForTest(false);
+    
+    // テストモード用の進捗表示を非表示
+    const hwTestModeProgress = document.getElementById('hwTestModeProgress');
+    if (hwTestModeProgress) hwTestModeProgress.classList.add('hidden');
+    
+    // リセット
+    hwQuizWords = [];
+    hwQuizIndex = 0;
+    hwQuizConfirmedText = '';
+    isHandwritingMode = false;
+    hwQuizCanvasInitialized = false; // キャンバス初期化フラグをリセット
+    hwQuizCanvas = null;
+    hwQuizCtx = null;
+    
+    // 細分化メニュー画面に戻る
+    const parent = window.currentSubcategoryParent;
+    if (parent === 'レベル１ 超重要500語' || parent === 'レベル２ 重要500語' || parent === 'レベル３ ハイレベル300語') {
+        showLevelSubcategorySelection(parent, true);
+    } else if (parent === 'カテゴリー別') {
+        showElementaryCategorySelection(true);
+    } else {
+        // その他の場合はカテゴリー選択画面に戻る
+        showCategorySelection();
+    }
+}
+
+/**
+ * 手書きクイズのチェック（ブックマーク）を切り替え
+ */
+function toggleHWQuizReview() {
+    if (hwQuizIndex >= hwQuizWords.length) return;
+    
+    const word = hwQuizWords[hwQuizIndex];
+    if (reviewWords.has(word.id)) {
+        reviewWords.delete(word.id);
+    } else {
+        reviewWords.add(word.id);
+    }
+    
+    saveReviewWords();
+    updateHWQuizCheckbox();
+}
+
+/**
+ * 手書きクイズのチェックボックスの表示を更新
+ */
+function updateHWQuizCheckbox() {
+    const hwCheckbox = document.getElementById('hwQuizCheckbox');
+    if (!hwCheckbox) return;
+    
+    if (hwQuizIndex >= hwQuizWords.length) return;
+    
+    const word = hwQuizWords[hwQuizIndex];
+    if (reviewWords.has(word.id)) {
+        hwCheckbox.classList.add('checked');
+    } else {
+        hwCheckbox.classList.remove('checked');
+    }
+}
+
+// =============================================
+// メモ用紙機能
+// =============================================
+let memoPadCanvas = null;
+let memoPadCtx = null;
+let memoPadIsDrawing = false;
+let memoPadLastX = 0;
+let memoPadLastY = 0;
+let memoPadLineWidth = 2; // デフォルトの太さ
+
+function initMemoPad() {
+    // インプットモード用のみ（アウトプットモードではメモ不要）
+    setupMemoPadListeners('memoPadBtn', 'memoPadOverlay', 'memoPadCloseBtn', 'memoPadClearBtn', 'memoPadCanvas');
+    
+    // インラインメモボタン（トグル横）も同じオーバーレイに接続
+    const inlineBtn = document.getElementById('memoPadBtnInline');
+    if (inlineBtn) {
+        inlineBtn.addEventListener('click', () => {
+            const overlay = document.getElementById('memoPadOverlay');
+            const canvas = document.getElementById('memoPadCanvas');
+            if (overlay && canvas) {
+                if (!overlay.classList.contains('hidden') && !overlay.classList.contains('closing')) {
+                    // 開いている場合は閉じる
+                    overlay.classList.add('closing');
+                    overlay.classList.remove('opening');
+                    inlineBtn.classList.remove('active');
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                        overlay.classList.remove('closing');
+                    }, 300);
+                } else if (overlay.classList.contains('hidden')) {
+                    // 閉じている場合は開く
+                    overlay.classList.remove('hidden');
+                    overlay.classList.remove('closing');
+                    overlay.classList.add('opening');
+                    inlineBtn.classList.add('active');
+                    memoPadCanvas = canvas;
+                    initMemoPadCanvas();
+                }
+            }
+        });
+    }
+}
+
+function setupMemoPadListeners(btnId, overlayId, closeBtnId, clearBtnId, canvasId) {
+    const btn = document.getElementById(btnId);
+    const overlay = document.getElementById(overlayId);
+    const closeBtn = document.getElementById(closeBtnId);
+    const clearBtn = document.getElementById(clearBtnId);
+    const canvas = document.getElementById(canvasId);
+    
+    if (!btn || !overlay || !canvas) return;
+    
+    // メモを閉じる関数
+    function closeMemoPad() {
+        overlay.classList.add('closing');
+        overlay.classList.remove('opening');
+        const inlineBtn = document.getElementById('memoPadBtnInline');
+        if (inlineBtn) {
+            inlineBtn.classList.remove('active');
+        }
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+            overlay.classList.remove('closing');
+        }, 300);
+    }
+    
+    // メモを開く関数
+    function openMemoPad() {
+        overlay.classList.remove('hidden');
+        overlay.classList.remove('closing');
+        overlay.classList.add('opening');
+        memoPadCanvas = canvas;
+        initMemoPadCanvas();
+    }
+    
+    // メモボタンクリック（トグル動作）
+    btn.addEventListener('click', () => {
+        if (!overlay.classList.contains('hidden') && !overlay.classList.contains('closing')) {
+            // 開いている場合は閉じる
+            closeMemoPad();
+        } else if (overlay.classList.contains('hidden')) {
+            // 閉じている場合は開く
+            openMemoPad();
+        }
+    });
+    
+    // 閉じるボタン
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            closeMemoPad();
+        });
+    }
+    
+    // クリアボタン
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            memoPadCanvas = canvas;
+            memoPadCtx = canvas.getContext('2d');
+            clearMemoPadCanvas();
+        });
+    }
+}
+
+function initMemoPadCanvas() {
+    if (!memoPadCanvas) return;
+    
+    // キャンバスサイズを設定
+    const container = memoPadCanvas.parentElement;
+    const rect = container.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    
+    memoPadCanvas.width = rect.width * dpr;
+    memoPadCanvas.height = (rect.height - 60) * dpr; // ヘッダー分を引く
+    memoPadCanvas.style.width = rect.width + 'px';
+    memoPadCanvas.style.height = (rect.height - 60) + 'px';
+    
+    memoPadCtx = memoPadCanvas.getContext('2d');
+    memoPadCtx.scale(dpr, dpr);
+    
+    // 背景をクリア（透明）
+    memoPadCtx.clearRect(0, 0, memoPadCanvas.width, memoPadCanvas.height);
+    
+    // 描画設定
+    memoPadCtx.strokeStyle = '#1f2937';
+    memoPadCtx.lineWidth = memoPadLineWidth;
+    memoPadCtx.lineCap = 'round';
+    memoPadCtx.lineJoin = 'round';
+    
+    // 太さボタンのイベントリスナー設定
+    setupMemoPadThicknessButtons();
+    
+    // イベントリスナー（既に設定済みならスキップ）
+    if (memoPadCanvas._eventsAttached) return;
+    memoPadCanvas._eventsAttached = true;
+    
+    // マウスイベント
+    memoPadCanvas.addEventListener('mousedown', memoPadDrawStart);
+    memoPadCanvas.addEventListener('mousemove', memoPadDrawMove);
+    memoPadCanvas.addEventListener('mouseup', memoPadDrawEnd);
+    memoPadCanvas.addEventListener('mouseleave', memoPadDrawEnd);
+    
+    // タッチイベント
+    memoPadCanvas.addEventListener('touchstart', memoPadDrawStart, { passive: false });
+    memoPadCanvas.addEventListener('touchmove', memoPadDrawMove, { passive: false });
+    memoPadCanvas.addEventListener('touchend', memoPadDrawEnd);
+    memoPadCanvas.addEventListener('touchcancel', memoPadDrawEnd);
+}
+
+function setupMemoPadThicknessButtons() {
+    const thicknessButtons = document.querySelectorAll('.memo-pad-thickness-btn');
+    if (!thicknessButtons.length) return;
+    
+    // 既に設定済みならスキップ
+    if (thicknessButtons[0]._eventsAttached) return;
+    
+    thicknessButtons.forEach(btn => {
+        btn._eventsAttached = true;
+        btn.addEventListener('click', () => {
+            // アクティブ状態を更新
+            thicknessButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // 太さを変更
+            const thickness = parseInt(btn.dataset.thickness, 10);
+            memoPadLineWidth = thickness;
+            
+            // 現在のコンテキストに即座に反映
+            if (memoPadCtx) {
+                memoPadCtx.lineWidth = thickness;
+            }
+        });
+    });
+}
+
+function clearMemoPadCanvas() {
+    if (!memoPadCtx || !memoPadCanvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    memoPadCtx.clearRect(0, 0, memoPadCanvas.width / dpr, memoPadCanvas.height / dpr);
+}
+
+function memoPadDrawStart(e) {
+    e.preventDefault();
+    memoPadIsDrawing = true;
+    const pos = getMemoPadPos(e);
+    memoPadLastX = pos.x;
+    memoPadLastY = pos.y;
+}
+
+function memoPadDrawMove(e) {
+    if (!memoPadIsDrawing) return;
+    e.preventDefault();
+    
+    const pos = getMemoPadPos(e);
+    
+    memoPadCtx.beginPath();
+    memoPadCtx.moveTo(memoPadLastX, memoPadLastY);
+    memoPadCtx.lineTo(pos.x, pos.y);
+    memoPadCtx.stroke();
+    
+    memoPadLastX = pos.x;
+    memoPadLastY = pos.y;
+}
+
+function memoPadDrawEnd(e) {
+    memoPadIsDrawing = false;
+}
+
+function getMemoPadPos(e) {
+    const rect = memoPadCanvas.getBoundingClientRect();
+    let clientX, clientY;
+    
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+    }
+    
+    return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+    };
+}
+
+// アプリケーションの起動
+// DOMが読み込まれてから初期化
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    // DOMが既に読み込まれている場合は即座に実行
+    init();
+}
+
+// 解答ボタンのイベント委譲（クラス名ベース・確実に動作させるため）
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.hw-answer-btn');
+    if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('[HWQuiz] Answer button clicked via delegation');
+        window.submitHWQuizAnswer();
+    }
+}, true);
+
+document.addEventListener('touchstart', function(e) {
+    const btn = e.target.closest('.hw-answer-btn');
+    if (btn) {
+        e.preventDefault();
+        console.log('[HWQuiz] Answer button touched via delegation');
+        window.submitHWQuizAnswer();
+    }
+}, { capture: true, passive: false });
+
+// キーボードキーのポップアップエフェクト（iOSスタイル）
+(function() {
+    // ボタンを離したときにシフトを解除する関数
+    function handlePendingShiftReset() {
+        if (!window.pendingShiftReset) return;
+        
+        const keyboardType = window.pendingShiftReset;
+        window.pendingShiftReset = null;
+        
+        switch (keyboardType) {
+            case 'virtualKeyboard':
+                if (typeof isShiftActive !== 'undefined' && isShiftActive) {
+                    toggleShift();
+                }
+                break;
+            case 'sentenceKeyboard':
+                if (typeof isShiftActive !== 'undefined' && isShiftActive) {
+                    toggleSentenceShift();
+                }
+                break;
+            case 'grammarExerciseKeyboard':
+                if (window.grammarExerciseResetShiftState) {
+                    window.grammarExerciseResetShiftState();
+                    window.grammarExerciseResetShiftState = null;
+                }
+                break;
+            case 'hwVirtualKeyboard':
+                if (typeof hwKeyboardShiftActive !== 'undefined' && hwKeyboardShiftActive) {
+                    hwKeyboardShiftActive = false;
+                    const shiftBtn = document.getElementById('hwKeyboardShift');
+                    if (shiftBtn) shiftBtn.classList.remove('active');
+                    updateHWKeyboardCase();
+                }
+                break;
+        }
+    }
+    
+    // タッチデバイスでのポップアップエフェクト
+    document.addEventListener('touchstart', function(e) {
+        const key = e.target.closest('.keyboard-key[data-key]');
+        if (key && !key.classList.contains('keyboard-key-special') && !key.classList.contains('keyboard-key-shift')) {
+            key.classList.add('key-pressed');
+        }
+    }, { passive: true });
+    
+    document.addEventListener('touchend', function(e) {
+        const key = e.target.closest('.keyboard-key[data-key]');
+        if (key) {
+            setTimeout(() => {
+                key.classList.remove('key-pressed');
+                // ボタンを離したときにシフトを解除
+                handlePendingShiftReset();
+            }, 100);
+        }
+    }, { passive: true });
+    
+    document.addEventListener('touchcancel', function(e) {
+        const key = e.target.closest('.keyboard-key[data-key]');
+        if (key) {
+            key.classList.remove('key-pressed');
+        }
+    }, { passive: true });
+    
+    // マウスでのポップアップエフェクト（デスクトップ用）
+    document.addEventListener('mousedown', function(e) {
+        const key = e.target.closest('.keyboard-key[data-key]');
+        if (key && !key.classList.contains('keyboard-key-special') && !key.classList.contains('keyboard-key-shift')) {
+            key.classList.add('key-pressed');
+        }
+    });
+    
+    document.addEventListener('mouseup', function(e) {
+        document.querySelectorAll('.keyboard-key.key-pressed').forEach(key => {
+            key.classList.remove('key-pressed');
+        });
+        // ボタンを離したときにシフトを解除
+        handlePendingShiftReset();
+    });
+    
+    document.addEventListener('mouseleave', function(e) {
+        if (e.target.classList && e.target.classList.contains('keyboard-key')) {
+            e.target.classList.remove('key-pressed');
+        }
+    }, { capture: true });
+})();
+
+// ========================
+// 不規則変化の単語機能
+// ========================
+
+// 不規則動詞データ（初級編）
+const irregularVerbsBeginner = [
+    { meaning: "〜である", base: "be", past: "was, were", pp: "been" },
+    { meaning: "する", base: "do", past: "did", pp: "done" },
+    { meaning: "持っている", base: "have", past: "had", pp: "had" },
+    { meaning: "行く", base: "go", past: "went", pp: "gone" },
+    { meaning: "来る", base: "come", past: "came", pp: "come" },
+    { meaning: "見る", base: "see", past: "saw", pp: "seen" },
+    { meaning: "取る", base: "take", past: "took", pp: "taken" },
+    { meaning: "作る", base: "make", past: "made", pp: "made" },
+    { meaning: "得る", base: "get", past: "got", pp: "gotten" },
+    { meaning: "言う", base: "say", past: "said", pp: "said" },
+    { meaning: "知っている", base: "know", past: "knew", pp: "known" },
+    { meaning: "思う", base: "think", past: "thought", pp: "thought" },
+    { meaning: "与える", base: "give", past: "gave", pp: "given" },
+    { meaning: "書く", base: "write", past: "wrote", pp: "written" },
+    { meaning: "読む", base: "read", past: "read", pp: "read" },
+    { meaning: "話す", base: "speak", past: "spoke", pp: "spoken" },
+    { meaning: "聞く", base: "hear", past: "heard", pp: "heard" },
+    { meaning: "立つ", base: "stand", past: "stood", pp: "stood" },
+    { meaning: "座る", base: "sit", past: "sat", pp: "sat" },
+    { meaning: "走る", base: "run", past: "ran", pp: "run" }
+];
+
+// 不規則動詞データ（中級編）
+const irregularVerbsIntermediate = [
+    { meaning: "食べる", base: "eat", past: "ate", pp: "eaten" },
+    { meaning: "飲む", base: "drink", past: "drank", pp: "drunk" },
+    { meaning: "眠る", base: "sleep", past: "slept", pp: "slept" },
+    { meaning: "買う", base: "buy", past: "bought", pp: "bought" },
+    { meaning: "売る", base: "sell", past: "sold", pp: "sold" },
+    { meaning: "教える", base: "teach", past: "taught", pp: "taught" },
+    { meaning: "学ぶ", base: "learn", past: "learned", pp: "learned" },
+    { meaning: "感じる", base: "feel", past: "felt", pp: "felt" },
+    { meaning: "見つける", base: "find", past: "found", pp: "found" },
+    { meaning: "落ちる", base: "fall", past: "fell", pp: "fallen" },
+    { meaning: "飛ぶ", base: "fly", past: "flew", pp: "flown" },
+    { meaning: "泳ぐ", base: "swim", past: "swam", pp: "swum" },
+    { meaning: "歌う", base: "sing", past: "sang", pp: "sung" },
+    { meaning: "持ってくる", base: "bring", past: "brought", pp: "brought" },
+    { meaning: "建てる", base: "build", past: "built", pp: "built" },
+    { meaning: "送る", base: "send", past: "sent", pp: "sent" },
+    { meaning: "使う", base: "spend", past: "spent", pp: "spent" },
+    { meaning: "去る", base: "leave", past: "left", pp: "left" },
+    { meaning: "保つ", base: "keep", past: "kept", pp: "kept" },
+    { meaning: "意味する", base: "mean", past: "meant", pp: "meant" }
+];
+
+// 不規則動詞データ（上級編）
+const irregularVerbsAdvanced = [
+    { meaning: "〜になる", base: "become", past: "became", pp: "become" },
+    { meaning: "始める", base: "begin", past: "began", pp: "begun" },
+    { meaning: "壊す", base: "break", past: "broke", pp: "broken" },
+    { meaning: "選ぶ", base: "choose", past: "chose", pp: "chosen" },
+    { meaning: "切る", base: "cut", past: "cut", pp: "cut" },
+    { meaning: "描く", base: "draw", past: "drew", pp: "drawn" },
+    { meaning: "運転する", base: "drive", past: "drove", pp: "driven" },
+    { meaning: "忘れる", base: "forget", past: "forgot", pp: "forgotten" },
+    { meaning: "育つ", base: "grow", past: "grew", pp: "grown" },
+    { meaning: "置く", base: "put", past: "put", pp: "put" },
+    { meaning: "乗る", base: "ride", past: "rode", pp: "ridden" },
+    { meaning: "昇る", base: "rise", past: "rose", pp: "risen" },
+    { meaning: "震える", base: "shake", past: "shook", pp: "shaken" },
+    { meaning: "見せる", base: "show", past: "showed", pp: "shown" },
+    { meaning: "投げる", base: "throw", past: "threw", pp: "thrown" },
+    { meaning: "着る", base: "wear", past: "wore", pp: "worn" },
+    { meaning: "勝つ", base: "win", past: "won", pp: "won" },
+    { meaning: "盗む", base: "steal", past: "stole", pp: "stolen" },
+    { meaning: "起きる", base: "wake", past: "woke", pp: "woken" },
+    { meaning: "打つ", base: "hit", past: "hit", pp: "hit" }
+];
+
+// 不規則に変化する比較級・最上級
+const irregularComparatives = [
+    { word: "good", meaning: "良い", comparative: "better", superlative: "best" },
+    { word: "bad", meaning: "悪い", comparative: "worse", superlative: "worst" },
+    { word: "many", meaning: "多い（数）", comparative: "more", superlative: "most" },
+    { word: "much", meaning: "多い（量）", comparative: "more", superlative: "most" },
+    { word: "little", meaning: "少ない", comparative: "less", superlative: "least" },
+    { word: "far", meaning: "遠い", comparative: "farther", superlative: "farthest" },
+    { word: "old", meaning: "年上の", comparative: "older", superlative: "oldest" },
+    { word: "late", meaning: "遅い", comparative: "later", superlative: "latest" },
+    { word: "well", meaning: "上手に", comparative: "better", superlative: "best" },
+    { word: "ill", meaning: "病気の", comparative: "worse", superlative: "worst" }
+];
+
+// 不規則に変化する名詞の複数形
+const irregularPlurals = [
+    { singular: "man", meaning: "男性", plural: "men" },
+    { singular: "woman", meaning: "女性", plural: "women" },
+    { singular: "child", meaning: "子供", plural: "children" },
+    { singular: "foot", meaning: "足", plural: "feet" },
+    { singular: "tooth", meaning: "歯", plural: "teeth" },
+    { singular: "mouse", meaning: "ネズミ", plural: "mice" },
+    { singular: "goose", meaning: "ガチョウ", plural: "geese" },
+    { singular: "person", meaning: "人", plural: "people" },
+    { singular: "fish", meaning: "魚", plural: "fish" },
+    { singular: "sheep", meaning: "羊", plural: "sheep" },
+    { singular: "deer", meaning: "鹿", plural: "deer" },
+    { singular: "leaf", meaning: "葉", plural: "leaves" },
+    { singular: "knife", meaning: "ナイフ", plural: "knives" },
+    { singular: "life", meaning: "命・人生", plural: "lives" },
+    { singular: "wife", meaning: "妻", plural: "wives" }
+];
+
+// 現在選択中のカテゴリー
+let currentIvCategory = null;
+let ivRedsheetActive = false;
+let currentIvData = null;
+
+// サブカテゴリーメニューを表示
+function showIvMenuView() {
+    // フローティング要復習ボタンを非表示
+    hideFloatingReviewBtn();
+    
+    const view = document.getElementById('ivMenuView');
+    const categorySelection = document.getElementById('categorySelection');
+    
+    if (view && categorySelection) {
+        // メインヘッダーを更新（パッと切り替わる）
+        updateHeaderButtons('course', '不規則変化の単語');
+        
+        // categorySelectionを表示状態にしておく（背景として）
+        categorySelection.classList.remove('hidden');
+        
+        // サブカテゴリーメニューを即座に表示し、右からスライドイン
+        view.style.opacity = '1';
+        view.classList.remove('hidden');
+        view.style.transform = 'translateX(100%)';
+        
+        // 次のフレームでアニメーション開始
+        requestAnimationFrame(() => {
+            view.style.transition = 'transform 0.3s ease-out';
+            view.style.transform = 'translateX(0)';
+        });
+        
+        // アニメーション完了後にcategorySelectionを非表示
+        setTimeout(() => {
+            view.style.transition = '';
+            view.style.transform = '';
+            categorySelection.classList.add('hidden');
+        }, 300);
+        
+        // サブカテゴリーの進捗バーを更新
+        updateIrregularVerbsProgressBar();
+        
+        // 戻るボタン用にフラグを設定
+        window.currentSubcategoryParent = '不規則変化の単語';
+    }
+}
+
+// サブカテゴリーメニューを非表示（ホームに戻る）
+function hideIvMenuView() {
+    const view = document.getElementById('ivMenuView');
+    const categorySelection = document.getElementById('categorySelection');
+    
+    if (view && categorySelection) {
+        // メインヘッダーをホームに戻す（パッと切り替わる）
+        updateHeaderButtons('home');
+        
+        // カテゴリー選択画面を先に表示（iv-menu-viewの下に表示）
+        categorySelection.classList.remove('hidden');
+        
+        // iv-menu-view全体を右へスライドアウト（opacityなし）
+        view.style.transition = 'transform 0.3s ease-out';
+        view.style.transform = 'translateX(100%)';
+        
+        // 進捗バーを更新
+        updateCategoryStars();
+        updateVocabProgressBar();
+        updateIrregularVerbsProgressBar();
+        
+        // フローティング要復習ボタンを表示（ホーム画面に戻る）
+        showFloatingReviewBtn();
+        
+        setTimeout(() => {
+            view.style.transition = '';
+            view.style.transform = '';
+            view.classList.add('hidden');
+            document.body.style.overflow = '';
+            window.currentSubcategoryParent = null;
+        }, 300);
+    }
+}
+
+// サブカテゴリーメニューを非表示（学習/テスト画面へ遷移時）
+function hideIvMenuViewForStudy() {
+    const view = document.getElementById('ivMenuView');
+    if (view) {
+        view.classList.add('hidden');
+    }
+}
+
+// モード選択（学習 or テスト）
+function showIvModeSelection(category) {
+    currentIvCategory = category;
+    
+    // カテゴリータイトルを取得
+    const titles = {
+        'verbs-beginner': '不規則動詞（初級編）',
+        'verbs-intermediate': '不規則動詞（中級編）',
+        'verbs-advanced': '不規則動詞（上級編）',
+        'comparatives': '比較級・最上級',
+        'plurals': '名詞の複数形'
+    };
+    const title = titles[category] || category;
+    
+    // 学習モード選択オーバーレイを表示
+    const existingOverlay = document.getElementById('ivModeOverlay');
+    if (existingOverlay) existingOverlay.remove();
+    
+    const overlay = document.createElement('div');
+    overlay.id = 'ivModeOverlay';
+    overlay.className = 'study-mode-overlay';
+    overlay.innerHTML = `
+        <div class="study-mode-container" style="width: calc(100% - 16px); max-width: 600px; margin: 0 auto;">
+            <div class="study-mode-title">学習方法を選択</div>
+            <div class="study-mode-buttons">
+                <button type="button" class="study-mode-choice-btn study-mode-input-btn iv-mode-study-btn">
+                    <span class="study-mode-choice-main">学習</span>
+                    <span class="study-mode-choice-sub">単語一覧を見て<br>学習する</span>
+                </button>
+                <button type="button" class="study-mode-choice-btn study-mode-output-btn iv-mode-test-btn">
+                    <span class="study-mode-choice-main">テスト</span>
+                    <span class="study-mode-choice-sub">覚えたかどうか<br>確認する</span>
+                </button>
+            </div>
+            <button type="button" class="study-mode-cancel-btn">キャンセル</button>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    
+    // イベントリスナー
+    overlay.querySelector('.iv-mode-study-btn').addEventListener('click', () => {
+        overlay.remove();
+        showIvStudyView(category);
+    });
+    
+    overlay.querySelector('.iv-mode-test-btn').addEventListener('click', () => {
+        overlay.remove();
+        showIvTestView(category);
+    });
+    
+    overlay.querySelector('.study-mode-cancel-btn').addEventListener('click', () => {
+        overlay.remove();
+    });
+    
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.remove();
+    });
+}
+
+// 学習モードを表示
+function showIvStudyView(category) {
+    // フローティング要復習ボタンを非表示
+    hideFloatingReviewBtn();
+    
+    const view = document.getElementById('ivStudyView');
+    const titleEl = document.getElementById('ivStudyTitle');
+    const thead = document.getElementById('ivStudyTableHead');
+    const tbody = document.getElementById('ivStudyTableBody');
+    
+    if (!view || !tbody) return;
+    
+    // 現在のカテゴリーを保存（テストボタン用）
+    currentIvCategory = category;
+    
+    // カテゴリータイトル
+    const titles = {
+        'verbs-beginner': '不規則動詞（初級編）',
+        'verbs-intermediate': '不規則動詞（中級編）',
+        'verbs-advanced': '不規則動詞（上級編）',
+        'comparatives': '比較級・最上級',
+        'plurals': '名詞の複数形'
+    };
+    titleEl.textContent = titles[category] || '学習';
+    
+    // データ取得
+    let data;
+    if (category === 'verbs-beginner') {
+        data = irregularVerbsBeginner;
+        currentIvData = { type: 'verbs', data };
+    } else if (category === 'verbs-intermediate') {
+        data = irregularVerbsIntermediate;
+        currentIvData = { type: 'verbs', data };
+    } else if (category === 'verbs-advanced') {
+        data = irregularVerbsAdvanced;
+        currentIvData = { type: 'verbs', data };
+    } else if (category === 'comparatives') {
+        data = irregularComparatives;
+        currentIvData = { type: 'comparatives', data };
+    } else if (category === 'plurals') {
+        data = irregularPlurals;
+        currentIvData = { type: 'plurals', data };
+    }
+    
+    // テーブル生成
+    tbody.innerHTML = '';
+    
+    // 進捗を取得
+    let correctSet = new Set();
+    let wrongSet = new Set();
+    try {
+        const savedCorrect = localStorage.getItem(`ivCorrect-${category}`);
+        const savedWrong = localStorage.getItem(`ivWrong-${category}`);
+        if (savedCorrect) correctSet = new Set(JSON.parse(savedCorrect));
+        if (savedWrong) wrongSet = new Set(JSON.parse(savedWrong));
+    } catch (e) {}
+    
+    // 進捗状態に応じたクラスを取得
+    const getNumClass = (index) => {
+        if (wrongSet.has(index)) return 'iv-study-num iv-num-wrong';
+        if (correctSet.has(index)) return 'iv-study-num iv-num-correct';
+        return 'iv-study-num';
+    };
+    
+    if (currentIvData.type === 'verbs') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-study-col-num">No.</th>
+                <th class="iv-study-col-meaning">意味</th>
+                <th class="iv-study-col-base">原形</th>
+                <th class="iv-study-col-past">過去形</th>
+                <th class="iv-study-col-pp">過去分詞</th>
+            </tr>
+        `;
+        data.forEach((verb, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="${getNumClass(index)}">${index + 1}</td>
+                <td class="iv-study-meaning">${verb.meaning}</td>
+                <td class="iv-study-answer">${verb.base}</td>
+                <td class="iv-study-answer">${verb.past}</td>
+                <td class="iv-study-answer">${verb.pp}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else if (currentIvData.type === 'comparatives') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-study-col-num">No.</th>
+                <th class="iv-study-col-word">原級</th>
+                <th class="iv-study-col-meaning">意味</th>
+                <th class="iv-study-col-comp">比較級</th>
+                <th class="iv-study-col-super">最上級</th>
+            </tr>
+        `;
+        data.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="${getNumClass(index)}">${index + 1}</td>
+                <td class="iv-study-word">${item.word}</td>
+                <td class="iv-study-meaning">${item.meaning}</td>
+                <td class="iv-study-answer">${item.comparative}</td>
+                <td class="iv-study-answer">${item.superlative}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else if (currentIvData.type === 'plurals') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-study-col-num">No.</th>
+                <th class="iv-study-col-singular">単数形</th>
+                <th class="iv-study-col-meaning">意味</th>
+                <th class="iv-study-col-plural">複数形</th>
+            </tr>
+        `;
+        data.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="${getNumClass(index)}">${index + 1}</td>
+                <td class="iv-study-word">${item.singular}</td>
+                <td class="iv-study-meaning">${item.meaning}</td>
+                <td class="iv-study-answer">${item.plural}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+    
+    // 赤シートリセット
+    ivRedsheetActive = false;
+    const ivRedsheetCheckbox = document.getElementById('ivRedsheetCheckbox');
+    if (ivRedsheetCheckbox) ivRedsheetCheckbox.checked = false;
+    document.getElementById('ivStudyTableContainer')?.classList.remove('redsheet-active');
+    document.getElementById('ivRedsheetOverlay')?.classList.add('hidden');
+    
+    // サブカテゴリーメニューを左へスライドアウト
+    const ivMenuView = document.getElementById('ivMenuView');
+    if (ivMenuView) {
+        ivMenuView.classList.add('slide-out-left');
+    }
+    
+    // 学習モードを右からスライドイン
+    view.classList.remove('hidden');
+    view.classList.add('slide-in-right');
+    document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+        view.classList.remove('slide-in-right');
+        if (ivMenuView) {
+            ivMenuView.classList.remove('slide-out-left');
+            ivMenuView.classList.add('hidden');
+        }
+    }, 300);
+}
+
+// 学習モードを非表示（サブカテゴリーメニューに戻る）
+function hideIvStudyView() {
+    const view = document.getElementById('ivStudyView');
+    const ivMenuView = document.getElementById('ivMenuView');
+    
+    if (view) {
+        // ヘッダーを更新（パッと切り替わる）
+        updateHeaderButtons('course', '不規則変化の単語');
+        
+        // サブカテゴリーメニューを先に表示（学習モードの下に）
+        if (ivMenuView) {
+            ivMenuView.classList.remove('hidden');
+            ivMenuView.classList.add('slide-in-left');
+            updateIrregularVerbsProgressBar();
+        }
+        
+        // 学習モードを右へスライドアウト
+        view.classList.add('slide-out-right');
+        
+        setTimeout(() => {
+            view.classList.remove('slide-out-right');
+            view.classList.add('hidden');
+            document.body.style.overflow = '';
+            if (ivMenuView) {
+                ivMenuView.classList.remove('slide-in-left');
+            }
+        }, 300);
+    }
+}
+
+// 赤シートトグル（不規則動詞学習モード）
+function toggleIvRedsheet() {
+    const checkbox = document.getElementById('ivRedsheetCheckbox');
+    const overlay = document.getElementById('ivRedsheetOverlay');
+    const nextBtn = document.getElementById('ivRedsheetNextBtn');
+    const studyView = document.getElementById('ivStudyView');
+    
+    ivRedsheetActive = checkbox?.checked || false;
+    
+    if (ivRedsheetActive) {
+        // 現在表示されている範囲内で、一番上の回答部分を探す
+        const answers = document.querySelectorAll('.iv-study-answer');
+        let targetAnswer = null;
+        
+        for (const answer of answers) {
+            const rect = answer.getBoundingClientRect();
+            if (rect.top >= 100) {
+                targetAnswer = answer;
+                break;
+            }
+        }
+        
+        if (!targetAnswer && answers.length > 0) {
+            targetAnswer = answers[0];
+        }
+        
+        // オーバーレイの位置を設定
+        let topPosition = 150;
+        let leftPosition = 0;
+        
+        if (targetAnswer) {
+            const rect = targetAnswer.getBoundingClientRect();
+            topPosition = rect.top;
+            leftPosition = rect.left - 10; // 単語の左端に合わせる
+        }
+        
+        if (overlay) {
+            overlay.style.top = topPosition + 'px';
+            overlay.style.left = leftPosition + 'px';
+            overlay.style.right = '0';
+            overlay.classList.remove('hidden');
+        }
+        
+        studyView?.classList.add('red-sheet-mode');
+        setupIvRedsheetDrag(overlay);
+        
+        // 下矢印ボタンを表示
+        if (nextBtn) {
+            nextBtn.classList.remove('hidden');
+        }
+    } else {
+        overlay?.classList.add('hidden');
+        studyView?.classList.remove('red-sheet-mode');
+        
+        // 下矢印ボタンを非表示
+        if (nextBtn) {
+            nextBtn.classList.add('hidden');
+        }
+    }
+}
+
+// 赤シートを次の行に移動（不規則動詞学習モード）
+function moveIvRedsheetToNext() {
+    const overlay = document.getElementById('ivRedsheetOverlay');
+    const studyView = document.getElementById('ivStudyView');
+    const tableContainer = document.getElementById('ivStudyTableContainer');
+    const rows = document.querySelectorAll('.iv-study-table tbody tr');
+    
+    if (!overlay || !studyView || rows.length === 0) return;
+    
+    const viewportHeight = window.innerHeight;
+    const currentRedSheetTop = parseFloat(overlay.style.top) || 0;
+    
+    // 赤シートより下にある最初の行を探す
+    let nextRow = null;
+    let nextIndex = -1;
+    
+    for (let i = 0; i < rows.length; i++) {
+        const answer = rows[i].querySelector('.iv-study-answer');
+        if (answer) {
+            const rect = answer.getBoundingClientRect();
+            if (rect.top > currentRedSheetTop + 5) {
+                nextRow = rows[i];
+                nextIndex = i;
+                break;
+            }
+        }
+    }
+    
+    // 次の行が見つからない場合は終了（フェードアウト）
+    if (!nextRow) {
+        overlay.style.transition = 'opacity 0.3s ease';
+        overlay.style.opacity = '0';
+        
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+            overlay.style.opacity = '';
+            overlay.style.transition = '';
+            studyView.classList.remove('red-sheet-mode');
+            
+            const nextBtn = document.getElementById('ivRedsheetNextBtn');
+            if (nextBtn) {
+                nextBtn.classList.add('hidden');
+            }
+            
+            const checkbox = document.getElementById('ivRedsheetCheckbox');
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+            ivRedsheetActive = false;
+        }, 300);
+        return;
+    }
+    
+    const nextAnswer = nextRow.querySelector('.iv-study-answer');
+    if (!nextAnswer) return;
+    
+    const nextRect = nextAnswer.getBoundingClientRect();
+    
+    // 次の行が画面外ならスクロール
+    if (nextRect.top >= viewportHeight - 100) {
+        const scrollAmount = nextRect.top - viewportHeight + 200;
+        tableContainer?.scrollBy({
+            top: scrollAmount,
+            behavior: 'smooth'
+        });
+        
+        setTimeout(() => {
+            const updatedRect = nextAnswer.getBoundingClientRect();
+            overlay.style.transition = 'top 0.3s ease';
+            overlay.style.top = updatedRect.top + 'px';
+            overlay.style.left = (updatedRect.left - 10) + 'px';
+            setTimeout(() => {
+                overlay.style.transition = '';
+            }, 300);
+        }, 350);
+    } else {
+        overlay.style.transition = 'top 0.3s ease';
+        overlay.style.top = nextRect.top + 'px';
+        overlay.style.left = (nextRect.left - 10) + 'px';
+        setTimeout(() => {
+            overlay.style.transition = '';
+        }, 300);
+    }
+}
+
+// 赤シートのドラッグ設定（不規則動詞学習モード）
+function setupIvRedsheetDrag(overlay) {
+    if (!overlay) return;
+    
+    let isDragging = false;
+    let startY = 0;
+    let startTop = 0;
+    
+    const onStart = (e) => {
+        isDragging = true;
+        startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+        startTop = parseInt(overlay.style.top) || 150;
+        overlay.style.transition = 'none';
+    };
+    
+    const onMove = (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+        const deltaY = clientY - startY;
+        const newTop = Math.max(0, startTop + deltaY);
+        overlay.style.top = newTop + 'px';
+    };
+    
+    const onEnd = () => {
+        isDragging = false;
+        overlay.style.transition = '';
+    };
+    
+    overlay.addEventListener('mousedown', onStart);
+    overlay.addEventListener('touchstart', onStart, { passive: false });
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('mouseup', onEnd);
+    document.addEventListener('touchend', onEnd);
+}
+
+// テストモードを表示
+function showIvTestView(category) {
+    // フローティング要復習ボタンを非表示
+    hideFloatingReviewBtn();
+    
+    // 現在のカテゴリーを保存
+    currentIvCategory = category;
+    
+    // サブカテゴリーメニューを左へスライドアウト
+    const ivMenuView = document.getElementById('ivMenuView');
+    if (ivMenuView) {
+        ivMenuView.classList.add('slide-out-left');
+        setTimeout(() => {
+            ivMenuView.classList.remove('slide-out-left');
+            ivMenuView.classList.add('hidden');
+        }, 300);
+    }
+    
+    // データ取得
+    let data;
+    let type;
+    if (category === 'verbs-beginner') {
+        data = irregularVerbsBeginner;
+        type = 'verbs';
+    } else if (category === 'verbs-intermediate') {
+        data = irregularVerbsIntermediate;
+        type = 'verbs';
+    } else if (category === 'verbs-advanced') {
+        data = irregularVerbsAdvanced;
+        type = 'verbs';
+    } else if (category === 'comparatives') {
+        data = irregularComparatives;
+        type = 'comparatives';
+    } else if (category === 'plurals') {
+        data = irregularPlurals;
+        type = 'plurals';
+    }
+    
+    // カテゴリータイトル
+    const titles = {
+        'verbs-beginner': '不規則動詞（初級編）',
+        'verbs-intermediate': '不規則動詞（中級編）',
+        'verbs-advanced': '不規則動詞（上級編）',
+        'comparatives': '比較級・最上級',
+        'plurals': '名詞の複数形'
+    };
+    
+    // テスト画面を表示
+    showIrregularVerbsTestView(data, type, titles[category]);
+}
+
+// テスト画面を表示（汎用）
+function showIrregularVerbsTestView(data, type, title) {
+    // フローティング要復習ボタンを非表示
+    hideFloatingReviewBtn();
+    
+    const view = document.getElementById('irregularVerbsView');
+    const titleEl = view.querySelector('.irregular-verbs-title');
+    const tbody = document.getElementById('irregularVerbsTableBody');
+    const thead = view.querySelector('.irregular-verbs-table thead');
+    const instructions = view.querySelector('.irregular-verbs-instructions');
+    
+    if (!view || !tbody) return;
+    
+    // タイトル更新
+    if (titleEl) titleEl.textContent = title;
+    
+    // スコアリセット
+    irregularVerbsScore = { correct: 0, total: 0 };
+    
+    // テーブルヘッダーと内容を生成
+    tbody.innerHTML = '';
+    
+    // 進捗を取得
+    let correctSet = new Set();
+    let wrongSet = new Set();
+    try {
+        const savedCorrect = localStorage.getItem(`ivCorrect-${currentIvCategory}`);
+        const savedWrong = localStorage.getItem(`ivWrong-${currentIvCategory}`);
+        if (savedCorrect) correctSet = new Set(JSON.parse(savedCorrect));
+        if (savedWrong) wrongSet = new Set(JSON.parse(savedWrong));
+    } catch (e) {}
+    
+    // 進捗状態に応じたクラスを取得
+    const getNumClass = (index) => {
+        if (wrongSet.has(index)) return 'iv-num iv-num-wrong';
+        if (correctSet.has(index)) return 'iv-num iv-num-correct';
+        return 'iv-num';
+    };
+    
+    if (type === 'verbs') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-col-num">No.</th>
+                <th class="iv-col-meaning">意味</th>
+                <th class="iv-col-base">原形</th>
+                <th class="iv-col-past">過去形</th>
+                <th class="iv-col-pp">過去分詞</th>
+            </tr>
+        `;
+        if (instructions) instructions.textContent = '原形・過去形・過去分詞を入力して「採点」ボタンを押してください';
+        
+        data.forEach((verb, index) => {
+            const tr = document.createElement('tr');
+            tr.id = `iv-row-${index}`;
+            tr.innerHTML = `
+                <td class="${getNumClass(index)}">${index + 1}</td>
+                <td class="iv-meaning">${verb.meaning}</td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-base-${index}" data-index="${index}" data-type="base" data-answer="${verb.base}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-base-${index}"></div>
+                </td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-past-${index}" data-index="${index}" data-type="past" data-answer="${verb.past}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-past-${index}"></div>
+                </td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-pp-${index}" data-index="${index}" data-type="pp" data-answer="${verb.pp}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-pp-${index}"></div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else if (type === 'comparatives') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-col-num">No.</th>
+                <th class="iv-col-word">原級</th>
+                <th class="iv-col-comp">比較級</th>
+                <th class="iv-col-super">最上級</th>
+            </tr>
+        `;
+        if (instructions) instructions.textContent = '比較級・最上級を入力して「採点」ボタンを押してください';
+        
+        data.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.id = `iv-row-${index}`;
+            tr.innerHTML = `
+                <td class="${getNumClass(index)}">${index + 1}</td>
+                <td class="iv-meaning">${item.word}<br><small>(${item.meaning})</small></td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-comp-${index}" data-index="${index}" data-type="comp" data-answer="${item.comparative}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-comp-${index}"></div>
+                </td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-super-${index}" data-index="${index}" data-type="super" data-answer="${item.superlative}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-super-${index}"></div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else if (type === 'plurals') {
+        thead.innerHTML = `
+            <tr>
+                <th class="iv-col-num">No.</th>
+                <th class="iv-col-singular">単数形</th>
+                <th class="iv-col-plural">複数形</th>
+            </tr>
+        `;
+        if (instructions) instructions.textContent = '複数形を入力して「採点」ボタンを押してください';
+        
+        data.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.id = `iv-row-${index}`;
+            tr.innerHTML = `
+                <td class="${getNumClass(index)}">${index + 1}</td>
+                <td class="iv-meaning">${item.singular}<br><small>(${item.meaning})</small></td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-plural-${index}" data-index="${index}" data-type="plural" data-answer="${item.plural}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-plural-${index}"></div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+    
+    // 現在のテストデータを保存
+    currentIvTestData = { data, type };
+    
+    // 画面表示（右からスライドイン）
+    view.classList.remove('hidden');
+    view.classList.add('slide-in-right');
+    document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+        view.classList.remove('slide-in-right');
+    }, 300);
+}
+
+// 現在のテストデータ
+let currentIvTestData = null;
+
+// 不規則動詞データ（50語）- 旧データ（互換性のため）
+const irregularVerbsData = [
+    { meaning: "〜である", base: "be", past: "was/were", pp: "been" },
+    { meaning: "〜になる", base: "become", past: "became", pp: "become" },
+    { meaning: "始める", base: "begin", past: "began", pp: "begun" },
+    { meaning: "壊す", base: "break", past: "broke", pp: "broken" },
+    { meaning: "持ってくる", base: "bring", past: "brought", pp: "brought" },
+    { meaning: "建てる", base: "build", past: "built", pp: "built" },
+    { meaning: "買う", base: "buy", past: "bought", pp: "bought" },
+    { meaning: "捕まえる", base: "catch", past: "caught", pp: "caught" },
+    { meaning: "選ぶ", base: "choose", past: "chose", pp: "chosen" },
+    { meaning: "来る", base: "come", past: "came", pp: "come" },
+    { meaning: "切る", base: "cut", past: "cut", pp: "cut" },
+    { meaning: "する", base: "do", past: "did", pp: "done" },
+    { meaning: "描く", base: "draw", past: "drew", pp: "drawn" },
+    { meaning: "飲む", base: "drink", past: "drank", pp: "drunk" },
+    { meaning: "運転する", base: "drive", past: "drove", pp: "driven" },
+    { meaning: "食べる", base: "eat", past: "ate", pp: "eaten" },
+    { meaning: "落ちる", base: "fall", past: "fell", pp: "fallen" },
+    { meaning: "感じる", base: "feel", past: "felt", pp: "felt" },
+    { meaning: "見つける", base: "find", past: "found", pp: "found" },
+    { meaning: "飛ぶ", base: "fly", past: "flew", pp: "flown" },
+    { meaning: "忘れる", base: "forget", past: "forgot", pp: "forgotten" },
+    { meaning: "得る", base: "get", past: "got", pp: "got/gotten" },
+    { meaning: "与える", base: "give", past: "gave", pp: "given" },
+    { meaning: "行く", base: "go", past: "went", pp: "gone" },
+    { meaning: "育てる", base: "grow", past: "grew", pp: "grown" },
+    { meaning: "持っている", base: "have", past: "had", pp: "had" },
+    { meaning: "聞く", base: "hear", past: "heard", pp: "heard" },
+    { meaning: "保つ", base: "keep", past: "kept", pp: "kept" },
+    { meaning: "知っている", base: "know", past: "knew", pp: "known" },
+    { meaning: "去る", base: "leave", past: "left", pp: "left" },
+    { meaning: "貸す", base: "lend", past: "lent", pp: "lent" },
+    { meaning: "させる", base: "let", past: "let", pp: "let" },
+    { meaning: "横たわる", base: "lie", past: "lay", pp: "lain" },
+    { meaning: "失う", base: "lose", past: "lost", pp: "lost" },
+    { meaning: "作る", base: "make", past: "made", pp: "made" },
+    { meaning: "意味する", base: "mean", past: "meant", pp: "meant" },
+    { meaning: "会う", base: "meet", past: "met", pp: "met" },
+    { meaning: "払う", base: "pay", past: "paid", pp: "paid" },
+    { meaning: "置く", base: "put", past: "put", pp: "put" },
+    { meaning: "読む", base: "read", past: "read", pp: "read" },
+    { meaning: "乗る", base: "ride", past: "rode", pp: "ridden" },
+    { meaning: "走る", base: "run", past: "ran", pp: "run" },
+    { meaning: "言う", base: "say", past: "said", pp: "said" },
+    { meaning: "見る", base: "see", past: "saw", pp: "seen" },
+    { meaning: "売る", base: "sell", past: "sold", pp: "sold" },
+    { meaning: "送る", base: "send", past: "sent", pp: "sent" },
+    { meaning: "見せる", base: "show", past: "showed", pp: "shown" },
+    { meaning: "歌う", base: "sing", past: "sang", pp: "sung" },
+    { meaning: "座る", base: "sit", past: "sat", pp: "sat" },
+    { meaning: "眠る", base: "sleep", past: "slept", pp: "slept" },
+    { meaning: "話す", base: "speak", past: "spoke", pp: "spoken" },
+    { meaning: "費やす", base: "spend", past: "spent", pp: "spent" },
+    { meaning: "立つ", base: "stand", past: "stood", pp: "stood" },
+    { meaning: "泳ぐ", base: "swim", past: "swam", pp: "swum" },
+    { meaning: "取る", base: "take", past: "took", pp: "taken" },
+    { meaning: "教える", base: "teach", past: "taught", pp: "taught" },
+    { meaning: "言う", base: "tell", past: "told", pp: "told" },
+    { meaning: "考える", base: "think", past: "thought", pp: "thought" },
+    { meaning: "投げる", base: "throw", past: "threw", pp: "thrown" },
+    { meaning: "理解する", base: "understand", past: "understood", pp: "understood" },
+    { meaning: "着る", base: "wear", past: "wore", pp: "worn" },
+    { meaning: "勝つ", base: "win", past: "won", pp: "won" },
+    { meaning: "書く", base: "write", past: "wrote", pp: "written" }
+];
+
+let irregularVerbsScore = { correct: 0, total: 0 };
+
+// 不規則変化の単語画面を表示
+function showIrregularVerbsView() {
+    // フローティング要復習ボタンを非表示
+    hideFloatingReviewBtn();
+    
+    const view = document.getElementById('irregularVerbsView');
+    const tbody = document.getElementById('irregularVerbsTableBody');
+    
+    if (!view || !tbody) return;
+    
+    // スコアリセット
+    irregularVerbsScore = { correct: 0, total: 0 };
+    updateIrregularVerbsScore();
+    
+    // テーブル生成
+    tbody.innerHTML = '';
+    irregularVerbsData.forEach((verb, index) => {
+        const tr = document.createElement('tr');
+        tr.id = `iv-row-${index}`;
+        tr.innerHTML = `
+            <td class="iv-num">${index + 1}</td>
+            <td class="iv-meaning">${verb.meaning}</td>
+            <td>
+                <input type="text" class="iv-input" id="iv-base-${index}" data-index="${index}" data-type="base" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                <div class="iv-answer hidden" id="iv-answer-base-${index}"></div>
+            </td>
+            <td>
+                <input type="text" class="iv-input" id="iv-past-${index}" data-index="${index}" data-type="past" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                <div class="iv-answer hidden" id="iv-answer-past-${index}"></div>
+            </td>
+            <td>
+                <input type="text" class="iv-input" id="iv-pp-${index}" data-index="${index}" data-type="pp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                <div class="iv-answer hidden" id="iv-answer-pp-${index}"></div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+    
+    // 画面表示
+    view.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+// 不規則変化の単語画面（テストモード）を非表示（サブカテゴリーメニューに戻る）
+function hideIrregularVerbsView() {
+    const view = document.getElementById('irregularVerbsView');
+    const ivMenuView = document.getElementById('ivMenuView');
+    
+    if (view) {
+        // キーボードを隠す
+        hideIvKeyboard();
+        
+        // ヘッダーを更新（パッと切り替わる）
+        updateHeaderButtons('course', '不規則変化の単語');
+        
+        // サブカテゴリーメニューを先に表示（テストモードの下に）
+        if (ivMenuView) {
+            ivMenuView.classList.remove('hidden');
+            ivMenuView.classList.add('slide-in-left');
+            updateIrregularVerbsProgressBar();
+        }
+        
+        // テストモードを右へスライドアウト
+        view.classList.add('slide-out-right');
+        
+        setTimeout(() => {
+            view.classList.remove('slide-out-right');
+            view.classList.add('hidden');
+            document.body.style.overflow = '';
+            if (ivMenuView) {
+                ivMenuView.classList.remove('slide-in-left');
+            }
+        }, 300);
+    }
+}
+
+// 1問採点（汎用）
+function checkIrregularVerb(index) {
+    const row = document.getElementById(`iv-row-${index}`);
+    
+    // 既に採点済みの場合はスキップ
+    if (!row || row.classList.contains('iv-row-correct') || row.classList.contains('iv-row-wrong')) {
+        return;
+    }
+    
+    // 正解判定（複数回答対応）
+    const checkAnswer = (input, correctAnswers) => {
+        if (!input) return true;
+        const userAnswer = input.value.trim().toLowerCase();
+        const answers = correctAnswers.toLowerCase().split('/').map(a => a.trim());
+        return answers.includes(userAnswer);
+    };
+    
+    const type = currentIvTestData?.type || 'verbs';
+    let allCorrect = true;
+    
+    if (type === 'verbs') {
+        const baseInput = document.getElementById(`iv-base-${index}`);
+        const pastInput = document.getElementById(`iv-past-${index}`);
+        const ppInput = document.getElementById(`iv-pp-${index}`);
+        
+        const baseAnswer = document.getElementById(`iv-answer-base-${index}`);
+        const pastAnswer = document.getElementById(`iv-answer-past-${index}`);
+        const ppAnswer = document.getElementById(`iv-answer-pp-${index}`);
+        
+        const baseCorrect = checkAnswer(baseInput, baseInput?.dataset.answer || '');
+        const pastCorrect = checkAnswer(pastInput, pastInput?.dataset.answer || '');
+        const ppCorrect = checkAnswer(ppInput, ppInput?.dataset.answer || '');
+        
+        // 入力欄のスタイル更新
+        if (baseInput) {
+            baseInput.classList.add(baseCorrect ? 'iv-correct' : 'iv-wrong');
+            baseInput.disabled = true;
+            if (!baseCorrect && baseAnswer) {
+                baseAnswer.textContent = baseInput.dataset.answer;
+                baseAnswer.classList.remove('hidden');
+            }
+        }
+        if (pastInput) {
+            pastInput.classList.add(pastCorrect ? 'iv-correct' : 'iv-wrong');
+            pastInput.disabled = true;
+            if (!pastCorrect && pastAnswer) {
+                pastAnswer.textContent = pastInput.dataset.answer;
+                pastAnswer.classList.remove('hidden');
+            }
+        }
+        if (ppInput) {
+            ppInput.classList.add(ppCorrect ? 'iv-correct' : 'iv-wrong');
+            ppInput.disabled = true;
+            if (!ppCorrect && ppAnswer) {
+                ppAnswer.textContent = ppInput.dataset.answer;
+                ppAnswer.classList.remove('hidden');
+            }
+        }
+        
+        allCorrect = baseCorrect && pastCorrect && ppCorrect;
+    } else if (type === 'comparatives') {
+        const compInput = document.getElementById(`iv-comp-${index}`);
+        const superInput = document.getElementById(`iv-super-${index}`);
+        
+        const compAnswer = document.getElementById(`iv-answer-comp-${index}`);
+        const superAnswer = document.getElementById(`iv-answer-super-${index}`);
+        
+        const compCorrect = checkAnswer(compInput, compInput?.dataset.answer || '');
+        const superCorrect = checkAnswer(superInput, superInput?.dataset.answer || '');
+        
+        if (compInput) {
+            compInput.classList.add(compCorrect ? 'iv-correct' : 'iv-wrong');
+            compInput.disabled = true;
+            if (!compCorrect && compAnswer) {
+                compAnswer.textContent = compInput.dataset.answer;
+                compAnswer.classList.remove('hidden');
+            }
+        }
+        if (superInput) {
+            superInput.classList.add(superCorrect ? 'iv-correct' : 'iv-wrong');
+            superInput.disabled = true;
+            if (!superCorrect && superAnswer) {
+                superAnswer.textContent = superInput.dataset.answer;
+                superAnswer.classList.remove('hidden');
+            }
+        }
+        
+        allCorrect = compCorrect && superCorrect;
+    } else if (type === 'plurals') {
+        const pluralInput = document.getElementById(`iv-plural-${index}`);
+        const pluralAnswer = document.getElementById(`iv-answer-plural-${index}`);
+        
+        const pluralCorrect = checkAnswer(pluralInput, pluralInput?.dataset.answer || '');
+        
+        if (pluralInput) {
+            pluralInput.classList.add(pluralCorrect ? 'iv-correct' : 'iv-wrong');
+            pluralInput.disabled = true;
+            if (!pluralCorrect && pluralAnswer) {
+                pluralAnswer.textContent = pluralInput.dataset.answer;
+                pluralAnswer.classList.remove('hidden');
+            }
+        }
+        
+        allCorrect = pluralCorrect;
+    }
+    
+    // 行のスタイル更新
+    row.classList.add(allCorrect ? 'iv-row-correct' : 'iv-row-wrong');
+    
+    // 単語番号セルのスタイル更新
+    const numCell = row.querySelector('td:first-child');
+    if (numCell) {
+        numCell.classList.remove('iv-num-correct', 'iv-num-wrong');
+        numCell.classList.add(allCorrect ? 'iv-num-correct' : 'iv-num-wrong');
+    }
+    
+    // スコア更新
+    irregularVerbsScore.total++;
+    if (allCorrect) {
+        irregularVerbsScore.correct++;
+    }
+    updateIrregularVerbsScore();
+    
+    // 進捗を保存（ホーム画面の進捗バー用）
+    if (currentIvCategory) {
+        saveIvProgress(currentIvCategory, index, allCorrect);
+    }
+}
+
+// スコア表示更新
+function updateIrregularVerbsScore() {
+    const correctEl = document.getElementById('irregularVerbsCorrect');
+    const totalEl = document.getElementById('irregularVerbsTotal');
+    if (correctEl) correctEl.textContent = irregularVerbsScore.correct;
+    if (totalEl) totalEl.textContent = irregularVerbsScore.total;
+}
+
+// 不規則動詞用仮想キーボード
+let ivCurrentInput = null;
+let ivShiftActive = false;
+
+// キーボードを表示
+function showIvKeyboard() {
+    const keyboard = document.getElementById('ivKeyboard');
+    const container = document.querySelector('.irregular-verbs-table-container');
+    if (keyboard) {
+        keyboard.classList.add('visible');
+    }
+    if (container) {
+        container.classList.add('keyboard-open');
+    }
+}
+
+// キーボードを非表示
+function hideIvKeyboard() {
+    const keyboard = document.getElementById('ivKeyboard');
+    const container = document.querySelector('.irregular-verbs-table-container');
+    if (keyboard) {
+        keyboard.classList.remove('visible');
+    }
+    if (container) {
+        container.classList.remove('keyboard-open');
+    }
+    ivCurrentInput = null;
+}
+
+// キーボードのセットアップ
+function setupIrregularVerbsKeyboard() {
+    const keyboard = document.getElementById('ivKeyboard');
+    if (!keyboard) return;
+    
+    // キー入力
+    keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        key.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (ivCurrentInput && !ivCurrentInput.disabled) {
+                let char = key.dataset.key;
+                // シフトが有効なら大文字に
+                if (ivShiftActive && char.length === 1 && char !== ' ' && char !== "'") {
+                    char = char.toUpperCase();
+                    // シフトをリセット
+                    toggleIvShift();
+                }
+                const start = ivCurrentInput.selectionStart;
+                const end = ivCurrentInput.selectionEnd;
+                const value = ivCurrentInput.value;
+                ivCurrentInput.value = value.slice(0, start) + char + value.slice(end);
+                ivCurrentInput.selectionStart = ivCurrentInput.selectionEnd = start + 1;
+                ivCurrentInput.focus();
+            }
+        });
+    });
+    
+    // シフトキー
+    const shiftBtn = document.getElementById('ivKeyboardShift');
+    if (shiftBtn) {
+        shiftBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleIvShift();
+        });
+    }
+    
+    // バックスペース
+    const backspaceBtn = document.getElementById('ivKeyboardBackspace');
+    if (backspaceBtn) {
+        backspaceBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (ivCurrentInput && !ivCurrentInput.disabled) {
+                const start = ivCurrentInput.selectionStart;
+                const end = ivCurrentInput.selectionEnd;
+                const value = ivCurrentInput.value;
+                if (start === end && start > 0) {
+                    ivCurrentInput.value = value.slice(0, start - 1) + value.slice(end);
+                    ivCurrentInput.selectionStart = ivCurrentInput.selectionEnd = start - 1;
+                } else if (start !== end) {
+                    ivCurrentInput.value = value.slice(0, start) + value.slice(end);
+                    ivCurrentInput.selectionStart = ivCurrentInput.selectionEnd = start;
+                }
+                ivCurrentInput.focus();
+            }
+        });
+    }
+    
+    // キーボード自体をクリックしても閉じないようにする
+    keyboard.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+    
+    // 採点ボタン
+    const checkBtn = document.getElementById('ivKeyboardCheckBtn');
+    if (checkBtn) {
+        checkBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (ivCurrentInput) {
+                const index = parseInt(ivCurrentInput.dataset.index);
+                if (!isNaN(index)) {
+                    checkIrregularVerb(index);
+                    // 次の未採点の行に移動
+                    moveToNextUncheckedRow(index);
+                }
+            }
+        });
+    }
+}
+
+// 次の未採点の行に移動
+function moveToNextUncheckedRow(currentIndex) {
+    const dataLength = currentIvTestData?.data?.length || irregularVerbsData.length;
+    for (let i = currentIndex + 1; i < dataLength; i++) {
+        const row = document.getElementById(`iv-row-${i}`);
+        if (row && !row.classList.contains('iv-row-correct') && !row.classList.contains('iv-row-wrong')) {
+            const firstInput = row.querySelector('.iv-input');
+            if (firstInput && !firstInput.disabled) {
+                firstInput.focus();
+                return;
+            }
+        }
+    }
+}
+
+// シフトキーをトグル
+function toggleIvShift() {
+    ivShiftActive = !ivShiftActive;
+    const shiftBtn = document.getElementById('ivKeyboardShift');
+    const keyboard = document.getElementById('ivKeyboard');
+    if (shiftBtn) {
+        shiftBtn.classList.toggle('active', ivShiftActive);
+    }
+    if (keyboard) {
+        keyboard.classList.toggle('shift-active', ivShiftActive);
+    }
+}
+
+// 次の入力欄に移動
+function moveToNextIvInput() {
+    if (!ivCurrentInput) return;
+    
+    const allInputs = Array.from(document.querySelectorAll('.iv-input:not(:disabled)'));
+    const currentIndex = allInputs.indexOf(ivCurrentInput);
+    
+    if (currentIndex !== -1 && currentIndex < allInputs.length - 1) {
+        allInputs[currentIndex + 1].focus();
+    }
+}
+
+// 入力欄フォーカス時の処理
+document.addEventListener('focusin', (e) => {
+    if (e.target.classList.contains('iv-input')) {
+        ivCurrentInput = e.target;
+        showIvKeyboard();
+        // 入力欄が見えるようにスクロール
+        setTimeout(() => {
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
+});
+
+// キーボード外をクリックしたらキーボードを閉じる
+document.addEventListener('click', (e) => {
+    const keyboard = document.getElementById('ivKeyboard');
+    const irregularVerbsView = document.getElementById('irregularVerbsView');
+    
+    if (!irregularVerbsView || irregularVerbsView.classList.contains('hidden')) return;
+    if (!keyboard || !keyboard.classList.contains('visible')) return;
+    
+    // 入力欄かキーボードをクリックした場合は閉じない
+    if (e.target.classList.contains('iv-input') || 
+        e.target.closest('.iv-keyboard') ||
+        e.target.closest('.iv-check-btn')) {
+        return;
+    }
+    
+    hideIvKeyboard();
+});
+
+// ページ読み込み時にキーボードセットアップ
+document.addEventListener('DOMContentLoaded', () => {
+    setupIrregularVerbsKeyboard();
+    setupFloatingReviewButton();
+});
+
+// ========================
+// フローティング苦手・要復習ボタン
+// ========================
+
+function setupFloatingReviewButton() {
+    const floatingBtn = document.getElementById('floatingReviewBtn');
+    const collapsed = document.getElementById('floatingReviewCollapsed');
+    const expanded = document.getElementById('floatingReviewExpanded');
+    const closeBtn = document.getElementById('floatingReviewClose');
+    const startBtn = document.getElementById('floatingReviewStartBtn');
+    
+    if (!floatingBtn || !collapsed || !expanded) return;
+    
+    // 初期状態：ホーム画面なら表示、それ以外は非表示
+    const categorySelection = document.getElementById('categorySelection');
+    if (categorySelection && !categorySelection.classList.contains('hidden')) {
+        showFloatingReviewBtn();
+    } else {
+        floatingBtn.classList.add('hidden');
+    }
+    
+    // 縮小状態をクリックで拡大
+    collapsed.addEventListener('click', () => {
+        collapsed.classList.add('hidden');
+        expanded.classList.remove('hidden');
+    });
+    
+    // 閉じるボタンで縮小
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            expanded.classList.add('hidden');
+            collapsed.classList.remove('hidden');
+        });
+    }
+    
+    // 外側クリックで縮小
+    document.addEventListener('click', (e) => {
+        if (!floatingBtn.contains(e.target) && !expanded.classList.contains('hidden')) {
+            expanded.classList.add('hidden');
+            collapsed.classList.remove('hidden');
+        }
+    });
+    
+    // 復習開始ボタン
+    if (startBtn) {
+        startBtn.addEventListener('click', () => {
+            startFloatingReview();
+        });
+    }
+}
+
+// フローティングボタンを表示（ホーム画面のみ）
+function showFloatingReviewBtn() {
+    const floatingBtn = document.getElementById('floatingReviewBtn');
+    if (floatingBtn) {
+        floatingBtn.classList.remove('hidden');
+        updateFloatingReviewCount();
+    }
+}
+
+// フローティングボタンを非表示
+function hideFloatingReviewBtn() {
+    const floatingBtn = document.getElementById('floatingReviewBtn');
+    const expanded = document.getElementById('floatingReviewExpanded');
+    const collapsed = document.getElementById('floatingReviewCollapsed');
+    if (floatingBtn) {
+        floatingBtn.classList.add('hidden');
+    }
+    // パネルが開いていたら閉じる
+    if (expanded) expanded.classList.add('hidden');
+    if (collapsed) collapsed.classList.remove('hidden');
+}
+
+// 要復習単語数を更新
+function updateFloatingReviewCount() {
+    const countEl = document.getElementById('floatingReviewCount');
+    const statValueEl = document.getElementById('floatingReviewStatValue');
+    
+    // 間違えた単語をカウント
+    let wrongCount = 0;
+    
+    // すべてのカテゴリーから間違えた単語を集計
+    const categories = [
+        '中学1年生', '中学2年生', '中学3年生', 
+        '発展', 'カテゴリー別', '小学生で習った単語',
+        '大阪府Ｃ問題', 'Level別英単語テスト'
+    ];
+    
+    categories.forEach(category => {
+        const wrongKey = `wrong-${category}`;
+        const wrongSet = JSON.parse(localStorage.getItem(wrongKey) || '[]');
+        wrongCount += wrongSet.length;
+    });
+    
+    // チェックマーク付き単語もカウント
+    const reviewWordsData = JSON.parse(localStorage.getItem('reviewWords') || '[]');
+    wrongCount += reviewWordsData.length;
+    
+    // 重複を除く（簡易的に合計を表示）
+    if (countEl) {
+        countEl.textContent = wrongCount > 0 ? wrongCount : '--';
+    }
+    if (statValueEl) {
+        statValueEl.textContent = wrongCount > 0 ? wrongCount : '--';
+    }
+}
+
+// 復習を開始
+function startFloatingReview() {
+    // 間違えた単語を収集
+    const wrongWords = [];
+    
+    // vocabularyDataから間違えた単語を収集
+    if (typeof vocabularyData !== 'undefined') {
+        const categories = Object.keys(vocabularyData);
+        categories.forEach(category => {
+            const wrongKey = `wrong-${category}`;
+            const wrongIds = JSON.parse(localStorage.getItem(wrongKey) || '[]');
+            
+            if (wrongIds.length > 0 && vocabularyData[category]) {
+                vocabularyData[category].forEach(word => {
+                    if (wrongIds.includes(word.id)) {
+                        wrongWords.push({...word, sourceCategory: category});
+                    }
+                });
+            }
+        });
+    }
+    
+    // チェックマーク付き単語を追加
+    const reviewWordsData = JSON.parse(localStorage.getItem('reviewWords') || '[]');
+    if (reviewWordsData.length > 0 && typeof vocabularyData !== 'undefined') {
+        const allWords = getAllWordsFromVocabulary();
+        reviewWordsData.forEach(wordId => {
+            const word = allWords.find(w => w.id === wordId);
+            if (word && !wrongWords.find(w => w.id === wordId)) {
+                wrongWords.push({...word, sourceCategory: word.category || '要復習'});
+            }
+        });
+    }
+    
+    if (wrongWords.length === 0) {
+        alert('復習する単語がありません。\n単語学習を進めると、間違えた単語やチェックした単語がここに表示されます。');
+        return;
+    }
+    
+    // パネルを閉じる
+    const expanded = document.getElementById('floatingReviewExpanded');
+    const collapsed = document.getElementById('floatingReviewCollapsed');
+    if (expanded) expanded.classList.add('hidden');
+    if (collapsed) collapsed.classList.remove('hidden');
+    
+    // 復習モードで表示
+    showInputModeDirectly('苦手・要復習', wrongWords, '苦手・要復習');
+}
+
+// すべての単語を取得するヘルパー関数
+function getAllWordsFromVocabulary() {
+    const allWords = [];
+    if (typeof vocabularyData !== 'undefined') {
+        Object.keys(vocabularyData).forEach(category => {
+            vocabularyData[category].forEach(word => {
+                allWords.push({...word, category: category});
+            });
+        });
+    }
+    return allWords;
+}
