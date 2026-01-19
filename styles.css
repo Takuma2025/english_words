@@ -1209,6 +1209,11 @@ body.learning-mode .app-header {
     font-size: 11px;
 }
 
+/* ホーム画面の進捗バー語数表示を非表示 */
+#categorySelection .category-card .category-progress-text {
+    display: none;
+}
+
 .course-section-title {
     font-size: clamp(16px, 3.5vw, 20px);
     font-weight: 700;
@@ -3839,12 +3844,6 @@ button.category-card:focus-visible {
     margin-bottom: 0;
     letter-spacing: -0.02em;
     line-height: 1; /* 余計な上下の余白をカット */
-}
-
-/* サブカテゴリーカード（家族、曜日など）のタイトル */
-.category-card.category-card-with-actions .category-name {
-    font-family: "Meiryo", "メイリオ", "Hiragino Kaku Gothic ProN", sans-serif;
-    font-weight: 700;
 }
 
 .level-badge {
@@ -6762,8 +6761,8 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: center;
     gap: 4px;
-    padding: 5px 10px;
-    height: 28px;
+    padding: 5px 12px;
+    height: 40px;
     border: none;
     background: transparent;
     border-radius: 6px;
