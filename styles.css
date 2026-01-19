@@ -6237,16 +6237,16 @@ body.choice-question-mode-active .word-card-container {
     display: none;
 }
 
-/* すべての単語モードでコンパクト表示を強制 */
-.input-list-scroll.all-words-mode .input-list-item-expand {
+/* コンパクト表示モードのスタイル */
+.input-list-scroll.compact-mode .input-list-item-expand {
     padding: 8px 12px;
 }
 
-.input-list-scroll.all-words-mode .input-list-expand-word {
+.input-list-scroll.compact-mode .input-list-expand-word {
     font-size: 18px;
 }
 
-.input-list-scroll.all-words-mode .input-list-expand-meaning {
+.input-list-scroll.compact-mode .input-list-expand-meaning {
     font-size: 14px;
 }
 
@@ -17279,15 +17279,28 @@ body .sentence-english {
     background: #fff;
     color: #1f2937;
     border-bottom: 1px solid #e5e7eb;
+    position: relative;
 }
 
 .study-header.iv-test-header .study-title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     color: #1f2937;
     font-size: 16px;
+    margin: 0;
 }
 
 .study-header.iv-test-header .study-header-left {
-    min-width: 36px;
+    width: 36px;
+    flex-shrink: 0;
+}
+
+.study-header.iv-test-header .study-header-right {
+    width: 36px;
+    flex-shrink: 0;
+    margin-left: auto;
 }
 
 .iv-test-close-btn {
@@ -17687,13 +17700,15 @@ body .sentence-english {
 
 .iv-input.iv-correct {
     background: #fff;
-    border-color: #cbd5e1;
+    border-color: #3b82f6;
+    border-width: 2px;
     color: #1f2937;
 }
 
 .iv-input.iv-wrong {
     background: #fff;
-    border-color: #cbd5e1;
+    border-color: #ef4444;
+    border-width: 2px;
     color: #1f2937;
 }
 
@@ -17752,23 +17767,23 @@ body .sentence-english {
     }
 }
 
-/* 不規則動詞用仮想キーボード */
+/* 不規則動詞用仮想キーボード（下部固定、常に表示） */
 .iv-keyboard {
     position: fixed;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(600px, calc(100% - 16px));
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
     z-index: 1100;
-    display: none;
-    background: rgba(255, 183, 77, 0.7);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.12);
-    padding: 14px;
-    border-radius: 14px;
-}
-
-.iv-keyboard.visible {
     display: block;
+    background: #d1d4d9;
+    padding: 10px 3px 6px 3px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    border-radius: 0;
+    box-shadow: none;
+    border-top: none;
 }
 
 .iv-keyboard .keyboard-actions {
@@ -17782,20 +17797,16 @@ body .sentence-english {
 
 @media (max-width: 600px) {
     .iv-keyboard {
-        width: calc(100% - 16px);
-        bottom: 8px;
-        padding: 10px;
-        border-radius: 12px;
+        max-width: 100%;
+        padding: 10px 3px 6px 3px;
+        padding-bottom: max(6px, env(safe-area-inset-bottom));
     }
 }
 
-.irregular-verbs-table-container {
-    padding-bottom: 20px;
-    transition: padding-bottom 0.2s;
-}
-
-.irregular-verbs-table-container.keyboard-open {
-    padding-bottom: 220px;
+/* キーボード常時表示のため、常に余白を確保 */
+.irregularVerbsView .irregular-verbs-table-container,
+.irregular-verbs-view .irregular-verbs-table-container {
+    padding-bottom: 280px;
 }
 
 .iv-input:focus {
