@@ -23,24 +23,54 @@ const SoundEffects = {
     audioContext: null,
     enabled: true,
     volume: 0.5, // 0.0 ~ 1.0
+    selectSound: null, // 選択・決定音用のAudio要素
+    flipSound: null, // カードめくり音用のAudio要素
     
     init() {
         try {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            // 保存された音量を読み込む
-            const savedVolume = localStorage.getItem('soundEffectsVolume');
-            if (savedVolume !== null) {
-                this.volume = parseFloat(savedVolume);
-            }
         } catch (e) {
             console.log('Web Audio API not supported');
-            this.enabled = false;
+        }
+        
+        // 保存された音量を読み込む
+        const savedVolume = localStorage.getItem('soundEffectsVolume');
+        if (savedVolume !== null) {
+            this.volume = parseFloat(savedVolume);
+        }
+        
+        // 選択・決定音を読み込み
+        try {
+            this.selectSound = new Audio(encodeURI('決定ボタンを押す53.mp3'));
+            this.selectSound.preload = 'auto';
+            this.selectSound.volume = this.volume;
+            this.selectSound.load();
+        } catch (e) {
+            console.log('Failed to load select sound:', e);
+        }
+        
+        // カードめくり音を読み込み
+        try {
+            this.flipSound = new Audio(encodeURI('ページめくり2.mp3'));
+            this.flipSound.preload = 'auto';
+            this.flipSound.volume = this.volume;
+            this.flipSound.load();
+        } catch (e) {
+            console.log('Failed to load flip sound:', e);
         }
     },
     
     setVolume(value) {
         this.volume = Math.max(0, Math.min(1, value));
         localStorage.setItem('soundEffectsVolume', this.volume.toString());
+        // 選択・決定音のボリュームも更新
+        if (this.selectSound) {
+            this.selectSound.volume = this.volume;
+        }
+        // カードめくり音のボリュームも更新
+        if (this.flipSound) {
+            this.flipSound.volume = this.volume;
+        }
     },
     
     getVolume() {
@@ -126,21 +156,18 @@ const SoundEffects = {
         });
     },
     
-    // カードめくり音
+    // カードめくり音（音声ファイル使用）
     playFlip() {
-        if (!this.enabled || !this.audioContext || this.volume === 0) return;
-        this.resume();
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(600, this.audioContext.currentTime + 0.08);
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.08 * this.volume, this.audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
-        oscillator.start(this.audioContext.currentTime);
-        oscillator.stop(this.audioContext.currentTime + 0.08);
+        if (!this.enabled || this.volume === 0) return;
+        if (this.flipSound) {
+            this.flipSound.currentTime = 0;
+            this.flipSound.volume = this.volume;
+            this.flipSound.play().catch(e => {
+                console.log('Flip sound play error:', e);
+            });
+        } else {
+            console.log('flipSound is null');
+        }
     },
     
     // ボタン押下音（カチッ）
@@ -176,20 +203,14 @@ const SoundEffects = {
         oscillator.stop(this.audioContext.currentTime + 0.1);
     },
     
-    // メニュー選択音（軽いクリック）
+    // メニュー選択音（音声ファイル使用）
     playMenuSelect() {
-        if (!this.enabled || !this.audioContext || this.volume === 0) return;
-        this.resume();
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        oscillator.frequency.value = 600;
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.08 * this.volume, this.audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.06);
-        oscillator.start(this.audioContext.currentTime);
-        oscillator.stop(this.audioContext.currentTime + 0.06);
+        if (!this.enabled || this.volume === 0) return;
+        if (this.selectSound) {
+            this.selectSound.currentTime = 0;
+            this.selectSound.volume = this.volume;
+            this.selectSound.play().catch(e => {});
+        }
     },
     
     // 紙のページめくり音（本のページをめくるパラッという音）
@@ -252,24 +273,14 @@ const SoundEffects = {
         noiseSourceLo.stop(now + duration);
     },
     
-    // 決定音（上昇する成功音）
+    // 決定音（音声ファイル使用）
     playConfirm() {
-        if (!this.enabled || !this.audioContext || this.volume === 0) return;
-        this.resume();
-        const now = this.audioContext.currentTime;
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        oscillator.frequency.setValueAtTime(523.25, now); // C5
-        oscillator.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
-        oscillator.frequency.exponentialRampToValueAtTime(783.99, now + 0.3); // G5
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.12 * this.volume, now);
-        gainNode.gain.setValueAtTime(0.12 * this.volume, now + 0.25);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-        oscillator.start(now);
-        oscillator.stop(now + 0.3);
+        if (!this.enabled || this.volume === 0) return;
+        if (this.selectSound) {
+            this.selectSound.currentTime = 0;
+            this.selectSound.volume = this.volume;
+            this.selectSound.play().catch(e => {});
+        }
     }
 };
 let answeredWords = new Set();
@@ -1530,54 +1541,6 @@ function setupVolumeControl() {
         // スライダーを離したときにテスト音を再生
         volumeSlider.addEventListener('change', () => {
             SoundEffects.playTap();
-        });
-    }
-    
-    // BGM音量スライダー
-    const bgmVolumeSlider = document.getElementById('bgmVolumeSlider');
-    const bgmVolumeValue = document.getElementById('bgmVolumeValue');
-    const bgmVolumeIcon = document.getElementById('bgmVolumeIcon');
-    
-    if (bgmVolumeSlider && bgmVolumeValue) {
-        // 保存されたBGM音量を読み込み
-        const savedBgmVolume = localStorage.getItem('bgmVolume');
-        const bgmVolume = savedBgmVolume !== null ? parseInt(savedBgmVolume) : 30;
-        bgmVolumeSlider.value = bgmVolume;
-        bgmVolumeValue.textContent = `${bgmVolume}%`;
-        
-        // スライダーの変更イベント
-        bgmVolumeSlider.addEventListener('input', (e) => {
-            const value = parseInt(e.target.value);
-            bgmVolumeValue.textContent = `${value}%`;
-            localStorage.setItem('bgmVolume', value);
-            
-            // audio要素を直接取得して音量を更新
-            const bgm = document.getElementById('bgmAudio');
-            const resultBgm = document.getElementById('resultBgmAudio');
-            
-            if (bgm) {
-                bgm.volume = value / 100;
-            }
-            if (resultBgm) {
-                resultBgm.volume = value / 100;
-            }
-            
-            // グローバル変数も更新
-            if (bgmAudio) {
-                bgmAudio.volume = value / 100;
-            }
-            if (resultBgmAudio) {
-                resultBgmAudio.volume = value / 100;
-            }
-            
-            // 音量0ならBGM停止、それ以外なら再生
-            if (value === 0) {
-                bgmEnabled = false;
-                stopBgm();
-            } else if (!bgmEnabled) {
-                bgmEnabled = true;
-                playBgm();
-            }
         });
     }
 }
@@ -11236,152 +11199,6 @@ function setupInputListModeToggle() {
     }
 }
 
-// BGM制御
-let bgmAudio = null;
-let resultBgmAudio = null;
-let bgmEnabled = false;
-let bgmStarted = false;
-
-function initBgm() {
-    bgmAudio = document.getElementById('bgmAudio');
-    resultBgmAudio = document.getElementById('resultBgmAudio');
-    
-    // 保存されたBGM音量を読み込み
-    const savedBgmVolume = localStorage.getItem('bgmVolume');
-    const bgmVolume = savedBgmVolume !== null ? parseInt(savedBgmVolume) : 30;
-    
-    console.log('initBgm: volume =', bgmVolume);
-    
-    if (bgmAudio) {
-        bgmAudio.volume = bgmVolume / 100;
-        console.log('bgmAudio.volume set to', bgmAudio.volume);
-        
-        // BGMが終わったら5秒後に再度再生
-        bgmAudio.addEventListener('ended', () => {
-            if (bgmEnabled) {
-                setTimeout(() => {
-                    if (bgmEnabled && bgmAudio) {
-                        bgmAudio.currentTime = 0;
-                        bgmAudio.play().catch(e => {});
-                    }
-                }, 5000);
-            }
-        });
-    }
-    if (resultBgmAudio) {
-        resultBgmAudio.volume = bgmVolume / 100;
-    }
-    
-    // スライダーの値も同期
-    const bgmVolumeSlider = document.getElementById('bgmVolumeSlider');
-    const bgmVolumeValue = document.getElementById('bgmVolumeValue');
-    if (bgmVolumeSlider) {
-        bgmVolumeSlider.value = bgmVolume;
-    }
-    if (bgmVolumeValue) {
-        bgmVolumeValue.textContent = `${bgmVolume}%`;
-    }
-    
-    // 音量0より大きければBGMを有効化
-    bgmEnabled = bgmVolume > 0;
-    
-    // 自動再生を試みる（ブロックされる可能性あり）
-    if (bgmEnabled) {
-        playBgm();
-    }
-    
-    // ユーザーの最初の操作でBGMを開始（自動再生がブロックされた場合の対策）
-    const startBgmOnInteraction = () => {
-        if (bgmEnabled && !bgmStarted && bgmAudio) {
-            // 現在の音量を再適用
-            const currentVolume = localStorage.getItem('bgmVolume');
-            const vol = currentVolume !== null ? parseInt(currentVolume) : 30;
-            bgmAudio.volume = vol / 100;
-            
-            bgmAudio.play().then(() => {
-                bgmStarted = true;
-                console.log('BGM started on user interaction');
-            }).catch(e => {});
-        }
-        // 一度実行したらリスナーを削除
-        document.removeEventListener('click', startBgmOnInteraction);
-        document.removeEventListener('touchstart', startBgmOnInteraction);
-        document.removeEventListener('keydown', startBgmOnInteraction);
-    };
-    
-    document.addEventListener('click', startBgmOnInteraction);
-    document.addEventListener('touchstart', startBgmOnInteraction);
-    document.addEventListener('keydown', startBgmOnInteraction);
-}
-
-function playBgm() {
-    if (bgmAudio && bgmEnabled) {
-        // 結果BGMが再生中なら停止
-        if (resultBgmAudio) {
-            resultBgmAudio.pause();
-            resultBgmAudio.currentTime = 0;
-        }
-        
-        // 現在の音量を適用
-        const savedBgmVolume = localStorage.getItem('bgmVolume');
-        const bgmVolume = savedBgmVolume !== null ? parseInt(savedBgmVolume) : 30;
-        bgmAudio.volume = bgmVolume / 100;
-        
-        bgmAudio.play().then(() => {
-            bgmStarted = true;
-        }).catch(e => {
-            // 自動再生がブロックされた場合は、ユーザー操作後に再生
-            console.log('BGM autoplay blocked, will play on user interaction');
-        });
-    }
-}
-
-function stopBgm() {
-    if (bgmAudio) {
-        bgmAudio.pause();
-        bgmAudio.currentTime = 0;
-    }
-}
-
-function playResultBgm() {
-    if (resultBgmAudio && bgmEnabled) {
-        // 通常BGMを停止
-        if (bgmAudio) {
-            bgmAudio.pause();
-        }
-        
-        // 現在の音量を適用
-        const savedBgmVolume = localStorage.getItem('bgmVolume');
-        const bgmVolume = savedBgmVolume !== null ? parseInt(savedBgmVolume) : 30;
-        resultBgmAudio.volume = bgmVolume / 100;
-        
-        resultBgmAudio.play().catch(e => {
-            console.log('Result BGM autoplay blocked');
-        });
-    }
-}
-
-function stopResultBgm() {
-    if (resultBgmAudio) {
-        resultBgmAudio.pause();
-        resultBgmAudio.currentTime = 0;
-    }
-    // 通常BGMを再開
-    if (bgmEnabled && bgmAudio) {
-        bgmAudio.play().catch(e => {});
-    }
-}
-
-function toggleBgm(enabled) {
-    bgmEnabled = enabled;
-    if (enabled) {
-        playBgm();
-    } else {
-        stopBgm();
-        stopResultBgm();
-    }
-}
-
 // 設定ボタンのセットアップ
 function setupInputListSettings() {
     const settingsBtn = document.getElementById('inputListSettingsBtn');
@@ -13105,9 +12922,6 @@ function showCompletion() {
     // 完了音を再生
     SoundEffects.playComplete();
     
-    // 結果BGMを再生
-    playResultBgm();
-    
     const completionOverlay = document.getElementById('completionOverlay');
     if (!completionOverlay) {
         // フォールバック：旧方式
@@ -13552,9 +13366,6 @@ function createFireworks(container) {
 
 // 完了画面を閉じる
 function hideCompletion() {
-    // 結果BGMを停止して通常BGMを再開
-    stopResultBgm();
-    
     const completionOverlay = document.getElementById('completionOverlay');
     if (completionOverlay) {
         completionOverlay.classList.remove('show');
@@ -21130,7 +20941,6 @@ document.addEventListener('click', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     setupIrregularVerbsKeyboard();
     setupFloatingReviewButton();
-    initBgm();
 });
 
 // ========================

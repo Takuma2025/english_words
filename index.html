@@ -115,18 +115,6 @@
                         </div>
                         <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="50">
                     </div>
-                    <div class="sidebar-volume-control">
-                        <div class="sidebar-volume-label">
-                            <svg id="bgmVolumeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="5.5" cy="17.5" r="2.5"></circle>
-                                <circle cx="17.5" cy="15.5" r="2.5"></circle>
-                                <path d="M8 17V5l12-2v12"></path>
-                            </svg>
-                            <span>BGMの音量</span>
-                            <span class="volume-value" id="bgmVolumeValue">30%</span>
-                        </div>
-                        <input type="range" id="bgmVolumeSlider" class="volume-slider" min="0" max="100" value="30">
-                    </div>
                 </div>
                 <div class="sidebar-section">
                     <div class="sidebar-section-title">シェア</div>
@@ -2358,14 +2346,6 @@
     <script src="handwriting-recognition.js"></script>
     <script src="handwriting-ui.js"></script>
     <script src="app.js"></script>
-    
-    <!-- BGM -->
-    <audio id="bgmAudio" preload="auto">
-        <source src="Short60_前向きポップ_01.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="resultBgmAudio" loop preload="auto">
-        <source src="Shooting_04.mp3" type="audio/mpeg">
-    </audio>
 </body>
 </html>
 
