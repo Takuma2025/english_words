@@ -2138,6 +2138,9 @@
                     </div>
                 </div>
             </div>
+            <div class="osaka-footer-container">
+                <img src="osaka_5_nashi_b.png" alt="大阪府" class="osaka-footer-img">
+            </div>
         </div>
     </div>
 
@@ -2146,6 +2149,7 @@
         <header class="study-header">
             <button class="study-back-btn" id="ivStudyBackBtn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <span>戻る</span>
             </button>
             <h1 class="study-title" id="ivStudyTitle">学習</h1>
             <div class="study-header-right">
@@ -2210,12 +2214,17 @@
 
     <!-- 不規則変化の単語画面（テストモード） -->
     <div class="irregular-verbs-view hidden" id="irregularVerbsView">
-        <header class="study-header">
-            <button class="study-back-btn" id="irregularVerbsBackBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </button>
+        <header class="study-header iv-test-header">
+            <div class="study-header-left"></div>
             <h1 class="study-title irregular-verbs-title">不規則変化の単語</h1>
-            <div class="study-header-right"></div>
+            <div class="study-header-right">
+                <button class="iv-test-close-btn" id="ivTestCloseBtn" aria-label="閉じる">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
         </header>
         <div class="irregular-verbs-table-container">
             <div class="irregular-verbs-instructions">
@@ -2286,6 +2295,16 @@
             </div>
             <div class="keyboard-actions">
                 <button class="keyboard-action-btn keyboard-action-btn-primary" id="ivKeyboardCheckBtn">採点</button>
+            </div>
+        </div>
+        <!-- ポーズオーバーレイ -->
+        <div class="pause-overlay hidden" id="ivTestPauseOverlay">
+            <div class="pause-menu">
+                <h2 class="pause-title">テストを中断しますか？</h2>
+                <div class="pause-buttons">
+                    <button class="pause-btn pause-continue-btn" id="ivTestPauseContinueBtn">テストを続ける</button>
+                    <button class="pause-btn pause-quit-btn" id="ivTestPauseQuitBtn">中断する</button>
+                </div>
             </div>
         </div>
     </div>

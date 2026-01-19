@@ -1689,14 +1689,9 @@ body.learning-mode .app-header {
     transition: width 0.3s ease;
 }
 
-/* 100%達成時の進捗バー（水色と青のグラデーション・動く） */
+/* 100%達成時の進捗バー（シンプルな青） */
 .school-card-progress-bar.complete {
-    background: linear-gradient(90deg, #1e40af 0%, #2563eb 25%, #3b82f6 50%, #2563eb 75%, #1e40af 100%);
-    background-size: 200% 100%;
-    animation: gradient-flow 2s linear infinite;
-    box-shadow: 
-        0 0 10px rgba(30, 64, 175, 0.6),
-        inset 0 0 8px rgba(255, 255, 255, 0.3);
+    background: #2563eb;
     overflow: visible;
 }
 
@@ -5380,7 +5375,7 @@ body.quiz-test-mode .progress-top-row {
 .card-area-wrapper:has(.input-mode:not(.hidden)) {
     padding-top: 0;
     padding-bottom: 0;
-    overflow-y: hidden;
+    overflow: visible;
 }
 
 .card-area-wrapper:has(#inputListView:not(.hidden)) {
@@ -6172,11 +6167,22 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    background: #f1f5f9;
+    background: #e0f2fe;
     position: relative;
     z-index: 100;
     gap: 10px;
     margin-bottom: 12px;
+    width: 100%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+    .word-search-container {
+        max-width: 100%;
+    }
 }
 
 .word-search-container.hidden {
@@ -17245,13 +17251,15 @@ body .sentence-english {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
+    gap: 4px;
     height: 36px;
     background: none;
     border: none;
     color: #fff;
     cursor: pointer;
     padding: 0;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .study-title {
@@ -17264,6 +17272,35 @@ body .sentence-english {
 
 .study-header-right {
     min-width: 36px;
+}
+
+/* 不規則変化テストモードのヘッダー（白背景、右上に×ボタン） */
+.study-header.iv-test-header {
+    background: #fff;
+    color: #1f2937;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.study-header.iv-test-header .study-title {
+    color: #1f2937;
+    font-size: 16px;
+}
+
+.study-header.iv-test-header .study-header-left {
+    min-width: 36px;
+}
+
+.iv-test-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    color: #1f2937;
+    cursor: pointer;
+    padding: 0;
 }
 
 .iv-test-btn {
@@ -17401,14 +17438,14 @@ body .sentence-english {
     font-weight: 700;
     color: #374151;
     text-align: left;
-    border-bottom: 0.5px solid #000000;
+    border-bottom: 1px solid #000000;
     background: #f3f4f6;
 }
 
 .iv-study-table td {
     padding: 10px 8px;
     font-size: 14px;
-    border-bottom: 0.5px solid #000000;
+    border-bottom: 1px solid #000000;
     vertical-align: middle;
 }
 
@@ -17556,14 +17593,14 @@ body .sentence-english {
     text-align: center;
     font-weight: 600;
     color: #475569;
-    border-bottom: 2px solid #cbd5e1;
+    border-bottom: 1px solid #000000;
     font-size: 12px;
 }
 
 .irregular-verbs-table td {
     padding: 8px 4px;
     text-align: center;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #000000;
     vertical-align: middle;
 }
 
@@ -17645,23 +17682,23 @@ body .sentence-english {
 .iv-input:focus {
     outline: none;
     border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    box-shadow: none;
 }
 
 .iv-input.iv-correct {
-    background: #dbeafe;
-    border-color: #3b82f6;
-    color: #1d4ed8;
+    background: #fff;
+    border-color: #cbd5e1;
+    color: #1f2937;
 }
 
 .iv-input.iv-wrong {
-    background: #fee2e2;
-    border-color: #ef4444;
-    color: #dc2626;
+    background: #fff;
+    border-color: #cbd5e1;
+    color: #1f2937;
 }
 
 .iv-input:disabled {
-    background: #f1f5f9;
+    background: #fff;
 }
 
 .iv-answer {
@@ -17763,5 +17800,5 @@ body .sentence-english {
 
 .iv-input:focus {
     background: #fffc42;
-    border-color: #3b82f6;
+    border: 2px solid #3b82f6;
 }

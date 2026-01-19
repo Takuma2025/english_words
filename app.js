@@ -3702,7 +3702,7 @@ function updateHeaderUnitName(unitName) {
 }
 
 // カテゴリー選択画面を表示
-function showCategorySelection() {
+function showCategorySelection(slideIn = false) {
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
     const appMain = document.querySelector('.app-main');
@@ -3743,6 +3743,12 @@ function showCategorySelection() {
     }
     
     elements.categorySelection.classList.remove('hidden');
+    if (slideIn) {
+        elements.categorySelection.classList.add('slide-in-left');
+        setTimeout(() => {
+            elements.categorySelection.classList.remove('slide-in-left');
+        }, 300);
+    }
     if (elements.mainContent) {
         elements.mainContent.classList.add('hidden');
     }
@@ -4479,7 +4485,14 @@ function showElementaryCategorySelection(skipAnimation = false) {
         categorySelection.classList.add('hidden');
         courseSelection.classList.remove('hidden');
         
-        if (!skipAnimation) {
+        // skipAnimationがtrueの場合は左からスライドイン（学習画面から戻るとき）
+        // falseの場合は右からスライドイン（ホームから進むとき）
+        if (skipAnimation) {
+            courseSelection.classList.add('slide-in-left');
+            setTimeout(() => {
+                courseSelection.classList.remove('slide-in-left');
+            }, 300);
+        } else {
             courseSelection.classList.add('slide-in-right');
             setTimeout(() => {
                 courseSelection.classList.remove('slide-in-right');
@@ -4489,7 +4502,7 @@ function showElementaryCategorySelection(skipAnimation = false) {
     
     // ナビゲーション状態を更新
     updateNavState('courseSelection');
-    
+
     // 戻るボタン用にparentCategoryを保存
     window.currentSubcategoryParent = 'カテゴリー別';
 }
@@ -4831,7 +4844,14 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         categorySelection.classList.add('hidden');
         courseSelection.classList.remove('hidden');
         
-        if (!skipAnimation) {
+        // skipAnimationがtrueの場合は左からスライドイン（学習画面から戻るとき）
+        // falseの場合は右からスライドイン（ホームから進むとき）
+        if (skipAnimation) {
+            courseSelection.classList.add('slide-in-left');
+            setTimeout(() => {
+                courseSelection.classList.remove('slide-in-left');
+            }, 300);
+        } else {
             courseSelection.classList.add('slide-in-right');
             setTimeout(() => {
                 courseSelection.classList.remove('slide-in-right');
@@ -4847,7 +4867,7 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
 }
 
 // コース選択画面を表示（100刻み）
-function showCourseSelection(category, categoryWords) {
+function showCourseSelection(category, categoryWords, slideIn = false) {
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
     const appMain = document.querySelector('.app-main');
@@ -5146,13 +5166,14 @@ function showCourseSelection(category, categoryWords) {
         // カテゴリー選択画面を即座に非表示
         categorySelection.classList.add('hidden');
         
-        // コース選択画面を右からスライドイン
+        // コース選択画面をスライドイン（slideInがtrueなら左から、falseなら右から）
         courseSelection.classList.remove('hidden');
-        courseSelection.classList.add('slide-in-right');
+        const slideClass = slideIn ? 'slide-in-left' : 'slide-in-right';
+        courseSelection.classList.add(slideClass);
         
         // アニメーション完了後にクラスをクリーンアップ
         setTimeout(() => {
-            courseSelection.classList.remove('slide-in-right');
+            courseSelection.classList.remove(slideClass);
         }, 300);
     } else {
         // フォールバック：通常の表示
@@ -5642,17 +5663,21 @@ function showInputModeDirectly(category, words, courseTitle) {
         if (settingsBtn) settingsBtn.style.display = '';
     }
     
-    // コース選択画面を非表示
+    // コース選択画面を即座に非表示
     const courseSelection = document.getElementById('courseSelection');
     if (courseSelection) {
         courseSelection.classList.add('hidden');
     }
     
-    // カテゴリー選択画面を非表示
+    // カテゴリー選択画面を即座に非表示
     elements.categorySelection.classList.add('hidden');
     
-    // メインコンテンツを表示
+    // メインコンテンツを右からスライドイン
     elements.mainContent.classList.remove('hidden');
+    elements.mainContent.classList.add('slide-in-right');
+    setTimeout(() => {
+        elements.mainContent.classList.remove('slide-in-right');
+    }, 300);
     
     // テストへボタンを表示（インプットモードなので常に表示、ただし「すべての単語」では非表示）
     const unitTestBtn = document.getElementById('unitTestBtn');
@@ -6995,11 +7020,47 @@ function setupEventListeners() {
         });
     }
     
-    // 不規則変化の単語画面（テストモード）の戻るボタン
-    const irregularVerbsBackBtn = document.getElementById('irregularVerbsBackBtn');
-    if (irregularVerbsBackBtn) {
-        irregularVerbsBackBtn.addEventListener('click', () => {
+    // 不規則変化の単語画面（テストモード）の×ボタン
+    const ivTestCloseBtn = document.getElementById('ivTestCloseBtn');
+    if (ivTestCloseBtn) {
+        ivTestCloseBtn.addEventListener('click', () => {
+            const pauseOverlay = document.getElementById('ivTestPauseOverlay');
+            if (pauseOverlay) {
+                pauseOverlay.classList.remove('hidden');
+            }
+        });
+    }
+    
+    // 不規則変化テストモードのポーズ：テストを続ける
+    const ivTestPauseContinueBtn = document.getElementById('ivTestPauseContinueBtn');
+    if (ivTestPauseContinueBtn) {
+        ivTestPauseContinueBtn.addEventListener('click', () => {
+            const pauseOverlay = document.getElementById('ivTestPauseOverlay');
+            if (pauseOverlay) {
+                pauseOverlay.classList.add('hidden');
+            }
+        });
+    }
+    
+    // 不規則変化テストモードのポーズ：中断する
+    const ivTestPauseQuitBtn = document.getElementById('ivTestPauseQuitBtn');
+    if (ivTestPauseQuitBtn) {
+        ivTestPauseQuitBtn.addEventListener('click', () => {
+            const pauseOverlay = document.getElementById('ivTestPauseOverlay');
+            if (pauseOverlay) {
+                pauseOverlay.classList.add('hidden');
+            }
             hideIrregularVerbsView();
+        });
+    }
+    
+    // 不規則変化テストモードのポーズオーバーレイの背景クリックで閉じる
+    const ivTestPauseOverlay = document.getElementById('ivTestPauseOverlay');
+    if (ivTestPauseOverlay) {
+        ivTestPauseOverlay.addEventListener('click', (e) => {
+            if (e.target === ivTestPauseOverlay) {
+                ivTestPauseOverlay.classList.add('hidden');
+            }
         });
     }
     
@@ -7348,16 +7409,23 @@ function setupEventListeners() {
                 inputListView.insertBefore(inputListHeader, inputListContainer);
             }
             
-            if (elements.mainContent) {
-                elements.mainContent.classList.add('hidden');
-            }
-            
             // カテゴリー別のサブカテゴリー
             const elementarySubcategories = [
                 '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器', '衣類', '単位',
                 '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
                 '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
             ];
+            
+            // メインコンテンツを右へスライドアウト
+            if (elements.mainContent) {
+                elements.mainContent.style.transition = 'transform 0.3s ease-out';
+                elements.mainContent.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    elements.mainContent.style.transition = '';
+                    elements.mainContent.style.transform = '';
+                    elements.mainContent.classList.add('hidden');
+                }, 300);
+            }
             
             // レベル別の細分化メニューから来た場合は、レベル別の細分化メニューに戻る
             console.log('inputBackBtn clicked, currentSubcategoryParent:', window.currentSubcategoryParent);
@@ -7424,12 +7492,12 @@ function setupEventListeners() {
                     }
                 }
                 if (categoryWords && categoryWords.length > 0) {
-                    showCourseSelection(selectedCategory, categoryWords);
+                    showCourseSelection(selectedCategory, categoryWords, true);
                 } else {
-                    showCategorySelection();
+                    showCategorySelection(true);
                 }
             } else {
-                showCategorySelection();
+                showCategorySelection(true);
             }
         });
     }
@@ -19657,25 +19725,31 @@ let currentIvData = null;
 function showIvMenuView() {
     const view = document.getElementById('ivMenuView');
     const categorySelection = document.getElementById('categorySelection');
-    const ivMenuContent = view?.querySelector('.iv-menu-content');
     
     if (view && categorySelection) {
         // メインヘッダーを更新（パッと切り替わる）
         updateHeaderButtons('course', '不規則変化の単語');
         
-        // カテゴリー選択画面を非表示
-        categorySelection.classList.add('hidden');
+        // categorySelectionを表示状態にしておく（背景として）
+        categorySelection.classList.remove('hidden');
         
-        // サブカテゴリーメニューを表示
+        // サブカテゴリーメニューを即座に表示し、右からスライドイン
+        view.style.opacity = '1';
         view.classList.remove('hidden');
+        view.style.transform = 'translateX(100%)';
         
-        // コンテンツ部分だけをスライドイン
-        if (ivMenuContent) {
-            ivMenuContent.classList.add('slide-in-right');
-            setTimeout(() => {
-                ivMenuContent.classList.remove('slide-in-right');
-            }, 300);
-        }
+        // 次のフレームでアニメーション開始
+        requestAnimationFrame(() => {
+            view.style.transition = 'transform 0.3s ease-out';
+            view.style.transform = 'translateX(0)';
+        });
+        
+        // アニメーション完了後にcategorySelectionを非表示
+        setTimeout(() => {
+            view.style.transition = '';
+            view.style.transform = '';
+            categorySelection.classList.add('hidden');
+        }, 300);
         
         // サブカテゴリーの進捗バーを更新
         updateIrregularVerbsProgressBar();
@@ -19689,20 +19763,17 @@ function showIvMenuView() {
 function hideIvMenuView() {
     const view = document.getElementById('ivMenuView');
     const categorySelection = document.getElementById('categorySelection');
-    const ivMenuContent = view?.querySelector('.iv-menu-content');
     
     if (view && categorySelection) {
         // メインヘッダーをホームに戻す（パッと切り替わる）
         updateHeaderButtons('home');
         
-        // コンテンツ部分を右へスライドアウト
-        if (ivMenuContent) {
-            ivMenuContent.classList.add('slide-out-right');
-        }
-        
-        // カテゴリー選択画面を左からスライドイン
+        // カテゴリー選択画面を先に表示（iv-menu-viewの下に表示）
         categorySelection.classList.remove('hidden');
-        categorySelection.classList.add('slide-in-left');
+        
+        // iv-menu-view全体を右へスライドアウト（opacityなし）
+        view.style.transition = 'transform 0.3s ease-out';
+        view.style.transform = 'translateX(100%)';
         
         // 進捗バーを更新
         updateCategoryStars();
@@ -19710,11 +19781,9 @@ function hideIvMenuView() {
         updateIrregularVerbsProgressBar();
         
         setTimeout(() => {
-            if (ivMenuContent) {
-                ivMenuContent.classList.remove('slide-out-right');
-            }
+            view.style.transition = '';
+            view.style.transform = '';
             view.classList.add('hidden');
-            categorySelection.classList.remove('slide-in-left');
             document.body.style.overflow = '';
             window.currentSubcategoryParent = null;
         }, 300);
@@ -19919,12 +19988,24 @@ function showIvStudyView(category) {
     document.getElementById('ivStudyTableContainer')?.classList.remove('redsheet-active');
     document.getElementById('ivRedsheetOverlay')?.classList.add('hidden');
     
-    // サブカテゴリーメニューを隠す
-    hideIvMenuViewForStudy();
+    // サブカテゴリーメニューを左へスライドアウト
+    const ivMenuView = document.getElementById('ivMenuView');
+    if (ivMenuView) {
+        ivMenuView.classList.add('slide-out-left');
+    }
     
-    // 画面表示
+    // 学習モードを右からスライドイン
     view.classList.remove('hidden');
+    view.classList.add('slide-in-right');
     document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+        view.classList.remove('slide-in-right');
+        if (ivMenuView) {
+            ivMenuView.classList.remove('slide-out-left');
+            ivMenuView.classList.add('hidden');
+        }
+    }, 300);
 }
 
 // 学習モードを非表示（サブカテゴリーメニューに戻る）
@@ -19933,19 +20014,23 @@ function hideIvStudyView() {
     const ivMenuView = document.getElementById('ivMenuView');
     
     if (view) {
-        // 学習モードを右へスライドアウト
-        view.classList.add('slide-out-right');
+        // ヘッダーを更新（パッと切り替わる）
+        updateHeaderButtons('course', '不規則変化の単語');
         
-        // サブカテゴリーメニューを左からスライドイン
+        // サブカテゴリーメニューを先に表示（学習モードの下に）
         if (ivMenuView) {
             ivMenuView.classList.remove('hidden');
             ivMenuView.classList.add('slide-in-left');
             updateIrregularVerbsProgressBar();
         }
         
+        // 学習モードを右へスライドアウト
+        view.classList.add('slide-out-right');
+        
         setTimeout(() => {
             view.classList.remove('slide-out-right');
             view.classList.add('hidden');
+            document.body.style.overflow = '';
             if (ivMenuView) {
                 ivMenuView.classList.remove('slide-in-left');
             }
@@ -20141,8 +20226,15 @@ function showIvTestView(category) {
     // 現在のカテゴリーを保存
     currentIvCategory = category;
     
-    // サブカテゴリーメニューを隠す
-    hideIvMenuViewForStudy();
+    // サブカテゴリーメニューを左へスライドアウト
+    const ivMenuView = document.getElementById('ivMenuView');
+    if (ivMenuView) {
+        ivMenuView.classList.add('slide-out-left');
+        setTimeout(() => {
+            ivMenuView.classList.remove('slide-out-left');
+            ivMenuView.classList.add('hidden');
+        }, 300);
+    }
     
     // データ取得
     let data;
@@ -20302,9 +20394,14 @@ function showIrregularVerbsTestView(data, type, title) {
     // 現在のテストデータを保存
     currentIvTestData = { data, type };
     
-    // 画面表示
+    // 画面表示（右からスライドイン）
     view.classList.remove('hidden');
+    view.classList.add('slide-in-right');
     document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+        view.classList.remove('slide-in-right');
+    }, 300);
 }
 
 // 現在のテストデータ
@@ -20428,15 +20525,18 @@ function hideIrregularVerbsView() {
         // キーボードを隠す
         hideIvKeyboard();
         
-        // テストモードを右へスライドアウト
-        view.classList.add('slide-out-right');
+        // ヘッダーを更新（パッと切り替わる）
+        updateHeaderButtons('course', '不規則変化の単語');
         
-        // サブカテゴリーメニューを左からスライドイン
+        // サブカテゴリーメニューを先に表示（テストモードの下に）
         if (ivMenuView) {
             ivMenuView.classList.remove('hidden');
             ivMenuView.classList.add('slide-in-left');
             updateIrregularVerbsProgressBar();
         }
+        
+        // テストモードを右へスライドアウト
+        view.classList.add('slide-out-right');
         
         setTimeout(() => {
             view.classList.remove('slide-out-right');
