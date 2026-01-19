@@ -1209,11 +1209,6 @@ body.learning-mode .app-header {
     font-size: 11px;
 }
 
-/* ホーム画面の進捗バー語数表示を非表示 */
-#categorySelection .category-card .category-progress-text {
-    display: none;
-}
-
 .course-section-title {
     font-size: clamp(16px, 3.5vw, 20px);
     font-weight: 700;
@@ -5922,6 +5917,12 @@ body.choice-question-mode-active .word-card-container {
     pointer-events: none;
 }
 
+/* 設定ドロップダウンの区切り線 */
+.settings-dropdown-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 8px 0;
+}
 
 .input-list-controls-row {
     display: flex;

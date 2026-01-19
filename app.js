@@ -1532,6 +1532,57 @@ function setupVolumeControl() {
             SoundEffects.playTap();
         });
     }
+    
+    // BGM音量スライダー
+    const bgmVolumeSlider = document.getElementById('bgmVolumeSlider');
+    const bgmVolumeValue = document.getElementById('bgmVolumeValue');
+    const bgmVolumeIcon = document.getElementById('bgmVolumeIcon');
+    
+    if (bgmVolumeSlider && bgmVolumeValue) {
+        // 保存されたBGM音量を読み込み
+        const savedBgmVolume = localStorage.getItem('bgmVolume');
+        const bgmVolume = savedBgmVolume !== null ? parseInt(savedBgmVolume) : 30;
+        bgmVolumeSlider.value = bgmVolume;
+        bgmVolumeValue.textContent = `${bgmVolume}%`;
+        
+        // BGM音量を適用
+        if (bgmAudio) {
+            bgmAudio.volume = bgmVolume / 100;
+        }
+        if (resultBgmAudio) {
+            resultBgmAudio.volume = bgmVolume / 100;
+        }
+        
+        // 音量0以上ならBGMを有効化
+        bgmEnabled = bgmVolume > 0;
+        if (bgmEnabled && bgmAudio) {
+            playBgm();
+        }
+        
+        // スライダーの変更イベント
+        bgmVolumeSlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            bgmVolumeValue.textContent = `${value}%`;
+            localStorage.setItem('bgmVolume', value);
+            
+            // BGM音量を更新
+            if (bgmAudio) {
+                bgmAudio.volume = value / 100;
+            }
+            if (resultBgmAudio) {
+                resultBgmAudio.volume = value / 100;
+            }
+            
+            // 音量0ならBGM停止、それ以外なら再生
+            if (value === 0) {
+                bgmEnabled = false;
+                stopBgm();
+            } else if (!bgmEnabled) {
+                bgmEnabled = true;
+                playBgm();
+            }
+        });
+    }
 }
 
 let correctWords = new Set(); // 正解済み（青マーカー用）
@@ -11188,6 +11239,87 @@ function setupInputListModeToggle() {
     }
 }
 
+// BGM制御
+let bgmAudio = null;
+let resultBgmAudio = null;
+let bgmEnabled = false;
+
+function initBgm() {
+    bgmAudio = document.getElementById('bgmAudio');
+    resultBgmAudio = document.getElementById('resultBgmAudio');
+    
+    // 保存されたBGM音量を読み込み
+    const savedBgmVolume = localStorage.getItem('bgmVolume');
+    const bgmVolume = savedBgmVolume !== null ? parseInt(savedBgmVolume) : 30;
+    
+    if (bgmAudio) {
+        bgmAudio.volume = bgmVolume / 100;
+    }
+    if (resultBgmAudio) {
+        resultBgmAudio.volume = bgmVolume / 100;
+    }
+    
+    // 音量0より大きければBGMを有効化
+    bgmEnabled = bgmVolume > 0;
+    if (bgmEnabled) {
+        playBgm();
+    }
+}
+
+function playBgm() {
+    if (bgmAudio && bgmEnabled) {
+        // 結果BGMが再生中なら停止
+        if (resultBgmAudio) {
+            resultBgmAudio.pause();
+            resultBgmAudio.currentTime = 0;
+        }
+        bgmAudio.play().catch(e => {
+            // 自動再生がブロックされた場合は、ユーザー操作後に再生
+            console.log('BGM autoplay blocked, will play on user interaction');
+        });
+    }
+}
+
+function stopBgm() {
+    if (bgmAudio) {
+        bgmAudio.pause();
+        bgmAudio.currentTime = 0;
+    }
+}
+
+function playResultBgm() {
+    if (resultBgmAudio && bgmEnabled) {
+        // 通常BGMを停止
+        if (bgmAudio) {
+            bgmAudio.pause();
+        }
+        resultBgmAudio.play().catch(e => {
+            console.log('Result BGM autoplay blocked');
+        });
+    }
+}
+
+function stopResultBgm() {
+    if (resultBgmAudio) {
+        resultBgmAudio.pause();
+        resultBgmAudio.currentTime = 0;
+    }
+    // 通常BGMを再開
+    if (bgmEnabled && bgmAudio) {
+        bgmAudio.play().catch(e => {});
+    }
+}
+
+function toggleBgm(enabled) {
+    bgmEnabled = enabled;
+    if (enabled) {
+        playBgm();
+    } else {
+        stopBgm();
+        stopResultBgm();
+    }
+}
+
 // 設定ボタンのセットアップ
 function setupInputListSettings() {
     const settingsBtn = document.getElementById('inputListSettingsBtn');
@@ -12911,6 +13043,9 @@ function showCompletion() {
     // 完了音を再生
     SoundEffects.playComplete();
     
+    // 結果BGMを再生
+    playResultBgm();
+    
     const completionOverlay = document.getElementById('completionOverlay');
     if (!completionOverlay) {
         // フォールバック：旧方式
@@ -13355,6 +13490,9 @@ function createFireworks(container) {
 
 // 完了画面を閉じる
 function hideCompletion() {
+    // 結果BGMを停止して通常BGMを再開
+    stopResultBgm();
+    
     const completionOverlay = document.getElementById('completionOverlay');
     if (completionOverlay) {
         completionOverlay.classList.remove('show');
@@ -20930,6 +21068,7 @@ document.addEventListener('click', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     setupIrregularVerbsKeyboard();
     setupFloatingReviewButton();
+    initBgm();
 });
 
 // ========================
