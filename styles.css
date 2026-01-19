@@ -3844,29 +3844,29 @@ button.category-card:focus-visible {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 2px 8px 2px 8px;
-    border-radius: 0px;
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-weight: 700;
-    font-size: 10px;
-    letter-spacing: 0.15em;
+    padding: 4px 10px 4px 10px;
+    border-radius: 8px;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    letter-spacing: 0.08em;
     color: #2563eb;
     margin-right: 8px;
     background: #dbeafe;
     border: none;
-    box-shadow: none;
+    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.15);
     transform: translateY(-2px);
 }
 
 /* 数字部分 */
 .level-badge b, 
 .level-badge strong {
-    font-weight: 700; /* 太く調整 */
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-weight: 400;
     font-size: 22px;
     line-height: 1;
-    letter-spacing: -0.02em;
-    margin-left: 4px; /* Levelとの間隔を詰める */
-    font-family: "Futura", "Century Gothic", "Inter", -apple-system, sans-serif;
+    letter-spacing: 0;
+    margin-left: 2px;
     display: inline-block;
 }
 
@@ -6569,16 +6569,16 @@ body.choice-question-mode-active .word-card-container {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: #dc2626;
-    border: 3px solid #ffffff;
-    color: #ffffff;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    color: #dc2626;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     -webkit-tap-highlight-color: transparent;
     z-index: 510;
-    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+    box-shadow: none;
     transition: transform 0.1s ease, background 0.1s ease;
     animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -6595,17 +6595,14 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .red-sheet-next-btn::after {
-    content: "NEXT";
-    font-size: 10px;
-    font-weight: 900;
-    margin-top: -4px;
-    letter-spacing: 1px;
+    content: "";
+    display: none;
 }
 
 .red-sheet-next-btn:active {
     transform: translateX(-50%) scale(0.9);
-    background: #b91c1c;
-    box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3);
+    background: #f3f4f6;
+    box-shadow: none;
 }
 
 .red-sheet-next-btn.hidden {
@@ -6615,8 +6612,8 @@ body.choice-question-mode-active .word-card-container {
 .red-sheet-next-btn svg {
     width: 32px;
     height: 32px;
-    stroke-width: 3.5;
-    margin-bottom: -2px;
+    stroke-width: 2;
+    margin-bottom: 0;
 }
 
 /* スマホ用の赤シートスタイル */
@@ -6915,18 +6912,18 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     gap: 0;
     min-height: auto;
-    border-top: 1.5px solid #444444;
-    border-left: 1.5px solid #444444;
+    border-top: 1.5px solid #d1d5db;
+    border-left: 1.5px solid #d1d5db;
     border-right: none;
     border-bottom: none;
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:first-child {
-    border-top: 1.5px solid #444444;
+    border-top: 1.5px solid #d1d5db;
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:last-child {
-    border-bottom: 1.5px solid #444444;
+    border-bottom: 1.5px solid #d1d5db;
 }
 
 /* 1. 単語番号 */
@@ -7030,7 +7027,7 @@ body.choice-question-mode-active .word-card-container {
 .flip-mode .input-list-inner {
     box-shadow: none;
     border-radius: 0;
-    border: 1.5px solid #444444;
+    border: 1.5px solid #d1d5db;
 }
 
 .flip-mode .input-list-front,
@@ -7503,8 +7500,8 @@ body.choice-question-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
-    border-top: 1.5px solid #444444;
-    border-left: 1.5px solid #444444;
+    border-top: 1.5px solid #d1d5db;
+    border-left: 1.5px solid #d1d5db;
     padding: 20px 16px;
     padding-top: 40px;
     padding-bottom: 24px;
@@ -7512,11 +7509,11 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-item-expand:first-child {
-    border-top: 1.5px solid #444444;
+    border-top: 1.5px solid #d1d5db;
 }
 
 .input-list-item-expand:last-child {
-    border-bottom: 1.5px solid #444444;
+    border-bottom: 1.5px solid #d1d5db;
 }
 
 .input-list-item-expand.marker-correct {
@@ -7535,8 +7532,8 @@ body.choice-question-mode-active .word-card-container {
 
 .input-list-expand-number {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: -1px;
+    left: -1px;
     font-size: 10px;
     font-weight: 700;
     color: #ffffff;
@@ -7659,8 +7656,8 @@ body.choice-question-mode-active .word-card-container {
 /* 展開モード右上のアクションエリア */
 .input-list-expand-top-actions {
     position: absolute;
-    top: 0;
-    right: 8px;
+    top: -1px;
+    right: 20px;
     display: flex;
     align-items: flex-start;
     gap: 8px;
@@ -7799,8 +7796,8 @@ body.choice-question-mode-active .word-card-container {
     .input-list-expand-number {
         font-size: 9px;
         padding: 2px 6px;
-        top: 0;
-        left: 0;
+        top: -1px;
+        left: -1px;
     }
     
     .input-list-expand-top-actions {
@@ -8827,14 +8824,14 @@ body.choice-question-mode-active .word-card-container {
     background: #ffffff;
     border-radius: 20px;
     box-shadow: none;
-    border: 1.5px solid #444444;
+    border: 1.5px solid #d1d5db;
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease;
 }
 
-/* アウトプットモードのときも濃いグレーボーダー */
+/* アウトプットモードのときも薄いグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-stack {
-    border: 1.5px solid #444444;
+    border: 1.5px solid #d1d5db;
 }
 
 .card-stack-1 {
@@ -9043,13 +9040,13 @@ body.learning-mode .bottom-nav {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1.5px solid #444444;
+    border: 1.5px solid #d1d5db;
     transition: border-color 0.3s ease;
 }
 
-/* アウトプットモードのときも濃いグレーボーダー */
+/* アウトプットモードのときも薄いグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
-    border: 1.5px solid #444444;
+    border: 1.5px solid #d1d5db;
 }
 
 /* カードの赤・青囲みは削除 - 単語番号下のマーカーのみ使用 */
@@ -9065,14 +9062,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1.5px solid #444444;
+    border: 1.5px solid #d1d5db;
     transform: rotateY(180deg);
     transition: border-color 0.3s ease;
 }
 
-/* アウトプットモードのときも濃いグレーボーダー */
+/* アウトプットモードのときも薄いグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
-    border: 1.5px solid #444444;
+    border: 1.5px solid #d1d5db;
 }
 
 /* 裏面の英単語表示（小さく上部に） */
@@ -17638,14 +17635,14 @@ body .sentence-english {
     text-align: center;
     font-weight: 600;
     color: #475569;
-    border-bottom: 1px solid #000000;
+    border-bottom: 1.5px solid #d1d5db;
     font-size: 12px;
 }
 
 .irregular-verbs-table td {
     padding: 8px 4px;
     text-align: center;
-    border-bottom: 1px solid #000000;
+    border-bottom: 1.5px solid #d1d5db;
     vertical-align: middle;
 }
 
@@ -17865,14 +17862,14 @@ body .sentence-english {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    background: rgba(0, 85, 202, 0.85);
+    gap: 10px;
+    padding: 14px 18px;
+    background: rgba(0, 85, 202, 0.92);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: #fff;
-    border-radius: 10px 0 0 10px;
-    box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 14px 0 0 14px;
+    box-shadow: -3px 3px 12px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     transition: background 0.2s;
 }
@@ -17893,12 +17890,12 @@ body .sentence-english {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 2px 5px;
+    padding: 3px 8px;
     background: #fff;
     color: #0055ca;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 800;
-    border-radius: 3px;
+    border-radius: 4px;
     flex-shrink: 0;
     vertical-align: middle;
 }
@@ -17913,20 +17910,21 @@ body .sentence-english {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 700;
 }
 
 .floating-review-count {
-    font-size: 13px;
-    font-weight: 700;
-    padding: 1px 6px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 2px 8px;
+    background: #dc2626;
+    color: #ffffff;
+    border-radius: 5px;
 }
 
 .floating-review-hint {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 400;
     opacity: 0.85;
 }
@@ -17954,7 +17952,7 @@ body .sentence-english {
     align-items: center;
     gap: 8px;
     padding: 14px 16px;
-    background: #0055ca;
+    background: rgba(0, 85, 202, 0.92);
     color: #fff;
 }
 
@@ -18032,7 +18030,7 @@ body .sentence-english {
     gap: 8px;
     width: 100%;
     padding: 12px 20px;
-    background: #0055ca;
+    background: #3b82f6;
     color: #fff;
     font-size: 14px;
     font-weight: 600;
@@ -18043,11 +18041,11 @@ body .sentence-english {
 }
 
 .floating-review-start-btn:hover {
-    background: #0048b0;
+    background: #2563eb;
 }
 
 .floating-review-start-btn:active {
-    background: #003d96;
+    background: #1d4ed8;
 }
 
 /* はじめにカード（フル幅） */
@@ -18086,21 +18084,21 @@ body.learning-mode .floating-review-btn {
     }
     
     .floating-review-collapsed {
-        padding: 8px 12px;
-        gap: 6px;
+        padding: 12px 16px;
+        gap: 8px;
     }
     
     .floating-review-ai-badge {
-        font-size: 10px;
-        padding: 2px 5px;
+        font-size: 11px;
+        padding: 3px 6px;
     }
     
     .floating-review-label {
-        font-size: 12px;
+        font-size: 14px;
     }
     
     .floating-review-count {
-        font-size: 12px;
+        font-size: 15px;
     }
     
     .floating-review-hint {
