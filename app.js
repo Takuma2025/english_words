@@ -297,20 +297,21 @@ function normalizeSchoolText(str) {
 }
 
 // 入試頻出度を★マークに変換
+// 入試頻出度をS～Dランクに変換
 function getAppearanceStars(count) {
     if (typeof count !== 'number' || isNaN(count) || count < 0) {
-        return '★';
+        return 'D';
     }
     if (count >= 50) {
-        return '★★★★★';
+        return 'S';
     } else if (count >= 20) {
-        return '★★★★';
+        return 'A';
     } else if (count >= 5) {
-        return '★★★';
+        return 'B';
     } else if (count >= 1) {
-        return '★★';
+        return 'C';
     } else {
-        return '★';
+        return 'D';
     }
 }
 
@@ -1669,13 +1670,14 @@ function saveCategoryWords(category, correctSet, wrongSet) {
     localStorage.setItem(`wrongWords-${category}_${mode}`, JSON.stringify([...wrongSet]));
 }
 
-// 出た度（appearanceCount）を★の数（1-5）に変換
+// でた度（appearanceCount）をランク値（1-5）に変換（フィルタ用）
+// 5=S, 4=A, 3=B, 2=C, 1=D
 function getStarRating(count) {
-    if (count >= 100) return 5;
-    if (count >= 50) return 4;
-    if (count >= 20) return 3;
-    if (count >= 5) return 2;
-    return 1;
+    if (count >= 50) return 5;  // S
+    if (count >= 20) return 4;  // A
+    if (count >= 5) return 3;   // B
+    if (count >= 1) return 2;   // C
+    return 1;                    // D
 }
 
 // 単語の進捗保存用カテゴリーを取得（小学生で習った単語、すべての単語の場合はword.categoryを使用）
@@ -18402,10 +18404,13 @@ function setupHWVirtualKeyboard() {
         const addPressedState = () => {
             key.style.transform = 'scale(0.95)';
             key.style.backgroundColor = '#d1d5db';
+            // ポップアップエフェクト用のクラスを追加（特殊キー等はCSSで非表示になる）
+            key.classList.add('key-pressed');
         };
         const removePressedState = () => {
             key.style.transform = '';
             key.style.backgroundColor = '';
+            key.classList.remove('key-pressed');
         };
         
         // バックスペースキーの長押し対応

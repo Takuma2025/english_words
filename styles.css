@@ -6566,25 +6566,46 @@ body.choice-question-mode-active .word-card-container {
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
-    background: #fff;
-    border: none;
-    color: #dc2626;
+    background: #dc2626;
+    border: 3px solid #ffffff;
+    color: #ffffff;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
     z-index: 510;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
-    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+    transition: transform 0.1s ease, background 0.1s ease;
+    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounceIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+.red-sheet-next-btn::after {
+    content: "NEXT";
+    font-size: 10px;
+    font-weight: 900;
+    margin-top: -4px;
+    letter-spacing: 1px;
 }
 
 .red-sheet-next-btn:active {
-    transform: translateX(-50%) scale(0.94);
-    background: #fef2f2;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+    transform: translateX(-50%) scale(0.9);
+    background: #b91c1c;
+    box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3);
 }
 
 .red-sheet-next-btn.hidden {
@@ -6592,9 +6613,10 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .red-sheet-next-btn svg {
-    width: 28px;
-    height: 28px;
-    stroke-width: 2.5;
+    width: 32px;
+    height: 32px;
+    stroke-width: 3.5;
+    margin-bottom: -2px;
 }
 
 /* スマホ用の赤シートスタイル */
@@ -7084,7 +7106,7 @@ body.choice-question-mode-active .word-card-container {
     border-radius: 0 0 6px 6px;
     font-size: 10px;
     color: #ffffff;
-    width: 140px;
+    width: auto;
     box-sizing: border-box;
 }
 
@@ -7104,9 +7126,31 @@ body.choice-question-mode-active .word-card-container {
 
 .input-list-appearance-box .appearance-stars {
     color: #ffffff;
-    font-size: 11px;
-    letter-spacing: 1px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0;
     text-align: left;
+}
+
+/* でた度ランクバッジ共通スタイル（フィルタ用） */
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 800;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    color: #fff;
+    margin-right: 6px;
+    background: #64748b;
+}
+
+.filter-rank-label {
+    display: flex;
+    align-items: center;
 }
 
 
@@ -7632,7 +7676,6 @@ body.choice-question-mode-active .word-card-container {
     font-size: 10px;
     color: #ffffff;
     width: auto;
-    min-width: 120px;
     box-sizing: border-box;
 }
 
@@ -7652,11 +7695,12 @@ body.choice-question-mode-active .word-card-container {
 
 .input-list-expand-appearance-box .appearance-stars {
     color: #ffffff;
-    font-size: 12px;
-    letter-spacing: 0.5px;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0;
     text-align: left;
     margin-right: 0;
-    min-width: 65px;
+    min-width: 0;
     display: inline-block;
 }
 
@@ -7767,7 +7811,6 @@ body.choice-question-mode-active .word-card-container {
         padding: 3px 6px;
         font-size: 9px;
         width: auto;
-        min-width: 110px;
         gap: 3px;
     }
     
@@ -7777,8 +7820,9 @@ body.choice-question-mode-active .word-card-container {
     }
     
     .input-list-expand-appearance-box .appearance-stars {
-        font-size: 10px;
-        min-width: 55px;
+        font-size: 14px;
+        font-weight: 800;
+        min-width: 0;
         display: inline-block;
     }
     
@@ -7831,7 +7875,7 @@ body.choice-question-mode-active .word-card-container {
     .input-list-appearance-box {
         padding: 3px 6px;
         font-size: 9px;
-        width: 140px;
+        width: auto;
     }
     
     .input-list-appearance-box .appearance-osaka-icon {
@@ -7840,7 +7884,8 @@ body.choice-question-mode-active .word-card-container {
     }
     
     .input-list-appearance-box .appearance-stars {
-        font-size: 10px;
+        font-size: 12px;
+        font-weight: 800;
     }
     .input-list-word {
         font-size: 24px;
