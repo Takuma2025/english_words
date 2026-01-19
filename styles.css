@@ -3854,7 +3854,7 @@ button.category-card:focus-visible {
     margin-right: 8px;
     background: #dbeafe;
     border: none;
-    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.15);
+    box-shadow: none;
     transform: translateY(-2px);
 }
 
@@ -3900,8 +3900,10 @@ button.category-card:focus-visible {
     background: transparent;
     border: none;
     color: #ffffff;
-    font-weight: 700;
-    font-size: 10px;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    letter-spacing: 0.08em;
     padding: 2px 8px;
     border-radius: 0;
 }
@@ -3966,9 +3968,11 @@ button.category-card:focus-visible {
 .level-badge.level-badge-header b,
 .level-badge.level-badge-header strong {
     color: #ffffff;
-    font-weight: 700;
-    font-size: 18px;
-    font-family: "Futura", "Century Gothic", sans-serif;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    letter-spacing: 0;
+    margin-left: 2px;
 }
 
 /* ヘッダータイトル内のバッジ - 最終的な上書き（全バリアント対応） */
@@ -3989,7 +3993,11 @@ button.category-card:focus-visible {
 .header-title-text .level-badge b,
 .header-title-text .level-badge strong {
     color: #ffffff;
-    font-size: 18px;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    letter-spacing: 0;
+    margin-left: 2px;
 }
 
 .category-word-count {
@@ -6701,7 +6709,7 @@ body.choice-question-mode-active .word-card-container {
 .input-list-mode-toggle {
     display: flex;
     gap: 4px;
-    background: #d1d5db;
+    background: #e5e7eb;
     padding: 3px;
     border-radius: 8px;
 }
@@ -6912,18 +6920,18 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     gap: 0;
     min-height: auto;
-    border-top: 1.5px solid #d1d5db;
-    border-left: 1.5px solid #d1d5db;
+    border-top: 2.5px solid #d1d5db;
+    border-left: 2.5px solid #d1d5db;
     border-right: none;
     border-bottom: none;
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:first-child {
-    border-top: 1.5px solid #d1d5db;
+    border-top: 2.5px solid #d1d5db;
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:last-child {
-    border-bottom: 1.5px solid #d1d5db;
+    border-bottom: 2.5px solid #d1d5db;
 }
 
 /* 1. 単語番号 */
@@ -7027,7 +7035,7 @@ body.choice-question-mode-active .word-card-container {
 .flip-mode .input-list-inner {
     box-shadow: none;
     border-radius: 0;
-    border: 1.5px solid #d1d5db;
+    border: 2.5px solid #d1d5db;
 }
 
 .flip-mode .input-list-front,
@@ -7500,8 +7508,8 @@ body.choice-question-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
-    border-top: 1.5px solid #d1d5db;
-    border-left: 1.5px solid #d1d5db;
+    border-top: 2.5px solid #d1d5db;
+    border-left: 2.5px solid #d1d5db;
     padding: 20px 16px;
     padding-top: 40px;
     padding-bottom: 24px;
@@ -7509,11 +7517,11 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-item-expand:first-child {
-    border-top: 1.5px solid #d1d5db;
+    border-top: 2.5px solid #d1d5db;
 }
 
 .input-list-item-expand:last-child {
-    border-bottom: 1.5px solid #d1d5db;
+    border-bottom: 2.5px solid #d1d5db;
 }
 
 .input-list-item-expand.marker-correct {
@@ -7532,8 +7540,8 @@ body.choice-question-mode-active .word-card-container {
 
 .input-list-expand-number {
     position: absolute;
-    top: -1px;
-    left: -1px;
+    top: -2px;
+    left: -2px;
     font-size: 10px;
     font-weight: 700;
     color: #ffffff;
@@ -7656,7 +7664,7 @@ body.choice-question-mode-active .word-card-container {
 /* 展開モード右上のアクションエリア */
 .input-list-expand-top-actions {
     position: absolute;
-    top: -1px;
+    top: -2px;
     right: 20px;
     display: flex;
     align-items: flex-start;
@@ -7796,8 +7804,8 @@ body.choice-question-mode-active .word-card-container {
     .input-list-expand-number {
         font-size: 9px;
         padding: 2px 6px;
-        top: -1px;
-        left: -1px;
+        top: -2px;
+        left: -2px;
     }
     
     .input-list-expand-top-actions {
@@ -8831,7 +8839,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* アウトプットモードのときも薄いグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-stack {
-    border: 1.5px solid #d1d5db;
+    border: 2.5px solid #d1d5db;
 }
 
 .card-stack-1 {
@@ -9046,7 +9054,7 @@ body.learning-mode .bottom-nav {
 
 /* アウトプットモードのときも薄いグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
-    border: 1.5px solid #d1d5db;
+    border: 2.5px solid #d1d5db;
 }
 
 /* カードの赤・青囲みは削除 - 単語番号下のマーカーのみ使用 */
@@ -9069,7 +9077,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
 
 /* アウトプットモードのときも薄いグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
-    border: 1.5px solid #d1d5db;
+    border: 2.5px solid #d1d5db;
 }
 
 /* 裏面の英単語表示（小さく上部に） */
@@ -10236,7 +10244,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .mode-toggle-wrapper {
     display: inline-flex; /* 必要な分だけの幅に */
     gap: 6px;
-    background: #d1d5db;
+    background: #e5e7eb;
     padding: 3px;
     border-radius: 10px;
     width: auto;
@@ -15837,7 +15845,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     background: #fff;
     font-family: var(--font-sans);
     font-weight: bold;
-    border: 1.5px solid #444444;
+    border: 2.5px solid #d1d5db;
     border-radius: 6px;
     font-size: 28px;
     font-weight: 700;
@@ -17480,14 +17488,14 @@ body .sentence-english {
     font-weight: 700;
     color: #374151;
     text-align: left;
-    border-bottom: 1px solid #000000;
+    border-bottom: 1.5px solid #d1d5db;
     background: #f3f4f6;
 }
 
 .iv-study-table td {
     padding: 10px 8px;
     font-size: 14px;
-    border-bottom: 1px solid #000000;
+    border-bottom: 1.5px solid #d1d5db;
     vertical-align: middle;
 }
 
