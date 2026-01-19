@@ -222,16 +222,30 @@
                 </div>
                 <div class="category-list">
                     <div class="course-section" id="courseMasterSection">
-                        <!-- AI分析 苦手・要復習 -->
-                        <button class="category-card ai-analysis-card" id="aiAnalysisCard">
-                            <div class="category-info">
-                                <div class="category-name"><span class="ai-badge">AI分析</span> 苦手・要復習</div>
-                                <div class="category-meta">AIが分析したあなたの苦手・要復習単語</div>
-                            </div>
-                            <div class="ai-word-count-right">
-                                <span class="ai-count-value" id="aiReviewCount">--</span><span class="ai-count-unit">語</span>
-                            </div>
-                        </button>
+                        <!-- はじめに & AI分析 苦手・要復習 2列 -->
+                        <div class="top-row-cards">
+                            <button class="category-card intro-card" id="introCard">
+                                <div class="intro-icon">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                    </svg>
+                                </div>
+                                <div class="category-info">
+                                    <div class="category-name">はじめに</div>
+                                    <div class="category-meta">学習方法の説明</div>
+                                </div>
+                            </button>
+                            <button class="category-card ai-analysis-card" id="aiAnalysisCard">
+                                <div class="category-info">
+                                    <div class="category-name"><span class="ai-badge">AI分析</span> 苦手・要復習</div>
+                                    <div class="ai-word-count-below">
+                                        <span class="ai-count-value" id="aiReviewCount">--</span><span class="ai-count-unit">語</span>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
                         <button class="category-card" id="elementaryCategoryCardBtn">
                             <div class="category-info">
                                 <div class="category-header">
@@ -352,19 +366,27 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
-                        <!-- 不規則動詞の活用 & 単語一覧 -->
+                        <!-- 不規則変化の単語 & 単語一覧 -->
                         <div class="bottom-menu-row">
-                            <button class="category-card bottom-menu-card" id="irregularVerbsCardBtn">
-                                <div class="irregular-verbs-icon">
-                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                                        <path d="M2 17l10 5 10-5"></path>
-                                        <path d="M2 12l10 5 10-5"></path>
-                                    </svg>
+                            <button class="category-card bottom-menu-card bottom-menu-card-with-progress" id="irregularVerbsCardBtn">
+                                <div class="bottom-menu-card-main">
+                                    <div class="irregular-verbs-icon">
+                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                            <path d="M2 17l10 5 10-5"></path>
+                                            <path d="M2 12l10 5 10-5"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="category-info">
+                                        <div class="category-name">不規則変化の単語</div>
+                                    </div>
                                 </div>
-                                <div class="category-info">
-                                    <div class="category-name">不規則動詞の活用</div>
-                                    <div class="category-meta">原形・過去形・過去分詞</div>
+                                <div class="category-progress bottom-menu-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-irregular-verbs" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-irregular-verbs" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-irregular-verbs">0/0語</div>
                                 </div>
                             </button>
                             <button class="category-card bottom-menu-card" id="allWordsCardBtn">
@@ -567,15 +589,9 @@
                                 <div class="memo-pad-thickness-control">
                                     <span class="memo-pad-thickness-label">ペンの太さ</span>
                                     <div class="memo-pad-thickness-btns">
-                                        <button class="memo-pad-thickness-btn" data-thickness="1" title="細い">
-                                            <span class="thickness-dot thickness-thin"></span>
-                                        </button>
-                                        <button class="memo-pad-thickness-btn active" data-thickness="2" title="普通">
-                                            <span class="thickness-dot thickness-medium"></span>
-                                        </button>
-                                        <button class="memo-pad-thickness-btn" data-thickness="4" title="太い">
-                                            <span class="thickness-dot thickness-thick"></span>
-                                        </button>
+                                        <button class="memo-pad-thickness-btn" data-thickness="1">細</button>
+                                        <button class="memo-pad-thickness-btn active" data-thickness="2">中</button>
+                                        <button class="memo-pad-thickness-btn" data-thickness="4">太</button>
                                     </div>
                                 </div>
                                 <div class="memo-pad-actions">
@@ -1991,16 +2007,9 @@
 
     <!-- 不規則動詞サブカテゴリーメニュー -->
     <div class="iv-menu-view hidden" id="ivMenuView">
-        <header class="study-header">
-            <button class="study-back-btn" id="ivMenuBackBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </button>
-            <h1 class="study-title">不規則変化</h1>
-            <div class="study-header-right"></div>
-        </header>
         <div class="iv-menu-content">
             <div class="iv-menu-section">
-                <h3 class="iv-menu-section-title">不規則動詞の活用</h3>
+                <h3 class="iv-menu-section-title">不規則変化の単語</h3>
                 <div class="iv-menu-cards">
                     <div class="category-card category-card-with-actions" data-category="verbs-beginner">
                         <div class="category-info">
@@ -2015,10 +2024,10 @@
                             </div>
                             <div class="category-progress">
                                 <div class="category-progress-bar">
-                                    <div class="category-progress-correct" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" style="width: 0%"></div>
+                                    <div class="category-progress-correct" id="progress-correct-verbs-beginner" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" id="progress-wrong-verbs-beginner" style="width: 0%"></div>
                                 </div>
-                                <div class="category-progress-text">0/20語</div>
+                                <div class="category-progress-text" id="progress-text-verbs-beginner">0/20語</div>
                             </div>
                         </div>
                         <div class="course-card-side-actions">
@@ -2039,10 +2048,10 @@
                             </div>
                             <div class="category-progress">
                                 <div class="category-progress-bar">
-                                    <div class="category-progress-correct" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" style="width: 0%"></div>
+                                    <div class="category-progress-correct" id="progress-correct-verbs-intermediate" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" id="progress-wrong-verbs-intermediate" style="width: 0%"></div>
                                 </div>
-                                <div class="category-progress-text">0/20語</div>
+                                <div class="category-progress-text" id="progress-text-verbs-intermediate">0/20語</div>
                             </div>
                         </div>
                         <div class="course-card-side-actions">
@@ -2063,10 +2072,10 @@
                             </div>
                             <div class="category-progress">
                                 <div class="category-progress-bar">
-                                    <div class="category-progress-correct" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" style="width: 0%"></div>
+                                    <div class="category-progress-correct" id="progress-correct-verbs-advanced" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" id="progress-wrong-verbs-advanced" style="width: 0%"></div>
                                 </div>
-                                <div class="category-progress-text">0/20語</div>
+                                <div class="category-progress-text" id="progress-text-verbs-advanced">0/20語</div>
                             </div>
                         </div>
                         <div class="course-card-side-actions">
@@ -2092,10 +2101,10 @@
                             </div>
                             <div class="category-progress">
                                 <div class="category-progress-bar">
-                                    <div class="category-progress-correct" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" style="width: 0%"></div>
+                                    <div class="category-progress-correct" id="progress-correct-comparatives" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" id="progress-wrong-comparatives" style="width: 0%"></div>
                                 </div>
-                                <div class="category-progress-text">0/10語</div>
+                                <div class="category-progress-text" id="progress-text-comparatives">0/10語</div>
                             </div>
                         </div>
                         <div class="course-card-side-actions">
@@ -2116,10 +2125,10 @@
                             </div>
                             <div class="category-progress">
                                 <div class="category-progress-bar">
-                                    <div class="category-progress-correct" style="width: 0%"></div>
-                                    <div class="category-progress-wrong" style="width: 0%"></div>
+                                    <div class="category-progress-correct" id="progress-correct-plurals" style="width: 0%"></div>
+                                    <div class="category-progress-wrong" id="progress-wrong-plurals" style="width: 0%"></div>
                                 </div>
-                                <div class="category-progress-text">0/15語</div>
+                                <div class="category-progress-text" id="progress-text-plurals">0/15語</div>
                             </div>
                         </div>
                         <div class="course-card-side-actions">
@@ -2143,23 +2152,23 @@
                 <button class="iv-test-btn" id="ivStudyTestBtn">テスト</button>
             </div>
         </header>
-        <div class="iv-study-controls">
-            <button class="memo-pad-btn-inline" id="ivMemoPadBtn" aria-label="メモ">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                </svg>
-                <span class="memo-btn-label">メモ</span>
-            </button>
-            <label class="red-sheet-toggle" id="ivRedsheetToggle">
-                <input type="checkbox" class="red-sheet-checkbox" id="ivRedsheetCheckbox">
-                <span class="red-sheet-slider"></span>
-                <span class="red-sheet-label">赤シート</span>
-            </label>
-        </div>
         <div class="iv-study-table-container" id="ivStudyTableContainer">
+            <div class="iv-study-controls">
+                <button class="memo-pad-btn-inline" id="ivMemoPadBtn" aria-label="メモ">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span class="memo-btn-label">メモ</span>
+                </button>
+                <label class="red-sheet-toggle" id="ivRedsheetToggle">
+                    <input type="checkbox" class="red-sheet-checkbox" id="ivRedsheetCheckbox">
+                    <span class="red-sheet-slider"></span>
+                    <span class="red-sheet-label">赤シート</span>
+                </label>
+            </div>
             <table class="iv-study-table">
                 <thead id="ivStudyTableHead">
                     <!-- 動的に生成 -->
@@ -2177,15 +2186,35 @@
                 <path d="M6 9l6 6 6-6"></path>
             </svg>
         </button>
+        <!-- メモ用紙オーバーレイ -->
+        <div class="memo-pad-overlay hidden" id="ivMemoPadOverlay">
+            <div class="memo-pad-container">
+                <div class="memo-pad-header">
+                    <div class="memo-pad-thickness-control">
+                        <span class="memo-pad-thickness-label">ペンの太さ</span>
+                        <div class="memo-pad-thickness-btns">
+                            <button class="memo-pad-thickness-btn" data-width="1">細</button>
+                            <button class="memo-pad-thickness-btn active" data-width="2">中</button>
+                            <button class="memo-pad-thickness-btn" data-width="4">太</button>
+                        </div>
+                    </div>
+                    <div class="memo-pad-actions">
+                        <button class="memo-pad-clear-btn" id="ivMemoPadClearBtn">クリア</button>
+                        <button class="memo-pad-close-btn" id="ivMemoPadCloseBtn">×</button>
+                    </div>
+                </div>
+                <canvas class="memo-pad-canvas" id="ivMemoPadCanvas"></canvas>
+            </div>
+        </div>
     </div>
 
-    <!-- 不規則動詞の活用画面（テストモード） -->
+    <!-- 不規則変化の単語画面（テストモード） -->
     <div class="irregular-verbs-view hidden" id="irregularVerbsView">
         <header class="study-header">
             <button class="study-back-btn" id="irregularVerbsBackBtn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
-            <h1 class="study-title irregular-verbs-title">不規則動詞の活用</h1>
+            <h1 class="study-title irregular-verbs-title">不規則変化の単語</h1>
             <div class="study-header-right"></div>
         </header>
         <div class="irregular-verbs-table-container">

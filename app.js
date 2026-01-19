@@ -2613,9 +2613,145 @@ function updateCategoryStars() {
         }
     });
     
+    // 不規則変化の単語の進捗バーを更新
+    updateIrregularVerbsProgressBar();
+    
     // 細分化メニューの進捗バーを更新
     updateSubcategoryProgressBars();
     
+}
+
+// 不規則変化の単語の進捗バーを更新
+function updateIrregularVerbsProgressBar() {
+    // 不規則変化のカテゴリー一覧とデータの対応
+    const irregularCategoriesData = [
+        { key: 'verbs-beginner', data: typeof irregularVerbsBeginner !== 'undefined' ? irregularVerbsBeginner : [] },
+        { key: 'verbs-intermediate', data: typeof irregularVerbsIntermediate !== 'undefined' ? irregularVerbsIntermediate : [] },
+        { key: 'verbs-advanced', data: typeof irregularVerbsAdvanced !== 'undefined' ? irregularVerbsAdvanced : [] },
+        { key: 'comparatives', data: typeof irregularComparatives !== 'undefined' ? irregularComparatives : [] },
+        { key: 'plurals', data: typeof irregularPlurals !== 'undefined' ? irregularPlurals : [] }
+    ];
+    
+    // 全体の集計用
+    let totalWordsAll = 0;
+    let correctCountAll = 0;
+    let wrongCountAll = 0;
+    
+    // 各サブカテゴリーの進捗を計算・更新
+    irregularCategoriesData.forEach(({ key, data }) => {
+        const categoryTotal = data.length;
+        totalWordsAll += categoryTotal;
+        
+        let correctCount = 0;
+        let wrongCount = 0;
+        
+        const savedCorrect = localStorage.getItem(`ivCorrect-${key}`);
+        const savedWrong = localStorage.getItem(`ivWrong-${key}`);
+        
+        if (savedCorrect) {
+            try {
+                const correctSet = new Set(JSON.parse(savedCorrect));
+                correctCount = correctSet.size;
+            } catch (e) {}
+        }
+        if (savedWrong) {
+            try {
+                const wrongSet = new Set(JSON.parse(savedWrong));
+                wrongCount = wrongSet.size;
+            } catch (e) {}
+        }
+        
+        correctCountAll += correctCount;
+        wrongCountAll += wrongCount;
+        
+        // サブカテゴリーの進捗バーを更新
+        const completedCount = correctCount + wrongCount;
+        const correctPercent = categoryTotal === 0 ? 0 : (correctCount / categoryTotal) * 100;
+        const wrongPercent = categoryTotal === 0 ? 0 : (wrongCount / categoryTotal) * 100;
+        const isComplete = categoryTotal > 0 && wrongCount === 0 && correctCount === categoryTotal;
+        
+        const correctBar = document.getElementById(`progress-correct-${key}`);
+        const wrongBar = document.getElementById(`progress-wrong-${key}`);
+        const text = document.getElementById(`progress-text-${key}`);
+        const barContainer = correctBar ? correctBar.parentElement : null;
+        
+        if (correctBar) {
+            correctBar.style.width = `${correctPercent}%`;
+        }
+        if (wrongBar) {
+            wrongBar.style.width = `${wrongPercent}%`;
+        }
+        if (barContainer) {
+            barContainer.classList.remove('category-progress-complete', 'category-progress-complete-input');
+            if (isComplete) {
+                barContainer.classList.add('category-progress-complete');
+            }
+        }
+        if (text) {
+            text.textContent = `${completedCount}/${categoryTotal}語`;
+        }
+    });
+    
+    // ホーム画面の全体進捗バーを更新
+    const completedCountAll = correctCountAll + wrongCountAll;
+    const correctPercentAll = totalWordsAll === 0 ? 0 : (correctCountAll / totalWordsAll) * 100;
+    const wrongPercentAll = totalWordsAll === 0 ? 0 : (wrongCountAll / totalWordsAll) * 100;
+    const isCompleteAll = totalWordsAll > 0 && wrongCountAll === 0 && correctCountAll === totalWordsAll;
+    
+    const correctBarAll = document.getElementById('progress-correct-irregular-verbs');
+    const wrongBarAll = document.getElementById('progress-wrong-irregular-verbs');
+    const textAll = document.getElementById('progress-text-irregular-verbs');
+    const barContainerAll = correctBarAll ? correctBarAll.parentElement : null;
+    
+    if (correctBarAll) {
+        correctBarAll.style.width = `${correctPercentAll}%`;
+    }
+    if (wrongBarAll) {
+        wrongBarAll.style.width = `${wrongPercentAll}%`;
+    }
+    if (barContainerAll) {
+        barContainerAll.classList.remove('category-progress-complete', 'category-progress-complete-input');
+        if (isCompleteAll) {
+            barContainerAll.classList.add('category-progress-complete');
+        }
+    }
+    if (textAll) {
+        textAll.textContent = `${completedCountAll}/${totalWordsAll}語`;
+    }
+}
+
+// 不規則変化の進捗を保存
+function saveIvProgress(category, index, isCorrect) {
+    const correctKey = `ivCorrect-${category}`;
+    const wrongKey = `ivWrong-${category}`;
+    
+    // 既存のデータを取得
+    let correctSet = new Set();
+    let wrongSet = new Set();
+    
+    try {
+        const savedCorrect = localStorage.getItem(correctKey);
+        const savedWrong = localStorage.getItem(wrongKey);
+        if (savedCorrect) correctSet = new Set(JSON.parse(savedCorrect));
+        if (savedWrong) wrongSet = new Set(JSON.parse(savedWrong));
+    } catch (e) {}
+    
+    if (isCorrect) {
+        // 正解の場合：間違いから削除し、正解に追加
+        wrongSet.delete(index);
+        correctSet.add(index);
+    } else {
+        // 不正解の場合：正解から削除し、間違いに追加
+        correctSet.delete(index);
+        wrongSet.add(index);
+    }
+    
+    // 保存
+    localStorage.setItem(correctKey, JSON.stringify([...correctSet]));
+    localStorage.setItem(wrongKey, JSON.stringify([...wrongSet]));
+    
+    // 進捗バーを更新
+    updateIrregularVerbsProgressBar();
 }
 
 // 細分化メニューの進捗バーを更新
@@ -6708,21 +6844,13 @@ function setupEventListeners() {
         });
     }
     
-    // 不規則動詞の活用カードボタン → サブカテゴリーメニューを表示
+    // 不規則変化の単語カードボタン → サブカテゴリーメニューを表示
     const irregularVerbsCardBtn = document.getElementById('irregularVerbsCardBtn');
     if (irregularVerbsCardBtn) {
         irregularVerbsCardBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             showIvMenuView();
-        });
-    }
-    
-    // サブカテゴリーメニューの戻るボタン
-    const ivMenuBackBtn = document.getElementById('ivMenuBackBtn');
-    if (ivMenuBackBtn) {
-        ivMenuBackBtn.addEventListener('click', () => {
-            hideIvMenuView();
         });
     }
     
@@ -6770,12 +6898,28 @@ function setupEventListeners() {
         });
     }
     
+    // 学習モード画面のテストボタン
+    const ivStudyTestBtn = document.getElementById('ivStudyTestBtn');
+    if (ivStudyTestBtn) {
+        ivStudyTestBtn.addEventListener('click', () => {
+            if (currentIvCategory) {
+                // 学習モードを閉じてテストモードを開く
+                const studyView = document.getElementById('ivStudyView');
+                if (studyView) {
+                    studyView.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+                showIvTestView(currentIvCategory);
+            }
+        });
+    }
+    
     // 学習モードのメモボタン
     const ivMemoPadBtn = document.getElementById('ivMemoPadBtn');
     if (ivMemoPadBtn) {
         ivMemoPadBtn.addEventListener('click', () => {
-            const overlay = document.getElementById('memoPadOverlay');
-            const canvas = document.getElementById('memoPadCanvas');
+            const overlay = document.getElementById('ivMemoPadOverlay');
+            const canvas = document.getElementById('ivMemoPadCanvas');
             if (overlay && canvas) {
                 if (!overlay.classList.contains('hidden') && !overlay.classList.contains('closing')) {
                     // 開いている場合は閉じる
@@ -6799,6 +6943,50 @@ function setupEventListeners() {
         });
     }
     
+    // 学習モードのメモパッド閉じるボタン
+    const ivMemoPadCloseBtn = document.getElementById('ivMemoPadCloseBtn');
+    if (ivMemoPadCloseBtn) {
+        ivMemoPadCloseBtn.addEventListener('click', () => {
+            const overlay = document.getElementById('ivMemoPadOverlay');
+            const ivMemoPadBtn = document.getElementById('ivMemoPadBtn');
+            if (overlay) {
+                overlay.classList.add('closing');
+                overlay.classList.remove('opening');
+                if (ivMemoPadBtn) ivMemoPadBtn.classList.remove('active');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                    overlay.classList.remove('closing');
+                }, 300);
+            }
+        });
+    }
+    
+    // 学習モードのメモパッドクリアボタン
+    const ivMemoPadClearBtn = document.getElementById('ivMemoPadClearBtn');
+    if (ivMemoPadClearBtn) {
+        ivMemoPadClearBtn.addEventListener('click', () => {
+            const canvas = document.getElementById('ivMemoPadCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        });
+    }
+    
+    // 学習モードのメモパッド太さボタン
+    const ivMemoPadOverlay = document.getElementById('ivMemoPadOverlay');
+    if (ivMemoPadOverlay) {
+        const thicknessBtns = ivMemoPadOverlay.querySelectorAll('.memo-pad-thickness-btn');
+        thicknessBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                thicknessBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                memoPadLineWidth = parseInt(btn.dataset.width);
+            });
+        });
+    }
+    
     // 学習モードの赤シート下矢印ボタン
     const ivRedsheetNextBtn = document.getElementById('ivRedsheetNextBtn');
     if (ivRedsheetNextBtn) {
@@ -6807,7 +6995,7 @@ function setupEventListeners() {
         });
     }
     
-    // 不規則動詞の活用画面（テストモード）の戻るボタン
+    // 不規則変化の単語画面（テストモード）の戻るボタン
     const irregularVerbsBackBtn = document.getElementById('irregularVerbsBackBtn');
     if (irregularVerbsBackBtn) {
         irregularVerbsBackBtn.addEventListener('click', () => {
@@ -7852,8 +8040,15 @@ function setupEventListeners() {
             const grammarChapterView = document.getElementById('grammarChapterView');
             const grammarTOCView = document.getElementById('grammarTableOfContentsView');
             const courseSelection = document.getElementById('courseSelection');
+            const ivMenuView = document.getElementById('ivMenuView');
             
             const wordFilterView = document.getElementById('wordFilterView');
+            
+            // 不規則変化のサブカテゴリーメニューからホームに戻る
+            if (ivMenuView && !ivMenuView.classList.contains('hidden')) {
+                hideIvMenuView();
+                return;
+            }
             
             if (grammarChapterView && !grammarChapterView.classList.contains('hidden')) {
                 // 文法解説ページから目次ページに戻る
@@ -13538,7 +13733,7 @@ function clearLearningHistory() {
             const keysToRemove = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                if (key && (key.startsWith('correctWords-') || key.startsWith('wrongWords-'))) {
+                if (key && (key.startsWith('correctWords-') || key.startsWith('wrongWords-') || key.startsWith('ivCorrect-') || key.startsWith('ivWrong-'))) {
                     keysToRemove.push(key);
                 }
             }
@@ -19345,7 +19540,7 @@ document.addEventListener('touchstart', function(e) {
 })();
 
 // ========================
-// 不規則動詞の活用機能
+// 不規則変化の単語機能
 // ========================
 
 // 不規則動詞データ（初級編）
@@ -19461,18 +19656,76 @@ let currentIvData = null;
 // サブカテゴリーメニューを表示
 function showIvMenuView() {
     const view = document.getElementById('ivMenuView');
-    if (view) {
+    const categorySelection = document.getElementById('categorySelection');
+    const ivMenuContent = view?.querySelector('.iv-menu-content');
+    
+    if (view && categorySelection) {
+        // メインヘッダーを更新（パッと切り替わる）
+        updateHeaderButtons('course', '不規則変化の単語');
+        
+        // カテゴリー選択画面を非表示
+        categorySelection.classList.add('hidden');
+        
+        // サブカテゴリーメニューを表示
         view.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
+        
+        // コンテンツ部分だけをスライドイン
+        if (ivMenuContent) {
+            ivMenuContent.classList.add('slide-in-right');
+            setTimeout(() => {
+                ivMenuContent.classList.remove('slide-in-right');
+            }, 300);
+        }
+        
+        // サブカテゴリーの進捗バーを更新
+        updateIrregularVerbsProgressBar();
+        
+        // 戻るボタン用にフラグを設定
+        window.currentSubcategoryParent = '不規則変化の単語';
     }
 }
 
-// サブカテゴリーメニューを非表示
+// サブカテゴリーメニューを非表示（ホームに戻る）
 function hideIvMenuView() {
+    const view = document.getElementById('ivMenuView');
+    const categorySelection = document.getElementById('categorySelection');
+    const ivMenuContent = view?.querySelector('.iv-menu-content');
+    
+    if (view && categorySelection) {
+        // メインヘッダーをホームに戻す（パッと切り替わる）
+        updateHeaderButtons('home');
+        
+        // コンテンツ部分を右へスライドアウト
+        if (ivMenuContent) {
+            ivMenuContent.classList.add('slide-out-right');
+        }
+        
+        // カテゴリー選択画面を左からスライドイン
+        categorySelection.classList.remove('hidden');
+        categorySelection.classList.add('slide-in-left');
+        
+        // 進捗バーを更新
+        updateCategoryStars();
+        updateVocabProgressBar();
+        updateIrregularVerbsProgressBar();
+        
+        setTimeout(() => {
+            if (ivMenuContent) {
+                ivMenuContent.classList.remove('slide-out-right');
+            }
+            view.classList.add('hidden');
+            categorySelection.classList.remove('slide-in-left');
+            document.body.style.overflow = '';
+            window.currentSubcategoryParent = null;
+        }, 300);
+    }
+}
+
+// サブカテゴリーメニューを非表示（学習/テスト画面へ遷移時）
+function hideIvMenuViewForStudy() {
     const view = document.getElementById('ivMenuView');
     if (view) {
         view.classList.add('hidden');
-        document.body.style.overflow = '';
     }
 }
 
@@ -19544,6 +19797,9 @@ function showIvStudyView(category) {
     
     if (!view || !tbody) return;
     
+    // 現在のカテゴリーを保存（テストボタン用）
+    currentIvCategory = category;
+    
     // カテゴリータイトル
     const titles = {
         'verbs-beginner': '不規則動詞（初級編）',
@@ -19576,6 +19832,23 @@ function showIvStudyView(category) {
     // テーブル生成
     tbody.innerHTML = '';
     
+    // 進捗を取得
+    let correctSet = new Set();
+    let wrongSet = new Set();
+    try {
+        const savedCorrect = localStorage.getItem(`ivCorrect-${category}`);
+        const savedWrong = localStorage.getItem(`ivWrong-${category}`);
+        if (savedCorrect) correctSet = new Set(JSON.parse(savedCorrect));
+        if (savedWrong) wrongSet = new Set(JSON.parse(savedWrong));
+    } catch (e) {}
+    
+    // 進捗状態に応じたクラスを取得
+    const getNumClass = (index) => {
+        if (wrongSet.has(index)) return 'iv-study-num iv-num-wrong';
+        if (correctSet.has(index)) return 'iv-study-num iv-num-correct';
+        return 'iv-study-num';
+    };
+    
     if (currentIvData.type === 'verbs') {
         thead.innerHTML = `
             <tr>
@@ -19589,7 +19862,7 @@ function showIvStudyView(category) {
         data.forEach((verb, index) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td class="iv-study-num">${index + 1}</td>
+                <td class="${getNumClass(index)}">${index + 1}</td>
                 <td class="iv-study-meaning">${verb.meaning}</td>
                 <td class="iv-study-answer">${verb.base}</td>
                 <td class="iv-study-answer">${verb.past}</td>
@@ -19610,7 +19883,7 @@ function showIvStudyView(category) {
         data.forEach((item, index) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td class="iv-study-num">${index + 1}</td>
+                <td class="${getNumClass(index)}">${index + 1}</td>
                 <td class="iv-study-word">${item.word}</td>
                 <td class="iv-study-meaning">${item.meaning}</td>
                 <td class="iv-study-answer">${item.comparative}</td>
@@ -19630,7 +19903,7 @@ function showIvStudyView(category) {
         data.forEach((item, index) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td class="iv-study-num">${index + 1}</td>
+                <td class="${getNumClass(index)}">${index + 1}</td>
                 <td class="iv-study-word">${item.singular}</td>
                 <td class="iv-study-meaning">${item.meaning}</td>
                 <td class="iv-study-answer">${item.plural}</td>
@@ -19647,21 +19920,36 @@ function showIvStudyView(category) {
     document.getElementById('ivRedsheetOverlay')?.classList.add('hidden');
     
     // サブカテゴリーメニューを隠す
-    hideIvMenuView();
+    hideIvMenuViewForStudy();
     
     // 画面表示
     view.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 }
 
-// 学習モードを非表示
+// 学習モードを非表示（サブカテゴリーメニューに戻る）
 function hideIvStudyView() {
     const view = document.getElementById('ivStudyView');
+    const ivMenuView = document.getElementById('ivMenuView');
+    
     if (view) {
-        view.classList.add('hidden');
-        document.body.style.overflow = '';
-        // サブカテゴリーメニューに戻る
-        showIvMenuView();
+        // 学習モードを右へスライドアウト
+        view.classList.add('slide-out-right');
+        
+        // サブカテゴリーメニューを左からスライドイン
+        if (ivMenuView) {
+            ivMenuView.classList.remove('hidden');
+            ivMenuView.classList.add('slide-in-left');
+            updateIrregularVerbsProgressBar();
+        }
+        
+        setTimeout(() => {
+            view.classList.remove('slide-out-right');
+            view.classList.add('hidden');
+            if (ivMenuView) {
+                ivMenuView.classList.remove('slide-in-left');
+            }
+        }, 300);
     }
 }
 
@@ -19850,8 +20138,11 @@ function setupIvRedsheetDrag(overlay) {
 
 // テストモードを表示
 function showIvTestView(category) {
+    // 現在のカテゴリーを保存
+    currentIvCategory = category;
+    
     // サブカテゴリーメニューを隠す
-    hideIvMenuView();
+    hideIvMenuViewForStudy();
     
     // データ取得
     let data;
@@ -19905,6 +20196,23 @@ function showIrregularVerbsTestView(data, type, title) {
     // テーブルヘッダーと内容を生成
     tbody.innerHTML = '';
     
+    // 進捗を取得
+    let correctSet = new Set();
+    let wrongSet = new Set();
+    try {
+        const savedCorrect = localStorage.getItem(`ivCorrect-${currentIvCategory}`);
+        const savedWrong = localStorage.getItem(`ivWrong-${currentIvCategory}`);
+        if (savedCorrect) correctSet = new Set(JSON.parse(savedCorrect));
+        if (savedWrong) wrongSet = new Set(JSON.parse(savedWrong));
+    } catch (e) {}
+    
+    // 進捗状態に応じたクラスを取得
+    const getNumClass = (index) => {
+        if (wrongSet.has(index)) return 'iv-num iv-num-wrong';
+        if (correctSet.has(index)) return 'iv-num iv-num-correct';
+        return 'iv-num';
+    };
+    
     if (type === 'verbs') {
         thead.innerHTML = `
             <tr>
@@ -19921,18 +20229,18 @@ function showIrregularVerbsTestView(data, type, title) {
             const tr = document.createElement('tr');
             tr.id = `iv-row-${index}`;
             tr.innerHTML = `
-                <td class="iv-num">${index + 1}</td>
+                <td class="${getNumClass(index)}">${index + 1}</td>
                 <td class="iv-meaning">${verb.meaning}</td>
                 <td>
-                    <input type="text" class="iv-input" id="iv-base-${index}" data-index="${index}" data-type="base" data-answer="${verb.base}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <input type="text" class="iv-input" id="iv-base-${index}" data-index="${index}" data-type="base" data-answer="${verb.base}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
                     <div class="iv-answer hidden" id="iv-answer-base-${index}"></div>
                 </td>
                 <td>
-                    <input type="text" class="iv-input" id="iv-past-${index}" data-index="${index}" data-type="past" data-answer="${verb.past}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <input type="text" class="iv-input" id="iv-past-${index}" data-index="${index}" data-type="past" data-answer="${verb.past}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
                     <div class="iv-answer hidden" id="iv-answer-past-${index}"></div>
                 </td>
                 <td>
-                    <input type="text" class="iv-input" id="iv-pp-${index}" data-index="${index}" data-type="pp" data-answer="${verb.pp}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <input type="text" class="iv-input" id="iv-pp-${index}" data-index="${index}" data-type="pp" data-answer="${verb.pp}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
                     <div class="iv-answer hidden" id="iv-answer-pp-${index}"></div>
                 </td>
             `;
@@ -19953,14 +20261,14 @@ function showIrregularVerbsTestView(data, type, title) {
             const tr = document.createElement('tr');
             tr.id = `iv-row-${index}`;
             tr.innerHTML = `
-                <td class="iv-num">${index + 1}</td>
+                <td class="${getNumClass(index)}">${index + 1}</td>
                 <td class="iv-meaning">${item.word}<br><small>(${item.meaning})</small></td>
                 <td>
-                    <input type="text" class="iv-input" id="iv-comp-${index}" data-index="${index}" data-type="comp" data-answer="${item.comparative}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <input type="text" class="iv-input" id="iv-comp-${index}" data-index="${index}" data-type="comp" data-answer="${item.comparative}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
                     <div class="iv-answer hidden" id="iv-answer-comp-${index}"></div>
                 </td>
                 <td>
-                    <input type="text" class="iv-input" id="iv-super-${index}" data-index="${index}" data-type="super" data-answer="${item.superlative}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <input type="text" class="iv-input" id="iv-super-${index}" data-index="${index}" data-type="super" data-answer="${item.superlative}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
                     <div class="iv-answer hidden" id="iv-answer-super-${index}"></div>
                 </td>
             `;
@@ -19980,10 +20288,10 @@ function showIrregularVerbsTestView(data, type, title) {
             const tr = document.createElement('tr');
             tr.id = `iv-row-${index}`;
             tr.innerHTML = `
-                <td class="iv-num">${index + 1}</td>
+                <td class="${getNumClass(index)}">${index + 1}</td>
                 <td class="iv-meaning">${item.singular}<br><small>(${item.meaning})</small></td>
                 <td>
-                    <input type="text" class="iv-input" id="iv-plural-${index}" data-index="${index}" data-type="plural" data-answer="${item.plural}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <input type="text" class="iv-input" id="iv-plural-${index}" data-index="${index}" data-type="plural" data-answer="${item.plural}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
                     <div class="iv-answer hidden" id="iv-answer-plural-${index}"></div>
                 </td>
             `;
@@ -20071,7 +20379,7 @@ const irregularVerbsData = [
 
 let irregularVerbsScore = { correct: 0, total: 0 };
 
-// 不規則動詞の活用画面を表示
+// 不規則変化の単語画面を表示
 function showIrregularVerbsView() {
     const view = document.getElementById('irregularVerbsView');
     const tbody = document.getElementById('irregularVerbsTableBody');
@@ -20091,15 +20399,15 @@ function showIrregularVerbsView() {
             <td class="iv-num">${index + 1}</td>
             <td class="iv-meaning">${verb.meaning}</td>
             <td>
-                <input type="text" class="iv-input" id="iv-base-${index}" data-index="${index}" data-type="base" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <input type="text" class="iv-input" id="iv-base-${index}" data-index="${index}" data-type="base" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
                 <div class="iv-answer hidden" id="iv-answer-base-${index}"></div>
             </td>
             <td>
-                <input type="text" class="iv-input" id="iv-past-${index}" data-index="${index}" data-type="past" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <input type="text" class="iv-input" id="iv-past-${index}" data-index="${index}" data-type="past" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
                 <div class="iv-answer hidden" id="iv-answer-past-${index}"></div>
             </td>
             <td>
-                <input type="text" class="iv-input" id="iv-pp-${index}" data-index="${index}" data-type="pp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <input type="text" class="iv-input" id="iv-pp-${index}" data-index="${index}" data-type="pp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
                 <div class="iv-answer hidden" id="iv-answer-pp-${index}"></div>
             </td>
         `;
@@ -20111,16 +20419,33 @@ function showIrregularVerbsView() {
     document.body.style.overflow = 'hidden';
 }
 
-// 不規則動詞の活用画面（テストモード）を非表示
+// 不規則変化の単語画面（テストモード）を非表示（サブカテゴリーメニューに戻る）
 function hideIrregularVerbsView() {
     const view = document.getElementById('irregularVerbsView');
+    const ivMenuView = document.getElementById('ivMenuView');
+    
     if (view) {
-        view.classList.add('hidden');
-        document.body.style.overflow = '';
         // キーボードを隠す
         hideIvKeyboard();
-        // サブカテゴリーメニューに戻る
-        showIvMenuView();
+        
+        // テストモードを右へスライドアウト
+        view.classList.add('slide-out-right');
+        
+        // サブカテゴリーメニューを左からスライドイン
+        if (ivMenuView) {
+            ivMenuView.classList.remove('hidden');
+            ivMenuView.classList.add('slide-in-left');
+            updateIrregularVerbsProgressBar();
+        }
+        
+        setTimeout(() => {
+            view.classList.remove('slide-out-right');
+            view.classList.add('hidden');
+            document.body.style.overflow = '';
+            if (ivMenuView) {
+                ivMenuView.classList.remove('slide-in-left');
+            }
+        }, 300);
     }
 }
 
@@ -20233,12 +20558,24 @@ function checkIrregularVerb(index) {
     // 行のスタイル更新
     row.classList.add(allCorrect ? 'iv-row-correct' : 'iv-row-wrong');
     
+    // 単語番号セルのスタイル更新
+    const numCell = row.querySelector('td:first-child');
+    if (numCell) {
+        numCell.classList.remove('iv-num-correct', 'iv-num-wrong');
+        numCell.classList.add(allCorrect ? 'iv-num-correct' : 'iv-num-wrong');
+    }
+    
     // スコア更新
     irregularVerbsScore.total++;
     if (allCorrect) {
         irregularVerbsScore.correct++;
     }
     updateIrregularVerbsScore();
+    
+    // 進捗を保存（ホーム画面の進捗バー用）
+    if (currentIvCategory) {
+        saveIvProgress(currentIvCategory, index, allCorrect);
+    }
 }
 
 // スコア表示更新
