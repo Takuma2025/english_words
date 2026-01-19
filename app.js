@@ -11243,6 +11243,7 @@ function setupInputListModeToggle() {
 let bgmAudio = null;
 let resultBgmAudio = null;
 let bgmEnabled = false;
+let bgmStarted = false;
 
 function initBgm() {
     bgmAudio = document.getElementById('bgmAudio');
@@ -11261,9 +11262,28 @@ function initBgm() {
     
     // 音量0より大きければBGMを有効化
     bgmEnabled = bgmVolume > 0;
+    
+    // 自動再生を試みる（ブロックされる可能性あり）
     if (bgmEnabled) {
         playBgm();
     }
+    
+    // ユーザーの最初の操作でBGMを開始（自動再生がブロックされた場合の対策）
+    const startBgmOnInteraction = () => {
+        if (bgmEnabled && !bgmStarted && bgmAudio) {
+            bgmAudio.play().then(() => {
+                bgmStarted = true;
+            }).catch(e => {});
+        }
+        // 一度実行したらリスナーを削除
+        document.removeEventListener('click', startBgmOnInteraction);
+        document.removeEventListener('touchstart', startBgmOnInteraction);
+        document.removeEventListener('keydown', startBgmOnInteraction);
+    };
+    
+    document.addEventListener('click', startBgmOnInteraction);
+    document.addEventListener('touchstart', startBgmOnInteraction);
+    document.addEventListener('keydown', startBgmOnInteraction);
 }
 
 function playBgm() {
@@ -11273,7 +11293,9 @@ function playBgm() {
             resultBgmAudio.pause();
             resultBgmAudio.currentTime = 0;
         }
-        bgmAudio.play().catch(e => {
+        bgmAudio.play().then(() => {
+            bgmStarted = true;
+        }).catch(e => {
             // 自動再生がブロックされた場合は、ユーザー操作後に再生
             console.log('BGM autoplay blocked, will play on user interaction');
         });
