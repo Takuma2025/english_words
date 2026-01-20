@@ -3733,24 +3733,24 @@ function formatTitleWithLevelBadge(title) {
     const isElementarySubcategory = elementarySubcategories.some(sub => title.includes(sub));
     
     if (title.includes('LEVEL1') || title.includes('超重要') || title.includes('レベル１') || title.includes('レベル1')) {
-        return '<span class="level-badge level-badge-header level-badge-red">RANK<b>1</b></span> ' + cleanTitle.replace(/超重要単語400/g, '超重要500語');
+        return '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span> ' + cleanTitle.replace(/超重要単語400/g, '超重要500語');
     } else if (title.includes('LEVEL2') || title.includes('重要500語') || title.includes('レベル２') || title.includes('レベル2')) {
-        return '<span class="level-badge level-badge-header level-badge-orange">RANK<b>2</b></span> ' + cleanTitle.replace(/重要単語300/g, '重要500語');
+        return '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span> ' + cleanTitle.replace(/重要単語300/g, '重要500語');
     } else if (title.includes('LEVEL3') || title.includes('差がつく') || title.includes('レベル３') || title.includes('レベル3')) {
-        return '<span class="level-badge level-badge-header level-badge-blue">RANK<b>3</b></span> ' + cleanTitle.replace(/差がつく単語200/g, 'ハイレベル300語');
+        return '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> ' + cleanTitle.replace(/差がつく単語200/g, 'ハイレベル300語');
     } else if (title.includes('LEVEL4') || title.includes('私立高校入試レベル') || title.includes('レベル４') || title.includes('レベル4')) {
-        return '<span class="level-badge level-badge-header level-badge-purple">RANK<b>4</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span> ' + cleanTitle;
     } else if (title.includes('LEVEL5') || title.includes('難関私立高校入試レベル') || title.includes('レベル５') || title.includes('レベル5')) {
-        return '<span class="level-badge level-badge-header level-badge-dark">RANK<b>5</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span> ' + cleanTitle;
     } else if (title.includes('カテゴリ別') || title.includes('レベル０') || title.includes('レベル0')) {
         // カテゴリー別のメインカテゴリ
         if (title.includes('カテゴリー別') || title.includes('カテゴリー別に覚える単語') || title.includes('カテゴリー別')) {
-            return '<span class="level-badge level-badge-header level-badge-green">RANK<b>0</b></span> カテゴリー別';
+            return '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> カテゴリー別';
         } else {
             return cleanTitle;
         }
     } else if (isElementarySubcategory) {
-        return '<span class="level-badge level-badge-header level-badge-green">RANK<b>0</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> ' + cleanTitle;
     }
     return title;
 }
@@ -3818,13 +3818,13 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
         if (mode === 'course' && title) {
             // コース選択時：テキストを表示、画像を非表示
             if (title === 'カテゴリー別') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">RANK<b>0</b></span> カテゴリー別';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> カテゴリー別';
             } else if (title === 'レベル１ 超重要500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">RANK<b>1</b></span> 超重要500語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span> 超重要500語';
             } else if (title === 'レベル２ 重要500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">RANK<b>2</b></span> 重要500語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span> 重要500語';
             } else if (title === 'レベル３ ハイレベル300語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">RANK<b>3</b></span> ハイレベル300語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> ハイレベル300語';
             } else {
                 headerTitleText.textContent = title;
             }
@@ -4700,11 +4700,11 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     
     // タイトルを設定（バッジ付き）
     if (parentCategory === 'レベル１ 超重要500語') {
-        courseTitle.innerHTML = '<span class="level-badge level-badge-red">RANK<b>1</b></span> 超重要500語';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-red">Level<b>1</b></span> 超重要500語';
     } else if (parentCategory === 'レベル２ 重要500語') {
-        courseTitle.innerHTML = '<span class="level-badge level-badge-orange">RANK<b>2</b></span> 重要500語';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-orange">Level<b>2</b></span> 重要500語';
     } else if (parentCategory === 'レベル３ ハイレベル300語') {
-        courseTitle.innerHTML = '<span class="level-badge level-badge-blue">RANK<b>3</b></span> ハイレベル300語';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-blue">Level<b>3</b></span> ハイレベル300語';
     } else {
         courseTitle.textContent = parentCategory;
     }

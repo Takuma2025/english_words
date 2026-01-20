@@ -7102,6 +7102,7 @@ body.choice-question-mode-active .word-card-container {
 
 .input-list-scroll.compact-mode.flip-mode .input-list-word {
     font-size: 16px;
+    color: #1e40af;
 }
 
 .input-list-scroll.compact-mode.flip-mode .input-list-meaning {
@@ -7199,7 +7200,7 @@ body.choice-question-mode-active .word-card-container {
     content: attr(data-word);
     font-size: 15px;
     font-weight: 700;
-    color: #111827;
+    color: #1e40af;
     flex-shrink: 0;
     min-width: 100px;
     order: 3;
