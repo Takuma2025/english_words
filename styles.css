@@ -1139,9 +1139,81 @@ body.learning-mode .app-header {
 }
 
 .course-section {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 0;
+    border-left: 1.5px solid #1e40af;
+    border-top: 1.5px solid #1e40af;
+}
+
+.course-section > .category-card,
+.course-section > .bottom-menu-row > .category-card {
+    aspect-ratio: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: none;
+    border-right: 1.5px solid #1e40af;
+    border-bottom: 1.5px solid #1e40af;
+}
+
+.course-section .category-card .category-info {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100%;
+}
+
+.course-section .category-card .category-arrow {
+    display: none !important;
+}
+
+.course-section .category-card .category-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100%;
+}
+
+.course-section .category-card .category-name {
+    display: block !important;
+    text-align: center !important;
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+    line-height: 1.4;
+}
+
+.course-section .category-card .category-name .level-badge {
+    display: block !important;
+    margin: 0 auto 8px auto !important;
+    font-size: 16px;
+    padding: 6px 14px;
+    transform: none;
+    width: fit-content;
+}
+
+.course-section .category-card .category-name .level-badge b {
+    font-size: 28px;
+}
+
+.course-section .category-card .category-meta {
+    display: none !important;
+}
+
+.course-section .category-card .category-progress {
+    width: 80%;
+    margin-top: 12px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.course-section .category-card .category-progress-text {
+    display: none !important;
 }
 
 .boy-word-image {
@@ -1154,31 +1226,40 @@ body.learning-mode .app-header {
 .category-cards-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 0;
+    margin-bottom: 0;
     border-bottom: none;
-    padding: 0; /* 細分化メニューの横幅をメインカードに合わせるためパディングを削除 */
+    padding: 0;
 }
 
 .category-cards-row .category-card {
     padding: 16px;
-    border-bottom: none;
-    border-right: none;
-    align-items: center;
+    border: 1.5px solid #1e40af;
     border-radius: 0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    box-shadow: none;
     margin-bottom: 0;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    aspect-ratio: 1;
 }
 
-.category-cards-row .category-card:last-child {
-    border-right: none;
+.category-cards-row .category-card:nth-child(2n) {
+    border-left: none;
+}
+
+.category-cards-row .category-card:nth-child(n+3) {
+    border-top: none;
 }
 
 .category-cards-row .category-name {
-    font-size: 18px;
+    font-size: 22px;
+    font-weight: 700;
     line-height: 1.3;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
 }
 
@@ -1409,8 +1490,9 @@ body.learning-mode .app-header {
     width: 100%;
     padding: 14px 16px;
     background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    border: 1.5px solid #1e40af;
+    box-shadow: none;
     cursor: pointer;
     transition: box-shadow 0.2s ease, transform 0.1s ease;
     position: relative;
@@ -1423,13 +1505,11 @@ body.learning-mode .app-header {
 
 @keyframes glowPulse {
     0% {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), 
-                    0 0 0 1px rgba(59, 130, 246, 0.5),
+        box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5),
                     0 0 4px 0px rgba(59, 130, 246, 0.3);
     }
     40% {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), 
-                    0 0 0 4px rgba(59, 130, 246, 0.3),
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3),
                     0 0 12px 4px rgba(59, 130, 246, 0.15);
     }
     70% {
@@ -2946,23 +3026,36 @@ body.learning-mode .app-header {
     background: transparent;
     border: none;
     overflow: visible;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
 }
 
 .category-accordion-item {
     display: flex;
     flex-direction: column;
-    width: 100%; /* 横幅をいっぱいに広げる */
-    padding: 10px 16px;
+    width: 100%;
+    padding: 16px;
     background: #ffffff;
-    border: none;
+    border: 1.5px solid #1e40af;
     border-radius: 0;
-    text-align: left;
+    text-align: center;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     position: relative;
-    min-height: 48px;
-    margin-bottom: 2px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+    margin-bottom: 0;
+    box-shadow: none;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+}
+
+.category-accordion-item:nth-child(2n) {
+    border-left: none;
+}
+
+.category-accordion-item:nth-child(n+3) {
+    border-top: none;
 }
 
 .category-accordion-item:last-child {
@@ -2971,8 +3064,11 @@ body.learning-mode .app-header {
 
 .accordion-item-main {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     width: 100%;
+    text-align: center;
 }
 
 .category-accordion-item + .category-accordion-item {
@@ -3007,10 +3103,7 @@ body.learning-mode .app-header {
 }
 
 .accordion-item-icon {
-    flex-shrink: 0;
-    margin-right: 12px;
-    width: 24px;
-    height: 24px;
+    display: none;
 }
 
 .file-icon-with-number {
@@ -3021,26 +3114,25 @@ body.learning-mode .app-header {
 
 .accordion-item-text {
     font-family: "Meiryo", "メイリオ", "Hiragino Kaku Gothic ProN", sans-serif;
-    font-size: 17px;
-    font-weight: 400;
-    color: #1f2937;
-    flex: 1;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e40af;
+    text-align: center;
 }
 
 .accordion-item-chevron {
-    flex-shrink: 0;
-    color: #9ca3af;
-    margin-left: 8px;
+    display: none;
 }
 
 /* 細分化メニューの進捗バー */
 .accordion-item-progress {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     width: 100%;
     margin-top: 8px;
-    padding-left: 30px;
+    padding-left: 0;
 }
 
 .accordion-progress-bar {
@@ -3134,18 +3226,28 @@ body.learning-mode .app-header {
 
 /* 下部メニュー横並び */
 .bottom-menu-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
+    display: contents;
 }
 
 .bottom-menu-card {
-    flex: 1;
     margin-bottom: 0 !important;
+    aspect-ratio: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: none;
+    border-right: 1.5px solid #1e40af;
+    border-bottom: 1.5px solid #1e40af;
+    gap: 4px;
 }
 
 .bottom-menu-card .category-info {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: none;
 }
 
 .bottom-menu-card .category-arrow {
@@ -3154,17 +3256,27 @@ body.learning-mode .app-header {
 
 .bottom-menu-card-with-progress {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
 }
 
 .bottom-menu-card-main {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    text-align: center;
+    gap: 4px;
+}
+
+.bottom-menu-card .category-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e40af;
+    text-align: center;
 }
 
 .bottom-menu-progress {
     margin-top: 8px;
-    width: 100%;
+    width: 80%;
 }
 
 .bottom-menu-progress .category-progress-bar {
@@ -3172,8 +3284,7 @@ body.learning-mode .app-header {
 }
 
 .bottom-menu-progress .category-progress-text {
-    font-size: 11px;
-    margin-top: 4px;
+    display: none !important;
 }
 
 .irregular-verbs-icon {
@@ -3184,8 +3295,8 @@ body.learning-mode .app-header {
     height: 48px;
     background: #ecfdf5;
     border-radius: 10px;
-    flex-shrink: 0;
-    margin-right: 12px;
+    flex: none;
+    margin: 0;
 }
 
 #allWordsCardBtn {
@@ -3201,20 +3312,29 @@ body.learning-mode .app-header {
     height: 48px;
     background: #eff6ff;
     border-radius: 10px;
-    flex-shrink: 0;
-    margin-right: 12px;
+    flex: none;
+    margin: 0;
 }
 
 /* はじめに & 苦手・要復習 2列レイアウト */
 .top-row-cards {
     display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 0;
+    margin-bottom: 0;
 }
 
 .top-row-cards .category-card {
     flex: 1;
     margin-bottom: 0;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    aspect-ratio: 1;
+}
+
+.top-row-cards .category-card:last-child {
+    border-left: none;
 }
 
 .intro-card {
@@ -3305,12 +3425,12 @@ body.learning-mode .app-header {
     border: none;
     border-radius: 0;
     padding: 16px;
-    margin-bottom: 10px;
+    margin-bottom: 0;
     width: 100%;
     box-sizing: border-box;
     text-align: left;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    box-shadow: none;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -18057,11 +18177,19 @@ body .sentence-english {
     background: #1d4ed8;
 }
 
-/* はじめにカード（フル幅） */
+/* はじめにカード */
 .intro-card-full {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 10px;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 0;
+    aspect-ratio: 1;
+    border: none;
+    border-right: 1.5px solid #1e40af;
+    border-bottom: 1.5px solid #1e40af;
+    gap: 4px;
 }
 
 .intro-card-full .intro-icon {
@@ -18072,8 +18200,26 @@ body .sentence-english {
     height: 48px;
     background: #eef2ff;
     border-radius: 10px;
-    flex-shrink: 0;
-    margin-right: 12px;
+    flex: none;
+    margin: 0;
+}
+
+.intro-card-full .category-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: none;
+}
+
+.intro-card-full .category-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e40af;
+}
+
+.intro-card-full .category-meta {
+    display: none !important;
 }
 
 /* 学習画面では非表示 */
