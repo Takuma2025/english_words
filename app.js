@@ -273,6 +273,48 @@ const SoundEffects = {
     }
 };
 
+// カード縮小アニメーション関数（戻るとき用）
+function animateCardShrink(targetCardId, callback) {
+    // まずオーバーレイを画面全体に表示
+    const overlay = document.createElement('div');
+    overlay.className = 'card-expand-overlay';
+    overlay.style.left = '0';
+    overlay.style.top = '0';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.opacity = '1';
+    overlay.style.transition = 'none';
+    
+    document.body.appendChild(overlay);
+    
+    // 画面遷移を先に実行（オーバーレイの下で）
+    if (callback) callback();
+    
+    // 次のフレームでターゲットカードの位置を取得して縮小開始
+    requestAnimationFrame(() => {
+        const targetCard = document.getElementById(targetCardId);
+        if (targetCard) {
+            const rect = targetCard.getBoundingClientRect();
+            
+            overlay.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            overlay.style.left = rect.left + 'px';
+            overlay.style.top = rect.top + 'px';
+            overlay.style.width = rect.width + 'px';
+            overlay.style.height = rect.height + 'px';
+            overlay.style.opacity = '0.3';
+        } else {
+            // ターゲットが見つからない場合はフェードアウト
+            overlay.style.transition = 'opacity 0.2s ease';
+            overlay.style.opacity = '0';
+        }
+        
+        // アニメーション完了後にオーバーレイを削除
+        setTimeout(() => {
+            overlay.remove();
+        }, 300);
+    });
+}
+
 // カード拡大アニメーション関数
 function animateCardExpand(cardElement, backgroundColor, callback) {
     if (!cardElement) {
@@ -282,16 +324,38 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     
     const rect = cardElement.getBoundingClientRect();
     
-    // オーバーレイ要素を作成（白背景のみ）
+    // オーバーレイ要素を作成
     const overlay = document.createElement('div');
     overlay.className = 'card-expand-overlay';
     overlay.style.left = rect.left + 'px';
     overlay.style.top = rect.top + 'px';
     overlay.style.width = rect.width + 'px';
     overlay.style.height = rect.height + 'px';
-    overlay.style.opacity = '0.3';
+    overlay.style.opacity = '0.5';
     overlay.style.transition = 'none';
     
+    // バッジとタイトルを抽出してコピー
+    const titleContainer = document.createElement('div');
+    titleContainer.className = 'expand-title';
+    
+    const badge = cardElement.querySelector('.level-badge');
+    const categoryName = cardElement.querySelector('.category-name');
+    
+    if (badge) {
+        const badgeClone = badge.cloneNode(true);
+        titleContainer.appendChild(badgeClone);
+    }
+    
+    if (categoryName) {
+        const titleText = document.createElement('div');
+        titleText.className = 'title-text';
+        // バッジを除いたテキストのみ取得
+        const textOnly = categoryName.textContent.replace(/RANK\d/g, '').trim();
+        titleText.textContent = textOnly;
+        titleContainer.appendChild(titleText);
+    }
+    
+    overlay.appendChild(titleContainer);
     document.body.appendChild(overlay);
     
     // 効果音を再生
@@ -305,6 +369,9 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
         overlay.style.width = '100vw';
         overlay.style.height = '100vh';
         overlay.style.opacity = '1';
+        // バッジとタイトルを少し拡大
+        titleContainer.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        titleContainer.style.transform = 'scale(1.5)';
     });
     
     // アニメーション完了後
@@ -5699,12 +5766,8 @@ function showInputModeDirectly(category, words, courseTitle) {
     // カテゴリー選択画面を即座に非表示
     elements.categorySelection.classList.add('hidden');
     
-    // メインコンテンツを右からスライドイン
+    // メインコンテンツを表示
     elements.mainContent.classList.remove('hidden');
-    elements.mainContent.classList.add('slide-in-right');
-    setTimeout(() => {
-        elements.mainContent.classList.remove('slide-in-right');
-    }, 300);
     
     // テストへボタンを表示（インプットモードなので常に表示、ただし「すべての単語」では非表示）
     const unitTestBtn = document.getElementById('unitTestBtn');
@@ -8220,36 +8283,44 @@ function setupEventListeners() {
                 // コース選択画面からカテゴリー選択画面に戻る（スライドイン）
                 const categorySelection = elements.categorySelection;
                 
-                // サブカテゴリー画面からの戻りの場合はスライドインを使用
+                // サブカテゴリー画面からの戻り
                 if (window.currentSubcategoryParent) {
-                    // コース選択画面を右へスライドアウト
-                    courseSelection.classList.add('slide-out-right');
-                    
-                    // カテゴリー選択画面を左からスライドイン
-                    categorySelection.classList.remove('hidden');
-                    categorySelection.classList.add('slide-in-left');
-                    
-                    // 進捗バーを更新してアニメーションを実行
-                    updateCategoryStars();
-                    updateVocabProgressBar();
-                    if (lastLearningCategory) {
-                        setTimeout(() => {
-                            animateProgressToGoal();
-                            lastLearningCategory = null;
-                        }, 100);
+                    // 戻り先のカードIDを特定
+                    let targetCardId = null;
+                    if (window.currentSubcategoryParent === 'レベル１ 超重要500語') {
+                        targetCardId = 'level1CardBtn';
+                    } else if (window.currentSubcategoryParent === 'レベル２ 重要500語') {
+                        targetCardId = 'level2CardBtn';
+                    } else if (window.currentSubcategoryParent === 'レベル３ ハイレベル300語') {
+                        targetCardId = 'level3CardBtn';
+                    } else if (window.currentSubcategoryParent === 'カテゴリー別') {
+                        targetCardId = 'elementaryCategoryCardBtn';
                     }
                     
-                    // フローティング要復習ボタンを表示（ホーム画面に戻る）
-                    showFloatingReviewBtn();
+                    const parentToReset = window.currentSubcategoryParent;
+                    window.currentSubcategoryParent = null;
                     
-                    setTimeout(() => {
-                        courseSelection.classList.remove('slide-out-right');
+                    // 縮小アニメーションで戻る
+                    animateCardShrink(targetCardId, () => {
                         courseSelection.classList.add('hidden');
-                        categorySelection.classList.remove('slide-in-left');
-                        window.currentSubcategoryParent = null;
-                    }, 300);
-                    
-                    updateHeaderButtons('home');
+                        categorySelection.classList.remove('hidden');
+                        
+                        // 進捗バーを更新してアニメーションを実行
+                        updateCategoryStars();
+                        updateVocabProgressBar();
+                        if (lastLearningCategory) {
+                            setTimeout(() => {
+                                animateProgressToGoal();
+                                lastLearningCategory = null;
+                            }, 100);
+                        }
+                        
+                        // フローティング要復習ボタンを表示（ホーム画面に戻る）
+                        showFloatingReviewBtn();
+                        
+                        updateHeaderButtons('home');
+                    });
+                    return;
                 } else {
                     courseSelection.classList.add('hidden');
                     showCategorySelection();
@@ -20077,18 +20148,13 @@ function showIvStudyView(category) {
         ivMenuView.classList.add('slide-out-left');
     }
     
-    // 学習モードを右からスライドイン
+    // 学習モードを表示
     view.classList.remove('hidden');
-    view.classList.add('slide-in-right');
     document.body.style.overflow = 'hidden';
     
-    setTimeout(() => {
-        view.classList.remove('slide-in-right');
-        if (ivMenuView) {
-            ivMenuView.classList.remove('slide-out-left');
-            ivMenuView.classList.add('hidden');
-        }
-    }, 300);
+    if (ivMenuView) {
+        ivMenuView.classList.add('hidden');
+    }
 }
 
 // 学習モードを非表示（サブカテゴリーメニューに戻る）
@@ -20097,27 +20163,16 @@ function hideIvStudyView() {
     const ivMenuView = document.getElementById('ivMenuView');
     
     if (view) {
-        // ヘッダーを更新（パッと切り替わる）
+        // ヘッダーを更新
         updateHeaderButtons('course', '不規則変化の単語');
         
-        // サブカテゴリーメニューを先に表示（学習モードの下に）
+        view.classList.add('hidden');
+        document.body.style.overflow = '';
+        
         if (ivMenuView) {
             ivMenuView.classList.remove('hidden');
-            ivMenuView.classList.add('slide-in-left');
             updateIrregularVerbsProgressBar();
         }
-        
-        // 学習モードを右へスライドアウト
-        view.classList.add('slide-out-right');
-        
-        setTimeout(() => {
-            view.classList.remove('slide-out-right');
-            view.classList.add('hidden');
-            document.body.style.overflow = '';
-            if (ivMenuView) {
-                ivMenuView.classList.remove('slide-in-left');
-            }
-        }, 300);
     }
 }
 
@@ -20483,14 +20538,9 @@ function showIrregularVerbsTestView(data, type, title) {
     // 現在のテストデータを保存
     currentIvTestData = { data, type };
     
-    // 画面表示（右からスライドイン）
+    // 画面表示
     view.classList.remove('hidden');
-    view.classList.add('slide-in-right');
     document.body.style.overflow = 'hidden';
-    
-    setTimeout(() => {
-        view.classList.remove('slide-in-right');
-    }, 300);
 }
 
 // 現在のテストデータ
@@ -20617,27 +20667,16 @@ function hideIrregularVerbsView() {
         // キーボードを隠す
         hideIvKeyboard();
         
-        // ヘッダーを更新（パッと切り替わる）
+        // ヘッダーを更新
         updateHeaderButtons('course', '不規則変化の単語');
         
-        // サブカテゴリーメニューを先に表示（テストモードの下に）
+        view.classList.add('hidden');
+        document.body.style.overflow = '';
+        
         if (ivMenuView) {
             ivMenuView.classList.remove('hidden');
-            ivMenuView.classList.add('slide-in-left');
             updateIrregularVerbsProgressBar();
         }
-        
-        // テストモードを右へスライドアウト
-        view.classList.add('slide-out-right');
-        
-        setTimeout(() => {
-            view.classList.remove('slide-out-right');
-            view.classList.add('hidden');
-            document.body.style.overflow = '';
-            if (ivMenuView) {
-                ivMenuView.classList.remove('slide-in-left');
-            }
-        }, 300);
     }
 }
 

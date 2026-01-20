@@ -18268,4 +18268,30 @@ body.learning-mode .floating-review-btn {
     pointer-events: none;
     overflow: hidden;
     background: #ffffff;
+    border: 1.5px solid #1e40af;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-expand-overlay .expand-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+}
+
+.card-expand-overlay .expand-title .level-badge {
+    display: inline-block;
+    transform: none;
+}
+
+.card-expand-overlay .expand-title .title-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
 }
