@@ -278,41 +278,87 @@ function animateCardShrink(targetCardId, callback) {
     // まずオーバーレイを画面全体に表示
     const overlay = document.createElement('div');
     overlay.className = 'card-expand-overlay';
-    overlay.style.left = '0';
-    overlay.style.top = '0';
-    overlay.style.width = '100vw';
-    overlay.style.height = '100vh';
-    overlay.style.opacity = '1';
-    overlay.style.transition = 'none';
+    Object.assign(overlay.style, {
+        left: '0',
+        top: '0',
+        width: '100vw',
+        height: '100vh',
+        opacity: '1',
+        transition: 'none',
+        zIndex: '10000',
+        backgroundColor: '#ffffff'
+    });
+    
+    // 戻る時もタイトルとバッジを表示
+    const targetCard = document.getElementById(targetCardId);
+    if (targetCard) {
+        const titleContainer = document.createElement('div');
+        titleContainer.className = 'expand-title';
+        titleContainer.style.transform = 'scale(1.5)';
+        
+        const badge = targetCard.querySelector('.level-badge');
+        const categoryName = targetCard.querySelector('.category-name');
+        
+        if (badge) {
+            const badgeClone = badge.cloneNode(true);
+            titleContainer.appendChild(badgeClone);
+        }
+        
+        if (categoryName) {
+            const titleText = document.createElement('div');
+            titleText.className = 'title-text';
+            const textOnly = categoryName.textContent.replace(/RANK\d/g, '').trim();
+            titleText.textContent = textOnly;
+            titleContainer.appendChild(titleText);
+        }
+        overlay.appendChild(titleContainer);
+    }
     
     document.body.appendChild(overlay);
     
     // 画面遷移を先に実行（オーバーレイの下で）
     if (callback) callback();
     
-    // 次のフレームでターゲットカードの位置を取得して縮小開始
-    requestAnimationFrame(() => {
-        const targetCard = document.getElementById(targetCardId);
-        if (targetCard) {
-            const rect = targetCard.getBoundingClientRect();
+    // レイアウトの確定を待ってからスクロール
+    setTimeout(() => {
+        const currentTargetCard = document.getElementById(targetCardId);
+        const appMain = document.querySelector('.app-main');
+        
+        if (currentTargetCard && appMain) {
+            // 最下部メニューの場合は一番下まで、それ以外は中央までスクロール
+            if (targetCardId === 'allWordsCardBtn' || targetCardId === 'irregularVerbsCardBtn') {
+                appMain.scrollTop = appMain.scrollHeight + 1000; // 余裕を持って下に飛ばす
+            } else {
+                currentTargetCard.scrollIntoView({ block: 'center', behavior: 'instant' });
+            }
             
-            overlay.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-            overlay.style.left = rect.left + 'px';
-            overlay.style.top = rect.top + 'px';
-            overlay.style.width = rect.width + 'px';
-            overlay.style.height = rect.height + 'px';
-            overlay.style.opacity = '0.3';
+            // スクロール完了後にアニメーション開始
+            requestAnimationFrame(() => {
+                const rect = currentTargetCard.getBoundingClientRect();
+                const titleContainer = overlay.querySelector('.expand-title');
+                
+                overlay.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                overlay.style.left = rect.left + 'px';
+                overlay.style.top = rect.top + 'px';
+                overlay.style.width = rect.width + 'px';
+                overlay.style.height = rect.height + 'px';
+                overlay.style.opacity = '0';
+                
+                if (titleContainer) {
+                    titleContainer.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                    titleContainer.style.transform = 'scale(1)';
+                }
+                
+                setTimeout(() => {
+                    overlay.remove();
+                }, 300);
+            });
         } else {
-            // ターゲットが見つからない場合はフェードアウト
             overlay.style.transition = 'opacity 0.2s ease';
             overlay.style.opacity = '0';
+            setTimeout(() => overlay.remove(), 200);
         }
-        
-        // アニメーション完了後にオーバーレイを削除
-        setTimeout(() => {
-            overlay.remove();
-        }, 300);
-    });
+    }, 30);
 }
 
 // カード拡大アニメーション関数
@@ -3818,11 +3864,13 @@ function updateHeaderUnitName(unitName) {
 }
 
 // カテゴリー選択画面を表示
-function showCategorySelection(slideIn = false) {
+function showCategorySelection(slideIn = false, skipScroll = false) {
     // スクロール位置を一番上にリセット
-    window.scrollTo(0, 0);
-    const appMain = document.querySelector('.app-main');
-    if (appMain) appMain.scrollTop = 0;
+    if (!skipScroll) {
+        window.scrollTo(0, 0);
+        const appMain = document.querySelector('.app-main');
+        if (appMain) appMain.scrollTop = 0;
+    }
     
     // 復習モードのタイトルとクラスをリセット
     resetReviewWrongWordsTitle();
@@ -7506,126 +7554,7 @@ function setupEventListeners() {
     // インプットモード用戻るボタン
     const inputBackBtn = document.getElementById('inputBackBtn');
     if (inputBackBtn) {
-        inputBackBtn.addEventListener('click', () => {
-            // 学習モードをリセット
-            document.body.classList.remove('learning-mode');
-            updateThemeColor(false);
-            
-            // シャッフル状態をリセット
-            isInputShuffled = false;
-            const shuffleBtn = document.getElementById('inputShuffleBtn');
-            if (shuffleBtn) {
-                shuffleBtn.classList.remove('active');
-            }
-            
-            // 単語一覧の表示モードを展開モードにリセット
-            inputListViewMode = 'expand';
-            const flipBtn = document.getElementById('inputListModeFlip');
-            const expandBtn = document.getElementById('inputListModeExpand');
-            const flipAllBtn = document.getElementById('inputFlipAllBtn');
-            if (flipBtn) flipBtn.classList.remove('active');
-            if (expandBtn) expandBtn.classList.add('active');
-            if (flipAllBtn) flipAllBtn.classList.add('hidden');
-            
-            // フリップモードでヘッダーがコンテナ内にある場合は元の位置に戻す
-            const inputListHeader = document.querySelector('.input-list-header');
-            const inputListView = document.getElementById('inputListView');
-            const inputListContainer = document.getElementById('inputListContainer');
-            if (inputListHeader && inputListView && inputListContainer && inputListContainer.contains(inputListHeader)) {
-                inputListView.insertBefore(inputListHeader, inputListContainer);
-            }
-            
-            // カテゴリー別のサブカテゴリー
-            const elementarySubcategories = [
-                '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器', '衣類', '単位',
-                '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
-                '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
-            ];
-            
-            // メインコンテンツを右へスライドアウト
-            if (elements.mainContent) {
-                elements.mainContent.style.transition = 'transform 0.3s ease-out';
-                elements.mainContent.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    elements.mainContent.style.transition = '';
-                    elements.mainContent.style.transform = '';
-                    elements.mainContent.classList.add('hidden');
-                }, 300);
-            }
-            
-            // レベル別の細分化メニューから来た場合は、レベル別の細分化メニューに戻る
-            console.log('inputBackBtn clicked, currentSubcategoryParent:', window.currentSubcategoryParent);
-            if (window.currentSubcategoryParent && (window.currentSubcategoryParent === 'レベル１ 超重要500語' || 
-                window.currentSubcategoryParent === 'レベル２ 重要500語' || 
-                window.currentSubcategoryParent === 'レベル３ ハイレベル300語')) {
-                console.log('Returning to level subcategory selection:', window.currentSubcategoryParent);
-                showLevelSubcategorySelection(window.currentSubcategoryParent, true);
-                return;
-            }
-            
-            // カテゴリー別から来た場合は、その画面に戻る
-            if (window.currentSubcategoryParent === 'カテゴリー別') {
-                showElementaryCategorySelection(true);
-                return;
-            }
-            
-            // カテゴリー別に覚える単語のサブカテゴリーの場合はカテゴリー別の画面に戻る
-            if (selectedCategory && elementarySubcategories.includes(selectedCategory)) {
-                showElementaryCategorySelection(true);
-                return;
-            }
-            
-            // コース選択画面に戻る
-            if (selectedCategory) {
-                let categoryWords;
-                if (selectedCategory === '小学生で習った単語とカテゴリー別に覚える単語') {
-                    // vocabulary-data.jsから取得（優先）
-                    if (typeof getElementaryVocabulary !== 'undefined' && typeof getElementaryVocabulary === 'function') {
-                        categoryWords = getElementaryVocabulary();
-                    } else if (typeof elementaryWordData !== 'undefined') {
-                        // 既存のelementaryWordDataとの互換性
-                        categoryWords = elementaryWordData;
-                    } else {
-                        showCategorySelection();
-                        return;
-                    }
-                } else if (selectedCategory === 'LEVEL1 超重要単語400' || selectedCategory === 'LEVEL2 重要単語300' || selectedCategory === 'LEVEL3 差がつく単語200' || 
-                           selectedCategory === 'LEVEL4 私立高校入試レベル' || selectedCategory === 'LEVEL5 難関私立高校入試レベル') {
-                    // レベル別単語：vocabulary-data.jsから取得（最適化）
-                    const levelMap = {
-                        'LEVEL1 超重要単語400': 1,
-                        'LEVEL2 重要単語300': 2,
-                        'LEVEL3 差がつく単語200': 3,
-                        'LEVEL4 私立高校入試レベル': 4,
-                        'LEVEL5 難関私立高校入試レベル': 5
-                    };
-                    const level = levelMap[selectedCategory];
-                    if (level && typeof getVocabularyByLevel !== 'undefined' && typeof getVocabularyByLevel === 'function') {
-                        categoryWords = getVocabularyByLevel(level);
-                    } else if (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function') {
-                        const allWords = getAllVocabulary();
-                        categoryWords = allWords.filter(word => word.category === selectedCategory);
-                } else {
-                        categoryWords = wordData.filter(word => word.category === selectedCategory);
-                    }
-                } else {
-                    // vocabulary-data.jsから取得を試みる
-                    if (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function') {
-                        const allWords = getAllVocabulary();
-                        categoryWords = allWords.filter(word => word.category === selectedCategory);
-                    } else {
-                        categoryWords = wordData.filter(word => word.category === selectedCategory);
-                    }
-                }
-                if (categoryWords && categoryWords.length > 0) {
-                    showCourseSelection(selectedCategory, categoryWords, true);
-                } else {
-                    showCategorySelection(true);
-                }
-            } else {
-                showCategorySelection(true);
-            }
-        });
+        inputBackBtn.addEventListener('click', handleBackButton);
     }
     
     // 進捗バーの左右矢印ボタン
@@ -8225,10 +8154,9 @@ function setupEventListeners() {
     
     // 戻る処理を共通関数化
     function handleBackButton() {
-            // スクロール位置を一番上にリセット
-            window.scrollTo(0, 0);
-            const appMain = document.querySelector('.app-main');
-            if (appMain) appMain.scrollTop = 0;
+            // 学習モードをリセット
+            document.body.classList.remove('learning-mode');
+            updateThemeColor(false);
             
             // 現在の画面に応じて適切な画面に戻る
             const grammarChapterView = document.getElementById('grammarChapterView');
@@ -8260,7 +8188,9 @@ function setupEventListeners() {
                 if (window.currentSubcategoryParent) {
                     if (window.currentSubcategoryParent === 'レベル１ 超重要500語' || 
                         window.currentSubcategoryParent === 'レベル２ 重要500語' || 
-                        window.currentSubcategoryParent === 'レベル３ ハイレベル300語') {
+                        window.currentSubcategoryParent === 'レベル３ ハイレベル300語' ||
+                        window.currentSubcategoryParent === 'レベル４ 難関公立高校入試レベル' ||
+                        window.currentSubcategoryParent === 'レベル５ 難関私立高校入試レベル') {
                         showLevelSubcategorySelection(window.currentSubcategoryParent, true);
                         return;
                     } else if (window.currentSubcategoryParent === 'カテゴリー別') {
@@ -8280,7 +8210,7 @@ function setupEventListeners() {
                     updateHeaderButtons('course', displayCategory);
                 }
             } else if (courseSelection && !courseSelection.classList.contains('hidden')) {
-                // コース選択画面からカテゴリー選択画面に戻る（スライドイン）
+                // コース選択画面からカテゴリー選択画面に戻る（縮小アニメーション）
                 const categorySelection = elements.categorySelection;
                 
                 // サブカテゴリー画面からの戻り
@@ -8293,41 +8223,56 @@ function setupEventListeners() {
                         targetCardId = 'level2CardBtn';
                     } else if (window.currentSubcategoryParent === 'レベル３ ハイレベル300語') {
                         targetCardId = 'level3CardBtn';
+                    } else if (window.currentSubcategoryParent === 'レベル４ 難関公立高校入試レベル') {
+                        targetCardId = 'level4CardBtn';
+                    } else if (window.currentSubcategoryParent === 'レベル５ 難関私立高校入試レベル') {
+                        targetCardId = 'level5CardBtn';
                     } else if (window.currentSubcategoryParent === 'カテゴリー別') {
                         targetCardId = 'elementaryCategoryCardBtn';
                     }
                     
-                    const parentToReset = window.currentSubcategoryParent;
-                    window.currentSubcategoryParent = null;
-                    
-                    // 縮小アニメーションで戻る
-                    animateCardShrink(targetCardId, () => {
-                        courseSelection.classList.add('hidden');
-                        categorySelection.classList.remove('hidden');
-                        
-                        // 進捗バーを更新してアニメーションを実行
-                        updateCategoryStars();
-                        updateVocabProgressBar();
-                        if (lastLearningCategory) {
-                            setTimeout(() => {
-                                animateProgressToGoal();
-                                lastLearningCategory = null;
-                            }, 100);
-                        }
-                        
-                        // フローティング要復習ボタンを表示（ホーム画面に戻る）
-                        showFloatingReviewBtn();
-                        
-                        updateHeaderButtons('home');
-                    });
-                    return;
-                } else {
-                    courseSelection.classList.add('hidden');
-                    showCategorySelection();
+                    if (targetCardId) {
+                        window.currentSubcategoryParent = null;
+                        animateCardShrink(targetCardId, () => {
+                            courseSelection.classList.add('hidden');
+                            categorySelection.classList.remove('hidden');
+                            updateHeaderButtons('home');
+                            updateCategoryStars();
+                            updateVocabProgressBar();
+                            showFloatingReviewBtn();
+                        });
+                        return;
+                    }
                 }
+                
+                courseSelection.classList.add('hidden');
+                showCategorySelection();
             } else if (elements.mainContent && !elements.mainContent.classList.contains('hidden')) {
                 // 学習画面からコース選択画面またはカテゴリー選択画面に戻る
                 if (selectedCategory) {
+                    // 単語一覧から来た場合は、縮小アニメーションでホームに戻る
+                    if (selectedCategory === '大阪府のすべての英単語') {
+                        animateCardShrink('allWordsCardBtn', () => {
+                            selectedCategory = null;
+                            elements.mainContent.classList.add('hidden');
+                            elements.categorySelection.classList.remove('hidden');
+                            updateHeaderButtons('home');
+                            updateCategoryStars();
+                            updateVocabProgressBar();
+                            showFloatingReviewBtn();
+                        });
+                        return;
+                    }
+                    
+                    // 不規則変化の単語から来た場合は、不規則変化メニューに戻る
+                    if (window.currentSubcategoryParent && window.currentSubcategoryParent === '不規則変化の単語') {
+                        elements.mainContent.classList.add('hidden');
+                        const ivMenuView = document.getElementById('ivMenuView');
+                        if (ivMenuView) ivMenuView.classList.remove('hidden');
+                        updateHeaderButtons('course', '不規則変化の単語');
+                        return;
+                    }
+                    
                     // レベル別の細分化メニューから来た場合は、細分化メニューに戻る
                     if (window.currentSubcategoryParent && (window.currentSubcategoryParent === 'レベル１ 超重要500語' || 
                         window.currentSubcategoryParent === 'レベル２ 重要500語' || 
@@ -19875,29 +19820,12 @@ function showIvMenuView() {
     const categorySelection = document.getElementById('categorySelection');
     
     if (view && categorySelection) {
-        // メインヘッダーを更新（パッと切り替わる）
+        // メインヘッダーを更新
         updateHeaderButtons('course', '不規則変化の単語');
         
-        // categorySelectionを表示状態にしておく（背景として）
-        categorySelection.classList.remove('hidden');
-        
-        // サブカテゴリーメニューを即座に表示し、右からスライドイン
-        view.style.opacity = '1';
+        // 画面切り替え
+        categorySelection.classList.add('hidden');
         view.classList.remove('hidden');
-        view.style.transform = 'translateX(100%)';
-        
-        // 次のフレームでアニメーション開始
-        requestAnimationFrame(() => {
-            view.style.transition = 'transform 0.3s ease-out';
-            view.style.transform = 'translateX(0)';
-        });
-        
-        // アニメーション完了後にcategorySelectionを非表示
-        setTimeout(() => {
-            view.style.transition = '';
-            view.style.transform = '';
-            categorySelection.classList.add('hidden');
-        }, 300);
         
         // サブカテゴリーの進捗バーを更新
         updateIrregularVerbsProgressBar();
@@ -19913,31 +19841,27 @@ function hideIvMenuView() {
     const categorySelection = document.getElementById('categorySelection');
     
     if (view && categorySelection) {
-        // メインヘッダーをホームに戻す（パッと切り替わる）
-        updateHeaderButtons('home');
+        window.currentSubcategoryParent = null;
         
-        // カテゴリー選択画面を先に表示（iv-menu-viewの下に表示）
-        categorySelection.classList.remove('hidden');
-        
-        // iv-menu-view全体を右へスライドアウト（opacityなし）
-        view.style.transition = 'transform 0.3s ease-out';
-        view.style.transform = 'translateX(100%)';
-        
-        // 進捗バーを更新
-        updateCategoryStars();
-        updateVocabProgressBar();
-        updateIrregularVerbsProgressBar();
-        
-        // フローティング要復習ボタンを表示（ホーム画面に戻る）
-        showFloatingReviewBtn();
-        
-        setTimeout(() => {
-            view.style.transition = '';
-            view.style.transform = '';
+        // 縮小アニメーションで戻る
+        animateCardShrink('irregularVerbsCardBtn', () => {
+            // メインヘッダーをホームに戻す
+            updateHeaderButtons('home');
+            
+            // 画面切り替え
             view.classList.add('hidden');
+            categorySelection.classList.remove('hidden');
+            
+            // 進捗バーを更新
+            updateCategoryStars();
+            updateVocabProgressBar();
+            updateIrregularVerbsProgressBar();
+            
+            // フローティング要復習ボタンを表示
+            showFloatingReviewBtn();
+            
             document.body.style.overflow = '';
-            window.currentSubcategoryParent = null;
-        }, 300);
+        });
     }
 }
 
@@ -20142,19 +20066,15 @@ function showIvStudyView(category) {
     document.getElementById('ivStudyTableContainer')?.classList.remove('redsheet-active');
     document.getElementById('ivRedsheetOverlay')?.classList.add('hidden');
     
-    // サブカテゴリーメニューを左へスライドアウト
+    // サブカテゴリーメニューを非表示
     const ivMenuView = document.getElementById('ivMenuView');
     if (ivMenuView) {
-        ivMenuView.classList.add('slide-out-left');
+        ivMenuView.classList.add('hidden');
     }
     
     // 学習モードを表示
     view.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
-    
-    if (ivMenuView) {
-        ivMenuView.classList.add('hidden');
-    }
 }
 
 // 学習モードを非表示（サブカテゴリーメニューに戻る）
@@ -20367,14 +20287,10 @@ function showIvTestView(category) {
     // 現在のカテゴリーを保存
     currentIvCategory = category;
     
-    // サブカテゴリーメニューを左へスライドアウト
+    // サブカテゴリーメニューを非表示
     const ivMenuView = document.getElementById('ivMenuView');
     if (ivMenuView) {
-        ivMenuView.classList.add('slide-out-left');
-        setTimeout(() => {
-            ivMenuView.classList.remove('slide-out-left');
-            ivMenuView.classList.add('hidden');
-        }, 300);
+        ivMenuView.classList.add('hidden');
     }
     
     // データ取得
