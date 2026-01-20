@@ -2525,7 +2525,8 @@ body.learning-mode .app-header {
     display: flex;
     justify-content: center;
     align-items: stretch;
-    gap: 10px;
+    gap: 16px;
+    padding: 0 8px;
 }
 
 .study-calendar-right {
@@ -2644,14 +2645,9 @@ body.learning-mode .app-header {
 
 .calendar-month-label {
     font-family: 'Meiryo', 'メイリオ', sans-serif;
-    font-size: 11px;
+    font-size: 10px;
     color: #1e40af;
     font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    writing-mode: horizontal-tb;
-    padding: 0 4px;
 }
 
 .study-calendar-grid {
@@ -2659,7 +2655,7 @@ body.learning-mode .app-header {
     grid-template-columns: repeat(7, 1fr);
     gap: 6px;
     width: 100%;
-    max-width: 245px;
+    max-width: 260px;
 }
 
 .calendar-corner {
@@ -2711,9 +2707,17 @@ body.learning-mode .app-header {
 .study-calendar-legend {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 5px;
     margin-top: 4px;
+    width: 100%;
+    max-width: 260px;
+}
+
+.study-calendar-legend-right {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .legend-label {
