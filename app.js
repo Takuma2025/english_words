@@ -286,7 +286,9 @@ function animateCardShrink(targetCardId, callback) {
         opacity: '1',
         transition: 'none',
         zIndex: '10000',
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        transformStyle: 'preserve-3d',
+        transform: 'perspective(1000px) rotateY(0deg)'
     });
     
     // 戻る時もタイトルとバッジを表示
@@ -327,7 +329,7 @@ function animateCardShrink(targetCardId, callback) {
         if (currentTargetCard && appMain) {
             // 最下部メニューの場合は一番下まで、それ以外は中央までスクロール
             if (targetCardId === 'allWordsCardBtn' || targetCardId === 'irregularVerbsCardBtn') {
-                appMain.scrollTop = appMain.scrollHeight + 1000; // 余裕を持って下に飛ばす
+                appMain.scrollTop = appMain.scrollHeight + 1000;
             } else {
                 currentTargetCard.scrollIntoView({ block: 'center', behavior: 'instant' });
             }
@@ -337,21 +339,22 @@ function animateCardShrink(targetCardId, callback) {
                 const rect = currentTargetCard.getBoundingClientRect();
                 const titleContainer = overlay.querySelector('.expand-title');
                 
-                overlay.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                overlay.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
                 overlay.style.left = rect.left + 'px';
                 overlay.style.top = rect.top + 'px';
                 overlay.style.width = rect.width + 'px';
                 overlay.style.height = rect.height + 'px';
                 overlay.style.opacity = '0';
+                overlay.style.transform = 'perspective(1000px) rotateY(-360deg)';
                 
                 if (titleContainer) {
-                    titleContainer.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                    titleContainer.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
                     titleContainer.style.transform = 'scale(1)';
                 }
                 
                 setTimeout(() => {
                     overlay.remove();
-                }, 300);
+                }, 400);
             });
         } else {
             overlay.style.transition = 'opacity 0.2s ease';
@@ -404,19 +407,24 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     overlay.appendChild(titleContainer);
     document.body.appendChild(overlay);
     
+    // 3D回転用の設定
+    overlay.style.transformStyle = 'preserve-3d';
+    overlay.style.transform = 'perspective(1000px) rotateY(0deg)';
+    
     // 効果音を再生
     SoundEffects.playMenuSelect();
     
     // 次のフレームでアニメーション開始
     requestAnimationFrame(() => {
-        overlay.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        overlay.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
         overlay.style.left = '0';
         overlay.style.top = '0';
         overlay.style.width = '100vw';
         overlay.style.height = '100vh';
         overlay.style.opacity = '1';
+        overlay.style.transform = 'perspective(1000px) rotateY(360deg)';
         // バッジとタイトルを少し拡大
-        titleContainer.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        titleContainer.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
         titleContainer.style.transform = 'scale(1.5)';
     });
     
@@ -429,7 +437,7 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
         setTimeout(() => {
             overlay.remove();
         }, 150);
-    }, 300);
+    }, 400);
 }
 
 let answeredWords = new Set();

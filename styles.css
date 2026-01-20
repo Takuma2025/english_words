@@ -2336,6 +2336,123 @@ body.learning-mode .app-header {
     font-weight: 500;
 }
 
+/* 学習ヒートマップ */
+.learning-heatmap-container {
+    width: calc(100% - 16px);
+    max-width: 600px;
+    margin: 16px auto;
+    padding: 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-sizing: border-box;
+}
+
+.heatmap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.heatmap-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.heatmap-month {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.heatmap-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.heatmap-weekdays span {
+    font-size: 10px;
+    color: #9ca3af;
+    text-align: center;
+}
+
+.heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.heatmap-cell {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    background: #f3f4f6;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.heatmap-cell:hover {
+    transform: scale(1.1);
+}
+
+.heatmap-cell.level-0 { background: #f3f4f6; }
+.heatmap-cell.level-1 { background: #bfdbfe; }
+.heatmap-cell.level-2 { background: #60a5fa; }
+.heatmap-cell.level-3 { background: #2563eb; }
+.heatmap-cell.level-4 { background: #1e40af; }
+
+.heatmap-cell.empty {
+    background: transparent;
+    pointer-events: none;
+}
+
+.heatmap-cell.today {
+    box-shadow: 0 0 0 2px #f59e0b;
+}
+
+.heatmap-cell .day-number {
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    font-size: 8px;
+    color: #6b7280;
+    line-height: 1;
+}
+
+.heatmap-cell.level-2 .day-number,
+.heatmap-cell.level-3 .day-number,
+.heatmap-cell.level-4 .day-number {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.heatmap-legend {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-top: 10px;
+}
+
+.heatmap-legend .legend-label {
+    font-size: 10px;
+    color: #9ca3af;
+}
+
+.heatmap-legend .legend-box {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.heatmap-legend .legend-box.level-0 { background: #f3f4f6; }
+.heatmap-legend .legend-box.level-1 { background: #bfdbfe; }
+.heatmap-legend .legend-box.level-2 { background: #60a5fa; }
+.heatmap-legend .legend-box.level-3 { background: #2563eb; }
+.heatmap-legend .legend-box.level-4 { background: #1e40af; }
+
 .course-tabs {
     display: flex;
     gap: 6px;
@@ -7372,7 +7489,7 @@ body.choice-question-mode-active .word-card-container {
     position: relative;
     padding: 3px 7px 3px 7px;
     margin-right: 0;
-    background: #6b7280;
+    background: #9ca3af;
     border-radius: 0;
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
     letter-spacing: 0.08em;
@@ -7566,7 +7683,7 @@ body.choice-question-mode-active .word-card-container {
     font-size: 26px;
     font-weight: 600;
     letter-spacing: 0.03em;
-    color: #0f172a;
+    color: #1e40af;
     font-family: var(--font-sans);
     font-weight: bold;
     word-break: break-word;
@@ -7667,7 +7784,7 @@ body.choice-question-mode-active .word-card-container {
     font-weight: 700;
     color: #ffffff;
     padding: 3px 7px;
-    background: #6b7280;
+    background: #9ca3af;
     border-radius: 0;
     font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
     letter-spacing: 0.08em;
@@ -7774,7 +7891,7 @@ body.choice-question-mode-active .word-card-container {
 .input-list-expand-word {
     font-size: 32px;
     font-weight: 700;
-    color: #111827;
+    color: #1e40af;
     font-family: var(--font-sans);
     font-weight: bold;
     font-weight: bold;
@@ -17533,10 +17650,7 @@ body .sentence-english {
 .iv-menu-cards {
     display: flex;
     flex-direction: column;
-}
-
-.iv-menu-cards .category-card.category-card-with-actions {
-    margin-bottom: 0 !important;
+    gap: 12px;
 }
 
 /* 学習モード */
