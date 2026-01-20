@@ -6921,18 +6921,18 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     gap: 0;
     min-height: auto;
-    border-top: 1px solid #0055ca;
-    border-left: 1px solid #0055ca;
+    border-top: 1.5px solid #1e40af;
+    border-left: 1.5px solid #1e40af;
     border-right: none;
     border-bottom: none;
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:first-child {
-    border-top: 1px solid #0055ca;
+    border-top: 1.5px solid #1e40af;
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:last-child {
-    border-bottom: 1px solid #0055ca;
+    border-bottom: 1.5px solid #1e40af;
 }
 
 /* 1. 単語番号 */
@@ -7036,7 +7036,7 @@ body.choice-question-mode-active .word-card-container {
 .flip-mode .input-list-inner {
     box-shadow: none;
     border-radius: 0;
-    border: 1px solid #0055ca;
+    border: 1.5px solid #1e40af;
 }
 
 .flip-mode .input-list-front,
@@ -7509,8 +7509,8 @@ body.choice-question-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
-    border-top: 1px solid #0055ca;
-    border-left: 1px solid #0055ca;
+    border-top: 1.5px solid #1e40af;
+    border-left: 1.5px solid #1e40af;
     padding: 20px 16px;
     padding-top: 40px;
     padding-bottom: 24px;
@@ -7518,11 +7518,11 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-item-expand:first-child {
-    border-top: 1px solid #0055ca;
+    border-top: 1.5px solid #1e40af;
 }
 
 .input-list-item-expand:last-child {
-    border-bottom: 1px solid #0055ca;
+    border-bottom: 1.5px solid #1e40af;
 }
 
 .input-list-item-expand.marker-correct {
@@ -8833,14 +8833,14 @@ body.choice-question-mode-active .word-card-container {
     background: #ffffff;
     border-radius: 20px;
     box-shadow: none;
-    border: 1px solid #0055ca;
+    border: 1.5px solid #1e40af;
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease;
 }
 
 /* アウトプットモードのときも青ボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-stack {
-    border: 1px solid #0055ca;
+    border: 1.5px solid #1e40af;
 }
 
 .card-stack-1 {
@@ -9049,13 +9049,13 @@ body.learning-mode .bottom-nav {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1px solid #0055ca;
+    border: 1.5px solid #1e40af;
     transition: border-color 0.3s ease;
 }
 
 /* アウトプットモードのときも青ボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
-    border: 1px solid #0055ca;
+    border: 1.5px solid #1e40af;
 }
 
 /* カードの赤・青囲みは削除 - 単語番号下のマーカーのみ使用 */
@@ -9071,14 +9071,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1px solid #0055ca;
+    border: 1.5px solid #1e40af;
     transform: rotateY(180deg);
     transition: border-color 0.3s ease;
 }
 
 /* アウトプットモードのときも青ボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
-    border: 1px solid #0055ca;
+    border: 1.5px solid #1e40af;
 }
 
 /* 裏面の英単語表示（小さく上部に） */
@@ -15846,7 +15846,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     background: #fff;
     font-family: var(--font-sans);
     font-weight: bold;
-    border: 1px solid #0055ca;
+    border: 1.5px solid #1e40af;
     border-radius: 6px;
     font-size: 28px;
     font-weight: 700;
@@ -17489,14 +17489,14 @@ body .sentence-english {
     font-weight: 700;
     color: #374151;
     text-align: left;
-    border-bottom: 1px solid #0055ca;
+    border-bottom: 1.5px solid #1e40af;
     background: #f3f4f6;
 }
 
 .iv-study-table td {
     padding: 10px 8px;
     font-size: 14px;
-    border-bottom: 1px solid #0055ca;
+    border-bottom: 1.5px solid #1e40af;
     vertical-align: middle;
 }
 
@@ -17644,14 +17644,14 @@ body .sentence-english {
     text-align: center;
     font-weight: 600;
     color: #475569;
-    border-bottom: 1px solid #0055ca;
+    border-bottom: 1.5px solid #1e40af;
     font-size: 12px;
 }
 
 .irregular-verbs-table td {
     padding: 8px 4px;
     text-align: center;
-    border-bottom: 1px solid #0055ca;
+    border-bottom: 1.5px solid #1e40af;
     vertical-align: middle;
 }
 
