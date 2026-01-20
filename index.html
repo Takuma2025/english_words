@@ -218,23 +218,56 @@
 
                 <!-- 学習カレンダー -->
                 <div class="study-calendar-container" id="studyCalendarContainer">
-                    <h3 class="study-calendar-title">学習カレンダー</h3>
-                    <div class="study-calendar-wrapper">
-                        <div class="calendar-month-label" id="calendarMonthLabel"></div>
-                        <div class="study-calendar-grid" id="studyCalendarGrid">
-                            <!-- JavaScriptで動的に生成 -->
+                    <div class="study-calendar-main">
+                        <div class="study-stats-container">
+                            <div class="study-stat-item study-streak">
+                                <div class="study-stat-header">
+                                    <span class="study-stat-title">連続学習日数</span>
+                                </div>
+                                <div class="study-time-display streak-display">
+                                    <svg class="streak-fire-icon" width="14" height="22" viewBox="4 0 16 24" fill="#3b82f6">
+                                        <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/>
+                                    </svg>
+                                    <span class="time-num" id="studyStreakNumber">0</span><span class="time-label">日</span>
+                                </div>
+                                <div class="study-stat-sub">自己ベスト: <span class="best-num" id="studyStreakBest">0</span>日</div>
+                            </div>
+                            <div class="study-stat-item study-time">
+                                <div class="study-stat-header">
+                                    <svg class="study-stat-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <polyline points="12 6 12 12 16 14"/>
+                                    </svg>
+                                    <span class="study-stat-title">総学習時間</span>
+                                </div>
+                                <div class="study-time-display">
+                                    <span class="time-num" id="studyTimeHours">00</span><span class="time-label">時間</span>
+                                    <span class="time-num" id="studyTimeMinutes">00</span><span class="time-label">分</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="study-calendar-legend">
-                        <span class="legend-label">少ない</span>
-                        <div class="legend-cells">
-                            <span class="legend-cell level-0"></span>
-                            <span class="legend-cell level-1"></span>
-                            <span class="legend-cell level-2"></span>
-                            <span class="legend-cell level-3"></span>
-                            <span class="legend-cell level-4"></span>
+                        <div class="study-calendar-right">
+                            <div class="study-calendar-wrapper">
+                                <div class="calendar-month-label" id="calendarMonthLabel"></div>
+                                <div class="study-calendar-grid-wrapper">
+                                    <h3 class="study-calendar-title">学習カレンダー</h3>
+                                    <div class="study-calendar-grid" id="studyCalendarGrid">
+                                        <!-- JavaScriptで動的に生成 -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="study-calendar-legend">
+                                <span class="legend-label">少ない</span>
+                                <div class="legend-cells">
+                                    <span class="legend-cell level-0"></span>
+                                    <span class="legend-cell level-1"></span>
+                                    <span class="legend-cell level-2"></span>
+                                    <span class="legend-cell level-3"></span>
+                                    <span class="legend-cell level-4"></span>
+                                </div>
+                                <span class="legend-label">多い</span>
+                            </div>
                         </div>
-                        <span class="legend-label">多い</span>
                     </div>
                 </div>
 

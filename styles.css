@@ -1444,8 +1444,8 @@ body.learning-mode .app-header {
 
 /* 英単語進捗バー */
 .vocab-progress-container {
-    padding: 0 0 12px 0;
-    margin: 0 auto 8px auto;
+    padding: 0 0 6px 0;
+    margin: 0 auto 2px auto;
     max-width: 600px;
     width: calc(100% - 16px);
 }
@@ -2456,7 +2456,7 @@ body.learning-mode .app-header {
 .course-tabs {
     display: flex;
     gap: 0;
-    margin: 32px auto 16px auto;
+    margin: 8px auto 16px auto;
     border-bottom: 2px solid #e2e8f0;
     padding: 0;
     max-width: 600px;
@@ -2506,12 +2506,32 @@ body.learning-mode .app-header {
     background: transparent;
 }
 
+.study-calendar-grid-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .study-calendar-title {
-    font-size: 13px;
+    font-family: 'Meiryo', 'メイリオ', sans-serif;
+    font-size: 10px;
     font-weight: 700;
-    color: #1f2937;
-    margin: 0 0 6px 0;
+    color: #1e40af;
+    margin: 0 0 4px 0;
     text-align: center;
+}
+
+.study-calendar-main {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.study-calendar-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .study-calendar-wrapper {
@@ -2521,23 +2541,125 @@ body.learning-mode .app-header {
     gap: 6px;
 }
 
-.calendar-month-label {
+.study-stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+}
+
+.study-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 14px;
+    background: #eff6ff;
+    border-radius: 8px;
+    min-width: 90px;
+}
+
+.study-stat-item.study-time {
+    padding: 12px 14px;
+}
+
+.study-stat-header {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.study-stat-icon {
+    flex-shrink: 0;
+}
+
+.study-stat-title {
+    font-size: 9px;
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+.study-stat-value {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    line-height: 1;
+    margin-top: 4px;
+}
+
+.study-stat-value span:first-child {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1d4ed8;
+}
+
+.study-stat-unit {
     font-size: 11px;
-    color: #6b7280;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.study-stat-sub {
+    font-size: 9px;
+    color: #93c5fd;
+    margin-top: 1px;
     font-weight: 500;
+}
+
+.study-stat-sub .best-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: #0055ca;
+}
+
+.study-time-display {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    margin-top: 2px;
+}
+
+.streak-display {
+    align-items: center;
+}
+
+.streak-fire-icon {
+    margin-right: 2px;
+}
+
+.time-num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: #1d4ed8;
+    letter-spacing: -0.5px;
+}
+
+.time-label {
+    font-size: 9px;
+    color: #64748b;
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+.calendar-month-label {
+    font-family: 'Meiryo', 'メイリオ', sans-serif;
+    font-size: 11px;
+    color: #1e40af;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
     writing-mode: horizontal-tb;
-    padding: 0 2px;
+    padding: 0 4px;
 }
 
 .study-calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    gap: 6px;
     width: 100%;
-    max-width: 250px;
+    max-width: 245px;
 }
 
 .calendar-corner {
@@ -2545,18 +2667,19 @@ body.learning-mode .app-header {
 }
 
 .calendar-weekday-label {
+    font-family: 'Meiryo', 'メイリオ', sans-serif;
     font-size: 11px;
-    color: #6b7280;
-    font-weight: 500;
+    color: #3b82f6;
+    font-weight: 600;
     text-align: center;
     padding-bottom: 5px;
 }
 
 .calendar-cell {
     aspect-ratio: 1;
-    border-radius: 3px;
-    background: #e8f4fc;
-    transition: background-color 0.2s ease;
+    border-radius: 4px;
+    background: #eff6ff;
+    transition: all 0.2s ease;
     min-height: 26px;
 }
 
@@ -2565,45 +2688,38 @@ body.learning-mode .app-header {
 }
 
 .calendar-cell.level-0 {
-    background: #e8f4fc;
+    background: #eff6ff;
 }
 
 .calendar-cell.level-1 {
-    background: #a5d8f3;
+    background: #93c5fd;
 }
 
 .calendar-cell.level-2 {
-    background: #5cb8e6;
+    background: #3b82f6;
 }
 
 .calendar-cell.level-3 {
-    background: #1a91c9;
+    background: #0055ca;
 }
 
 .calendar-cell.level-4 {
-    background: #0c5d8a;
+    background: #1e3a8a;
 }
 
-.calendar-cell.future {
-    background: #f3f4f6;
-}
-
-.calendar-cell.today {
-    outline: 2px solid #1e40af;
-    outline-offset: -1px;
-}
 
 .study-calendar-legend {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    margin-top: 3px;
+    gap: 5px;
+    margin-top: 4px;
 }
 
 .legend-label {
-    font-size: 10px;
-    color: #9ca3af;
+    font-family: 'Meiryo', 'メイリオ', sans-serif;
+    font-size: 9px;
+    color: #64748b;
 }
 
 .legend-cells {
@@ -2614,27 +2730,27 @@ body.learning-mode .app-header {
 .legend-cell {
     width: 12px;
     height: 12px;
-    border-radius: 2px;
+    border-radius: 3px;
 }
 
 .legend-cell.level-0 {
-    background: #e8f4fc;
+    background: #eff6ff;
 }
 
 .legend-cell.level-1 {
-    background: #a5d8f3;
+    background: #93c5fd;
 }
 
 .legend-cell.level-2 {
-    background: #5cb8e6;
+    background: #3b82f6;
 }
 
 .legend-cell.level-3 {
-    background: #1a91c9;
+    background: #0055ca;
 }
 
 .legend-cell.level-4 {
-    background: #0c5d8a;
+    background: #1e3a8a;
 }
 
 /* =============================================

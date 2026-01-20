@@ -3874,6 +3874,9 @@ function updateHeaderUnitName(unitName) {
 
 // カテゴリー選択画面を表示
 function showCategorySelection(slideIn = false, skipScroll = false) {
+    // 学習セッション終了（時間を記録）
+    endStudySession();
+    
     // スクロール位置を一番上にリセット
     if (!skipScroll) {
         window.scrollTo(0, 0);
@@ -4293,6 +4296,9 @@ function startCategory(category) {
 
 // 日本語→英語モードで学習を初期化
 function initInputModeLearning(category, words, startIndex = 0) {
+    // 学習セッション開始
+    startStudySession();
+    
     selectedCategory = category;
     currentWords = words;
     isInputModeActive = true;
@@ -6337,6 +6343,9 @@ function createMethodCard(title, description, onClick, buttonType = 'default') {
 
 // タイムアタックモードで学習を初期化
 function initTimeAttackLearning(category, words) {
+    // 学習セッション開始
+    startStudySession();
+    
     // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
     learnedWordsAtStart = calculateTotalLearnedWords();
     lastLearningCategory = category;
@@ -6665,6 +6674,9 @@ function handleTimeUp() {
 // rangeEnd: 学習範囲の終了index（exclusive）
 // rangeStartOverride: 進捗計算に用いる開始index（表示開始位置をずらすため）
 function initLearning(category, words, startIndex = 0, rangeEnd = undefined, rangeStartOverride = undefined) {
+    // 学習セッション開始
+    startStudySession();
+    
     selectedCategory = category;
     currentWords = words;
     // 英語→日本語モード（カードモード）なので、selectedLearningModeを'card'に設定
@@ -14009,6 +14021,9 @@ function closeInstallOverlay() {
 
 // 厳選例文暗記モードで学習を初期化
 function initSentenceModeLearning(category) {
+    // 学習セッション開始
+    startStudySession();
+    
     selectedCategory = category;
     sentenceData = sentenceMemorizationData;
     isSentenceModeActive = true;
@@ -14961,6 +14976,9 @@ function initReorderModeLearning(category) {
         return;
     }
     
+    // 学習セッション開始
+    startStudySession();
+    
     selectedCategory = category;
     reorderData = reorderQuestions;
     isReorderModeActive = true;
@@ -15897,6 +15915,9 @@ function initChoiceQuestionLearning(category) {
         console.error('choiceQuestions is empty in initChoiceQuestionLearning');
         return;
     }
+    
+    // 学習セッション開始
+    startStudySession();
     
     selectedCategory = category;
     choiceQuestionData = choiceQuestions;
@@ -17340,6 +17361,9 @@ let hwQuizWrongCount = 0;
  */
 async function startHandwritingQuiz(category, words, courseTitle) {
     console.log('[HWQuiz] Starting handwriting quiz with', words.length, 'words');
+    
+    // 学習セッション開始
+    startStudySession();
     
     // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
     learnedWordsAtStart = calculateTotalLearnedWords();
@@ -21124,6 +21148,8 @@ function getAllWordsFromVocabulary() {
 // ========================
 
 const STUDY_CALENDAR_KEY = 'studyCalendarData';
+const STUDY_TIME_KEY = 'studyTotalTime';
+let studySessionStartTime = null; // 学習セッション開始時刻
 
 // 学習カレンダーデータを読み込み
 function loadStudyCalendarData() {
@@ -21151,13 +21177,103 @@ function recordStudyActivity(count = 1) {
     const data = loadStudyCalendarData();
     data[today] = (data[today] || 0) + count;
     saveStudyCalendarData(data);
-    // カレンダーを更新
+    // カレンダーと統計を更新
     renderStudyCalendar();
+    updateStudyStreak();
 }
 
 // 学習カレンダーを初期化
 function initStudyCalendar() {
     renderStudyCalendar();
+    updateStudyStreak();
+    updateTotalStudyTime();
+}
+
+// 連続学習日数を計算・更新
+function updateStudyStreak() {
+    const calendarData = loadStudyCalendarData();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    let streak = 0;
+    let checkDate = new Date(today);
+    
+    // 今日から遡って連続学習日数をカウント
+    while (true) {
+        const dateStr = checkDate.toISOString().split('T')[0];
+        if (calendarData[dateStr] && calendarData[dateStr] > 0) {
+            streak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+            // 今日まだ学習していない場合、昨日から数える
+            if (streak === 0 && checkDate.getTime() === today.getTime()) {
+                checkDate.setDate(checkDate.getDate() - 1);
+                continue;
+            }
+            break;
+        }
+    }
+    
+    const streakEl = document.getElementById('studyStreakNumber');
+    if (streakEl) {
+        streakEl.textContent = streak;
+    }
+    
+    // 自己ベストを更新
+    updateStreakBest(streak);
+}
+
+// 自己ベストを保存・取得・更新
+function updateStreakBest(currentStreak) {
+    const STREAK_BEST_KEY = 'studyStreakBest';
+    let best = parseInt(localStorage.getItem(STREAK_BEST_KEY) || '0', 10);
+    
+    if (currentStreak > best) {
+        best = currentStreak;
+        localStorage.setItem(STREAK_BEST_KEY, best.toString());
+    }
+    
+    const bestEl = document.getElementById('studyStreakBest');
+    if (bestEl) {
+        bestEl.textContent = best;
+    }
+}
+
+// 学習セッション開始
+function startStudySession() {
+    if (!studySessionStartTime) {
+        studySessionStartTime = Date.now();
+    }
+}
+
+// 学習セッション終了（時間を保存）
+function endStudySession() {
+    if (studySessionStartTime) {
+        const elapsed = Date.now() - studySessionStartTime;
+        const elapsedMinutes = elapsed / 1000 / 60; // 分単位
+        
+        // 総学習時間に加算
+        let totalTime = parseFloat(localStorage.getItem(STUDY_TIME_KEY) || '0');
+        totalTime += elapsedMinutes;
+        localStorage.setItem(STUDY_TIME_KEY, totalTime.toString());
+        
+        studySessionStartTime = null;
+        updateTotalStudyTime();
+    }
+}
+
+// 総学習時間を更新
+function updateTotalStudyTime() {
+    const totalTime = parseFloat(localStorage.getItem(STUDY_TIME_KEY) || '0');
+    const hoursEl = document.getElementById('studyTimeHours');
+    const minsEl = document.getElementById('studyTimeMinutes');
+    
+    if (hoursEl && minsEl) {
+        const hours = Math.floor(totalTime / 60);
+        const mins = Math.floor(totalTime % 60);
+        hoursEl.textContent = hours.toString().padStart(2, '0');
+        minsEl.textContent = mins.toString().padStart(2, '0');
+    }
 }
 
 // 学習カレンダーを描画（1ヶ月分）
@@ -21223,14 +21339,9 @@ function renderStudyCalendar() {
             // 今日かどうか
             const isToday = cellDate.toDateString() === today.toDateString();
             
-            // 未来の日付かどうか
-            if (cellDate > today) {
-                cell.classList.add('future');
-            } else {
-                // 学習量に応じたレベルを設定
-                const level = getStudyLevel(studyCount);
-                cell.classList.add(`level-${level}`);
-            }
+            // 学習量に応じたレベルを設定（未来の日付も同じ）
+            const level = getStudyLevel(studyCount);
+            cell.classList.add(`level-${level}`);
             
             // 今日のセルに目印
             if (isToday) {
