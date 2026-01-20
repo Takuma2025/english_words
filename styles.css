@@ -2455,17 +2455,17 @@ body.learning-mode .app-header {
 
 .course-tabs {
     display: flex;
-    gap: 6px;
+    gap: 0;
     margin: 32px auto 16px auto;
-    border-bottom: none;
+    border-bottom: 2px solid #e2e8f0;
     padding: 0;
     max-width: 600px;
     width: calc(100% - 16px);
+    position: relative;
 }
 
-
 .course-tabs.score-active {
-    border-bottom: none;
+    border-bottom: 2px solid #e2e8f0;
 }
 
 .school-trigger-row {
@@ -3023,30 +3023,52 @@ body.learning-mode .app-header {
 
 .course-tab {
     flex: 1;
-    background: #e2e8f0;
+    background: transparent;
     border: none;
-    border-radius: 10px 10px 0 0;
+    border-radius: 0;
     padding: 14px 12px;
     font-size: 14px;
     font-weight: 700;
-    color: #64748b;
+    color: #94a3b8;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    transition: color 0.2s ease;
+    position: relative;
+}
+
+.course-tab::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    transition: background-color 0.2s ease;
 }
 
 .course-tab.active {
-    background: #64748b;
-    color: #ffffff;
+    background: transparent;
+    color: #1e40af;
+}
+
+.course-tab.active::after {
+    background: #1e40af;
 }
 
 .course-tab[data-target="courseMasterSection"].active {
-    background: #3182ce;
-    color: #ffffff;
+    color: #1e40af;
+}
+
+.course-tab[data-target="courseMasterSection"].active::after {
+    background: #1e40af;
 }
 
 .course-tab[data-target="courseScoreSection"].active {
+    color: #dc2626;
+}
+
+.course-tab[data-target="courseScoreSection"].active::after {
     background: #dc2626;
-    color: #ffffff;
 }
 
 .course-tab:active {
