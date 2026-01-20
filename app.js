@@ -192,6 +192,18 @@ const SoundEffects = {
         oscillator.stop(this.audioContext.currentTime + 0.06);
     },
     
+    // 戻るボタン音（MP3ファイル）
+    playBack() {
+        if (!this.enabled || this.volume === 0) return;
+        try {
+            const audio = new Audio('ui-sounds-pack-5.mp3');
+            audio.volume = this.volume;
+            audio.play().catch(e => console.log('Back sound play failed:', e));
+        } catch (e) {
+            console.log('Back sound error:', e);
+        }
+    },
+    
     // 紙のページめくり音（本のページをめくるパラッという音）
     playPageTurn() {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
@@ -5434,6 +5446,9 @@ let currentFilterCategory = '';
 let currentFilterCourseTitle = '';
 
 function showWordFilterView(category, categoryWords, courseTitle) {
+    // 学習セッション開始
+    startStudySession();
+    
     // フローティング要復習ボタンを非表示
     hideFloatingReviewBtn();
     
@@ -5765,6 +5780,9 @@ function getFilteredWords() {
 
 // インプットモードで直接単語一覧を表示
 function showInputModeDirectly(category, words, courseTitle) {
+    // 学習セッション開始
+    startStudySession();
+    
     // フローティング要復習ボタンを非表示
     hideFloatingReviewBtn();
     
@@ -8175,6 +8193,12 @@ function setupEventListeners() {
     
     // 戻る処理を共通関数化
     function handleBackButton() {
+            // 戻るボタン音を再生
+            SoundEffects.playBack();
+            
+            // 学習セッション終了（時間を記録）
+            endStudySession();
+            
             // 学習モードをリセット
             document.body.classList.remove('learning-mode');
             updateThemeColor(false);
@@ -19970,6 +19994,9 @@ function showIvModeSelection(category) {
 
 // 学習モードを表示
 function showIvStudyView(category) {
+    // 学習セッション開始
+    startStudySession();
+    
     // フローティング要復習ボタンを非表示
     hideFloatingReviewBtn();
     
@@ -20333,6 +20360,9 @@ function setupIvRedsheetDrag(overlay) {
 
 // テストモードを表示
 function showIvTestView(category) {
+    // 学習セッション開始
+    startStudySession();
+    
     // フローティング要復習ボタンを非表示
     hideFloatingReviewBtn();
     
