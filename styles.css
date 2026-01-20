@@ -7813,6 +7813,15 @@ body.choice-question-mode-active .word-card-container {
     letter-spacing: 0.08em;
 }
 
+/* 未学習状態（marker-correctもmarker-wrongもない） */
+.input-list-expand-number:not(.marker-correct):not(.marker-wrong) {
+    background: transparent;
+    color: #1e40af;
+    border: 1px solid #1e40af;
+    top: -1px;
+    left: -1px;
+}
+
 .input-list-expand-number.marker-correct {
     background: #3b82f6;
 }
