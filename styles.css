@@ -3026,8 +3026,8 @@ body.learning-mode .app-header {
     background: transparent;
     border: none;
     overflow: visible;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 0;
 }
 
@@ -3035,27 +3035,22 @@ body.learning-mode .app-header {
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding: 16px;
+    padding: 12px 16px;
     background: #ffffff;
-    border: 1.5px solid #1e40af;
+    border: none;
+    border-bottom: 1.5px solid #1e40af;
     border-radius: 0;
-    text-align: center;
+    text-align: left;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     position: relative;
     margin-bottom: 0;
     box-shadow: none;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1;
+    align-items: stretch;
 }
 
-.category-accordion-item:nth-child(2n) {
-    border-left: none;
-}
-
-.category-accordion-item:nth-child(n+3) {
-    border-top: none;
+.category-accordion-item:first-child {
+    border-top: 1.5px solid #1e40af;
 }
 
 .category-accordion-item:last-child {
@@ -3064,11 +3059,10 @@ body.learning-mode .app-header {
 
 .accordion-item-main {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
     width: 100%;
-    text-align: center;
+    text-align: left;
 }
 
 .category-accordion-item + .category-accordion-item {
@@ -3103,7 +3097,10 @@ body.learning-mode .app-header {
 }
 
 .accordion-item-icon {
-    display: none;
+    flex-shrink: 0;
+    margin-right: 12px;
+    width: 24px;
+    height: 24px;
 }
 
 .file-icon-with-number {
@@ -3114,25 +3111,26 @@ body.learning-mode .app-header {
 
 .accordion-item-text {
     font-family: "Meiryo", "メイリオ", "Hiragino Kaku Gothic ProN", sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: #1e40af;
-    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2937;
+    flex: 1;
 }
 
 .accordion-item-chevron {
-    display: none;
+    flex-shrink: 0;
+    color: #9ca3af;
+    margin-left: 8px;
 }
 
 /* 細分化メニューの進捗バー */
 .accordion-item-progress {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
     width: 100%;
     margin-top: 8px;
-    padding-left: 0;
+    padding-left: 36px;
 }
 
 .accordion-progress-bar {
@@ -3462,9 +3460,11 @@ button.category-card:focus-visible {
     padding: 0;
     overflow: hidden;
     border-radius: 0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
-    margin-bottom: 2px;
+    box-shadow: none;
+    border-bottom: 1.5px solid #1e40af;
+    margin-bottom: 0;
 }
+
 
 .category-card.category-card-with-actions:active:not(:has(.course-side-btn:active)) {
     transform: scale(0.98);
@@ -17536,7 +17536,7 @@ body .sentence-english {
 }
 
 .iv-menu-cards .category-card.category-card-with-actions {
-    margin-bottom: 12px !important;
+    margin-bottom: 0 !important;
 }
 
 /* 学習モード */
@@ -18259,4 +18259,13 @@ body.learning-mode .floating-review-btn {
     .floating-review-hint {
         font-size: 9px;
     }
+}
+
+/* カード拡大アニメーション */
+.card-expand-overlay {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    overflow: hidden;
+    background: #ffffff;
 }

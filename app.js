@@ -272,6 +272,53 @@ const SoundEffects = {
         oscillator.stop(now + 0.3);
     }
 };
+
+// カード拡大アニメーション関数
+function animateCardExpand(cardElement, backgroundColor, callback) {
+    if (!cardElement) {
+        if (callback) callback();
+        return;
+    }
+    
+    const rect = cardElement.getBoundingClientRect();
+    
+    // オーバーレイ要素を作成（白背景のみ）
+    const overlay = document.createElement('div');
+    overlay.className = 'card-expand-overlay';
+    overlay.style.left = rect.left + 'px';
+    overlay.style.top = rect.top + 'px';
+    overlay.style.width = rect.width + 'px';
+    overlay.style.height = rect.height + 'px';
+    overlay.style.opacity = '0.3';
+    overlay.style.transition = 'none';
+    
+    document.body.appendChild(overlay);
+    
+    // 効果音を再生
+    SoundEffects.playMenuSelect();
+    
+    // 次のフレームでアニメーション開始
+    requestAnimationFrame(() => {
+        overlay.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        overlay.style.left = '0';
+        overlay.style.top = '0';
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.opacity = '1';
+    });
+    
+    // アニメーション完了後
+    setTimeout(() => {
+        if (callback) callback();
+        // フェードアウトしてオーバーレイを削除
+        overlay.style.transition = 'opacity 0.15s ease';
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+            overlay.remove();
+        }, 150);
+    }, 300);
+}
+
 let answeredWords = new Set();
 let correctCount = 0;
 let wrongCount = 0;
@@ -3745,12 +3792,6 @@ function showCategorySelection(slideIn = false) {
     }
     
     elements.categorySelection.classList.remove('hidden');
-    if (slideIn) {
-        elements.categorySelection.classList.add('slide-in-left');
-        setTimeout(() => {
-            elements.categorySelection.classList.remove('slide-in-left');
-        }, 300);
-    }
     if (elements.mainContent) {
         elements.mainContent.classList.add('hidden');
     }
@@ -4496,19 +4537,6 @@ function showElementaryCategorySelection(skipAnimation = false) {
         categorySelection.classList.add('hidden');
         courseSelection.classList.remove('hidden');
         
-        // skipAnimationがtrueの場合は左からスライドイン（学習画面から戻るとき）
-        // falseの場合は右からスライドイン（ホームから進むとき）
-        if (skipAnimation) {
-            courseSelection.classList.add('slide-in-left');
-            setTimeout(() => {
-                courseSelection.classList.remove('slide-in-left');
-            }, 300);
-        } else {
-            courseSelection.classList.add('slide-in-right');
-            setTimeout(() => {
-                courseSelection.classList.remove('slide-in-right');
-            }, 300);
-        }
     }
     
     // ナビゲーション状態を更新
@@ -4857,20 +4885,6 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     if (categorySelection && courseSelection) {
         categorySelection.classList.add('hidden');
         courseSelection.classList.remove('hidden');
-        
-        // skipAnimationがtrueの場合は左からスライドイン（学習画面から戻るとき）
-        // falseの場合は右からスライドイン（ホームから進むとき）
-        if (skipAnimation) {
-            courseSelection.classList.add('slide-in-left');
-            setTimeout(() => {
-                courseSelection.classList.remove('slide-in-left');
-            }, 300);
-        } else {
-            courseSelection.classList.add('slide-in-right');
-            setTimeout(() => {
-                courseSelection.classList.remove('slide-in-right');
-            }, 300);
-        }
     }
     
     // ナビゲーション状態を更新
@@ -5176,24 +5190,13 @@ function showCourseSelection(category, categoryWords, slideIn = false) {
     
     console.log('Making courseSelection visible...');
     
-    // 画面遷移（スライドイン）
+    // 画面遷移
     const categorySelection = document.getElementById('categorySelection');
     
     if (categorySelection && courseSelection) {
-        // カテゴリー選択画面を即座に非表示
         categorySelection.classList.add('hidden');
-        
-        // コース選択画面をスライドイン（slideInがtrueなら左から、falseなら右から）
         courseSelection.classList.remove('hidden');
-        const slideClass = slideIn ? 'slide-in-left' : 'slide-in-right';
-        courseSelection.classList.add(slideClass);
-        
-        // アニメーション完了後にクラスをクリーンアップ
-        setTimeout(() => {
-            courseSelection.classList.remove(slideClass);
-        }, 300);
     } else {
-        // フォールバック：通常の表示
         courseSelection.classList.remove('hidden');
     }
     
@@ -6825,7 +6828,20 @@ function setupEventListeners() {
     if (elementaryCategoryCardBtn) {
         elementaryCategoryCardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            showElementaryCategorySelection();
+            animateCardExpand(elementaryCategoryCardBtn, '#ffffff', () => {
+                showElementaryCategorySelection();
+            });
+        });
+    }
+    
+    // はじめにカード
+    const introCard = document.getElementById('introCard');
+    if (introCard) {
+        introCard.addEventListener('click', (e) => {
+            e.stopPropagation();
+            animateCardExpand(introCard, '#ffffff', () => {
+                showAlert('はじめに', 'このアプリの使い方の説明ページは準備中です。');
+            });
         });
     }
     
@@ -6834,7 +6850,9 @@ function setupEventListeners() {
     if (level1CardBtn) {
         level1CardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            showLevelSubcategorySelection('レベル１ 超重要500語');
+            animateCardExpand(level1CardBtn, '#ffffff', () => {
+                showLevelSubcategorySelection('レベル１ 超重要500語');
+            });
         });
     }
     
@@ -6843,7 +6861,9 @@ function setupEventListeners() {
     if (level2CardBtn) {
         level2CardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            showLevelSubcategorySelection('レベル２ 重要500語');
+            animateCardExpand(level2CardBtn, '#ffffff', () => {
+                showLevelSubcategorySelection('レベル２ 重要500語');
+            });
         });
     }
     
@@ -6852,7 +6872,9 @@ function setupEventListeners() {
     if (level3CardBtn) {
         level3CardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            showLevelSubcategorySelection('レベル３ ハイレベル300語');
+            animateCardExpand(level3CardBtn, '#ffffff', () => {
+                showLevelSubcategorySelection('レベル３ ハイレベル300語');
+            });
         });
     }
     
@@ -6879,7 +6901,15 @@ function setupEventListeners() {
                 const category = categoryCard.getAttribute('data-category');
                 console.log('Starting category:', category);
                 if (category) {
-                    startCategory(category);
+                    // LEVEL4, LEVEL5 などホーム画面のカードはアニメーション付き
+                    const isHomeCard = categoryCard.closest('.course-section');
+                    if (isHomeCard) {
+                        animateCardExpand(categoryCard, '#ffffff', () => {
+                            startCategory(category);
+                        });
+                    } else {
+                        startCategory(category);
+                    }
                 }
             }
         });
@@ -6894,7 +6924,9 @@ function setupEventListeners() {
         allWordsCardBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            startAllWordsLearning();
+            animateCardExpand(allWordsCardBtn, '#ffffff', () => {
+                startAllWordsLearning();
+            });
         });
     }
     
@@ -6904,7 +6936,9 @@ function setupEventListeners() {
         irregularVerbsCardBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            showIvMenuView();
+            animateCardExpand(irregularVerbsCardBtn, '#ffffff', () => {
+                showIvMenuView();
+            });
         });
     }
     
