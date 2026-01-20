@@ -23,54 +23,24 @@ const SoundEffects = {
     audioContext: null,
     enabled: true,
     volume: 0.5, // 0.0 ~ 1.0
-    selectSound: null, // 選択・決定音用のAudio要素
-    flipSound: null, // カードめくり音用のAudio要素
     
     init() {
         try {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            // 保存された音量を読み込む
+            const savedVolume = localStorage.getItem('soundEffectsVolume');
+            if (savedVolume !== null) {
+                this.volume = parseFloat(savedVolume);
+            }
         } catch (e) {
             console.log('Web Audio API not supported');
-        }
-        
-        // 保存された音量を読み込む
-        const savedVolume = localStorage.getItem('soundEffectsVolume');
-        if (savedVolume !== null) {
-            this.volume = parseFloat(savedVolume);
-        }
-        
-        // 選択・決定音を読み込み
-        try {
-            this.selectSound = new Audio(encodeURI('決定ボタンを押す53.mp3'));
-            this.selectSound.preload = 'auto';
-            this.selectSound.volume = this.volume;
-            this.selectSound.load();
-        } catch (e) {
-            console.log('Failed to load select sound:', e);
-        }
-        
-        // カードめくり音を読み込み
-        try {
-            this.flipSound = new Audio(encodeURI('ページめくり2.mp3'));
-            this.flipSound.preload = 'auto';
-            this.flipSound.volume = this.volume;
-            this.flipSound.load();
-        } catch (e) {
-            console.log('Failed to load flip sound:', e);
+            this.enabled = false;
         }
     },
     
     setVolume(value) {
         this.volume = Math.max(0, Math.min(1, value));
         localStorage.setItem('soundEffectsVolume', this.volume.toString());
-        // 選択・決定音のボリュームも更新
-        if (this.selectSound) {
-            this.selectSound.volume = this.volume;
-        }
-        // カードめくり音のボリュームも更新
-        if (this.flipSound) {
-            this.flipSound.volume = this.volume;
-        }
     },
     
     getVolume() {
@@ -156,18 +126,21 @@ const SoundEffects = {
         });
     },
     
-    // カードめくり音（音声ファイル使用）
+    // カードめくり音
     playFlip() {
-        if (!this.enabled || this.volume === 0) return;
-        if (this.flipSound) {
-            this.flipSound.currentTime = 0;
-            this.flipSound.volume = this.volume;
-            this.flipSound.play().catch(e => {
-                console.log('Flip sound play error:', e);
-            });
-        } else {
-            console.log('flipSound is null');
-        }
+        if (!this.enabled || !this.audioContext || this.volume === 0) return;
+        this.resume();
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(600, this.audioContext.currentTime + 0.08);
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.08 * this.volume, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.08);
     },
     
     // ボタン押下音（カチッ）
@@ -203,14 +176,20 @@ const SoundEffects = {
         oscillator.stop(this.audioContext.currentTime + 0.1);
     },
     
-    // メニュー選択音（音声ファイル使用）
+    // メニュー選択音（軽いクリック）
     playMenuSelect() {
-        if (!this.enabled || this.volume === 0) return;
-        if (this.selectSound) {
-            this.selectSound.currentTime = 0;
-            this.selectSound.volume = this.volume;
-            this.selectSound.play().catch(e => {});
-        }
+        if (!this.enabled || !this.audioContext || this.volume === 0) return;
+        this.resume();
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.value = 600;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.08 * this.volume, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.06);
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.06);
     },
     
     // 紙のページめくり音（本のページをめくるパラッという音）
@@ -273,14 +252,24 @@ const SoundEffects = {
         noiseSourceLo.stop(now + duration);
     },
     
-    // 決定音（音声ファイル使用）
+    // 決定音（上昇する成功音）
     playConfirm() {
-        if (!this.enabled || this.volume === 0) return;
-        if (this.selectSound) {
-            this.selectSound.currentTime = 0;
-            this.selectSound.volume = this.volume;
-            this.selectSound.play().catch(e => {});
-        }
+        if (!this.enabled || !this.audioContext || this.volume === 0) return;
+        this.resume();
+        const now = this.audioContext.currentTime;
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        oscillator.frequency.setValueAtTime(523.25, now); // C5
+        oscillator.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+        oscillator.frequency.exponentialRampToValueAtTime(783.99, now + 0.3); // G5
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.12 * this.volume, now);
+        gainNode.gain.setValueAtTime(0.12 * this.volume, now + 0.25);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        oscillator.start(now);
+        oscillator.stop(now + 0.3);
     }
 };
 let answeredWords = new Set();
