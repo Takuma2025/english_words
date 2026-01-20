@@ -339,7 +339,7 @@ function animateCardShrink(targetCardId, callback) {
                 const rect = currentTargetCard.getBoundingClientRect();
                 const titleContainer = overlay.querySelector('.expand-title');
                 
-                overlay.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                overlay.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
                 overlay.style.left = rect.left + 'px';
                 overlay.style.top = rect.top + 'px';
                 overlay.style.width = rect.width + 'px';
@@ -348,13 +348,13 @@ function animateCardShrink(targetCardId, callback) {
                 overlay.style.transform = 'perspective(1000px) rotateY(-360deg)';
                 
                 if (titleContainer) {
-                    titleContainer.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                    titleContainer.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
                     titleContainer.style.transform = 'scale(1)';
                 }
                 
                 setTimeout(() => {
                     overlay.remove();
-                }, 400);
+                }, 600);
             });
         } else {
             overlay.style.transition = 'opacity 0.2s ease';
@@ -3581,6 +3581,7 @@ function init() {
         updateVocabProgressBar();
         initMemoPad();
         initAdBannerSlider();
+        initStudyCalendar();
         
         // タップ後にフォーカスを外す（スマホでのアクティブ状態残り防止）
         document.addEventListener('touchend', (e) => {
@@ -12749,6 +12750,9 @@ function showConsecutiveCorrectMessage(count) {
 function markAnswer(isCorrect, isTimeout = false) {
     if (currentIndex >= currentRangeEnd) return;
     
+    // 学習カレンダーに記録
+    recordStudyActivity(1);
+    
     // 効果音を再生（正解/不正解）
     if (isCorrect) {
         SoundEffects.playCorrect();
@@ -20255,36 +20259,52 @@ function setupIvRedsheetDrag(overlay) {
     if (!overlay) return;
     
     let isDragging = false;
+    let startX = 0;
     let startY = 0;
+    let startLeft = 0;
     let startTop = 0;
     
-    const onStart = (e) => {
+    const onPointerDown = (e) => {
         isDragging = true;
-        startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-        startTop = parseInt(overlay.style.top) || 150;
+        startX = e.clientX;
+        startY = e.clientY;
+        startLeft = overlay.offsetLeft;
+        startTop = overlay.offsetTop;
+        overlay.style.cursor = 'grabbing';
         overlay.style.transition = 'none';
+        overlay.setPointerCapture(e.pointerId);
     };
     
-    const onMove = (e) => {
+    const onPointerMove = (e) => {
         if (!isDragging) return;
-        e.preventDefault();
-        const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-        const deltaY = clientY - startY;
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+        // 横にも縦にも自由に動かせる
+        const newLeft = startLeft + deltaX;
         const newTop = Math.max(0, startTop + deltaY);
+        overlay.style.left = newLeft + 'px';
         overlay.style.top = newTop + 'px';
     };
     
-    const onEnd = () => {
+    const onPointerUp = (e) => {
         isDragging = false;
+        overlay.style.cursor = 'grab';
         overlay.style.transition = '';
+        overlay.releasePointerCapture(e.pointerId);
     };
     
-    overlay.addEventListener('mousedown', onStart);
-    overlay.addEventListener('touchstart', onStart, { passive: false });
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('touchmove', onMove, { passive: false });
-    document.addEventListener('mouseup', onEnd);
-    document.addEventListener('touchend', onEnd);
+    // 既存のリスナーを削除してから追加
+    overlay.removeEventListener('pointerdown', overlay._onPointerDown);
+    overlay.removeEventListener('pointermove', overlay._onPointerMove);
+    overlay.removeEventListener('pointerup', overlay._onPointerUp);
+    
+    overlay._onPointerDown = onPointerDown;
+    overlay._onPointerMove = onPointerMove;
+    overlay._onPointerUp = onPointerUp;
+    
+    overlay.addEventListener('pointerdown', onPointerDown);
+    overlay.addEventListener('pointermove', onPointerMove);
+    overlay.addEventListener('pointerup', onPointerUp);
 }
 
 // テストモードを表示
@@ -21097,4 +21117,140 @@ function getAllWordsFromVocabulary() {
         });
     }
     return allWords;
+}
+
+// ========================
+// 学習カレンダー
+// ========================
+
+const STUDY_CALENDAR_KEY = 'studyCalendarData';
+
+// 学習カレンダーデータを読み込み
+function loadStudyCalendarData() {
+    try {
+        const data = localStorage.getItem(STUDY_CALENDAR_KEY);
+        return data ? JSON.parse(data) : {};
+    } catch (e) {
+        console.error('学習カレンダーデータの読み込みエラー:', e);
+        return {};
+    }
+}
+
+// 学習カレンダーデータを保存
+function saveStudyCalendarData(data) {
+    try {
+        localStorage.setItem(STUDY_CALENDAR_KEY, JSON.stringify(data));
+    } catch (e) {
+        console.error('学習カレンダーデータの保存エラー:', e);
+    }
+}
+
+// 今日の学習を記録
+function recordStudyActivity(count = 1) {
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const data = loadStudyCalendarData();
+    data[today] = (data[today] || 0) + count;
+    saveStudyCalendarData(data);
+    // カレンダーを更新
+    renderStudyCalendar();
+}
+
+// 学習カレンダーを初期化
+function initStudyCalendar() {
+    renderStudyCalendar();
+}
+
+// 学習カレンダーを描画（1ヶ月分）
+function renderStudyCalendar() {
+    const grid = document.getElementById('studyCalendarGrid');
+    if (!grid) return;
+    
+    const calendarData = loadStudyCalendarData();
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+    const dayNames = ['月', '火', '水', '木', '金', '土', '日'];
+    
+    // 今月の1日と最終日を取得
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    
+    // 月の1日が何曜日か（月曜=0, 日曜=6に変換）
+    let startDayOfWeek = firstDay.getDay() - 1;
+    if (startDayOfWeek < 0) startDayOfWeek = 6; // 日曜日の場合
+    
+    // 必要な週数を計算
+    const weeksNeeded = Math.ceil((startDayOfWeek + daysInMonth) / 7);
+    
+    // グリッドをクリア
+    grid.innerHTML = '';
+    
+    // 月ラベルを更新
+    const monthLabelEl = document.getElementById('calendarMonthLabel');
+    if (monthLabelEl) {
+        monthLabelEl.textContent = (currentMonth + 1) + '月';
+    }
+    
+    // 曜日ラベル（横に並べる）
+    dayNames.forEach(name => {
+        const label = document.createElement('div');
+        label.className = 'calendar-weekday-label';
+        label.textContent = name;
+        grid.appendChild(label);
+    });
+    
+    // 週ごとに行を作成
+    let dayCounter = 1;
+    for (let week = 0; week < weeksNeeded; week++) {
+        
+        // 各曜日のセルを追加
+        for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+            const cell = document.createElement('div');
+            cell.className = 'calendar-cell';
+            
+            // 月の開始前または終了後の空セル
+            if ((week === 0 && dayOfWeek < startDayOfWeek) || dayCounter > daysInMonth) {
+                cell.classList.add('empty');
+                grid.appendChild(cell);
+                continue;
+            }
+            
+            const cellDate = new Date(currentYear, currentMonth, dayCounter);
+            const dateStr = cellDate.toISOString().split('T')[0];
+            const studyCount = calendarData[dateStr] || 0;
+            
+            // 今日かどうか
+            const isToday = cellDate.toDateString() === today.toDateString();
+            
+            // 未来の日付かどうか
+            if (cellDate > today) {
+                cell.classList.add('future');
+            } else {
+                // 学習量に応じたレベルを設定
+                const level = getStudyLevel(studyCount);
+                cell.classList.add(`level-${level}`);
+            }
+            
+            // 今日のセルに目印
+            if (isToday) {
+                cell.classList.add('today');
+            }
+            
+            // ツールチップ用のタイトル
+            cell.title = `${currentMonth + 1}/${dayCounter}: ${studyCount}語学習`;
+            
+            grid.appendChild(cell);
+            dayCounter++;
+        }
+    }
+}
+
+// 学習量からレベル（0-4）を計算
+function getStudyLevel(count) {
+    if (count === 0) return 0;
+    if (count < 10) return 1;
+    if (count < 30) return 2;
+    if (count < 50) return 3;
+    return 4;
 }

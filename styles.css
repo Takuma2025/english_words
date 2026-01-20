@@ -2495,6 +2495,149 @@ body.learning-mode .app-header {
 }
 
 /* =============================================
+   学習カレンダー（1ヶ月表示）
+   ============================================= */
+
+.study-calendar-container {
+    padding: 0;
+    margin: 0 auto 4px auto;
+    max-width: 600px;
+    width: 100%;
+    background: transparent;
+}
+
+.study-calendar-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 6px 0;
+    text-align: center;
+}
+
+.study-calendar-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 6px;
+}
+
+.calendar-month-label {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    writing-mode: horizontal-tb;
+    padding: 0 2px;
+}
+
+.study-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    width: 100%;
+    max-width: 250px;
+}
+
+.calendar-corner {
+    display: none;
+}
+
+.calendar-weekday-label {
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 500;
+    text-align: center;
+    padding-bottom: 5px;
+}
+
+.calendar-cell {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    background: #e8f4fc;
+    transition: background-color 0.2s ease;
+    min-height: 26px;
+}
+
+.calendar-cell.empty {
+    background: transparent;
+}
+
+.calendar-cell.level-0 {
+    background: #e8f4fc;
+}
+
+.calendar-cell.level-1 {
+    background: #a5d8f3;
+}
+
+.calendar-cell.level-2 {
+    background: #5cb8e6;
+}
+
+.calendar-cell.level-3 {
+    background: #1a91c9;
+}
+
+.calendar-cell.level-4 {
+    background: #0c5d8a;
+}
+
+.calendar-cell.future {
+    background: #f3f4f6;
+}
+
+.calendar-cell.today {
+    outline: 2px solid #1e40af;
+    outline-offset: -1px;
+}
+
+.study-calendar-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 3px;
+}
+
+.legend-label {
+    font-size: 10px;
+    color: #9ca3af;
+}
+
+.legend-cells {
+    display: flex;
+    gap: 3px;
+}
+
+.legend-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.legend-cell.level-0 {
+    background: #e8f4fc;
+}
+
+.legend-cell.level-1 {
+    background: #a5d8f3;
+}
+
+.legend-cell.level-2 {
+    background: #5cb8e6;
+}
+
+.legend-cell.level-3 {
+    background: #1a91c9;
+}
+
+.legend-cell.level-4 {
+    background: #0c5d8a;
+}
+
+/* =============================================
    志望校設定モーダル（ボトムシート）
    ============================================= */
 
@@ -7817,9 +7960,9 @@ body.choice-question-mode-active .word-card-container {
 .input-list-expand-number:not(.marker-correct):not(.marker-wrong) {
     background: transparent;
     color: #1e40af;
-    border: 1px solid #1e40af;
-    top: -1px;
-    left: -1px;
+    border: 0.5px solid #1e40af;
+    top: -0.5px;
+    left: -0.5px;
 }
 
 .input-list-expand-number.marker-correct {
@@ -7945,7 +8088,7 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     align-items: center;
     gap: 4px;
-    background: #6b7a8f !important;
+    background: #1e40af !important;
     padding: 4px 8px;
     border-radius: 0 0 8px 8px;
     font-size: 10px;
