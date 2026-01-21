@@ -304,6 +304,9 @@ function animateCardShrink(targetCardId, callback) {
         
         if (badge) {
             const badgeClone = badge.cloneNode(true);
+            // クローンしたバッジのvisibilityを確実にvisibleに
+            badgeClone.style.visibility = 'visible';
+            badgeClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
             titleContainer.appendChild(badgeClone);
         }
         
@@ -328,6 +331,12 @@ function animateCardShrink(targetCardId, callback) {
         const appMain = document.querySelector('.app-main');
         
         if (currentTargetCard && appMain) {
+            // ターゲットカードの中身を非表示にする（枠線は残す）
+            currentTargetCard.style.setProperty('background', 'transparent', 'important');
+            currentTargetCard.querySelectorAll('*').forEach(child => {
+                child.style.visibility = 'hidden';
+            });
+            
             // 最下部メニューの場合は一番下まで、それ以外は中央までスクロール
             if (targetCardId === 'allWordsCardBtn' || targetCardId === 'irregularVerbsCardBtn') {
                 appMain.scrollTop = appMain.scrollHeight + 1000;
@@ -345,7 +354,7 @@ function animateCardShrink(targetCardId, callback) {
                 overlay.style.top = rect.top + 'px';
                 overlay.style.width = rect.width + 'px';
                 overlay.style.height = rect.height + 'px';
-                overlay.style.opacity = '0';
+                overlay.style.opacity = '1';
                 overlay.style.transform = 'perspective(1000px) rotateY(-360deg)';
                 
                 if (titleContainer) {
@@ -354,6 +363,11 @@ function animateCardShrink(targetCardId, callback) {
                 }
                 
                 setTimeout(() => {
+                    // アニメーション完了後にターゲットカードを表示
+                    currentTargetCard.style.removeProperty('background');
+                    currentTargetCard.querySelectorAll('*').forEach(child => {
+                        child.style.visibility = '';
+                    });
                     overlay.remove();
                 }, 600);
             });
@@ -374,6 +388,18 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     
     const rect = cardElement.getBoundingClientRect();
     
+    // 先にバッジとタイトルをクローン（非表示にする前に）
+    const badge = cardElement.querySelector('.level-badge');
+    const categoryName = cardElement.querySelector('.category-name');
+    const badgeClone = badge ? badge.cloneNode(true) : null;
+    const categoryText = categoryName ? categoryName.textContent.replace(/RANK\d/g, '').trim() : '';
+    
+    // カードの中身を非表示にする（枠線は残す）
+    cardElement.style.setProperty('background', 'transparent', 'important');
+    cardElement.querySelectorAll('*').forEach(child => {
+        child.style.visibility = 'hidden';
+    });
+    
     // オーバーレイ要素を作成
     const overlay = document.createElement('div');
     overlay.className = 'card-expand-overlay';
@@ -381,27 +407,24 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     overlay.style.top = rect.top + 'px';
     overlay.style.width = rect.width + 'px';
     overlay.style.height = rect.height + 'px';
-    overlay.style.opacity = '0.5';
+    overlay.style.opacity = '1';
     overlay.style.transition = 'none';
     
-    // バッジとタイトルを抽出してコピー
+    // バッジとタイトルをオーバーレイに追加
     const titleContainer = document.createElement('div');
     titleContainer.className = 'expand-title';
     
-    const badge = cardElement.querySelector('.level-badge');
-    const categoryName = cardElement.querySelector('.category-name');
-    
-    if (badge) {
-        const badgeClone = badge.cloneNode(true);
+    if (badgeClone) {
+        // クローンしたバッジのvisibilityを確実にvisibleに
+        badgeClone.style.visibility = 'visible';
+        badgeClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
         titleContainer.appendChild(badgeClone);
     }
     
-    if (categoryName) {
+    if (categoryText) {
         const titleText = document.createElement('div');
         titleText.className = 'title-text';
-        // バッジを除いたテキストのみ取得
-        const textOnly = categoryName.textContent.replace(/RANK\d/g, '').trim();
-        titleText.textContent = textOnly;
+        titleText.textContent = categoryText;
         titleContainer.appendChild(titleText);
     }
     
@@ -432,6 +455,11 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     // アニメーション完了後
     setTimeout(() => {
         if (callback) callback();
+        // 元のカードの中身を再表示（画面遷移後は見えないが念のため）
+        cardElement.style.removeProperty('background');
+        cardElement.querySelectorAll('*').forEach(child => {
+            child.style.visibility = '';
+        });
         // フェードアウトしてオーバーレイを削除
         overlay.style.transition = 'opacity 0.15s ease';
         overlay.style.opacity = '0';
