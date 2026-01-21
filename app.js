@@ -10478,8 +10478,6 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
                 cycleWordProgress(word, number, item);
             });
         }
-        item.appendChild(number);
-        
         // チェックボックス（単語番号の右）
         const checkbox = document.createElement('div');
         checkbox.className = 'input-list-expand-checkbox';
@@ -10497,7 +10495,13 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             }
             saveReviewWords();
         });
-        item.appendChild(checkbox);
+
+        // 番号とチェックボックスを連結
+        const numberBox = document.createElement('div');
+        numberBox.className = 'input-list-expand-number-box';
+        numberBox.appendChild(number);
+        numberBox.appendChild(checkbox);
+        item.appendChild(numberBox);
         
         const wordRow = document.createElement('div');
         wordRow.className = 'input-list-expand-word-row';
@@ -10896,8 +10900,6 @@ function renderInputListView(words) {
             } else if (isCorrect) {
                 number.classList.add('marker-correct');
             }
-            item.appendChild(number);
-            
             // チェックボックス（単語番号の右）
             const checkbox = document.createElement('div');
             checkbox.className = 'input-list-expand-checkbox';
@@ -10915,7 +10917,13 @@ function renderInputListView(words) {
                 }
                 saveReviewWords();
             });
-            item.appendChild(checkbox);
+
+            // 番号とチェックボックスを連結
+            const numberBox = document.createElement('div');
+            numberBox.className = 'input-list-expand-number-box';
+            numberBox.appendChild(number);
+            numberBox.appendChild(checkbox);
+            item.appendChild(numberBox);
             
             const wordRow = document.createElement('div');
             wordRow.className = 'input-list-expand-word-row';
