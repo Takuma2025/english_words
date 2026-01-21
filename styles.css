@@ -1206,10 +1206,8 @@ body.learning-mode .app-header {
 }
 
 .course-section .category-card .category-progress {
-    width: 80%;
+    width: 100%;
     margin-top: 12px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .course-section .category-card .category-progress-text {
@@ -2517,9 +2515,9 @@ body.learning-mode .app-header {
 }
 
 .study-calendar-title {
-    font-size: 9px;
-    font-weight: 700;
-    color: #1e40af;
+    font-size: 11px;
+    font-weight: 600;
+    color: #3b82f6;
     margin: 0 0 4px 0;
     text-align: center;
 }
@@ -2647,9 +2645,8 @@ body.learning-mode .app-header {
 }
 
 .calendar-month-label {
-    font-family: 'Meiryo', 'メイリオ', sans-serif;
-    font-size: 10px;
-    color: #1e40af;
+    font-size: 11px;
+    color: #3b82f6;
     font-weight: 600;
 }
 
@@ -2715,6 +2712,35 @@ body.learning-mode .app-header {
     margin-top: 4px;
     width: 100%;
     max-width: 260px;
+}
+
+.calendar-month-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.calendar-nav-btn {
+    background: transparent;
+    border: none;
+    color: #3b82f6;
+    cursor: pointer;
+    font-size: 8px;
+    padding: 2px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease, opacity 0.2s ease;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.calendar-nav-btn:hover {
+    background: #eff6ff;
+}
+
+.calendar-nav-btn:active {
+    transform: scale(0.9);
 }
 
 .study-calendar-legend-right {
@@ -3719,6 +3745,32 @@ body.learning-mode .app-header {
     margin: 0;
 }
 
+/* ミニゲーム */
+.minigame-card {
+    background: #ffffff !important;
+}
+
+.minigame-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: #fef3c7;
+    border-radius: 10px;
+    flex: none;
+    margin: 0;
+}
+
+.minigame-card .category-name {
+    color: #d97706 !important;
+}
+
+.minigame-card .category-meta {
+    color: #92400e !important;
+    font-size: 11px !important;
+}
+
 /* はじめに & 苦手・要復習 2列レイアウト */
 .top-row-cards {
     display: flex;
@@ -3839,9 +3891,7 @@ body.learning-mode .app-header {
 
 .category-card:active,
 button.category-card:active {
-    transform: scale(0.98);
     background-color: #ffffff !important;
-    background: #ffffff !important;
 }
 
 .category-card:focus,
@@ -3872,7 +3922,6 @@ button.category-card:focus-visible {
 
 
 .category-card.category-card-with-actions:active:not(:has(.course-side-btn:active)) {
-    transform: scale(0.98);
     background: #ffffff;
 }
 
@@ -7322,9 +7371,9 @@ body.choice-question-mode-active .word-card-container {
     display: none;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-number {
-    font-size: 9px;
-    padding: 2px 5px;
+.input-list-scroll.compact-mode.flip-mode .input-list-number,
+.input-list-scroll.compact-mode.flip-mode .input-list-expand-number-box {
+    display: none !important;
 }
 
 .input-list-scroll.compact-mode.flip-mode .input-list-appearance-box {
@@ -7815,55 +7864,22 @@ body.choice-question-mode-active .word-card-container {
 }
 
 /* 展開モード（単語帳モード）の番号とチェックを連結 */
+/* フリップモード（単語カード）では単語番号とチェックマークを非表示 */
+.flip-mode .input-list-number,
+.flip-mode .input-list-checkbox,
+.flip-mode .input-list-expand-number-box {
+    display: none !important;
+}
+
 .flip-mode .input-list-meta {
     align-items: center;
     gap: 0;
+    display: none !important; /* コンテナごと消す */
 }
 
-.flip-mode .input-list-number {
-    position: static;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 24px;
-    padding: 0 10px;
-    background: #ffffff;
-    color: #111111;
-    border: 1px solid #111111;
-    border-right: 0;
-    border-radius: 0;
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-
-.flip-mode .input-list-checkbox {
-    position: static;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 24px;
-    border: 1px solid #111111;
-    border-left: 0;
-    border-radius: 0;
-    background: #ffffff;
-    cursor: pointer;
-}
-
-.flip-mode .input-list-checkbox::after {
-    content: '';
-    width: 7px;
-    height: 12px;
-    border: solid #9ca3af;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-    margin-top: -2px;
-}
-
-/* フリップモードでカードが裏返ったときはチェックボックスを非表示 */
-.input-list-item.flipped .input-list-checkbox {
-    display: none;
+/* 不要なチェックマークのアイコン定義を削除 */
+.flip-mode .input-list-item.flipped .input-list-checkbox {
+    display: none !important;
 }
 
 .input-list-appearance {
@@ -9765,9 +9781,20 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     box-shadow: none !important;
 }
 
-/* インプットモードのチェックボックス（非表示） */
-#inputWordCheckbox {
+/* 各種入力モードのチェックボックスを確実に非表示 */
+#inputWordCheckbox,
+#hwQuizCheckbox,
+.word-checkbox,
+.hw-quiz-checkbox,
+#inputMode .word-checkbox,
+.input-mode .word-checkbox,
+.input-mode-content .word-checkbox {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
 }
 
 .word-card.flipped .word-number {
@@ -15188,42 +15215,46 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     /* 学習メニューは常に白で固定 */
     .category-card,
     .category-card:hover,
-    .category-card:active,
     .category-card:focus,
     .category-card:focus-visible,
     .category-accordion-header,
     .category-accordion-header:hover,
-    .category-accordion-header:active,
     .category-accordion-header:focus,
     .category-accordion-header:focus-visible,
     .category-accordion-item,
     .category-accordion-item:hover,
-    .category-accordion-item:active,
     .category-accordion-item:focus,
     .category-accordion-item:focus-visible,
     .category-accordion-item-green,
     .category-accordion-item-green:hover,
-    .category-accordion-item-green:active,
     .category-accordion-item-green:focus,
     .category-accordion-item-green:focus-visible,
     .category-accordion-item-purple,
     .category-accordion-item-purple:hover,
-    .category-accordion-item-purple:active,
     .category-accordion-item-purple:focus,
     .category-accordion-item-purple:focus-visible,
     .category-card.category-card-with-actions,
     .category-card.category-card-with-actions:hover,
-    .category-card.category-card-with-actions:active,
     .category-card.category-card-with-actions:focus,
     .category-card.category-card-with-actions:focus-visible,
     button.category-card,
     button.category-card:hover,
-    button.category-card:active,
     button.category-card:focus,
     button.category-card:focus-visible {
         background-color: #ffffff !important;
         background: #ffffff !important;
         outline: none;
+    }
+
+    .category-card:active,
+    .category-accordion-header:active,
+    .category-accordion-item:active,
+    .category-accordion-item-green:active,
+    .category-accordion-item-purple:active,
+    .category-card.category-card-with-actions:active,
+    button.category-card:active {
+        background-color: #ffffff !important;
+        transform: none !important;
     }
 }
 
@@ -16073,10 +16104,23 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 /* 入力モード切替行 */
 .hw-mode-toggle-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start; /* 左寄せに変更 */
     align-items: center;
     padding: 4px 12px;
     margin-top: 4px;
+}
+
+/* チェックボックスを完全に非表示 */
+.hw-mode-toggle-row #hwQuizCheckbox,
+.hw-mode-toggle-row .hw-quiz-checkbox,
+#hwQuizCheckbox {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
 }
 
 /* メイン */
@@ -16099,7 +16143,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     bottom: 0;
     left: 0;
     right: 0;
-    background: transparent;
+    background: #ffffff;
     padding: 8px 3px;
     padding-bottom: max(8px, env(safe-area-inset-bottom));
     display: flex;
@@ -16406,7 +16450,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     top: -12px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(59, 130, 246, 0.9);
+    background: #3b82f6;
     color: #fff;
     font-size: 11px;
     font-weight: 600;
@@ -18596,3 +18640,21 @@ body.learning-mode .floating-review-btn {
     font-weight: 600;
     color: #374151;
 }
+
+/* 日本語→英語モードのチェックボックスを確実に非表示 */
+#inputMode #inputWordCheckbox,
+#inputMode .word-checkbox,
+.input-mode #inputWordCheckbox,
+.input-mode .word-checkbox,
+div#inputWordCheckbox,
+#hwQuizCheckbox,
+.hw-quiz-checkbox {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
+}
+

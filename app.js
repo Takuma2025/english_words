@@ -9,6 +9,7 @@ let isInputShuffled = false; // インプットモードのシャッフル状態
 let learnedWordsAtStart = 0; // 進捗アニメーション用：学習開始時の覚えた語彙数
 let lastLearningCategory = null; // 最後に学習していたカテゴリ
 let isAnimatingProgress = false; // アニメーション重複防止フラグ
+let calendarViewDate = new Date(); // 表示中の学習カレンダーの基準日
 
 // アプリ起動時に現在の語彙数を初期化（1回目から正確に判定するため）
 window.addEventListener('DOMContentLoaded', () => {
@@ -21104,6 +21105,26 @@ function initStudyCalendar() {
     renderStudyCalendar();
     updateStudyStreak();
     updateTotalStudyTime();
+
+    // カレンダーの月移動ボタンのイベントリスナー
+    const prevBtn = document.getElementById('prevMonthBtn');
+    const nextBtn = document.getElementById('nextMonthBtn');
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+            renderStudyCalendar();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+            renderStudyCalendar();
+        });
+    }
 }
 
 // 連続学習日数を計算・更新
@@ -21200,13 +21221,13 @@ function renderStudyCalendar() {
     
     const calendarData = loadStudyCalendarData();
     const today = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth();
+    const viewYear = calendarViewDate.getFullYear();
+    const viewMonth = calendarViewDate.getMonth();
     const dayNames = ['月', '火', '水', '木', '金', '土', '日'];
     
-    // 今月の1日と最終日を取得
-    const firstDay = new Date(currentYear, currentMonth, 1);
-    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    // 表示月の1日と最終日を取得
+    const firstDay = new Date(viewYear, viewMonth, 1);
+    const lastDay = new Date(viewYear, viewMonth + 1, 0);
     const daysInMonth = lastDay.getDate();
     
     // 月の1日が何曜日か（月曜=0, 日曜=6に変換）
@@ -21222,7 +21243,7 @@ function renderStudyCalendar() {
     // 月ラベルを更新
     const monthLabelEl = document.getElementById('calendarMonthLabel');
     if (monthLabelEl) {
-        monthLabelEl.textContent = (currentMonth + 1) + '月';
+        monthLabelEl.textContent = viewYear + '年 ' + (viewMonth + 1) + '月';
     }
     
     // 曜日ラベル（横に並べる）
@@ -21236,7 +21257,6 @@ function renderStudyCalendar() {
     // 週ごとに行を作成
     let dayCounter = 1;
     for (let week = 0; week < weeksNeeded; week++) {
-        
         // 各曜日のセルを追加
         for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
             const cell = document.createElement('div');
@@ -21249,14 +21269,14 @@ function renderStudyCalendar() {
                 continue;
             }
             
-            const cellDate = new Date(currentYear, currentMonth, dayCounter);
+            const cellDate = new Date(viewYear, viewMonth, dayCounter);
             const dateStr = getLocalDateString(cellDate);
             const studyCount = calendarData[dateStr] || 0;
             
             // 今日かどうか
             const isToday = cellDate.toDateString() === today.toDateString();
             
-            // 学習量に応じたレベルを設定（未来の日付も同じ）
+            // 学習量に応じたレベルを設定
             const level = getStudyLevel(studyCount);
             cell.classList.add(`level-${level}`);
             
@@ -21266,7 +21286,7 @@ function renderStudyCalendar() {
             }
             
             // ツールチップ用のタイトル
-            cell.title = `${currentMonth + 1}/${dayCounter}: ${studyCount}語学習`;
+            cell.title = `${viewMonth + 1}/${dayCounter}: ${studyCount}語学習`;
             
             grid.appendChild(cell);
             dayCounter++;
@@ -21282,3 +21302,4 @@ function getStudyLevel(count) {
     if (count < 50) return 3;
     return 4;
 }
+
