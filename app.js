@@ -1472,6 +1472,12 @@ function initSchoolSelector() {
                 tempSelectedSchool = undefined;
                 // モーダルを閉じる
                 closeModal(true);
+                // モーダルクローズ後に再度進捗バーを更新（確実に反映させる）
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        updateVocabProgressBar();
+                    });
+                });
             }
         });
     }
@@ -5779,7 +5785,7 @@ function showInputModeDirectly(category, words, courseTitle) {
     const appMain = document.querySelector('.app-main');
     if (appMain) appMain.scrollTop = 0;
     
-    // コンパクトモードをデフォルト（オフ）にリセット
+    // コンパクトモードをデフォルト（オフ）にリセット、用例表示はデフォルトでオン
     const compactModeCheckbox = document.getElementById('settingCompactMode');
     const showExamplesCheckbox = document.getElementById('settingShowExamples');
     const inputListContainer = document.getElementById('inputListContainer');
@@ -5789,6 +5795,8 @@ function showInputModeDirectly(category, words, courseTitle) {
     if (showExamplesCheckbox) {
         showExamplesCheckbox.checked = true;
     }
+    // メニュー切り替え時にlocalStorageの設定をクリア（毎回デフォルトでオンにする）
+    localStorage.removeItem('inputListShowExamples');
     if (inputListContainer) {
         inputListContainer.classList.remove('compact-mode');
         inputListContainer.classList.remove('hide-examples');
@@ -11415,17 +11423,31 @@ function updateExamplesToggleAvailability() {
         }
         
         // データ全体から用例があるかチェック（ページネーションでも正しく動作するように）
-        let hasExamples = false;
         const wordsToCheck = currentFilterWords || currentCourseWords || [];
+        
+        // 単語データがまだ読み込まれていない場合は有効化したままにする
+        if (wordsToCheck.length === 0) {
+            showExamplesCheckbox.disabled = false;
+            showExamplesItem.classList.remove('disabled');
+            return;
+        }
+        
+        let hasExamples = false;
         for (const word of wordsToCheck) {
-            if (word.example && word.example.trim() !== '') {
-                hasExamples = true;
-                break;
+            // オブジェクト形式（{english, japanese}）と文字列形式の両方に対応
+            if (word.example) {
+                if (typeof word.example === 'string' && word.example.trim() !== '') {
+                    hasExamples = true;
+                    break;
+                } else if (typeof word.example === 'object' && (word.example.english || word.example.japanese)) {
+                    hasExamples = true;
+                    break;
+                }
             }
         }
         
         if (hasExamples) {
-            // 用例がある場合：有効化（チェック状態は変更しない）
+            // 用例がある場合：有効化
             showExamplesCheckbox.disabled = false;
             showExamplesItem.classList.remove('disabled');
             // チェック状態に応じてクラスを適用
@@ -11435,10 +11457,11 @@ function updateExamplesToggleAvailability() {
                 inputListContainer.classList.add('hide-examples');
             }
         } else {
-            // 用例がない場合：無効化してグレーアウト
+            // 用例がない場合：無効化してオフ
             showExamplesCheckbox.disabled = true;
             showExamplesItem.classList.add('disabled');
             showExamplesCheckbox.checked = false;
+            inputListContainer.classList.add('hide-examples');
         }
     }, 50);
 }
