@@ -2684,23 +2684,23 @@ body.learning-mode .app-header {
 }
 
 .calendar-cell.level-0 {
-    background: #eff6ff;
+    background: #e8f4fc;
 }
 
 .calendar-cell.level-1 {
-    background: #93c5fd;
+    background: #c5dff8;
 }
 
 .calendar-cell.level-2 {
-    background: #3b82f6;
+    background: #93c5fd;
 }
 
 .calendar-cell.level-3 {
-    background: #0055ca;
+    background: #60a5fa;
 }
 
 .calendar-cell.level-4 {
-    background: #1e3a8a;
+    background: #3b82f6;
 }
 
 
@@ -2738,23 +2738,23 @@ body.learning-mode .app-header {
 }
 
 .legend-cell.level-0 {
-    background: #eff6ff;
+    background: #e8f4fc;
 }
 
 .legend-cell.level-1 {
-    background: #93c5fd;
+    background: #c5dff8;
 }
 
 .legend-cell.level-2 {
-    background: #3b82f6;
+    background: #93c5fd;
 }
 
 .legend-cell.level-3 {
-    background: #0055ca;
+    background: #60a5fa;
 }
 
 .legend-cell.level-4 {
-    background: #1e3a8a;
+    background: #3b82f6;
 }
 
 /* =============================================
@@ -5761,108 +5761,23 @@ body.quiz-test-mode .progress-top-row {
 
 
 .progress-bar-container {
-    height: 8px;
+    height: 6px;
     background: #e5e7eb;
-    border-radius: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
+    border-radius: 3px;
+    overflow: hidden;
     margin-top: 0;
     margin-bottom: 12px;
-    display: flex;
-    gap: 2px;
-    padding: 0;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    scrollbar-color: transparent transparent;
-    cursor: grab;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: pan-x;
-    transition: transform 0.1s ease-out;
+    position: relative;
 }
 
-.progress-bar-container.swiping {
-    transition: transform 0.1s ease-out;
-}
-
-.progress-bar-container:active {
-    cursor: grabbing;
-}
-
-
-.progress-bar-container::-webkit-scrollbar {
-    height: 4px;
-}
-
-.progress-bar-container::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.progress-bar-container::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 0;
-}
-
-.progress-segment {
-    flex: 0 0 auto;
-    /* 幅はJavaScriptで動的に設定 */
+.progress-bar-fill {
     height: 100%;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    transition: background-color 0.2s ease;
-    cursor: pointer;
-    position: relative;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    padding: 0;
-}
-
-.progress-segment-disabled {
-    cursor: default;
-    pointer-events: none;
-}
-
-.progress-segment-number {
-    display: none;
-}
-
-.progress-segment-number.progress-segment-flag {
-    display: none;
-}
-
-.progress-segment-number.progress-segment-flag svg {
-    display: none;
-}
-
-.progress-segment-number.progress-segment-flag svg path {
-    display: none;
-}
-
-
-.progress-segment:hover {
-    opacity: 0.8;
-}
-
-.progress-segment.correct {
     background: #3b82f6;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 0%;
 }
 
-.progress-segment.wrong {
-    background: #ef4444;
-}
-
-.progress-segment.current {
-    position: relative;
-    background: #22c55e !important;
-}
-
-.progress-segment.current::after {
-    display: none;
-}
 
 .progress-fill {
     height: 100%;
@@ -11287,29 +11202,6 @@ body.choice-question-mode-active .progress-bar-container {
     width: 100%;
 }
 
-/* 未回答セグメントのデフォルト背景色（グレー）と均等幅 */
-body.sentence-mode-active .progress-segment,
-body.choice-question-mode-active .progress-segment {
-    background: #d1d5db;
-    flex: 1 1 0;
-}
-
-/* 正解（青）、不正解（赤）、現在（緑）のセグメント */
-body.sentence-mode-active .progress-segment.correct,
-body.choice-question-mode-active .progress-segment.correct {
-    background: #3b82f6;
-}
-
-body.sentence-mode-active .progress-segment.wrong,
-body.choice-question-mode-active .progress-segment.wrong {
-    background: #ef4444;
-}
-
-body.sentence-mode-active .progress-segment.current,
-body.choice-question-mode-active .progress-segment.current {
-    background: #22c55e !important;
-}
-
 /* 進捗バーのテキスト行を非表示（ヘッダーに表示するため） */
 body.sentence-mode-active .sentence-progress-header .progress-top-row,
 body.choice-question-mode-active .choice-progress-header .progress-top-row,
@@ -16093,11 +15985,6 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     padding: 0 16px 16px;
 }
 
-/* 手書きクイズの進捗バーはタップ不可 */
-.handwriting-quiz-view .progress-segment {
-    pointer-events: none;
-    cursor: default;
-}
 
 .hw-back-btn {
     position: absolute;
