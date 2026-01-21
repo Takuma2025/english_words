@@ -292,15 +292,24 @@ function animateCardShrink(targetCardId, callback) {
         transform: 'perspective(1000px) rotateY(0deg)'
     });
     
-    // 戻る時もタイトルとバッジを表示
+    // 戻る時もアイコン、タイトル、バッジを表示
     const targetCard = document.getElementById(targetCardId);
     if (targetCard) {
         const titleContainer = document.createElement('div');
         titleContainer.className = 'expand-title';
         titleContainer.style.transform = 'scale(1.5)';
         
+        const icon = targetCard.querySelector('.intro-icon, .irregular-verbs-icon, .all-words-icon, .minigame-icon, .category-icon, [class*="-icon"]:not(.category-arrow)');
         const badge = targetCard.querySelector('.level-badge');
         const categoryName = targetCard.querySelector('.category-name');
+        
+        if (icon) {
+            const iconClone = icon.cloneNode(true);
+            // クローンしたアイコンのvisibilityを確実にvisibleに
+            iconClone.style.visibility = 'visible';
+            iconClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
+            titleContainer.appendChild(iconClone);
+        }
         
         if (badge) {
             const badgeClone = badge.cloneNode(true);
@@ -313,7 +322,7 @@ function animateCardShrink(targetCardId, callback) {
         if (categoryName) {
             const titleText = document.createElement('div');
             titleText.className = 'title-text';
-            const textOnly = categoryName.textContent.replace(/RANK\d/g, '').trim();
+            const textOnly = categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').trim();
             titleText.textContent = textOnly;
             titleContainer.appendChild(titleText);
         }
@@ -388,11 +397,15 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     
     const rect = cardElement.getBoundingClientRect();
     
-    // 先にバッジとタイトルをクローン（非表示にする前に）
+    // 先にバッジ、アイコン、タイトルをクローン（非表示にする前に）
     const badge = cardElement.querySelector('.level-badge');
     const categoryName = cardElement.querySelector('.category-name');
+    // アイコンを探す（様々なクラス名に対応）
+    const icon = cardElement.querySelector('.intro-icon, .irregular-verbs-icon, .all-words-icon, .minigame-icon, .category-icon, [class*="-icon"]:not(.category-arrow)');
+    
     const badgeClone = badge ? badge.cloneNode(true) : null;
-    const categoryText = categoryName ? categoryName.textContent.replace(/RANK\d/g, '').trim() : '';
+    const iconClone = icon ? icon.cloneNode(true) : null;
+    const categoryText = categoryName ? categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').trim() : '';
     
     // カードの中身を非表示にする（枠線は残す）
     cardElement.style.setProperty('background', 'transparent', 'important');
@@ -410,9 +423,16 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     overlay.style.opacity = '1';
     overlay.style.transition = 'none';
     
-    // バッジとタイトルをオーバーレイに追加
+    // アイコン、バッジ、タイトルをオーバーレイに追加
     const titleContainer = document.createElement('div');
     titleContainer.className = 'expand-title';
+    
+    if (iconClone) {
+        // クローンしたアイコンのvisibilityを確実にvisibleに
+        iconClone.style.visibility = 'visible';
+        iconClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
+        titleContainer.appendChild(iconClone);
+    }
     
     if (badgeClone) {
         // クローンしたバッジのvisibilityを確実にvisibleに
