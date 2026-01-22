@@ -21748,9 +21748,9 @@ const Alphabet2048 = (() => {
     // Undo/Shuffle
     let history = [];
     let undoCount = 3;
-    let shuffleCount = 1;
+    let shuffleCount = 3;
     const MAX_UNDO = 3;
-    const MAX_SHUFFLE = 1;
+    const MAX_SHUFFLE = 3;
     
     // DOM要素
     let elements = {};
@@ -22350,6 +22350,7 @@ const Alphabet2048 = (() => {
             exitQuit: document.getElementById('alphabet2048ExitQuit'),
             continueBtn: document.getElementById('alphabet2048ContinueBtn'),
             restartBtn: document.getElementById('alphabet2048RestartBtn'),
+            homeBtn: document.getElementById('alphabet2048HomeBtn'),
             undoBtn: document.getElementById('alphabet2048UndoBtn'),
             undoCount: document.getElementById('alphabet2048UndoCount'),
             shuffleBtn: document.getElementById('alphabet2048ShuffleBtn'),
@@ -22384,11 +22385,13 @@ const Alphabet2048 = (() => {
             const minigameMenuOverlay = document.getElementById('minigameMenuOverlay');
             if (minigameMenuOverlay) {
                 minigameMenuOverlay.classList.remove('hidden');
+                setStatusBarColor('#1d4ed8'); // メニューヘッダーは青
             } else {
                 const minigameBtn = document.getElementById('minigameCardBtn');
                 if (minigameBtn) {
                     animateCardShrink('minigameCardBtn');
                 }
+                setStatusBarColor('#1d4ed8'); // ホーム画面は青
             }
         });
         
@@ -22410,6 +22413,12 @@ const Alphabet2048 = (() => {
         
         elements.continueBtn.addEventListener('click', continueGame);
         elements.restartBtn.addEventListener('click', startGame);
+        elements.homeBtn.addEventListener('click', () => {
+            elements.gameOverOverlay.classList.add('hidden');
+            elements.overlay.classList.add('hidden');
+            animateCardShrink('minigameCardBtn');
+            setStatusBarColor('#1d4ed8'); // ホーム画面は青
+        });
         
         startGame();
     }
@@ -22574,8 +22583,10 @@ const AlphabetDrop = (() => {
     }
 
     function getFirstEmptyRow(col) {
+        // gridが初期化されていない場合は-1を返す
+        if (!grid || !grid.length || col < 0 || col >= COLS) return -1;
         for (let r = ROWS - 1; r >= 0; r--) {
-            if (!grid[r][col]) return r;
+            if (!grid[r] || !grid[r][col]) return r;
         }
         return -1;
     }
@@ -22781,17 +22792,17 @@ const AlphabetDrop = (() => {
     
     // スコアに応じた落下速度レベル（1-16）
     function getSpeedLevel() {
-        // 500点ごとにレベルアップ、最大16
-        return Math.min(1 + Math.floor(score / 500), 16);
+        // 300点ごとにレベルアップ、最大16
+        return Math.min(1 + Math.floor(score / 300), 16);
     }
     
     // スコアに応じた落下速度（ピクセル/秒）
     function getDropSpeed() {
-        // 基本速度25、レベルごとに5ずつ速くなる（最大100）
-        const baseSpeed = 25;
-        const maxSpeed = 100;
+        // 基本速度40、レベルごとに15ずつ速くなる（最大250）
+        const baseSpeed = 40;
+        const maxSpeed = 250;
         const level = getSpeedLevel();
-        return Math.min(baseSpeed + (level - 1) * 5, maxSpeed);
+        return Math.min(baseSpeed + (level - 1) * 15, maxSpeed);
     }
     
     // スピードレベル表示を更新
@@ -22812,7 +22823,7 @@ const AlphabetDrop = (() => {
         }
     }
 
-    function startAutoDrop() {
+    function startAutoDrop(resumeFromCurrent = false) {
         stopAutoDrop();
         if (!elements?.board || !previewElement) return;
         
@@ -22823,33 +22834,36 @@ const AlphabetDrop = (() => {
         }
         
         const { cellSize, gap } = getBoardMetrics();
-        let targetRow = getFirstEmptyRow(selectedCol);
-        
-        // 選択列が埋まっていたら空いている列に移動
-        if (targetRow < 0) {
-            for (let c = 0; c < COLS; c++) {
-                if (getFirstEmptyRow(c) >= 0) {
-                    selectedCol = c;
-                    updateSelectedColUI();
-                    break;
-                }
-            }
-            targetRow = getFirstEmptyRow(selectedCol);
-            if (targetRow < 0) {
-                showGameOver();
-                return;
-            }
-        }
+        const targetRow = getFirstEmptyRow(selectedCol);
+        const isOverflow = targetRow < 0; // 列が満杯 = 一番上を超えて積もうとしている
         
         currentDropLetter = next; // 落下開始時の文字を記憶
         
-        // 開始位置（盤面の上）
-        const startTop = -(cellSize + gap);
-        const endTop = targetRow * (cellSize + gap);
+        // 開始位置（再開時は現在位置から、それ以外は盤面の上から）
+        let startTop;
+        if (resumeFromCurrent) {
+            // アニメーション中の実際の位置を取得
+            const currentTop = getCurrentPreviewTop();
+            startTop = (currentTop !== null && !isNaN(currentTop)) ? currentTop : -(cellSize + gap);
+        } else {
+            startTop = -(cellSize + gap);
+        }
+        
+        // 落下先：満杯の場合は6個目のタイルの上（重ならない位置）、通常は空き行まで
+        // タイルの下端が row 0 のタイルの上端に触れる位置 = タイルの top が -cellSize
+        const endTop = isOverflow ? -cellSize : targetRow * (cellSize + gap);
         const left = selectedCol * (cellSize + gap);
         
         // 落下距離に応じた時間を計算（スコアで速度が変わる）
         const distance = endTop - startTop;
+        if (distance <= 0) {
+            // 既に目標位置にいる場合（満杯の列で既に上にいる）
+            if (isOverflow) {
+                hidePreview();
+                showGameOver();
+            }
+            return;
+        }
         const dropSpeed = getDropSpeed();
         const duration = (distance / dropSpeed) * 1000; // ミリ秒
         
@@ -22863,9 +22877,13 @@ const AlphabetDrop = (() => {
             previewElement.style.top = `${endTop}px`;
         });
         
-        // 着地時にドロップ
+        // 着地時の処理
         autoDropTimer = setTimeout(() => {
-            if (!isAnimating) {
+            if (isOverflow) {
+                // 一番上の高さを超えて積んだ = ゲームオーバー
+                hidePreview();
+                showGameOver();
+            } else if (!isAnimating) {
                 isAnimating = true;
                 executeDropFromPreview();
             }
@@ -22886,14 +22904,12 @@ const AlphabetDrop = (() => {
         
         const { cellSize, gap } = getBoardMetrics();
         const targetRow = getFirstEmptyRow(selectedCol);
-        if (targetRow < 0) {
-            isAnimating = false;
-            return;
-        }
+        const isOverflow = targetRow < 0; // 列が満杯 = 一番上を超えて積もうとしている
         
         // 現在のtop位置を取得
         const currentTop = parseFloat(previewElement.style.top) || 0;
-        const endTop = targetRow * (cellSize + gap);
+        // 落下先：満杯の場合は6個目のタイルの上（重ならない位置）、通常は空き行まで
+        const endTop = isOverflow ? -cellSize : targetRow * (cellSize + gap);
         
         // 速く落下（固定時間）
         const duration = 120;
@@ -22903,6 +22919,14 @@ const AlphabetDrop = (() => {
         
         // 落下完了を待つ
         await sleep(duration);
+        
+        // 一番上の高さを超えて積んだ = ゲームオーバー
+        if (isOverflow) {
+            hidePreview();
+            showGameOver();
+            isAnimating = false;
+            return;
+        }
         
         // プレビューを非表示
         hidePreview();
@@ -23067,18 +23091,95 @@ const AlphabetDrop = (() => {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    // アニメーション中の実際の位置を取得
+    function getCurrentPreviewTop() {
+        if (!previewElement) return null;
+        // getComputedStyle でアニメーション中の実際の位置を取得
+        const computedStyle = getComputedStyle(previewElement);
+        return parseFloat(computedStyle.top);
+    }
+    
     function setSelectedCol(col) {
         if (isAnimating) return;
-        selectedCol = ((col % COLS) + COLS) % COLS;
+        
+        // ラップアラウンドを無効化（範囲外なら何もしない）
+        if (col < 0 || col >= COLS) return;
+        
+        const newCol = col;
+        if (newCol === selectedCol) return;
+        
+        const targetRow = getFirstEmptyRow(newCol);
+        
+        // 移動先の列が埋まっている場合は移動不可
+        if (targetRow < 0) return;
+        
+        // プレビューの現在位置を取得
+        if (previewElement) {
+            const { cellSize, gap } = getBoardMetrics();
+            // アニメーション中の実際の位置を取得
+            const currentTop = getCurrentPreviewTop();
+            
+            // currentTopが無効な値、または盤面の外（上）にいる場合は移動を許可
+            if (currentTop === null || isNaN(currentTop) || currentTop < 0) {
+                selectedCol = newCol;
+                updateSelectedColUI();
+                startAutoDrop(true);
+                return;
+            }
+            
+            // プレビューの下端のY座標（タイルの下端）
+            const previewBottomY = currentTop + cellSize;
+            
+            // 経路上の列をチェック（現在の列と移動先の列の間）
+            const fromCol = selectedCol;
+            const toCol = newCol;
+            const step = fromCol < toCol ? 1 : -1;
+            
+            for (let c = fromCol + step; ; c += step) {
+                const emptyRow = getFirstEmptyRow(c);
+                
+                // この列に積まれているタイルがある場合
+                // emptyRow は最下から見て最初の空き行
+                // emptyRow = ROWS-1 (例:5) なら列は完全に空（障害物なし）
+                // emptyRow < ROWS-1 なら何かタイルがある
+                if (emptyRow >= 0 && emptyRow < ROWS - 1) {
+                    // 積まれているタイルの一番上のY座標（タイルの上端）
+                    // emptyRow+1 の行にタイルがある
+                    const stackTopRow = emptyRow + 1;
+                    const stackTopY = stackTopRow * (cellSize + gap);
+                    
+                    // プレビューの下端がスタックの上端以上なら移動不可
+                    // （同じ高さでも衝突とみなす）
+                    if (previewBottomY >= stackTopY) {
+                        return;
+                    }
+                } else if (emptyRow < 0) {
+                    // この列は完全に埋まっている（row 0 にもタイルがある）
+                    // プレビューが盤面内にいる場合は移動不可
+                    const stackTopY = 0;
+                    if (previewBottomY >= stackTopY) {
+                        return;
+                    }
+                }
+                // emptyRow === ROWS - 1 の場合、列は空なのでスキップ
+                
+                if (c === toCol) break;
+            }
+        }
+        
+        selectedCol = newCol;
         updateSelectedColUI();
-        // 列変更時は自動落下をリスタート
-        updatePreview();
-        startAutoDrop();
+        // 列変更時は現在の高さを維持して落下を継続
+        startAutoDrop(true);
     }
 
     async function executeDropFromPreview() {
         const row = getFirstEmptyRow(selectedCol);
         if (row < 0) {
+            // 選択列が満杯（6個積まれている）= 7個目が6個目の上に触れた = ゲームオーバー
+            stopAutoDrop();
+            hidePreview();
+            showGameOver();
             isAnimating = false;
             return;
         }
@@ -23096,7 +23197,10 @@ const AlphabetDrop = (() => {
         nextNext = randomSpawnLetter();
         currentDropLetter = null;
         
+        // 自動落下時も落下アニメーションをスキップ
+        skipDropAnimation = true;
         render();
+        skipDropAnimation = false;
 
         // 着地後に少し待ってから合体処理
         await sleep(LAND_DELAY);
@@ -23123,9 +23227,6 @@ const AlphabetDrop = (() => {
         if (elements.exitDialog && !elements.exitDialog.classList.contains('hidden')) return;
         if (elements.gameOverOverlay && !elements.gameOverOverlay.classList.contains('hidden')) return;
         if (elements.clearOverlay && !elements.clearOverlay.classList.contains('hidden') && !continueAfterWin) return;
-
-        const row = getFirstEmptyRow(selectedCol);
-        if (row < 0) return;
 
         isAnimating = true;
         dropFromCurrentPosition();
@@ -23166,7 +23267,24 @@ const AlphabetDrop = (() => {
         dropAtSelectedCol();
     }
 
-    function startGame() {
+    async function showCountdown() {
+        if (!elements?.countdownOverlay || !elements?.countdownNumber) return;
+        
+        elements.countdownOverlay.classList.remove('hidden');
+        
+        for (let i = 3; i >= 1; i--) {
+            elements.countdownNumber.textContent = i;
+            elements.countdownNumber.style.animation = 'none';
+            // リフローを強制してアニメーションをリセット
+            void elements.countdownNumber.offsetWidth;
+            elements.countdownNumber.style.animation = 'countdownPulse 1s ease-in-out';
+            await sleep(1000);
+        }
+        
+        elements.countdownOverlay.classList.add('hidden');
+    }
+    
+    async function startGame() {
         stopAutoDrop();
         score = 0;
         hasWon = false;
@@ -23191,6 +23309,10 @@ const AlphabetDrop = (() => {
         updateNextPreview();
         updateSpeedLevel();
         render();
+        
+        // カウントダウン
+        await showCountdown();
+        
         updatePreview();
         showPreview();
         startAutoDrop();
@@ -23227,9 +23349,12 @@ const AlphabetDrop = (() => {
             colHighlight: document.getElementById('alphabetDropColHighlight'),
             clearOverlay: document.getElementById('alphabetDropClear'),
             gameOverOverlay: document.getElementById('alphabetDropGameOver'),
+            countdownOverlay: document.getElementById('alphabetDropCountdown'),
+            countdownNumber: document.getElementById('alphabetDropCountdownNumber'),
             finalScore: document.getElementById('alphabetDropFinalScore'),
             continueBtn: document.getElementById('alphabetDropContinueBtn'),
             restartBtn: document.getElementById('alphabetDropRestartBtn'),
+            homeBtn: document.getElementById('alphabetDropHomeBtn'),
             closeBtn: document.getElementById('alphabetDropCloseBtn'),
             newBtn: document.getElementById('alphabetDropNewBtn'),
             confirmDialog: document.getElementById('alphabetDropConfirmDialog'),
@@ -23249,10 +23374,18 @@ const AlphabetDrop = (() => {
             elements.board.addEventListener('touchend', handleBoardTap, { passive: true });
 
             elements.closeBtn.addEventListener('click', () => {
+                stopAutoDrop(); // 一時停止
+                // プレビューのアニメーションも停止
+                if (previewElement) {
+                    const currentTop = getComputedStyle(previewElement).top;
+                    previewElement.style.transition = 'none';
+                    previewElement.style.top = currentTop;
+                }
                 elements.exitDialog.classList.remove('hidden');
             });
             elements.exitContinue.addEventListener('click', () => {
                 elements.exitDialog.classList.add('hidden');
+                startAutoDrop(true); // 現在位置から再開
             });
             elements.exitQuit.addEventListener('click', () => {
                 stopAutoDrop();
@@ -23260,6 +23393,7 @@ const AlphabetDrop = (() => {
                 elements.overlay.classList.add('hidden');
                 const menu = document.getElementById('minigameMenuOverlay');
                 if (menu) menu.classList.remove('hidden');
+                setStatusBarColor('#1d4ed8'); // メニューヘッダーは青
             });
 
             elements.newBtn.addEventListener('click', () => {
@@ -23275,6 +23409,12 @@ const AlphabetDrop = (() => {
 
             elements.continueBtn.addEventListener('click', continueGame);
             elements.restartBtn.addEventListener('click', startGame);
+            elements.homeBtn.addEventListener('click', () => {
+                elements.gameOverOverlay.classList.add('hidden');
+                elements.overlay.classList.add('hidden');
+                animateCardShrink('minigameCardBtn');
+                setStatusBarColor('#1d4ed8'); // ホーム画面は青
+            });
         }
 
         startGame();
@@ -23298,6 +23438,7 @@ document.addEventListener('DOMContentLoaded', () => {
         minigameBtn.addEventListener('click', () => {
             animateCardExpand(minigameBtn, '#f8fafc', () => {
                 minigameMenuOverlay.classList.remove('hidden');
+                setStatusBarColor('#1d4ed8'); // メニューヘッダーは青
             });
         });
     }
@@ -23307,6 +23448,7 @@ document.addEventListener('DOMContentLoaded', () => {
         minigameMenuBackBtn.addEventListener('click', () => {
             minigameMenuOverlay.classList.add('hidden');
             animateCardShrink('minigameCardBtn');
+            setStatusBarColor('#1d4ed8'); // ホーム画面は青
         });
     }
     
@@ -23315,6 +23457,7 @@ document.addEventListener('DOMContentLoaded', () => {
         minigameAtoZBtn.addEventListener('click', () => {
             minigameMenuOverlay.classList.add('hidden');
             alphabet2048Overlay.classList.remove('hidden');
+            setStatusBarColor('#0f172a'); // ゲーム背景の黒
             Alphabet2048.init();
         });
     }
@@ -23324,6 +23467,7 @@ document.addEventListener('DOMContentLoaded', () => {
         minigameAtoZDropBtn.addEventListener('click', () => {
             minigameMenuOverlay.classList.add('hidden');
             alphabetDropOverlay.classList.remove('hidden');
+            setStatusBarColor('#0f172a'); // ゲーム背景の黒
             AlphabetDrop.init();
         });
     }

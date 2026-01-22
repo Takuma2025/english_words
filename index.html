@@ -2446,7 +2446,7 @@
                         <div class="minigame-tile-mini alphabet2048-tile-D">D</div>
                     </div>
                     <div class="minigame-menu-card-info">
-                        <div class="minigame-menu-card-name">A to Z</div>
+                        <div class="minigame-menu-card-name alphabet2048-title-small"><span class="title-letter title-A">A</span><span class="title-to">to</span><span class="title-letter title-Z">Z</span></div>
                         <div class="minigame-menu-card-desc">2048風パズル。同じ文字を合体させてZを目指そう！</div>
                     </div>
                     <div class="minigame-menu-card-arrow">
@@ -2457,11 +2457,11 @@
                     <div class="minigame-menu-card-tiles minigame-menu-card-tiles-drop">
                         <div class="minigame-tile-mini minigame-tile-dropping alphabet2048-tile-A">A</div>
                         <div class="minigame-drop-arrow">↓</div>
-                        <div class="minigame-tile-mini alphabet2048-tile-A">A</div>
+                        <div class="minigame-tile-mini minigame-tile-stacked-dim alphabet2048-tile-A">A</div>
                         <div class="minigame-tile-mini alphabet2048-tile-B">B</div>
                     </div>
                     <div class="minigame-menu-card-info">
-                        <div class="minigame-menu-card-name">A to Z Drop</div>
+                        <div class="minigame-menu-card-name alphabet2048-title-small"><span class="title-letter title-A">A</span><span class="title-to">to</span><span class="title-letter title-Z">Z</span><span class="title-drop">Drop</span></div>
                         <div class="minigame-menu-card-desc">タイルを落として合体！Zを目指す落下パズル</div>
                     </div>
                     <div class="minigame-menu-card-arrow">
@@ -2556,7 +2556,10 @@
                     <div class="alphabet2048-message alphabet2048-gameover">
                         <div class="alphabet2048-message-title">GAME OVER</div>
                         <div class="alphabet2048-message-sub">SCORE: <span id="alphabet2048FinalScore">0</span></div>
-                        <button class="alphabet2048-restart-btn" id="alphabet2048RestartBtn">もう一度</button>
+                        <div class="alphabet2048-gameover-buttons">
+                            <button class="alphabet2048-restart-btn" id="alphabet2048RestartBtn">もう一度</button>
+                            <button class="alphabet2048-home-btn" id="alphabet2048HomeBtn">ホームに戻る</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2662,6 +2665,11 @@
                     </div>
                 </div>
 
+                <!-- カウントダウンオーバーレイ -->
+                <div class="alphabetdrop-countdown-overlay hidden" id="alphabetDropCountdown">
+                    <div class="alphabetdrop-countdown-number" id="alphabetDropCountdownNumber">3</div>
+                </div>
+
                 <!-- CLEAR オーバーレイ -->
                 <div class="alphabet2048-message-overlay hidden" id="alphabetDropClear">
                     <div class="alphabet2048-message alphabet2048-clear">
@@ -2676,7 +2684,10 @@
                     <div class="alphabet2048-message alphabet2048-gameover">
                         <div class="alphabet2048-message-title">GAME OVER</div>
                         <div class="alphabet2048-message-sub">SCORE: <span id="alphabetDropFinalScore">0</span></div>
-                        <button class="alphabet2048-restart-btn" id="alphabetDropRestartBtn">もう一度</button>
+                        <div class="alphabet2048-gameover-buttons">
+                            <button class="alphabet2048-restart-btn" id="alphabetDropRestartBtn">もう一度</button>
+                            <button class="alphabet2048-home-btn" id="alphabetDropHomeBtn">ホームに戻る</button>
+                        </div>
                     </div>
                 </div>
             </div>
