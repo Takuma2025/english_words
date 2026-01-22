@@ -1,3 +1,14 @@
+// ステータスバーの色を変更する関数
+function setStatusBarColor(color) {
+    let themeColor = document.querySelector('meta[name="theme-color"]');
+    if (!themeColor) {
+        themeColor = document.createElement('meta');
+        themeColor.name = 'theme-color';
+        document.head.appendChild(themeColor);
+    }
+    themeColor.content = color;
+}
+
 // アプリケーションの状態管理
 let currentWords = [];
 let currentIndex = 0;
@@ -20445,6 +20456,9 @@ function showIrregularVerbsTestView(data, type, title) {
     
     // キーボードを表示
     showIvKeyboard();
+    
+    // ステータスバーを白に
+    setStatusBarColor('#ffffff');
 }
 
 // 現在のテストデータ
@@ -20563,6 +20577,9 @@ function showIrregularVerbsView() {
     
     // キーボードを表示
     showIvKeyboard();
+    
+    // ステータスバーを白に
+    setStatusBarColor('#ffffff');
 }
 
 // 不規則変化の単語画面（テストモード）を非表示（サブカテゴリーメニューに戻る）
@@ -20579,6 +20596,9 @@ function hideIrregularVerbsView() {
         
         view.classList.add('hidden');
         document.body.style.overflow = '';
+        
+        // ステータスバーを元に戻す
+        setStatusBarColor('#1d4ed8');
         
         if (ivMenuView) {
             ivMenuView.classList.remove('hidden');
@@ -20758,8 +20778,11 @@ function setupIrregularVerbsKeyboard() {
     const keyboard = document.getElementById('ivKeyboard');
     if (!keyboard) return;
     
-    // キー入力
+    // キー入力（mousedownでpreventDefaultしてフォーカスを維持）
     keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        key.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // フォーカスが外れないようにする
+        });
         key.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -20776,7 +20799,6 @@ function setupIrregularVerbsKeyboard() {
                 const value = ivCurrentInput.value;
                 ivCurrentInput.value = value.slice(0, start) + char + value.slice(end);
                 ivCurrentInput.selectionStart = ivCurrentInput.selectionEnd = start + 1;
-                ivCurrentInput.focus();
             }
         });
     });
@@ -20784,6 +20806,7 @@ function setupIrregularVerbsKeyboard() {
     // シフトキー
     const shiftBtn = document.getElementById('ivKeyboardShift');
     if (shiftBtn) {
+        shiftBtn.addEventListener('mousedown', (e) => e.preventDefault());
         shiftBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -20794,6 +20817,7 @@ function setupIrregularVerbsKeyboard() {
     // バックスペース
     const backspaceBtn = document.getElementById('ivKeyboardBackspace');
     if (backspaceBtn) {
+        backspaceBtn.addEventListener('mousedown', (e) => e.preventDefault());
         backspaceBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -20808,7 +20832,6 @@ function setupIrregularVerbsKeyboard() {
                     ivCurrentInput.value = value.slice(0, start) + value.slice(end);
                     ivCurrentInput.selectionStart = ivCurrentInput.selectionEnd = start;
                 }
-                ivCurrentInput.focus();
             }
         });
     }
@@ -21242,10 +21265,11 @@ function initStudyCalendar() {
         const currentMonth = currentDate.getMonth();
         yearMonthSelect.innerHTML = '';
         
-        // 過去5年から今月までのオプションを生成（新しい順）
-        for (let year = currentYear; year >= currentYear - 5; year--) {
+        // 2026年から今月までのオプションを生成（新しい順）
+        const startYear = 2026;
+        for (let year = currentYear; year >= startYear; year--) {
             const endMonth = (year === currentYear) ? currentMonth : 11;
-            const startMonth = 0;
+            const startMonth = (year === startYear) ? 0 : 0;
             for (let month = endMonth; month >= startMonth; month--) {
                 const option = document.createElement('option');
                 option.value = `${year}-${month}`;
