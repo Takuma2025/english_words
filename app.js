@@ -980,13 +980,14 @@ function animateProgressToGoal() {
         const currentRect = progressBar.getBoundingClientRect();
         
         const floatingText = document.createElement('div');
-        floatingText.textContent = `+${count}語`;
+        floatingText.innerHTML = `+${count}<span style="font-size: 16px;">語</span>`;
         floatingText.style.position = 'fixed';
         floatingText.style.left = `${currentRect.left + currentRect.width / 2}px`;
         floatingText.style.top = `${currentRect.top - 5}px`;
         floatingText.style.transform = 'translateX(-50%)';
+        floatingText.style.fontFamily = "'Oswald', sans-serif";
         floatingText.style.fontSize = '24px';
-        floatingText.style.fontWeight = '800';
+        floatingText.style.fontWeight = '500';
         floatingText.style.color = '#2563eb';
         floatingText.style.textShadow = '-2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff, -2px 0 0 #fff, 2px 0 0 #fff, 0 -2px 0 #fff, 0 2px 0 #fff';
         floatingText.style.zIndex = '10001';
@@ -21729,619 +21730,494 @@ function getStudyLevel(count) {
 }
 
 // =============================================
-// Word Tetris ミニゲーム（1文字ブロック版）
+// Alphabet 2048 ミニゲーム
 // =============================================
-const WordTetris = (() => {
-    // 定数
-    const COLS = 10;
-    const ROWS = 16;
-    let CELL_SIZE = 22; // 動的に調整
-    const DROP_INTERVAL_INITIAL = 800;
-    const DROP_INTERVAL_MIN = 100;
-    const MAX_CHAIN = 10;
-    const NEXT_QUEUE_SIZE = 10; // NEXT表示数
+const Alphabet2048 = (() => {
+    const SIZE = 4;
+    const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     
     // ゲーム状態
     let grid = [];
-    let currentPiece = null;
-    let nextQueue = []; // 次の10個の文字
     let score = 0;
     let bestScore = 0;
+    let tileIdCounter = 0;
     let isGameOver = false;
-    let isPaused = false;
-    let dropInterval = DROP_INTERVAL_INITIAL;
-    let lastDropTime = 0;
-    let animationFrameId = null;
+    let hasWon = false;
+    let continueAfterWin = false;
     
-    // 辞書
-    let dictionary = new Set();
-    let meaningMap = new Map();
-    
-    // 文字頻度
-    const LETTER_WEIGHTS = {
-        'E': 12, 'T': 9, 'A': 8, 'O': 7, 'I': 7, 'N': 7, 'S': 6, 'H': 6, 'R': 6,
-        'D': 4, 'L': 4, 'C': 3, 'U': 3, 'M': 3, 'W': 2, 'F': 2, 'G': 2, 'Y': 2,
-        'P': 2, 'B': 1, 'V': 1, 'K': 1, 'J': 1, 'X': 1, 'Q': 1, 'Z': 1
-    };
-    let weightedLetters = [];
-    
-    // DOM
-    let canvas, ctx;
+    // DOM要素
     let elements = {};
     
-    // 辞書構築
-    function buildDictionary() {
-        dictionary.clear();
-        meaningMap.clear();
-        
-        try {
-            const allWords = getAllWordData();
-            if (allWords && allWords.length > 0) {
-                allWords.forEach(w => {
-                    if (w.word && w.word.length >= 3) {
-                        const lower = w.word.toLowerCase();
-                        dictionary.add(lower);
-                        meaningMap.set(lower, w.meaning || '意味未登録');
-                    }
-                });
-            }
-        } catch (e) {
-            console.warn('Word data not available');
-        }
-        
-        if (dictionary.size < 100) {
-            const fallbackWords = [
-                'the','and','for','are','but','not','you','all','can','her','was','one','our','out',
-                'day','get','has','him','his','how','its','may','new','now','old','see','two','way',
-                'who','boy','did','man','any','ask','big','buy','car','cat','dog','eat','far','few',
-                'fly','got','had','hot','job','key','let','lot','mom','pay','put','red','run','sit',
-                'sun','top','try','use','win','yes','able','also','back','best','both','call','come',
-                'each','even','find','from','give','good','have','help','here','high','home','into',
-                'just','know','last','left','life','like','line','long','look','made','make','many',
-                'most','much','must','name','need','next','only','open','over','part','play','read',
-                'real','room','same','seem','self','show','side','some','such','take','tell','than',
-                'that','them','then','they','this','time','tree','turn','upon','very','want','well',
-                'went','were','what','when','will','with','word','work','year','your','about','after',
-                'again','being','black','bring','could','every','first','found','great','group','house',
-                'large','later','learn','leave','level','light','might','money','never','night','often',
-                'order','other','paper','place','plant','point','right','school','shall','small','sound',
-                'spell','start','state','still','story','study','table','think','three','times','today',
-                'under','until','using','water','where','which','while','white','whole','world','would',
-                'write','young','family','father','mother','sister','brother','friend','people','person',
-                'thing','place','animal','number','letter','answer','before','behind','better','change'
-            ];
-            fallbackWords.forEach(w => {
-                dictionary.add(w);
-                if (!meaningMap.has(w)) meaningMap.set(w, '意味未登録');
-            });
-        }
-        
-        weightedLetters = [];
-        for (const [letter, weight] of Object.entries(LETTER_WEIGHTS)) {
-            for (let i = 0; i < weight; i++) weightedLetters.push(letter);
-        }
+    // タッチ操作用
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    const SWIPE_THRESHOLD = 30;
+    
+    // タイル情報: { id, letter, row, col, mergedThisTurn }
+    function createTile(letter, row, col) {
+        return {
+            id: tileIdCounter++,
+            letter: letter,
+            row: row,
+            col: col,
+            mergedThisTurn: false,
+            isNew: true
+        };
     }
     
-    function getRandomLetter() {
-        return weightedLetters[Math.floor(Math.random() * weightedLetters.length)];
+    // 文字のインデックス取得 (A=0, B=1, ..., Z=25)
+    function letterIndex(letter) {
+        return LETTERS.indexOf(letter);
     }
     
-    // 辞書から適切な長さの単語をランダムに取得
-    let wordPool = [];
-    function buildWordPool() {
-        wordPool = [];
-        for (const word of dictionary) {
-            if (word.length >= 3 && word.length <= 7) {
-                wordPool.push(word.toUpperCase());
+    // 文字のスコア値 (2^index)
+    function letterValue(letter) {
+        return Math.pow(2, letterIndex(letter));
+    }
+    
+    // 次の文字を取得
+    function nextLetter(letter) {
+        const idx = letterIndex(letter);
+        if (idx >= 25) return null; // Zの次はない
+        return LETTERS[idx + 1];
+    }
+    
+    // 空きセル取得
+    function getEmptyCells() {
+        const empty = [];
+        for (let r = 0; r < SIZE; r++) {
+            for (let c = 0; c < SIZE; c++) {
+                if (!grid[r][c]) {
+                    empty.push({ row: r, col: c });
+                }
             }
         }
+        return empty;
     }
     
-    function getRandomWord() {
-        if (wordPool.length === 0) return null;
-        return wordPool[Math.floor(Math.random() * wordPool.length)];
+    // ランダムなタイルをスポーン
+    function spawnTile() {
+        const empty = getEmptyCells();
+        if (empty.length === 0) return null;
+        
+        const pos = empty[Math.floor(Math.random() * empty.length)];
+        const letter = Math.random() < 0.9 ? 'A' : 'B';
+        const tile = createTile(letter, pos.row, pos.col);
+        grid[pos.row][pos.col] = tile;
+        return tile;
     }
     
-    // 文字列をシャッフル
-    function shuffleString(str) {
-        const arr = str.split('');
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-    }
-    
-    // 単語ごとの色パレット（はっきり区別できる色）
-    const WORD_COLORS = [
-        '#2563eb', // blue
-        '#059669', // emerald
-        '#d97706', // amber
-        '#dc2626', // red
-        '#7c3aed', // violet
-    ];
-    let nextQueueColors = []; // 各文字の色
-    let colorIndex = 0;
-    
-    // NEXTキューを初期化（単語のシャッフル文字で埋める）
-    function initNextQueue() {
-        nextQueue = [];
-        nextQueueColors = [];
-        colorIndex = 0;
-        // 最初に十分な量の単語を追加（切り詰めない）
-        while (nextQueue.length < NEXT_QUEUE_SIZE + 10) {
-            addWordToQueue();
-        }
-    }
-    
-    // 単語を1つキューに追加
-    function addWordToQueue() {
-        const word = getRandomWord();
-        if (word) {
-            const color = WORD_COLORS[colorIndex % WORD_COLORS.length];
-            colorIndex++;
-            const shuffled = shuffleString(word);
-            for (const letter of shuffled) {
-                nextQueue.push(letter);
-                nextQueueColors.push(color);
-            }
-        } else {
-            // フォールバック：ランダム文字
-            nextQueue.push(getRandomLetter());
-            nextQueueColors.push('#64748b');
-        }
-    }
-    
-    // NEXTキューを単語で補充（単語単位で追加）
-    function fillNextQueue() {
-        // キューが少なくなったら単語を丸ごと追加
-        while (nextQueue.length < NEXT_QUEUE_SIZE + 5) {
-            addWordToQueue();
-        }
-    }
-    
+    // グリッド初期化
     function initGrid() {
         grid = [];
-        for (let r = 0; r < ROWS; r++) {
+        for (let r = 0; r < SIZE; r++) {
             grid[r] = [];
-            for (let c = 0; c < COLS; c++) {
+            for (let c = 0; c < SIZE; c++) {
                 grid[r][c] = null;
             }
         }
     }
     
-    // ピースをスポーン（1文字）
-    function spawnPiece() {
-        const letter = nextQueue.shift();
-        nextQueueColors.shift();
-        fillNextQueue(); // 単語で補充
-        updateNextDisplay();
-        
-        currentPiece = {
-            letter: letter,
-            x: Math.floor(COLS / 2),
-            y: 0
-        };
-        
-        // スポーン位置に既にブロックがあればゲームオーバー
-        if (grid[0][currentPiece.x] !== null) {
-            gameOver();
-            return false;
-        }
-        return true;
-    }
-    
-    // 衝突判定（1文字ピース用）
-    function checkCollision(x, y) {
-        if (x < 0 || x >= COLS) return true;
-        if (y >= ROWS) return true;
-        if (y >= 0 && grid[y][x] !== null) return true;
-        return false;
-    }
-    
-    // ピース固定
-    function lockPiece() {
-        if (!currentPiece || currentPiece.y < 0) return;
-        
-        grid[currentPiece.y][currentPiece.x] = currentPiece.letter;
-        
-        // 単語探索
-        const foundWords = findWordsAt(currentPiece.x, currentPiece.y);
-        
-        if (foundWords.length > 0) {
-            processFoundWords(foundWords, 1);
-        } else {
-            spawnPiece();
-        }
-    }
-    
-    // 単語の重複除去（長い単語優先）
-    function deduplicateWords(words) {
-        const usedCells = new Set();
-        const result = [];
-        words.sort((a, b) => b.length - a.length);
-        
-        for (const w of words) {
-            const cellKeys = w.cells.map(c => `${c.x},${c.y}`);
-            if (!cellKeys.some(k => usedCells.has(k))) {
-                result.push(w);
-                cellKeys.forEach(k => usedCells.add(k));
+    // 行/列を1次元配列として取得（移動方向に応じて）
+    function getLine(index, direction) {
+        const line = [];
+        for (let i = 0; i < SIZE; i++) {
+            switch (direction) {
+                case 'left':
+                    line.push(grid[index][i]);
+                    break;
+                case 'right':
+                    line.push(grid[index][SIZE - 1 - i]);
+                    break;
+                case 'up':
+                    line.push(grid[i][index]);
+                    break;
+                case 'down':
+                    line.push(grid[SIZE - 1 - i][index]);
+                    break;
             }
         }
-        return result;
+        return line;
     }
     
-    // 8方向単語探索
-    function findWordsAt(startX, startY) {
-        if (grid[startY][startX] === null) return [];
+    // 行/列を設定（移動方向に応じて）
+    function setLine(index, line, direction) {
+        for (let i = 0; i < SIZE; i++) {
+            let r, c;
+            switch (direction) {
+                case 'left':
+                    r = index; c = i;
+                    break;
+                case 'right':
+                    r = index; c = SIZE - 1 - i;
+                    break;
+                case 'up':
+                    r = i; c = index;
+                    break;
+                case 'down':
+                    r = SIZE - 1 - i; c = index;
+                    break;
+            }
+            grid[r][c] = line[i];
+            if (line[i]) {
+                line[i].row = r;
+                line[i].col = c;
+            }
+        }
+    }
+    
+    // ラインを圧縮（nullを詰める）
+    function compress(line) {
+        return line.filter(t => t !== null);
+    }
+    
+    // ラインをマージ
+    function mergeLine(line) {
+        const compressed = compress(line);
+        const result = [];
+        let scoreGain = 0;
+        let merged = false;
         
-        const candidates = [];
-        const dirPairs = [
-            [{ dx: 1, dy: 0 }, { dx: -1, dy: 0 }],
-            [{ dx: 0, dy: 1 }, { dx: 0, dy: -1 }],
-            [{ dx: 1, dy: 1 }, { dx: -1, dy: -1 }],
-            [{ dx: 1, dy: -1 }, { dx: -1, dy: 1 }]
-        ];
-        
-        for (const [dir1, dir2] of dirPairs) {
-            const cells1 = getLineCells(startX, startY, dir1.dx, dir1.dy);
-            const cells2 = getLineCells(startX, startY, dir2.dx, dir2.dy);
-            const allCells = [...cells2.reverse(), { x: startX, y: startY, letter: grid[startY][startX] }, ...cells1];
-            const line = allCells.map(c => c.letter).join('').toLowerCase();
+        for (let i = 0; i < compressed.length; i++) {
+            const tile = compressed[i];
+            const nextTile = compressed[i + 1];
             
-            for (let len = line.length; len >= 3; len--) {
-                for (let start = 0; start <= line.length - len; start++) {
-                    const substr = line.substring(start, start + len);
-                    if (dictionary.has(substr)) {
-                        candidates.push({
-                            word: substr,
-                            cells: allCells.slice(start, start + len),
-                            length: len,
-                            meaning: meaningMap.get(substr) || '意味未登録'
-                        });
+            if (nextTile && tile.letter === nextTile.letter && !tile.mergedThisTurn && !nextTile.mergedThisTurn) {
+                // 合体
+                const newLetter = nextLetter(tile.letter);
+                if (newLetter) {
+                    tile.letter = newLetter;
+                    tile.mergedThisTurn = true;
+                    tile.justMerged = true;
+                    scoreGain += letterValue(newLetter);
+                    
+                    // Zを作成したらクリア
+                    if (newLetter === 'Z' && !hasWon) {
+                        hasWon = true;
+                    }
+                    
+                    result.push(tile);
+                    i++; // 次のタイルをスキップ
+                    merged = true;
+                } else {
+                    result.push(tile);
+                }
+            } else {
+                result.push(tile);
+            }
+        }
+        
+        // SIZEまでnullで埋める
+        while (result.length < SIZE) {
+            result.push(null);
+        }
+        
+        return { line: result, scoreGain, merged };
+    }
+    
+    // グリッドのスナップショットを取得（移動判定用）
+    function getGridSnapshot() {
+        const snapshot = [];
+        for (let r = 0; r < SIZE; r++) {
+            for (let c = 0; c < SIZE; c++) {
+                const tile = grid[r][c];
+                snapshot.push(tile ? `${tile.id}:${r}:${c}:${tile.letter}` : 'null');
+            }
+        }
+        return snapshot.join(',');
+    }
+    
+    // 移動処理
+    function move(direction) {
+        if (isGameOver) return false;
+        
+        // 移動前のスナップショット
+        const beforeSnapshot = getGridSnapshot();
+        
+        let totalScoreGain = 0;
+        
+        // 全タイルのisNew, justMergedをリセット
+        for (let r = 0; r < SIZE; r++) {
+            for (let c = 0; c < SIZE; c++) {
+                if (grid[r][c]) {
+                    grid[r][c].isNew = false;
+                    grid[r][c].justMerged = false;
+                }
+            }
+        }
+        
+        // 各行/列を処理
+        for (let i = 0; i < SIZE; i++) {
+            const originalLine = getLine(i, direction);
+            const { line: newLine, scoreGain } = mergeLine(originalLine);
+            setLine(i, newLine, direction);
+            totalScoreGain += scoreGain;
+        }
+        
+        // 移動後のスナップショットと比較
+        const afterSnapshot = getGridSnapshot();
+        const moved = (beforeSnapshot !== afterSnapshot);
+        
+        // 移動があった場合のみスポーン
+        if (moved) {
+            score += totalScoreGain;
+            updateScore();
+            
+            // mergedThisTurnをリセット
+            for (let r = 0; r < SIZE; r++) {
+                for (let c = 0; c < SIZE; c++) {
+                    if (grid[r][c]) {
+                        grid[r][c].mergedThisTurn = false;
                     }
                 }
             }
-        }
-        return candidates;
-    }
-    
-    function getLineCells(startX, startY, dx, dy) {
-        const cells = [];
-        let x = startX + dx, y = startY + dy;
-        while (x >= 0 && x < COLS && y >= 0 && y < ROWS && grid[y][x] !== null) {
-            cells.push({ x, y, letter: grid[y][x] });
-            x += dx; y += dy;
-        }
-        return cells;
-    }
-    
-    function processFoundWords(words, chainLevel) {
-        if (chainLevel > MAX_CHAIN) { spawnPiece(); return; }
-        
-        let totalScore = 0;
-        const comboMultiplier = 1 + (chainLevel - 1) * 0.5;
-        
-        for (const w of words) {
-            totalScore += Math.floor(Math.pow(w.length, 2) * comboMultiplier);
-            addWordLog(w.word, w.meaning);
-            speakWord(w.word);
-            showWordPopup(w.word, w.meaning);
-            for (const cell of w.cells) grid[cell.y][cell.x] = null;
-        }
-        
-        score += totalScore;
-        updateScoreDisplay();
-        
-        setTimeout(() => {
-            applyGravity();
+            
+            spawnTile();
             render();
-            setTimeout(() => {
-                const chainWords = findAllWords();
-                if (chainWords.length > 0) processFoundWords(chainWords, chainLevel + 1);
-                else spawnPiece();
-            }, 150);
-        }, 300);
-    }
-    
-    function findAllWords() {
-        const candidates = [];
-        for (let y = 0; y < ROWS; y++) {
-            for (let x = 0; x < COLS; x++) {
-                if (grid[y][x] !== null) candidates.push(...findWordsAt(x, y));
+            
+            // 勝利チェック
+            if (hasWon && !continueAfterWin) {
+                setTimeout(() => showClear(), 300);
+            }
+            
+            // ゲームオーバーチェック
+            if (!canMove()) {
+                isGameOver = true;
+                setTimeout(() => showGameOver(), 300);
             }
         }
-        return deduplicateWords(candidates);
+        
+        return moved;
     }
     
-    function applyGravity() {
-        for (let x = 0; x < COLS; x++) {
-            let writeY = ROWS - 1;
-            for (let y = ROWS - 1; y >= 0; y--) {
-                if (grid[y][x] !== null) {
-                    if (y !== writeY) { grid[writeY][x] = grid[y][x]; grid[y][x] = null; }
-                    writeY--;
+    // 移動可能かチェック
+    function canMove() {
+        // 空きセルがあれば移動可能
+        if (getEmptyCells().length > 0) return true;
+        
+        // 隣接する同じ文字があれば移動可能
+        for (let r = 0; r < SIZE; r++) {
+            for (let c = 0; c < SIZE; c++) {
+                const tile = grid[r][c];
+                if (!tile) continue;
+                
+                // 右隣
+                if (c < SIZE - 1 && grid[r][c + 1] && grid[r][c + 1].letter === tile.letter) {
+                    return true;
+                }
+                // 下隣
+                if (r < SIZE - 1 && grid[r + 1][c] && grid[r + 1][c].letter === tile.letter) {
+                    return true;
                 }
             }
         }
-    }
-    
-    function speakWord(word) {
-        try {
-            if ('speechSynthesis' in window) {
-                const u = new SpeechSynthesisUtterance(word);
-                u.lang = 'en-US'; u.rate = 0.9;
-                speechSynthesis.speak(u);
-            }
-        } catch (e) {}
-    }
-    
-    function showWordPopup(word, meaning) {
-        elements.foundWord.textContent = word.toUpperCase();
-        elements.foundMeaning.textContent = meaning;
-        elements.wordPopup.classList.remove('hidden');
-        setTimeout(() => elements.wordPopup.classList.add('hidden'), 1500);
-    }
-    
-    function addWordLog(word, meaning) {
-        // ワードログ表示は削除済み
-    }
-    
-    // NEXT表示更新（10個表示・同じ単語は同色）
-    function updateNextDisplay() {
-        // 先頭10個だけを表示
-        const displayQueue = nextQueue.slice(0, NEXT_QUEUE_SIZE);
-        const displayColors = nextQueueColors.slice(0, NEXT_QUEUE_SIZE);
-        elements.nextList.innerHTML = displayQueue.map((letter, i) => {
-            const color = displayColors[i] || '#64748b';
-            // 最初の文字は枠線を追加して目立たせる
-            const borderStyle = i === 0 ? 'border:2px solid #fbbf24;' : '';
-            return `<div class="word-tetris-next-item">
-                <span class="word-tetris-next-letter" style="background:${color};color:#fff;${borderStyle}">${letter}</span>
-            </div>`;
-        }).join('');
-    }
-    
-    function updateScoreDisplay() {
-        elements.score.textContent = score;
-        if (score > bestScore) {
-            bestScore = score;
-            elements.best.textContent = bestScore;
-            saveBestScore();
-        }
-    }
-    
-    function updateWordLogDisplay() {
-        // ワードログ表示は削除済み
-    }
-    
-    function saveBestScore() { localStorage.setItem('wordTetrisBestScore', bestScore.toString()); }
-    function loadBestScore() {
-        bestScore = parseInt(localStorage.getItem('wordTetrisBestScore') || '0', 10);
-        elements.best.textContent = bestScore;
+        
+        return false;
     }
     
     // 描画
     function render() {
-        if (!ctx) return;
-        const width = COLS * CELL_SIZE, height = ROWS * CELL_SIZE;
+        const tilesContainer = elements.tiles;
+        tilesContainer.innerHTML = '';
         
-        // 背景（ダークテーマ）
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(0, 0, width, height);
+        const board = elements.board;
+        const boardRect = board.getBoundingClientRect();
+        const gap = parseFloat(getComputedStyle(board).getPropertyValue('--cell-gap')) || 8;
+        const cellSize = (boardRect.width - gap * 5) / 4;
         
-        // グリッド線
-        ctx.strokeStyle = '#334155';
-        ctx.lineWidth = 1;
-        for (let x = 0; x <= COLS; x++) {
-            ctx.beginPath(); ctx.moveTo(x * CELL_SIZE, 0); ctx.lineTo(x * CELL_SIZE, height); ctx.stroke();
-        }
-        for (let y = 0; y <= ROWS; y++) {
-            ctx.beginPath(); ctx.moveTo(0, y * CELL_SIZE); ctx.lineTo(width, y * CELL_SIZE); ctx.stroke();
-        }
-        
-        // 固定ブロック
-        for (let y = 0; y < ROWS; y++) {
-            for (let x = 0; x < COLS; x++) {
-                if (grid[y][x] !== null) drawBlock(x, y, grid[y][x], '#22d3ee', '#0e7490');
+        for (let r = 0; r < SIZE; r++) {
+            for (let c = 0; c < SIZE; c++) {
+                const tile = grid[r][c];
+                if (!tile) continue;
+                
+                const el = document.createElement('div');
+                el.className = `alphabet2048-tile alphabet2048-tile-${tile.letter}`;
+                if (tile.isNew) {
+                    el.classList.add('alphabet2048-tile-new');
+                }
+                if (tile.justMerged) {
+                    el.classList.add('alphabet2048-tile-merge');
+                }
+                
+                el.textContent = tile.letter;
+                el.style.left = `${c * (cellSize + gap)}px`;
+                el.style.top = `${r * (cellSize + gap)}px`;
+                el.style.width = `${cellSize}px`;
+                el.style.height = `${cellSize}px`;
+                el.style.fontSize = `${cellSize * 0.5}px`;
+                
+                tilesContainer.appendChild(el);
             }
-        }
-        
-        // ゴースト（着地位置プレビュー）
-        if (currentPiece) {
-            let ghostY = currentPiece.y;
-            while (!checkCollision(currentPiece.x, ghostY + 1)) {
-                ghostY++;
-            }
-            if (ghostY !== currentPiece.y && ghostY >= 0) {
-                drawGhostBlock(currentPiece.x, ghostY, currentPiece.letter);
-            }
-        }
-        
-        // 現在のピース（1文字）
-        if (currentPiece && currentPiece.y >= 0) {
-            drawBlock(currentPiece.x, currentPiece.y, currentPiece.letter, '#fbbf24', '#b45309');
         }
     }
     
-    function drawGhostBlock(x, y, letter) {
-        const px = x * CELL_SIZE, py = y * CELL_SIZE;
-        ctx.fillStyle = 'rgba(251, 191, 36, 0.25)';
-        ctx.fillRect(px + 1, py + 1, CELL_SIZE - 2, CELL_SIZE - 2);
-        ctx.strokeStyle = '#fbbf24';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(px + 1, py + 1, CELL_SIZE - 2, CELL_SIZE - 2);
-        ctx.fillStyle = 'rgba(180, 83, 9, 0.4)';
-        ctx.font = `bold ${CELL_SIZE - 6}px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(letter, px + CELL_SIZE / 2, py + CELL_SIZE / 2);
-    }
-    
-    function drawBlock(x, y, letter, bgColor, textColor) {
-        const px = x * CELL_SIZE, py = y * CELL_SIZE;
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(px + 1, py + 1, CELL_SIZE - 2, CELL_SIZE - 2);
-        ctx.fillStyle = textColor;
-        ctx.font = `bold ${CELL_SIZE - 6}px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(letter, px + CELL_SIZE / 2, py + CELL_SIZE / 2);
-    }
-    
-    function gameLoop(timestamp) {
-        if (isGameOver || isPaused) { animationFrameId = requestAnimationFrame(gameLoop); return; }
+    // スコア更新
+    function updateScore() {
+        elements.score.textContent = score;
         
-        if (timestamp - lastDropTime > dropInterval) {
-            if (currentPiece) {
-                if (!checkCollision(currentPiece.x, currentPiece.y + 1)) currentPiece.y++;
-                else lockPiece();
-            }
-            lastDropTime = timestamp;
+        if (score > bestScore) {
+            bestScore = score;
+            elements.best.textContent = bestScore;
+            saveBestScore();
+            
+            // NEWバッジ表示
+            elements.bestBadge.classList.remove('hidden');
+            setTimeout(() => {
+                elements.bestBadge.classList.add('hidden');
+            }, 2000);
         }
-        render();
-        animationFrameId = requestAnimationFrame(gameLoop);
     }
     
-    function moveLeft() {
-        if (!currentPiece || isGameOver || isPaused) return;
-        if (!checkCollision(currentPiece.x - 1, currentPiece.y)) { currentPiece.x--; render(); }
+    // ベストスコア保存/読み込み
+    function saveBestScore() {
+        localStorage.setItem('alphabet2048BestScore', bestScore.toString());
     }
-    function moveRight() {
-        if (!currentPiece || isGameOver || isPaused) return;
-        if (!checkCollision(currentPiece.x + 1, currentPiece.y)) { currentPiece.x++; render(); }
+    
+    function loadBestScore() {
+        bestScore = parseInt(localStorage.getItem('alphabet2048BestScore') || '0', 10);
+        elements.best.textContent = bestScore;
     }
-    function softDrop() {
-        if (!currentPiece || isGameOver || isPaused) return;
-        if (!checkCollision(currentPiece.x, currentPiece.y + 1)) { currentPiece.y++; render(); }
+    
+    // クリア表示
+    function showClear() {
+        elements.clearOverlay.classList.remove('hidden');
     }
-    function hardDrop() {
-        if (!currentPiece || isGameOver || isPaused) return;
-        while (!checkCollision(currentPiece.x, currentPiece.y + 1)) currentPiece.y++;
-        lockPiece(); render();
-    }
-    function togglePause() {
-        if (isGameOver) return;
-        isPaused = !isPaused;
-        elements.pausedOverlay.classList.toggle('hidden', !isPaused);
-    }
-    function gameOver() {
-        isGameOver = true;
-        elements.gameOverOverlay.classList.remove('hidden');
+    
+    // ゲームオーバー表示
+    function showGameOver() {
         elements.finalScore.textContent = score;
+        elements.gameOverOverlay.classList.remove('hidden');
     }
     
+    // ゲーム開始
     function startGame() {
-        isGameOver = false; isPaused = false; score = 0;
-        dropInterval = DROP_INTERVAL_INITIAL;
-        elements.gameOverOverlay.classList.add('hidden');
-        elements.pausedOverlay.classList.add('hidden');
-        
         initGrid();
-        buildDictionary();
-        buildWordPool();
-        loadBestScore();
-        initNextQueue();
-        spawnPiece();
-        updateScoreDisplay();
-        updateWordLogDisplay();
+        score = 0;
+        isGameOver = false;
+        hasWon = false;
+        continueAfterWin = false;
+        tileIdCounter = 0;
         
-        lastDropTime = performance.now();
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        animationFrameId = requestAnimationFrame(gameLoop);
+        elements.clearOverlay.classList.add('hidden');
+        elements.gameOverOverlay.classList.add('hidden');
+        elements.bestBadge.classList.add('hidden');
+        
+        loadBestScore();
+        
+        // 初期タイル2枚
+        spawnTile();
+        spawnTile();
+        
+        updateScore();
+        render();
     }
     
+    // 続ける（クリア後）
+    function continueGame() {
+        continueAfterWin = true;
+        elements.clearOverlay.classList.add('hidden');
+    }
+    
+    // キー入力ハンドラ
+    function handleKeyDown(e) {
+        if (elements.overlay.classList.contains('hidden')) return;
+        
+        let direction = null;
+        switch (e.key) {
+            case 'ArrowLeft': direction = 'left'; break;
+            case 'ArrowRight': direction = 'right'; break;
+            case 'ArrowUp': direction = 'up'; break;
+            case 'ArrowDown': direction = 'down'; break;
+        }
+        
+        if (direction) {
+            e.preventDefault();
+            move(direction);
+        }
+    }
+    
+    // タッチハンドラ
+    function handleTouchStart(e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }
+    
+    function handleTouchEnd(e) {
+        touchEndX = e.changedTouches[0].clientX;
+        touchEndY = e.changedTouches[0].clientY;
+        
+        const dx = touchEndX - touchStartX;
+        const dy = touchEndY - touchStartY;
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+        
+        if (Math.max(absDx, absDy) < SWIPE_THRESHOLD) return;
+        
+        let direction = null;
+        if (absDx > absDy) {
+            direction = dx > 0 ? 'right' : 'left';
+        } else {
+            direction = dy > 0 ? 'down' : 'up';
+        }
+        
+        if (direction) {
+            move(direction);
+        }
+    }
+    
+    // 初期化
     function init() {
-        canvas = document.getElementById('tetrisCanvas');
-        if (!canvas) return;
-        ctx = canvas.getContext('2d');
-        
-        // 画面サイズに合わせてセルサイズを計算
-        const gameArea = canvas.parentElement;
-        const availableHeight = window.innerHeight - 180; // ヘッダー＋コントロール分を引く
-        const availableWidth = window.innerWidth - 100; // サイドバー分を引く
-        
-        const maxCellByHeight = Math.floor(availableHeight / ROWS);
-        const maxCellByWidth = Math.floor(availableWidth / COLS);
-        CELL_SIZE = Math.min(maxCellByHeight, maxCellByWidth, 28);
-        CELL_SIZE = Math.max(CELL_SIZE, 18); // 最小サイズ
-        
-        canvas.width = COLS * CELL_SIZE;
-        canvas.height = ROWS * CELL_SIZE;
-        
         elements = {
-            nextList: document.getElementById('tetrisNextList'),
-            score: document.getElementById('tetrisScore'),
-            best: document.getElementById('tetrisBest'),
-            gameOverOverlay: document.getElementById('tetrisGameOver'),
-            pausedOverlay: document.getElementById('tetrisPaused'),
-            finalScore: document.getElementById('tetrisFinalScore'),
-            wordPopup: document.getElementById('tetrisWordPopup'),
-            foundWord: document.getElementById('tetrisFoundWord'),
-            foundMeaning: document.getElementById('tetrisFoundMeaning')
+            overlay: document.getElementById('alphabet2048Overlay'),
+            board: document.getElementById('alphabet2048Board'),
+            tiles: document.getElementById('alphabet2048Tiles'),
+            score: document.getElementById('alphabet2048Score'),
+            best: document.getElementById('alphabet2048Best'),
+            bestBadge: document.getElementById('alphabet2048BestBadge'),
+            clearOverlay: document.getElementById('alphabet2048Clear'),
+            gameOverOverlay: document.getElementById('alphabet2048GameOver'),
+            finalScore: document.getElementById('alphabet2048FinalScore'),
+            closeBtn: document.getElementById('alphabet2048CloseBtn'),
+            newBtn: document.getElementById('alphabet2048NewBtn'),
+            continueBtn: document.getElementById('alphabet2048ContinueBtn'),
+            restartBtn: document.getElementById('alphabet2048RestartBtn')
         };
         
-        document.getElementById('tetrisMoveLeft').addEventListener('click', moveLeft);
-        document.getElementById('tetrisMoveRight').addEventListener('click', moveRight);
-        document.getElementById('tetrisSoftDrop').addEventListener('click', softDrop);
-        document.getElementById('tetrisHardDrop').addEventListener('click', hardDrop);
-        document.getElementById('tetrisRestartBtn').addEventListener('click', startGame);
-        document.getElementById('tetrisResumeBtn').addEventListener('click', togglePause);
+        // イベントリスナー
+        document.addEventListener('keydown', handleKeyDown);
         
-        document.addEventListener('keydown', (e) => {
-            const overlay = document.getElementById('wordTetrisOverlay');
-            if (overlay.classList.contains('hidden')) return;
-            switch (e.key) {
-                case 'ArrowLeft': e.preventDefault(); moveLeft(); break;
-                case 'ArrowRight': e.preventDefault(); moveRight(); break;
-                case 'ArrowDown': e.preventDefault(); softDrop(); break;
-                case ' ': e.preventDefault(); hardDrop(); break;
-                case 'p': case 'P': e.preventDefault(); togglePause(); break;
-            }
+        elements.board.addEventListener('touchstart', handleTouchStart, { passive: true });
+        elements.board.addEventListener('touchend', handleTouchEnd, { passive: true });
+        
+        elements.closeBtn.addEventListener('click', () => {
+            elements.overlay.classList.add('hidden');
         });
+        
+        elements.newBtn.addEventListener('click', startGame);
+        elements.continueBtn.addEventListener('click', continueGame);
+        elements.restartBtn.addEventListener('click', startGame);
         
         startGame();
     }
     
+    // 公開API
     return {
-        init, startGame,
-        stop: () => { if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; } isPaused = true; },
-        pause: () => {
-            if (isGameOver) return;
-            isPaused = true;
-            if (elements && elements.pausedOverlay) {
-                elements.pausedOverlay.classList.remove('hidden');
-            }
-        }
+        init,
+        startGame
     };
 })();
 
 // ミニゲームボタンのイベントリスナー
 document.addEventListener('DOMContentLoaded', () => {
     const minigameBtn = document.getElementById('minigameCardBtn');
-    const tetrisOverlay = document.getElementById('wordTetrisOverlay');
-    const tetrisCloseBtn = document.getElementById('wordTetrisCloseBtn');
-    const tetrisQuitBtn = document.getElementById('tetrisQuitBtn');
+    const alphabet2048Overlay = document.getElementById('alphabet2048Overlay');
     
-    if (minigameBtn && tetrisOverlay) {
+    if (minigameBtn && alphabet2048Overlay) {
         minigameBtn.addEventListener('click', () => {
-            tetrisOverlay.classList.remove('hidden');
-            WordTetris.init();
-        });
-    }
-    
-    // ×ボタンで一時停止
-    if (tetrisCloseBtn) {
-        tetrisCloseBtn.addEventListener('click', () => {
-            WordTetris.pause();
-        });
-    }
-    
-    // ホームに戻るボタン
-    if (tetrisQuitBtn && tetrisOverlay) {
-        tetrisQuitBtn.addEventListener('click', () => {
-            WordTetris.stop();
-            tetrisOverlay.classList.add('hidden');
+            alphabet2048Overlay.classList.remove('hidden');
+            Alphabet2048.init();
         });
     }
 });

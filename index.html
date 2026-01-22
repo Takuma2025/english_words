@@ -2094,7 +2094,7 @@
                                 <div class="category-name">
                                     <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#d1fae5" stroke="none" style="margin-right: 8px;">
                                         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                                        <text x="12" y="13" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">1</text>
+                                        <text x="12" y="13" text-anchor="middle" fill="#10b981" font-size="11" font-weight="500" stroke="none" style="font-family: 'Oswald', sans-serif; dominant-baseline: central;">1</text>
                                     </svg>
                                     不規則動詞（初級編）
                                 </div>
@@ -2118,7 +2118,7 @@
                                 <div class="category-name">
                                     <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#d1fae5" stroke="none" style="margin-right: 8px;">
                                         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                                        <text x="12" y="13" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">2</text>
+                                        <text x="12" y="13" text-anchor="middle" fill="#10b981" font-size="11" font-weight="500" stroke="none" style="font-family: 'Oswald', sans-serif; dominant-baseline: central;">2</text>
                                     </svg>
                                     不規則動詞（中級編）
                                 </div>
@@ -2142,7 +2142,7 @@
                                 <div class="category-name">
                                     <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#d1fae5" stroke="none" style="margin-right: 8px;">
                                         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                                        <text x="12" y="13" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">3</text>
+                                        <text x="12" y="13" text-anchor="middle" fill="#10b981" font-size="11" font-weight="500" stroke="none" style="font-family: 'Oswald', sans-serif; dominant-baseline: central;">3</text>
                                     </svg>
                                     不規則動詞（上級編）
                                 </div>
@@ -2171,7 +2171,7 @@
                                 <div class="category-name">
                                     <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#d1fae5" stroke="none" style="margin-right: 8px;">
                                         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                                        <text x="12" y="13" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">4</text>
+                                        <text x="12" y="13" text-anchor="middle" fill="#10b981" font-size="11" font-weight="500" stroke="none" style="font-family: 'Oswald', sans-serif; dominant-baseline: central;">4</text>
                                     </svg>
                                     比較級・最上級
                                 </div>
@@ -2195,7 +2195,7 @@
                                 <div class="category-name">
                                     <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#d1fae5" stroke="none" style="margin-right: 8px;">
                                         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                                        <text x="12" y="13" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">5</text>
+                                        <text x="12" y="13" text-anchor="middle" fill="#10b981" font-size="11" font-weight="500" stroke="none" style="font-family: 'Oswald', sans-serif; dominant-baseline: central;">5</text>
                                     </svg>
                                     名詞の複数形
                                 </div>
@@ -2426,79 +2426,72 @@
         </div>
     </div>
 
-    <!-- Word Tetris ミニゲーム -->
-    <div class="word-tetris-overlay hidden" id="wordTetrisOverlay">
-        <div class="word-tetris-container">
-            <div class="word-tetris-header">
-                <h2 class="word-tetris-title">Letter Drop</h2>
-                <button class="word-tetris-close-btn" id="wordTetrisCloseBtn">
+    <!-- Alphabet 2048 ミニゲーム -->
+    <div class="alphabet2048-overlay hidden" id="alphabet2048Overlay">
+        <div class="alphabet2048-container">
+            <div class="alphabet2048-header">
+                <h2 class="alphabet2048-title"><span class="title-letter title-A">A</span><span class="title-to">to</span><span class="title-letter title-Z">Z</span></h2>
+                <button class="alphabet2048-close-btn" id="alphabet2048CloseBtn">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
             </div>
-            <div class="word-tetris-main">
-                <div class="word-tetris-center">
-                    <div class="word-tetris-top-section">
-                        <div class="word-tetris-scores-row">
-                            <div class="word-tetris-info-box word-tetris-score-box">
-                                <div class="word-tetris-info-label">SCORE</div>
-                                <div class="word-tetris-score" id="tetrisScore">0</div>
-                            </div>
-                            <div class="word-tetris-info-box word-tetris-best-box">
-                                <div class="word-tetris-info-label">BEST</div>
-                                <div class="word-tetris-best" id="tetrisBest">0</div>
-                            </div>
-                        </div>
-                        <div class="word-tetris-info-box word-tetris-next-box">
-                            <div class="word-tetris-info-label">NEXT</div>
-                            <div class="word-tetris-next-list" id="tetrisNextList"></div>
-                        </div>
+            <div class="alphabet2048-scores">
+                <div class="alphabet2048-score-box">
+                    <div class="alphabet2048-score-label">SCORE</div>
+                    <div class="alphabet2048-score-value" id="alphabet2048Score">0</div>
+                </div>
+                <div class="alphabet2048-score-box alphabet2048-best-box">
+                    <div class="alphabet2048-score-label">BEST</div>
+                    <div class="alphabet2048-score-value" id="alphabet2048Best">0</div>
+                    <div class="alphabet2048-best-badge hidden" id="alphabet2048BestBadge">NEW!</div>
+                </div>
+                <button class="alphabet2048-new-btn" id="alphabet2048NewBtn">NEW GAME</button>
+            </div>
+            <div class="alphabet2048-board-wrapper">
+                <div class="alphabet2048-board" id="alphabet2048Board">
+                    <div class="alphabet2048-grid-bg">
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
+                        <div class="alphabet2048-cell-bg"></div>
                     </div>
-                    <div class="word-tetris-game-area">
-                        <canvas id="tetrisCanvas" class="word-tetris-canvas"></canvas>
-                    <div class="word-tetris-game-over hidden" id="tetrisGameOver">
-                        <div class="word-tetris-game-over-text">GAME OVER</div>
-                        <div class="word-tetris-final-score">SCORE: <span id="tetrisFinalScore">0</span></div>
-                        <button class="word-tetris-restart-btn" id="tetrisRestartBtn">もう一度</button>
+                    <div class="alphabet2048-tiles" id="alphabet2048Tiles"></div>
+                </div>
+                <!-- CLEAR オーバーレイ -->
+                <div class="alphabet2048-message-overlay hidden" id="alphabet2048Clear">
+                    <div class="alphabet2048-message alphabet2048-clear">
+                        <div class="alphabet2048-message-title">CLEAR!</div>
+                        <div class="alphabet2048-message-sub">Zを作成しました！</div>
+                        <button class="alphabet2048-continue-btn" id="alphabet2048ContinueBtn">続ける</button>
                     </div>
-                    <div class="word-tetris-paused hidden" id="tetrisPaused">
-                        <div class="word-tetris-paused-text">PAUSED</div>
-                        <div class="word-tetris-pause-buttons">
-                            <button class="word-tetris-resume-btn" id="tetrisResumeBtn">続ける</button>
-                            <button class="word-tetris-quit-btn" id="tetrisQuitBtn">ホームに戻る</button>
-                        </div>
-                    </div>
+                </div>
+                <!-- GAME OVER オーバーレイ -->
+                <div class="alphabet2048-message-overlay hidden" id="alphabet2048GameOver">
+                    <div class="alphabet2048-message alphabet2048-gameover">
+                        <div class="alphabet2048-message-title">GAME OVER</div>
+                        <div class="alphabet2048-message-sub">SCORE: <span id="alphabet2048FinalScore">0</span></div>
+                        <button class="alphabet2048-restart-btn" id="alphabet2048RestartBtn">もう一度</button>
                     </div>
                 </div>
             </div>
-            <div class="word-tetris-controls">
-                <button class="word-tetris-ctrl-btn word-tetris-left-btn" id="tetrisMoveLeft">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                    </svg>
-                </button>
-                <div class="word-tetris-ctrl-center">
-                    <button class="word-tetris-ctrl-btn word-tetris-drop-btn" id="tetrisHardDrop">DROP</button>
-                    <button class="word-tetris-ctrl-btn word-tetris-down-btn" id="tetrisSoftDrop">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </button>
-                </div>
-                <button class="word-tetris-ctrl-btn word-tetris-right-btn" id="tetrisMoveRight">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </button>
-            </div>
-            <!-- 単語成立時の表示 -->
-            <div class="word-tetris-word-popup hidden" id="tetrisWordPopup">
-                <div class="word-tetris-word-popup-content">
-                    <div class="word-tetris-found-word" id="tetrisFoundWord"></div>
-                    <div class="word-tetris-found-meaning" id="tetrisFoundMeaning"></div>
-                </div>
+            <div class="alphabet2048-controls">
+                <div class="alphabet2048-hint">←↑→↓ / swipe で操作</div>
+                <div class="alphabet2048-rule">同じ文字を合体させてZを目指そう！</div>
             </div>
         </div>
     </div>

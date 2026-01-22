@@ -2361,7 +2361,9 @@ body.learning-mode .app-header {
 }
 
 .heatmap-month {
+    font-family: 'Oswald', sans-serif;
     font-size: 12px;
+    font-weight: 500;
     color: #6b7280;
 }
 
@@ -2666,10 +2668,10 @@ body.learning-mode .app-header {
 }
 
 .calendar-yearmonth-label {
-    font-family: 'Meiryo', 'メイリオ', sans-serif;
+    font-family: 'Oswald', sans-serif;
     font-size: 12px;
     color: #374151;
-    font-weight: 600;
+    font-weight: 500;
     white-space: nowrap;
 }
 
@@ -4820,8 +4822,9 @@ button.category-card:focus-visible {
 
 .category-progress-text {
     margin-top: 6px;
+    font-family: 'Oswald', sans-serif;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     color: #3182ce;
     text-align: right;
 }
@@ -5151,8 +5154,9 @@ body.quiz-test-mode .unit-header-container .unit-pause-btn {
 /* テストモード用の進捗表示（中央） */
 .test-mode-progress {
     color: #333333;
-    font-size: 16px;
-    font-weight: 700;
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
     text-align: center;
 }
 
@@ -5491,11 +5495,11 @@ body.quiz-test-mode .progress-top-row {
 
 .progress-top-row #progressText,
 .progress-top-row [id$="ProgressText"] {
-    font-weight: 700;
+    font-weight: 500;
     font-size: 15px;
     color: #3b82f6;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    letter-spacing: -0.01em;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0;
 }
 
 .progress-bar-wrapper {
@@ -7793,15 +7797,15 @@ body.choice-question-mode-active .word-card-container {
 
 .input-list-number {
     font-size: 10px;
-    font-weight: 700;
+    font-weight: 500;
     color: #ffffff;
     position: relative;
     padding: 3px 7px 3px 7px;
     margin-right: 0;
     background: #9ca3af;
     border-radius: 0;
-    font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
-    letter-spacing: 0.08em;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.05em;
     z-index: 5;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -8070,12 +8074,12 @@ body.choice-question-mode-active .word-card-container {
 .input-list-expand-number {
     position: static;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 500;
     padding: 0 8px;
     border-radius: 0;
     border: none;
-    font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
-    letter-spacing: 0.05em;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.03em;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -9652,13 +9656,13 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
     top: 12px;
     left: 12px;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 500;
     color: #64748b;
     padding: 4px 8px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 6px;
-    font-family: "Century Gothic", "Century", Futura, "Trebuchet MS", Arial, sans-serif;
-    letter-spacing: 0.1em;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.05em;
     z-index: 10;
 }
 
@@ -10608,8 +10612,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .sidebar-volume-label .volume-value {
     flex: none;
+    font-family: 'Oswald', sans-serif;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 500;
     color: #3b82f6;
     min-width: 40px;
     text-align: right;
@@ -13827,8 +13832,9 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     display: inline-block;
     background: #2563eb;
     color: #ffffff;
+    font-family: 'Oswald', sans-serif;
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 500;
     padding: 8px 20px;
     border-radius: 20px;
     margin-top: 20px;
@@ -14003,8 +14009,9 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .completion-progress-text {
+    font-family: 'Oswald', sans-serif;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     color: #6b7280;
     text-align: right;
 }
@@ -14021,6 +14028,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .completion-stat-label {
+    font-family: 'Oswald', sans-serif;
     font-size: 13px;
     font-weight: 500;
     color: #6b7280;
@@ -14028,8 +14036,9 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .completion-stat-value {
+    font-family: 'Oswald', sans-serif;
     font-size: 32px;
-    font-weight: 800;
+    font-weight: 500;
 }
 
 .completion-stat-correct .completion-stat-value {
@@ -14459,8 +14468,9 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .question-count-value {
+    font-family: 'Oswald', sans-serif;
     font-size: 20px;
-    font-weight: 800;
+    font-weight: 500;
     color: #1f2937;
     min-width: 80px;
     text-align: center;
@@ -15140,7 +15150,8 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .filter-info #filteredWordCount {
-    font-weight: 800;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
     color: #1d4ed8;
     font-size: 18px;
 }
@@ -18422,8 +18433,9 @@ body .sentence-english {
 }
 
 .floating-review-count {
+    font-family: 'Oswald', sans-serif;
     font-size: 16px;
-    font-weight: 800;
+    font-weight: 500;
     padding: 2px 8px;
     background: #dc2626;
     color: #ffffff;
@@ -18710,9 +18722,9 @@ div#inputWordCheckbox,
 }
 
 /* =============================================
-   Word Tetris ミニゲーム
+   Alphabet 2048 ミニゲーム
    ============================================= */
-.word-tetris-overlay {
+.alphabet2048-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -18726,7 +18738,7 @@ div#inputWordCheckbox,
     padding: 0;
 }
 
-.word-tetris-container {
+.alphabet2048-container {
     width: 100%;
     height: 100%;
     max-width: 100%;
@@ -18734,28 +18746,59 @@ div#inputWordCheckbox,
     flex-direction: column;
     background: #0f172a;
     position: relative;
+    overflow: hidden;
 }
 
-.word-tetris-header {
+.alphabet2048-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 16px;
+    padding: 12px 16px;
     background: #1e293b;
     border-bottom: 3px solid #f59e0b;
+    flex-shrink: 0;
 }
 
-.word-tetris-title {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 22px;
-    font-weight: 900;
+.alphabet2048-title {
+    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-size: 28px;
+    font-weight: 400;
     color: #f59e0b;
     margin: 0;
-    letter-spacing: 3px;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.word-tetris-close-btn {
+.alphabet2048-title .title-letter {
+    font-family: 'Oswald', sans-serif;
+    font-size: 36px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px currentColor;
+}
+
+.alphabet2048-title .title-A {
+    color: #22d3ee;
+    text-shadow: 0 0 12px rgba(34, 211, 238, 0.6);
+}
+
+.alphabet2048-title .title-to {
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: #64748b;
+    text-transform: lowercase;
+    letter-spacing: 1px;
+}
+
+.alphabet2048-title .title-Z {
+    color: #fbbf24;
+    text-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+}
+
+.alphabet2048-close-btn {
     width: 40px;
     height: 40px;
     display: flex;
@@ -18766,425 +18809,331 @@ div#inputWordCheckbox,
     color: #f1f5f9;
     cursor: pointer;
     border-radius: 8px;
-    font-size: 20px;
 }
 
-.word-tetris-close-btn:active {
+.alphabet2048-close-btn:active {
     background: #475569;
-    border-color: #64748b;
 }
 
-.word-tetris-main {
-    flex: 1;
+/* スコア表示 */
+.alphabet2048-scores {
     display: flex;
-    padding: 10px;
-    min-height: 0;
-    overflow: hidden;
+    gap: 10px;
+    padding: 12px 16px;
     justify-content: center;
     align-items: center;
-    background: #0f172a;
+    flex-shrink: 0;
 }
 
-.word-tetris-center {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
-}
-
-.word-tetris-top-section {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    width: 100%;
-}
-
-.word-tetris-scores-row {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-}
-
-.word-tetris-info-box {
+.alphabet2048-score-box {
     background: #1e293b;
     border: 2px solid #334155;
     border-radius: 8px;
-    padding: 8px 12px;
+    padding: 8px 16px;
     text-align: center;
-}
-
-.word-tetris-score-box,
-.word-tetris-best-box {
-    flex: 1;
     min-width: 80px;
+    position: relative;
 }
 
-.word-tetris-next-box {
-    width: 100%;
+.alphabet2048-best-box {
+    border-color: #f59e0b;
 }
 
-.word-tetris-info-label {
+.alphabet2048-score-label {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 9px;
-    font-weight: 800;
-    color: #f59e0b;
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
     letter-spacing: 1px;
-    margin-bottom: 4px;
     text-transform: uppercase;
 }
 
-.word-tetris-next-box {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.word-tetris-next-list {
-    display: flex;
-    flex-direction: row;
-    gap: 4px;
-    justify-content: center;
-    flex-wrap: nowrap;
-}
-
-.word-tetris-next-item {
-    display: flex;
-    justify-content: center;
-}
-
-.word-tetris-next-item:first-child .word-tetris-next-letter {
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
-}
-
-.word-tetris-next-letter {
+.alphabet2048-score-value {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-    color: #e2e8f0;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #334155;
-    border-radius: 4px;
-    border: 1px solid #475569;
-}
-
-
-.word-tetris-score,
-.word-tetris-best {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 800;
     color: #f1f5f9;
+}
+
+.alphabet2048-best-box .alphabet2048-score-value {
+    color: #fbbf24;
+}
+
+.alphabet2048-best-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 8px;
+    animation: alphabet2048-badge-pulse 0.6s ease-in-out;
+}
+
+@keyframes alphabet2048-badge-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.alphabet2048-new-btn {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    background: #f59e0b;
+    border: 2px solid #fbbf24;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
     letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
-.word-tetris-best {
-    color: #22d3ee;
+.alphabet2048-new-btn:active {
+    background: #d97706;
 }
 
-.word-tetris-game-area {
-    position: relative;
+/* ボード */
+.alphabet2048-board-wrapper {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 16px;
+    min-height: 0;
+    position: relative;
 }
 
-.word-tetris-canvas {
+.alphabet2048-board {
+    --board-size: min(85vw, 85vh - 200px, 360px);
+    --cell-gap: 8px;
+    --cell-size: calc((var(--board-size) - var(--cell-gap) * 5) / 4);
+    width: var(--board-size);
+    height: var(--board-size);
     background: #1e293b;
-    border: 3px solid #334155;
-    border-radius: 0;
-    display: block;
-    max-width: 100%;
-    max-height: 100%;
+    border-radius: 12px;
+    padding: var(--cell-gap);
+    position: relative;
+    touch-action: none;
+    user-select: none;
 }
 
-.word-tetris-game-over,
-.word-tetris-paused {
+.alphabet2048-grid-bg {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: var(--cell-gap);
+    position: absolute;
+    top: var(--cell-gap);
+    left: var(--cell-gap);
+    right: var(--cell-gap);
+    bottom: var(--cell-gap);
+}
+
+.alphabet2048-cell-bg {
+    background: #334155;
+    border-radius: 8px;
+}
+
+.alphabet2048-tiles {
+    position: absolute;
+    top: var(--cell-gap);
+    left: var(--cell-gap);
+    right: var(--cell-gap);
+    bottom: var(--cell-gap);
+}
+
+/* タイル */
+.alphabet2048-tile {
+    position: absolute;
+    width: var(--cell-size);
+    height: var(--cell-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: calc(var(--cell-size) * 0.5);
+    font-weight: 800;
+    border-radius: 8px;
+    transition: top 0.12s ease-out, left 0.12s ease-out;
+    z-index: 10;
+}
+
+.alphabet2048-tile.alphabet2048-tile-new {
+    animation: alphabet2048-tile-appear 0.2s ease-out;
+}
+
+.alphabet2048-tile.alphabet2048-tile-merge {
+    animation: alphabet2048-tile-pop 0.2s ease-out;
+    z-index: 20;
+}
+
+@keyframes alphabet2048-tile-appear {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes alphabet2048-tile-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+/* タイル色（A-Z用グラデーション） */
+.alphabet2048-tile-A { background: #94a3b8; color: #1e293b; }
+.alphabet2048-tile-B { background: #64748b; color: #f1f5f9; }
+.alphabet2048-tile-C { background: #22d3ee; color: #1e293b; }
+.alphabet2048-tile-D { background: #06b6d4; color: #1e293b; }
+.alphabet2048-tile-E { background: #14b8a6; color: #1e293b; }
+.alphabet2048-tile-F { background: #10b981; color: #1e293b; }
+.alphabet2048-tile-G { background: #22c55e; color: #1e293b; }
+.alphabet2048-tile-H { background: #84cc16; color: #1e293b; }
+.alphabet2048-tile-I { background: #eab308; color: #1e293b; }
+.alphabet2048-tile-J { background: #f59e0b; color: #1e293b; }
+.alphabet2048-tile-K { background: #f97316; color: #1e293b; }
+.alphabet2048-tile-L { background: #ef4444; color: #f1f5f9; }
+.alphabet2048-tile-M { background: #dc2626; color: #f1f5f9; }
+.alphabet2048-tile-N { background: #db2777; color: #f1f5f9; }
+.alphabet2048-tile-O { background: #ec4899; color: #f1f5f9; }
+.alphabet2048-tile-P { background: #d946ef; color: #f1f5f9; }
+.alphabet2048-tile-Q { background: #a855f7; color: #f1f5f9; }
+.alphabet2048-tile-R { background: #8b5cf6; color: #f1f5f9; }
+.alphabet2048-tile-S { background: #7c3aed; color: #f1f5f9; }
+.alphabet2048-tile-T { background: #6366f1; color: #f1f5f9; }
+.alphabet2048-tile-U { background: #4f46e5; color: #f1f5f9; }
+.alphabet2048-tile-V { background: #4338ca; color: #f1f5f9; }
+.alphabet2048-tile-W { background: #3730a3; color: #f1f5f9; }
+.alphabet2048-tile-X { background: #312e81; color: #f1f5f9; }
+.alphabet2048-tile-Y { background: #1e1b4b; color: #fbbf24; border: 2px solid #fbbf24; }
+.alphabet2048-tile-Z { 
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%); 
+    color: #1e293b; 
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+    font-size: calc(var(--cell-size) * 0.55);
+}
+
+/* メッセージオーバーレイ */
+.alphabet2048-message-overlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(15, 23, 42, 0.95);
+    background: rgba(15, 23, 42, 0.9);
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    border-radius: 0;
+    border-radius: 12px;
+    z-index: 100;
 }
 
-.word-tetris-game-over-text,
-.word-tetris-paused-text {
+.alphabet2048-message {
+    text-align: center;
+    padding: 24px;
+}
+
+.alphabet2048-message-title {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 900;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+}
+
+.alphabet2048-clear .alphabet2048-message-title {
+    color: #fbbf24;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+}
+
+.alphabet2048-gameover .alphabet2048-message-title {
     color: #ef4444;
-    letter-spacing: 4px;
-    text-transform: uppercase;
 }
 
-.word-tetris-paused-text {
-    color: #22d3ee;
-}
-
-.word-tetris-final-score {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: #94a3b8;
-}
-
-.word-tetris-pause-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.word-tetris-restart-btn,
-.word-tetris-resume-btn {
+.alphabet2048-message-sub {
     font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 16px;
+    color: #94a3b8;
+    margin-bottom: 20px;
+}
+
+.alphabet2048-continue-btn,
+.alphabet2048-restart-btn {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
     font-weight: 700;
     color: #1e293b;
     background: #f59e0b;
-    border: 3px solid #fbbf24;
-    border-radius: 12px;
-    padding: 14px 40px;
-    cursor: pointer;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
-.word-tetris-restart-btn:active,
-.word-tetris-resume-btn:active {
-    background: #d97706;
-    border-color: #f59e0b;
-    transform: scale(0.95);
-}
-
-.word-tetris-quit-btn {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: #94a3b8;
-    background: #334155;
-    border: 2px solid #475569;
+    border: 2px solid #fbbf24;
     border-radius: 10px;
     padding: 12px 32px;
     cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
-.word-tetris-quit-btn:active {
-    background: #475569;
-    transform: scale(0.95);
+.alphabet2048-continue-btn:active,
+.alphabet2048-restart-btn:active {
+    background: #d97706;
 }
 
-.word-tetris-controls {
-    display: flex;
-    gap: 16px;
-    padding: 16px 20px 28px;
-    justify-content: center;
-    align-items: center;
-    background: #1e293b;
-    border-top: 3px solid #334155;
-}
-
-.word-tetris-ctrl-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #334155;
-    border: 3px solid #475569;
-    border-radius: 50%;
-    color: #f1f5f9;
-    cursor: pointer;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 24px;
-    font-weight: 800;
-}
-
-.word-tetris-ctrl-btn:active {
-    background: #475569;
-    border-color: #64748b;
-    transform: scale(0.95);
-}
-
-.word-tetris-left-btn,
-.word-tetris-right-btn {
-    width: 68px;
-    height: 68px;
-}
-
-.word-tetris-ctrl-center {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-}
-
-.word-tetris-drop-btn {
-    width: 90px;
-    height: 48px;
-    background: #dc2626;
-    border: 3px solid #ef4444;
-    border-radius: 24px;
-    color: #ffffff;
-    font-size: 15px;
-    letter-spacing: 2px;
-}
-
-.word-tetris-drop-btn:active {
-    background: #b91c1c;
-    border-color: #dc2626;
-    transform: scale(0.95);
-}
-
-.word-tetris-down-btn {
-    width: 60px;
-    height: 48px;
-    border-radius: 24px;
-}
-
-
-/* 単語成立ポップアップ */
-.word-tetris-word-popup {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 100;
-    pointer-events: none;
-}
-
-.word-tetris-word-popup-content {
-    background: #1e293b;
-    border: 3px solid #f59e0b;
-    border-radius: 12px;
-    padding: 18px 28px;
+/* 操作説明 */
+.alphabet2048-controls {
+    padding: 16px;
     text-align: center;
-    animation: tetrisPopupIn 0.3s ease-out;
+    flex-shrink: 0;
+    background: #1e293b;
+    border-top: 2px solid #334155;
 }
 
-@keyframes tetrisPopupIn {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.word-tetris-found-word {
+.alphabet2048-hint {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 24px;
-    font-weight: 800;
-    color: #f59e0b;
-    margin-bottom: 8px;
-    letter-spacing: 2px;
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 4px;
 }
 
-.word-tetris-found-meaning {
+.alphabet2048-rule {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 15px;
-    color: #94a3b8;
+    font-size: 12px;
+    color: #475569;
 }
 
-/* レスポンシブ対応 */
+/* レスポンシブ */
 @media (max-width: 400px) {
-    .word-tetris-next-letter {
+    .alphabet2048-board {
+        --board-size: min(90vw, 320px);
+        --cell-gap: 6px;
+    }
+    
+    .alphabet2048-scores {
+        gap: 8px;
+        padding: 10px 12px;
+    }
+    
+    .alphabet2048-score-box {
+        padding: 6px 12px;
+        min-width: 65px;
+    }
+    
+    .alphabet2048-score-value {
+        font-size: 18px;
+    }
+    
+    .alphabet2048-new-btn {
+        padding: 8px 12px;
         font-size: 11px;
-        width: 20px;
-        height: 20px;
     }
     
-    .word-tetris-next-item:first-child .word-tetris-next-letter {
-        width: 24px;
-        height: 24px;
-        font-size: 13px;
-    }
-
-    .word-tetris-score,
-    .word-tetris-best {
-        font-size: 14px;
-    }
-    
-    .word-tetris-left-btn,
-    .word-tetris-right-btn {
-        width: 60px;
-        height: 60px;
-        font-size: 22px;
-    }
-    
-    .word-tetris-drop-btn {
-        width: 80px;
-        height: 44px;
-        font-size: 14px;
-    }
-    
-    .word-tetris-down-btn {
-        width: 54px;
-        height: 44px;
-        font-size: 20px;
-    }
-    
-    .word-tetris-controls {
-        padding: 12px 16px 20px;
-        gap: 12px;
-    }
-    
-    .word-tetris-main {
-        padding: 6px;
-    }
-    
-    .word-tetris-top-bar {
-        gap: 6px;
+    .alphabet2048-title {
+        font-size: 18px;
     }
 }
 
-@media (min-width: 500px) {
-    .word-tetris-next-letter {
-        width: 28px;
-        height: 28px;
-        font-size: 15px;
-    }
-    
-    .word-tetris-next-item:first-child .word-tetris-next-letter {
-        width: 32px;
-        height: 32px;
-        font-size: 17px;
-    }
-    
-    .word-tetris-left-btn,
-    .word-tetris-right-btn {
-        width: 80px;
-        height: 80px;
-        font-size: 28px;
-    }
-    
-    .word-tetris-drop-btn {
-        width: 100px;
-        height: 54px;
-        font-size: 17px;
-    }
-    
-    .word-tetris-down-btn {
-        width: 70px;
-        height: 54px;
-        font-size: 26px;
-    }
-    
-    .word-tetris-score,
-    .word-tetris-best {
-        font-size: 22px;
+@media (min-height: 700px) {
+    .alphabet2048-board {
+        --board-size: min(85vw, 400px);
     }
 }
 
