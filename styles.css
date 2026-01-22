@@ -18875,11 +18875,53 @@ div#inputWordCheckbox,
     letter-spacing: 1px;
 }
 
+.alphabetdrop-info-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 8px 16px;
+}
+
+.alphabetdrop-speed {
+    position: absolute;
+    left: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.alphabetdrop-speed-label {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 10px;
+    color: #64748b;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.alphabetdrop-speed-value {
+    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #22c55e;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.alphabetdrop-speed-value.level-up {
+    animation: speed-level-up 0.5s ease-out;
+}
+
+@keyframes speed-level-up {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.5); }
+    50% { transform: scale(0.9); }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
 .alphabetdrop-next {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 8px 16px;
     gap: 10px;
     flex-shrink: 0;
 }
@@ -18903,6 +18945,16 @@ div#inputWordCheckbox,
     font-weight: 900;
     font-size: 16px !important;
     transition: transform 0.15s ease;
+}
+
+.alphabetdrop-next-tile.next-change {
+    animation: next-tile-change 0.3s ease-out;
+}
+
+@keyframes next-tile-change {
+    0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+    50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
 .alphabetdrop-selected-col {
@@ -18967,6 +19019,15 @@ div#inputWordCheckbox,
     transition: left 0.12s ease;
 }
 
+.alphabetdrop-preview {
+    position: absolute;
+    width: var(--cell-size);
+    height: var(--cell-size);
+    transition: left 0.12s ease, opacity 0.15s ease;
+    opacity: 0.85;
+    z-index: 30;
+}
+
 .alphabetdrop-hint {
     font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 12px;
@@ -18979,8 +19040,8 @@ div#inputWordCheckbox,
         --board-width: min(92vw, 320px);
         --cell-gap: 5px;
     }
-    .alphabetdrop-next {
-        padding: 0 12px 10px;
+    .alphabetdrop-next-row {
+        padding: 6px 12px;
     }
 }
 
@@ -19344,17 +19405,17 @@ div#inputWordCheckbox,
     font-size: calc(var(--cell-size) * 0.5);
     font-weight: 800;
     border-radius: 8px;
-    transition: top 0.18s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                left 0.18s cubic-bezier(0.25, 0.1, 0.25, 1);
+    transition: top 0.35s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                left 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
     z-index: 10;
 }
 
 .alphabet2048-tile.alphabet2048-tile-new {
-    animation: alphabet2048-tile-appear 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: alphabet2048-tile-appear 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .alphabet2048-tile.alphabet2048-tile-merge {
-    animation: alphabet2048-tile-pop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: alphabet2048-tile-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 20;
 }
 
@@ -19365,13 +19426,15 @@ div#inputWordCheckbox,
 }
 
 @keyframes alphabet2048-tile-pop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.15); }
+    0% { transform: scale(0.8); }
+    30% { transform: scale(1.35); }
+    50% { transform: scale(0.95); }
+    70% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
 .alphabet2048-tile.alphabet2048-tile-vanish {
-    animation: alphabet2048-tile-vanish 0.15s ease-out forwards;
+    animation: alphabet2048-tile-vanish 0.25s ease-out forwards;
     pointer-events: none;
 }
 
@@ -19598,4 +19661,3 @@ div#inputWordCheckbox,
         --board-size: min(85vw, 400px);
     }
 }
-

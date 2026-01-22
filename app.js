@@ -22363,8 +22363,8 @@ const Alphabet2048 = (() => {
         elements.undoBtn.addEventListener('click', undo);
         elements.shuffleBtn.addEventListener('click', shuffle);
         
-        elements.board.addEventListener('touchstart', handleTouchStart, { passive: true });
-        elements.board.addEventListener('touchend', handleTouchEnd, { passive: true });
+        elements.overlay.addEventListener('touchstart', handleTouchStart, { passive: true });
+        elements.overlay.addEventListener('touchend', handleTouchEnd, { passive: true });
         
         // ×ボタン → 終了確認ダイアログ表示
         elements.closeBtn.addEventListener('click', () => {
@@ -22429,18 +22429,22 @@ const AlphabetDrop = (() => {
     const ROWS = 6;
     const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const STORAGE_KEY_BEST = 'alphabetDropBestScore';
-    const MERGE_DELAY = 150;
-    const GRAVITY_DELAY = 100;
+    const MERGE_DELAY = 450;
+    const GRAVITY_DELAY = 350;
+    const LAND_DELAY = 300;
+    const AUTO_DROP_INTERVAL = 800; // 自動落下の間隔
 
     let grid = [];
     let score = 0;
     let bestScore = 0;
     let tileIdCounter = 1;
-    let next = 'A';
+    let next = 'A';       // 現在落下中のタイル
+    let nextNext = 'A';   // 次に落ちてくるタイル（NEXT表示用）
     let selectedCol = 2;
     let hasWon = false;
     let continueAfterWin = false;
     let isAnimating = false;
+    let skipDropAnimation = false; // タップ時は落下アニメーションをスキップ
 
     let elements = null;
     let initialized = false;
@@ -22465,38 +22469,10 @@ const AlphabetDrop = (() => {
         return LETTERS[Math.min(idx + 1, LETTERS.length - 1)];
     }
 
-    // 盤面の最高タイルを取得
-    function getMaxLetterOnBoard() {
-        let maxIdx = -1;
-        forEachTile((t) => {
-            const idx = letterIndex(t.letter);
-            if (idx > maxIdx) maxIdx = idx;
-        });
-        return maxIdx;
-    }
-
-    // 出現タイルをランダム選択（最高タイルの2段階下まで出現可能）
+    // A〜Dを同じ確率で出す
     function randomSpawnLetter() {
-        const maxIdx = getMaxLetterOnBoard();
-        // 最高タイルの2段階下まで（最低でもA,B）
-        const maxSpawnIdx = Math.max(1, maxIdx - 2);
-        
-        // 重み付きランダム（低いほど出やすい）
-        // A: 50%, B: 25%, C: 12.5%, D: 6.25%... のような感じ
-        const weights = [];
-        let total = 0;
-        for (let i = 0; i <= maxSpawnIdx; i++) {
-            const w = Math.pow(0.5, i); // 指数的に減少
-            weights.push(w);
-            total += w;
-        }
-        
-        let rand = Math.random() * total;
-        for (let i = 0; i <= maxSpawnIdx; i++) {
-            rand -= weights[i];
-            if (rand <= 0) return LETTERS[i];
-        }
-        return 'A';
+        const spawnLetters = ['A', 'B', 'C', 'D'];
+        return spawnLetters[Math.floor(Math.random() * spawnLetters.length)];
     }
 
     function initGrid() {
@@ -22529,6 +22505,7 @@ const AlphabetDrop = (() => {
     }
 
     function updateScore(delta) {
+        const prevLevel = getSpeedLevel();
         score += delta;
         if (elements?.score) elements.score.textContent = String(score);
         if (score > bestScore) {
@@ -22537,12 +22514,31 @@ const AlphabetDrop = (() => {
             saveBestScore();
             showBestBadge();
         }
+        // スピードレベル更新
+        const newLevel = getSpeedLevel();
+        updateSpeedLevel();
+        // レベルアップ時にアニメーション
+        if (newLevel > prevLevel && elements?.speedLevel) {
+            elements.speedLevel.classList.remove('level-up');
+            // 再フローを強制してアニメーションをリセット
+            void elements.speedLevel.offsetWidth;
+            elements.speedLevel.classList.add('level-up');
+            setTimeout(() => {
+                if (elements?.speedLevel) elements.speedLevel.classList.remove('level-up');
+            }, 500);
+        }
     }
 
     function updateNextPreview() {
         if (!elements?.nextTile) return;
-        elements.nextTile.textContent = next;
-        elements.nextTile.className = `alphabetdrop-next-tile alphabet2048-tile-${next}`;
+        elements.nextTile.textContent = nextNext;
+        elements.nextTile.className = `alphabetdrop-next-tile alphabet2048-tile-${nextNext} next-change`;
+        // アニメーション終了後にクラスを削除
+        setTimeout(() => {
+            if (elements?.nextTile) {
+                elements.nextTile.classList.remove('next-change');
+            }
+        }, 300);
     }
 
     function updateSelectedColUI() {
@@ -22571,6 +22567,10 @@ const AlphabetDrop = (() => {
     function clearTileElements() {
         tileElements.forEach((el) => el.remove());
         tileElements.clear();
+        if (previewElement) {
+            previewElement.remove();
+            previewElement = null;
+        }
     }
 
     function getFirstEmptyRow(col) {
@@ -22612,40 +22612,144 @@ const AlphabetDrop = (() => {
         return moved;
     }
 
-    // 隣接する同じ文字を探す（上下左右）
-    function findMergePair() {
-        // 下から上、左から右の順で探索（下側・左側を優先的に残す）
+    // 隣接する同じ文字のグループを見つける（3つ以上も対応）
+    function findMergeGroup() {
+        const visited = new Set();
+        
         for (let r = ROWS - 1; r >= 0; r--) {
             for (let c = 0; c < COLS; c++) {
                 const t = grid[r][c];
                 if (!t) continue;
-                // 右隣
-                if (c + 1 < COLS && grid[r][c + 1]?.letter === t.letter) {
-                    return { r1: r, c1: c, r2: r, c2: c + 1 };
+                const key = `${r},${c}`;
+                if (visited.has(key)) continue;
+                
+                // BFSで隣接する同じ文字を探す
+                const group = [];
+                const queue = [{ r, c }];
+                const groupVisited = new Set();
+                
+                while (queue.length > 0) {
+                    const { r: cr, c: cc } = queue.shift();
+                    const cellKey = `${cr},${cc}`;
+                    if (groupVisited.has(cellKey)) continue;
+                    groupVisited.add(cellKey);
+                    
+                    const cell = grid[cr][cc];
+                    if (!cell || cell.letter !== t.letter) continue;
+                    
+                    group.push({ r: cr, c: cc });
+                    
+                    // 上下左右を探索
+                    if (cr > 0) queue.push({ r: cr - 1, c: cc });
+                    if (cr < ROWS - 1) queue.push({ r: cr + 1, c: cc });
+                    if (cc > 0) queue.push({ r: cr, c: cc - 1 });
+                    if (cc < COLS - 1) queue.push({ r: cr, c: cc + 1 });
                 }
-                // 上隣
-                if (r - 1 >= 0 && grid[r - 1][c]?.letter === t.letter) {
-                    return { r1: r, c1: c, r2: r - 1, c2: c };
+                
+                if (group.length >= 2) {
+                    return { letter: t.letter, cells: group };
                 }
+                
+                group.forEach(({ r, c }) => visited.add(`${r},${c}`));
             }
         }
         return null;
     }
 
-    // 1回の合体を実行（下側/左側に合体）
-    function doOneMerge() {
-        const pair = findMergePair();
-        if (!pair) return false;
+    // グループを合体 - 既存タイルが動いてきた方（最新タイル）に吸い寄せられる
+    async function doMergeGroup() {
+        const group = findMergeGroup();
+        if (!group) return false;
 
-        const { r1, c1, r2, c2 } = pair;
-        const base = grid[r1][c1];
-        const merged = grid[r2][c2];
-        const newLetter = nextLetter(base.letter);
-
-        base.letter = newLetter;
-        grid[r2][c2] = null;
-
-        updateScore(letterValue(newLetter));
+        const { letter, cells } = group;
+        
+        // 一番新しいタイル（ID が大きい = 最後に落ちてきた）を基準にする
+        cells.sort((a, b) => {
+            const tileA = grid[a.r][a.c];
+            const tileB = grid[b.r][b.c];
+            return (tileB?.id || 0) - (tileA?.id || 0); // ID大きい順
+        });
+        
+        const base = cells[0]; // 動いてきたタイル（上）
+        const count = cells.length;
+        const { cellSize, gap } = getBoardMetrics();
+        
+        // 基準セルの位置
+        const baseTop = base.r * (cellSize + gap);
+        const baseLeft = base.c * (cellSize + gap);
+        
+        // 基準セル以外のタイル（既存タイル）を吸い寄せるアニメーション
+        const animPromises = [];
+        cells.forEach(({ r, c }, i) => {
+            if (i > 0) {
+                const tile = grid[r][c];
+                if (tile) {
+                    const el = tileElements.get(tile.id);
+                    if (el) {
+                        // 吸い寄せアニメーション（既存タイルが上に移動）
+                        el.style.transition = 'top 150ms ease-in, left 150ms ease-in, transform 150ms ease-in';
+                        el.style.top = `${baseTop}px`;
+                        el.style.left = `${baseLeft}px`;
+                        el.style.transform = 'scale(0.8)';
+                        el.style.zIndex = '1';
+                        
+                        animPromises.push(new Promise(resolve => setTimeout(resolve, 150)));
+                    }
+                }
+            }
+        });
+        
+        // 基準タイルのDOM要素を取得
+        const baseTile = grid[base.r][base.c];
+        const baseEl = baseTile ? tileElements.get(baseTile.id) : null;
+        
+        // アニメーション完了を待つ
+        if (animPromises.length > 0) {
+            await Promise.all(animPromises);
+        }
+        
+        // 合体回数に応じて文字を進める（2個→1段階、3個→1段階、4個→2段階...）
+        const mergeSteps = Math.floor(Math.log2(count));
+        let newLetter = letter;
+        for (let i = 0; i < mergeSteps; i++) {
+            newLetter = nextLetter(newLetter);
+        }
+        // 最低1段階は進める
+        if (mergeSteps === 0) {
+            newLetter = nextLetter(letter);
+        }
+        
+        // 基準セル以外を削除（DOM要素も削除）
+        cells.forEach(({ r, c }, i) => {
+            if (i > 0) {
+                const tile = grid[r][c];
+                if (tile) {
+                    const el = tileElements.get(tile.id);
+                    if (el) {
+                        el.remove();
+                        tileElements.delete(tile.id);
+                    }
+                }
+                grid[r][c] = null;
+            }
+        });
+        
+        // 基準セルを更新
+        grid[base.r][base.c].letter = newLetter;
+        
+        // 基準タイルにマージアニメーション
+        if (baseEl) {
+            baseEl.textContent = newLetter;
+            baseEl.className = `alphabet2048-tile alphabet2048-tile-${newLetter} alphabet2048-tile-merge`;
+            baseEl.style.transform = '';
+            baseEl.style.zIndex = '';
+            setTimeout(() => {
+                baseEl.classList.remove('alphabet2048-tile-merge');
+            }, 300);
+        }
+        
+        // スコア加算（合体した個数分）
+        updateScore(letterValue(newLetter) * (count - 1));
 
         if (newLetter === 'Z') {
             hasWon = true;
@@ -22671,6 +22775,210 @@ const AlphabetDrop = (() => {
         if (elements?.gameOverOverlay) elements.gameOverOverlay.classList.add('hidden');
     }
 
+    let previewElement = null;
+    let autoDropTimer = null;
+    let currentDropLetter = null; // 現在落下中のタイルの文字
+    
+    // スコアに応じた落下速度レベル（1-16）
+    function getSpeedLevel() {
+        // 500点ごとにレベルアップ、最大16
+        return Math.min(1 + Math.floor(score / 500), 16);
+    }
+    
+    // スコアに応じた落下速度（ピクセル/秒）
+    function getDropSpeed() {
+        // 基本速度25、レベルごとに5ずつ速くなる（最大100）
+        const baseSpeed = 25;
+        const maxSpeed = 100;
+        const level = getSpeedLevel();
+        return Math.min(baseSpeed + (level - 1) * 5, maxSpeed);
+    }
+    
+    // スピードレベル表示を更新
+    function updateSpeedLevel() {
+        const level = getSpeedLevel();
+        if (elements?.speedLevel) {
+            elements.speedLevel.textContent = `Lv.${level}`;
+            // レベルに応じて色を変える
+            if (level >= 12) {
+                elements.speedLevel.style.color = '#ef4444'; // 赤
+            } else if (level >= 8) {
+                elements.speedLevel.style.color = '#f97316'; // オレンジ
+            } else if (level >= 4) {
+                elements.speedLevel.style.color = '#f59e0b'; // 黄色
+            } else {
+                elements.speedLevel.style.color = '#22c55e'; // 緑
+            }
+        }
+    }
+
+    function startAutoDrop() {
+        stopAutoDrop();
+        if (!elements?.board || !previewElement) return;
+        
+        // 全列が埋まっていたらゲームオーバー
+        if (!canDropAny()) {
+            showGameOver();
+            return;
+        }
+        
+        const { cellSize, gap } = getBoardMetrics();
+        let targetRow = getFirstEmptyRow(selectedCol);
+        
+        // 選択列が埋まっていたら空いている列に移動
+        if (targetRow < 0) {
+            for (let c = 0; c < COLS; c++) {
+                if (getFirstEmptyRow(c) >= 0) {
+                    selectedCol = c;
+                    updateSelectedColUI();
+                    break;
+                }
+            }
+            targetRow = getFirstEmptyRow(selectedCol);
+            if (targetRow < 0) {
+                showGameOver();
+                return;
+            }
+        }
+        
+        currentDropLetter = next; // 落下開始時の文字を記憶
+        
+        // 開始位置（盤面の上）
+        const startTop = -(cellSize + gap);
+        const endTop = targetRow * (cellSize + gap);
+        const left = selectedCol * (cellSize + gap);
+        
+        // 落下距離に応じた時間を計算（スコアで速度が変わる）
+        const distance = endTop - startTop;
+        const dropSpeed = getDropSpeed();
+        const duration = (distance / dropSpeed) * 1000; // ミリ秒
+        
+        previewElement.style.transition = 'none';
+        previewElement.style.left = `${left}px`;
+        previewElement.style.top = `${startTop}px`;
+        
+        // 次フレームでアニメーション開始
+        requestAnimationFrame(() => {
+            previewElement.style.transition = `top ${duration}ms linear`;
+            previewElement.style.top = `${endTop}px`;
+        });
+        
+        // 着地時にドロップ
+        autoDropTimer = setTimeout(() => {
+            if (!isAnimating) {
+                isAnimating = true;
+                executeDropFromPreview();
+            }
+        }, duration);
+    }
+
+    function stopAutoDrop() {
+        if (autoDropTimer) {
+            clearTimeout(autoDropTimer);
+            autoDropTimer = null;
+        }
+    }
+
+    // 現在位置から即座に落下（プレビューを直接タイルとして使う）
+    async function dropFromCurrentPosition() {
+        stopAutoDrop();
+        if (!previewElement || !elements?.board) return;
+        
+        const { cellSize, gap } = getBoardMetrics();
+        const targetRow = getFirstEmptyRow(selectedCol);
+        if (targetRow < 0) {
+            isAnimating = false;
+            return;
+        }
+        
+        // 現在のtop位置を取得
+        const currentTop = parseFloat(previewElement.style.top) || 0;
+        const endTop = targetRow * (cellSize + gap);
+        
+        // 速く落下（固定時間）
+        const duration = 120;
+        
+        previewElement.style.transition = `top ${duration}ms ease-in`;
+        previewElement.style.top = `${endTop}px`;
+        
+        // 落下完了を待つ
+        await sleep(duration);
+        
+        // プレビューを非表示
+        hidePreview();
+        
+        // グリッドにタイルを配置
+        const letterToUse = currentDropLetter || next;
+        const tile = createTile(letterToUse);
+        grid[targetRow][selectedCol] = tile;
+        
+        // 次のタイルを準備（nextNext を next に、新しい nextNext を生成）
+        next = nextNext;
+        nextNext = randomSpawnLetter();
+        currentDropLetter = null;
+        
+        // タップ時は落下アニメーションをスキップ
+        skipDropAnimation = true;
+        render();
+        skipDropAnimation = false;
+        
+        // 着地後に少し待ってから合体処理
+        await sleep(LAND_DELAY);
+        await resolveChain();
+        
+        if (hasWon && !continueAfterWin) {
+            showClear();
+        } else if (!canDropAny()) {
+            showGameOver();
+        } else {
+            updateNextPreview();
+            updatePreview();
+            showPreview();
+            startAutoDrop();
+        }
+        
+        isAnimating = false;
+    }
+
+    function updatePreviewPosition() {
+        if (!previewElement || !elements?.board) return;
+        const { cellSize, gap } = getBoardMetrics();
+        const left = selectedCol * (cellSize + gap);
+        previewElement.style.left = `${left}px`;
+    }
+
+    function updatePreview() {
+        if (!elements?.tiles || !elements?.board) return;
+        const { cellSize, gap } = getBoardMetrics();
+
+        if (!previewElement) {
+            previewElement = document.createElement('div');
+            previewElement.className = `alphabet2048-tile alphabet2048-tile-${next} alphabetdrop-preview`;
+            previewElement.textContent = next;
+            elements.tiles.appendChild(previewElement);
+        }
+
+        previewElement.textContent = next;
+        previewElement.className = `alphabet2048-tile alphabet2048-tile-${next} alphabetdrop-preview`;
+        previewElement.style.transition = 'none';
+        
+        const left = selectedCol * (cellSize + gap);
+        previewElement.style.left = `${left}px`;
+        previewElement.style.top = `${-(cellSize + gap)}px`;
+    }
+
+    function hidePreview() {
+        if (previewElement) {
+            previewElement.style.opacity = '0';
+        }
+    }
+
+    function showPreview() {
+        if (previewElement) {
+            previewElement.style.opacity = '1';
+        }
+    }
+
     function render() {
         if (!elements?.tiles || !elements?.board) return;
         const { cellSize, gap } = getBoardMetrics();
@@ -22680,6 +22988,10 @@ const AlphabetDrop = (() => {
         forEachTile((tile, r, c) => {
             aliveIds.add(tile.id);
             let el = tileElements.get(tile.id);
+            const isNew = !el;
+
+            const top = r * (cellSize + gap);
+            const left = c * (cellSize + gap);
 
             if (!el) {
                 el = document.createElement('div');
@@ -22688,21 +23000,29 @@ const AlphabetDrop = (() => {
                 el.dataset.tileId = String(tile.id);
                 tileElements.set(tile.id, el);
                 elements.tiles.appendChild(el);
-                el.classList.add('alphabet2048-tile-new');
-                setTimeout(() => el?.classList.remove('alphabet2048-tile-new'), 180);
+                
+                el.style.left = `${left}px`;
+                
+                // タップ時は直接配置、自動落下時は上から落下
+                if (skipDropAnimation) {
+                    el.style.top = `${top}px`;
+                } else {
+                    el.style.top = `${-(cellSize + gap * 2)}px`;
+                    requestAnimationFrame(() => {
+                        el.style.top = `${top}px`;
+                    });
+                }
+            } else {
+                el.style.top = `${top}px`;
+                el.style.left = `${left}px`;
             }
-
-            const top = r * (cellSize + gap);
-            const left = c * (cellSize + gap);
-            el.style.top = `${top}px`;
-            el.style.left = `${left}px`;
 
             // 文字・色更新
             if (el.textContent !== tile.letter) {
                 el.textContent = tile.letter;
                 el.className = `alphabet2048-tile alphabet2048-tile-${tile.letter}`;
                 el.classList.add('alphabet2048-tile-merge');
-                setTimeout(() => el?.classList.remove('alphabet2048-tile-merge'), 200);
+                setTimeout(() => el?.classList.remove('alphabet2048-tile-merge'), 450);
             }
         });
 
@@ -22713,7 +23033,7 @@ const AlphabetDrop = (() => {
                 setTimeout(() => {
                     el.remove();
                     tileElements.delete(id);
-                }, 150);
+                }, 250);
             }
         });
 
@@ -22730,10 +23050,9 @@ const AlphabetDrop = (() => {
                 render();
                 await sleep(GRAVITY_DELAY);
             }
-            // 合体（1回ずつ処理して連鎖を見せる）
-            while (doOneMerge()) {
+            // 合体（グループ単位で処理）- 吸い寄せアニメーション付き
+            while (await doMergeGroup()) {
                 changed = true;
-                render();
                 await sleep(MERGE_DELAY);
                 // 合体後に重力
                 if (applyGravity()) {
@@ -22749,11 +23068,55 @@ const AlphabetDrop = (() => {
     }
 
     function setSelectedCol(col) {
+        if (isAnimating) return;
         selectedCol = ((col % COLS) + COLS) % COLS;
         updateSelectedColUI();
+        // 列変更時は自動落下をリスタート
+        updatePreview();
+        startAutoDrop();
     }
 
-    async function dropAtSelectedCol() {
+    async function executeDropFromPreview() {
+        const row = getFirstEmptyRow(selectedCol);
+        if (row < 0) {
+            isAnimating = false;
+            return;
+        }
+
+        stopAutoDrop();
+        hidePreview();
+
+        // 落下中の文字を使う（なければnextを使う）
+        const letterToUse = currentDropLetter || next;
+        const tile = createTile(letterToUse);
+        grid[row][selectedCol] = tile;
+
+        // 次のタイルを準備（nextNext を next に、新しい nextNext を生成）
+        next = nextNext;
+        nextNext = randomSpawnLetter();
+        currentDropLetter = null;
+        
+        render();
+
+        // 着地後に少し待ってから合体処理
+        await sleep(LAND_DELAY);
+        await resolveChain();
+
+        if (hasWon && !continueAfterWin) {
+            showClear();
+        } else if (!canDropAny()) {
+            showGameOver();
+        } else {
+            updateNextPreview();
+            updatePreview();
+            showPreview();
+            startAutoDrop();
+        }
+
+        isAnimating = false;
+    }
+
+    function dropAtSelectedCol() {
         if (!elements?.overlay || elements.overlay.classList.contains('hidden')) return;
         if (isAnimating) return;
         if (elements.confirmDialog && !elements.confirmDialog.classList.contains('hidden')) return;
@@ -22765,24 +23128,7 @@ const AlphabetDrop = (() => {
         if (row < 0) return;
 
         isAnimating = true;
-
-        const tile = createTile(next);
-        grid[row][selectedCol] = tile;
-
-        next = randomSpawnLetter();
-        updateNextPreview();
-        render();
-
-        await sleep(50);
-        await resolveChain();
-
-        if (hasWon && !continueAfterWin) {
-            showClear();
-        } else if (!canDropAny()) {
-            showGameOver();
-        }
-
-        isAnimating = false;
+        dropFromCurrentPosition();
     }
 
     function handleKeyDown(e) {
@@ -22800,12 +23146,20 @@ const AlphabetDrop = (() => {
         }
     }
 
-    function handleBoardClick(e) {
+    function handleBoardTap(e) {
         if (!elements?.overlay || elements.overlay.classList.contains('hidden')) return;
         if (isAnimating) return;
 
         const rect = elements.board.getBoundingClientRect();
-        const x = e.clientX - rect.left;
+        let clientX;
+        if (e.type === 'touchend' && e.changedTouches) {
+            clientX = e.changedTouches[0].clientX;
+        } else if (e.touches) {
+            clientX = e.touches[0].clientX;
+        } else {
+            clientX = e.clientX;
+        }
+        const x = clientX - rect.left;
         const { cellSize, gap } = getBoardMetrics();
         const col = Math.max(0, Math.min(COLS - 1, Math.floor(x / (cellSize + gap))));
         setSelectedCol(col);
@@ -22813,16 +23167,19 @@ const AlphabetDrop = (() => {
     }
 
     function startGame() {
+        stopAutoDrop();
         score = 0;
         hasWon = false;
         continueAfterWin = false;
         isAnimating = false;
         tileIdCounter = 1;
-        next = randomSpawnLetter();
         selectedCol = Math.floor(COLS / 2);
+        currentDropLetter = null;
 
         initGrid();
         clearTileElements();
+        next = randomSpawnLetter();
+        nextNext = randomSpawnLetter();
 
         if (elements?.score) elements.score.textContent = '0';
         if (elements?.bestBadge) elements.bestBadge.classList.add('hidden');
@@ -22832,7 +23189,11 @@ const AlphabetDrop = (() => {
         if (elements?.exitDialog) elements.exitDialog.classList.add('hidden');
 
         updateNextPreview();
+        updateSpeedLevel();
         render();
+        updatePreview();
+        showPreview();
+        startAutoDrop();
     }
 
     function continueGame() {
@@ -22861,6 +23222,7 @@ const AlphabetDrop = (() => {
             best: document.getElementById('alphabetDropBest'),
             bestBadge: document.getElementById('alphabetDropBestBadge'),
             nextTile: document.getElementById('alphabetDropNextTile'),
+            speedLevel: document.getElementById('alphabetDropSpeedLevel'),
             selectedCol: document.getElementById('alphabetDropSelectedCol'),
             colHighlight: document.getElementById('alphabetDropColHighlight'),
             clearOverlay: document.getElementById('alphabetDropClear'),
@@ -22884,7 +23246,7 @@ const AlphabetDrop = (() => {
         if (!initialized) {
             initialized = true;
             document.addEventListener('keydown', handleKeyDown);
-            elements.board.addEventListener('click', handleBoardClick);
+            elements.board.addEventListener('touchend', handleBoardTap, { passive: true });
 
             elements.closeBtn.addEventListener('click', () => {
                 elements.exitDialog.classList.remove('hidden');
@@ -22893,6 +23255,7 @@ const AlphabetDrop = (() => {
                 elements.exitDialog.classList.add('hidden');
             });
             elements.exitQuit.addEventListener('click', () => {
+                stopAutoDrop();
                 elements.exitDialog.classList.add('hidden');
                 elements.overlay.classList.add('hidden');
                 const menu = document.getElementById('minigameMenuOverlay');
