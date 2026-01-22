@@ -13,6 +13,9 @@ function setStatusBarColor(color) {
 let currentWords = [];
 let currentIndex = 0;
 let hasReachedGoalBefore = false; // 目標達成済みフラグ（演出重複防止）
+let isReturningToLearningMenu = false; // 学習メニューに戻る時のフラグ
+let returnToCourseInfo = null; // 中断時に戻るコース情報 { category, words }
+let lastExpandProgressWidth = 0; // 拡大アニメーション時の進捗バー幅（縮小時に使用）
 let pendingGoalCelebration = false; // 学習完了後に目標達成画面を表示するフラグ
 let selectedStudyMode = 'input'; // 'input' or 'output' - インプット/アウトプットモード選択
 let currentInputFilter = 'all'; // インプットモードのフィルター状態: 'all', 'wrong', 'unlearned', 'bookmark', 'correct'
@@ -303,16 +306,19 @@ function animateCardShrink(targetCardId, callback) {
         transform: 'perspective(1000px) rotateY(0deg)'
     });
     
-    // 戻る時もアイコン、タイトル、バッジを表示
+    // 戻る時もアイコン、タイトル、バッジ、進捗バーを表示
     const targetCard = document.getElementById(targetCardId);
     if (targetCard) {
         const titleContainer = document.createElement('div');
         titleContainer.className = 'expand-title';
-        titleContainer.style.transform = 'scale(1.5)';
         
         const icon = targetCard.querySelector('.intro-icon, .irregular-verbs-icon, .all-words-icon, .minigame-icon, .category-icon, [class*="-icon"]:not(.category-arrow)');
         const badge = targetCard.querySelector('.level-badge');
         const categoryName = targetCard.querySelector('.category-name');
+        const progress = targetCard.querySelector('.category-progress');
+        
+        // 元の進捗バーの幅を取得
+        const progressWidth = progress ? progress.getBoundingClientRect().width : 0;
         
         if (icon) {
             const iconClone = icon.cloneNode(true);
@@ -336,6 +342,22 @@ function animateCardShrink(targetCardId, callback) {
             const textOnly = categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').trim();
             titleText.textContent = textOnly;
             titleContainer.appendChild(titleText);
+        }
+        
+        if (progress) {
+            const progressClone = progress.cloneNode(true);
+            // クローンした進捗バーのvisibilityを確実にvisibleに
+            progressClone.style.visibility = 'visible';
+            progressClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
+            // 進捗テキスト（0/0語など）は非表示にする
+            const progressText = progressClone.querySelector('.category-progress-text');
+            if (progressText) progressText.style.display = 'none';
+            // 進捗バーの幅を元のカードに合わせる（取得できない場合は拡大時の幅を使用）
+            const width = progressWidth > 0 ? progressWidth : (lastExpandProgressWidth > 0 ? lastExpandProgressWidth : 130);
+            progressClone.style.width = width + 'px';
+            progressClone.style.minWidth = width + 'px';
+            progressClone.style.maxWidth = width + 'px';
+            titleContainer.appendChild(progressClone);
         }
         overlay.appendChild(titleContainer);
     }
@@ -377,10 +399,7 @@ function animateCardShrink(targetCardId, callback) {
                 overlay.style.opacity = '1';
                 overlay.style.transform = 'perspective(1000px) rotateY(-360deg)';
                 
-                if (titleContainer) {
-                    titleContainer.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-                    titleContainer.style.transform = 'scale(1)';
-                }
+                // バッジと文字のサイズ比率は変更しない
                 
                 setTimeout(() => {
                     // アニメーション完了後にターゲットカードを表示
@@ -408,14 +427,23 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     
     const rect = cardElement.getBoundingClientRect();
     
-    // 先にバッジ、アイコン、タイトルをクローン（非表示にする前に）
+    // 先にバッジ、アイコン、タイトル、進捗バーをクローン（非表示にする前に）
     const badge = cardElement.querySelector('.level-badge');
     const categoryName = cardElement.querySelector('.category-name');
     // アイコンを探す（様々なクラス名に対応）
     const icon = cardElement.querySelector('.intro-icon, .irregular-verbs-icon, .all-words-icon, .minigame-icon, .category-icon, [class*="-icon"]:not(.category-arrow)');
+    const progress = cardElement.querySelector('.category-progress');
+    
+    // 元の進捗バーの幅を取得（クローン前に）
+    const progressWidth = progress ? progress.getBoundingClientRect().width : 0;
+    // 縮小アニメーション時に使用するため保存
+    if (progressWidth > 0) {
+        lastExpandProgressWidth = progressWidth;
+    }
     
     const badgeClone = badge ? badge.cloneNode(true) : null;
     const iconClone = icon ? icon.cloneNode(true) : null;
+    const progressClone = progress ? progress.cloneNode(true) : null;
     const categoryText = categoryName ? categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').trim() : '';
     
     // カードの中身を非表示にする（枠線は残す）
@@ -459,6 +487,20 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
         titleContainer.appendChild(titleText);
     }
     
+    if (progressClone && progressWidth > 0) {
+        // クローンした進捗バーのvisibilityを確実にvisibleに
+        progressClone.style.visibility = 'visible';
+        progressClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
+        // 進捗テキスト（0/0語など）は非表示にする
+        const progressText = progressClone.querySelector('.category-progress-text');
+        if (progressText) progressText.style.display = 'none';
+        // 進捗バーの幅を元のカードに合わせる
+        progressClone.style.width = progressWidth + 'px';
+        progressClone.style.minWidth = progressWidth + 'px';
+        progressClone.style.maxWidth = progressWidth + 'px';
+        titleContainer.appendChild(progressClone);
+    }
+    
     overlay.appendChild(titleContainer);
     document.body.appendChild(overlay);
     
@@ -478,9 +520,7 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
         overlay.style.height = '100vh';
         overlay.style.opacity = '1';
         overlay.style.transform = 'perspective(1000px) rotateY(360deg)';
-        // バッジとタイトルを少し拡大
-        titleContainer.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-        titleContainer.style.transform = 'scale(1.5)';
+        // バッジと文字のサイズ比率は変更しない
     });
     
     // アニメーション完了後
@@ -3943,6 +3983,9 @@ function showCategorySelection(slideIn = false, skipScroll = false) {
     // 学習セッション終了（時間を記録）
     endStudySession();
     
+    // 戻り先情報をクリア
+    returnToCourseInfo = null;
+    
     // スクロール位置を一番上にリセット
     if (!skipScroll) {
         window.scrollTo(0, 0);
@@ -4089,6 +4132,134 @@ function showCategorySelection(slideIn = false, skipScroll = false) {
     
     // フローティング要復習ボタンを表示（ホーム画面のみ）
     showFloatingReviewBtn();
+}
+
+// 学習メニュー（コース選択画面）に戻る（中断時用）
+function returnToLearningMenu(category) {
+    // 学習セッション終了
+    endStudySession();
+    
+    // 既存のモーダル/オーバーレイをすべて閉じる
+    const overlaysToClose = [
+        'studyModeOverlay',
+        'learningMenuOverlay',
+        'ivModeOverlay'
+    ];
+    overlaysToClose.forEach(id => {
+        const overlay = document.getElementById(id);
+        if (overlay) overlay.remove();
+    });
+    // study-mode-overlayクラスを持つ要素もすべて削除
+    document.querySelectorAll('.study-mode-overlay').forEach(el => el.remove());
+    
+    // フィルター画面（テストの設定画面）を閉じる
+    const wordFilterView = document.getElementById('wordFilterView');
+    const filterOverlay = document.getElementById('filterOverlay');
+    if (wordFilterView) {
+        wordFilterView.classList.add('hidden');
+        wordFilterView.classList.remove('show');
+    }
+    if (filterOverlay) {
+        filterOverlay.classList.add('hidden');
+        filterOverlay.classList.remove('show');
+    }
+    
+    // 復習モードのタイトルとクラスをリセット
+    resetReviewWrongWordsTitle();
+    
+    // 赤シートをリセット
+    resetRedSheet();
+    
+    // テストモードのクラスをリセット
+    document.body.classList.remove('quiz-test-mode');
+    updateThemeColorForTest(false);
+    
+    // テストモード用の進捗表示を非表示
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress) testModeProgress.classList.add('hidden');
+    const hwTestModeProgress = document.getElementById('hwTestModeProgress');
+    if (hwTestModeProgress) hwTestModeProgress.classList.add('hidden');
+    
+    // 手書きクイズ画面を非表示
+    const hwQuizView = document.getElementById('handwritingQuizView');
+    if (hwQuizView) hwQuizView.classList.add('hidden');
+    
+    // タイマーを停止
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    stopWordTimer();
+    isTimeAttackMode = false;
+    document.body.classList.remove('time-attack-mode');
+    
+    document.body.classList.remove('learning-mode');
+    updateThemeColor(false);
+    
+    // メインコンテンツ（学習画面全体）を非表示にする
+    if (elements.mainContent) {
+        elements.mainContent.classList.add('hidden');
+    }
+    
+    // すべての学習モードを非表示にする
+    const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
+    const inputMode = document.getElementById('inputMode');
+    const sentenceMode = document.getElementById('sentenceMode');
+    const reorderMode = document.getElementById('reorderMode');
+    const cardHint = document.getElementById('cardHint');
+    const handwritingQuizView = document.getElementById('handwritingQuizView');
+    const cardTopSection = document.querySelector('.card-top-section');
+    const choiceMode = document.getElementById('choiceQuestionMode');
+    const inputListView = document.getElementById('inputListView');
+    if (wordCard) wordCard.classList.add('hidden');
+    if (wordCardContainer) wordCardContainer.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (sentenceMode) sentenceMode.classList.add('hidden');
+    if (reorderMode) reorderMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.add('hidden');
+    if (cardHint) cardHint.classList.add('hidden');
+    if (handwritingQuizView) handwritingQuizView.classList.add('hidden');
+    if (cardTopSection) cardTopSection.classList.add('hidden');
+    if (inputListView) inputListView.classList.add('hidden');
+    
+    // モードフラグをリセット
+    isInputModeActive = false;
+    isSentenceModeActive = false;
+    isReorderModeActive = false;
+    isChoiceQuestionModeActive = false;
+    document.body.classList.remove('choice-question-mode-active');
+    
+    // カードモード専用オーバーレイをリセット
+    if (elements.cardFeedbackOverlay) {
+        elements.cardFeedbackOverlay.classList.remove('active', 'correct', 'wrong', 'mastered');
+    }
+    
+    // 進捗ステップボタンを表示
+    const progressStepButtons = document.querySelector('.progress-step-buttons');
+    if (progressStepButtons) {
+        progressStepButtons.classList.remove('hidden');
+    }
+    
+    // 最新のデータを読み込み
+    loadData();
+    
+    // サブカテゴリー選択画面の親カテゴリーがあればそこに戻る
+    const parent = window.currentSubcategoryParent;
+    if (parent === 'レベル１ 超重要500語' || parent === 'レベル２ 重要500語' || 
+        parent === 'レベル３ ハイレベル300語' || parent === 'レベル４ 難関公立高校入試レベル' || 
+        parent === 'レベル５ 難関私立高校入試レベル') {
+        showLevelSubcategorySelection(parent, true);
+    } else if (parent === 'カテゴリー別') {
+        showElementaryCategorySelection(true);
+    } else if (returnToCourseInfo && returnToCourseInfo.category && returnToCourseInfo.words) {
+        // 保存されたコース情報があればそのコース選択画面に戻る
+        // skipSaveReturnInfo = true で、戻り情報を上書きしない
+        showCourseSelection(returnToCourseInfo.category, returnToCourseInfo.words, false, true);
+    } else {
+        // 情報がなければホーム画面に戻る
+        showCategorySelection();
+    }
 }
 
 // ホーム画面に戻った時の目標達成チェック（学習完了・中断問わず）
@@ -4338,8 +4509,8 @@ function startCategory(category) {
     
     const isVocabularySubcategory = vocabularySubcategories.includes(category);
     
-    if (isVocabularySubcategory) {
-        // サブカテゴリーの場合は直接フィルター画面を表示
+    if (isVocabularySubcategory && !isReturningToLearningMenu) {
+        // サブカテゴリーの場合は直接フィルター画面を表示（戻る時以外）
         console.log('Vocabulary subcategory detected, showing filter view directly');
         currentCourseWords = categoryWords;
         // カテゴリー選択画面を非表示、コース選択画面を表示してからフィルター画面を表示
@@ -4349,6 +4520,10 @@ function startCategory(category) {
             courseSelection.classList.remove('hidden');
         }
         showWordFilterView(category, categoryWords, category);
+    } else if (isVocabularySubcategory && isReturningToLearningMenu) {
+        // サブカテゴリーから戻る場合はホーム画面に戻る
+        console.log('Returning from vocabulary subcategory, going to home');
+        showCategorySelection();
     } else {
         console.log('Hiding category selection and showing course selection...');
         // カテゴリー選択画面を非表示（showCourseSelection内でスライドアニメーションと一緒に処理される）
@@ -5091,7 +5266,13 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
 }
 
 // コース選択画面を表示（100刻み）
-function showCourseSelection(category, categoryWords, slideIn = false) {
+function showCourseSelection(category, categoryWords, slideIn = false, skipSaveReturnInfo = false) {
+    // 中断時に戻るためのコース情報を保存（戻り時の呼び出しではスキップ）
+    // 配列は参照渡しなのでコピーを保存
+    if (!skipSaveReturnInfo) {
+        returnToCourseInfo = { category, words: [...categoryWords] };
+    }
+    
     // フローティング要復習ボタンを非表示
     hideFloatingReviewBtn();
     
@@ -7627,13 +7808,18 @@ function setupEventListeners() {
         });
     }
     
-    // ポーズメニュー：中断する
+    // ポーズメニュー：中断する（学習メニューに戻る）
     if (elements.pauseQuitBtn) {
         elements.pauseQuitBtn.addEventListener('click', () => {
             if (elements.pauseOverlay) {
                 elements.pauseOverlay.classList.add('hidden');
             }
-            showCategorySelection();
+            // 現在のカテゴリがあれば学習メニューに戻る、なければホーム画面へ
+            if (selectedCategory) {
+                returnToLearningMenu(selectedCategory);
+            } else {
+                showCategorySelection();
+            }
         });
     }
     
@@ -8235,8 +8421,12 @@ function setupEventListeners() {
         completionBackBtn.addEventListener('click', () => {
             hideCompletion();
             setTimeout(() => {
-                // ホーム画面（カテゴリー選択画面）に戻る
-                showCategorySelection();
+                // 学習メニューに戻る（カテゴリがあれば）、なければホーム画面へ
+                if (selectedCategory) {
+                    returnToLearningMenu(selectedCategory);
+                } else {
+                    showCategorySelection();
+                }
             }, 350);
         });
     }

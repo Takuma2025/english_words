@@ -29,6 +29,7 @@
     user-select: none;
 }
 
+
 /* 汎用非表示クラス */
 .hidden {
     display: none !important;
@@ -1804,16 +1805,11 @@ body.learning-mode .app-header {
 }
 
 .school-complete-text .complete-word {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 900;
     color: #ffffff;
-    text-shadow: 
-        -1px -1px 0 #2563eb,
-        1px -1px 0 #2563eb,
-        -1px 1px 0 #2563eb,
-        1px 1px 0 #2563eb,
-        0 0 8px rgba(37, 99, 235, 0.5);
     letter-spacing: 2px;
+    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
 }
 
 /* 流れる星のコンテナ */
@@ -4737,7 +4733,7 @@ button.category-card:focus-visible {
 
 /* 英語→日本語モード（カードモード）で全問正解した場合の青色COMPLETE表示 */
 .category-progress-bar.category-progress-complete {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    background: #2563eb;
 }
 
 .category-progress-bar.category-progress-complete::after {
@@ -4747,13 +4743,12 @@ button.category-card:focus-visible {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 900;
     color: #ffffff;
-    letter-spacing: 1px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 2px;
+    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
     text-transform: uppercase;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     z-index: 1;
 }
 
@@ -4776,15 +4771,12 @@ button.category-card:focus-visible {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 900;
     color: #7c2d12;
-    letter-spacing: 1px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 2px;
+    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
     text-transform: uppercase;
-    text-shadow: 
-        0 1px 0 rgba(255, 255, 255, 0.6),
-        0 0 8px rgba(255, 215, 0, 0.8);
     z-index: 1;
 }
 
@@ -13901,7 +13893,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 
 /* 英語→日本語モード（カードモード）: 青色グラデーションCOMPLETE表示 */
 .completion-progress-bar.completion-progress-complete-card {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    background: #2563eb;
 }
 
 .completion-progress-bar.completion-progress-complete-card::after {
@@ -13911,13 +13903,12 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 900;
     color: #ffffff;
-    letter-spacing: 1px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 2px;
+    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
     text-transform: uppercase;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     opacity: 0;
     transform: scale(0.5);
     animation: completePopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -13943,15 +13934,12 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 900;
     color: #7c2d12;
     letter-spacing: 2px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
     text-transform: uppercase;
-    text-shadow: 
-        0 1px 0 rgba(255, 255, 255, 0.6),
-        0 0 10px rgba(255, 215, 0, 0.8);
     opacity: 0;
     transform: scale(0.5);
     animation: completePopInLuxury 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -18675,14 +18663,32 @@ body.learning-mode .floating-review-btn {
 }
 
 .card-expand-overlay .expand-title .level-badge {
-    display: inline-block;
+    display: block;
     transform: none;
+    margin: 0 auto 8px auto;
+    font-size: 16px;
+    padding: 4px 12px;
+    width: fit-content;
+}
+
+.card-expand-overlay .expand-title .level-badge b {
+    font-size: 28px;
 }
 
 .card-expand-overlay .expand-title .title-text {
     font-size: 14px;
     font-weight: 400;
     color: #374151;
+}
+
+.card-expand-overlay .expand-title .category-progress {
+    width: 100%;
+    margin-top: 8px;
+    min-width: 100px;
+}
+
+.card-expand-overlay .expand-title .category-progress-text {
+    display: none !important;
 }
 
 /* 日本語→英語モードのチェックボックスを確実に非表示 */
