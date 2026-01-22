@@ -22380,10 +22380,15 @@ const Alphabet2048 = (() => {
         elements.exitQuit.addEventListener('click', () => {
             elements.exitDialog.classList.add('hidden');
             elements.overlay.classList.add('hidden');
-            // カード縮小アニメーション
-            const minigameBtn = document.getElementById('minigameCardBtn');
-            if (minigameBtn) {
-                animateCardShrink('minigameCardBtn');
+            // ミニゲームメニューに戻す（メニューが無ければカード縮小）
+            const minigameMenuOverlay = document.getElementById('minigameMenuOverlay');
+            if (minigameMenuOverlay) {
+                minigameMenuOverlay.classList.remove('hidden');
+            } else {
+                const minigameBtn = document.getElementById('minigameCardBtn');
+                if (minigameBtn) {
+                    animateCardShrink('minigameCardBtn');
+                }
             }
         });
         
@@ -22416,13 +22421,514 @@ const Alphabet2048 = (() => {
     };
 })();
 
+// =============================================
+// A to Z Drop ミニゲーム（Drop Merge スタイル）
+// =============================================
+const AlphabetDrop = (() => {
+    const COLS = 5;
+    const ROWS = 6;
+    const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const STORAGE_KEY_BEST = 'alphabetDropBestScore';
+    const MERGE_DELAY = 150;
+    const GRAVITY_DELAY = 100;
+
+    let grid = [];
+    let score = 0;
+    let bestScore = 0;
+    let tileIdCounter = 1;
+    let next = 'A';
+    let selectedCol = 2;
+    let hasWon = false;
+    let continueAfterWin = false;
+    let isAnimating = false;
+
+    let elements = null;
+    let initialized = false;
+    const tileElements = new Map();
+
+    function createTile(letter) {
+        return { id: tileIdCounter++, letter };
+    }
+
+    function letterIndex(letter) {
+        return LETTERS.indexOf(letter);
+    }
+
+    function letterValue(letter) {
+        const idx = letterIndex(letter);
+        return idx < 0 ? 0 : (2 ** idx);
+    }
+
+    function nextLetter(letter) {
+        const idx = letterIndex(letter);
+        if (idx < 0) return 'A';
+        return LETTERS[Math.min(idx + 1, LETTERS.length - 1)];
+    }
+
+    // 盤面の最高タイルを取得
+    function getMaxLetterOnBoard() {
+        let maxIdx = -1;
+        forEachTile((t) => {
+            const idx = letterIndex(t.letter);
+            if (idx > maxIdx) maxIdx = idx;
+        });
+        return maxIdx;
+    }
+
+    // 出現タイルをランダム選択（最高タイルの2段階下まで出現可能）
+    function randomSpawnLetter() {
+        const maxIdx = getMaxLetterOnBoard();
+        // 最高タイルの2段階下まで（最低でもA,B）
+        const maxSpawnIdx = Math.max(1, maxIdx - 2);
+        
+        // 重み付きランダム（低いほど出やすい）
+        // A: 50%, B: 25%, C: 12.5%, D: 6.25%... のような感じ
+        const weights = [];
+        let total = 0;
+        for (let i = 0; i <= maxSpawnIdx; i++) {
+            const w = Math.pow(0.5, i); // 指数的に減少
+            weights.push(w);
+            total += w;
+        }
+        
+        let rand = Math.random() * total;
+        for (let i = 0; i <= maxSpawnIdx; i++) {
+            rand -= weights[i];
+            if (rand <= 0) return LETTERS[i];
+        }
+        return 'A';
+    }
+
+    function initGrid() {
+        grid = Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => null));
+    }
+
+    function loadBestScore() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY_BEST);
+            const v = raw ? parseInt(raw, 10) : 0;
+            bestScore = Number.isFinite(v) ? v : 0;
+        } catch {
+            bestScore = 0;
+        }
+        if (elements?.best) elements.best.textContent = String(bestScore);
+    }
+
+    function saveBestScore() {
+        try {
+            localStorage.setItem(STORAGE_KEY_BEST, String(bestScore));
+        } catch {}
+    }
+
+    function showBestBadge() {
+        if (!elements?.bestBadge) return;
+        elements.bestBadge.classList.remove('hidden');
+        setTimeout(() => {
+            elements?.bestBadge?.classList.add('hidden');
+        }, 2000);
+    }
+
+    function updateScore(delta) {
+        score += delta;
+        if (elements?.score) elements.score.textContent = String(score);
+        if (score > bestScore) {
+            bestScore = score;
+            if (elements?.best) elements.best.textContent = String(bestScore);
+            saveBestScore();
+            showBestBadge();
+        }
+    }
+
+    function updateNextPreview() {
+        if (!elements?.nextTile) return;
+        elements.nextTile.textContent = next;
+        elements.nextTile.className = `alphabetdrop-next-tile alphabet2048-tile-${next}`;
+    }
+
+    function updateSelectedColUI() {
+        if (elements?.selectedCol) elements.selectedCol.textContent = String(selectedCol + 1);
+        updateColHighlight();
+    }
+
+    function getBoardMetrics() {
+        if (!elements?.board) return { cellSize: 0, gap: 0 };
+        const boardWidth = elements.board.clientWidth;
+        const boardHeight = elements.board.clientHeight;
+        const style = getComputedStyle(elements.board);
+        const gap = parseFloat(style.getPropertyValue('--cell-gap')) || 6;
+        const cellSize = (boardWidth - gap * (COLS + 1)) / COLS;
+        return { cellSize, gap, boardWidth, boardHeight };
+    }
+
+    function updateColHighlight() {
+        if (!elements?.colHighlight || !elements?.board) return;
+        const { cellSize, gap } = getBoardMetrics();
+        const left = selectedCol * (cellSize + gap);
+        elements.colHighlight.style.left = `${left}px`;
+        elements.colHighlight.style.width = `${cellSize}px`;
+    }
+
+    function clearTileElements() {
+        tileElements.forEach((el) => el.remove());
+        tileElements.clear();
+    }
+
+    function getFirstEmptyRow(col) {
+        for (let r = ROWS - 1; r >= 0; r--) {
+            if (!grid[r][col]) return r;
+        }
+        return -1;
+    }
+
+    function canDropAny() {
+        for (let c = 0; c < COLS; c++) {
+            if (getFirstEmptyRow(c) >= 0) return true;
+        }
+        return false;
+    }
+
+    function forEachTile(cb) {
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                if (grid[r][c]) cb(grid[r][c], r, c);
+            }
+        }
+    }
+
+    // 重力：全列を下に詰める
+    function applyGravity() {
+        let moved = false;
+        for (let c = 0; c < COLS; c++) {
+            const stack = [];
+            for (let r = ROWS - 1; r >= 0; r--) {
+                if (grid[r][c]) stack.push(grid[r][c]);
+            }
+            for (let r = ROWS - 1; r >= 0; r--) {
+                const t = stack[ROWS - 1 - r] || null;
+                if (grid[r][c] !== t) moved = true;
+                grid[r][c] = t;
+            }
+        }
+        return moved;
+    }
+
+    // 隣接する同じ文字を探す（上下左右）
+    function findMergePair() {
+        // 下から上、左から右の順で探索（下側・左側を優先的に残す）
+        for (let r = ROWS - 1; r >= 0; r--) {
+            for (let c = 0; c < COLS; c++) {
+                const t = grid[r][c];
+                if (!t) continue;
+                // 右隣
+                if (c + 1 < COLS && grid[r][c + 1]?.letter === t.letter) {
+                    return { r1: r, c1: c, r2: r, c2: c + 1 };
+                }
+                // 上隣
+                if (r - 1 >= 0 && grid[r - 1][c]?.letter === t.letter) {
+                    return { r1: r, c1: c, r2: r - 1, c2: c };
+                }
+            }
+        }
+        return null;
+    }
+
+    // 1回の合体を実行（下側/左側に合体）
+    function doOneMerge() {
+        const pair = findMergePair();
+        if (!pair) return false;
+
+        const { r1, c1, r2, c2 } = pair;
+        const base = grid[r1][c1];
+        const merged = grid[r2][c2];
+        const newLetter = nextLetter(base.letter);
+
+        base.letter = newLetter;
+        grid[r2][c2] = null;
+
+        updateScore(letterValue(newLetter));
+
+        if (newLetter === 'Z') {
+            hasWon = true;
+        }
+
+        return true;
+    }
+
+    function showClear() {
+        if (elements?.clearOverlay) elements.clearOverlay.classList.remove('hidden');
+    }
+
+    function hideClear() {
+        if (elements?.clearOverlay) elements.clearOverlay.classList.add('hidden');
+    }
+
+    function showGameOver() {
+        if (elements?.finalScore) elements.finalScore.textContent = String(score);
+        if (elements?.gameOverOverlay) elements.gameOverOverlay.classList.remove('hidden');
+    }
+
+    function hideGameOver() {
+        if (elements?.gameOverOverlay) elements.gameOverOverlay.classList.add('hidden');
+    }
+
+    function render() {
+        if (!elements?.tiles || !elements?.board) return;
+        const { cellSize, gap } = getBoardMetrics();
+
+        const aliveIds = new Set();
+
+        forEachTile((tile, r, c) => {
+            aliveIds.add(tile.id);
+            let el = tileElements.get(tile.id);
+
+            if (!el) {
+                el = document.createElement('div');
+                el.className = `alphabet2048-tile alphabet2048-tile-${tile.letter}`;
+                el.textContent = tile.letter;
+                el.dataset.tileId = String(tile.id);
+                tileElements.set(tile.id, el);
+                elements.tiles.appendChild(el);
+                el.classList.add('alphabet2048-tile-new');
+                setTimeout(() => el?.classList.remove('alphabet2048-tile-new'), 180);
+            }
+
+            const top = r * (cellSize + gap);
+            const left = c * (cellSize + gap);
+            el.style.top = `${top}px`;
+            el.style.left = `${left}px`;
+
+            // 文字・色更新
+            if (el.textContent !== tile.letter) {
+                el.textContent = tile.letter;
+                el.className = `alphabet2048-tile alphabet2048-tile-${tile.letter}`;
+                el.classList.add('alphabet2048-tile-merge');
+                setTimeout(() => el?.classList.remove('alphabet2048-tile-merge'), 200);
+            }
+        });
+
+        // 消えたタイルを削除
+        tileElements.forEach((el, id) => {
+            if (!aliveIds.has(id)) {
+                el.classList.add('alphabet2048-tile-vanish');
+                setTimeout(() => {
+                    el.remove();
+                    tileElements.delete(id);
+                }, 150);
+            }
+        });
+
+        updateSelectedColUI();
+    }
+
+    // 連鎖処理：重力→合体→重力→合体…を繰り返す
+    async function resolveChain() {
+        let changed = true;
+        while (changed) {
+            changed = false;
+            // 重力
+            if (applyGravity()) {
+                render();
+                await sleep(GRAVITY_DELAY);
+            }
+            // 合体（1回ずつ処理して連鎖を見せる）
+            while (doOneMerge()) {
+                changed = true;
+                render();
+                await sleep(MERGE_DELAY);
+                // 合体後に重力
+                if (applyGravity()) {
+                    render();
+                    await sleep(GRAVITY_DELAY);
+                }
+            }
+        }
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function setSelectedCol(col) {
+        selectedCol = ((col % COLS) + COLS) % COLS;
+        updateSelectedColUI();
+    }
+
+    async function dropAtSelectedCol() {
+        if (!elements?.overlay || elements.overlay.classList.contains('hidden')) return;
+        if (isAnimating) return;
+        if (elements.confirmDialog && !elements.confirmDialog.classList.contains('hidden')) return;
+        if (elements.exitDialog && !elements.exitDialog.classList.contains('hidden')) return;
+        if (elements.gameOverOverlay && !elements.gameOverOverlay.classList.contains('hidden')) return;
+        if (elements.clearOverlay && !elements.clearOverlay.classList.contains('hidden') && !continueAfterWin) return;
+
+        const row = getFirstEmptyRow(selectedCol);
+        if (row < 0) return;
+
+        isAnimating = true;
+
+        const tile = createTile(next);
+        grid[row][selectedCol] = tile;
+
+        next = randomSpawnLetter();
+        updateNextPreview();
+        render();
+
+        await sleep(50);
+        await resolveChain();
+
+        if (hasWon && !continueAfterWin) {
+            showClear();
+        } else if (!canDropAny()) {
+            showGameOver();
+        }
+
+        isAnimating = false;
+    }
+
+    function handleKeyDown(e) {
+        if (!elements?.overlay || elements.overlay.classList.contains('hidden')) return;
+
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            setSelectedCol(selectedCol - 1);
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            setSelectedCol(selectedCol + 1);
+        } else if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            dropAtSelectedCol();
+        }
+    }
+
+    function handleBoardClick(e) {
+        if (!elements?.overlay || elements.overlay.classList.contains('hidden')) return;
+        if (isAnimating) return;
+
+        const rect = elements.board.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const { cellSize, gap } = getBoardMetrics();
+        const col = Math.max(0, Math.min(COLS - 1, Math.floor(x / (cellSize + gap))));
+        setSelectedCol(col);
+        dropAtSelectedCol();
+    }
+
+    function startGame() {
+        score = 0;
+        hasWon = false;
+        continueAfterWin = false;
+        isAnimating = false;
+        tileIdCounter = 1;
+        next = randomSpawnLetter();
+        selectedCol = Math.floor(COLS / 2);
+
+        initGrid();
+        clearTileElements();
+
+        if (elements?.score) elements.score.textContent = '0';
+        if (elements?.bestBadge) elements.bestBadge.classList.add('hidden');
+        hideClear();
+        hideGameOver();
+        if (elements?.confirmDialog) elements.confirmDialog.classList.add('hidden');
+        if (elements?.exitDialog) elements.exitDialog.classList.add('hidden');
+
+        updateNextPreview();
+        render();
+    }
+
+    function continueGame() {
+        continueAfterWin = true;
+        hideClear();
+    }
+
+    function generateGridBg() {
+        const gridBg = document.getElementById('alphabetDropGridBg');
+        if (!gridBg) return;
+        gridBg.innerHTML = '';
+        for (let i = 0; i < COLS * ROWS; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'alphabetdrop-cell-bg';
+            gridBg.appendChild(cell);
+        }
+    }
+
+    function init() {
+        elements = {
+            overlay: document.getElementById('alphabetDropOverlay'),
+            board: document.getElementById('alphabetDropBoard'),
+            gridBg: document.getElementById('alphabetDropGridBg'),
+            tiles: document.getElementById('alphabetDropTiles'),
+            score: document.getElementById('alphabetDropScore'),
+            best: document.getElementById('alphabetDropBest'),
+            bestBadge: document.getElementById('alphabetDropBestBadge'),
+            nextTile: document.getElementById('alphabetDropNextTile'),
+            selectedCol: document.getElementById('alphabetDropSelectedCol'),
+            colHighlight: document.getElementById('alphabetDropColHighlight'),
+            clearOverlay: document.getElementById('alphabetDropClear'),
+            gameOverOverlay: document.getElementById('alphabetDropGameOver'),
+            finalScore: document.getElementById('alphabetDropFinalScore'),
+            continueBtn: document.getElementById('alphabetDropContinueBtn'),
+            restartBtn: document.getElementById('alphabetDropRestartBtn'),
+            closeBtn: document.getElementById('alphabetDropCloseBtn'),
+            newBtn: document.getElementById('alphabetDropNewBtn'),
+            confirmDialog: document.getElementById('alphabetDropConfirmDialog'),
+            confirmStart: document.getElementById('alphabetDropConfirmStart'),
+            confirmCancel: document.getElementById('alphabetDropConfirmCancel'),
+            exitDialog: document.getElementById('alphabetDropExitDialog'),
+            exitContinue: document.getElementById('alphabetDropExitContinue'),
+            exitQuit: document.getElementById('alphabetDropExitQuit')
+        };
+
+        generateGridBg();
+        loadBestScore();
+
+        if (!initialized) {
+            initialized = true;
+            document.addEventListener('keydown', handleKeyDown);
+            elements.board.addEventListener('click', handleBoardClick);
+
+            elements.closeBtn.addEventListener('click', () => {
+                elements.exitDialog.classList.remove('hidden');
+            });
+            elements.exitContinue.addEventListener('click', () => {
+                elements.exitDialog.classList.add('hidden');
+            });
+            elements.exitQuit.addEventListener('click', () => {
+                elements.exitDialog.classList.add('hidden');
+                elements.overlay.classList.add('hidden');
+                const menu = document.getElementById('minigameMenuOverlay');
+                if (menu) menu.classList.remove('hidden');
+            });
+
+            elements.newBtn.addEventListener('click', () => {
+                elements.confirmDialog.classList.remove('hidden');
+            });
+            elements.confirmStart.addEventListener('click', () => {
+                elements.confirmDialog.classList.add('hidden');
+                startGame();
+            });
+            elements.confirmCancel.addEventListener('click', () => {
+                elements.confirmDialog.classList.add('hidden');
+            });
+
+            elements.continueBtn.addEventListener('click', continueGame);
+            elements.restartBtn.addEventListener('click', startGame);
+        }
+
+        startGame();
+    }
+
+    return { init, startGame };
+})();
+
 // ミニゲームボタンのイベントリスナー
 document.addEventListener('DOMContentLoaded', () => {
     const minigameBtn = document.getElementById('minigameCardBtn');
     const minigameMenuOverlay = document.getElementById('minigameMenuOverlay');
     const minigameMenuBackBtn = document.getElementById('minigameMenuBackBtn');
     const minigameAtoZBtn = document.getElementById('minigameAtoZBtn');
+    const minigameAtoZDropBtn = document.getElementById('minigameAtoZDropBtn');
     const alphabet2048Overlay = document.getElementById('alphabet2048Overlay');
+    const alphabetDropOverlay = document.getElementById('alphabetDropOverlay');
     
     // ミニゲームボタン → メニュー表示
     if (minigameBtn && minigameMenuOverlay) {
@@ -22447,6 +22953,15 @@ document.addEventListener('DOMContentLoaded', () => {
             minigameMenuOverlay.classList.add('hidden');
             alphabet2048Overlay.classList.remove('hidden');
             Alphabet2048.init();
+        });
+    }
+
+    // A to Z Drop ゲーム選択
+    if (minigameAtoZDropBtn && alphabetDropOverlay && minigameMenuOverlay) {
+        minigameAtoZDropBtn.addEventListener('click', () => {
+            minigameMenuOverlay.classList.add('hidden');
+            alphabetDropOverlay.classList.remove('hidden');
+            AlphabetDrop.init();
         });
     }
 });

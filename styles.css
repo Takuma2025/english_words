@@ -18780,22 +18780,24 @@ div#inputWordCheckbox,
 
 .minigame-menu-list {
     flex: 1;
-    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
     padding: 16px;
+    align-content: start;
 }
 
 .minigame-menu-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 14px;
-    width: 100%;
-    padding: 16px;
+    gap: 12px;
+    padding: 20px 12px;
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     cursor: pointer;
-    text-align: left;
-    margin-bottom: 12px;
+    text-align: center;
     transition: box-shadow 0.15s, border-color 0.15s;
 }
 
@@ -18804,43 +18806,47 @@ div#inputWordCheckbox,
     box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
 }
 
-.minigame-menu-card-icon {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 8px 12px;
-    background: #0f172a;
-    border-radius: 10px;
+.minigame-menu-card-tiles {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3px;
+    padding: 6px;
+    background: #1e293b;
+    border-radius: 8px;
     flex-shrink: 0;
 }
 
-.minigame-menu-card-letter {
-    font-family: 'Oswald', sans-serif;
-    font-size: 22px;
-    font-weight: 400;
+.minigame-menu-card-tiles-drop {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 2px;
 }
 
-.minigame-letter-a {
-    color: #22d3ee;
-}
-
-.minigame-letter-z {
-    color: #fbbf24;
-}
-
-.minigame-menu-card-arrow {
-    font-size: 14px;
+.minigame-drop-arrow {
+    font-size: 10px;
     color: #64748b;
+    line-height: 1;
+}
+
+.minigame-tile-mini {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
 }
 
 .minigame-menu-card-info {
-    flex: 1;
-    min-width: 0;
+    text-align: center;
 }
 
 .minigame-menu-card-name {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     color: #1e293b;
     margin-bottom: 4px;
@@ -18848,14 +18854,134 @@ div#inputWordCheckbox,
 
 .minigame-menu-card-desc {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     color: #64748b;
     line-height: 1.4;
 }
 
 .minigame-menu-card > .minigame-menu-card-arrow {
-    color: #cbd5e1;
+    display: none;
+}
+
+/* =============================================
+   A to Z Drop（落下パズル）
+   ============================================= */
+.alphabetdrop-title-sub {
+    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: #94a3b8;
+    margin-left: 8px;
+    letter-spacing: 1px;
+}
+
+.alphabetdrop-next {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    gap: 10px;
     flex-shrink: 0;
+}
+
+.alphabetdrop-next-label {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 11px;
+    color: #64748b;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.alphabetdrop-next-tile {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-weight: 900;
+    font-size: 16px !important;
+    transition: transform 0.15s ease;
+}
+
+.alphabetdrop-selected-col {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.alphabetdrop-board {
+    --drop-cols: 5;
+    --drop-rows: 6;
+    --board-width: min(85vw, 340px);
+    --cell-gap: 6px;
+    --cell-size: calc((var(--board-width) - var(--cell-gap) * (var(--drop-cols) + 1)) / var(--drop-cols));
+    width: var(--board-width);
+    height: calc(var(--cell-gap) * (var(--drop-rows) + 1) + var(--cell-size) * var(--drop-rows));
+    background: #1e293b;
+    border-radius: 12px;
+    padding: var(--cell-gap);
+    position: relative;
+    touch-action: none;
+    user-select: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+/* 背景グリッド（5 x 6） */
+.alphabetdrop-grid-bg {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: var(--cell-gap);
+    position: absolute;
+    top: var(--cell-gap);
+    left: var(--cell-gap);
+    right: var(--cell-gap);
+    bottom: var(--cell-gap);
+}
+
+.alphabetdrop-cell-bg {
+    background: #334155;
+    border-radius: 6px;
+}
+
+.alphabetdrop-tiles {
+    position: absolute;
+    top: var(--cell-gap);
+    left: var(--cell-gap);
+    right: var(--cell-gap);
+    bottom: var(--cell-gap);
+}
+
+.alphabetdrop-col-highlight {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--cell-size);
+    left: 0;
+    border-radius: 8px;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    pointer-events: none;
+    transition: left 0.12s ease;
+}
+
+.alphabetdrop-hint {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 6px;
+}
+
+@media (max-width: 400px) {
+    .alphabetdrop-board {
+        --board-width: min(92vw, 320px);
+        --cell-gap: 5px;
+    }
+    .alphabetdrop-next {
+        padding: 0 12px 10px;
+    }
 }
 
 /* =============================================
@@ -19242,6 +19368,16 @@ div#inputWordCheckbox,
     0% { transform: scale(1); }
     50% { transform: scale(1.15); }
     100% { transform: scale(1); }
+}
+
+.alphabet2048-tile.alphabet2048-tile-vanish {
+    animation: alphabet2048-tile-vanish 0.15s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes alphabet2048-tile-vanish {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0.3); opacity: 0; }
 }
 
 /* タイル色（A-Z用グラデーション） */
