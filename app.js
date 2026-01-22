@@ -311,6 +311,8 @@ function animateCardShrink(targetCardId, callback) {
     if (targetCard) {
         const titleContainer = document.createElement('div');
         titleContainer.className = 'expand-title';
+        // 最初は拡大状態からスタート
+        titleContainer.style.transform = 'scale(1.5)';
         
         const icon = targetCard.querySelector('.intro-icon, .irregular-verbs-icon, .all-words-icon, .minigame-icon, .category-icon, [class*="-icon"]:not(.category-arrow)');
         const badge = targetCard.querySelector('.level-badge');
@@ -399,7 +401,11 @@ function animateCardShrink(targetCardId, callback) {
                 overlay.style.opacity = '1';
                 overlay.style.transform = 'perspective(1000px) rotateY(-360deg)';
                 
-                // バッジと文字のサイズ比率は変更しない
+                // バッジと文字も縮小
+                if (titleContainer) {
+                    titleContainer.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    titleContainer.style.transform = 'scale(1)';
+                }
                 
                 setTimeout(() => {
                     // アニメーション完了後にターゲットカードを表示
@@ -520,7 +526,9 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
         overlay.style.height = '100vh';
         overlay.style.opacity = '1';
         overlay.style.transform = 'perspective(1000px) rotateY(360deg)';
-        // バッジと文字のサイズ比率は変更しない
+        // バッジと文字も拡大
+        titleContainer.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+        titleContainer.style.transform = 'scale(1.5)';
     });
     
     // アニメーション完了後
