@@ -20442,6 +20442,9 @@ function showIrregularVerbsTestView(data, type, title) {
     // 画面表示
     view.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    
+    // キーボードを表示
+    showIvKeyboard();
 }
 
 // 現在のテストデータ
@@ -20557,6 +20560,9 @@ function showIrregularVerbsView() {
     // 画面表示
     view.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    
+    // キーボードを表示
+    showIvKeyboard();
 }
 
 // 不規則変化の単語画面（テストモード）を非表示（サブカテゴリーメニューに戻る）
@@ -20828,6 +20834,71 @@ function setupIrregularVerbsKeyboard() {
             }
         });
     }
+    
+    // 左へボタン
+    const prevBtn = document.getElementById('ivKeyboardPrevBtn');
+    if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            moveToAdjacentInput('prev');
+        });
+    }
+    
+    // 右へボタン
+    const nextBtn = document.getElementById('ivKeyboardNextBtn');
+    if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            moveToAdjacentInput('next');
+        });
+    }
+}
+
+// 隣の入力欄に移動
+function moveToAdjacentInput(direction) {
+    const inputs = Array.from(document.querySelectorAll('.iv-input:not(:disabled)'));
+    if (inputs.length === 0) return;
+    
+    let currentIndex = -1;
+    if (ivCurrentInput) {
+        currentIndex = inputs.indexOf(ivCurrentInput);
+    }
+    
+    let newIndex;
+    if (direction === 'next') {
+        newIndex = (currentIndex + 1) % inputs.length;
+    } else {
+        newIndex = currentIndex <= 0 ? inputs.length - 1 : currentIndex - 1;
+    }
+    
+    const newInput = inputs[newIndex];
+    if (newInput) {
+        newInput.focus();
+        ivCurrentInput = newInput;
+        // 入力欄がキーボードに隠れないようにスクロール
+        scrollInputIntoView(newInput);
+    }
+}
+
+// 入力欄がキーボードに隠れないようにスクロール
+function scrollInputIntoView(input) {
+    const container = document.querySelector('.irregular-verbs-table-container');
+    if (container && input) {
+        const inputRect = input.getBoundingClientRect();
+        const keyboardHeight = 280;
+        const visibleBottom = window.innerHeight - keyboardHeight;
+        
+        if (inputRect.bottom > visibleBottom) {
+            const scrollAmount = inputRect.bottom - visibleBottom + 50;
+            container.scrollTop += scrollAmount;
+        } else if (inputRect.top < container.getBoundingClientRect().top + 50) {
+            // 上に隠れている場合
+            const scrollAmount = inputRect.top - container.getBoundingClientRect().top - 50;
+            container.scrollTop += scrollAmount;
+        }
+    }
 }
 
 // 次の未採点の行に移動
@@ -20875,30 +20946,42 @@ document.addEventListener('focusin', (e) => {
     if (e.target.classList.contains('iv-input')) {
         ivCurrentInput = e.target;
         showIvKeyboard();
-        // 入力欄が見えるようにスクロール
+        // 入力欄がキーボードに隠れないようにスクロール
         setTimeout(() => {
-            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const container = document.querySelector('.irregular-verbs-table-container');
+            if (container) {
+                const inputRect = e.target.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                const keyboardHeight = 280; // キーボードの高さ
+                const visibleBottom = window.innerHeight - keyboardHeight;
+                
+                // 入力欄がキーボードに隠れている場合
+                if (inputRect.bottom > visibleBottom) {
+                    const scrollAmount = inputRect.bottom - visibleBottom + 50; // 50px余裕
+                    container.scrollTop += scrollAmount;
+                }
+            }
         }, 100);
     }
 });
 
-// キーボード外をクリックしたらキーボードを閉じる
-document.addEventListener('click', (e) => {
-    const keyboard = document.getElementById('ivKeyboard');
-    const irregularVerbsView = document.getElementById('irregularVerbsView');
-    
-    if (!irregularVerbsView || irregularVerbsView.classList.contains('hidden')) return;
-    if (!keyboard || !keyboard.classList.contains('visible')) return;
-    
-    // 入力欄かキーボードをクリックした場合は閉じない
-    if (e.target.classList.contains('iv-input') || 
-        e.target.closest('.iv-keyboard') ||
-        e.target.closest('.iv-check-btn')) {
-        return;
-    }
-    
-    hideIvKeyboard();
-});
+// キーボード外をクリックしてもキーボードは閉じない（常に表示）
+// document.addEventListener('click', (e) => {
+//     const keyboard = document.getElementById('ivKeyboard');
+//     const irregularVerbsView = document.getElementById('irregularVerbsView');
+//     
+//     if (!irregularVerbsView || irregularVerbsView.classList.contains('hidden')) return;
+//     if (!keyboard || !keyboard.classList.contains('visible')) return;
+//     
+//     // 入力欄かキーボードをクリックした場合は閉じない
+//     if (e.target.classList.contains('iv-input') || 
+//         e.target.closest('.iv-keyboard') ||
+//         e.target.closest('.iv-check-btn')) {
+//         return;
+//     }
+//     
+//     hideIvKeyboard();
+// });
 
 // ページ読み込み時にキーボードセットアップ
 document.addEventListener('DOMContentLoaded', () => {
@@ -21150,29 +21233,40 @@ function recordStudyActivity(count = 1) {
 
 // 学習カレンダーを初期化
 function initStudyCalendar() {
+    // 年月セレクトボックスのオプションを生成
+    const yearMonthSelect = document.getElementById('calendarYearMonthSelect');
+    
+    if (yearMonthSelect) {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+        yearMonthSelect.innerHTML = '';
+        
+        // 過去5年から今月までのオプションを生成（新しい順）
+        for (let year = currentYear; year >= currentYear - 5; year--) {
+            const endMonth = (year === currentYear) ? currentMonth : 11;
+            const startMonth = 0;
+            for (let month = endMonth; month >= startMonth; month--) {
+                const option = document.createElement('option');
+                option.value = `${year}-${month}`;
+                option.textContent = `${year}年${month + 1}月`;
+                yearMonthSelect.appendChild(option);
+            }
+        }
+        yearMonthSelect.value = `${calendarViewDate.getFullYear()}-${calendarViewDate.getMonth()}`;
+        
+        yearMonthSelect.addEventListener('change', (e) => {
+            e.stopPropagation();
+            const [year, month] = e.target.value.split('-').map(Number);
+            calendarViewDate.setFullYear(year);
+            calendarViewDate.setMonth(month);
+            renderStudyCalendar();
+        });
+    }
+    
     renderStudyCalendar();
     updateStudyStreak();
     updateTotalStudyTime();
-
-    // カレンダーの月移動ボタンのイベントリスナー
-    const prevBtn = document.getElementById('prevMonthBtn');
-    const nextBtn = document.getElementById('nextMonthBtn');
-
-    if (prevBtn) {
-        prevBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
-            renderStudyCalendar();
-        });
-    }
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
-            renderStudyCalendar();
-        });
-    }
 }
 
 // 連続学習日数を計算・更新
@@ -21288,10 +21382,14 @@ function renderStudyCalendar() {
     // グリッドをクリア
     grid.innerHTML = '';
     
-    // 月ラベルを更新
-    const monthLabelEl = document.getElementById('calendarMonthLabel');
-    if (monthLabelEl) {
-        monthLabelEl.textContent = viewYear + '年 ' + (viewMonth + 1) + '月';
+    // 年月セレクトボックスとラベルの値を更新
+    const yearMonthSelect = document.getElementById('calendarYearMonthSelect');
+    const yearMonthLabel = document.getElementById('calendarYearMonthLabel');
+    if (yearMonthSelect) {
+        yearMonthSelect.value = `${viewYear}-${viewMonth}`;
+    }
+    if (yearMonthLabel) {
+        yearMonthLabel.textContent = `${viewYear}年${viewMonth + 1}月`;
     }
     
     // 曜日ラベル（横に並べる）

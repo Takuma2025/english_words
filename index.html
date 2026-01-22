@@ -259,17 +259,19 @@
                         </div>
                         <div class="study-calendar-right">
                             <div class="study-calendar-grid-wrapper">
-                                <h3 class="study-calendar-title">学習カレンダー</h3>
+                                <div class="study-calendar-header">
+                                    <h3 class="study-calendar-title">学習カレンダー</h3>
+                                    <div class="calendar-yearmonth-display">
+                                        <span class="calendar-yearmonth-label" id="calendarYearMonthLabel"></span>
+                                        <span class="calendar-dropdown-arrow">▼</span>
+                                        <select class="calendar-yearmonth-select" id="calendarYearMonthSelect"></select>
+                                    </div>
+                                </div>
                                 <div class="study-calendar-grid" id="studyCalendarGrid">
                                     <!-- JavaScriptで動的に生成 -->
                                 </div>
                             </div>
                             <div class="study-calendar-legend">
-                                <div class="calendar-month-nav">
-                                    <button class="calendar-nav-btn" id="prevMonthBtn" title="前の月">◀</button>
-                                    <div class="calendar-month-label" id="calendarMonthLabel"></div>
-                                    <button class="calendar-nav-btn" id="nextMonthBtn" title="次の月">▶</button>
-                                </div>
                                 <div class="study-calendar-legend-right">
                                     <span class="legend-label">少ない</span>
                                     <div class="legend-cells">
@@ -830,7 +832,7 @@
                                                 <input type="checkbox" id="inputFilterBookmark" data-filter="bookmark" checked>
                                                 <span class="filter-dropdown-checkbox"></span>
                                                 <span class="filter-dropdown-label">チェックマーク</span>
-                                                <svg class="filter-dropdown-bookmark" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="3" fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                                                <svg class="filter-dropdown-bookmark" width="12" height="12" viewBox="0 0 12 12" fill="none"><rect width="12" height="12" fill="#fbbf24"/><path d="M3 6l2 2 4-4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
                                             </label>
                                         </div>
                                         <div class="filter-dropdown-section filter-frequency-section hidden" id="filterFrequencySection">
@@ -1845,7 +1847,7 @@
                         </label>
                         <label class="filter-checkbox-grid">
                             <input type="checkbox" id="filterBookmark" checked>
-                            <span class="checkbox-label">チェック <svg class="filter-icon-bookmark" width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="3" fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+                            <span class="checkbox-label">チェック <svg class="filter-icon-bookmark" width="12" height="12" viewBox="0 0 12 12" fill="none"><rect width="12" height="12" fill="#fbbf24"/><path d="M3 6l2 2 4-4" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
                         </label>
                     </div>
                     <div class="filter-info" id="filterInfo">
@@ -2369,7 +2371,9 @@
                 </button>
             </div>
             <div class="keyboard-actions">
+                <button class="keyboard-action-btn" id="ivKeyboardPrevBtn">← 前へ</button>
                 <button class="keyboard-action-btn keyboard-action-btn-primary" id="ivKeyboardCheckBtn">採点</button>
+                <button class="keyboard-action-btn" id="ivKeyboardNextBtn">次へ →</button>
             </div>
         </div>
         <!-- ポーズオーバーレイ -->

@@ -2501,11 +2501,12 @@ body.learning-mode .app-header {
    ============================================= */
 
 .study-calendar-container {
-    padding: 0;
+    padding: 0 12px;
     margin: 0 auto 4px auto;
     max-width: 600px;
     width: 100%;
     background: transparent;
+    box-sizing: border-box;
 }
 
 .study-calendar-grid-wrapper {
@@ -2518,7 +2519,7 @@ body.learning-mode .app-header {
     font-size: 11px;
     font-weight: 600;
     color: #3b82f6;
-    margin: 0 0 4px 0;
+    margin: 0;
     text-align: center;
 }
 
@@ -2619,6 +2620,7 @@ body.learning-mode .app-header {
     align-items: baseline;
     gap: 2px;
     margin-top: 2px;
+    white-space: nowrap;
 }
 
 .streak-display {
@@ -2642,12 +2644,59 @@ body.learning-mode .app-header {
     color: #64748b;
     font-weight: 600;
     margin-right: 4px;
+    white-space: nowrap;
 }
 
-.calendar-month-label {
-    font-size: 11px;
+.study-calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.calendar-yearmonth-display {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 4px;
+    padding: 2px 6px;
+    transition: background 0.2s ease;
+}
+
+.calendar-yearmonth-display:hover {
+    background: #dbeafe;
+}
+
+.calendar-yearmonth-label {
+    font-family: 'Meiryo', 'メイリオ', sans-serif;
+    font-size: 10px;
     color: #3b82f6;
     font-weight: 600;
+    white-space: nowrap;
+}
+
+.calendar-dropdown-arrow {
+    font-size: 6px;
+    color: #3b82f6;
+}
+
+.calendar-yearmonth-select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.calendar-yearmonth-select:focus {
+    outline: none;
 }
 
 .study-calendar-grid {
@@ -2709,7 +2758,7 @@ body.learning-mode .app-header {
     align-items: center;
     justify-content: space-between;
     gap: 5px;
-    margin-top: 4px;
+    margin-top: 10px;
     width: 100%;
     max-width: 260px;
 }
@@ -2720,28 +2769,6 @@ body.learning-mode .app-header {
     gap: 4px;
 }
 
-.calendar-nav-btn {
-    background: transparent;
-    border: none;
-    color: #3b82f6;
-    cursor: pointer;
-    font-size: 8px;
-    padding: 2px 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.1s ease, opacity 0.2s ease;
-    border-radius: 4px;
-    line-height: 1;
-}
-
-.calendar-nav-btn:hover {
-    background: #eff6ff;
-}
-
-.calendar-nav-btn:active {
-    transform: scale(0.9);
-}
 
 .study-calendar-legend-right {
     display: flex;
@@ -6816,7 +6843,7 @@ body.choice-question-mode-active .word-card-container {
 .filter-dropdown-icon {
     width: 12px;
     height: 12px;
-    border-radius: 3px;
+    border-radius: 0;
     flex-shrink: 0;
 }
 
@@ -7443,11 +7470,11 @@ body.choice-question-mode-active .word-card-container {
     flex-shrink: 0;
     order: 1;
     margin-right: 8px;
-    border: 1px solid #1e40af;
+    border: none;
     border-radius: 0;
     overflow: hidden;
     height: 18px;
-    background: #ffffff;
+    background: transparent;
 }
 
 /* 1. 単語番号 */
@@ -7472,14 +7499,18 @@ body.choice-question-mode-active .word-card-container {
     height: 100%;
     flex-shrink: 0;
     border: none;
-    border-left: 1px solid #1e40af;
     border-radius: 0;
+    background: #f3f4f6;
 }
 
 .input-list-scroll.compact-mode .input-list-expand-checkbox::after {
     width: 4px;
     height: 7px;
     border-width: 0 2px 2px 0;
+}
+
+.input-list-scroll.compact-mode .input-list-expand-checkbox.checked {
+    background: #fbbf24 !important;
 }
 
 /* 3. 英単語（::beforeで表示） */
@@ -7846,9 +7877,9 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
 }
 
-/* 単語カードモードの日本語を黒字・中央揃えに */
+/* 単語カードモードの日本語を濃いグレー・中央揃えに */
 .flip-mode .input-list-meaning {
-    color: #0f172a;
+    color: #374151;
     justify-content: center;
     text-align: center;
     margin-top: 14px;
@@ -8039,12 +8070,10 @@ body.choice-question-mode-active .word-card-container {
     left: 0;
     display: inline-flex;
     align-items: stretch;
-    border: 1px solid #1e40af;
-    border-top: none;
-    border-left: none;
+    border: none;
     border-radius: 0;
     overflow: hidden;
-    background: #ffffff;
+    background: transparent;
     height: 22px;
 }
 
@@ -8064,10 +8093,10 @@ body.choice-question-mode-active .word-card-container {
     line-height: 1;
 }
 
-/* 未学習: 白背景、グレー文字 */
+/* 未学習: 濃いグレー背景、グレー文字 */
 .input-list-expand-number:not(.marker-correct):not(.marker-wrong) {
-    background: #ffffff;
-    color: #9ca3af;
+    background: #d1d5db;
+    color: #4b5563;
 }
 
 /* 学習済み（正解）: 青背景、白文字 */
@@ -8088,9 +8117,8 @@ body.choice-question-mode-active .word-card-container {
     width: 22px;
     height: 100%;
     border: none;
-    border-left: 1px solid #1e40af;
     border-radius: 0;
-    background: #ffffff;
+    background: #f3f4f6;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -8113,7 +8141,7 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-expand-checkbox.checked {
-    background: #fbbf24;
+    background: #fbbf24 !important;
 }
 
 .input-list-expand-checkbox.checked::after {
@@ -10169,7 +10197,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .meaning {
     font-size: clamp(20px, 5vw, 28px);
     font-weight: 700;
-    color: #0f172a;
+    color: #374151;
     line-height: 28px;
     word-break: break-word;
     padding: 0 8px;
@@ -14917,7 +14945,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     margin-left: 4px;
     width: 12px;
     height: 12px;
-    border-radius: 3px;
+    border-radius: 0;
     border: none;
     vertical-align: middle;
 }
@@ -14937,8 +14965,8 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 .filter-icon-bookmark {
     display: inline-block;
     margin-left: 4px;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     vertical-align: middle;
 }
 
@@ -17954,14 +17982,14 @@ body .sentence-english {
     font-weight: 700;
     color: #374151;
     text-align: left;
-    border-bottom: 1.5px solid #1e40af;
+    border-bottom: 1.5px solid #d1d5db;
     background: #f3f4f6;
 }
 
 .iv-study-table td {
     padding: 10px 8px;
     font-size: 14px;
-    border-bottom: 1.5px solid #1e40af;
+    border-bottom: 1.5px solid #d1d5db;
     vertical-align: middle;
 }
 
@@ -17985,18 +18013,20 @@ body .sentence-english {
 
 .iv-study-meaning {
     font-weight: 600;
-    color: #1e293b;
+    color: #374151;
     font-size: 13px;
 }
 
 .iv-study-word {
     color: #1f2937;
-    font-weight: 600;
+    font-weight: 700;
+    font-family: "Times New Roman", Times, serif;
 }
 
 .iv-study-answer {
     color: #ff9933;
     font-weight: 700;
+    font-family: "Times New Roman", Times, serif;
 }
 
 /* 赤シートアクティブ時 */
@@ -18109,14 +18139,14 @@ body .sentence-english {
     text-align: center;
     font-weight: 600;
     color: #475569;
-    border-bottom: 1.5px solid #1e40af;
+    border-bottom: 1.5px solid #d1d5db;
     font-size: 12px;
 }
 
 .irregular-verbs-table td {
     padding: 8px 4px;
     text-align: center;
-    border-bottom: 1.5px solid #1e40af;
+    border-bottom: 1.5px solid #d1d5db;
     vertical-align: middle;
 }
 
@@ -18181,18 +18211,20 @@ body .sentence-english {
 
 .iv-meaning {
     font-weight: 600;
-    color: #1e293b;
+    color: #374151;
     font-size: 13px;
 }
 
 .iv-input {
     width: 100%;
-    padding: 6px 4px;
-    border: 1px solid #cbd5e1;
+    padding: 5px 3px;
+    border: 2px solid #cbd5e1;
     border-radius: 4px;
     font-size: 13px;
     text-align: center;
     box-sizing: border-box;
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 700;
 }
 
 .iv-input:focus {
@@ -18204,7 +18236,8 @@ body .sentence-english {
 .iv-input.iv-correct {
     background: #fff;
     border-color: #cbd5e1;
-    color: #1f2937;
+    color: #3b82f6;
+    font-weight: 600;
 }
 
 .iv-input.iv-wrong {
@@ -18271,16 +18304,20 @@ body .sentence-english {
 /* 不規則動詞用仮想キーボード */
 .iv-keyboard {
     position: fixed;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(600px, calc(100% - 16px));
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
     z-index: 1100;
-    display: none;
-    background: rgba(255, 183, 77, 0.7);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.12);
-    padding: 14px;
-    border-radius: 14px;
+    display: block;
+    background: #d1d4d9;
+    border-top: none;
+    padding: 10px 3px 6px 3px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    border-radius: 0;
+    box-sizing: border-box;
 }
 
 .iv-keyboard.visible {
@@ -18298,25 +18335,27 @@ body .sentence-english {
 
 @media (max-width: 600px) {
     .iv-keyboard {
-        width: calc(100% - 16px);
-        bottom: 8px;
-        padding: 10px;
-        border-radius: 12px;
+        width: 100%;
+        max-width: 100%;
+        bottom: 0;
+        padding: 10px 3px 6px 3px;
+        padding-bottom: max(6px, env(safe-area-inset-bottom));
+        border-radius: 0;
     }
 }
 
 .irregular-verbs-table-container {
-    padding-bottom: 20px;
+    padding-bottom: 280px;
     transition: padding-bottom 0.2s;
 }
 
 .irregular-verbs-table-container.keyboard-open {
-    padding-bottom: 220px;
+    padding-bottom: 280px;
 }
 
 .iv-input:focus {
     background: #fffc42;
-    border: 2px solid #3b82f6;
+    border-color: #3b82f6;
 }
 
 /* フローティング苦手・要復習ボタン */
@@ -18637,7 +18676,7 @@ body.learning-mode .floating-review-btn {
 
 .card-expand-overlay .expand-title .title-text {
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 400;
     color: #374151;
 }
 
