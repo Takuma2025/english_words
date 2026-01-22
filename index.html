@@ -2426,6 +2426,83 @@
         </div>
     </div>
 
+    <!-- Word Tetris ミニゲーム -->
+    <div class="word-tetris-overlay hidden" id="wordTetrisOverlay">
+        <div class="word-tetris-container">
+            <div class="word-tetris-header">
+                <h2 class="word-tetris-title">Letter Drop</h2>
+                <button class="word-tetris-close-btn" id="wordTetrisCloseBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="word-tetris-main">
+                <div class="word-tetris-center">
+                    <div class="word-tetris-top-section">
+                        <div class="word-tetris-scores-row">
+                            <div class="word-tetris-info-box word-tetris-score-box">
+                                <div class="word-tetris-info-label">SCORE</div>
+                                <div class="word-tetris-score" id="tetrisScore">0</div>
+                            </div>
+                            <div class="word-tetris-info-box word-tetris-best-box">
+                                <div class="word-tetris-info-label">BEST</div>
+                                <div class="word-tetris-best" id="tetrisBest">0</div>
+                            </div>
+                        </div>
+                        <div class="word-tetris-info-box word-tetris-next-box">
+                            <div class="word-tetris-info-label">NEXT</div>
+                            <div class="word-tetris-next-list" id="tetrisNextList"></div>
+                        </div>
+                    </div>
+                    <div class="word-tetris-game-area">
+                        <canvas id="tetrisCanvas" class="word-tetris-canvas"></canvas>
+                    <div class="word-tetris-game-over hidden" id="tetrisGameOver">
+                        <div class="word-tetris-game-over-text">GAME OVER</div>
+                        <div class="word-tetris-final-score">SCORE: <span id="tetrisFinalScore">0</span></div>
+                        <button class="word-tetris-restart-btn" id="tetrisRestartBtn">もう一度</button>
+                    </div>
+                    <div class="word-tetris-paused hidden" id="tetrisPaused">
+                        <div class="word-tetris-paused-text">PAUSED</div>
+                        <div class="word-tetris-pause-buttons">
+                            <button class="word-tetris-resume-btn" id="tetrisResumeBtn">続ける</button>
+                            <button class="word-tetris-quit-btn" id="tetrisQuitBtn">ホームに戻る</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="word-tetris-controls">
+                <button class="word-tetris-ctrl-btn word-tetris-left-btn" id="tetrisMoveLeft">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <div class="word-tetris-ctrl-center">
+                    <button class="word-tetris-ctrl-btn word-tetris-drop-btn" id="tetrisHardDrop">DROP</button>
+                    <button class="word-tetris-ctrl-btn word-tetris-down-btn" id="tetrisSoftDrop">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                </div>
+                <button class="word-tetris-ctrl-btn word-tetris-right-btn" id="tetrisMoveRight">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+            <!-- 単語成立時の表示 -->
+            <div class="word-tetris-word-popup hidden" id="tetrisWordPopup">
+                <div class="word-tetris-word-popup-content">
+                    <div class="word-tetris-found-word" id="tetrisFoundWord"></div>
+                    <div class="word-tetris-found-meaning" id="tetrisFoundMeaning"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="sentence-data.js"></script>
     <script src="reorder-questions.js"></script>
     <script src="choice-questions-data.js"></script>
