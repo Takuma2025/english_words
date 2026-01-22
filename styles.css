@@ -1711,10 +1711,10 @@ body.learning-mode .app-header {
 
 .school-progress-current strong,
 .school-progress-total strong {
-    font-weight: 700;
+    font-weight: 500;
     font-size: 18px;
     color: #0055ca;
-    font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Oswald', sans-serif;
     letter-spacing: -0.5px;
 }
 
@@ -1757,7 +1757,8 @@ body.learning-mode .app-header {
 
 .school-card-progress-percent .progress-number {
     font-size: 22px;
-    font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
     letter-spacing: -0.5px;
 }
 

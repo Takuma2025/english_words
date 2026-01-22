@@ -4371,7 +4371,10 @@ function startCategory(category) {
     selectedCategory = category;
     
     // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
-    learnedWordsAtStart = calculateTotalLearnedWords();
+    // 既に学習セッション中の場合は上書きしない（複数メニュー学習時の累計カウント用）
+    if (!lastLearningCategory) {
+        learnedWordsAtStart = calculateTotalLearnedWords();
+    }
     lastLearningCategory = category;
     // モード用のボディクラスをいったんリセット
     document.body.classList.remove('sentence-mode-active', 'reorder-mode-active', 'choice-question-mode-active');
@@ -5714,7 +5717,10 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     if (appMain) appMain.scrollTop = 0;
     
     // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
-    learnedWordsAtStart = calculateTotalLearnedWords();
+    // 既に学習セッション中の場合は上書きしない（複数メニュー学習時の累計カウント用）
+    if (!lastLearningCategory) {
+        learnedWordsAtStart = calculateTotalLearnedWords();
+    }
     lastLearningCategory = category;
     console.log('showWordFilterView: 学習開始', { category, learnedWordsAtStart });
     
@@ -6066,7 +6072,10 @@ function showInputModeDirectly(category, words, courseTitle) {
     }
     
     // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
-    learnedWordsAtStart = calculateTotalLearnedWords();
+    // 既に学習セッション中の場合は上書きしない（複数メニュー学習時の累計カウント用）
+    if (!lastLearningCategory) {
+        learnedWordsAtStart = calculateTotalLearnedWords();
+    }
     lastLearningCategory = category;
     console.log('showInputModeDirectly: 学習開始', { category, learnedWordsAtStart });
     
@@ -6400,7 +6409,10 @@ function showLearningSubcategoryMenu(category) {
 // 学習メニューから学習を開始
 function startLearningFromMenu(category, subcategory) {
     // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
-    learnedWordsAtStart = calculateTotalLearnedWords();
+    // 既に学習セッション中の場合は上書きしない（複数メニュー学習時の累計カウント用）
+    if (!lastLearningCategory) {
+        learnedWordsAtStart = calculateTotalLearnedWords();
+    }
     lastLearningCategory = category;
     console.log('startLearningFromMenu: 学習開始', { category, learnedWordsAtStart });
     
@@ -6623,7 +6635,10 @@ function initTimeAttackLearning(category, words) {
     startStudySession();
     
     // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
-    learnedWordsAtStart = calculateTotalLearnedWords();
+    // 既に学習セッション中の場合は上書きしない（複数メニュー学習時の累計カウント用）
+    if (!lastLearningCategory) {
+        learnedWordsAtStart = calculateTotalLearnedWords();
+    }
     lastLearningCategory = category;
     console.log('initTimeAttackLearning: 学習開始', { category, learnedWordsAtStart });
     
@@ -8143,7 +8158,10 @@ function setupEventListeners() {
             }
             
             // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
-            learnedWordsAtStart = calculateTotalLearnedWords();
+            // 既に学習セッション中の場合は上書きしない（複数メニュー学習時の累計カウント用）
+            if (!lastLearningCategory) {
+                learnedWordsAtStart = calculateTotalLearnedWords();
+            }
             lastLearningCategory = currentFilterCategory;
             console.log('filterStartBtn: 学習開始', { category: currentFilterCategory, learnedWordsAtStart });
             
@@ -12615,6 +12633,11 @@ function resetInputFilter() {
 // 現在の単語を表示
 function displayCurrentWord() {
     if (currentIndex >= currentRangeEnd) {
+        // 最後の問題を解いた後、進捗バーを100%にする
+        const progressBarFill = document.getElementById('progressBarFill');
+        if (progressBarFill) {
+            progressBarFill.style.width = '100%';
+        }
         // 学習完了時は完了画面を表示
         showCompletion();
         return;
@@ -13313,6 +13336,12 @@ function markAnswer(isCorrect, isTimeout = false) {
 
 // 完了画面を表示
 function showCompletion() {
+    // 最後の問題を解いた後、進捗バーを100%にする
+    const progressBarFill = document.getElementById('progressBarFill');
+    if (progressBarFill) {
+        progressBarFill.style.width = '100%';
+    }
+    
     // 完了音を再生
     SoundEffects.playComplete();
     
@@ -13896,8 +13925,9 @@ function updateProgressBar(total) {
         currentQuestionIndex = currentIndex - currentRangeStart;
     }
     
-    // 進捗を計算（現在の問題番号 / 全体）
-    const progress = total > 0 ? ((currentQuestionIndex + 1) / total) * 100 : 0;
+    // 進捗を計算（解答済み問題数 / 全体）
+    // 最後の問題を解いた時にMAXになるように、currentQuestionIndex（0始まり）をそのまま使用
+    const progress = total > 0 ? (currentQuestionIndex / total) * 100 : 0;
     
     // 進捗バーを更新
     const progressBarFill = document.getElementById('progressBarFill');
@@ -17553,7 +17583,10 @@ async function startHandwritingQuiz(category, words, courseTitle) {
     startStudySession();
     
     // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
-    learnedWordsAtStart = calculateTotalLearnedWords();
+    // 既に学習セッション中の場合は上書きしない（複数メニュー学習時の累計カウント用）
+    if (!lastLearningCategory) {
+        learnedWordsAtStart = calculateTotalLearnedWords();
+    }
     lastLearningCategory = category;
     console.log('startHandwritingQuiz: 学習開始', { category, learnedWordsAtStart });
     
