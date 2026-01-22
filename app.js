@@ -22,6 +22,7 @@ let currentInputFilter = 'all'; // インプットモードのフィルター状
 let isInputShuffled = false; // インプットモードのシャッフル状態
 let learnedWordsAtStart = 0; // 進捗アニメーション用：学習開始時の覚えた語彙数
 let lastLearningCategory = null; // 最後に学習していたカテゴリ
+let lastLearningSourceElement = null; // 進捗アニメーション用：学習開始時のソース要素
 let isAnimatingProgress = false; // アニメーション重複防止フラグ
 let calendarViewDate = new Date(); // 表示中の学習カレンダーの基準日
 
@@ -684,42 +685,48 @@ function animateProgressToGoal() {
     const selectedSchool = loadSelectedSchool();
     if (!selectedSchool || learnedCount <= 0) {
         lastLearningCategory = null;
+        lastLearningSourceElement = null;
         return;
     }
     
     // ソース要素（飛ばし元）を特定
-    let sourceElement = null;
-    const category = lastLearningCategory || '';
-    const parentCategory = window.currentSubcategoryParent || '';
-    const checkCategory = category + ' ' + parentCategory;
+    // 保存されたソース要素を優先的に使用
+    let sourceElement = lastLearningSourceElement;
     
-    console.log('カテゴリ判定:', { category, parentCategory, checkCategory });
-    
-    // LEVEL1〜5の判定
-    if (checkCategory.includes('レベル１') || checkCategory.includes('LEVEL1') || checkCategory.includes('超重要')) {
-        sourceElement = document.getElementById('level1CardBtn');
-    } else if (checkCategory.includes('レベル２') || checkCategory.includes('LEVEL2') || checkCategory.includes('重要500')) {
-        sourceElement = document.getElementById('level2CardBtn');
-    } else if (checkCategory.includes('レベル３') || checkCategory.includes('LEVEL3') || checkCategory.includes('ハイレベル')) {
-        sourceElement = document.getElementById('level3CardBtn');
-    } else if (checkCategory.includes('LEVEL4') || checkCategory.includes('私立高校入試')) {
-        sourceElement = document.querySelector('[data-category*="LEVEL4"]');
-    } else if (checkCategory.includes('LEVEL5') || checkCategory.includes('難関私立')) {
-        sourceElement = document.querySelector('[data-category*="LEVEL5"]');
-    } else if (checkCategory.includes('カテゴリー別') || parentCategory.includes('カテゴリー別') || 
-               ['家族', '体', '食べ物', '動物', '自然', '場所', '時間', '数', '色', '形容詞', '動詞', '副詞', '前置詞', '接続詞'].some(cat => category.includes(cat))) {
-        // カテゴリー別単語の場合
-        sourceElement = document.querySelector('[data-category*="カテゴリー別"]') || 
-                       document.querySelector('[data-category*="小学生"]') ||
-                       document.getElementById('level1CardBtn'); // フォールバック
-    }
-    
-    // それでも見つからない場合、学習していたカテゴリに最も近いカードを探す
-    if (!sourceElement) {
-        // 任意のLEVELカードをフォールバックとして使用
-        sourceElement = document.getElementById('level1CardBtn') || 
-                       document.getElementById('level2CardBtn') ||
-                       document.getElementById('level3CardBtn');
+    // 保存されたソース要素が無効な場合のみフォールバック
+    if (!sourceElement || !document.body.contains(sourceElement)) {
+        const category = lastLearningCategory || '';
+        const parentCategory = window.currentSubcategoryParent || '';
+        const checkCategory = category + ' ' + parentCategory;
+        
+        console.log('カテゴリ判定（フォールバック）:', { category, parentCategory, checkCategory });
+        
+        // LEVEL1〜5の判定
+        if (checkCategory.includes('レベル１') || checkCategory.includes('LEVEL1') || checkCategory.includes('超重要')) {
+            sourceElement = document.getElementById('level1CardBtn');
+        } else if (checkCategory.includes('レベル２') || checkCategory.includes('LEVEL2') || checkCategory.includes('重要500')) {
+            sourceElement = document.getElementById('level2CardBtn');
+        } else if (checkCategory.includes('レベル３') || checkCategory.includes('LEVEL3') || checkCategory.includes('ハイレベル')) {
+            sourceElement = document.getElementById('level3CardBtn');
+        } else if (checkCategory.includes('LEVEL4') || checkCategory.includes('私立高校入試')) {
+            sourceElement = document.querySelector('[data-category*="LEVEL4"]');
+        } else if (checkCategory.includes('LEVEL5') || checkCategory.includes('難関私立')) {
+            sourceElement = document.querySelector('[data-category*="LEVEL5"]');
+        } else if (checkCategory.includes('カテゴリー別') || parentCategory.includes('カテゴリー別') || 
+                   ['家族', '体', '食べ物', '動物', '自然', '場所', '時間', '数', '色', '形容詞', '動詞', '副詞', '前置詞', '接続詞'].some(cat => category.includes(cat))) {
+            // カテゴリー別単語の場合
+            sourceElement = document.querySelector('[data-category*="カテゴリー別"]') || 
+                           document.querySelector('[data-category*="小学生"]') ||
+                           document.getElementById('level1CardBtn'); // フォールバック
+        }
+        
+        // それでも見つからない場合、学習していたカテゴリに最も近いカードを探す
+        if (!sourceElement) {
+            // 任意のLEVELカードをフォールバックとして使用
+            sourceElement = document.getElementById('level1CardBtn') || 
+                           document.getElementById('level2CardBtn') ||
+                           document.getElementById('level3CardBtn');
+        }
     }
     
     const targetElement = document.getElementById('schoolProgressBar');
@@ -727,6 +734,7 @@ function animateProgressToGoal() {
     if (!sourceElement || !targetElement) {
         console.log('アニメーション中止: 要素が見つかりません', { sourceElement, targetElement });
         lastLearningCategory = null;
+        lastLearningSourceElement = null;
         return;
     }
 
@@ -816,6 +824,7 @@ function animateProgressToGoal() {
                         
                         isAnimatingProgress = false;
                         lastLearningCategory = null;
+                        lastLearningSourceElement = null;
                     }, 200);
                 }
             });
@@ -4138,6 +4147,7 @@ function showCategorySelection(slideIn = false, skipScroll = false) {
                     animateProgressToGoal();
                     // アニメーション後にカテゴリをリセット
                     lastLearningCategory = null;
+                    lastLearningSourceElement = null;
                 }, 100);
             }
             
@@ -4714,6 +4724,9 @@ function showElementaryCategorySelection(skipAnimation = false) {
     const appMain = document.querySelector('.app-main');
     if (appMain) appMain.scrollTop = 0;
     
+    // 進捗アニメーション用：カテゴリー別カード要素を保存
+    lastLearningSourceElement = document.getElementById('elementaryCategoryCardBtn');
+    
     // 学習画面から戻る場合、mainContentを非表示にする
     const mainContent = document.getElementById('mainContent');
     if (mainContent) {
@@ -4951,6 +4964,15 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     window.scrollTo(0, 0);
     const appMain = document.querySelector('.app-main');
     if (appMain) appMain.scrollTop = 0;
+    
+    // 進捗アニメーション用：親カテゴリに対応するカード要素を保存
+    if (parentCategory === 'レベル１ 超重要500語') {
+        lastLearningSourceElement = document.getElementById('level1CardBtn');
+    } else if (parentCategory === 'レベル２ 重要500語') {
+        lastLearningSourceElement = document.getElementById('level2CardBtn');
+    } else if (parentCategory === 'レベル３ ハイレベル300語') {
+        lastLearningSourceElement = document.getElementById('level3CardBtn');
+    }
     
     console.log('showLevelSubcategorySelection called with:', parentCategory, 'skipAnimation:', skipAnimation);
     
@@ -8578,6 +8600,7 @@ function setupEventListeners() {
                             setTimeout(() => {
                                 animateProgressToGoal();
                                 lastLearningCategory = null;
+                                lastLearningSourceElement = null;
                             }, 700);
                         }
                         return;
@@ -23457,7 +23480,7 @@ document.addEventListener('DOMContentLoaded', () => {
         minigameAtoZBtn.addEventListener('click', () => {
             minigameMenuOverlay.classList.add('hidden');
             alphabet2048Overlay.classList.remove('hidden');
-            setStatusBarColor('#0f172a'); // ゲーム背景の黒
+            setStatusBarColor('#1e293b'); // ヘッダーの色
             Alphabet2048.init();
         });
     }
@@ -23467,7 +23490,7 @@ document.addEventListener('DOMContentLoaded', () => {
         minigameAtoZDropBtn.addEventListener('click', () => {
             minigameMenuOverlay.classList.add('hidden');
             alphabetDropOverlay.classList.remove('hidden');
-            setStatusBarColor('#0f172a'); // ゲーム背景の黒
+            setStatusBarColor('#1e293b'); // ヘッダーの色
             AlphabetDrop.init();
         });
     }

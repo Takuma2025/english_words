@@ -19622,6 +19622,12 @@ div#inputWordCheckbox,
     color: #64748b;
 }
 
+/* GAME OVERは全画面表示 */
+.alphabet2048-message-overlay:has(.alphabet2048-gameover) {
+    position: fixed;
+    z-index: 9999;
+}
+
 .alphabet2048-message-sub {
     font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 16px;
