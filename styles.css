@@ -17826,6 +17826,7 @@ body .sentence-english {
     background: #fff;
     color: #1f2937;
     border-bottom: 1px solid #e5e7eb;
+    padding-top: max(14px, env(safe-area-inset-top));
 }
 
 .study-header.iv-test-header .study-title {
@@ -18059,6 +18060,7 @@ body .sentence-english {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    padding-top: env(safe-area-inset-top);
 }
 
 .irregular-verbs-header {
