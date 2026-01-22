@@ -2426,6 +2426,36 @@
         </div>
     </div>
 
+    <!-- ミニゲームメニュー -->
+    <div class="minigame-menu-overlay hidden" id="minigameMenuOverlay">
+        <div class="minigame-menu-container">
+            <div class="minigame-menu-header">
+                <button class="minigame-menu-back-btn" id="minigameMenuBackBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <h2 class="minigame-menu-title">ミニゲーム</h2>
+            </div>
+            <div class="minigame-menu-list">
+                <button class="minigame-menu-card" id="minigameAtoZBtn">
+                    <div class="minigame-menu-card-icon">
+                        <span class="minigame-menu-card-letter minigame-letter-a">A</span>
+                        <span class="minigame-menu-card-arrow">→</span>
+                        <span class="minigame-menu-card-letter minigame-letter-z">Z</span>
+                    </div>
+                    <div class="minigame-menu-card-info">
+                        <div class="minigame-menu-card-name">A to Z</div>
+                        <div class="minigame-menu-card-desc">2048風パズル。同じ文字を合体させてZを目指そう！</div>
+                    </div>
+                    <div class="minigame-menu-card-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Alphabet 2048 ミニゲーム -->
     <div class="alphabet2048-overlay hidden" id="alphabet2048Overlay">
         <div class="alphabet2048-container">
@@ -2439,7 +2469,13 @@
                 </button>
             </div>
             <div class="alphabet2048-scores">
-                <div class="alphabet2048-score-box">
+                <button class="alphabet2048-new-icon-btn" id="alphabet2048NewBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
+                </button>
+                <div class="alphabet2048-score-box alphabet2048-main-score">
                     <div class="alphabet2048-score-label">SCORE</div>
                     <div class="alphabet2048-score-value" id="alphabet2048Score">0</div>
                 </div>
@@ -2448,7 +2484,26 @@
                     <div class="alphabet2048-score-value" id="alphabet2048Best">0</div>
                     <div class="alphabet2048-best-badge hidden" id="alphabet2048BestBadge">NEW!</div>
                 </div>
-                <button class="alphabet2048-new-btn" id="alphabet2048NewBtn">NEW GAME</button>
+            </div>
+            <!-- New Game 確認ダイアログ -->
+            <div class="alphabet2048-confirm-overlay hidden" id="alphabet2048ConfirmDialog">
+                <div class="alphabet2048-confirm-box">
+                    <div class="alphabet2048-confirm-title">New Game</div>
+                    <div class="alphabet2048-confirm-buttons">
+                        <button class="alphabet2048-confirm-start" id="alphabet2048ConfirmStart">Start New Game</button>
+                        <button class="alphabet2048-confirm-cancel" id="alphabet2048ConfirmCancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 終了確認ダイアログ -->
+            <div class="alphabet2048-confirm-overlay hidden" id="alphabet2048ExitDialog">
+                <div class="alphabet2048-confirm-box">
+                    <div class="alphabet2048-confirm-title">ゲームを終了しますか？</div>
+                    <div class="alphabet2048-confirm-buttons">
+                        <button class="alphabet2048-confirm-continue" id="alphabet2048ExitContinue">続ける</button>
+                        <button class="alphabet2048-confirm-exit" id="alphabet2048ExitQuit">中断する</button>
+                    </div>
+                </div>
             </div>
             <div class="alphabet2048-board-wrapper">
                 <div class="alphabet2048-board" id="alphabet2048Board">
@@ -2489,9 +2544,29 @@
                     </div>
                 </div>
             </div>
+            <div class="alphabet2048-actions">
+                <button class="alphabet2048-action-btn" id="alphabet2048UndoBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                    <span>１手戻す</span>
+                    <span class="alphabet2048-action-count" id="alphabet2048UndoCount">3</span>
+                </button>
+                <button class="alphabet2048-action-btn" id="alphabet2048ShuffleBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 3h5v5"></path>
+                        <path d="M4 20L21 3"></path>
+                        <path d="M21 16v5h-5"></path>
+                        <path d="M15 15l6 6"></path>
+                        <path d="M4 4l5 5"></path>
+                    </svg>
+                    <span>シャッフル</span>
+                    <span class="alphabet2048-action-count" id="alphabet2048ShuffleCount">1</span>
+                </button>
+            </div>
             <div class="alphabet2048-controls">
-                <div class="alphabet2048-hint">←↑→↓ / swipe で操作</div>
                 <div class="alphabet2048-rule">同じ文字を合体させてZを目指そう！</div>
+                <div class="alphabet2048-credit">Based on <a href="https://github.com/gabrielecirulli/2048" target="_blank" rel="noopener">2048</a> by Gabriele Cirulli</div>
             </div>
         </div>
     </div>
