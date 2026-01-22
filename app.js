@@ -731,6 +731,18 @@ function animateProgressToGoal() {
     }
 
     isAnimatingProgress = true;
+    
+    // ★アニメーションが見えるように画面を一番上にスクロール
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const appMain = document.querySelector('.app-main');
+    if (appMain) appMain.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // スクロール完了を待ってからアニメーション開始
+    setTimeout(() => {
+        startStarAnimation();
+    }, 300);
+    
+    function startStarAnimation() {
     const sourceRect = sourceElement.getBoundingClientRect();
     const targetRect = targetElement.getBoundingClientRect();
     
@@ -759,15 +771,19 @@ function animateProgressToGoal() {
     const schoolProgressBarEl = document.getElementById('schoolProgressBar');
     const schoolProgressPercentEl = document.getElementById('schoolProgressPercent');
     
-    // 現在の表示値を取得
-    const oldLearnedWords = parseInt(schoolProgressCurrentEl?.textContent || '0', 10);
-    const oldBarWidth = parseFloat(schoolProgressBarEl?.style.width || '0');
-    const oldPercent = parseInt(schoolProgressPercentEl?.textContent || '0', 10);
-    
     // 新しい値を計算（selectedSchoolは上で既に取得済み）
     const newLearnedWords = calculateTotalLearnedWords();
     const requiredWords = selectedSchool ? calculateRequiredWords(selectedSchool.hensachi, selectedSchool.name) : 0;
     const newPercent = requiredWords > 0 ? Math.min(100, Math.round((newLearnedWords / requiredWords) * 100)) : 0;
+    
+    // 学習開始時の値を使用（DOM値は信頼できないため）
+    const oldLearnedWords = learnedWordsAtStart;
+    const oldPercent = requiredWords > 0 ? Math.min(100, Math.round((oldLearnedWords / requiredWords) * 100)) : 0;
+    
+    // 進捗バーの表示値を学習開始時の値に設定（アニメーション前の状態にする）
+    if (schoolProgressCurrentEl) schoolProgressCurrentEl.textContent = oldLearnedWords;
+    if (schoolProgressBarEl) schoolProgressBarEl.style.width = `${oldPercent}%`;
+    if (schoolProgressPercentEl) schoolProgressPercentEl.textContent = oldPercent;
     
     for (let i = 0; i < starCount; i++) {
         setTimeout(() => {
@@ -788,9 +804,8 @@ function animateProgressToGoal() {
                         );
                         
                         // +○語のフローティングテキストを表示
-                        const addedWords = newLearnedWords - oldLearnedWords;
-                        if (addedWords > 0) {
-                            showFloatingAddedWords(addedWords, targetRect);
+                        if (learnedCount > 0) {
+                            showFloatingAddedWords(learnedCount);
                         }
                         
                         // タップブロックオーバーレイを削除（フローティングテキスト表示後に遅延）
@@ -957,44 +972,42 @@ function animateProgressToGoal() {
     }
     
     // +○語のフローティングテキストを表示
-    function showFloatingAddedWords(count, targetRect) {
+    function showFloatingAddedWords(count) {
+        // 表示時に進捗バーの現在位置を再取得
+        const progressBar = document.getElementById('schoolProgressBar');
+        if (!progressBar) return;
+        
+        const currentRect = progressBar.getBoundingClientRect();
+        
         const floatingText = document.createElement('div');
         floatingText.textContent = `+${count}語`;
-        floatingText.style.cssText = `
-            position: fixed;
-            left: ${targetRect.left + targetRect.width / 2}px;
-            top: ${targetRect.top - 10}px;
-            transform: translateX(-50%);
-            font-size: 24px;
-            font-weight: 800;
-            color: #2563eb;
-            text-shadow: 
-                -2px -2px 0 #fff,
-                2px -2px 0 #fff,
-                -2px 2px 0 #fff,
-                2px 2px 0 #fff,
-                -2px 0 0 #fff,
-                2px 0 0 #fff,
-                0 -2px 0 #fff,
-                0 2px 0 #fff;
-            z-index: 10001;
-            pointer-events: none;
-            opacity: 1;
-            transition: transform 2s ease-out, opacity 2s ease-out;
-        `;
+        floatingText.style.position = 'fixed';
+        floatingText.style.left = `${currentRect.left + currentRect.width / 2}px`;
+        floatingText.style.top = `${currentRect.top - 5}px`;
+        floatingText.style.transform = 'translateX(-50%)';
+        floatingText.style.fontSize = '24px';
+        floatingText.style.fontWeight = '800';
+        floatingText.style.color = '#2563eb';
+        floatingText.style.textShadow = '-2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff, -2px 0 0 #fff, 2px 0 0 #fff, 0 -2px 0 #fff, 0 2px 0 #fff';
+        floatingText.style.zIndex = '10001';
+        floatingText.style.pointerEvents = 'none';
+        floatingText.style.opacity = '1';
+        
         document.body.appendChild(floatingText);
         
         // アニメーション開始（上に上がりながらフェードアウト）
-        requestAnimationFrame(() => {
-            floatingText.style.transform = 'translateX(-50%) translateY(-60px)';
+        setTimeout(() => {
+            floatingText.style.transition = 'transform 1.5s ease-out, opacity 1.5s ease-out';
+            floatingText.style.transform = 'translateX(-50%) translateY(-50px)';
             floatingText.style.opacity = '0';
-        });
+        }, 50);
         
         // 削除
         setTimeout(() => {
             floatingText.remove();
-        }, 2100);
+        }, 1600);
     }
+    } // startStarAnimation関数の終わり
 }
 
 // 英単語進捗バーを更新
@@ -8528,6 +8541,9 @@ function setupEventListeners() {
                     }
                     
                     if (targetCardId) {
+                        // 学習後の★アニメーション用にカテゴリを保存（lastLearningCategoryはリセットしない）
+                        const hasStarAnimation = !!lastLearningCategory;
+                        
                         window.currentSubcategoryParent = null;
                         animateCardShrink(targetCardId, () => {
                             courseSelection.classList.add('hidden');
@@ -8537,6 +8553,14 @@ function setupEventListeners() {
                             updateVocabProgressBar();
                             showFloatingReviewBtn();
                         });
+                        
+                        // 縮小アニメーション完了後（600ms）に★アニメーションを実行
+                        if (hasStarAnimation) {
+                            setTimeout(() => {
+                                animateProgressToGoal();
+                                lastLearningCategory = null;
+                            }, 700);
+                        }
                         return;
                     }
                 }
