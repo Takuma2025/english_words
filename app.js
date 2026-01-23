@@ -795,7 +795,7 @@ function animateProgressToGoal() {
     
     for (let i = 0; i < starCount; i++) {
         setTimeout(() => {
-            createFloatingStar(sourceRect, targetRect, () => {
+            createFloatingStar(sourceRect, targetElement, () => {
                 completedCount++;
                 // 最初の★が到達したらバーのアニメーション開始
                 if (completedCount === 1) {
@@ -869,14 +869,15 @@ function animateProgressToGoal() {
     }
 
     // 白い★（シアンの光）を生成してふわっと飛ばす
-    function createFloatingStar(sourceRect, targetRect, onComplete) {
+    function createFloatingStar(sourceRect, targetElement, onComplete) {
         const star = document.createElement('div');
         const size = 22 + Math.random() * 16; // 22〜38px
         
         const sX = sourceRect.left + sourceRect.width / 2 + (Math.random() - 0.5) * 80;
         const sY = sourceRect.top + sourceRect.height / 2 + (Math.random() - 0.5) * 40;
-        const eX = targetRect.left + Math.random() * targetRect.width;
-        const eY = targetRect.top + targetRect.height / 2;
+        
+        // ターゲット位置のランダムオフセットを固定（アニメーション開始時に決定）
+        const targetOffsetRatio = Math.random(); // 0〜1の範囲でターゲットバー内の位置を決定
         
         // ★のデザイン（白い星＋シアンの光）- ランダムで形を選択
         const starShapes = ['★', '✦'];
@@ -915,6 +916,11 @@ function animateProgressToGoal() {
         function animate(currentTime) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
+            
+            // 毎フレームでターゲットの現在位置を取得（スクロール対応）
+            const currentTargetRect = targetElement.getBoundingClientRect();
+            const eX = currentTargetRect.left + targetOffsetRatio * currentTargetRect.width;
+            const eY = currentTargetRect.top + currentTargetRect.height / 2;
             
             // ふわっとしたイージング
             const t = progress < 0.5
@@ -7448,6 +7454,80 @@ function setupEventListeners() {
         });
     }
     
+    // 学習モードのランダムボタン
+    const ivStudyShuffleBtn = document.getElementById('ivStudyShuffleBtn');
+    if (ivStudyShuffleBtn) {
+        ivStudyShuffleBtn.addEventListener('click', () => {
+            ivStudyIsRandomOrder = !ivStudyIsRandomOrder;
+            ivStudyShuffleBtn.classList.toggle('active', ivStudyIsRandomOrder);
+            refreshIvStudyTable();
+        });
+    }
+    
+    // 学習モードのしぼるボタン
+    const ivStudyFilterTrigger = document.getElementById('ivStudyFilterTrigger');
+    const ivStudyFilterDropdown = document.getElementById('ivStudyFilterDropdown');
+    if (ivStudyFilterTrigger && ivStudyFilterDropdown) {
+        ivStudyFilterTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpening = ivStudyFilterDropdown.classList.contains('hidden');
+            ivStudyFilterDropdown.classList.toggle('hidden');
+            // 開くときは青に、閉じるときはフィルター状態に応じて
+            if (isOpening) {
+                ivStudyFilterTrigger.classList.add('active');
+            } else {
+                updateIvStudyFilterBadge(); // フィルター状態に応じてactiveを更新
+            }
+        });
+        
+        // ドロップダウン外クリックで閉じる
+        document.addEventListener('click', (e) => {
+            if (!ivStudyFilterDropdown.contains(e.target) && e.target !== ivStudyFilterTrigger && !ivStudyFilterTrigger.contains(e.target)) {
+                ivStudyFilterDropdown.classList.add('hidden');
+                updateIvStudyFilterBadge(); // フィルター状態に応じてactiveを更新
+            }
+        });
+        
+        // フィルターチェックボックスのイベント
+        const ivStudyFilterAll = document.getElementById('ivStudyFilterAll');
+        const ivStudyFilterUnlearned = document.getElementById('ivStudyFilterUnlearned');
+        const ivStudyFilterWrong = document.getElementById('ivStudyFilterWrong');
+        const ivStudyFilterCorrect = document.getElementById('ivStudyFilterCorrect');
+        
+        if (ivStudyFilterAll) {
+            ivStudyFilterAll.addEventListener('change', () => {
+                ivStudyFilterState.all = ivStudyFilterAll.checked;
+                if (ivStudyFilterAll.checked) {
+                    // すべてがONなら他もON
+                    ivStudyFilterState.unlearned = true;
+                    ivStudyFilterState.wrong = true;
+                    ivStudyFilterState.correct = true;
+                    if (ivStudyFilterUnlearned) ivStudyFilterUnlearned.checked = true;
+                    if (ivStudyFilterWrong) ivStudyFilterWrong.checked = true;
+                    if (ivStudyFilterCorrect) ivStudyFilterCorrect.checked = true;
+                }
+                refreshIvStudyTable();
+            });
+        }
+        
+        const handleStudyIndividualFilter = () => {
+            ivStudyFilterState.unlearned = ivStudyFilterUnlearned?.checked ?? true;
+            ivStudyFilterState.wrong = ivStudyFilterWrong?.checked ?? true;
+            ivStudyFilterState.correct = ivStudyFilterCorrect?.checked ?? true;
+            
+            // 全部ONなら「すべて」もON、そうでなければOFF
+            const allOn = ivStudyFilterState.unlearned && ivStudyFilterState.wrong && ivStudyFilterState.correct;
+            ivStudyFilterState.all = allOn;
+            if (ivStudyFilterAll) ivStudyFilterAll.checked = allOn;
+            
+            refreshIvStudyTable();
+        };
+        
+        if (ivStudyFilterUnlearned) ivStudyFilterUnlearned.addEventListener('change', handleStudyIndividualFilter);
+        if (ivStudyFilterWrong) ivStudyFilterWrong.addEventListener('change', handleStudyIndividualFilter);
+        if (ivStudyFilterCorrect) ivStudyFilterCorrect.addEventListener('change', handleStudyIndividualFilter);
+    }
+    
     // 学習モードのメモボタン
     const ivMemoPadBtn = document.getElementById('ivMemoPadBtn');
     if (ivMemoPadBtn) {
@@ -7538,6 +7618,82 @@ function setupEventListeners() {
                 pauseOverlay.classList.remove('hidden');
             }
         });
+    }
+    
+    // 不規則変化のランダムボタン
+    const ivShuffleBtn = document.getElementById('ivShuffleBtn');
+    if (ivShuffleBtn) {
+        ivShuffleBtn.addEventListener('click', () => {
+            ivIsRandomOrder = !ivIsRandomOrder;
+            ivShuffleBtn.classList.toggle('active', ivIsRandomOrder);
+            refreshIvTable();
+        });
+    }
+    
+    // 不規則変化のしぼるボタン
+    const ivFilterTrigger = document.getElementById('ivFilterTrigger');
+    const ivFilterDropdown = document.getElementById('ivFilterDropdown');
+    if (ivFilterTrigger && ivFilterDropdown) {
+        ivFilterTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpening = ivFilterDropdown.classList.contains('hidden');
+            ivFilterDropdown.classList.toggle('hidden');
+            // ドロップダウンを開くときは青に
+            if (isOpening) {
+                ivFilterTrigger.classList.add('active');
+            }
+        });
+        
+        // ドロップダウン外クリックで閉じる
+        document.addEventListener('click', (e) => {
+            if (!ivFilterDropdown.contains(e.target) && e.target !== ivFilterTrigger) {
+                ivFilterDropdown.classList.add('hidden');
+                // 閉じた後、フィルター状態に応じてactiveを更新
+                const allChecked = ivFilterState.all || (ivFilterState.unlearned && ivFilterState.wrong && ivFilterState.correct);
+                if (allChecked) {
+                    ivFilterTrigger.classList.remove('active');
+                }
+            }
+        });
+        
+        // フィルターチェックボックスのイベント
+        const ivFilterAll = document.getElementById('ivFilterAll');
+        const ivFilterUnlearned = document.getElementById('ivFilterUnlearned');
+        const ivFilterWrong = document.getElementById('ivFilterWrong');
+        const ivFilterCorrect = document.getElementById('ivFilterCorrect');
+        
+        if (ivFilterAll) {
+            ivFilterAll.addEventListener('change', () => {
+                ivFilterState.all = ivFilterAll.checked;
+                if (ivFilterAll.checked) {
+                    // すべてがONなら他もON
+                    ivFilterState.unlearned = true;
+                    ivFilterState.wrong = true;
+                    ivFilterState.correct = true;
+                    if (ivFilterUnlearned) ivFilterUnlearned.checked = true;
+                    if (ivFilterWrong) ivFilterWrong.checked = true;
+                    if (ivFilterCorrect) ivFilterCorrect.checked = true;
+                }
+                refreshIvTable();
+            });
+        }
+        
+        const handleIndividualFilter = () => {
+            ivFilterState.unlearned = ivFilterUnlearned?.checked ?? true;
+            ivFilterState.wrong = ivFilterWrong?.checked ?? true;
+            ivFilterState.correct = ivFilterCorrect?.checked ?? true;
+            
+            // 全部ONなら「すべて」もON、そうでなければOFF
+            const allOn = ivFilterState.unlearned && ivFilterState.wrong && ivFilterState.correct;
+            ivFilterState.all = allOn;
+            if (ivFilterAll) ivFilterAll.checked = allOn;
+            
+            refreshIvTable();
+        };
+        
+        if (ivFilterUnlearned) ivFilterUnlearned.addEventListener('change', handleIndividualFilter);
+        if (ivFilterWrong) ivFilterWrong.addEventListener('change', handleIndividualFilter);
+        if (ivFilterCorrect) ivFilterCorrect.addEventListener('change', handleIndividualFilter);
     }
     
     // 不規則変化テストモードのポーズ：テストを続ける
@@ -17347,70 +17503,115 @@ function setupGrammarExerciseKeyboard() {
     // キーボードキーのイベント
     newKeyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
         const letter = key.dataset.key;
+        let touchHandled = false;
         
         if (letter === ' ') {
-            const handleSpace = (e) => {
+            key.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                touchHandled = true;
                 insertGrammarExerciseLetter(' ');
-            };
-            key.addEventListener('touchstart', handleSpace, { passive: false });
-            key.addEventListener('click', handleSpace);
+            }, { passive: false });
+            key.addEventListener('touchend', () => {
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            key.addEventListener('click', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                insertGrammarExerciseLetter(' ');
+            });
         } else if (key.dataset.shiftKey) {
             // アポストロフィ/アンダーバーキー
-            const handleApostrophe = (e) => {
+            key.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                // Shift状態を再確認
+                touchHandled = true;
                 const currentShift = shiftKey && shiftKey.dataset.shift === 'true';
                 const charToInsert = currentShift ? key.dataset.shiftKey : letter;
                 insertGrammarExerciseLetter(charToInsert);
-            };
-            key.addEventListener('touchstart', handleApostrophe, { passive: false });
-            key.addEventListener('click', handleApostrophe);
+            }, { passive: false });
+            key.addEventListener('touchend', () => {
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            key.addEventListener('click', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                const currentShift = shiftKey && shiftKey.dataset.shift === 'true';
+                const charToInsert = currentShift ? key.dataset.shiftKey : letter;
+                insertGrammarExerciseLetter(charToInsert);
+            });
         } else {
-            const handleLetter = (e) => {
+            key.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                // Shift状態を再確認して大文字・小文字を切り替え
+                touchHandled = true;
                 const currentShift = shiftKey && shiftKey.dataset.shift === 'true';
                 const charToInsert = (currentShift && letter.match(/[a-z]/)) ? letter.toUpperCase() : letter;
                 insertGrammarExerciseLetter(charToInsert);
-                // 大文字を入力した場合は、ボタンを離したときにシフトを解除するためフラグを設定
                 if (currentShift && letter.match(/[a-z]/) && charToInsert === letter.toUpperCase()) {
                     window.pendingShiftReset = 'grammarExerciseKeyboard';
                     window.grammarExerciseResetShiftState = resetShiftState;
                 }
-            };
-            key.addEventListener('touchstart', handleLetter, { passive: false });
-            key.addEventListener('click', handleLetter);
+            }, { passive: false });
+            key.addEventListener('touchend', () => {
+                setTimeout(() => { touchHandled = false; }, 100);
+            });
+            key.addEventListener('click', (e) => {
+                if (touchHandled) return;
+                e.preventDefault();
+                const currentShift = shiftKey && shiftKey.dataset.shift === 'true';
+                const charToInsert = (currentShift && letter.match(/[a-z]/)) ? letter.toUpperCase() : letter;
+                insertGrammarExerciseLetter(charToInsert);
+                if (currentShift && letter.match(/[a-z]/) && charToInsert === letter.toUpperCase()) {
+                    window.pendingShiftReset = 'grammarExerciseKeyboard';
+                    window.grammarExerciseResetShiftState = resetShiftState;
+                }
+            });
         }
     });
     
     // バックスペースキー
     const backspaceKey = document.getElementById('grammarExerciseKeyboardBackspace');
     if (backspaceKey) {
-        const handleBackspace = (e) => {
+        let bsTouchHandled = false;
+        backspaceKey.addEventListener('touchstart', (e) => {
             e.preventDefault();
             e.stopPropagation();
+            bsTouchHandled = true;
             handleGrammarExerciseBackspace();
-        };
-        backspaceKey.addEventListener('touchstart', handleBackspace, { passive: false });
-        backspaceKey.addEventListener('click', handleBackspace);
+        }, { passive: false });
+        backspaceKey.addEventListener('touchend', () => {
+            setTimeout(() => { bsTouchHandled = false; }, 100);
+        });
+        backspaceKey.addEventListener('click', (e) => {
+            if (bsTouchHandled) return;
+            e.preventDefault();
+            handleGrammarExerciseBackspace();
+        });
     }
     
     // 採点キー（キーボード内）
     const decideKey = document.getElementById('grammarExerciseKeyboardDecide');
     if (decideKey) {
-        const handleDecide = (e) => {
+        let decideTouchHandled = false;
+        decideKey.addEventListener('touchstart', (e) => {
             e.preventDefault();
             e.stopPropagation();
+            decideTouchHandled = true;
             if (currentGrammarSelectedExerciseIndex !== -1) {
                 submitGrammarExerciseAnswer(currentGrammarSelectedExerciseIndex);
             }
-        };
-        decideKey.addEventListener('touchstart', handleDecide, { passive: false });
-        decideKey.addEventListener('click', handleDecide);
+        }, { passive: false });
+        decideKey.addEventListener('touchend', () => {
+            setTimeout(() => { decideTouchHandled = false; }, 100);
+        });
+        decideKey.addEventListener('click', (e) => {
+            if (decideTouchHandled) return;
+            e.preventDefault();
+            if (currentGrammarSelectedExerciseIndex !== -1) {
+                submitGrammarExerciseAnswer(currentGrammarSelectedExerciseIndex);
+            }
+        });
     }
 
     // キーボード外クリックで閉じる（1回だけ登録）
@@ -20277,8 +20478,8 @@ function showIvStudyView(category) {
         thead.innerHTML = `
             <tr>
                 <th class="iv-study-col-num">No.</th>
-                <th class="iv-study-col-word">原級</th>
                 <th class="iv-study-col-meaning">意味</th>
+                <th class="iv-study-col-word">原級</th>
                 <th class="iv-study-col-comp">比較級</th>
                 <th class="iv-study-col-super">最上級</th>
             </tr>
@@ -20287,8 +20488,8 @@ function showIvStudyView(category) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td class="${getNumClass(index)}">${index + 1}</td>
-                <td class="iv-study-word">${item.word}</td>
                 <td class="iv-study-meaning">${item.meaning}</td>
+                <td class="iv-study-word">${item.word}</td>
                 <td class="iv-study-answer">${item.comparative}</td>
                 <td class="iv-study-answer">${item.superlative}</td>
             `;
@@ -20298,8 +20499,8 @@ function showIvStudyView(category) {
         thead.innerHTML = `
             <tr>
                 <th class="iv-study-col-num">No.</th>
-                <th class="iv-study-col-singular">単数形</th>
                 <th class="iv-study-col-meaning">意味</th>
+                <th class="iv-study-col-singular">単数形</th>
                 <th class="iv-study-col-plural">複数形</th>
             </tr>
         `;
@@ -20307,8 +20508,8 @@ function showIvStudyView(category) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td class="${getNumClass(index)}">${index + 1}</td>
-                <td class="iv-study-word">${item.singular}</td>
                 <td class="iv-study-meaning">${item.meaning}</td>
+                <td class="iv-study-word">${item.singular}</td>
                 <td class="iv-study-answer">${item.plural}</td>
             `;
             tbody.appendChild(tr);
@@ -20321,6 +20522,24 @@ function showIvStudyView(category) {
     if (ivRedsheetCheckbox) ivRedsheetCheckbox.checked = false;
     document.getElementById('ivStudyTableContainer')?.classList.remove('redsheet-active');
     document.getElementById('ivRedsheetOverlay')?.classList.add('hidden');
+    
+    // フィルター状態をリセット
+    ivStudyFilterState = { all: true, unlearned: true, wrong: true, correct: true };
+    ivStudyIsRandomOrder = false;
+    
+    // UIをリセット
+    const ivStudyShuffleBtn = document.getElementById('ivStudyShuffleBtn');
+    if (ivStudyShuffleBtn) ivStudyShuffleBtn.classList.remove('active');
+    const ivStudyFilterAll = document.getElementById('ivStudyFilterAll');
+    const ivStudyFilterUnlearned = document.getElementById('ivStudyFilterUnlearned');
+    const ivStudyFilterWrong = document.getElementById('ivStudyFilterWrong');
+    const ivStudyFilterCorrect = document.getElementById('ivStudyFilterCorrect');
+    if (ivStudyFilterAll) ivStudyFilterAll.checked = true;
+    if (ivStudyFilterUnlearned) ivStudyFilterUnlearned.checked = true;
+    if (ivStudyFilterWrong) ivStudyFilterWrong.checked = true;
+    if (ivStudyFilterCorrect) ivStudyFilterCorrect.checked = true;
+    const ivStudyFilterBadge = document.getElementById('ivStudyFilterActiveBadge');
+    if (ivStudyFilterBadge) ivStudyFilterBadge.classList.add('hidden');
     
     // サブカテゴリーメニューを非表示
     const ivMenuView = document.getElementById('ivMenuView');
@@ -20620,6 +20839,24 @@ function showIrregularVerbsTestView(data, type, title) {
     // スコアリセット
     irregularVerbsScore = { correct: 0, total: 0 };
     
+    // フィルター状態をリセット
+    ivFilterState = { all: true, unlearned: true, wrong: true, correct: true };
+    ivIsRandomOrder = false;
+    
+    // UIをリセット
+    const ivShuffleBtn = document.getElementById('ivShuffleBtn');
+    if (ivShuffleBtn) ivShuffleBtn.classList.remove('active');
+    const ivFilterAll = document.getElementById('ivFilterAll');
+    const ivFilterUnlearned = document.getElementById('ivFilterUnlearned');
+    const ivFilterWrong = document.getElementById('ivFilterWrong');
+    const ivFilterCorrect = document.getElementById('ivFilterCorrect');
+    if (ivFilterAll) ivFilterAll.checked = true;
+    if (ivFilterUnlearned) ivFilterUnlearned.checked = true;
+    if (ivFilterWrong) ivFilterWrong.checked = true;
+    if (ivFilterCorrect) ivFilterCorrect.checked = true;
+    const ivFilterBadge = document.getElementById('ivFilterActiveBadge');
+    if (ivFilterBadge) ivFilterBadge.classList.add('hidden');
+    
     // テーブルヘッダーと内容を生成
     tbody.innerHTML = '';
     
@@ -20677,6 +20914,7 @@ function showIrregularVerbsTestView(data, type, title) {
         thead.innerHTML = `
             <tr>
                 <th class="iv-col-num">No.</th>
+                <th class="iv-col-meaning">意味</th>
                 <th class="iv-col-word">原級</th>
                 <th class="iv-col-comp">比較級</th>
                 <th class="iv-col-super">最上級</th>
@@ -20689,7 +20927,8 @@ function showIrregularVerbsTestView(data, type, title) {
             tr.id = `iv-row-${index}`;
             tr.innerHTML = `
                 <td class="${getNumClass(index)}">${index + 1}</td>
-                <td class="iv-meaning">${item.word}<br><small>(${item.meaning})</small></td>
+                <td class="iv-meaning">${item.meaning}</td>
+                <td class="iv-word">${item.word}</td>
                 <td>
                     <input type="text" class="iv-input" id="iv-comp-${index}" data-index="${index}" data-type="comp" data-answer="${item.comparative}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
                     <div class="iv-answer hidden" id="iv-answer-comp-${index}"></div>
@@ -20705,6 +20944,7 @@ function showIrregularVerbsTestView(data, type, title) {
         thead.innerHTML = `
             <tr>
                 <th class="iv-col-num">No.</th>
+                <th class="iv-col-meaning">意味</th>
                 <th class="iv-col-singular">単数形</th>
                 <th class="iv-col-plural">複数形</th>
             </tr>
@@ -20716,7 +20956,8 @@ function showIrregularVerbsTestView(data, type, title) {
             tr.id = `iv-row-${index}`;
             tr.innerHTML = `
                 <td class="${getNumClass(index)}">${index + 1}</td>
-                <td class="iv-meaning">${item.singular}<br><small>(${item.meaning})</small></td>
+                <td class="iv-meaning">${item.meaning}</td>
+                <td class="iv-word">${item.singular}</td>
                 <td>
                     <input type="text" class="iv-input" id="iv-plural-${index}" data-index="${index}" data-type="plural" data-answer="${item.plural}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
                     <div class="iv-answer hidden" id="iv-answer-plural-${index}"></div>
@@ -20742,6 +20983,255 @@ function showIrregularVerbsTestView(data, type, title) {
 
 // 現在のテストデータ
 let currentIvTestData = null;
+
+// 不規則変化のフィルター状態（テストモード）
+let ivFilterState = {
+    all: true,
+    unlearned: true,
+    wrong: true,
+    correct: true
+};
+
+// 不規則変化のランダム状態（テストモード）
+let ivIsRandomOrder = false;
+let ivOriginalOrder = []; // 元の順番を保持
+
+// 不規則変化のフィルター状態（学習モード）
+let ivStudyFilterState = {
+    all: true,
+    unlearned: true,
+    wrong: true,
+    correct: true
+};
+
+// 不規則変化のランダム状態（学習モード）
+let ivStudyIsRandomOrder = false;
+
+// 不規則変化の単語をフィルター・シャッフルして再描画
+function refreshIvTable() {
+    if (!currentIvTestData) return;
+    
+    const { data, type } = currentIvTestData;
+    const tbody = document.getElementById('irregularVerbsTableBody');
+    if (!tbody) return;
+    
+    // 進捗を取得
+    let correctSet = new Set();
+    let wrongSet = new Set();
+    try {
+        const savedCorrect = localStorage.getItem(`ivCorrect-${currentIvCategory}`);
+        const savedWrong = localStorage.getItem(`ivWrong-${currentIvCategory}`);
+        if (savedCorrect) correctSet = new Set(JSON.parse(savedCorrect));
+        if (savedWrong) wrongSet = new Set(JSON.parse(savedWrong));
+    } catch (e) {}
+    
+    // フィルター適用
+    let filteredData = data.map((item, idx) => ({ item, originalIndex: idx })).filter(({ originalIndex }) => {
+        const isCorrect = correctSet.has(originalIndex);
+        const isWrong = wrongSet.has(originalIndex);
+        const isUnlearned = !isCorrect && !isWrong;
+        
+        if (ivFilterState.all) return true;
+        if (ivFilterState.unlearned && isUnlearned) return true;
+        if (ivFilterState.wrong && isWrong) return true;
+        if (ivFilterState.correct && isCorrect) return true;
+        return false;
+    });
+    
+    // ランダム並び替え
+    if (ivIsRandomOrder) {
+        filteredData = filteredData.sort(() => Math.random() - 0.5);
+    }
+    
+    // 進捗状態に応じたクラスを取得
+    const getNumClass = (index) => {
+        if (wrongSet.has(index)) return 'iv-num iv-num-wrong';
+        if (correctSet.has(index)) return 'iv-num iv-num-correct';
+        return 'iv-num';
+    };
+    
+    // テーブル再描画
+    tbody.innerHTML = '';
+    
+    filteredData.forEach(({ item, originalIndex }, displayIndex) => {
+        const tr = document.createElement('tr');
+        tr.id = `iv-row-${originalIndex}`;
+        
+        if (type === 'verbs') {
+            tr.innerHTML = `
+                <td class="${getNumClass(originalIndex)}">${originalIndex + 1}</td>
+                <td class="iv-meaning">${item.meaning}</td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-base-${originalIndex}" data-index="${originalIndex}" data-type="base" data-answer="${item.base}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-base-${originalIndex}"></div>
+                </td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-past-${originalIndex}" data-index="${originalIndex}" data-type="past" data-answer="${item.past}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-past-${originalIndex}"></div>
+                </td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-pp-${originalIndex}" data-index="${originalIndex}" data-type="pp" data-answer="${item.pp}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-pp-${originalIndex}"></div>
+                </td>
+            `;
+        } else if (type === 'comparatives') {
+            tr.innerHTML = `
+                <td class="${getNumClass(originalIndex)}">${originalIndex + 1}</td>
+                <td class="iv-meaning">${item.meaning}</td>
+                <td class="iv-word">${item.word}</td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-comp-${originalIndex}" data-index="${originalIndex}" data-type="comp" data-answer="${item.comparative}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-comp-${originalIndex}"></div>
+                </td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-super-${originalIndex}" data-index="${originalIndex}" data-type="super" data-answer="${item.superlative}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-super-${originalIndex}"></div>
+                </td>
+            `;
+        } else if (type === 'plurals') {
+            tr.innerHTML = `
+                <td class="${getNumClass(originalIndex)}">${originalIndex + 1}</td>
+                <td class="iv-meaning">${item.meaning}</td>
+                <td class="iv-word">${item.singular}</td>
+                <td>
+                    <input type="text" class="iv-input" id="iv-plural-${originalIndex}" data-index="${originalIndex}" data-type="plural" data-answer="${item.plural}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="none">
+                    <div class="iv-answer hidden" id="iv-answer-plural-${originalIndex}"></div>
+                </td>
+            `;
+        }
+        
+        tbody.appendChild(tr);
+    });
+    
+    // フィルターバッジ更新（フィルター後の行数を渡す）
+    updateIvFilterBadge(filteredData.length);
+}
+
+// フィルターバッジ更新
+function updateIvFilterBadge(filteredCount) {
+    const badge = document.getElementById('ivFilterActiveBadge');
+    const trigger = document.getElementById('ivFilterTrigger');
+    if (!badge) return;
+    
+    // すべてにチェックが入っているか確認
+    const allChecked = ivFilterState.all || (ivFilterState.unlearned && ivFilterState.wrong && ivFilterState.correct);
+    
+    if (allChecked) {
+        badge.classList.add('hidden');
+        if (trigger) trigger.classList.remove('active');
+    } else {
+        // フィルター後の行数を表示（引数がない場合は既存のテキストを維持）
+        if (filteredCount !== undefined) {
+            badge.textContent = filteredCount;
+        }
+        badge.classList.remove('hidden');
+        if (trigger) trigger.classList.add('active');
+    }
+}
+
+// 学習モードのテーブルを再描画
+function refreshIvStudyTable() {
+    if (!currentIvData) return;
+    
+    const { type, data } = currentIvData;
+    const tbody = document.getElementById('ivStudyTableBody');
+    if (!tbody) return;
+    
+    // 進捗を取得
+    let correctSet = new Set();
+    let wrongSet = new Set();
+    try {
+        const savedCorrect = localStorage.getItem(`ivCorrect-${currentIvCategory}`);
+        const savedWrong = localStorage.getItem(`ivWrong-${currentIvCategory}`);
+        if (savedCorrect) correctSet = new Set(JSON.parse(savedCorrect));
+        if (savedWrong) wrongSet = new Set(JSON.parse(savedWrong));
+    } catch (e) {}
+    
+    // フィルター適用
+    let filteredData = data.map((item, idx) => ({ item, originalIndex: idx })).filter(({ originalIndex }) => {
+        const isCorrect = correctSet.has(originalIndex);
+        const isWrong = wrongSet.has(originalIndex);
+        const isUnlearned = !isCorrect && !isWrong;
+        
+        if (ivStudyFilterState.all) return true;
+        if (ivStudyFilterState.unlearned && isUnlearned) return true;
+        if (ivStudyFilterState.wrong && isWrong) return true;
+        if (ivStudyFilterState.correct && isCorrect) return true;
+        return false;
+    });
+    
+    // ランダム並び替え
+    if (ivStudyIsRandomOrder) {
+        filteredData = filteredData.sort(() => Math.random() - 0.5);
+    }
+    
+    // 進捗状態に応じたクラスを取得
+    const getNumClass = (index) => {
+        if (wrongSet.has(index)) return 'iv-study-num iv-num-wrong';
+        if (correctSet.has(index)) return 'iv-study-num iv-num-correct';
+        return 'iv-study-num';
+    };
+    
+    // テーブル再描画
+    tbody.innerHTML = '';
+    
+    filteredData.forEach(({ item, originalIndex }) => {
+        const tr = document.createElement('tr');
+        
+        if (type === 'verbs') {
+            tr.innerHTML = `
+                <td class="${getNumClass(originalIndex)}">${originalIndex + 1}</td>
+                <td class="iv-study-meaning">${item.meaning}</td>
+                <td class="iv-study-answer">${item.base}</td>
+                <td class="iv-study-answer">${item.past}</td>
+                <td class="iv-study-answer">${item.pp}</td>
+            `;
+        } else if (type === 'comparatives') {
+            tr.innerHTML = `
+                <td class="${getNumClass(originalIndex)}">${originalIndex + 1}</td>
+                <td class="iv-study-meaning">${item.meaning}</td>
+                <td class="iv-study-word">${item.word}</td>
+                <td class="iv-study-answer">${item.comparative}</td>
+                <td class="iv-study-answer">${item.superlative}</td>
+            `;
+        } else if (type === 'plurals') {
+            tr.innerHTML = `
+                <td class="${getNumClass(originalIndex)}">${originalIndex + 1}</td>
+                <td class="iv-study-meaning">${item.meaning}</td>
+                <td class="iv-study-word">${item.singular}</td>
+                <td class="iv-study-answer">${item.plural}</td>
+            `;
+        }
+        
+        tbody.appendChild(tr);
+    });
+    
+    // フィルターバッジ更新（フィルター後の行数を渡す）
+    updateIvStudyFilterBadge(filteredData.length);
+}
+
+// 学習モードのフィルターバッジ更新
+function updateIvStudyFilterBadge(filteredCount) {
+    const badge = document.getElementById('ivStudyFilterActiveBadge');
+    const trigger = document.getElementById('ivStudyFilterTrigger');
+    
+    // すべてにチェックが入っているか確認
+    const allChecked = ivStudyFilterState.all || (ivStudyFilterState.unlearned && ivStudyFilterState.wrong && ivStudyFilterState.correct);
+    
+    if (allChecked) {
+        if (badge) badge.classList.add('hidden');
+        if (trigger) trigger.classList.remove('active');
+    } else {
+        // フィルター後の行数を表示（引数がない場合は既存のテキストを維持）
+        if (badge) {
+            if (filteredCount !== undefined) {
+                badge.textContent = filteredCount;
+            }
+            badge.classList.remove('hidden');
+        }
+        if (trigger) trigger.classList.add('active');
+    }
+}
 
 // 不規則動詞データ（50語）- 旧データ（互換性のため）
 const irregularVerbsData = [
@@ -21057,61 +21547,93 @@ function setupIrregularVerbsKeyboard() {
     const keyboard = document.getElementById('ivKeyboard');
     if (!keyboard) return;
     
-    // キー入力（mousedownでpreventDefaultしてフォーカスを維持）
+    // キー入力処理
+    const handleKeyInput = (key) => {
+        if (ivCurrentInput && !ivCurrentInput.disabled) {
+            let char = key.dataset.key;
+            // シフトが有効なら大文字に
+            if (ivShiftActive && char.length === 1 && char !== ' ' && char !== "'") {
+                char = char.toUpperCase();
+                // シフトをリセット
+                toggleIvShift();
+            }
+            // 常に末尾に追加（タッチ操作でセレクション位置がリセットされる問題を回避）
+            ivCurrentInput.value = ivCurrentInput.value + char;
+        }
+    };
+    
+    // キー入力（touchstart/mousedownでpreventDefaultしてフォーカスを維持）
     keyboard.querySelectorAll('.keyboard-key[data-key]').forEach(key => {
+        let touchHandled = false;
+        key.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            touchHandled = true;
+            handleKeyInput(key);
+        }, { passive: false });
+        key.addEventListener('touchend', () => {
+            setTimeout(() => { touchHandled = false; }, 100);
+        });
         key.addEventListener('mousedown', (e) => {
-            e.preventDefault(); // フォーカスが外れないようにする
+            e.preventDefault();
         });
         key.addEventListener('click', (e) => {
+            if (touchHandled) return;
             e.preventDefault();
             e.stopPropagation();
-            if (ivCurrentInput && !ivCurrentInput.disabled) {
-                let char = key.dataset.key;
-                // シフトが有効なら大文字に
-                if (ivShiftActive && char.length === 1 && char !== ' ' && char !== "'") {
-                    char = char.toUpperCase();
-                    // シフトをリセット
-                    toggleIvShift();
-                }
-                const start = ivCurrentInput.selectionStart;
-                const end = ivCurrentInput.selectionEnd;
-                const value = ivCurrentInput.value;
-                ivCurrentInput.value = value.slice(0, start) + char + value.slice(end);
-                ivCurrentInput.selectionStart = ivCurrentInput.selectionEnd = start + 1;
-            }
+            handleKeyInput(key);
         });
     });
     
     // シフトキー
     const shiftBtn = document.getElementById('ivKeyboardShift');
     if (shiftBtn) {
+        let shiftTouchHandled = false;
+        shiftBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            shiftTouchHandled = true;
+            toggleIvShift();
+        }, { passive: false });
+        shiftBtn.addEventListener('touchend', () => {
+            setTimeout(() => { shiftTouchHandled = false; }, 100);
+        });
         shiftBtn.addEventListener('mousedown', (e) => e.preventDefault());
         shiftBtn.addEventListener('click', (e) => {
+            if (shiftTouchHandled) return;
             e.preventDefault();
             e.stopPropagation();
             toggleIvShift();
         });
     }
     
+    // バックスペース処理
+    const handleBackspace = () => {
+        if (ivCurrentInput && !ivCurrentInput.disabled) {
+            const value = ivCurrentInput.value;
+            if (value.length > 0) {
+                // 常に末尾から削除
+                ivCurrentInput.value = value.slice(0, -1);
+            }
+        }
+    };
+    
     // バックスペース
     const backspaceBtn = document.getElementById('ivKeyboardBackspace');
     if (backspaceBtn) {
+        let bsTouchHandled = false;
+        backspaceBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            bsTouchHandled = true;
+            handleBackspace();
+        }, { passive: false });
+        backspaceBtn.addEventListener('touchend', () => {
+            setTimeout(() => { bsTouchHandled = false; }, 100);
+        });
         backspaceBtn.addEventListener('mousedown', (e) => e.preventDefault());
         backspaceBtn.addEventListener('click', (e) => {
+            if (bsTouchHandled) return;
             e.preventDefault();
             e.stopPropagation();
-            if (ivCurrentInput && !ivCurrentInput.disabled) {
-                const start = ivCurrentInput.selectionStart;
-                const end = ivCurrentInput.selectionEnd;
-                const value = ivCurrentInput.value;
-                if (start === end && start > 0) {
-                    ivCurrentInput.value = value.slice(0, start - 1) + value.slice(end);
-                    ivCurrentInput.selectionStart = ivCurrentInput.selectionEnd = start - 1;
-                } else if (start !== end) {
-                    ivCurrentInput.value = value.slice(0, start) + value.slice(end);
-                    ivCurrentInput.selectionStart = ivCurrentInput.selectionEnd = start;
-                }
-            }
+            handleBackspace();
         });
     }
     
@@ -21120,27 +21642,52 @@ function setupIrregularVerbsKeyboard() {
         e.stopPropagation();
     });
     
+    // 採点ボタン処理
+    const handleCheck = () => {
+        if (ivCurrentInput) {
+            const index = parseInt(ivCurrentInput.dataset.index);
+            if (!isNaN(index)) {
+                checkIrregularVerb(index);
+                // 次の未採点の行に移動
+                moveToNextUncheckedRow(index);
+            }
+        }
+    };
+    
     // 採点ボタン
     const checkBtn = document.getElementById('ivKeyboardCheckBtn');
     if (checkBtn) {
+        let checkTouchHandled = false;
+        checkBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            checkTouchHandled = true;
+            handleCheck();
+        }, { passive: false });
+        checkBtn.addEventListener('touchend', () => {
+            setTimeout(() => { checkTouchHandled = false; }, 100);
+        });
         checkBtn.addEventListener('click', (e) => {
+            if (checkTouchHandled) return;
             e.preventDefault();
             e.stopPropagation();
-            if (ivCurrentInput) {
-                const index = parseInt(ivCurrentInput.dataset.index);
-                if (!isNaN(index)) {
-                    checkIrregularVerb(index);
-                    // 次の未採点の行に移動
-                    moveToNextUncheckedRow(index);
-                }
-            }
+            handleCheck();
         });
     }
     
     // 左へボタン
     const prevBtn = document.getElementById('ivKeyboardPrevBtn');
     if (prevBtn) {
+        let prevTouchHandled = false;
+        prevBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            prevTouchHandled = true;
+            moveToAdjacentInput('prev');
+        }, { passive: false });
+        prevBtn.addEventListener('touchend', () => {
+            setTimeout(() => { prevTouchHandled = false; }, 100);
+        });
         prevBtn.addEventListener('click', (e) => {
+            if (prevTouchHandled) return;
             e.preventDefault();
             e.stopPropagation();
             moveToAdjacentInput('prev');
@@ -21150,7 +21697,17 @@ function setupIrregularVerbsKeyboard() {
     // 右へボタン
     const nextBtn = document.getElementById('ivKeyboardNextBtn');
     if (nextBtn) {
+        let nextTouchHandled = false;
+        nextBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            nextTouchHandled = true;
+            moveToAdjacentInput('next');
+        }, { passive: false });
+        nextBtn.addEventListener('touchend', () => {
+            setTimeout(() => { nextTouchHandled = false; }, 100);
+        });
         nextBtn.addEventListener('click', (e) => {
+            if (nextTouchHandled) return;
             e.preventDefault();
             e.stopPropagation();
             moveToAdjacentInput('next');
@@ -23456,10 +24013,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const alphabet2048Overlay = document.getElementById('alphabet2048Overlay');
     const alphabetDropOverlay = document.getElementById('alphabetDropOverlay');
     
+    // メニュー表示時にBESTスコアを更新する関数
+    function updateMinigameMenuBestScores() {
+        const atozBestEl = document.getElementById('minigameAtoZBest');
+        const atozDropBestEl = document.getElementById('minigameAtoZDropBest');
+        
+        if (atozBestEl) {
+            const atozBest = parseInt(localStorage.getItem('alphabet2048BestScore') || '0', 10);
+            atozBestEl.textContent = atozBest.toLocaleString();
+        }
+        if (atozDropBestEl) {
+            const atozDropBest = parseInt(localStorage.getItem('alphabetDropBestScore') || '0', 10);
+            atozDropBestEl.textContent = atozDropBest.toLocaleString();
+        }
+    }
+    
     // ミニゲームボタン → メニュー表示
     if (minigameBtn && minigameMenuOverlay) {
         minigameBtn.addEventListener('click', () => {
             animateCardExpand(minigameBtn, '#f8fafc', () => {
+                updateMinigameMenuBestScores();
                 minigameMenuOverlay.classList.remove('hidden');
                 setStatusBarColor('#1d4ed8'); // メニューヘッダーは青
             });

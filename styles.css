@@ -1768,14 +1768,14 @@ body.learning-mode .app-header {
 
 .school-card-progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, #0055ca 0%, #0284c7 100%);
+    background: #0055ca;
     border-radius: 0;
     transition: width 0.3s ease;
 }
 
-/* 100%達成時の進捗バー（シンプルな青） */
+/* 100%達成時の進捗バー */
 .school-card-progress-bar.complete {
-    background: #2563eb;
+    background: #0055ca;
     overflow: visible;
 }
 
@@ -1806,11 +1806,12 @@ body.learning-mode .app-header {
 }
 
 .school-complete-text .complete-word {
-    font-size: 16px;
-    font-weight: 900;
+    font-size: 14px;
+    font-weight: 700;
     color: #ffffff;
-    letter-spacing: 0.5px;
-    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 3px;
+    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    text-transform: uppercase;
 }
 
 /* 流れる星のコンテナ */
@@ -3633,10 +3634,10 @@ body.learning-mode .app-header {
     align-items: center;
     justify-content: center;
     font-size: 10px;
-    font-weight: 900;
+    font-weight: 600;
     color: #ffffff;
-    letter-spacing: 0px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 2px;
+    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
     text-transform: uppercase;
     z-index: 10;
     pointer-events: none;
@@ -4746,11 +4747,11 @@ button.category-card:focus-visible {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
-    font-weight: 900;
+    font-size: 14px;
+    font-weight: 600;
     color: #ffffff;
-    letter-spacing: 0.5px;
-    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 3px;
+    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
     text-transform: uppercase;
     z-index: 1;
 }
@@ -4774,11 +4775,11 @@ button.category-card:focus-visible {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
-    font-weight: 900;
+    font-size: 14px;
+    font-weight: 600;
     color: #7c2d12;
-    letter-spacing: 0.5px;
-    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 3px;
+    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
     text-transform: uppercase;
     z-index: 1;
 }
@@ -13910,11 +13911,11 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
-    font-weight: 900;
+    font-size: 14px;
+    font-weight: 600;
     color: #ffffff;
-    letter-spacing: 0.5px;
-    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 3px;
+    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
     text-transform: uppercase;
     opacity: 0;
     transform: scale(0.5);
@@ -13941,11 +13942,11 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    font-weight: 900;
+    font-size: 16px;
+    font-weight: 600;
     color: #7c2d12;
-    letter-spacing: 0.5px;
-    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 3px;
+    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
     text-transform: uppercase;
     opacity: 0;
     transform: scale(0.5);
@@ -17832,7 +17833,107 @@ body .sentence-english {
 }
 
 .study-header.iv-test-header .study-header-left {
-    min-width: 36px;
+    min-width: auto;
+}
+
+/* 不規則変化のランダム・しぼるボタン */
+.iv-header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* テストモードのボタン（説明文の上に配置） */
+.iv-test-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px 0;
+    margin-bottom: 12px;
+}
+
+.iv-shuffle-btn,
+.iv-filter-trigger {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    background: #64748b;
+    border: 1px solid #64748b;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.iv-shuffle-btn:active {
+    opacity: 0.8;
+}
+
+.iv-filter-trigger:active {
+    background: #1e40af;
+    border-color: #1e40af;
+}
+
+.iv-shuffle-btn.active,
+.iv-filter-trigger.active {
+    background: #1e40af;
+    border-color: #1e40af;
+    color: #ffffff;
+}
+
+.iv-shuffle-btn svg,
+.iv-filter-trigger svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.iv-shuffle-btn .btn-label,
+.iv-filter-trigger .btn-label {
+    white-space: nowrap;
+}
+
+.iv-filter-dropdown-wrapper {
+    position: relative;
+}
+
+.iv-filter-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 180px;
+    z-index: 1000;
+    padding: 8px 0;
+}
+
+.iv-filter-dropdown.hidden {
+    display: none;
+}
+
+.iv-filter-active-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 5px;
+    background: #fbbf24;
+    color: #1e293b;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 8px;
+    margin-left: 4px;
+}
+
+.iv-filter-active-badge.hidden {
+    display: none;
 }
 
 .iv-test-close-btn {
@@ -17941,6 +18042,89 @@ body .sentence-english {
     display: flex;
 }
 
+/* 学習モードのランダム・しぼるボタン */
+.iv-study-buttons-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: auto;
+}
+
+.iv-study-shuffle-btn,
+.iv-study-filter-trigger {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    background: #64748b;
+    border: 1px solid #64748b;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.iv-study-shuffle-btn:active,
+.iv-study-filter-trigger:active {
+    transform: scale(0.97);
+}
+
+.iv-study-shuffle-btn.active,
+.iv-study-filter-trigger.active {
+    background: #1e40af;
+    border-color: #1e40af;
+    color: #ffffff;
+}
+
+.iv-study-shuffle-btn svg,
+.iv-study-filter-trigger svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.iv-study-shuffle-btn .btn-label,
+.iv-study-filter-trigger .btn-label {
+    display: inline;
+}
+
+.iv-study-filter-dropdown-wrapper {
+    position: relative;
+}
+
+.iv-study-filter-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 180px;
+    z-index: 1000;
+    padding: 8px 0;
+}
+
+.iv-study-filter-dropdown.hidden {
+    display: none;
+}
+
+.iv-study-filter-active-badge {
+    background: #fbbf24;
+    color: #1e293b;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 8px;
+    margin-left: 4px;
+}
+
+.iv-study-filter-active-badge.hidden {
+    display: none;
+}
 
 .iv-study-table-container {
     flex: 1;
@@ -18016,7 +18200,7 @@ body .sentence-english {
 }
 
 .iv-study-word {
-    color: #1f2937;
+    color: #374151;
     font-weight: 700;
 }
 
@@ -18202,7 +18386,7 @@ body .sentence-english {
     background: #dbeafe;
 }
 
-.irregular-verbs-table tbody tr.iv-row-correct td {
+.irregular-verbs-table tbody tr.iv-row-correct td:not(:has(.iv-input)) {
     background: #dbeafe;
 }
 
@@ -18210,12 +18394,18 @@ body .sentence-english {
     background: #fee2e2;
 }
 
-.irregular-verbs-table tbody tr.iv-row-wrong td {
+.irregular-verbs-table tbody tr.iv-row-wrong td:not(:has(.iv-input)) {
     background: #fee2e2;
 }
 
 .iv-meaning {
     font-weight: 600;
+    color: #374151;
+    font-size: 13px;
+}
+
+.iv-word {
+    font-weight: 700;
     color: #374151;
     font-size: 13px;
 }
@@ -18251,6 +18441,17 @@ body .sentence-english {
 }
 
 .iv-input:disabled {
+    background: #fff;
+}
+
+/* 正解・不正解の行でも入力欄を含むセルは背景色を白に維持 */
+.irregular-verbs-table tbody tr.iv-row-correct td:has(.iv-input),
+.irregular-verbs-table tbody tr.iv-row-wrong td:has(.iv-input) {
+    background: transparent;
+}
+
+.irregular-verbs-table tbody tr.iv-row-correct .iv-input,
+.irregular-verbs-table tbody tr.iv-row-wrong .iv-input {
     background: #fff;
 }
 
@@ -18903,6 +19104,33 @@ div#inputWordCheckbox,
     font-size: 11px;
     color: #64748b;
     line-height: 1.4;
+}
+
+.minigame-menu-card-best {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 4px 10px;
+    background: #f1f5f9;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.minigame-menu-card-best .best-label {
+    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+}
+
+.minigame-menu-card-best .best-value {
+    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #64748b;
+    letter-spacing: -0.5px;
 }
 
 .minigame-menu-card > .minigame-menu-card-arrow {
@@ -19737,8 +19965,6 @@ div#inputWordCheckbox,
     padding: 10px 16px 14px;
     text-align: center;
     flex-shrink: 0;
-    background: #1e293b;
-    border-top: 2px solid #334155;
 }
 
 
