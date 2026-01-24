@@ -563,10 +563,10 @@ body.learning-mode .app-header {
     }
     
     .input-list-scroll {
-        width: calc(100% - 8px) !important;
+        width: calc(100% - 16px) !important;
         max-width: none !important;
         margin-left: 8px !important;
-        margin-right: 0 !important;
+        margin-right: 8px !important;
     }
 }
 
@@ -1554,14 +1554,14 @@ body.learning-mode .app-header {
     background: #0055ca;
 }
 
-/* 私立（赤） */
+/* 私立（シアン） */
 .school-card-icon-private {
-    background: #dc2626;
+    background: #0891b2;
 }
 
-/* 国立（緑） */
+/* 国立（紫） */
 .school-card-icon-national {
-    background: #22c55e;
+    background: #7c3aed;
 }
 
 .school-card-img {
@@ -3013,11 +3013,11 @@ body.learning-mode .app-header {
 }
 
 .school-filter-tab-icon-private {
-    background: #dc2626;
+    background: #0891b2;
 }
 
 .school-filter-tab-icon-national {
-    background: #22c55e;
+    background: #7c3aed;
 }
 
 .school-filter-tab.active .school-filter-tab-icon {
@@ -3191,12 +3191,12 @@ body.learning-mode .app-header {
 }
 
 .school-type-badge-private {
-    background: #dc2626;
+    background: #0891b2;
     color: #ffffff;
 }
 
 .school-type-badge-national {
-    background: #22c55e;
+    background: #7c3aed;
     color: #ffffff;
 }
 
@@ -4469,22 +4469,53 @@ button.category-card:focus-visible {
     display: inline-block;
 }
 
-/* すべてのレベルで背景とスタイルを統一（カード用） */
-.level-badge.level-badge-green,
-.level-badge.level-badge-red,
-.level-badge.level-badge-orange, 
-.level-badge.level-badge-blue,
-.level-badge.level-badge-purple,
-.level-badge.level-badge-dark {
+/* 各レベルごとに異なる色を設定（カード用） */
+.level-badge.level-badge-green {
+    color: #10b981;
+    background: #d1fae5;
+    border: none;
+}
+
+.level-badge.level-badge-red {
+    color: #dc2626;
+    background: #fee2e2;
+    border: none;
+}
+
+.level-badge.level-badge-orange {
+    color: #ea580c;
+    background: #ffedd5;
+    border: none;
+}
+
+.level-badge.level-badge-blue {
     color: #2563eb;
     background: #dbeafe;
     border: none;
 }
 
-/* カテゴリーカード内の個別調整（Level 4, 5 も含めて統一） */
-.category-card[data-category*="LEVEL"] .level-badge {
-    color: #2563eb;
-    background: #dbeafe;
+.level-badge.level-badge-purple {
+    color: #7c3aed;
+    background: #ede9fe;
+    border: none;
+}
+
+.level-badge.level-badge-dark {
+    color: #4338ca;
+    background: #e0e7ff;
+    border: none;
+}
+
+/* カテゴリーカード内の個別調整（Level 4, 5） */
+.category-card[data-category*="LEVEL4"] .level-badge {
+    color: #7c3aed;
+    background: #ede9fe;
+    border: none;
+}
+
+.category-card[data-category*="LEVEL5"] .level-badge {
+    color: #4338ca;
+    background: #e0e7ff;
     border: none;
 }
 
@@ -7306,7 +7337,8 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     flex-direction: column;
     gap: 0;
-    padding: 0 0 12px 8px;
+    padding: 0 0 12px 0;
+    box-sizing: border-box;
 }
 
 /* もっと見るボタン */
@@ -7440,7 +7472,7 @@ body.choice-question-mode-active .word-card-container {
     gap: 0;
     min-height: auto;
     border-top: 1.5px solid #9ca3af;
-    border-left: 1.5px solid #9ca3af;
+    border-left: none;
     border-right: none;
     border-bottom: none;
 }
@@ -8029,7 +8061,7 @@ body.choice-question-mode-active .word-card-container {
     background: #ffffff;
     border: none;
     border-top: 1.5px solid #9ca3af;
-    border-left: 1.5px solid #9ca3af;
+    border-left: none;
     padding: 20px 16px;
     padding-top: 40px;
     padding-bottom: 24px;

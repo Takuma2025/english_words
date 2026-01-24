@@ -4886,9 +4886,9 @@ function showElementaryCategorySelection(skipAnimation = false) {
             <div class="category-info">
                 <div class="category-header">
                     <div class="category-name">
-                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#dbeafe" stroke="none" style="margin-right: 8px;">
+                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#d1fae5" stroke="none" style="margin-right: 8px;">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                            <text x="12" y="13" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
+                            <text x="12" y="13" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
                         </svg>
                         ${subcat}
                     </div>
@@ -5051,8 +5051,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
             '間投詞'
         ];
         levelCategory = 'LEVEL1 超重要単語400';
-        badgeColor = '#2563eb'; // 青
-        badgeBgColor = '#eff6ff'; // 薄い青
+        badgeColor = '#dc2626'; // 赤
+        badgeBgColor = '#fee2e2'; // 薄い赤
     } else if (parentCategory === 'レベル２ 重要500語') {
         subcategories = [
             '名詞',
@@ -5066,8 +5066,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
             '代名詞'
         ];
         levelCategory = 'LEVEL2 重要単語300';
-        badgeColor = '#2563eb'; // 青
-        badgeBgColor = '#eff6ff'; // 薄い青
+        badgeColor = '#ea580c'; // オレンジ
+        badgeBgColor = '#ffedd5'; // 薄いオレンジ
     } else if (parentCategory === 'レベル３ ハイレベル300語') {
         subcategories = [
             '名詞',
@@ -5080,7 +5080,7 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         ];
         levelCategory = 'LEVEL3 差がつく単語200';
         badgeColor = '#2563eb'; // 青
-        badgeBgColor = '#eff6ff'; // 薄い青
+        badgeBgColor = '#dbeafe'; // 薄い青
     }
     
     // サブカテゴリーカードを生成
@@ -5244,9 +5244,9 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
             <div class="category-info">
                 <div class="category-header">
                     <div class="category-name">
-                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="#dbeafe" stroke="none" style="margin-right: 8px;">
+                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="${badgeBgColor}" stroke="none" style="margin-right: 8px;">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                            <text x="12" y="13" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
+                            <text x="12" y="13" text-anchor="middle" fill="${badgeColor}" font-size="11" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${number}</text>
                         </svg>
                         ${subcat}
                     </div>
@@ -6254,6 +6254,9 @@ function showInputModeDirectly(category, words, courseTitle) {
         renderInputListView(words);
     }
     
+    // 赤シートボタンの表示状態を更新（展開モードでは表示）
+    updateRedSheetToggleVisibility();
+    
     // 「すべての単語」モードの場合はデフォルトでコンパクト表示をON（設定で切り替え可能）
     if (category === '大阪府のすべての英単語') {
         const compactModeCheckbox = document.getElementById('settingCompactMode');
@@ -7219,6 +7222,8 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         // ヘッダー更新（インプットモード：×ボタン非表示）
         updateHeaderButtons('learning', '', false);
         renderInputListView(currentWords);
+        // 赤シートボタンの表示状態を更新
+        updateRedSheetToggleVisibility();
     } else {
         // 通常のカードモード（アウトプット）
         if (cardHint) cardHint.classList.remove('hidden');
