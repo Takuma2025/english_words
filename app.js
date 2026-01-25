@@ -843,7 +843,7 @@ function animateProgressToGoal() {
         }
         
         // 1つずつカウントアップ（最大2秒、最小間隔50ms）
-        const interval = Math.max(200, Math.min(150, 4000 / diff));
+        const interval = Math.max(100, Math.min(150, 5000 / diff));
         let currentWords = oldWords;
         const requiredWords = newPct > 0 ? Math.round(newWords / (newPct / 100)) : newWords;
         
@@ -988,14 +988,13 @@ function animateProgressToGoal() {
                 const startX = barRect.right - 10 + (Math.random() - 0.5) * 30;
                 const startY = barRect.top + barRect.height / 2 + (Math.random() - 0.5) * 20;
                 
-                particle.innerHTML = `<svg viewBox="0 0 24 24" width="${size}" height="${size}"><path d="M12 1.5c.4 0 .8.3 1 .7l2.5 5.3 5.7.9c.5.1.9.4 1 .9.1.4 0 .9-.3 1.2l-4.2 4.2 1 5.8c.1.5-.1.9-.5 1.2-.4.2-.8.2-1.2 0L12 18.8l-5 2.9c-.4.2-.8.2-1.2 0-.4-.2-.6-.7-.5-1.2l1-5.8-4.2-4.2c-.4-.3-.5-.8-.3-1.2.1-.5.5-.8 1-.9l5.7-.9 2.5-5.3c.2-.4.6-.7 1-.7z" fill="${color}" stroke="#fff" stroke-width="1"/></svg>`;
+                particle.innerHTML = `<svg viewBox="0 0 24 24" width="${size}" height="${size}"><path d="M12 1.5c.4 0 .8.3 1 .7l2.5 5.3 5.7.9c.5.1.9.4 1 .9.1.4 0 .9-.3 1.2l-4.2 4.2 1 5.8c.1.5-.1.9-.5 1.2-.4.2-.8.2-1.2 0L12 18.8l-5 2.9c-.4.2-.8.2-1.2 0-.4-.2-.6-.7-.5-1.2l1-5.8-4.2-4.2c-.4-.3-.5-.8-.3-1.2.1-.5.5-.8 1-.9l5.7-.9 2.5-5.3c.2-.4.6-.7 1-.7z" fill="${color}" stroke="#ffffff" stroke-width="1.5"/></svg>`;
                 particle.style.cssText = `
                     position: fixed;
                     left: ${startX}px;
                     top: ${startY}px;
                     pointer-events: none;
                     z-index: 10000;
-                    filter: drop-shadow(0 0 3px ${color});
                 `;
                 document.body.appendChild(particle);
                 
