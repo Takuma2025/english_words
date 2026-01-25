@@ -1021,6 +1021,12 @@ body.learning-mode .app-header {
     padding-top: 16px;
 }
 
+#courseSelection .category-list {
+    gap: 12px;
+    background: #0055ca;
+    padding: 12px;
+}
+
 #courseSelection .section-title,
 #courseSelection .course-selection-description {
     color: #ffffff;
@@ -1507,22 +1513,20 @@ body.learning-mode .app-header {
 
 @keyframes glowPulse {
     0% {
-        box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5),
-                    0 0 4px 0px rgba(59, 130, 246, 0.3);
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6),
+                    0 0 4px 0px rgba(255, 255, 255, 0.4);
     }
     40% {
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3),
-                    0 0 12px 4px rgba(59, 130, 246, 0.15);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.4),
+                    0 0 12px 4px rgba(255, 255, 255, 0.2);
     }
     70% {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), 
-                    0 0 0 7px rgba(59, 130, 246, 0.12),
-                    0 0 20px 8px rgba(59, 130, 246, 0.05);
+        box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.15),
+                    0 0 20px 8px rgba(255, 255, 255, 0.08);
     }
     100% {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), 
-                    0 0 0 10px rgba(59, 130, 246, 0),
-                    0 0 28px 12px rgba(59, 130, 246, 0);
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0),
+                    0 0 28px 12px rgba(255, 255, 255, 0);
     }
 }
 
@@ -2461,7 +2465,7 @@ body.learning-mode .app-header {
 .course-tabs {
     display: flex;
     gap: 8px;
-    margin: 20px auto 16px auto;
+    margin: 34px auto 16px auto;
     border-bottom: none;
     padding: 4px;
     max-width: 600px;
@@ -3359,8 +3363,8 @@ body.learning-mode .app-header {
     background: transparent;
     border: none;
     border-radius: 8px;
-    padding: 12px 12px;
-    font-size: 14px;
+    padding: 10px 12px;
+    font-size: 12px;
     font-weight: 700;
     color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
