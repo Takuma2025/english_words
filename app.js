@@ -883,18 +883,14 @@ function animateProgressToGoal() {
         const starColors = ['#f472b6', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa', '#fb923c', '#f87171', '#22d3ee'];
         const randomColor = starColors[Math.floor(Math.random() * starColors.length)];
         
-        // ★のデザイン（カラフルな星＋白い外枠）
-        star.innerHTML = '★';
+        // SVGの★アイコン（丸みのあるかわいい星）
+        star.innerHTML = `<svg viewBox="0 0 24 24" width="${size}" height="${size}" style="filter: drop-shadow(0 0 3px rgba(255,255,255,0.9));"><path d="M12 1.5c.4 0 .8.3 1 .7l2.5 5.3 5.7.9c.5.1.9.4 1 .9.1.4 0 .9-.3 1.2l-4.2 4.2 1 5.8c.1.5-.1.9-.5 1.2-.4.2-.8.2-1.2 0L12 18.8l-5 2.9c-.4.2-.8.2-1.2 0-.4-.2-.6-.7-.5-1.2l1-5.8-4.2-4.2c-.4-.3-.5-.8-.3-1.2.1-.5.5-.8 1-.9l5.7-.9 2.5-5.3c.2-.4.6-.7 1-.7z" fill="${randomColor}" stroke="#ffffff" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
         star.style.cssText = `
             position: fixed;
             width: ${size}px;
             height: ${size}px;
             left: ${sX}px;
             top: ${sY}px;
-            font-size: ${size}px;
-            line-height: 1;
-            color: ${randomColor};
-            -webkit-text-stroke: 1.5px #ffffff;
             text-shadow: none;
             z-index: 10000;
             pointer-events: none;
@@ -8160,6 +8156,7 @@ function setupEventListeners() {
                 selectedQuizDirection = 'eng-to-jpn';
                 isHandwritingMode = false;
                 console.log('[Filter] Quiz direction: 英語→日本語');
+                SoundEffects.playCorrect(); // 選択時に効果音
             }
         });
     }
@@ -8170,12 +8167,33 @@ function setupEventListeners() {
                 selectedQuizDirection = 'jpn-to-eng';
                 isHandwritingMode = true;
                 console.log('[Filter] Quiz direction: 日本語→英語 (手書きモード)');
+                SoundEffects.playCorrect(); // 選択時に効果音
                 
                 // モデルを事前ロード
                 if (window.handwritingRecognition && !window.handwritingRecognition.isModelLoaded) {
                     console.log('[Filter] Pre-loading EMNIST model...');
                     window.handwritingRecognition.loadModel();
                 }
+            }
+        });
+    }
+
+    // 出題順（標準 / ランダム）のラジオボタン
+    const orderSequential = document.getElementById('orderSequential');
+    const orderRandom = document.getElementById('orderRandom');
+
+    if (orderSequential) {
+        orderSequential.addEventListener('change', () => {
+            if (orderSequential.checked) {
+                SoundEffects.playCorrect(); // 選択時に効果音
+            }
+        });
+    }
+
+    if (orderRandom) {
+        orderRandom.addEventListener('change', () => {
+            if (orderRandom.checked) {
+                SoundEffects.playCorrect(); // 選択時に効果音
             }
         });
     }
@@ -13590,7 +13608,28 @@ function showSparkleEffect() {
     document.body.appendChild(container);
     
     // カラフルな色のバリエーション
-    const starColors = ['star-pink', 'star-yellow', 'star-green', 'star-blue', 'star-purple', 'star-orange', 'star-red', 'star-cyan'];
+    const starColors = ['#f472b6', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa', '#fb923c', '#f87171', '#22d3ee'];
+    
+    // SVGの★アイコンを生成する関数（丸みのあるかわいい星）
+    function createStarSVG(color, size) {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('width', size);
+        svg.setAttribute('height', size);
+        svg.style.filter = 'drop-shadow(0 0 2px rgba(255,255,255,0.8))';
+        
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        // 丸みのある星のパス
+        path.setAttribute('d', 'M12 1.5c.4 0 .8.3 1 .7l2.5 5.3 5.7.9c.5.1.9.4 1 .9.1.4 0 .9-.3 1.2l-4.2 4.2 1 5.8c.1.5-.1.9-.5 1.2-.4.2-.8.2-1.2 0L12 18.8l-5 2.9c-.4.2-.8.2-1.2 0-.4-.2-.6-.7-.5-1.2l1-5.8-4.2-4.2c-.4-.3-.5-.8-.3-1.2.1-.5.5-.8 1-.9l5.7-.9 2.5-5.3c.2-.4.6-.7 1-.7z');
+        path.setAttribute('fill', color);
+        path.setAttribute('stroke', '#ffffff');
+        path.setAttribute('stroke-width', '1.2');
+        path.setAttribute('stroke-linejoin', 'round');
+        path.setAttribute('stroke-linecap', 'round');
+        
+        svg.appendChild(path);
+        return svg;
+    }
     
     // 星型キラキラを複数生成
     const sparkleCount = 15;
@@ -13603,15 +13642,17 @@ function showSparkleEffect() {
             // カラフルな星
             const star = document.createElement('div');
             star.className = 'sparkle-star';
-            // ランダムな色を適用
+            
+            // ランダムな色とサイズ
             const randomColor = starColors[Math.floor(Math.random() * starColors.length)];
-            star.classList.add(randomColor);
+            const size = 18 + Math.random() * 24; // 18〜42px
+            
+            // SVGを追加
+            star.appendChild(createStarSVG(randomColor, size));
+            
             star.style.left = x + 'px';
             star.style.top = y + 'px';
             star.style.animationDelay = (Math.random() * 0.2) + 's';
-            // ランダムなサイズ（バラバラに）
-            const size = 0.5 + Math.random() * 1.2;
-            star.style.setProperty('--star-scale', size);
             container.appendChild(star);
         }, i * 30);
     }
@@ -23424,6 +23465,9 @@ const AlphabetDrop = (() => {
     let continueAfterWin = false;
     let isAnimating = false;
     let skipDropAnimation = false; // タップ時は落下アニメーションをスキップ
+    let isPaused = false; // ポーズ状態
+    let countdownInterrupted = false; // カウントダウン中断フラグ
+    let isInCountdown = false; // カウントダウン中フラグ
 
     let elements = null;
     let initialized = false;
@@ -24240,18 +24284,41 @@ const AlphabetDrop = (() => {
     async function showCountdown() {
         if (!elements?.countdownOverlay || !elements?.countdownNumber) return;
         
+        isInCountdown = true;
+        countdownInterrupted = false;
         elements.countdownOverlay.classList.remove('hidden');
         
         for (let i = 3; i >= 1; i--) {
+            // ポーズ中は待機
+            while (isPaused && !countdownInterrupted) {
+                await sleep(100);
+            }
+            if (countdownInterrupted) {
+                isInCountdown = false;
+                return;
+            }
+            
             elements.countdownNumber.textContent = i;
             elements.countdownNumber.style.animation = 'none';
             // リフローを強制してアニメーションをリセット
             void elements.countdownNumber.offsetWidth;
             elements.countdownNumber.style.animation = 'countdownPulse 1s ease-in-out';
-            await sleep(1000);
+            
+            // 1秒待機（ポーズ対応）
+            for (let j = 0; j < 10; j++) {
+                await sleep(100);
+                while (isPaused && !countdownInterrupted) {
+                    await sleep(100);
+                }
+                if (countdownInterrupted) {
+                    isInCountdown = false;
+                    return;
+                }
+            }
         }
         
         elements.countdownOverlay.classList.add('hidden');
+        isInCountdown = false;
     }
     
     async function startGame() {
@@ -24260,6 +24327,8 @@ const AlphabetDrop = (() => {
         hasWon = false;
         continueAfterWin = false;
         isAnimating = false;
+        isPaused = false;
+        countdownInterrupted = false;
         tileIdCounter = 1;
         selectedCol = Math.floor(COLS / 2);
         currentDropLetter = null;
@@ -24344,6 +24413,7 @@ const AlphabetDrop = (() => {
             elements.board.addEventListener('touchend', handleBoardTap, { passive: true });
 
             elements.closeBtn.addEventListener('click', () => {
+                isPaused = true; // ポーズ状態に
                 stopAutoDrop(); // 一時停止
                 // プレビューのアニメーションも停止
                 if (previewElement) {
@@ -24355,11 +24425,17 @@ const AlphabetDrop = (() => {
             });
             elements.exitContinue.addEventListener('click', () => {
                 elements.exitDialog.classList.add('hidden');
-                startAutoDrop(true); // 現在位置から再開
+                isPaused = false; // ポーズ解除
+                if (!isInCountdown) {
+                    startAutoDrop(true); // 現在位置から再開
+                }
             });
             elements.exitQuit.addEventListener('click', () => {
+                isPaused = false;
+                countdownInterrupted = true; // カウントダウンを中断
                 stopAutoDrop();
                 elements.exitDialog.classList.add('hidden');
+                elements.countdownOverlay.classList.add('hidden');
                 elements.overlay.classList.add('hidden');
                 const menu = document.getElementById('minigameMenuOverlay');
                 if (menu) menu.classList.remove('hidden');
