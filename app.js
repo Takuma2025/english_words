@@ -831,29 +831,33 @@ function animateProgressToGoal() {
         }, i * staggerDelay);
     }
     
-    // 進捗の数値をアニメーションで更新
+    // 進捗の数値をアニメーションで更新（1つずつカウントアップ）
     function animateProgressValues(oldWords, newWords, oldPct, newPct, wordEl, barEl, pctEl) {
-        const duration = 600; // ms
-        const startTime = performance.now();
+        const diff = newWords - oldWords;
+        if (diff <= 0) {
+            // 差がなければ即座に更新
+            if (wordEl) wordEl.textContent = newWords;
+            if (barEl) barEl.style.width = `${newPct}%`;
+            if (pctEl) pctEl.textContent = newPct;
+            return;
+        }
         
-        function animate(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // イージング（easeOutCubic）
-            const t = 1 - Math.pow(1 - progress, 3);
-            
-            // 現在の値を計算
-            const currentWords = Math.round(oldWords + (newWords - oldWords) * t);
-            const currentPct = Math.round(oldPct + (newPct - oldPct) * t);
+        // 1つずつカウントアップ（最大2秒、最小間隔50ms）
+        const interval = Math.max(200, Math.min(150, 4000 / diff));
+        let currentWords = oldWords;
+        const requiredWords = newPct > 0 ? Math.round(newWords / (newPct / 100)) : newWords;
+        
+        function countUp() {
+            currentWords++;
+            const currentPct = requiredWords > 0 ? Math.min(100, Math.round((currentWords / requiredWords) * 100)) : newPct;
             
             // DOM更新
             if (wordEl) wordEl.textContent = currentWords;
             if (barEl) barEl.style.width = `${currentPct}%`;
             if (pctEl) pctEl.textContent = currentPct;
             
-            if (progress < 1) {
-                requestAnimationFrame(animate);
+            if (currentWords < newWords) {
+                setTimeout(countUp, interval);
             } else {
                 // アニメーション完了時、100%なら進捗バーをキラキラに
                 if (barEl && newPct >= 100) {
@@ -865,7 +869,9 @@ function animateProgressToGoal() {
                 }
             }
         }
-        requestAnimationFrame(animate);
+        
+        // 少し遅延してからカウントアップ開始
+        setTimeout(countUp, 100);
     }
 
     // カラフルな★（白い外枠）を生成してふわっと飛ばす
@@ -961,15 +967,77 @@ function animateProgressToGoal() {
         requestAnimationFrame(animate);
     }
     
-    // 進捗バーのグロー演出
+    // 進捗バーのグロー演出（キラキラ粒子エフェクト）
     function animateProgressBarGlow(bar, wrapper) {
         if (!bar || !wrapper) return;
         
-        // バーにグロー効果を追加
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const barRect = bar.getBoundingClientRect();
+        
+        // キラキラ粒子を生成
+        const particleCount = 12;
+        const colors = ['#fbbf24', '#f472b6', '#60a5fa', '#34d399', '#a78bfa', '#fb923c'];
+        
+        for (let i = 0; i < particleCount; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                const size = 6 + Math.random() * 8;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // バーの端（進捗位置）付近からスタート
+                const startX = barRect.right - 10 + (Math.random() - 0.5) * 30;
+                const startY = barRect.top + barRect.height / 2 + (Math.random() - 0.5) * 20;
+                
+                particle.innerHTML = `<svg viewBox="0 0 24 24" width="${size}" height="${size}"><path d="M12 1.5c.4 0 .8.3 1 .7l2.5 5.3 5.7.9c.5.1.9.4 1 .9.1.4 0 .9-.3 1.2l-4.2 4.2 1 5.8c.1.5-.1.9-.5 1.2-.4.2-.8.2-1.2 0L12 18.8l-5 2.9c-.4.2-.8.2-1.2 0-.4-.2-.6-.7-.5-1.2l1-5.8-4.2-4.2c-.4-.3-.5-.8-.3-1.2.1-.5.5-.8 1-.9l5.7-.9 2.5-5.3c.2-.4.6-.7 1-.7z" fill="${color}" stroke="#fff" stroke-width="1"/></svg>`;
+                particle.style.cssText = `
+                    position: fixed;
+                    left: ${startX}px;
+                    top: ${startY}px;
+                    pointer-events: none;
+                    z-index: 10000;
+                    filter: drop-shadow(0 0 3px ${color});
+                `;
+                document.body.appendChild(particle);
+                
+                // アニメーション
+                const angle = (Math.random() - 0.5) * Math.PI;
+                const distance = 40 + Math.random() * 60;
+                const duration = 600 + Math.random() * 400;
+                const startTime = performance.now();
+                
+                function animateParticle(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // イージング
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    
+                    const x = startX + Math.cos(angle) * distance * easeOut;
+                    const y = startY + Math.sin(angle) * distance * easeOut - progress * 30;
+                    const scale = 1 - progress * 0.5;
+                    const opacity = 1 - progress;
+                    const rotation = progress * 360;
+                    
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    particle.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
+                    particle.style.opacity = opacity;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animateParticle);
+                    } else {
+                        particle.remove();
+                    }
+                }
+                requestAnimationFrame(animateParticle);
+            }, i * 50);
+        }
+        
+        // バーに青い光のグロー効果
         bar.style.transition = 'box-shadow 0.3s ease-out';
         bar.style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3)';
         
-        // ラッパーに微細な発光
+        // ラッパーにも微細な発光
         wrapper.style.transition = 'box-shadow 0.3s ease-out';
         wrapper.style.boxShadow = '0 0 15px rgba(59, 130, 246, 0.4)';
         
