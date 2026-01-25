@@ -7473,7 +7473,7 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     gap: 0;
     min-height: auto;
-    border-top: 1.5px solid #9ca3af;
+    border-top: 1.5px solid #e5e5e5;
     border-left: none;
     border-right: none;
     border-bottom: none;
@@ -7484,11 +7484,11 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:first-child {
-    border-top: 1.5px solid #9ca3af;
+    border-top: 1.5px solid #e5e5e5;
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:last-child {
-    border-bottom: 1.5px solid #9ca3af;
+    border-bottom: 1.5px solid #e5e5e5;
 }
 
 /* 連結ボックス（番号+チェック）を一列で表示 */
@@ -8062,7 +8062,7 @@ body.choice-question-mode-active .word-card-container {
     position: relative;
     background: #ffffff;
     border: none;
-    border-top: 1.5px solid #9ca3af;
+    border-top: 1.5px solid #e5e5e5;
     border-left: none;
     padding: 20px 16px;
     padding-top: 40px;
@@ -8071,11 +8071,11 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-item-expand:first-child {
-    border-top: 1.5px solid #9ca3af;
+    border-top: 1.5px solid #e5e5e5;
 }
 
 .input-list-item-expand:last-child {
-    border-bottom: 1.5px solid #9ca3af;
+    border-bottom: 1.5px solid #e5e5e5;
 }
 
 .input-list-item-expand.marker-correct {
@@ -20191,6 +20191,12 @@ div#inputWordCheckbox,
     background: #ebebeb;
 }
 
+.quiz-pass-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+}
+
 .quiz-badge {
     position: absolute;
     top: -5px;
@@ -20353,7 +20359,7 @@ div#inputWordCheckbox,
     }
     
     .quiz-english-word {
-        font-size: 36px;
+        font-size: 32px;
     }
     
     .quiz-choice-btn {

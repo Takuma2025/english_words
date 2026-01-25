@@ -13079,6 +13079,12 @@ function updateQuizModeUI(word) {
         }
     }
     
+    // PASSボタンを有効に戻す
+    const quizPassBtn = document.getElementById('quizPassBtn');
+    if (quizPassBtn) {
+        quizPassBtn.disabled = false;
+    }
+    
     // 4択選択肢を非表示
     if (quizChoices) {
         quizChoices.classList.add('hidden');
@@ -13169,6 +13175,7 @@ function handleQuizChoiceClick(event) {
     const quizChoices = document.getElementById('quizChoices');
     const allButtons = quizChoices.querySelectorAll('.quiz-choice-btn');
     const overlay = elements.cardFeedbackOverlay;
+    const quizPassBtn = document.getElementById('quizPassBtn');
     
     if (btn.classList.contains('disabled')) return;
     
@@ -13176,6 +13183,11 @@ function handleQuizChoiceClick(event) {
     
     // すべてのボタンを無効化
     allButtons.forEach(b => b.classList.add('disabled'));
+    
+    // PASSボタンも無効化
+    if (quizPassBtn) {
+        quizPassBtn.disabled = true;
+    }
     
     // オーバーレイを即座に表示（画面全体）
     if (overlay) {
@@ -13301,9 +13313,15 @@ function handleQuizPass() {
     const quizChoices = document.getElementById('quizChoices');
     const allButtons = quizChoices ? quizChoices.querySelectorAll('.quiz-choice-btn') : [];
     const overlay = elements.cardFeedbackOverlay;
+    const quizPassBtn = document.getElementById('quizPassBtn');
     
     // すべてのボタンを無効化
     allButtons.forEach(b => b.classList.add('disabled'));
+    
+    // PASSボタンも無効化
+    if (quizPassBtn) {
+        quizPassBtn.disabled = true;
+    }
     
     // 正解を表示
     allButtons.forEach(b => {
