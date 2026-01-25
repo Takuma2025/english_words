@@ -808,7 +808,8 @@ function animateProgressToGoal() {
                         animateProgressValues(
                             oldLearnedWords, newLearnedWords,
                             oldPercent, newPercent,
-                            schoolProgressCurrentEl, schoolProgressBarEl, schoolProgressPercentEl
+                            schoolProgressCurrentEl, schoolProgressBarEl, schoolProgressPercentEl,
+                            requiredWords
                         );
                         
                         // +○語のフローティングテキストを表示
@@ -832,7 +833,7 @@ function animateProgressToGoal() {
     }
     
     // 進捗の数値をアニメーションで更新（1つずつカウントアップ）
-    function animateProgressValues(oldWords, newWords, oldPct, newPct, wordEl, barEl, pctEl) {
+    function animateProgressValues(oldWords, newWords, oldPct, newPct, wordEl, barEl, pctEl, actualRequiredWords) {
         const diff = newWords - oldWords;
         if (diff <= 0) {
             // 差がなければ即座に更新
@@ -845,7 +846,8 @@ function animateProgressToGoal() {
         // 1つずつカウントアップ（最大2秒、最小間隔50ms）
         const interval = Math.max(70, Math.min(150, 3000 / diff));
         let currentWords = oldWords;
-        const requiredWords = newPct > 0 ? Math.round(newWords / (newPct / 100)) : newWords;
+        // 正確な必須語数を使用（渡されていない場合はフォールバック）
+        const requiredWords = actualRequiredWords > 0 ? actualRequiredWords : (newPct > 0 ? Math.round(newWords / (newPct / 100)) : newWords);
         
         function countUp() {
             currentWords++;

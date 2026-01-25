@@ -1026,7 +1026,8 @@ body.learning-mode .app-header {
 }
 
 #courseSelection {
-    background: linear-gradient(to bottom, #0055ca 0%, #2563eb 100px, #60a5fa 200px, #93c5fd 320px, #bfdbfe 450px, #ffffff 600px);
+    background: linear-gradient(to bottom, #0055ca 56px, #2563eb 156px, #60a5fa 256px, #93c5fd 376px, #bfdbfe 506px, #ffffff 656px);
+    background-attachment: fixed;
     min-height: 100vh;
     margin-top: -16px;
     padding-top: 16px;
