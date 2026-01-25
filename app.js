@@ -5006,7 +5006,7 @@ function showElementaryCategorySelection(skipAnimation = false) {
     // 一番下に大阪の画像を追加
     const osakaFooterImg = document.createElement('div');
     osakaFooterImg.className = 'osaka-footer-container';
-    osakaFooterImg.innerHTML = `<img src="osaka_5_nashi_b.png" alt="大阪" class="osaka-footer-img">`;
+    osakaFooterImg.innerHTML = `<img src="osaka.png" alt="大阪" class="osaka-footer-img">`;
     courseList.appendChild(osakaFooterImg);
     
     // ヘッダーの戻るボタンを表示
@@ -5364,7 +5364,7 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     // 一番下に大阪の画像を追加
     const osakaFooterImg = document.createElement('div');
     osakaFooterImg.className = 'osaka-footer-container';
-    osakaFooterImg.innerHTML = `<img src="osaka_5_nashi_b.png" alt="大阪" class="osaka-footer-img">`;
+    osakaFooterImg.innerHTML = `<img src="osaka.png" alt="大阪" class="osaka-footer-img">`;
     courseList.appendChild(osakaFooterImg);
     
     // ヘッダーの戻るボタンを表示

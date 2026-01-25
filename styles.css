@@ -520,20 +520,9 @@ body.learning-mode .app-header {
     max-width: none !important;
     margin: 0;
     box-sizing: border-box;
-    background: linear-gradient(to bottom, #0055ca 0%, #2563eb 100px, #60a5fa 200px, #93c5fd 320px, #bfdbfe 450px, #ffffff 600px);
+    background: #0055ca;
 }
 
-/* 青背景の上のテキストに白い外縁を追加 */
-.study-calendar-title,
-.heatmap-weekday,
-.heatmap-weekday-label,
-.calendar-weekday-label,
-.legend-label,
-.heatmap-legend-label,
-.course-tab {
-    -webkit-text-stroke: 2px #fff;
-    paint-order: stroke fill;
-}
 
 /* スマホ向け：フルスクリーン表示 */
 @media (max-width: 600px) {
@@ -888,7 +877,7 @@ body.learning-mode .app-header {
 }
 
 .legend-label {
-    color: #6b7280;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 10px;
 }
 
@@ -1026,8 +1015,7 @@ body.learning-mode .app-header {
 }
 
 #courseSelection {
-    background: linear-gradient(to bottom, #0055ca 56px, #2563eb 156px, #60a5fa 256px, #93c5fd 376px, #bfdbfe 506px, #ffffff 656px);
-    background-attachment: fixed;
+    background: transparent;
     min-height: 100vh;
     margin-top: -16px;
     padding-top: 16px;
@@ -1139,7 +1127,7 @@ body.learning-mode .app-header {
 .category-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0;
     margin: 0 auto; /* 中央寄せ */
     max-width: 600px; /* 志望校コンテナと同じ最大幅 */
     width: calc(100% - 16px); /* 志望校コンテナと同じ横幅計算 */
@@ -1151,7 +1139,7 @@ body.learning-mode .app-header {
 .course-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 0;
     border: none;
 }
 
@@ -1162,10 +1150,16 @@ body.learning-mode .app-header {
     align-items: center;
     justify-content: center;
     text-align: center;
-    border: none;
+    border-right: 2px solid #0055ca;
+    border-bottom: 2px solid #0055ca;
     border-radius: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     -webkit-tap-highlight-color: transparent;
+}
+
+.course-section > .category-card:nth-child(2n),
+.course-section > .bottom-menu-row > .category-card:nth-child(2n) {
+    border-right: none;
 }
 
 .course-section .category-card .category-info {
@@ -1500,7 +1494,7 @@ body.learning-mode .app-header {
     background: #ffffff;
     border-radius: 12px;
     border: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     cursor: pointer;
     transition: box-shadow 0.2s ease, transform 0.1s ease;
     position: relative;
@@ -2466,13 +2460,15 @@ body.learning-mode .app-header {
 
 .course-tabs {
     display: flex;
-    gap: 0;
+    gap: 8px;
     margin: 20px auto 16px auto;
     border-bottom: none;
-    padding: 0;
+    padding: 4px;
     max-width: 600px;
     width: calc(100% - 16px);
     position: relative;
+    background: rgba(0, 40, 100, 0.4);
+    border-radius: 12px;
 }
 
 .course-tabs.score-active {
@@ -2527,7 +2523,7 @@ body.learning-mode .app-header {
 .study-calendar-title {
     font-size: 11px;
     font-weight: 600;
-    color: #3b82f6;
+    color: #ffffff;
     margin: 0;
     text-align: center;
 }
@@ -2544,6 +2540,11 @@ body.learning-mode .app-header {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: rgba(0, 40, 100, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 14px 16px;
 }
 
 .study-calendar-wrapper {
@@ -2556,18 +2557,22 @@ body.learning-mode .app-header {
 .study-stats-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    justify-content: center;
+    gap: 12px;
+    justify-content: stretch;
 }
 
 .study-stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 8px 14px;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 8px;
-    min-width: 90px;
+    justify-content: center;
+    padding: 12px 18px;
+    background: rgba(0, 40, 100, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 16px;
+    min-width: 95px;
+    flex: 1;
 }
 
 .study-stat-item.study-time {
@@ -2586,7 +2591,7 @@ body.learning-mode .app-header {
 
 .study-stat-title {
     font-size: 11px;
-    color: #3b82f6;
+    color: rgba(255, 255, 255, 0.9);
     font-weight: 600;
 }
 
@@ -2612,7 +2617,7 @@ body.learning-mode .app-header {
 
 .study-stat-sub {
     font-size: 9px;
-    color: #475569;
+    color: rgba(255, 255, 255, 0.7);
     margin-top: 1px;
     font-weight: 500;
 }
@@ -2621,7 +2626,7 @@ body.learning-mode .app-header {
     font-family: 'Oswald', sans-serif;
     font-size: 11px;
     font-weight: 500;
-    color: #0055ca;
+    color: #ffffff;
 }
 
 .study-time-display {
@@ -2644,13 +2649,14 @@ body.learning-mode .app-header {
     font-family: 'Oswald', sans-serif;
     font-size: 32px;
     font-weight: 500;
-    color: #1d4ed8;
+    color: #ffffff;
     letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .time-label {
     font-size: 11px;
-    color: #64748b;
+    color: rgba(255, 255, 255, 0.8);
     font-weight: 600;
     margin-right: 4px;
     white-space: nowrap;
@@ -2670,7 +2676,9 @@ body.learning-mode .app-header {
     align-items: center;
     gap: 5px;
     cursor: pointer;
-    background: #eff6ff;
+    background: rgba(0, 40, 100, 0.5);
+    border-radius: 8px;
+    padding: 4px 10px;
     border: none;
     border-radius: 6px;
     padding: 6px 12px;
@@ -2680,14 +2688,14 @@ body.learning-mode .app-header {
 .calendar-yearmonth-label {
     font-family: 'Oswald', sans-serif;
     font-size: 12px;
-    color: #374151;
+    color: rgba(255, 255, 255, 0.9);
     font-weight: 500;
     white-space: nowrap;
 }
 
 .calendar-dropdown-arrow {
     font-size: 8px;
-    color: #6b7280;
+    color: rgba(255, 255, 255, 0.7);
     margin-left: 2px;
 }
 
@@ -2720,7 +2728,7 @@ body.learning-mode .app-header {
 .calendar-weekday-label {
     font-family: 'Meiryo', 'メイリオ', sans-serif;
     font-size: 10px;
-    color: #3b82f6;
+    color: rgba(255, 255, 255, 0.8);
     font-weight: 600;
     text-align: center;
     padding-bottom: 4px;
@@ -2739,23 +2747,23 @@ body.learning-mode .app-header {
 }
 
 .calendar-cell.level-0 {
-    background: #e8f4fc;
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .calendar-cell.level-1 {
-    background: #c5dff8;
+    background: rgba(255, 255, 255, 0.35);
 }
 
 .calendar-cell.level-2 {
-    background: #93c5fd;
+    background: rgba(255, 255, 255, 0.55);
 }
 
 .calendar-cell.level-3 {
-    background: #60a5fa;
+    background: rgba(255, 255, 255, 0.75);
 }
 
 .calendar-cell.level-4 {
-    background: #3b82f6;
+    background: rgba(255, 255, 255, 0.95);
 }
 
 
@@ -2785,7 +2793,7 @@ body.learning-mode .app-header {
 .legend-label {
     font-family: 'Meiryo', 'メイリオ', sans-serif;
     font-size: 9px;
-    color: #64748b;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .legend-cells {
@@ -2800,23 +2808,23 @@ body.learning-mode .app-header {
 }
 
 .legend-cell.level-0 {
-    background: #e8f4fc;
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .legend-cell.level-1 {
-    background: #c5dff8;
+    background: rgba(255, 255, 255, 0.35);
 }
 
 .legend-cell.level-2 {
-    background: #93c5fd;
+    background: rgba(255, 255, 255, 0.55);
 }
 
 .legend-cell.level-3 {
-    background: #60a5fa;
+    background: rgba(255, 255, 255, 0.75);
 }
 
 .legend-cell.level-4 {
-    background: #3b82f6;
+    background: rgba(255, 255, 255, 0.95);
 }
 
 /* =============================================
@@ -3350,53 +3358,33 @@ body.learning-mode .app-header {
     flex: 1;
     background: transparent;
     border: none;
-    border-radius: 0;
-    padding: 14px 12px;
+    border-radius: 8px;
+    padding: 12px 12px;
     font-size: 14px;
     font-weight: 700;
-    color: #64748b;
+    color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
     position: relative;
 }
 
 .course-tab::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: transparent;
-    transition: background-color 0.2s ease;
+    display: none;
 }
 
 .course-tab.active {
-    background: transparent;
+    background: #ffffff;
     color: #1e40af;
-}
-
-.course-tab.active::after {
-    background: #1e40af;
-    box-shadow: 0 0 0 2px #fff;
 }
 
 .course-tab[data-target="courseMasterSection"].active {
+    background: #ffffff;
     color: #1e40af;
 }
 
-.course-tab[data-target="courseMasterSection"].active::after {
-    background: #1e40af;
-    box-shadow: 0 0 0 1px #fff;
-}
-
 .course-tab[data-target="courseScoreSection"].active {
+    background: #ffffff;
     color: #dc2626;
-}
-
-.course-tab[data-target="courseScoreSection"].active::after {
-    background: #dc2626;
-    box-shadow: 0 0 0 1px #fff;
 }
 
 .course-tab:active {
@@ -3511,7 +3499,7 @@ body.learning-mode .app-header {
     -webkit-tap-highlight-color: transparent;
     position: relative;
     margin-bottom: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     align-items: stretch;
 }
 
@@ -3536,7 +3524,7 @@ body.learning-mode .app-header {
 }
 
 .category-accordion-item:active {
-    transform: scale(0.99);
+    transform: scale(0.97);
     background: #ffffff;
 }
 
@@ -3702,8 +3690,21 @@ body.learning-mode .app-header {
     text-align: center;
     border: none;
     border-radius: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     gap: 8px;
+    background: transparent;
+}
+
+/* 左のカード（Level5、単語一覧）は右ボーダーあり */
+#level5CardBtn,
+#allWordsCardBtn {
+    border-right: 2px solid #0055ca;
+}
+
+/* 上のカード（Level5、不規則変化）は下ボーダーあり */
+#level5CardBtn,
+#irregularVerbsCardBtn {
+    border-bottom: 2px solid #0055ca;
 }
 
 .bottom-menu-card .category-info {
@@ -3950,7 +3951,7 @@ button.category-card:focus-visible {
     padding: 0;
     overflow: hidden;
     border-radius: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     border: none;
     margin-bottom: 8px;
 }
@@ -3958,6 +3959,7 @@ button.category-card:focus-visible {
 
 .category-card.category-card-with-actions:active:not(:has(.course-side-btn:active)) {
     background: #ffffff;
+    transform: scale(0.97);
 }
 
 .category-card.category-card-with-actions:focus,
@@ -3995,7 +3997,7 @@ button.category-card:focus-visible {
 
 .course-side-btn:active {
     filter: brightness(0.85);
-    transform: scale(0.92);
+    transform: scale(0.90);
 }
 
 .course-side-btn.input-btn {
@@ -18892,7 +18894,7 @@ body .sentence-english {
     aspect-ratio: 1;
     border: none;
     border-radius: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     gap: 8px;
 }
 
