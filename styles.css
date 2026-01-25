@@ -1127,14 +1127,13 @@ body.learning-mode .app-header {
 .category-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0;
     margin: 0 auto; /* 中央寄せ */
     max-width: 600px; /* 志望校コンテナと同じ最大幅 */
     width: calc(100% - 16px); /* 志望校コンテナと同じ横幅計算 */
     box-sizing: border-box;
-    background: #0055ca;
-    padding: 12px;
-    border-radius: 0;
+    background: transparent;
+    padding: 0;
 }
 
 .course-section {
