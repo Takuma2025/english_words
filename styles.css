@@ -2468,7 +2468,7 @@ body.learning-mode .app-header {
     display: flex;
     gap: 0;
     margin: 20px auto 16px auto;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: none;
     padding: 0;
     max-width: 600px;
     width: calc(100% - 16px);
@@ -2476,7 +2476,7 @@ body.learning-mode .app-header {
 }
 
 .course-tabs.score-active {
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: none;
 }
 
 .school-trigger-row {
@@ -3378,6 +3378,7 @@ body.learning-mode .app-header {
 
 .course-tab.active::after {
     background: #1e40af;
+    box-shadow: 0 0 0 2px #fff;
 }
 
 .course-tab[data-target="courseMasterSection"].active {
@@ -3386,6 +3387,7 @@ body.learning-mode .app-header {
 
 .course-tab[data-target="courseMasterSection"].active::after {
     background: #1e40af;
+    box-shadow: 0 0 0 1px #fff;
 }
 
 .course-tab[data-target="courseScoreSection"].active {
@@ -3394,6 +3396,7 @@ body.learning-mode .app-header {
 
 .course-tab[data-target="courseScoreSection"].active::after {
     background: #dc2626;
+    box-shadow: 0 0 0 1px #fff;
 }
 
 .course-tab:active {
