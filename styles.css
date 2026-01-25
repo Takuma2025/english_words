@@ -20100,7 +20100,7 @@ div#inputWordCheckbox,
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     flex: 1;
 }
 
@@ -20353,7 +20353,7 @@ div#inputWordCheckbox,
     }
     
     .quiz-english-word {
-        font-size: 28px;
+        font-size: 36px;
     }
     
     .quiz-choice-btn {

@@ -13661,11 +13661,13 @@ function markAnswer(isCorrect, isTimeout = false) {
     // 学習カレンダーに記録
     recordStudyActivity(1);
     
-    // 効果音を再生（正解/不正解）
-    if (isCorrect) {
-        SoundEffects.playCorrect();
-    } else {
-        SoundEffects.playWrong();
+    // 効果音を再生（正解/不正解）- 4択モードでは既に鳴らしているのでスキップ
+    if (!quizFeedbackShown) {
+        if (isCorrect) {
+            SoundEffects.playCorrect();
+        } else {
+            SoundEffects.playWrong();
+        }
     }
 
     const word = currentWords[currentIndex];
