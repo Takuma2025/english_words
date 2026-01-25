@@ -1032,20 +1032,21 @@ function animateProgressToGoal() {
             }, i * 50);
         }
         
-        // バーに青い光のグロー効果
-        bar.style.transition = 'box-shadow 0.3s ease-out';
-        bar.style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3)';
+        // バーとラッパー（グレー部分）の色が少し変わる効果
+        const originalBarBg = getComputedStyle(bar).backgroundColor;
+        const originalWrapperBg = getComputedStyle(wrapper).backgroundColor;
         
-        // ラッパーにも微細な発光
-        wrapper.style.transition = 'box-shadow 0.3s ease-out';
-        wrapper.style.boxShadow = '0 0 15px rgba(59, 130, 246, 0.4)';
+        bar.style.transition = 'background-color 0.3s ease-out';
+        bar.style.backgroundColor = '#60a5fa'; // 少し明るい青
+        wrapper.style.transition = 'background-color 0.3s ease-out';
+        wrapper.style.backgroundColor = '#d1d5db'; // 少し明るいグレー
         
         // 0.8秒後にリセット
         setTimeout(() => {
-            bar.style.transition = 'box-shadow 0.5s ease-out';
-            bar.style.boxShadow = '';
-            wrapper.style.transition = 'box-shadow 0.5s ease-out';
-            wrapper.style.boxShadow = '';
+            bar.style.transition = 'background-color 0.5s ease-out';
+            bar.style.backgroundColor = '';
+            wrapper.style.transition = 'background-color 0.5s ease-out';
+            wrapper.style.backgroundColor = '';
         }, 800);
     }
     

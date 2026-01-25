@@ -20298,6 +20298,7 @@ div#inputWordCheckbox,
     text-align: left;
     cursor: pointer;
     transition: all 0.15s ease;
+    box-sizing: border-box;
 }
 
 .quiz-choice-btn:hover {
@@ -20328,6 +20329,7 @@ div#inputWordCheckbox,
 .quiz-choice-btn.correct {
     background: #dbeafe;
     border-color: #3b82f6;
+    box-shadow: 0 0 0 1.5px #3b82f6;
 }
 
 .quiz-choice-btn.correct .quiz-choice-num {
@@ -20342,6 +20344,7 @@ div#inputWordCheckbox,
 .quiz-choice-btn.wrong {
     background: #fee2e2;
     border-color: #ef4444;
+    box-shadow: 0 0 0 1.5px #ef4444;
 }
 
 .quiz-choice-btn.wrong .quiz-choice-num {
