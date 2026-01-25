@@ -13146,18 +13146,31 @@ function displayCurrentWord() {
 let quizChoicesRevealed = false;
 let quizStreakCount = 0; // 連続正解カウント
 
-// 連続正解表示を更新
+// 連続正解表示を更新（英語→日本語モードと日本語→英語モード両方）
 function updateQuizStreakDisplay() {
+    // 英語→日本語モード用
     const streakDisplay = document.getElementById('quizStreakDisplay');
     const streakNumber = document.getElementById('quizStreakNumber');
     
-    if (!streakDisplay || !streakNumber) return;
+    // 日本語→英語モード用
+    const hwStreakDisplay = document.getElementById('hwQuizStreakDisplay');
+    const hwStreakNumber = document.getElementById('hwQuizStreakNumber');
     
     if (quizStreakCount >= 2) {
-        streakNumber.textContent = quizStreakCount;
-        streakDisplay.classList.remove('hidden');
+        // 英語→日本語モード
+        if (streakDisplay && streakNumber) {
+            streakNumber.textContent = quizStreakCount;
+            streakDisplay.classList.remove('hidden');
+        }
+        // 日本語→英語モード
+        if (hwStreakDisplay && hwStreakNumber) {
+            hwStreakNumber.textContent = quizStreakCount;
+            hwStreakDisplay.classList.remove('hidden');
+        }
     } else {
-        streakDisplay.classList.add('hidden');
+        // 非表示にする
+        if (streakDisplay) streakDisplay.classList.add('hidden');
+        if (hwStreakDisplay) hwStreakDisplay.classList.add('hidden');
     }
 }
 
@@ -18379,6 +18392,10 @@ async function startHandwritingQuiz(category, words, courseTitle) {
     const mainEl = hwQuizView.querySelector('.hw-main');
     if (mainEl) {
         mainEl.innerHTML = `
+            <!-- 連続正解表示 -->
+            <div class="quiz-streak-display hidden" id="hwQuizStreakDisplay">
+                <span class="quiz-streak-number" id="hwQuizStreakNumber">0</span>連続正解中!!
+            </div>
             <!-- 問題（シンプル表示） -->
             <div class="hw-question-simple">
                 <span class="pos-inline part-of-speech" id="hwQuizPos"></span>
@@ -19650,6 +19667,9 @@ function displayHWQuizQuestion() {
         meaningEl.textContent = word.meaning;
     }
     
+    // 連続正解表示を更新
+    updateQuizStreakDisplay();
+    
     // チェックボックスの状態を更新
     updateHWQuizCheckbox();
     
@@ -19752,8 +19772,12 @@ function submitHWQuizAnswer() {
     hwQuizResults[hwQuizIndex] = isCorrect ? 'correct' : 'wrong';
     if (isCorrect) {
         hwQuizCorrectCount++;
+        // 連続正解カウントを増やす
+        quizStreakCount++;
     } else {
         hwQuizWrongCount++;
+        // 連続正解カウントをリセット
+        quizStreakCount = 0;
     }
     
     // 進捗セグメントと統計を更新
@@ -20060,6 +20084,9 @@ function handleHWQuizPass() {
     hwQuizWrongCount++;
     hwQuizAnswerSubmitted = true;
     
+    // 連続正解カウントをリセット
+    quizStreakCount = 0;
+    
     // 進捗セグメントと統計を更新
     updateHWQuizProgressSegments();
     updateHWQuizStats();
@@ -20156,6 +20183,10 @@ function restartHWQuiz() {
     const main = document.querySelector('.hw-main');
     if (main) {
         main.innerHTML = `
+            <!-- 連続正解表示 -->
+            <div class="quiz-streak-display hidden" id="hwQuizStreakDisplay">
+                <span class="quiz-streak-number" id="hwQuizStreakNumber">0</span>連続正解中!!
+            </div>
             <!-- 問題（シンプル表示） -->
             <div class="hw-question-simple">
                 <span class="pos-inline part-of-speech" id="hwQuizPos"></span>

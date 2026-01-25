@@ -520,7 +520,22 @@ body.learning-mode .app-header {
     max-width: none !important;
     margin: 0;
     box-sizing: border-box;
-    background-color: #ffffff;
+    background: linear-gradient(to bottom, #0055ca 0%, #2563eb 100px, #60a5fa 200px, #93c5fd 320px, #bfdbfe 450px, #ffffff 600px);
+}
+
+/* 青背景の上のテキストに白い外縁を追加 */
+.study-calendar-title,
+.heatmap-weekday,
+.heatmap-weekday-label,
+.calendar-weekday-label,
+.legend-label,
+.heatmap-legend-label,
+.course-tab {
+    text-shadow: 
+        -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px 1px 0 #fff,
+        1px 1px 0 #fff;
 }
 
 /* スマホ向け：フルスクリーン表示 */
@@ -1011,6 +1026,13 @@ body.learning-mode .app-header {
     color: #1f2937;
     margin-bottom: 16px;
     padding-left: 4px;
+}
+
+#courseSelection {
+    background: #ffffff;
+    min-height: 100vh;
+    margin-top: -16px;
+    padding-top: 16px;
 }
 
 #courseSelectionTitle {
@@ -6497,6 +6519,8 @@ body.choice-question-mode-active .word-card-container {
     background: #ffffff;
     border: 1.5px solid #d1d5db;
     color: #6b7280;
+    height: 34px;
+    box-sizing: border-box;
 }
 
 .input-flip-all-btn:hover {
