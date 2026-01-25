@@ -843,7 +843,7 @@ function animateProgressToGoal() {
         }
         
         // 1つずつカウントアップ（最大2秒、最小間隔50ms）
-        const interval = Math.max(100, Math.min(150, 5000 / diff));
+        const interval = Math.max(70, Math.min(150, 3000 / diff));
         let currentWords = oldWords;
         const requiredWords = newPct > 0 ? Math.round(newWords / (newPct / 100)) : newWords;
         
@@ -6505,6 +6505,9 @@ function showLearningSubcategoryMenu(category) {
 
 // 学習メニューから学習を開始
 function startLearningFromMenu(category, subcategory) {
+    // 連続正解カウントをリセット
+    quizStreakCount = 0;
+    
     // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
     // 既に学習セッション中の場合は上書きしない（複数メニュー学習時の累計カウント用）
     if (!lastLearningCategory) {
@@ -10706,6 +10709,10 @@ function renderInputListViewPaginated(words) {
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
+        // フリップモード時はヘッダーをコンテナ内に移動してスクロールに追随させる
+        if (inputListHeader && !container.contains(inputListHeader)) {
+            container.appendChild(inputListHeader);
+        }
     }
     
     if (!Array.isArray(words) || words.length === 0) {
@@ -10900,6 +10907,10 @@ function renderInputListViewAsync(words) {
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
+        // フリップモード時はヘッダーをコンテナ内に移動してスクロールに追随させる
+        if (inputListHeader && !container.contains(inputListHeader)) {
+            container.appendChild(inputListHeader);
+        }
     }
     
     if (!Array.isArray(words) || words.length === 0) {
@@ -11345,6 +11356,10 @@ function renderInputListView(words) {
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
+        // フリップモード時はヘッダーをコンテナ内に移動してスクロールに追随させる
+        if (inputListHeader && !container.contains(inputListHeader)) {
+            container.appendChild(inputListHeader);
+        }
     }
     
     if (!Array.isArray(words) || words.length === 0) {
@@ -13129,6 +13144,22 @@ function displayCurrentWord() {
 // =====================================================
 
 let quizChoicesRevealed = false;
+let quizStreakCount = 0; // 連続正解カウント
+
+// 連続正解表示を更新
+function updateQuizStreakDisplay() {
+    const streakDisplay = document.getElementById('quizStreakDisplay');
+    const streakNumber = document.getElementById('quizStreakNumber');
+    
+    if (!streakDisplay || !streakNumber) return;
+    
+    if (quizStreakCount >= 2) {
+        streakNumber.textContent = quizStreakCount;
+        streakDisplay.classList.remove('hidden');
+    } else {
+        streakDisplay.classList.add('hidden');
+    }
+}
 
 // 4択クイズUIを更新
 function updateQuizModeUI(word) {
@@ -13145,6 +13176,9 @@ function updateQuizModeUI(word) {
     
     // 英単語を表示
     quizEnglishWord.textContent = word.word;
+    
+    // 連続正解表示を更新
+    updateQuizStreakDisplay();
     
     // タップヒントを表示
     if (quizTapHint) {
@@ -13294,9 +13328,15 @@ function handleQuizChoiceClick(event) {
         
         // ★エフェクトを表示
         showSparkleEffect();
+        
+        // 連続正解カウントを増やす
+        quizStreakCount++;
     } else {
         btn.classList.add('wrong');
         SoundEffects.playWrong();
+        
+        // 連続正解カウントをリセット
+        quizStreakCount = 0;
         
         // 正解も表示
         allButtons.forEach(b => {
@@ -20042,7 +20082,7 @@ function handleHWQuizPass() {
 }
 
 /**
- * 次の問題へ
+ * 次の問題へ（フェードアニメーション付き）
  */
 function goToNextHWQuizQuestion() {
     hwQuizIndex++;
@@ -20050,6 +20090,33 @@ function goToNextHWQuizQuestion() {
     if (hwQuizIndex >= hwQuizWords.length) {
         // クイズ完了
         showHWQuizCompletion();
+        return;
+    }
+    
+    // 手書きクイズビュー全体を取得
+    const hwQuizView = document.getElementById('handwritingQuizView');
+    const hwMain = hwQuizView ? hwQuizView.querySelector('.hw-main') : null;
+    
+    if (hwMain) {
+        // フェードアウト
+        hwMain.style.transition = 'opacity 0.25s ease-out';
+        hwMain.style.opacity = '0';
+        
+        // フェードアウト完了後に内容を更新してフェードイン
+        setTimeout(() => {
+            displayHWQuizQuestion();
+            
+            // フェードイン
+            requestAnimationFrame(() => {
+                hwMain.style.transition = 'opacity 0.25s ease-in';
+                hwMain.style.opacity = '1';
+                
+                // トランジション終了後にスタイルをクリア
+                setTimeout(() => {
+                    hwMain.style.transition = '';
+                }, 250);
+            });
+        }, 250);
     } else {
         displayHWQuizQuestion();
     }

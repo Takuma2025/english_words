@@ -799,7 +799,7 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                                         </svg>
-                                        <span class="btn-label">しぼる</span>
+                                        <span class="btn-label">フィルター</span>
                                         <span class="filter-active-badge hidden" id="filterActiveBadge"></span>
                                     </button>
                                     <div class="input-filter-dropdown hidden" id="inputFilterDropdown">
@@ -921,12 +921,15 @@
                         <div class="quiz-mode" id="quizMode">
                             <!-- 英単語表示エリア -->
                             <div class="quiz-word-area">
+                                <div class="quiz-streak-display hidden" id="quizStreakDisplay">
+                                    <span class="quiz-streak-number" id="quizStreakNumber">0</span>連続正解中!!
+                                </div>
                                 <div class="quiz-english-word" id="quizEnglishWord">Loading...</div>
                             </div>
                             
                             <!-- タップヒント / 4択選択肢 -->
                             <div class="quiz-bottom-area">
-                                <div class="quiz-tap-hint" id="quizTapHint">タップして4択を表示</div>
+                                <div class="quiz-tap-hint" id="quizTapHint">意味がわかったら<br>タップして4択を表示</div>
                                 
                                 <!-- アクションボタン（チェック & PASS） -->
                                 <div class="quiz-actions hidden" id="quizActions">
@@ -1758,7 +1761,7 @@
                             <div class="radio-option-content">
                                 <span class="radio-option-mode-name">4択モード</span>
                                 <span class="radio-option-label">英語<span class="arrow-small">→</span><span class="lang-highlight">日本語</span></span>
-                                <span class="radio-option-description">英単語を見て4択から意味を選ぶ</span>
+                                <span class="radio-option-description">4択から意味を選ぶ</span>
                             </div>
                         </label>
                         <label class="learning-mode-radio">
@@ -2264,7 +2267,7 @@
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                             </svg>
-                            <span class="btn-label">しぼる</span>
+                            <span class="btn-label">フィルター</span>
                             <span class="iv-study-filter-active-badge hidden" id="ivStudyFilterActiveBadge"></span>
                         </button>
                         <div class="iv-study-filter-dropdown hidden" id="ivStudyFilterDropdown">
@@ -2382,7 +2385,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                         </svg>
-                        <span class="btn-label">しぼる</span>
+                        <span class="btn-label">フィルター</span>
                         <span class="iv-filter-active-badge hidden" id="ivFilterActiveBadge"></span>
                     </button>
                     <div class="iv-filter-dropdown hidden" id="ivFilterDropdown">

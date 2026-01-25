@@ -6492,14 +6492,29 @@ body.choice-question-mode-active .word-card-container {
     display: inline;
 }
 
-.input-shuffle-btn:hover,
+/* ひっくり返すボタン独自スタイル */
+.input-flip-all-btn {
+    background: #ffffff;
+    border: 1.5px solid #d1d5db;
+    color: #6b7280;
+}
+
 .input-flip-all-btn:hover {
+    background: #ffffff;
+    border-color: #9ca3af;
+}
+
+.input-flip-all-btn:active {
+    background: #ffffff;
+    border-color: #6b7280;
+}
+
+.input-shuffle-btn:hover {
     background: #475569;
     border-color: #475569;
 }
 
-.input-shuffle-btn:active,
-.input-flip-all-btn:active {
+.input-shuffle-btn:active {
     transform: scale(0.97);
 }
 
@@ -6556,7 +6571,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* フリップモード時のコンテナスタイル */
 #inputListContainer.flip-mode {
-    padding: 0;
+    padding: 12px 0 0 0;
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
@@ -20122,6 +20137,33 @@ div#inputWordCheckbox,
     flex: 0.8;
 }
 
+/* 連続正解表示 */
+.quiz-streak-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #f59e0b;
+    margin-bottom: 8px;
+    animation: streak-pulse 1s ease-in-out infinite;
+}
+
+.quiz-streak-display.hidden {
+    display: none;
+}
+
+.quiz-streak-number {
+    font-size: 18px;
+    color: #f59e0b;
+}
+
+@keyframes streak-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
 .quiz-english-word {
     font-size: 42px;
     font-weight: 700;
@@ -20135,7 +20177,7 @@ div#inputWordCheckbox,
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     flex: 1;
 }
 
@@ -20144,6 +20186,7 @@ div#inputWordCheckbox,
     font-size: 14px;
     color: #9ca3af;
     text-align: center;
+    line-height: 1.6;
 }
 
 .quiz-tap-hint.hidden {
@@ -20210,20 +20253,20 @@ div#inputWordCheckbox,
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #f5f5f5;
+    background: #fef3c7;
     border: none;
     border-radius: 20px;
     padding: 8px 20px;
     font-size: 13px;
     font-weight: 600;
-    color: #737373;
+    color: #b45309;
     cursor: pointer;
     transition: all 0.15s ease;
 }
 
 .quiz-pass-btn:active {
     transform: scale(0.97);
-    background: #ebebeb;
+    background: #fde68a;
 }
 
 .quiz-pass-btn:disabled {
