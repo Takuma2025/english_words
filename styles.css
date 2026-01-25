@@ -1127,13 +1127,14 @@ body.learning-mode .app-header {
 .category-list {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 12px;
     margin: 0 auto; /* 中央寄せ */
     max-width: 600px; /* 志望校コンテナと同じ最大幅 */
     width: calc(100% - 16px); /* 志望校コンテナと同じ横幅計算 */
     box-sizing: border-box;
-    background: transparent;
-    padding: 0; /* 余白はmarginで管理 */
+    background: #0055ca;
+    padding: 12px;
+    border-radius: 0;
 }
 
 .course-section {
@@ -3373,18 +3374,18 @@ body.learning-mode .app-header {
 }
 
 .course-tab.active {
-    background: #ffffff;
-    color: #1e40af;
+    background: #2563eb;
+    color: #ffffff;
 }
 
 .course-tab[data-target="courseMasterSection"].active {
-    background: #ffffff;
-    color: #1e40af;
+    background: #2563eb;
+    color: #ffffff;
 }
 
 .course-tab[data-target="courseScoreSection"].active {
-    background: #ffffff;
-    color: #dc2626;
+    background: #dc2626;
+    color: #ffffff;
 }
 
 .course-tab:active {
@@ -3478,12 +3479,14 @@ body.learning-mode .app-header {
 }
 
 .category-accordion-container {
-    background: transparent;
+    background: #0055ca;
     border: none;
     overflow: visible;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 0;
 }
 
 .category-accordion-item {
@@ -3501,6 +3504,7 @@ body.learning-mode .app-header {
     margin-bottom: 0;
     box-shadow: none;
     align-items: stretch;
+    transition: transform 0.1s ease;
 }
 
 .category-accordion-item:first-child {
@@ -3524,7 +3528,7 @@ body.learning-mode .app-header {
 }
 
 .category-accordion-item:active {
-    transform: scale(0.97);
+    transform: scale(0.95);
     background: #ffffff;
 }
 
@@ -3953,7 +3957,8 @@ button.category-card:focus-visible {
     border-radius: 0;
     box-shadow: none;
     border: none;
-    margin-bottom: 8px;
+    margin-bottom: 0;
+    transition: transform 0.1s ease;
 }
 
 
@@ -3980,6 +3985,7 @@ button.category-card:focus-visible {
     flex-direction: column;
     flex-shrink: 0;
     width: 70px;
+    background: #0055ca;
 }
 
 .course-side-btn {
@@ -3997,7 +4003,7 @@ button.category-card:focus-visible {
 
 .course-side-btn:active {
     filter: brightness(0.85);
-    transform: scale(0.90);
+    transform: scale(0.85);
 }
 
 .course-side-btn.input-btn {
@@ -15354,13 +15360,20 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 
     .category-card:active,
     .category-accordion-header:active,
-    .category-accordion-item:active,
-    .category-accordion-item-green:active,
-    .category-accordion-item-purple:active,
-    .category-card.category-card-with-actions:active,
     button.category-card:active {
         background-color: #ffffff !important;
-        transform: none !important;
+    }
+    
+    .category-accordion-item:active,
+    .category-accordion-item-green:active,
+    .category-accordion-item-purple:active {
+        background-color: #ffffff !important;
+        transform: scale(0.95) !important;
+    }
+    
+    .category-card.category-card-with-actions:active {
+        background-color: #ffffff !important;
+        transform: scale(0.97) !important;
     }
 }
 
