@@ -1026,10 +1026,15 @@ body.learning-mode .app-header {
 }
 
 #courseSelection {
-    background: #ffffff;
+    background: linear-gradient(to bottom, #0055ca 0%, #2563eb 100px, #60a5fa 200px, #93c5fd 320px, #bfdbfe 450px, #ffffff 600px);
     min-height: 100vh;
     margin-top: -16px;
     padding-top: 16px;
+}
+
+#courseSelection .section-title,
+#courseSelection .course-selection-description {
+    color: #ffffff;
 }
 
 #courseSelectionTitle {
@@ -1492,7 +1497,7 @@ body.learning-mode .app-header {
     width: 100%;
     padding: 14px 16px;
     background: #ffffff;
-    border-radius: 0;
+    border-radius: 12px;
     border: none;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;
@@ -2559,7 +2564,7 @@ body.learning-mode .app-header {
     flex-direction: column;
     align-items: center;
     padding: 8px 14px;
-    background: #eff6ff;
+    background: rgba(255, 255, 255, 0.7);
     border-radius: 8px;
     min-width: 90px;
 }
@@ -2606,7 +2611,7 @@ body.learning-mode .app-header {
 
 .study-stat-sub {
     font-size: 9px;
-    color: #93c5fd;
+    color: #475569;
     margin-top: 1px;
     font-weight: 500;
 }
@@ -3348,7 +3353,7 @@ body.learning-mode .app-header {
     padding: 14px 12px;
     font-size: 14px;
     font-weight: 700;
-    color: #94a3b8;
+    color: #64748b;
     cursor: pointer;
     transition: color 0.2s ease;
     position: relative;
@@ -18081,7 +18086,7 @@ body .sentence-english {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #ffffff;
+    background: linear-gradient(to bottom, #0055ca 0%, #2563eb 100px, #60a5fa 200px, #93c5fd 320px, #bfdbfe 450px, #ffffff 600px);
     z-index: 100;
     display: flex;
     flex-direction: column;
@@ -18104,7 +18109,7 @@ body .sentence-english {
 .iv-menu-section-title {
     font-size: 13px;
     font-weight: 700;
-    color: #6b7280;
+    color: #ffffff;
     margin: 0 0 10px 0;
     padding-left: 4px;
 }
