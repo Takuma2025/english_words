@@ -14651,13 +14651,19 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     border: 2px solid transparent;
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.1s ease;
     gap: 6px;
     position: relative;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .order-radio:hover {
     background: rgba(255, 255, 255, 0.6);
+}
+
+.order-radio:active {
+    transform: scale(0.97);
+    background: #eff6ff;
 }
 
 .order-radio:has(input:checked) {
@@ -15341,13 +15347,19 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     border: 2px solid transparent;
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.1s ease;
     gap: 6px;
     position: relative;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .learning-mode-radio:hover {
     background: rgba(255, 255, 255, 0.6);
+}
+
+.learning-mode-radio:active {
+    transform: scale(0.97);
+    background: #eff6ff;
 }
 
 .learning-mode-radio:has(input[type="radio"]:checked) {
@@ -15441,7 +15453,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     border-radius: 12px;
     flex-shrink: 0;
     margin-bottom: 4px;
-    transition: background 0.15s ease;
+    transition: background 0.08s ease;
 }
 
 .learning-mode-radio:has(input[type="radio"]:checked) .mode-icon-wrapper {
@@ -16190,6 +16202,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     flex-direction: column;
     background: transparent;
     padding: 16px;
+    padding-top: 60px;
     padding-bottom: 280px; /* 下部固定エリアのためのスペース */
     gap: 12px;
     overflow-y: auto;
@@ -16309,9 +16322,31 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     color: #ffffff;
 }
 
+/* 問題（シンプル表示） */
+.hw-question-simple {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-bottom: 40px;
+}
+
 /* hw-question-simple内のpos-inlineスタイル調整 */
 .hw-question-simple .pos-inline {
-    /* 統一サイズを継承 */
+    height: 1.6em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    font-size: 0.6em;
+    line-height: 1;
+    margin: 0;
+    border-radius: 4px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-weight: 600;
 }
 
 .hw-question-simple .pos-inline:empty {
@@ -16323,6 +16358,8 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     font-weight: 700;
     color: #1a202c;
     text-align: center;
+    line-height: 1.6;
+    margin: 0;
 }
 
 /* 旧スタイル（互換性用） */
@@ -16363,6 +16400,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     font-weight: 700;
     color: #1a202c;
     text-align: center;
+    margin-bottom: 24px;
 }
 
 /* 回答欄 */
@@ -17099,6 +17137,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 
     .hw-main {
         padding: 14px 12px;
+        padding-top: 50px;
         padding-bottom: 260px;
         gap: 10px;
     }
@@ -17216,6 +17255,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     
     .hw-main {
         padding: 12px 10px;
+        padding-top: 40px;
         padding-bottom: 250px;
         gap: 8px;
     }
@@ -17306,6 +17346,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     
     .hw-main {
         padding: 10px 8px;
+        padding-top: 30px;
         padding-bottom: 240px;
         gap: 6px;
     }
@@ -20084,7 +20125,7 @@ div#inputWordCheckbox,
     align-items: center;
     justify-content: center;
     width: 100%;
-    flex: 1;
+    flex: 0.8;
 }
 
 .quiz-english-word {
@@ -20257,8 +20298,8 @@ div#inputWordCheckbox,
     width: 100%;
     background: #ffffff;
     border: 1.5px solid #e5e5e5;
-    border-radius: 14px;
-    padding: 18px 18px;
+    border-radius: 9999px;
+    padding: 18px 24px;
     min-height: 60px;
     text-align: left;
     cursor: pointer;
