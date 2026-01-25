@@ -868,7 +868,7 @@ function animateProgressToGoal() {
         requestAnimationFrame(animate);
     }
 
-    // 白い★（シアンの光）を生成してふわっと飛ばす
+    // カラフルな★（白い外枠）を生成してふわっと飛ばす
     function createFloatingStar(sourceRect, targetElement, onComplete) {
         const star = document.createElement('div');
         const size = 22 + Math.random() * 16; // 22〜38px
@@ -879,9 +879,12 @@ function animateProgressToGoal() {
         // ターゲット位置のランダムオフセットを固定（アニメーション開始時に決定）
         const targetOffsetRatio = Math.random(); // 0〜1の範囲でターゲットバー内の位置を決定
         
-        // ★のデザイン（白い星＋シアンの光）- ランダムで形を選択
-        const starShapes = ['★', '✦'];
-        star.innerHTML = starShapes[Math.floor(Math.random() * starShapes.length)];
+        // カラフルな色のバリエーション
+        const starColors = ['#f472b6', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa', '#fb923c', '#f87171', '#22d3ee'];
+        const randomColor = starColors[Math.floor(Math.random() * starColors.length)];
+        
+        // ★のデザイン（カラフルな星＋白い外枠）
+        star.innerHTML = '★';
         star.style.cssText = `
             position: fixed;
             width: ${size}px;
@@ -890,12 +893,9 @@ function animateProgressToGoal() {
             top: ${sY}px;
             font-size: ${size}px;
             line-height: 1;
-            color: #ffffff;
-            text-shadow: 
-                0 0 4px #22d3ee,
-                0 0 8px #22d3ee,
-                0 0 12px #67e8f9,
-                0 0 20px #67e8f9;
+            color: ${randomColor};
+            -webkit-text-stroke: 1.5px #ffffff;
+            text-shadow: none;
             z-index: 10000;
             pointer-events: none;
             opacity: 0;
@@ -3714,6 +3714,7 @@ function init() {
         loadData();
         initExamCountdown();
         setupEventListeners();
+        initQuizModeListeners(); // 4択クイズモードのイベントリスナー
         initSchoolSelector();
         setupVolumeControl();
         initSpeechSynthesis(); // 音声合成を事前に初期化
@@ -13032,6 +13033,360 @@ function displayCurrentWord() {
             speakWord(word.word, null);
         }, 300);
     }
+    
+    // 4択クイズUIを更新
+    updateQuizModeUI(word);
+}
+
+// =====================================================
+// 4択クイズモード関連
+// =====================================================
+
+let quizChoicesRevealed = false;
+
+// 4択クイズUIを更新
+function updateQuizModeUI(word) {
+    const quizEnglishWord = document.getElementById('quizEnglishWord');
+    const quizTapHint = document.getElementById('quizTapHint');
+    const quizChoices = document.getElementById('quizChoices');
+    const quizActions = document.getElementById('quizActions');
+    const quizCheckBtn = document.getElementById('quizCheckBtn');
+    
+    if (!quizEnglishWord || !quizChoices) return;
+    
+    // 状態をリセット
+    quizChoicesRevealed = false;
+    
+    // 英単語を表示
+    quizEnglishWord.textContent = word.word;
+    
+    // タップヒントを表示
+    if (quizTapHint) {
+        quizTapHint.classList.remove('hidden');
+    }
+    
+    // アクションボタンを非表示
+    if (quizActions) {
+        quizActions.classList.add('hidden');
+    }
+    
+    // チェック状態を更新
+    if (quizCheckBtn) {
+        if (reviewWords.has(word.id)) {
+            quizCheckBtn.classList.add('active');
+        } else {
+            quizCheckBtn.classList.remove('active');
+        }
+    }
+    
+    // 4択選択肢を非表示
+    if (quizChoices) {
+        quizChoices.classList.add('hidden');
+        quizChoices.classList.remove('fade-in');
+    }
+    
+    // 4択の選択肢を準備
+    prepareQuizChoices(word);
+}
+
+// 4択の選択肢を準備
+function prepareQuizChoices(correctWord) {
+    const quizChoices = document.getElementById('quizChoices');
+    if (!quizChoices) return;
+    
+    const choices = [];
+    const correctMeaning = correctWord.meaning;
+    
+    // 正解を追加
+    choices.push({
+        meaning: correctMeaning,
+        isCorrect: true
+    });
+    
+    // 他の単語からダミー選択肢を3つ選ぶ
+    const otherWords = currentWords.filter(w => w.id !== correctWord.id && w.meaning !== correctMeaning);
+    const shuffled = [...otherWords].sort(() => Math.random() - 0.5);
+    
+    for (let i = 0; i < 3 && i < shuffled.length; i++) {
+        choices.push({
+            meaning: shuffled[i].meaning,
+            isCorrect: false
+        });
+    }
+    
+    // 選択肢をシャッフル
+    choices.sort(() => Math.random() - 0.5);
+    
+    // ボタンに設定
+    const choiceButtons = quizChoices.querySelectorAll('.quiz-choice-btn');
+    choiceButtons.forEach((btn, index) => {
+        const textEl = btn.querySelector('.quiz-choice-text');
+        if (textEl && choices[index]) {
+            textEl.textContent = choices[index].meaning;
+            btn.dataset.isCorrect = choices[index].isCorrect ? 'true' : 'false';
+        }
+        // 状態をリセット
+        btn.classList.remove('correct', 'wrong', 'disabled');
+        btn.disabled = false;
+    });
+}
+
+// タップで4択を表示
+function revealQuizChoices() {
+    if (quizChoicesRevealed) return;
+    quizChoicesRevealed = true;
+    
+    const quizTapHint = document.getElementById('quizTapHint');
+    const quizChoices = document.getElementById('quizChoices');
+    const quizActions = document.getElementById('quizActions');
+    
+    // タップヒントを非表示
+    if (quizTapHint) {
+        quizTapHint.classList.add('hidden');
+    }
+    
+    // アクションボタンを表示
+    if (quizActions) {
+        quizActions.classList.remove('hidden');
+    }
+    
+    // 4択を表示
+    if (quizChoices) {
+        quizChoices.classList.remove('hidden');
+        quizChoices.classList.add('fade-in');
+    }
+}
+
+// 4択モードでフィードバック表示済みフラグ
+let quizFeedbackShown = false;
+// 4択モードで回答済みフラグ
+let quizAnswered = false;
+let quizLastAnswerCorrect = false;
+
+// 選択肢クリック時の処理
+function handleQuizChoiceClick(event) {
+    const btn = event.currentTarget;
+    const quizChoices = document.getElementById('quizChoices');
+    const allButtons = quizChoices.querySelectorAll('.quiz-choice-btn');
+    const overlay = elements.cardFeedbackOverlay;
+    
+    if (btn.classList.contains('disabled')) return;
+    
+    const isCorrect = btn.dataset.isCorrect === 'true';
+    
+    // すべてのボタンを無効化
+    allButtons.forEach(b => b.classList.add('disabled'));
+    
+    // オーバーレイを即座に表示（画面全体）
+    if (overlay) {
+        overlay.classList.remove('correct', 'wrong');
+        overlay.classList.add('active', isCorrect ? 'correct' : 'wrong');
+    }
+    
+    // markAnswerでの重複表示を防ぐフラグ
+    quizFeedbackShown = true;
+    
+    // 回答済みフラグを設定
+    quizAnswered = true;
+    quizLastAnswerCorrect = isCorrect;
+    
+    if (isCorrect) {
+        btn.classList.add('correct');
+        SoundEffects.playCorrect();
+        
+        // ★エフェクトを表示
+        showSparkleEffect();
+    } else {
+        btn.classList.add('wrong');
+        SoundEffects.playWrong();
+        
+        // 正解も表示
+        allButtons.forEach(b => {
+            if (b.dataset.isCorrect === 'true') {
+                b.classList.add('correct');
+            }
+        });
+    }
+    
+    // オーバーレイを消す（600ms後）
+    setTimeout(() => {
+        if (overlay) overlay.classList.remove('active', 'correct', 'wrong');
+    }, 600);
+}
+
+// 次の問題へ進む処理（タップで呼ばれる）
+function proceedToNextQuizWord() {
+    if (!quizAnswered) return;
+    
+    const overlay = elements.cardFeedbackOverlay;
+    
+    // オーバーレイを消す
+    if (overlay) overlay.classList.remove('active', 'correct', 'wrong');
+    
+    // 正解/不正解を記録（4択モードではカードアニメーションはスキップされる）
+    markAnswer(quizLastAnswerCorrect);
+    
+    // フラグをリセット
+    quizFeedbackShown = false;
+    quizAnswered = false;
+    
+    // currentIndexをインクリメント（markAnswerでスキップされたため）
+    currentIndex++;
+    
+    // 次の問題へ
+    goToNextQuizWord();
+}
+
+// 次の問題へ（markAnswerでcurrentIndex++済みなのでここでは増やさない）
+function goToNextQuizWord() {
+    // 最後の問題だった場合は完了画面へ
+    if (currentIndex >= currentRangeEnd) {
+        showCompletion();
+        return;
+    }
+    
+    // フラグをリセット
+    quizAnswered = false;
+    quizChoicesRevealed = false;
+    quizFeedbackShown = false;
+    
+    // 4択モードの要素を取得
+    const quizMode = document.getElementById('quizMode');
+    if (!quizMode) {
+        displayCurrentWord();
+        return;
+    }
+    
+    // フェードアウト
+    quizMode.style.transition = 'opacity 0.25s ease-out';
+    quizMode.style.opacity = '0';
+    
+    // フェードアウト完了後に内容を更新してフェードイン
+    setTimeout(() => {
+        displayCurrentWord();
+        
+        // フェードイン
+        requestAnimationFrame(() => {
+            quizMode.style.transition = 'opacity 0.25s ease-in';
+            quizMode.style.opacity = '1';
+            
+            // トランジション完了後にスタイルをクリア
+            setTimeout(() => {
+                quizMode.style.transition = '';
+            }, 250);
+        });
+    }, 250);
+}
+
+// チェック切り替え
+function handleQuizCheck() {
+    const word = currentWords[currentIndex];
+    if (!word) return;
+    
+    const quizCheckBtn = document.getElementById('quizCheckBtn');
+    
+    if (reviewWords.has(word.id)) {
+        reviewWords.delete(word.id);
+        if (quizCheckBtn) quizCheckBtn.classList.remove('active');
+    } else {
+        reviewWords.add(word.id);
+        if (quizCheckBtn) quizCheckBtn.classList.add('active');
+    }
+    
+    saveReviewWords();
+}
+
+// PASSボタン（間違い扱い）
+function handleQuizPass() {
+    const quizChoices = document.getElementById('quizChoices');
+    const allButtons = quizChoices ? quizChoices.querySelectorAll('.quiz-choice-btn') : [];
+    const overlay = elements.cardFeedbackOverlay;
+    
+    // すべてのボタンを無効化
+    allButtons.forEach(b => b.classList.add('disabled'));
+    
+    // 正解を表示
+    allButtons.forEach(b => {
+        if (b.dataset.isCorrect === 'true') {
+            b.classList.add('correct');
+        }
+    });
+    
+    // 間違いとしてオーバーレイを表示
+    if (overlay) {
+        overlay.classList.remove('correct', 'wrong', 'mastered');
+        overlay.classList.add('active', 'wrong');
+    }
+    
+    // markAnswerでの重複表示を防ぐフラグ
+    quizFeedbackShown = true;
+    
+    // 回答済みフラグを設定
+    quizAnswered = true;
+    quizLastAnswerCorrect = false;
+    
+    SoundEffects.playWrong();
+    
+    // オーバーレイを消す（600ms後）
+    setTimeout(() => {
+        if (overlay) overlay.classList.remove('active', 'correct', 'wrong');
+    }, 600);
+}
+
+// 4択イベントリスナーの初期化
+let quizModeListenersInitialized = false;
+function initQuizModeListeners() {
+    if (quizModeListenersInitialized) return;
+    quizModeListenersInitialized = true;
+    
+    const quizMode = document.getElementById('quizMode');
+    const quizChoices = document.getElementById('quizChoices');
+    const quizPassBtn = document.getElementById('quizPassBtn');
+    const quizCheckBtn = document.getElementById('quizCheckBtn');
+    
+    // どこをタップしても4択表示 or 次の問題へ
+    if (quizMode) {
+        quizMode.addEventListener('click', (e) => {
+            // 選択肢ボタンやアクションボタンをクリックした場合は除外
+            if (e.target.closest('.quiz-choice-btn') || e.target.closest('.quiz-pass-btn') || e.target.closest('.quiz-check-btn')) return;
+            
+            // 回答済みの場合は次の問題へ
+            if (quizAnswered) {
+                proceedToNextQuizWord();
+                return;
+            }
+            
+            // 未回答の場合は4択を表示
+            revealQuizChoices();
+        });
+    }
+    
+    // 選択肢ボタン
+    if (quizChoices) {
+        const choiceButtons = quizChoices.querySelectorAll('.quiz-choice-btn');
+        choiceButtons.forEach(btn => {
+            btn.addEventListener('click', handleQuizChoiceClick);
+        });
+    }
+    
+    // PASSボタン
+    if (quizPassBtn) {
+        quizPassBtn.addEventListener('click', handleQuizPass);
+    }
+    
+    // チェックボタン
+    if (quizCheckBtn) {
+        quizCheckBtn.addEventListener('click', handleQuizCheck);
+    }
+}
+
+// DOMContentLoadedで初期化（既にロード済みの場合も対応）
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        initQuizModeListeners();
+    });
+} else {
+    initQuizModeListeners();
 }
 
 // ナビゲーションボタンの状態更新
@@ -13200,13 +13555,13 @@ function showAnswerMark(isCorrect) {
     overlay.className = `answer-flash-overlay ${isCorrect ? 'correct' : 'wrong'}`;
     document.body.appendChild(overlay);
     
-    // フェードアウト後に削除
+    // フェードアウト後に削除（600ms後）
     setTimeout(() => {
         overlay.classList.add('fade-out');
         setTimeout(() => {
             overlay.remove();
         }, 300);
-    }, 200);
+    }, 600);
 }
 
 // キラキラエフェクトを表示
@@ -13216,6 +13571,9 @@ function showSparkleEffect() {
     container.className = 'sparkle-container';
     document.body.appendChild(container);
     
+    // カラフルな色のバリエーション
+    const starColors = ['star-pink', 'star-yellow', 'star-green', 'star-blue', 'star-purple', 'star-orange', 'star-red', 'star-cyan'];
+    
     // 星型キラキラを複数生成
     const sparkleCount = 15;
     for (let i = 0; i < sparkleCount; i++) {
@@ -13224,13 +13582,12 @@ function showSparkleEffect() {
             const x = Math.random() * window.innerWidth;
             const y = Math.random() * window.innerHeight;
             
-            // 星型キラキラ（白い星＋シアンの光）
+            // カラフルな星
             const star = document.createElement('div');
             star.className = 'sparkle-star';
-            // ランダムで★か✦を選択
-            if (Math.random() > 0.5) {
-                star.classList.add('star-5');
-            }
+            // ランダムな色を適用
+            const randomColor = starColors[Math.floor(Math.random() * starColors.length)];
+            star.classList.add(randomColor);
             star.style.left = x + 'px';
             star.style.top = y + 'px';
             star.style.animationDelay = (Math.random() * 0.2) + 's';
@@ -13395,17 +13752,25 @@ function markAnswer(isCorrect, isTimeout = false) {
     updateProgressSegments(); // 進捗バーのセグメントを更新
     updateVocabProgressBar(); // 英単語進捗バーを更新
 
-    // ○/×マークを表示
-    showAnswerMark(isCorrect);
-    
-    // 正解時にキラキラエフェクトを表示
-    if (isCorrect) {
-        showSparkleEffect();
+    // 4択モードで既に表示済みの場合はスキップ
+    if (!quizFeedbackShown) {
+        // ○/×マークを表示
+        showAnswerMark(isCorrect);
+        
+        // 正解時にキラキラエフェクトを表示
+        if (isCorrect) {
+            showSparkleEffect();
+        }
     }
 
     // 入力モードの場合はカードアニメーションをスキップ
     if (isInputModeActive) {
         // 入力モードでは自動で進まない（ユーザーが次へボタンを押すまで待つ）
+        return;
+    }
+    
+    // 4択モードの場合はカードアニメーションをスキップ（別途処理される）
+    if (quizFeedbackShown) {
         return;
     }
 

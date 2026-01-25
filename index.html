@@ -916,75 +916,82 @@
                         </div>
                     </div>
                     
-                    <!-- 通常のカード学習モード -->
+                    <!-- 4択クイズモード -->
                     <div class="word-card-container" id="wordCardContainer">
-                        <!-- カードスタック（残り枚数表示用） -->
-                        <div class="card-stack card-stack-1" id="cardStack1"></div>
-                        <div class="card-stack card-stack-2" id="cardStack2"></div>
-                        <div class="card-stack card-stack-3" id="cardStack3"></div>
-                        <div class="card-stack card-stack-4" id="cardStack4"></div>
-                        <div class="card-stack card-stack-5" id="cardStack5"></div>
-                        
-                        <!-- メインカード -->
-                        <div class="word-card" id="wordCard">
-                        <!-- 単語あたりの時間プログレスバー（タイムアタックモード時のみ） -->
-                        <div class="word-timer-bar hidden" id="wordTimerBar">
-                            <span class="word-timer-countdown" id="wordTimerCountdown">2.0秒</span>
-                            <div class="word-timer-bar-fill" id="wordTimerBarFill"></div>
-                        </div>
-                        <div class="card-inner" id="cardInner">
-                            <!-- ブックマークボタン（リボン型、右上に配置、カードと一緒に回転） -->
-                            <button class="star-btn card-star-btn" id="starBtn">
-                                <svg width="28" height="38" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="0" aria-hidden="true" focusable="false">
-                                    <path d="M4 0h16v32l-8-6-8 6V0z" fill="currentColor"/>
-                                </svg>
-                            </button>
-                            <div class="card-face card-front">
-                                <!-- No. -->
-                                <div class="word-number" id="wordNumber">No.1</div>
-                                <div class="word-checkbox" id="wordCheckbox"></div>
-                                <div class="word-display">
-                                    <div class="word-appearance-count card-appearance-left" id="wordAppearanceCount" style="display: none;">
-                                        <span class="appearance-label">入試頻出度</span><span class="appearance-value"> ★</span>
-                                    </div>
-                                    <div class="english-word-wrapper">
-                                        <span class="pos-inline part-of-speech" id="posInlineFront"></span>
-                                        <div class="english-word" id="englishWord">Loading...</div>
-                                        <button class="audio-btn" id="audioBtn" title="音声を再生">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class="pos-container" id="posContainer">
-                                        <!-- 品詞はインライン表示に変更 -->
-                                    </div>
-                                    <div class="tap-hint">タップして意味を表示</div>
+                        <div class="quiz-mode" id="quizMode">
+                            <!-- 英単語表示エリア -->
+                            <div class="quiz-word-area">
+                                <div class="quiz-english-word" id="quizEnglishWord">Loading...</div>
+                            </div>
+                            
+                            <!-- タップヒント / 4択選択肢 -->
+                            <div class="quiz-bottom-area">
+                                <div class="quiz-tap-hint" id="quizTapHint">タップして4択を表示</div>
+                                
+                                <!-- アクションボタン（チェック & PASS） -->
+                                <div class="quiz-actions hidden" id="quizActions">
+                                    <button class="quiz-check-btn" id="quizCheckBtn"></button>
+                                    <button class="quiz-pass-btn" id="quizPassBtn">PASS</button>
+                                </div>
+                                
+                                <div class="quiz-choices hidden" id="quizChoices">
+                                <button class="quiz-choice-btn" data-choice="0">
+                                    <span class="quiz-choice-num">1</span>
+                                    <span class="quiz-choice-text">選択肢1</span>
+                                </button>
+                                <button class="quiz-choice-btn" data-choice="1">
+                                    <span class="quiz-choice-num">2</span>
+                                    <span class="quiz-choice-text">選択肢2</span>
+                                </button>
+                                <button class="quiz-choice-btn" data-choice="2">
+                                    <span class="quiz-choice-num">3</span>
+                                    <span class="quiz-choice-text">選択肢3</span>
+                                </button>
+                                <button class="quiz-choice-btn" data-choice="3">
+                                    <span class="quiz-choice-num">4</span>
+                                    <span class="quiz-choice-text">選択肢4</span>
+                                </button>
                                 </div>
                             </div>
-                            <div class="card-face card-back">
-                                <div class="word-checkbox word-checkbox-back" id="wordCheckboxBack"></div>
-                                <div class="meaning-content">
-                                    <div class="english-word-back" id="englishWordBack"></div>
-                                    <div class="meaning-wrapper">
-                                        <span class="pos-inline part-of-speech" id="posInlineBack"></span>
-                                        <div class="meaning" id="meaning">意味</div>
+                        </div>
+                        
+                        <!-- 互換性のための非表示要素 -->
+                        <div class="word-card hidden" id="wordCard" style="display:none;">
+                            <div class="card-inner" id="cardInner">
+                                <button class="star-btn card-star-btn hidden" id="starBtn"></button>
+                                <div class="card-face card-front">
+                                    <div class="word-number" id="wordNumber">No.1</div>
+                                    <div class="word-checkbox" id="wordCheckbox"></div>
+                                    <div class="word-display">
+                                        <div class="word-appearance-count" id="wordAppearanceCount" style="display:none;"></div>
+                                        <div class="english-word-wrapper">
+                                            <span class="pos-inline part-of-speech" id="posInlineFront"></span>
+                                            <div class="english-word" id="englishWord">Loading...</div>
+                                            <button class="audio-btn" id="audioBtn" title="音声を再生"></button>
+                                        </div>
+                                        <div class="pos-container" id="posContainer"></div>
                                     </div>
-                                    <div class="pos-container" id="posContainerBack">
-                                        <!-- 品詞はインライン表示に変更 -->
-                                    </div>
-                                    <div class="example-container" id="exampleContainer" style="display: none;">
-                                        <span class="example-label">用例</span>
-                                        <div class="example-text">
-                                            <div class="example-english" id="exampleEnglish"></div>
-                                            <div class="example-japanese" id="exampleJapanese"></div>
+                                </div>
+                                <div class="card-face card-back">
+                                    <div class="word-checkbox word-checkbox-back" id="wordCheckboxBack"></div>
+                                    <div class="meaning-content">
+                                        <div class="english-word-back" id="englishWordBack"></div>
+                                        <div class="meaning-wrapper">
+                                            <span class="pos-inline part-of-speech" id="posInlineBack"></span>
+                                            <div class="meaning" id="meaning">意味</div>
+                                        </div>
+                                        <div class="pos-container" id="posContainerBack"></div>
+                                        <div class="example-container" id="exampleContainer" style="display:none;">
+                                            <span class="example-label">用例</span>
+                                            <div class="example-text">
+                                                <div class="example-english" id="exampleEnglish"></div>
+                                                <div class="example-japanese" id="exampleJapanese"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     </div>
                     
                     <!-- 厳選例文暗記モード -->
@@ -1732,20 +1739,21 @@
                             <input type="radio" name="learningMode" id="modeEngToJpn" value="eng-to-jpn" checked>
                             <div class="mode-icon-wrapper">
                                 <svg class="mode-icon" width="36" height="36" viewBox="0 0 36 36" fill="none">
-                                    <!-- 左矢印 -->
-                                    <path d="M3 18 L7 14 M3 18 L7 22" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <!-- カード -->
-                                    <rect x="10" y="7" width="16" height="22" rx="2" fill="#1d4ed8"/>
-                                    <!-- カード内の線（1行） -->
-                                    <rect x="13" y="17" width="10" height="2" rx="1" fill="#dbeafe"/>
-                                    <!-- 右矢印 -->
-                                    <path d="M33 18 L29 14 M33 18 L29 22" stroke="#1d4ed8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <!-- 4択ボタン（縦1列）数字付き -->
+                                    <rect x="6" y="2" width="24" height="7" rx="2" fill="#1d4ed8"/>
+                                    <text x="18" y="7.5" font-size="6" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+                                    <rect x="6" y="11" width="24" height="7" rx="2" fill="#1d4ed8"/>
+                                    <text x="18" y="16.5" font-size="6" font-weight="bold" fill="#fff" text-anchor="middle">2</text>
+                                    <rect x="6" y="20" width="24" height="7" rx="2" fill="#1d4ed8"/>
+                                    <text x="18" y="25.5" font-size="6" font-weight="bold" fill="#fff" text-anchor="middle">3</text>
+                                    <rect x="6" y="29" width="24" height="7" rx="2" fill="#1d4ed8"/>
+                                    <text x="18" y="34.5" font-size="6" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
                                 </svg>
                             </div>
                             <div class="radio-option-content">
-                                <span class="radio-option-mode-name">カードモード</span>
+                                <span class="radio-option-mode-name">4択モード</span>
                                 <span class="radio-option-label">英語<span class="arrow-small">→</span><span class="lang-highlight">日本語</span></span>
-                                <span class="radio-option-description">英単語を見て意味を答える</span>
+                                <span class="radio-option-description">英単語を見て4択から意味を選ぶ</span>
                             </div>
                         </label>
                         <label class="learning-mode-radio">
