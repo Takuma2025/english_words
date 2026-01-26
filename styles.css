@@ -1147,6 +1147,7 @@ body.learning-mode .app-header {
     grid-template-columns: 1fr 1fr;
     gap: 0;
     border: none;
+    background: #ffffff;
 }
 
 .course-section > .category-card,
@@ -1238,6 +1239,7 @@ body.learning-mode .app-header {
     margin-bottom: 0;
     border-bottom: none;
     padding: 0;
+    background: #ffffff;
 }
 
 .category-cards-row .category-card {
@@ -3712,6 +3714,12 @@ body.learning-mode .app-header {
 #level5CardBtn,
 #irregularVerbsCardBtn {
     border-bottom: 2px solid #0055ca;
+}
+
+/* 右側のカード（不規則変化、ミニゲーム）は右ボーダーなし */
+#irregularVerbsCardBtn,
+#minigameCardBtn {
+    border-right: none;
 }
 
 .bottom-menu-card .category-info {
@@ -6281,7 +6289,7 @@ body.choice-question-mode-active .word-card-container {
     width: 100% !important;
     max-width: none !important;
     margin: 0;
-    background: #ffffff;
+    background: #0055ca;
 }
 
 .input-list-header {
