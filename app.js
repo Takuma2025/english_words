@@ -376,11 +376,7 @@ function animateCardShrink(targetCardId, callback) {
         const appMain = document.querySelector('.app-main');
         
         if (currentTargetCard && appMain) {
-            // ターゲットカードの中身を非表示にする（枠線は残す）
-            currentTargetCard.style.setProperty('background', 'transparent', 'important');
-            currentTargetCard.querySelectorAll('*').forEach(child => {
-                child.style.visibility = 'hidden';
-            });
+            // 元のカードはそのまま残す（非表示にしない）
             
             // 最下部メニューの場合は一番下まで、それ以外は中央までスクロール
             if (targetCardId === 'allWordsCardBtn' || targetCardId === 'irregularVerbsCardBtn') {
@@ -393,6 +389,11 @@ function animateCardShrink(targetCardId, callback) {
             requestAnimationFrame(() => {
                 const rect = currentTargetCard.getBoundingClientRect();
                 const titleContainer = overlay.querySelector('.expand-title');
+                
+                // 元のカードをグレーアウト
+                currentTargetCard.style.filter = 'grayscale(100%)';
+                currentTargetCard.style.opacity = '0.5';
+                currentTargetCard.style.transition = 'filter 0.3s ease, opacity 0.3s ease';
                 
                 overlay.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
                 overlay.style.left = rect.left + 'px';
@@ -409,12 +410,11 @@ function animateCardShrink(targetCardId, callback) {
                 }
                 
                 setTimeout(() => {
-                    // アニメーション完了後にターゲットカードを表示
-                    currentTargetCard.style.removeProperty('background');
-                    currentTargetCard.querySelectorAll('*').forEach(child => {
-                        child.style.visibility = '';
-                    });
+                    // アニメーション完了後にオーバーレイを削除し、元のカードを元に戻す
                     overlay.remove();
+                    currentTargetCard.style.filter = '';
+                    currentTargetCard.style.opacity = '';
+                    currentTargetCard.style.transition = '';
                 }, 600);
             });
         } else {
@@ -453,11 +453,7 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     const progressClone = progress ? progress.cloneNode(true) : null;
     const categoryText = categoryName ? categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').trim() : '';
     
-    // カードの中身を非表示にする（枠線は残す）
-    cardElement.style.setProperty('background', 'transparent', 'important');
-    cardElement.querySelectorAll('*').forEach(child => {
-        child.style.visibility = 'hidden';
-    });
+    // 元のカードはそのまま残す（非表示にしない）
     
     // オーバーレイ要素を作成
     const overlay = document.createElement('div');
@@ -520,6 +516,11 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     
     // 次のフレームでアニメーション開始
     requestAnimationFrame(() => {
+        // 元のカードをグレーアウト
+        cardElement.style.filter = 'grayscale(100%)';
+        cardElement.style.opacity = '0.5';
+        cardElement.style.transition = 'filter 0.3s ease, opacity 0.3s ease';
+        
         overlay.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
         overlay.style.left = '0';
         overlay.style.top = '0';
@@ -535,11 +536,6 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     // アニメーション完了後
     setTimeout(() => {
         if (callback) callback();
-        // 元のカードの中身を再表示（画面遷移後は見えないが念のため）
-        cardElement.style.removeProperty('background');
-        cardElement.querySelectorAll('*').forEach(child => {
-            child.style.visibility = '';
-        });
         // フェードアウトしてオーバーレイを削除
         overlay.style.transition = 'opacity 0.15s ease';
         overlay.style.opacity = '0';

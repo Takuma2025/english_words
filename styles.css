@@ -6379,8 +6379,8 @@ body.choice-question-mode-active .word-card-container {
     gap: 4px;
     padding: 0 12px;
     height: 40px;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: #64748b;
+    border: 1px solid #64748b;
     border-radius: 8px;
     color: #ffffff;
     cursor: pointer;
@@ -6391,19 +6391,19 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-settings-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: #475569;
+    border-color: #475569;
     color: #ffffff;
 }
 
 .input-list-settings-btn:active {
-    background: rgba(255, 255, 255, 0.3);
+    background: #475569;
 }
 
 .input-list-settings-btn.active {
-    background: #ffffff;
-    border-color: #ffffff;
-    color: #0055ca;
+    background: #1e40af;
+    border-color: #1e40af;
+    color: #ffffff;
 }
 
 /* 設定ドロップダウン */
