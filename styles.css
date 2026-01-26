@@ -6289,7 +6289,7 @@ body.choice-question-mode-active .word-card-container {
     width: 100% !important;
     max-width: none !important;
     margin: 0;
-    background: #0055ca;
+    background: #ffffff;
 }
 
 .input-list-header {
@@ -6379,8 +6379,8 @@ body.choice-question-mode-active .word-card-container {
     gap: 4px;
     padding: 0 12px;
     height: 40px;
-    background: #64748b;
-    border: 1px solid #64748b;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     color: #ffffff;
     cursor: pointer;
@@ -6391,19 +6391,19 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-settings-btn:hover {
-    background: #475569;
-    border-color: #475569;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
     color: #ffffff;
 }
 
 .input-list-settings-btn:active {
-    background: #475569;
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .input-list-settings-btn.active {
-    background: #1e40af;
-    border-color: #1e40af;
-    color: #ffffff;
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #0055ca;
 }
 
 /* 設定ドロップダウン */
@@ -6619,7 +6619,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* フリップモード時のコンテナスタイル */
 #inputListContainer.flip-mode {
-    padding: 12px 0 0 0;
+    padding: 0;
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
