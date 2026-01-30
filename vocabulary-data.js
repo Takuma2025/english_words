@@ -14,11 +14,11 @@
 
 // 家族に関する単語
 const familyWords = [
-  { id: 10001, word: "family", meaning: "家族", partOfSpeech: "名詞", category: "家族", appearanceCount: 48, kana: "*ファ*ミリー" },
-  { id: 10003, word: "father", meaning: "父、父親", partOfSpeech: "名詞", category: "家族", appearanceCount: 4, kana: "*ファ*ーザー" },
-  { id: 10004, word: "mother", meaning: "母、母親、お母さん", partOfSpeech: "名詞", category: "家族", appearanceCount: 1, kana: "*マ*ザー" },
+  { id: 10001, word: "family", meaning: "【副】もっと…　【形】もっと多く", partOfSpeech: "名詞", category: "家族", appearanceCount: 48, kana: "*ファ*ミリー" },
+  { id: 10003, word: "father", meaning: "【代】父；父親", partOfSpeech: "名詞", category: "家族", appearanceCount: 4, kana: "*ファ*ーザー" },
+  { id: 10004, word: "mother", meaning: "母；母親；お母さん", partOfSpeech: "名詞", category: "家族", appearanceCount: 1, kana: "*マ*ザー" },
   { id: 10005, word: "parent", meaning: "親　（parents:両親）", partOfSpeech: "名詞", category: "家族", appearanceCount: 1, kana: "*ペア*レント" },
-  { id: 10012, word: "brother", meaning: "兄弟、兄、弟", partOfSpeech: "名詞", category: "家族", appearanceCount: 23, kana: "*ブラ*ザー" },
+  { id: 10012, word: "brother", meaning: "兄弟；兄；弟", partOfSpeech: "名詞", category: "家族", appearanceCount: 23, kana: "*ブラ*ザー" },
   { id: 10013, word: "sister", meaning: "姉妹、姉、妹", partOfSpeech: "名詞", category: "家族", appearanceCount: 52, kana: "*スィ*スター" },
   { id: 10015, word: "son", meaning: "息子", partOfSpeech: "名詞", category: "家族", appearanceCount: 1, kana: "*サ*ン" },
   { id: 10014, word: "daughter", meaning: "娘", partOfSpeech: "名詞", category: "家族", appearanceCount: 4, kana: "*ドー*ター" },
@@ -38,7 +38,7 @@ const familyWords = [
 const numberWords = [
   { id: 10100, word: "number", meaning: "数、数字", partOfSpeech: "名詞", category: "数字", appearanceCount: 56 },
   // zero（最初に）
-  { id: 10101, word: "zero", meaning: "ゼロ", partOfSpeech: "名詞・形容詞", category: "数字", appearanceCount: 2 },
+  { id: 10101, word: "zero", meaning: "〖名〗ゼロ；〖形〗ゼロの", partOfSpeech: "名詞・形容詞", category: "数字", appearanceCount: 2 },
   // 数字（順番に）
   { id: 10102, word: "one", meaning: "1（の）、1つ", partOfSpeech: "名詞・形容詞", category: "数字", appearanceCount: 210 },
   { id: 10103, word: "two", meaning: "2（の）", partOfSpeech: "名詞・形容詞", category: "数字", appearanceCount: 131 },
@@ -642,7 +642,7 @@ const level1ArticleWords = [
 
 // レベル1 代名詞
 const level1PronounWords = [
-  { id: 20101, word: "I", meaning: "私は(主格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 1441, example: { english: "<strong>I</strong> like baseball very much.", japanese: "(<strong>私は</strong>)野球が大好きです。" } },
+  { id: 20101, word: "I", meaning: "【代】私は(主格）　《活用》am - am - am", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 1441, example: { english: "<strong>I</strong> like baseball very much.", japanese: "(<strong>私は</strong>)野球が大好きです。" } },
   { id: 20102, word: "my", meaning: "私の（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 324, example: { english: "<strong>my</strong> book", japanese: "(<strong>私の</strong>)本" } },
   { id: 20103, word: "me", meaning: "私を/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 178, example: { english: "Please help <strong>me</strong>.", japanese: "(<strong>私を</strong>)助けてください。" } },
   { id: 20104, word: "mine", meaning: "私のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 6, example: { english: "This pen is <strong>mine</strong>.", japanese: "このペンは(<strong>私のもの</strong>)です。" } },
@@ -1259,7 +1259,7 @@ const level2AuxiliaryWords = [
   { id: 20717, word: "might", meaning: "（mayの過去形）（ひょっとして）〜かもしれない", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 0, example: { english: "I <strong>might</strong> go to the party.", japanese: "ひょっとしてパーティーに行く(<strong>かもしれません</strong>)。" } },
   { id: 20704, word: "must", meaning: "〜しなければならない", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 22, example: { english: "You <strong>must</strong> do your homework.", japanese: "あなたは宿題を(<strong>しなければなりません</strong>)。" } },
   { id: 20705, word: "should", meaning: "〜すべきである", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 63, example: { english: "We <strong>should</strong> take a break.", japanese: "私たちは休憩を(<strong>取るべきです</strong>)。" } },
-  { id: 20706, word: "will", meaning: "〜するつもり、〜でしょう", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 323, example: { english: "I <strong>will</strong> go to the park next week.", japanese: "私は来週公園に(<strong>行くつもりです</strong>)。" } },
+  { id: 20706, word: "will", meaning: "～でしょう；～するつもりである　＊Will you ～?　＊～してくれませんか", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 323, example: { english: "I <strong>will</strong> go to the park next week.", japanese: "私は来週公園に(<strong>行くつもりです</strong>)。" } },
   { id: 20707, word: "would", meaning: "（willの過去形）〜だろう、〜するつもりだ、(would like toで)〜したい", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 100, example: { english: "I <strong>would</strong> like to go abroad.", japanese: "私は海外に(<strong>行きたいです</strong>)。" } },
   { id: 20708, word: "be able to", meaning: "〜することができる", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 8, example: { english: "I <strong>am able to</strong> play the piano.", japanese: "私はピアノを(<strong>弾けます</strong>)。" } },
   { id: 20709, word: "be going to", meaning: "〜するつもり", partOfSpeech: "助動詞", category: "LEVEL2 助動詞", appearanceCount: 14, example: { english: "I <strong>am going to</strong> go to the park next week.", japanese: "私は来週公園に(<strong>行くつもりです</strong>)。" } },

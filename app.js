@@ -9569,29 +9569,27 @@ function displayInputMode(skipAnimationReset = false) {
     const inputStarBtn = document.getElementById('inputStarBtn');
     
     if (inputMeaning) {
-        // 品詞を一文字に変換
-        const posShort = getPartOfSpeechShort(word.partOfSpeech || '');
-        const posClass = getPartOfSpeechClass(word.partOfSpeech || '');
-        
-        // 意味の前に品詞を表示
+        // partOfSpeech ではなく meaning 内の【名】【形】等から品詞を出す
         const meaningWrapper = inputMeaning.parentElement;
         let posElement = document.getElementById('inputPosInline');
         if (!posElement) {
             posElement = document.createElement('span');
             posElement.id = 'inputPosInline';
-            posElement.className = `pos-inline part-of-speech ${posClass}`;
+            posElement.className = 'pos-inline part-of-speech meaning-pos-inline other';
             meaningWrapper.insertBefore(posElement, inputMeaning);
         }
-        if (posShort) {
-            posElement.textContent = posShort;
-            posElement.className = `pos-inline part-of-speech ${posClass}`;
+        
+        const posText = getMeaningPosBadgeText(word.meaning || '');
+        if (posText) {
+            posElement.textContent = posText;
+            posElement.className = `pos-inline part-of-speech meaning-pos-inline ${getPosClassFromPosShort(posText)}`;
             posElement.style.display = '';
         } else {
             posElement.style.display = 'none';
         }
         
-        // 入力モード側も意味を整形して表示
-        setMeaningContent(inputMeaning, word.meaning);
+        // 日本語本文側には品詞バッジを埋め込まず、《活用》は表示しない
+        setMeaningContent(inputMeaning, word.meaning, { showPosBadges: false, hideConjugation: true });
     }
     
     // 入試頻出度を表示（入力モード）
@@ -10576,17 +10574,172 @@ function highlightTargetWord(sentence, targetWord) {
     return highlighted;
 }
 
-function setMeaningContent(meaningElement, text) {
+// meaning 内の品詞タグ（【名】など）と活用（《活用》）を表示用に整形する
+function meaningHasPosTags(text) {
+    if (!text) return false;
+    return text.includes('【') || text.includes('〈') || text.includes('〖');
+}
+
+function toPosShortFromMeaningTag(tag) {
+    if (!tag) return '';
+    const t = String(tag).trim();
+    if (t.length === 1) return t;
+    if (t.includes('動')) return '動';
+    if (t.includes('名')) return '名';
+    if (t.includes('形')) return '形';
+    if (t.includes('副')) return '副';
+    if (t.includes('前')) return '前';
+    if (t.includes('接')) return '接';
+    if (t.includes('冠')) return '冠';
+    if (t.includes('代')) return '代';
+    if (t.includes('助')) return '助';
+    if (t.includes('間')) return '間';
+    if (t.includes('関')) return '関';
+    return t.charAt(0);
+}
+
+function getPosClassFromPosShort(posShort) {
+    if (!posShort) return 'other';
+    if (posShort.includes('動')) return 'verb';
+    if (posShort.includes('名')) return 'noun';
+    if (posShort.includes('形')) return 'adjective';
+    if (posShort.includes('副')) return 'adverb';
+    return 'other';
+}
+
+function parseMeaningPosSegments(rawText) {
+    if (!rawText) return [];
+    const text = String(rawText);
+    const tagRegex = /〖([^〗]+)〗|〈([^〉]+)〉|【([^】]+)】/g;
+    
+    const segments = [];
+    let currentPos = '';
+    let currentSource = null; // 'bracket' | 'angle' | 'double-angle' | null
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = tagRegex.exec(text)) !== null) {
+        const start = match.index;
+        const between = text.slice(lastIndex, start);
+        const cleaned = between.replace(/[；;]\s*$/g, '').trim();
+        if (cleaned) {
+            segments.push({ posShort: currentPos, text: cleaned, source: currentSource });
+        }
+        
+        const inner = (match[1] || match[2] || match[3] || '').trim();
+        currentPos = toPosShortFromMeaningTag(inner);
+        currentSource =
+            match[3] != null ? 'bracket' : (match[2] != null ? 'angle' : 'double-angle');
+        
+        lastIndex = tagRegex.lastIndex;
+    }
+    
+    const rest = text.slice(lastIndex);
+    const cleanedRest = rest.replace(/^\s*[；;]\s*/g, '').trim();
+    if (cleanedRest) {
+        segments.push({ posShort: currentPos, text: cleanedRest, source: currentSource });
+    }
+    
+    if (segments.length === 0) {
+        return [{ posShort: '', text: text.trim(), source: null }];
+    }
+    return segments;
+}
+
+function getMeaningPosBadgeText(rawText) {
+    const segments = parseMeaningPosSegments(rawText);
+    const uniq = [];
+    segments.forEach(s => {
+        const p = (s.posShort || '').trim();
+        if (!p) return;
+        if (p === '連') return; // 連語は非表示方針
+        if (!uniq.includes(p)) uniq.push(p);
+    });
+    return uniq.join('・');
+}
+
+function appendTextWithConjugationBreak(targetEl, rawText, options = {}) {
+    if (!targetEl) return;
+    const text = String(rawText || '');
+    const marker = '《活用》';
+    const idx = text.indexOf(marker);
+    if (idx === -1) {
+        targetEl.appendChild(document.createTextNode(text));
+        return;
+    }
+    
+    const before = text.slice(0, idx).trimEnd();
+    const hideConjugation = options && options.hideConjugation;
+    if (before) targetEl.appendChild(document.createTextNode(before));
+    if (hideConjugation) return; // 《活用》以降は表示しない
+    
+    const after = text.slice(idx).trimStart();
+    targetEl.appendChild(document.createElement('br'));
+    targetEl.appendChild(document.createTextNode(after));
+}
+
+function stripConjugationFromText(rawText) {
+    if (!rawText) return '';
+    const text = String(rawText);
+    // 「《活用》」以降を丸ごと削除（表記ゆれやスペースがあっても確実に消す）
+    return text.replace(/\s*《活用》[\s\S]*$/g, '').trimEnd();
+}
+
+function renderMeaningWithPosSegments(targetEl, rawText, options = {}) {
+    if (!targetEl) return;
+    targetEl.innerHTML = '';
+    
+    // 連語（〖連〗）は表示しない
+    const segments = parseMeaningPosSegments(rawText).filter(s => (s.posShort || '').trim() !== '連');
+    const showPosBadges = options.showPosBadges !== false;
+    
+    segments.forEach((seg, idx) => {
+        const pos = (seg.posShort || '').trim();
+        
+        if (idx > 0) targetEl.appendChild(document.createTextNode(' '));
+        
+        if (showPosBadges && pos) {
+            const badge = document.createElement('span');
+            badge.className = `pos-inline part-of-speech meaning-pos-inline ${getPosClassFromPosShort(pos)}`;
+            if (seg && seg.source === 'bracket') badge.classList.add('meaning-pos-inline-bracket');
+            badge.textContent = pos;
+            targetEl.appendChild(badge);
+            targetEl.appendChild(document.createTextNode(' '));
+        }
+        
+        appendTextWithConjugationBreak(targetEl, seg.text, options);
+    });
+}
+
+function setMeaningContent(meaningElement, text, options = {}) {
     if (!meaningElement) return;
     if (!text) {
         meaningElement.textContent = '';
         meaningElement.classList.remove('meaning-multiline-root');
         return;
     }
+
+    // 《活用》を表示しない指定なら、先に確実に取り除く
+    if (options && options.hideConjugation) {
+        text = stripConjugationFromText(text);
+        // 取り除いた結果が空になったらクリア
+        if (!text) {
+            meaningElement.textContent = '';
+            meaningElement.classList.remove('meaning-multiline-root');
+            return;
+        }
+    }
     
-    // ①が含まれていなければ従来どおり一行表示
+    // ①が含まれていなければ一行表示（品詞タグと《活用》の整形を適用）
     if (!text.includes('①')) {
-        meaningElement.textContent = text;
+        if (meaningHasPosTags(text)) {
+            renderMeaningWithPosSegments(meaningElement, text, options);
+        } else if (String(text).includes('《活用》')) {
+            meaningElement.innerHTML = '';
+            appendTextWithConjugationBreak(meaningElement, text, options);
+        } else {
+            meaningElement.textContent = text;
+        }
         meaningElement.classList.remove('meaning-multiline-root');
         return;
     }
@@ -10633,7 +10786,14 @@ function setMeaningContent(meaningElement, text) {
         
         const textSpan = document.createElement('span');
         textSpan.className = 'meaning-text';
-        textSpan.textContent = lineText;
+        if (meaningHasPosTags(lineText)) {
+            renderMeaningWithPosSegments(textSpan, lineText, options);
+        } else if (String(lineText).includes('《活用》')) {
+            textSpan.innerHTML = '';
+            appendTextWithConjugationBreak(textSpan, lineText, options);
+        } else {
+            textSpan.textContent = lineText;
+        }
         
         lineDiv.appendChild(numSpan);
         lineDiv.appendChild(textSpan);
@@ -11036,10 +11196,15 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             }
         }
         
-        // ヘッダー部分（番号、英単語、音声、ブックマーク）
-        const header = document.createElement('div');
-        header.className = 'input-list-expand-header';
+        // ====== 左カラム（英単語情報） ======
+        const leftCol = document.createElement('div');
+        leftCol.className = 'expand-left-col';
         
+        // 上部：番号とチェックボックスの連結ボックス
+        const leftTop = document.createElement('div');
+        leftTop.className = 'expand-left-top';
+        
+        // 番号（先に追加）
         const number = document.createElement('span');
         number.className = 'input-list-expand-number';
         number.textContent = String(word.id).padStart(5, '0');
@@ -11051,7 +11216,6 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             }
         }
         
-        // 「すべての単語」の場合は単語番号クリックで進捗変更可能
         if (selectedCategory === '大阪府のすべての英単語') {
             number.classList.add('clickable-number');
             number.addEventListener('click', (e) => {
@@ -11059,7 +11223,9 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
                 cycleWordProgress(word, number, item);
             });
         }
-        // チェックボックス（単語番号の右）
+        leftTop.appendChild(number);
+        
+        // チェックボックス（番号の右に追加）
         const checkbox = document.createElement('div');
         checkbox.className = 'input-list-expand-checkbox';
         if (reviewWords.has(word.id)) {
@@ -11076,42 +11242,101 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             }
             saveReviewWords();
         });
-
-        // 番号とチェックボックスを連結
-        const numberBox = document.createElement('div');
-        numberBox.className = 'input-list-expand-number-box';
-        numberBox.appendChild(number);
-        numberBox.appendChild(checkbox);
-        item.appendChild(numberBox);
+        leftTop.appendChild(checkbox);
+        leftCol.appendChild(leftTop);
         
-        const wordRow = document.createElement('div');
-        wordRow.className = 'input-list-expand-word-row';
-        
-        const wordEl = document.createElement('span');
+        // 英単語（長い単語は横縮小）
+        const wordEl = document.createElement('div');
         wordEl.className = 'input-list-expand-word';
         wordEl.textContent = word.word;
-        wordRow.appendChild(wordEl);
+        // 長い単語は横縮小
+        if (word.word.length >= 12) {
+            wordEl.style.transform = 'scaleX(0.7)';
+            wordEl.style.transformOrigin = 'left';
+        } else if (word.word.length >= 10) {
+            wordEl.style.transform = 'scaleX(0.8)';
+            wordEl.style.transformOrigin = 'left';
+        }
+        leftCol.appendChild(wordEl);
         
-        const audioBtn = document.createElement('button');
-        audioBtn.className = 'audio-btn';
-        audioBtn.setAttribute('type', 'button');
-        audioBtn.setAttribute('aria-label', `${word.word}の音声を再生`);
-        audioBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
-        audioBtn.addEventListener('click', (e) => {
+        // カタカナ読み（あれば）
+        if (word.kana) {
+            const kanaEl = document.createElement('div');
+            kanaEl.className = 'input-list-expand-kana';
+            // *で囲まれた部分を太字にする
+            const kanaText = word.kana.replace(/\*([^*]+)\*/g, '<b>$1</b>');
+            kanaEl.innerHTML = kanaText;
+            leftCol.appendChild(kanaEl);
+        }
+        
+        // 発音ボタン
+        const pronunciationBtn = document.createElement('button');
+        pronunciationBtn.className = 'expand-pronunciation-btn';
+        pronunciationBtn.setAttribute('type', 'button');
+        pronunciationBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+        pronunciationBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            speakWord(word.word, audioBtn);
+            speakWord(word.word, pronunciationBtn);
         });
-        wordRow.appendChild(audioBtn);
+        leftCol.appendChild(pronunciationBtn);
         
-        header.appendChild(wordRow);
-        item.appendChild(header);
+        item.appendChild(leftCol);
         
-        // 右上のアクションエリア（でた度）
-        const topActions = document.createElement('div');
-        topActions.className = 'input-list-expand-top-actions';
+        // ====== 右カラム（意味・例文） ======
+        const rightCol = document.createElement('div');
+        rightCol.className = 'expand-right-col';
         
-        // でた度表示
+        // 品詞バッジ（meaningから抽出）
+        const posBadgeText = getMeaningPosBadgeText(word.meaning || '');
+        if (posBadgeText) {
+            const posBadge = document.createElement('span');
+            posBadge.className = 'expand-pos-badge';
+            posBadge.textContent = posBadgeText;
+            rightCol.appendChild(posBadge);
+        }
+        
+        // 意味テキスト
+        const meaningText = document.createElement('div');
+        meaningText.className = 'expand-meaning-text';
+        setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
+        rightCol.appendChild(meaningText);
+        
+        // 例文（あれば）
+        if (word.example && (word.example.english || word.example.japanese)) {
+            const exampleSection = document.createElement('div');
+            exampleSection.className = 'expand-example-section';
+            
+            const exampleBadge = document.createElement('span');
+            exampleBadge.className = 'expand-example-badge';
+            exampleBadge.textContent = '例';
+            exampleSection.appendChild(exampleBadge);
+            
+            if (word.example.english) {
+                const exEn = document.createElement('div');
+                exEn.className = 'expand-example-en';
+                if (word.word) {
+                    exEn.innerHTML = highlightTargetWord(word.example.english, word.word);
+                } else {
+                    exEn.textContent = word.example.english;
+                }
+                exampleSection.appendChild(exEn);
+            }
+            
+            if (word.example.japanese) {
+                const exJa = document.createElement('div');
+                exJa.className = 'expand-example-ja';
+                exJa.innerHTML = word.example.japanese;
+                exampleSection.appendChild(exJa);
+            }
+            
+            rightCol.appendChild(exampleSection);
+        }
+        
+        // でた度表示（右カラム内に配置）
         if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
+            const topActions = document.createElement('div');
+            topActions.className = 'input-list-expand-top-actions';
+            
             const appearanceBox = document.createElement('div');
             appearanceBox.className = 'input-list-expand-appearance-box';
             
@@ -11133,51 +11358,10 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             appearanceBox.appendChild(starsSpan);
             
             topActions.appendChild(appearanceBox);
+            rightCol.appendChild(topActions);
         }
         
-        item.appendChild(topActions);
-        
-        // 意味（品詞付き）
-        const meaningEl = document.createElement('div');
-        meaningEl.className = 'input-list-expand-meaning';
-        
-        const meaningPos = document.createElement('span');
-        meaningPos.className = 'pos-inline part-of-speech input-list-expand-meaning-pos';
-        meaningPos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
-        meaningEl.appendChild(meaningPos);
-        
-        const meaningText = document.createElement('span');
-        meaningText.textContent = word.meaning || '';
-        meaningEl.appendChild(meaningText);
-        
-        item.appendChild(meaningEl);
-        
-        // 用例
-        if (word.example && (word.example.english || word.example.japanese)) {
-            const exampleBox = document.createElement('div');
-            exampleBox.className = 'input-list-expand-example';
-            
-            if (word.example.english) {
-                const exEn = document.createElement('div');
-                exEn.className = 'input-list-expand-example-en';
-                const exampleEn = word.example.english;
-                if (exampleEn && word.word) {
-                    exEn.innerHTML = highlightTargetWord(exampleEn, word.word);
-                } else {
-                    exEn.textContent = exampleEn;
-                }
-                exampleBox.appendChild(exEn);
-            }
-            
-            if (word.example.japanese) {
-                const exJa = document.createElement('div');
-                exJa.className = 'input-list-expand-example-ja';
-                exJa.innerHTML = word.example.japanese;
-                exampleBox.appendChild(exJa);
-            }
-            
-            item.appendChild(exampleBox);
-        }
+        item.appendChild(rightCol);
         
         return item;
     } else {
@@ -11302,10 +11486,12 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         meaningWrapper.className = 'input-list-meaning-wrapper';
         const meaningPos = document.createElement('span');
         meaningPos.className = 'pos-inline part-of-speech input-list-meaning-pos';
-        meaningPos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
+        meaningPos.textContent = '';
+        meaningPos.style.display = 'none';
         meaningWrapper.appendChild(meaningPos);
         const meaningText = document.createElement('span');
-        meaningText.textContent = word.meaning || '';
+        // 単語カードモード（フリップ）では《活用》は表示しない
+        setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
         meaningWrapper.appendChild(meaningText);
         meaningEl.appendChild(meaningWrapper);
         back.appendChild(meaningEl);
@@ -11473,10 +11659,15 @@ function renderInputListView(words) {
                 item.classList.add('marker-correct');
             }
             
-            // ヘッダー部分（番号、英単語、音声）
-            const header = document.createElement('div');
-            header.className = 'input-list-expand-header';
+            // ====== 左カラム（英単語情報） ======
+            const leftCol = document.createElement('div');
+            leftCol.className = 'expand-left-col';
             
+            // 上部：番号とチェックボックスの連結ボックス
+            const leftTop = document.createElement('div');
+            leftTop.className = 'expand-left-top';
+            
+            // 番号（先に追加）
             const number = document.createElement('span');
             number.className = 'input-list-expand-number';
             number.textContent = String(word.id).padStart(5, '0');
@@ -11485,7 +11676,9 @@ function renderInputListView(words) {
             } else if (isCorrect) {
                 number.classList.add('marker-correct');
             }
-            // チェックボックス（単語番号の右）
+            leftTop.appendChild(number);
+            
+            // チェックボックス（番号の右に追加）
             const checkbox = document.createElement('div');
             checkbox.className = 'input-list-expand-checkbox';
             if (reviewWords.has(word.id)) {
@@ -11502,55 +11695,99 @@ function renderInputListView(words) {
                 }
                 saveReviewWords();
             });
-
-            // 番号とチェックボックスを連結
-            const numberBox = document.createElement('div');
-            numberBox.className = 'input-list-expand-number-box';
-            numberBox.appendChild(number);
-            numberBox.appendChild(checkbox);
-            item.appendChild(numberBox);
+            leftTop.appendChild(checkbox);
+            leftCol.appendChild(leftTop);
             
-            const wordRow = document.createElement('div');
-            wordRow.className = 'input-list-expand-word-row';
-            
-            const wordTextContainer = document.createElement('div');
-            wordTextContainer.className = 'input-list-expand-word-container';
-            
-            // カタカナ発音を上に表示（*で囲まれた部分を太字に）
-            if (word.kana) {
-                const kanaEl = document.createElement('span');
-                kanaEl.className = 'input-list-expand-kana';
-                kanaEl.innerHTML = word.kana.replace(/\*([^*]+)\*/g, '<b>$1</b>');
-                wordTextContainer.appendChild(kanaEl);
-            }
-            
-            const wordEl = document.createElement('span');
+            // 英単語（長い単語は横縮小）
+            const wordEl = document.createElement('div');
             wordEl.className = 'input-list-expand-word';
             wordEl.textContent = word.word;
-            wordTextContainer.appendChild(wordEl);
+            // 長い単語は横縮小
+            if (word.word.length >= 12) {
+                wordEl.style.transform = 'scaleX(0.7)';
+                wordEl.style.transformOrigin = 'left';
+            } else if (word.word.length >= 10) {
+                wordEl.style.transform = 'scaleX(0.8)';
+                wordEl.style.transformOrigin = 'left';
+            }
+            leftCol.appendChild(wordEl);
             
-            wordRow.appendChild(wordTextContainer);
+            // カタカナ読み（あれば）
+            if (word.kana) {
+                const kanaEl = document.createElement('div');
+                kanaEl.className = 'input-list-expand-kana';
+                kanaEl.innerHTML = word.kana.replace(/\*([^*]+)\*/g, '<b>$1</b>');
+                leftCol.appendChild(kanaEl);
+            }
             
-            const audioBtn = document.createElement('button');
-            audioBtn.className = 'audio-btn';
-            audioBtn.setAttribute('type', 'button');
-            audioBtn.setAttribute('aria-label', `${word.word}の音声を再生`);
-            audioBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
-            audioBtn.addEventListener('click', (e) => {
+            // 発音ボタン
+            const pronunciationBtn = document.createElement('button');
+            pronunciationBtn.className = 'expand-pronunciation-btn';
+            pronunciationBtn.setAttribute('type', 'button');
+            pronunciationBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+            pronunciationBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                speakWord(word.word, audioBtn);
+                speakWord(word.word, pronunciationBtn);
             });
-            wordRow.appendChild(audioBtn);
+            leftCol.appendChild(pronunciationBtn);
             
-            header.appendChild(wordRow);
-            item.appendChild(header);
+            item.appendChild(leftCol);
             
-            // 右上のアクションエリア（でた度）
-            const topActions = document.createElement('div');
-            topActions.className = 'input-list-expand-top-actions';
+            // ====== 右カラム（意味・例文） ======
+            const rightCol = document.createElement('div');
+            rightCol.className = 'expand-right-col';
             
-            // でた度表示
+            // 品詞バッジ（meaningから抽出）
+            const posBadgeText = getMeaningPosBadgeText(word.meaning || '');
+            if (posBadgeText) {
+                const posBadge = document.createElement('span');
+                posBadge.className = 'expand-pos-badge';
+                posBadge.textContent = posBadgeText;
+                rightCol.appendChild(posBadge);
+            }
+            
+            // 意味テキスト
+            const meaningText = document.createElement('div');
+            meaningText.className = 'expand-meaning-text';
+            setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
+            rightCol.appendChild(meaningText);
+            
+            // 例文（あれば）
+            if (word.example && (word.example.english || word.example.japanese)) {
+                const exampleSection = document.createElement('div');
+                exampleSection.className = 'expand-example-section';
+                
+                const exampleBadge = document.createElement('span');
+                exampleBadge.className = 'expand-example-badge';
+                exampleBadge.textContent = '例';
+                exampleSection.appendChild(exampleBadge);
+                
+                if (word.example.english) {
+                    const exEn = document.createElement('div');
+                    exEn.className = 'expand-example-en';
+                    if (word.word) {
+                        exEn.innerHTML = highlightTargetWord(word.example.english, word.word);
+                    } else {
+                        exEn.textContent = word.example.english;
+                    }
+                    exampleSection.appendChild(exEn);
+                }
+                
+                if (word.example.japanese) {
+                    const exJa = document.createElement('div');
+                    exJa.className = 'expand-example-ja';
+                    exJa.innerHTML = word.example.japanese;
+                    exampleSection.appendChild(exJa);
+                }
+                
+                rightCol.appendChild(exampleSection);
+            }
+            
+            // でた度表示（右カラム内に配置）
             if (typeof word.appearanceCount === 'number' && !Number.isNaN(word.appearanceCount)) {
+                const topActions = document.createElement('div');
+                topActions.className = 'input-list-expand-top-actions';
+                
                 const appearanceBox = document.createElement('div');
                 appearanceBox.className = 'input-list-expand-appearance-box';
                 
@@ -11572,51 +11809,10 @@ function renderInputListView(words) {
                 appearanceBox.appendChild(starsSpan);
                 
                 topActions.appendChild(appearanceBox);
+                rightCol.appendChild(topActions);
             }
             
-            item.appendChild(topActions);
-            
-            // 意味（品詞付き）
-            const meaningEl = document.createElement('div');
-            meaningEl.className = 'input-list-expand-meaning';
-            
-            const meaningPos = document.createElement('span');
-            meaningPos.className = 'pos-inline part-of-speech input-list-expand-meaning-pos';
-            meaningPos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
-            meaningEl.appendChild(meaningPos);
-            
-            const meaningText = document.createElement('span');
-            meaningText.textContent = word.meaning || '';
-            meaningEl.appendChild(meaningText);
-            
-            item.appendChild(meaningEl);
-            
-            // 用例
-            if (word.example && (word.example.english || word.example.japanese)) {
-                const exampleBox = document.createElement('div');
-                exampleBox.className = 'input-list-expand-example';
-                
-                if (word.example.english) {
-                    const exEn = document.createElement('div');
-                    exEn.className = 'input-list-expand-example-en';
-                    const exampleEn = word.example.english;
-                    if (exampleEn && word.word) {
-                        exEn.innerHTML = highlightTargetWord(exampleEn, word.word);
-                    } else {
-                        exEn.textContent = exampleEn;
-                    }
-                    exampleBox.appendChild(exEn);
-                }
-                
-                if (word.example.japanese) {
-                    const exJa = document.createElement('div');
-                    exJa.className = 'input-list-expand-example-ja';
-                    exJa.innerHTML = word.example.japanese;
-                    exampleBox.appendChild(exJa);
-                }
-                
-                item.appendChild(exampleBox);
-            }
+            item.appendChild(rightCol);
             
             container.appendChild(item);
         } else {
@@ -11737,10 +11933,12 @@ function renderInputListView(words) {
             meaningWrapper.className = 'input-list-meaning-wrapper';
             const meaningPos = document.createElement('span');
             meaningPos.className = 'pos-inline part-of-speech input-list-meaning-pos';
-            meaningPos.textContent = getPartOfSpeechShort(word.partOfSpeech || '') || '—';
+            meaningPos.textContent = '';
+            meaningPos.style.display = 'none';
             meaningWrapper.appendChild(meaningPos);
             const meaningText = document.createElement('span');
-            meaningText.textContent = word.meaning || '';
+            // 単語カードモード（フリップ）では《活用》は表示しない
+            setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
             meaningWrapper.appendChild(meaningText);
             meaningEl.appendChild(meaningWrapper);
             back.appendChild(meaningEl);
@@ -12298,18 +12496,19 @@ function setupRedSheet() {
         
         if (isActive) {
             // 現在表示されている範囲内で、一番上の単語の日本語の意味を探す
-            const meanings = document.querySelectorAll('.input-list-expand-meaning');
-            let targetMeaning = null;
+            // 新レイアウト：.expand-right-col（右カラム全体）を対象にする
+            const rightCols = document.querySelectorAll('.expand-right-col');
+            let targetCol = null;
             let targetIndex = 0;
             
             // ヘッダーの高さを考慮したオフセット（スティッキーなコントロールバーなど）
             const headerOffset = 150; 
 
-            for (let i = 0; i < meanings.length; i++) {
-                const rect = meanings[i].getBoundingClientRect();
-                // 画面内にあり、かつヘッダーより下にある最初の意味要素を見つける
+            for (let i = 0; i < rightCols.length; i++) {
+                const rect = rightCols[i].getBoundingClientRect();
+                // 画面内にあり、かつヘッダーより下にある最初の要素を見つける
                 if (rect.bottom > headerOffset) {
-                    targetMeaning = meanings[i];
+                    targetCol = rightCols[i];
                     targetIndex = i;
                     break;
                 }
@@ -12319,16 +12518,16 @@ function setupRedSheet() {
             let topPosition = 150; // デフォルト値
             let leftPosition = 0; // デフォルト値
 
-            if (targetMeaning) {
-                const rect = targetMeaning.getBoundingClientRect();
-                topPosition = rect.top; // 日本語の意味の上端から
-                // 意味テキストの左端から右端まで隠す
-                leftPosition = rect.left - 10;
-            } else if (meanings.length > 0) {
+            if (targetCol) {
+                const rect = targetCol.getBoundingClientRect();
+                topPosition = rect.top; // 右カラムの上端から
+                // 右カラムの左端から隠す
+                leftPosition = rect.left;
+            } else if (rightCols.length > 0) {
                 // 見つからない場合は一番最初の要素（フォールバック）
-                const rect = meanings[0].getBoundingClientRect();
+                const rect = rightCols[0].getBoundingClientRect();
                 topPosition = rect.top;
-                leftPosition = rect.left - 10;
+                leftPosition = rect.left;
                 currentRedSheetIndex = 0;
             }
 
@@ -12367,9 +12566,10 @@ function setupRedSheet() {
 function moveRedSheetToNext() {
     const redSheetOverlay = document.getElementById('redSheetOverlay');
     const inputListView = document.getElementById('inputListView');
-    const meanings = document.querySelectorAll('.input-list-expand-meaning');
+    // 新レイアウト：右カラムを対象にする
+    const rightCols = document.querySelectorAll('.expand-right-col');
     
-    if (!redSheetOverlay || !inputListView || meanings.length === 0) return;
+    if (!redSheetOverlay || !inputListView || rightCols.length === 0) return;
     
     // 画面の表示領域を取得（ヘッダーを考慮）
     const headerOffset = 150; // ヘッダー部分のオフセット
@@ -12380,8 +12580,8 @@ function moveRedSheetToNext() {
     
     // 現在隠している単語を特定（赤シートの位置に最も近い単語）
     let currentWordIndex = -1;
-    for (let i = 0; i < meanings.length; i++) {
-        const rect = meanings[i].getBoundingClientRect();
+    for (let i = 0; i < rightCols.length; i++) {
+        const rect = rightCols[i].getBoundingClientRect();
         if (rect.top <= currentRedSheetTop + 5) {
             currentWordIndex = i;
         } else {
@@ -12391,8 +12591,8 @@ function moveRedSheetToNext() {
     
     // 赤シートの位置より下にある最初の単語を見つける
     let nextIndex = -1;
-    for (let i = 0; i < meanings.length; i++) {
-        const rect = meanings[i].getBoundingClientRect();
+    for (let i = 0; i < rightCols.length; i++) {
+        const rect = rightCols[i].getBoundingClientRect();
         // 赤シートより少し下にある単語を探す（5px余裕を持たせる）
         if (rect.top > currentRedSheetTop + 5) {
             nextIndex = i;
@@ -12431,17 +12631,17 @@ function moveRedSheetToNext() {
         return;
     }
     
-    const nextMeaning = meanings[nextIndex];
-    if (!nextMeaning) return;
+    const nextCol = rightCols[nextIndex];
+    if (!nextCol) return;
     
     // 次の単語の位置を取得
-    const nextRect = nextMeaning.getBoundingClientRect();
+    const nextRect = nextCol.getBoundingClientRect();
     
     // 次の単語が画面外ならスクロール（現在の単語を隠したまま上へ）
     if (nextRect.top >= viewportHeight) {
         // 現在隠している単語を取得
-        const currentMeaning = currentWordIndex >= 0 ? meanings[currentWordIndex] : meanings[0];
-        const currentRect = currentMeaning.getBoundingClientRect();
+        const currentCol = currentWordIndex >= 0 ? rightCols[currentWordIndex] : rightCols[0];
+        const currentRect = currentCol.getBoundingClientRect();
         
         // スクロール量を計算（現在の単語がヘッダー直下に来るように）
         const scrollAmount = currentRect.top - headerOffset;
@@ -12467,7 +12667,7 @@ function moveRedSheetToNext() {
         // 赤シートも同時にアニメーション（現在の単語を隠したまま）
         redSheetOverlay.style.transition = 'top 0.3s ease';
         redSheetOverlay.style.top = newRedSheetTop + 'px';
-        redSheetOverlay.style.left = (currentRect.left - 10) + 'px';
+        redSheetOverlay.style.left = currentRect.left + 'px';
         
         setTimeout(() => {
             redSheetOverlay.style.transition = '';
@@ -12479,7 +12679,7 @@ function moveRedSheetToNext() {
         currentRedSheetIndex = nextIndex;
         redSheetOverlay.style.transition = 'top 0.3s ease';
         redSheetOverlay.style.top = nextRect.top + 'px';
-        redSheetOverlay.style.left = (nextRect.left - 10) + 'px';
+        redSheetOverlay.style.left = nextRect.left + 'px';
         setTimeout(() => {
             redSheetOverlay.style.transition = '';
         }, 300);
@@ -12961,9 +13161,9 @@ function displayCurrentWord() {
         }
     }
     
-    // 品詞を一文字に変換
-    const posShort = getPartOfSpeechShort(word.partOfSpeech || '');
-    const posClass = getPartOfSpeechClass(word.partOfSpeech || '');
+    // 品詞表示は meaning 内の【名】【形】等からのみ行う（partOfSpeech由来の表示は廃止）
+    const posShort = '';
+    const posClass = 'other';
     
     // 英単語と品詞を一緒に表示（品詞を左横に）- アウトプットモードでは非表示
     const englishWordWrapper = elements.englishWord.parentElement;
@@ -13029,7 +13229,8 @@ function displayCurrentWord() {
     }
 
     // 意味を表示（①②③があれば行ごとに整形）
-    setMeaningContent(elements.meaning, word.meaning);
+    // 単語カード（フリップ）の裏面では《活用》は表示しない
+    setMeaningContent(elements.meaning, word.meaning, { hideConjugation: true });
     
     // 用例を表示（あれば）※アウトプットモードでは非表示
     const exampleContainer = document.getElementById('exampleContainer');
@@ -13259,7 +13460,8 @@ function prepareQuizChoices(correctWord) {
     choiceButtons.forEach((btn, index) => {
         const textEl = btn.querySelector('.quiz-choice-text');
         if (textEl && choices[index]) {
-            textEl.textContent = choices[index].meaning;
+            // 4択（テスト含む）では《活用》も品詞も表示しない
+            setMeaningContent(textEl, choices[index].meaning, { hideConjugation: true, showPosBadges: false });
             btn.dataset.isCorrect = choices[index].isCorrect ? 'true' : 'false';
         }
         // 状態をリセット
@@ -19653,16 +19855,16 @@ function displayHWQuizQuestion() {
     // 品詞（インプットモードと同じスタイル）
     const posEl = document.getElementById('hwQuizPos');
     if (posEl) {
-        const posShort = getPartOfSpeechShort(word.partOfSpeech || '');
-        const posClass = getPartOfSpeechClass(word.partOfSpeech || '');
-        posEl.textContent = posShort;
-        posEl.className = `pos-inline part-of-speech ${posClass}`;
+        posEl.textContent = '';
+        posEl.style.display = 'none';
     }
     
     // 意味
     const meaningEl = document.getElementById('hwQuizMeaning');
     if (meaningEl) {
-        meaningEl.textContent = word.meaning;
+        // テストモードでは《活用》は表示しない
+        const hideConjugation = document.body.classList.contains('quiz-test-mode');
+        setMeaningContent(meaningEl, word.meaning || '', { hideConjugation });
     }
     
     // 連続正解表示を更新

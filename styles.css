@@ -7508,17 +7508,14 @@ body.choice-question-mode-active .word-card-container {
 
 /* ========================================
    展開モード（単語帳）のコンパクト表示
-   順番: 番号 → チェック → 英単語 → 日本語
+   2カラム維持：左に番号・英単語、右に意味
    ======================================== */
 .input-list-scroll.compact-mode .input-list-item-expand {
-    padding: 4px 8px;
+    padding: 0;
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: 0;
-    min-height: auto;
-    border-top: 1.5px solid #e5e5e5;
+    min-height: 40px;
+    border-top: 1px solid #e5e5e5;
     border-left: none;
     border-right: none;
     border-bottom: none;
@@ -7529,123 +7526,81 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:first-child {
-    border-top: 1.5px solid #e5e5e5;
+    border-top: 1px solid #e5e5e5;
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:last-child {
-    border-bottom: 1.5px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
 }
 
-/* 連結ボックス（番号+チェック）を一列で表示 */
-.input-list-scroll.compact-mode .input-list-expand-number-box {
-    position: static;
-    display: inline-flex;
+/* コンパクト時も2カラム維持 */
+.input-list-scroll.compact-mode .expand-left-col {
+    flex: 0 0 45%;
+    max-width: 45%;
+    padding: 6px 8px;
+    background: #e0f2fe;
+    display: flex;
+    flex-direction: row;
     align-items: center;
-    flex-shrink: 0;
-    order: 1;
-    margin-right: 8px;
-    border: none;
-    border-radius: 0;
-    overflow: hidden;
-    height: 18px;
-    background: transparent;
+    gap: 6px;
 }
 
-/* 1. 単語番号 */
+.input-list-scroll.compact-mode .expand-right-col {
+    flex: 1;
+    background: #ffffff;
+    padding: 6px 8px;
+    display: block;
+    text-align: left;
+}
+
+.input-list-scroll.compact-mode .expand-left-top {
+    display: flex;
+    align-items: center;
+    height: 18px;
+    margin-bottom: 0;
+}
+
+/* コンパクト時の番号 */
 .input-list-scroll.compact-mode .input-list-expand-number {
     font-size: 9px;
     padding: 0 5px;
-    position: static;
-    flex-shrink: 0;
-    border: none;
-    border-radius: 0;
     height: 100%;
-    display: inline-flex;
-    align-items: center;
 }
 
-/* 2. チェックマーク */
+.input-list-scroll.compact-mode .input-list-expand-number-star {
+    display: none;
+}
+
+/* コンパクト時のチェックボックス */
 .input-list-scroll.compact-mode .input-list-expand-checkbox {
-    position: static;
-    top: auto;
-    left: auto;
     width: 18px;
     height: 100%;
-    flex-shrink: 0;
-    border: none;
-    border-radius: 0;
-    background: #f3f4f6;
 }
 
-.input-list-scroll.compact-mode .input-list-expand-checkbox::after {
-    width: 4px;
-    height: 7px;
-    border-width: 0 2px 2px 0;
-}
-
-.input-list-scroll.compact-mode .input-list-expand-checkbox.checked {
-    background: #fbbf24 !important;
-}
-
-/* 3. 英単語（::beforeで表示） */
-.input-list-scroll.compact-mode .input-list-item-expand::before {
-    content: attr(data-word);
-    font-size: 15px;
-    font-weight: 700;
-    color: #374151;
-    flex-shrink: 0;
-    min-width: 100px;
-    order: 3;
-}
-
-/* 4. 日本語の意味 */
-.input-list-scroll.compact-mode .input-list-expand-meaning {
+/* コンパクト時の英単語 */
+.input-list-scroll.compact-mode .input-list-expand-word {
     font-size: 14px;
+    font-weight: 700;
+    color: #0369a1;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* コンパクト時の意味 */
+.input-list-scroll.compact-mode .expand-meaning-text {
+    font-size: 12px;
     color: #ff9933;
     font-weight: 600;
     flex: 1;
     text-align: left;
-    padding: 0;
-    margin: 0;
-    order: 4;
 }
 
-.input-list-scroll.compact-mode .input-list-expand-meaning-pos {
-    font-size: 10px;
-    padding: 1px 4px;
-    margin-right: 4px;
-}
-
-/* 非表示にする要素 */
-.input-list-scroll.compact-mode .input-list-expand-header {
-    display: none;
-}
-
-.input-list-scroll.compact-mode .input-list-expand-word-row {
-    display: none;
-}
-
-.input-list-scroll.compact-mode .input-list-expand-word-container {
-    display: none;
-}
-
-.input-list-scroll.compact-mode .input-list-expand-word {
-    display: none;
-}
-
-.input-list-scroll.compact-mode .input-list-expand-kana {
-    display: none;
-}
-
+/* コンパクト時に非表示にする要素 */
+.input-list-scroll.compact-mode .input-list-expand-kana,
+.input-list-scroll.compact-mode .expand-pronunciation-btn,
+.input-list-scroll.compact-mode .expand-pos-badge,
+.input-list-scroll.compact-mode .expand-example-section,
 .input-list-scroll.compact-mode .input-list-expand-top-actions {
-    display: none;
-}
-
-.input-list-scroll.compact-mode .input-list-expand-appearance-box {
-    display: none;
-}
-
-.input-list-scroll.compact-mode .input-list-expand-example {
     display: none;
 }
 
@@ -8102,17 +8057,15 @@ body.choice-question-mode-active .word-card-container {
     line-height: 1.4;
 }
 
-/* 展開モード（英単語の下に意味と用例を表示） */
+/* 展開モード（2カラムレイアウト：左に英単語、右に意味） */
 .input-list-item-expand {
     position: relative;
+    display: flex;
+    flex-direction: row;
     background: #ffffff;
     border: none;
     border-top: 1.5px solid #e5e5e5;
-    border-left: none;
-    padding: 20px 16px;
-    padding-top: 40px;
-    padding-bottom: 24px;
-    transition: background 0.15s ease;
+    min-height: 90px;
 }
 
 .input-list-item-expand:first-child {
@@ -8131,17 +8084,30 @@ body.choice-question-mode-active .word-card-container {
     background: #ffffff;
 }
 
-.input-list-expand-header {
+/* 左カラム（英単語情報）- 水色背景 */
+.expand-left-col {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 10px 12px;
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    gap: 4px;
+    background: #e0f2fe;
+    position: relative;
 }
 
-/* 展開モードの番号とチェックの連結ボックス */
-.input-list-expand-number-box {
-    position: absolute;
-    top: 0;
-    left: 0;
+/* 右カラム（意味・例文）- 白背景 */
+.expand-right-col {
+    flex: 1;
+    background: #ffffff;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* 左カラム上部：番号とチェックボックスの連結ボックス */
+.expand-left-top {
     display: inline-flex;
     align-items: stretch;
     border: none;
@@ -8149,10 +8115,11 @@ body.choice-question-mode-active .word-card-container {
     overflow: hidden;
     background: transparent;
     height: 22px;
+    margin-bottom: 4px;
 }
 
+/* 番号 */
 .input-list-expand-number {
-    position: static;
     font-size: 11px;
     font-weight: 500;
     padding: 0 8px;
@@ -8165,29 +8132,26 @@ body.choice-question-mode-active .word-card-container {
     justify-content: center;
     height: 100%;
     line-height: 1;
-}
-
-/* 未学習: 濃いグレー背景、グレー文字 */
-.input-list-expand-number:not(.marker-correct):not(.marker-wrong) {
     background: #d1d5db;
     color: #4b5563;
 }
 
-/* 学習済み（正解）: 青背景、白文字 */
+.input-list-expand-number-star {
+    display: none;
+}
+
 .input-list-expand-number.marker-correct {
     background: #3b82f6;
     color: #ffffff;
 }
 
-/* 学習済み（不正解）: 赤背景、白文字 */
 .input-list-expand-number.marker-wrong {
     background: #ef4444;
     color: #ffffff;
 }
 
-/* 展開モードのチェックボックス（単語番号の右に連結） */
+/* チェックボックス（番号の右に連結） */
 .input-list-expand-checkbox {
-    position: static;
     width: 22px;
     height: 100%;
     border: none;
@@ -8211,7 +8175,7 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-expand-checkbox:hover {
-    background: #f8fafc;
+    background: #e5e7eb;
 }
 
 .input-list-expand-checkbox.checked {
@@ -8222,93 +8186,144 @@ body.choice-question-mode-active .word-card-container {
     border-color: #ffffff;
 }
 
-.input-list-expand-word-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 6px;
-    flex: 1;
+/* 英単語 */
+.input-list-expand-word {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0369a1;
+    font-family: var(--font-sans);
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    margin-top: 2px;
+    white-space: nowrap;
 }
 
-.input-list-expand-word-row .audio-btn {
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    padding: 0;
-    align-self: flex-end;
-    margin-bottom: 5px;
-}
-
-.input-list-expand-word-row .audio-btn svg {
-    width: 14px;
-    height: 14px;
-}
-
-.input-list-expand-pos {
-    font-size: 10px;
-    padding: 2px 5px;
-    background: #fafafa;
-    border-radius: 3px;
-    color: #6b7280;
-    font-weight: 500;
-}
-
-.input-list-expand-word-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-}
-
+/* カタカナ読み */
 .input-list-expand-kana {
-    font-size: 11px;
-    color: #64748b;
+    font-size: 12px;
+    color: #0369a1;
     font-weight: 400;
-    line-height: 1;
-    margin-bottom: -3px;
+    line-height: 1.2;
 }
 
 .input-list-expand-kana b {
     font-weight: 700;
-    color: #1e293b;
+    color: #0284c7;
 }
 
-.input-list-expand-word {
-    font-size: 32px;
-    font-weight: 700;
-    color: #374151;
-    font-family: var(--font-sans);
-    font-weight: bold;
-    font-weight: bold;
-    letter-spacing: 0.02em;
-    margin-top: 0;
+/* 発音ボタン（アイコンのみ） */
+.expand-pronunciation-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #1d4ed8;
+    margin-top: 4px;
+    transition: background 0.15s ease;
 }
 
-/* 展開モード右上のアクションエリア */
-.input-list-expand-top-actions {
-    position: absolute;
-    top: 0;
-    right: 20px;
+.expand-pronunciation-btn:hover {
+    background: #f3f4f6;
+}
+
+.expand-pronunciation-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* 発音ボタン再生中アニメーション */
+.expand-pronunciation-btn.playing {
+    background-color: #93c5fd !important;
+    color: #1d4ed8 !important;
+    animation: audio-pulse 0.6s ease-in-out infinite;
+}
+
+/* 右カラム：品詞バッジ（非表示） */
+.expand-pos-badge {
+    display: none;
+}
+
+/* 右カラム：意味 */
+.expand-meaning-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ff9933;
+    line-height: 1.4;
+}
+
+/* 右カラム：例文セクション */
+.expand-example-section {
     display: flex;
-    align-items: flex-start;
-    gap: 8px;
+    flex-direction: column;
+    gap: 1px;
+    font-size: 10px;
+    margin-top: 3px;
+    padding-top: 4px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.expand-example-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 4px;
+    background: #a78bfa;
+    color: #ffffff;
+    font-size: 8px;
+    font-weight: 400;
+    border-radius: 2px;
+    flex-shrink: 0;
+    width: fit-content;
+}
+
+.expand-example-en {
+    color: #1f2937;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.3;
+}
+
+.expand-example-en strong {
+    color: #1f2937;
+    font-weight: 700;
+}
+
+.expand-example-ja {
+    color: #6b7280;
+    font-size: 9px;
+    line-height: 1.2;
+}
+
+.expand-example-ja strong {
+    color: #ff9933;
+    font-weight: 700;
+}
+
+/* 右上のでた度表示（非表示） */
+.input-list-expand-top-actions {
+    display: none;
 }
 
 .input-list-expand-appearance-box {
     display: flex;
     align-items: center;
-    gap: 4px;
-    background: #9ca3af !important;
-    padding: 4px 8px;
-    border-radius: 0 0 8px 8px;
-    font-size: 10px;
+    gap: 3px;
+    background: rgba(0,0,0,0.5);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 9px;
     color: #ffffff;
-    width: auto;
-    box-sizing: border-box;
 }
 
 .input-list-expand-appearance-box .appearance-osaka-icon {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
     object-fit: contain;
 }
 
@@ -8321,14 +8336,19 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-expand-appearance-box .appearance-stars {
-    color: #ffffff;
-    font-size: 16px;
+    color: #fbbf24;
+    font-size: 12px;
     font-weight: 800;
     letter-spacing: 0;
-    text-align: left;
-    margin-right: 0;
-    min-width: 0;
-    display: inline-block;
+}
+
+/* レガシー要素（非表示） */
+.input-list-expand-header,
+.input-list-expand-number-box,
+.input-list-expand-word-row,
+.input-list-expand-word-container,
+.input-list-expand-pos {
+    display: none;
 }
 
 .input-list-expand-star-btn {
@@ -8362,72 +8382,50 @@ body.choice-question-mode-active .word-card-container {
     height: 32px;
 }
 
-.input-list-expand-meaning {
-    font-size: 18px;
-    color: #ff9933;
-    font-weight: 600;
-    line-height: 1.5;
-    margin-top: 6px;
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.input-list-expand-meaning-pos {
-    margin-top: 6px !important;
-    font-size: 12px !important;
-    padding: 2px 3px !important;
-    border-radius: 2px;
-    color: #6b7280;
-    font-weight: 500;
-    flex-shrink: 0;
-}
-
-.input-list-expand-example {
-    background: #f5f5f5;
-    border-radius: 0;
-    padding: 8px 10px;
-    margin-top: 6px;
-}
-
-.input-list-expand-example-en {
-    font-size: 14px;
-    color: #1f2937;
-    font-family: var(--font-sans);
-    font-weight: bold;
-    font-weight: 400;
-    line-height: 1.5;
-    margin-bottom: 2px;
-}
-
-.input-list-expand-example-en strong {
-    color: #1f2937;
-    font-weight: 700;
-}
-
+/* レガシー意味・例文（非表示） */
+.input-list-expand-meaning,
+.input-list-expand-meaning-pos,
+.input-list-expand-example,
+.input-list-expand-example-en,
 .input-list-expand-example-ja {
-    font-size: 12px;
-    color: #6b7280;
-    line-height: 1.4;
+    display: none;
 }
 
+/* モバイル対応 */
 @media (max-width: 640px) {
     .input-list-item-expand {
-        padding: 16px 12px;
-        padding-top: 36px;
-        padding-bottom: 20px;
+        min-height: 80px;
     }
     
-    .input-list-expand-header {
-        gap: 6px;
+    .expand-left-col {
+        flex: 0 0 45%;
+        max-width: 45%;
+        padding: 8px 10px;
     }
     
-    .input-list-expand-number {
-        font-size: 9px;
-        padding: 2px 6px;
-        top: 0;
-        left: 0;
+    .expand-right-col {
+        padding: 8px 10px;
+    }
+    
+    .input-list-expand-word {
+        font-size: 16px;
+    }
+    
+    .input-list-expand-kana {
+        font-size: 11px;
+    }
+    
+    .expand-pronunciation-btn {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+    
+    .expand-meaning-text {
+        font-size: 14px;
+    }
+    
+    .expand-example-section {
+        font-size: 11px;
     }
     
     .input-list-expand-top-actions {
@@ -10041,6 +10039,13 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     height: 28px;
     min-height: 28px;
     min-width: 28px;
+}
+
+/* meaning 由来の品詞バッジ（【名】【形】など）は薄いグレー背景に統一 */
+.pos-inline.meaning-pos-inline,
+.pos-inline.meaning-pos-inline.meaning-pos-inline-bracket {
+    background: #f3f4f6;
+    color: #6b7280;
 }
 
 /* 英語単語のときの品詞位置調整 */
