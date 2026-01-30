@@ -11250,11 +11250,17 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         wordEl.className = 'input-list-expand-word';
         wordEl.textContent = word.word;
         // 長い単語は横縮小
-        if (word.word.length >= 12) {
+        if (word.word.length >= 13) {
             wordEl.style.transform = 'scaleX(0.7)';
             wordEl.style.transformOrigin = 'left';
+        } else if (word.word.length >= 12) {
+            wordEl.style.transform = 'scaleX(0.75)';
+            wordEl.style.transformOrigin = 'left';
         } else if (word.word.length >= 10) {
-            wordEl.style.transform = 'scaleX(0.8)';
+            wordEl.style.transform = 'scaleX(0.85)';
+            wordEl.style.transformOrigin = 'left';
+        } else if (word.word.length >= 9) {
+            wordEl.style.transform = 'scaleX(0.95)';
             wordEl.style.transformOrigin = 'left';
         }
         leftCol.appendChild(wordEl);
@@ -11703,11 +11709,17 @@ function renderInputListView(words) {
             wordEl.className = 'input-list-expand-word';
             wordEl.textContent = word.word;
             // 長い単語は横縮小
-            if (word.word.length >= 12) {
+            if (word.word.length >= 13) {
                 wordEl.style.transform = 'scaleX(0.7)';
                 wordEl.style.transformOrigin = 'left';
+            } else if (word.word.length >= 12) {
+                wordEl.style.transform = 'scaleX(0.75)';
+                wordEl.style.transformOrigin = 'left';
             } else if (word.word.length >= 10) {
-                wordEl.style.transform = 'scaleX(0.8)';
+                wordEl.style.transform = 'scaleX(0.85)';
+                wordEl.style.transformOrigin = 'left';
+            } else if (word.word.length >= 9) {
+                wordEl.style.transform = 'scaleX(0.95)';
                 wordEl.style.transformOrigin = 'left';
             }
             leftCol.appendChild(wordEl);

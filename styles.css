@@ -8220,7 +8220,7 @@ body.choice-question-mode-active .word-card-container {
     height: 28px;
     padding: 0;
     background: #ffffff;
-    border: 1px solid #e5e7eb;
+    border: none;
     border-radius: 50%;
     cursor: pointer;
     color: #1d4ed8;
@@ -8261,10 +8261,10 @@ body.choice-question-mode-active .word-card-container {
 .expand-example-section {
     display: flex;
     flex-direction: column;
-    gap: 1px;
-    font-size: 10px;
-    margin-top: 3px;
-    padding-top: 4px;
+    gap: 2px;
+    font-size: 11px;
+    margin-top: 4px;
+    padding-top: 5px;
     border-top: 1px solid #e5e7eb;
 }
 
@@ -8272,10 +8272,10 @@ body.choice-question-mode-active .word-card-container {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0px 4px;
+    padding: 1px 4px;
     background: #a78bfa;
     color: #ffffff;
-    font-size: 8px;
+    font-size: 9px;
     font-weight: 400;
     border-radius: 2px;
     flex-shrink: 0;
@@ -8284,9 +8284,9 @@ body.choice-question-mode-active .word-card-container {
 
 .expand-example-en {
     color: #1f2937;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 400;
-    line-height: 1.3;
+    line-height: 1.4;
 }
 
 .expand-example-en strong {
@@ -8296,13 +8296,13 @@ body.choice-question-mode-active .word-card-container {
 
 .expand-example-ja {
     color: #6b7280;
-    font-size: 9px;
-    line-height: 1.2;
+    font-size: 10px;
+    line-height: 1.3;
 }
 
 .expand-example-ja strong {
     color: #ff9933;
-    font-weight: 700;
+    font-weight: 400;
 }
 
 /* 右上のでた度表示（非表示） */
