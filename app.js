@@ -10685,6 +10685,16 @@ function stripConjugationFromText(rawText) {
     return text.replace(/\s*《活用》[\s\S]*$/g, '').trimEnd();
 }
 
+// 《活用》部分を抽出する（例: "am - was - been"）
+function extractConjugationFromText(rawText) {
+    if (!rawText) return '';
+    const text = String(rawText);
+    const marker = '《活用》';
+    const idx = text.indexOf(marker);
+    if (idx === -1) return '';
+    return text.substring(idx + marker.length).trim();
+}
+
 function renderMeaningWithPosSegments(targetEl, rawText, options = {}) {
     if (!targetEl) return;
     targetEl.innerHTML = '';
@@ -11250,11 +11260,17 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         wordEl.className = 'input-list-expand-word';
         wordEl.textContent = word.word;
         // 長い単語は横縮小
-        if (word.word.length >= 13) {
+        if (word.word.length >= 14) {
+            wordEl.style.transform = 'scaleX(0.67)';
+            wordEl.style.transformOrigin = 'left';
+        } else if (word.word.length >= 13) {
             wordEl.style.transform = 'scaleX(0.7)';
             wordEl.style.transformOrigin = 'left';
         } else if (word.word.length >= 12) {
             wordEl.style.transform = 'scaleX(0.75)';
+            wordEl.style.transformOrigin = 'left';
+        } else if (word.word.length >= 11) {
+            wordEl.style.transform = 'scaleX(0.8)';
             wordEl.style.transformOrigin = 'left';
         } else if (word.word.length >= 10) {
             wordEl.style.transform = 'scaleX(0.85)';
@@ -11307,35 +11323,71 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
         rightCol.appendChild(meaningText);
         
-        // 例文（あれば）
-        if (word.example && (word.example.english || word.example.japanese)) {
-            const exampleSection = document.createElement('div');
-            exampleSection.className = 'expand-example-section';
+        // 活用・例文セクション（線の下）
+        const conjugationText = extractConjugationFromText(word.meaning || '');
+        const hasExample = word.example && (word.example.english || word.example.japanese);
+        
+        if (conjugationText || hasExample) {
+            // 線の下のコンテナ
+            const belowLineSection = document.createElement('div');
+            belowLineSection.className = 'expand-below-line-section';
             
-            const exampleBadge = document.createElement('span');
-            exampleBadge.className = 'expand-example-badge';
-            exampleBadge.textContent = '例';
-            exampleSection.appendChild(exampleBadge);
+            // 活用（あれば）
+            if (conjugationText) {
+                const conjSection = document.createElement('div');
+                conjSection.className = 'expand-conjugation-section';
+                
+                const conjBadge = document.createElement('span');
+                conjBadge.className = 'expand-conjugation-badge';
+                conjBadge.textContent = '活';
+                conjSection.appendChild(conjBadge);
+                
+                const conjText = document.createElement('span');
+                conjText.className = 'expand-conjugation-text';
+                conjText.textContent = conjugationText;
+                conjSection.appendChild(conjText);
+                
+                belowLineSection.appendChild(conjSection);
+            }
             
-            if (word.example.english) {
-                const exEn = document.createElement('div');
-                exEn.className = 'expand-example-en';
-                if (word.word) {
-                    exEn.innerHTML = highlightTargetWord(word.example.english, word.word);
-                } else {
-                    exEn.textContent = word.example.english;
+            // 例文（あれば）
+            if (hasExample) {
+                const exampleSection = document.createElement('div');
+                exampleSection.className = 'expand-example-section';
+                
+                // 例バッジと英語を横並び
+                const exampleRow = document.createElement('div');
+                exampleRow.className = 'expand-example-row';
+                
+                const exampleBadge = document.createElement('span');
+                exampleBadge.className = 'expand-example-badge';
+                exampleBadge.textContent = '例';
+                exampleRow.appendChild(exampleBadge);
+                
+                if (word.example.english) {
+                    const exEn = document.createElement('span');
+                    exEn.className = 'expand-example-en';
+                    if (word.word) {
+                        exEn.innerHTML = highlightTargetWord(word.example.english, word.word);
+                    } else {
+                        exEn.textContent = word.example.english;
+                    }
+                    exampleRow.appendChild(exEn);
                 }
-                exampleSection.appendChild(exEn);
+                
+                exampleSection.appendChild(exampleRow);
+                
+                if (word.example.japanese) {
+                    const exJa = document.createElement('div');
+                    exJa.className = 'expand-example-ja';
+                    exJa.innerHTML = word.example.japanese;
+                    exampleSection.appendChild(exJa);
+                }
+                
+                belowLineSection.appendChild(exampleSection);
             }
             
-            if (word.example.japanese) {
-                const exJa = document.createElement('div');
-                exJa.className = 'expand-example-ja';
-                exJa.innerHTML = word.example.japanese;
-                exampleSection.appendChild(exJa);
-            }
-            
-            rightCol.appendChild(exampleSection);
+            rightCol.appendChild(belowLineSection);
         }
         
         // でた度表示（右カラム内に配置）
@@ -11709,11 +11761,17 @@ function renderInputListView(words) {
             wordEl.className = 'input-list-expand-word';
             wordEl.textContent = word.word;
             // 長い単語は横縮小
-            if (word.word.length >= 13) {
+            if (word.word.length >= 14) {
+                wordEl.style.transform = 'scaleX(0.67)';
+                wordEl.style.transformOrigin = 'left';
+            } else if (word.word.length >= 13) {
                 wordEl.style.transform = 'scaleX(0.7)';
                 wordEl.style.transformOrigin = 'left';
             } else if (word.word.length >= 12) {
                 wordEl.style.transform = 'scaleX(0.75)';
+                wordEl.style.transformOrigin = 'left';
+            } else if (word.word.length >= 11) {
+                wordEl.style.transform = 'scaleX(0.8)';
                 wordEl.style.transformOrigin = 'left';
             } else if (word.word.length >= 10) {
                 wordEl.style.transform = 'scaleX(0.85)';
@@ -11764,35 +11822,71 @@ function renderInputListView(words) {
             setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
             rightCol.appendChild(meaningText);
             
-            // 例文（あれば）
-            if (word.example && (word.example.english || word.example.japanese)) {
-                const exampleSection = document.createElement('div');
-                exampleSection.className = 'expand-example-section';
+            // 活用・例文セクション（線の下）
+            const conjugationText = extractConjugationFromText(word.meaning || '');
+            const hasExample = word.example && (word.example.english || word.example.japanese);
+            
+            if (conjugationText || hasExample) {
+                // 線の下のコンテナ
+                const belowLineSection = document.createElement('div');
+                belowLineSection.className = 'expand-below-line-section';
                 
-                const exampleBadge = document.createElement('span');
-                exampleBadge.className = 'expand-example-badge';
-                exampleBadge.textContent = '例';
-                exampleSection.appendChild(exampleBadge);
+                // 活用（あれば）
+                if (conjugationText) {
+                    const conjSection = document.createElement('div');
+                    conjSection.className = 'expand-conjugation-section';
+                    
+                    const conjBadge = document.createElement('span');
+                    conjBadge.className = 'expand-conjugation-badge';
+                    conjBadge.textContent = '活';
+                    conjSection.appendChild(conjBadge);
+                    
+                    const conjText = document.createElement('span');
+                    conjText.className = 'expand-conjugation-text';
+                    conjText.textContent = conjugationText;
+                    conjSection.appendChild(conjText);
+                    
+                    belowLineSection.appendChild(conjSection);
+                }
                 
-                if (word.example.english) {
-                    const exEn = document.createElement('div');
-                    exEn.className = 'expand-example-en';
-                    if (word.word) {
-                        exEn.innerHTML = highlightTargetWord(word.example.english, word.word);
-                    } else {
-                        exEn.textContent = word.example.english;
+                // 例文（あれば）
+                if (hasExample) {
+                    const exampleSection = document.createElement('div');
+                    exampleSection.className = 'expand-example-section';
+                    
+                    // 例バッジと英語を横並び
+                    const exampleRow = document.createElement('div');
+                    exampleRow.className = 'expand-example-row';
+                    
+                    const exampleBadge = document.createElement('span');
+                    exampleBadge.className = 'expand-example-badge';
+                    exampleBadge.textContent = '例';
+                    exampleRow.appendChild(exampleBadge);
+                    
+                    if (word.example.english) {
+                        const exEn = document.createElement('span');
+                        exEn.className = 'expand-example-en';
+                        if (word.word) {
+                            exEn.innerHTML = highlightTargetWord(word.example.english, word.word);
+                        } else {
+                            exEn.textContent = word.example.english;
+                        }
+                        exampleRow.appendChild(exEn);
                     }
-                    exampleSection.appendChild(exEn);
+                    
+                    exampleSection.appendChild(exampleRow);
+                    
+                    if (word.example.japanese) {
+                        const exJa = document.createElement('div');
+                        exJa.className = 'expand-example-ja';
+                        exJa.innerHTML = word.example.japanese;
+                        exampleSection.appendChild(exJa);
+                    }
+                    
+                    belowLineSection.appendChild(exampleSection);
                 }
                 
-                if (word.example.japanese) {
-                    const exJa = document.createElement('div');
-                    exJa.className = 'expand-example-ja';
-                    exJa.innerHTML = word.example.japanese;
-                    exampleSection.appendChild(exJa);
-                }
-                
-                rightCol.appendChild(exampleSection);
+                rightCol.appendChild(belowLineSection);
             }
             
             // でた度表示（右カラム内に配置）

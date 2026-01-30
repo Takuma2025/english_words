@@ -7588,7 +7588,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* コンパクト時の意味 */
 .input-list-scroll.compact-mode .expand-meaning-text {
-    font-size: 12px;
+    font-size: 14px;
     color: #ff9933;
     font-weight: 600;
     flex: 1;
@@ -8251,21 +8251,35 @@ body.choice-question-mode-active .word-card-container {
 
 /* 右カラム：意味 */
 .expand-meaning-text {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     color: #ff9933;
     line-height: 1.4;
+}
+
+/* 線の下のセクション（活用・例文） */
+.expand-below-line-section {
+    margin-top: 4px;
+    padding-top: 5px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 /* 右カラム：例文セクション */
 .expand-example-section {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 1px;
     font-size: 11px;
-    margin-top: 4px;
-    padding-top: 5px;
-    border-top: 1px solid #e5e7eb;
+}
+
+/* 例バッジと英語例文を横並び */
+.expand-example-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
 }
 
 .expand-example-badge {
@@ -8279,7 +8293,7 @@ body.choice-question-mode-active .word-card-container {
     font-weight: 400;
     border-radius: 2px;
     flex-shrink: 0;
-    width: fit-content;
+    margin-top: 2px;
 }
 
 .expand-example-en {
@@ -8298,11 +8312,42 @@ body.choice-question-mode-active .word-card-container {
     color: #6b7280;
     font-size: 10px;
     line-height: 1.3;
+    margin-left: 22px;
 }
 
 .expand-example-ja strong {
     color: #ff9933;
     font-weight: 400;
+}
+
+/* 活用セクション */
+.expand-conjugation-section {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+}
+
+.expand-conjugation-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 4px;
+    background: #6b7280;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 400;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.expand-conjugation-text {
+    color: #6b7280;
+    font-size: 10px;
+    line-height: 1.3;
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 3px;
 }
 
 /* 右上のでた度表示（非表示） */
@@ -8421,7 +8466,7 @@ body.choice-question-mode-active .word-card-container {
     }
     
     .expand-meaning-text {
-        font-size: 14px;
+        font-size: 16px;
     }
     
     .expand-example-section {
