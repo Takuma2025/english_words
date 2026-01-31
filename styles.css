@@ -7577,6 +7577,12 @@ body.choice-question-mode-active .word-card-container {
     height: 100%;
 }
 
+/* コンパクト時の品詞 */
+.input-list-scroll.compact-mode .expand-left-pos {
+    font-size: 8px;
+    padding: 0 4px;
+}
+
 /* コンパクト時の英単語 */
 .input-list-scroll.compact-mode .input-list-expand-word {
     font-size: 14px;
@@ -7890,6 +7896,7 @@ body.choice-question-mode-active .word-card-container {
 /* 単語カードモードの英字を大きく・中央揃え */
 .flip-mode .input-list-word {
     font-size: 30px;
+    color: #0369a1;
 }
 
 .flip-mode .input-list-front {
@@ -8188,6 +8195,51 @@ body.choice-question-mode-active .word-card-container {
     border-color: #ffffff;
 }
 
+/* 品詞（単語番号の右に表示） */
+.expand-left-pos {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 8px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    border-left: none;
+    /* デフォルト（その他に近い） */
+    color: #475569;
+}
+
+/* 名詞・代名詞：薄い赤 */
+.expand-left-pos-noun {
+    background: #fce7f3;
+    color: #be185d;
+}
+
+/* 動詞：薄い青 */
+.expand-left-pos-verb {
+    background: #bfdbfe;
+    color: #1d4ed8;
+}
+
+/* 形容詞：薄い緑 */
+.expand-left-pos-adjective {
+    background: #bbf7d0;
+    color: #15803d;
+}
+
+/* 副詞：薄い紫 */
+.expand-left-pos-adverb {
+    background: #ddd6fe;
+    color: #6d28d9;
+}
+
+/* その他：薄いグレー */
+.expand-left-pos-other {
+    background: #e5e7eb;
+    color: #475569;
+}
+
 /* 英単語 */
 .input-list-expand-word {
     font-size: 18px;
@@ -8298,7 +8350,7 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: center;
     padding: 1px 4px;
-    background: #a78bfa;
+    background: #0369a1;
     color: #ffffff;
     font-size: 9px;
     font-weight: 400;
@@ -8308,14 +8360,14 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .expand-example-en {
-    color: #6b7280;
+    color: #0369a1;
     font-size: 11px;
     font-weight: 400;
     line-height: 1.4;
 }
 
 .expand-example-en strong {
-    color: #6b7280;
+    color: #0369a1;
     font-weight: 700;
 }
 
@@ -8344,7 +8396,7 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: center;
     padding: 1px 4px;
-    background: #6b7280;
+    background: #a78bfa;
     color: #ffffff;
     font-size: 9px;
     font-weight: 400;

@@ -10699,6 +10699,46 @@ function extractConjugationFromText(rawText) {
     return rest;
 }
 
+function getPosLabelKind(partOfSpeechText) {
+    const t = String(partOfSpeechText || '');
+    // 動詞/形容詞/副詞が含まれる場合はそれを優先。それ以外は名詞/代名詞→その他
+    if (t.includes('動詞')) return 'verb';
+    if (t.includes('形容詞')) return 'adjective';
+    if (t.includes('副詞')) return 'adverb';
+    if (t.includes('名詞') || t.includes('代名詞')) return 'noun';
+    return 'other';
+}
+
+function splitPartOfSpeechLabels(partOfSpeechText) {
+    const raw = String(partOfSpeechText || '').trim();
+    if (!raw) return [];
+    // 「名詞・副詞」「名詞・形容詞・副詞」などを個別ラベルに分割（区切り文字は表示しない）
+    return raw
+        .split(/[・、,\s]+/g)
+        .map(s => s.trim())
+        .filter(Boolean);
+}
+
+function toShortPosFromPartOfSpeech(part) {
+    const t = String(part || '').trim();
+    if (!t) return '';
+    if (t.includes('代名詞')) return '代';
+    if (t.includes('名詞')) return '名';
+    if (t.includes('動詞')) return '動';
+    if (t.includes('形容詞')) return '形';
+    if (t.includes('副詞')) return '副';
+    if (t.includes('前置詞')) return '前';
+    if (t.includes('接続詞')) return '接';
+    if (t.includes('助動詞')) return '助';
+    if (t.includes('冠詞')) return '冠';
+    if (t.includes('間投詞')) return '間';
+    if (t.includes('疑問詞')) return '疑';
+    if (t.includes('関係')) return '関';
+    if (t.includes('限定詞')) return '限';
+    // フォールバック：最初の1文字
+    return t.charAt(0);
+}
+
 // 〖連〗（連語）部分を抽出する（複数あれば配列で返す）
 function extractRengoFromText(rawText) {
     if (!rawText) return [];
@@ -11299,9 +11339,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
                 cycleWordProgress(word, number, item);
             });
         }
-        leftTop.appendChild(number);
-        
-        // チェックボックス（番号の右に追加）
+        // チェックボックス（左に表示）
         const checkbox = document.createElement('div');
         checkbox.className = 'input-list-expand-checkbox';
         if (reviewWords.has(word.id)) {
@@ -11319,6 +11357,18 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             saveReviewWords();
         });
         leftTop.appendChild(checkbox);
+
+        // 番号（チェックの右に表示）
+        leftTop.appendChild(number);
+
+        // 品詞（番号の右に表示：複数なら並べる。区切りの「・」は表示しない）
+        const posParts = splitPartOfSpeechLabels(word.partOfSpeech);
+        posParts.forEach((p) => {
+            const posLabel = document.createElement('span');
+            posLabel.className = `expand-left-pos expand-left-pos-${getPosLabelKind(p)}`;
+            posLabel.textContent = toShortPosFromPartOfSpeech(p);
+            leftTop.appendChild(posLabel);
+        });
         leftCol.appendChild(leftTop);
         
         // 英単語（長い単語は横縮小）
@@ -11386,15 +11436,14 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         // 意味テキスト
         const meaningText = document.createElement('div');
         meaningText.className = 'expand-meaning-text';
-        setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
+        setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true, showPosBadges: false });
         rightCol.appendChild(meaningText);
         
-        // 活用・連語・例文セクション（線の下）
+        // 活用・例文セクション（線の下）
         const conjugationText = extractConjugationFromText(word.meaning || '');
-        const rengoList = extractRengoFromText(word.meaning || '');
         const hasExample = word.example && (word.example.english || word.example.japanese);
         
-        if (conjugationText || (rengoList && rengoList.length > 0) || hasExample) {
+        if (conjugationText || hasExample) {
             // 線の下のコンテナ
             const belowLineSection = document.createElement('div');
             belowLineSection.className = 'expand-below-line-section';
@@ -11415,26 +11464,6 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
                 conjSection.appendChild(conjText);
                 
                 belowLineSection.appendChild(conjSection);
-            }
-
-            // 連語（〖連〗）（あれば）: 活用の下に表示
-            if (rengoList && rengoList.length > 0) {
-                rengoList.forEach((rt) => {
-                    const rengoSection = document.createElement('div');
-                    rengoSection.className = 'expand-rengo-section';
-
-                    const rengoBadge = document.createElement('span');
-                    rengoBadge.className = 'expand-rengo-badge';
-                    rengoBadge.textContent = '連';
-                    rengoSection.appendChild(rengoBadge);
-
-                    const rengoText = document.createElement('span');
-                    rengoText.className = 'expand-rengo-text';
-                    setRengoContent(rengoText, rt);
-                    rengoSection.appendChild(rengoText);
-
-                    belowLineSection.appendChild(rengoSection);
-                });
             }
             
             // 例文（あれば）
@@ -11636,7 +11665,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         meaningWrapper.appendChild(meaningPos);
         const meaningText = document.createElement('span');
         // 単語カードモード（フリップ）では《活用》は表示しない
-        setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
+        setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true, showPosBadges: false });
         meaningWrapper.appendChild(meaningText);
         meaningEl.appendChild(meaningWrapper);
         back.appendChild(meaningEl);
@@ -11821,9 +11850,7 @@ function renderInputListView(words) {
             } else if (isCorrect) {
                 number.classList.add('marker-correct');
             }
-            leftTop.appendChild(number);
-            
-            // チェックボックス（番号の右に追加）
+            // チェックボックス（左に表示）
             const checkbox = document.createElement('div');
             checkbox.className = 'input-list-expand-checkbox';
             if (reviewWords.has(word.id)) {
@@ -11841,6 +11868,18 @@ function renderInputListView(words) {
                 saveReviewWords();
             });
             leftTop.appendChild(checkbox);
+
+            // 番号（チェックの右に表示）
+            leftTop.appendChild(number);
+
+            // 品詞（番号の右に表示：複数なら並べる。区切りの「・」は表示しない）
+            const posParts = splitPartOfSpeechLabels(word.partOfSpeech);
+            posParts.forEach((p) => {
+                const posLabel = document.createElement('span');
+                posLabel.className = `expand-left-pos expand-left-pos-${getPosLabelKind(p)}`;
+                posLabel.textContent = toShortPosFromPartOfSpeech(p);
+                leftTop.appendChild(posLabel);
+            });
             leftCol.appendChild(leftTop);
             
             // 英単語（長い単語は横縮小）
@@ -11906,15 +11945,14 @@ function renderInputListView(words) {
             // 意味テキスト
             const meaningText = document.createElement('div');
             meaningText.className = 'expand-meaning-text';
-            setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
+            setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true, showPosBadges: false });
             rightCol.appendChild(meaningText);
             
-            // 活用・連語・例文セクション（線の下）
+            // 活用・例文セクション（線の下）
             const conjugationText = extractConjugationFromText(word.meaning || '');
-            const rengoList = extractRengoFromText(word.meaning || '');
             const hasExample = word.example && (word.example.english || word.example.japanese);
             
-            if (conjugationText || (rengoList && rengoList.length > 0) || hasExample) {
+            if (conjugationText || hasExample) {
                 // 線の下のコンテナ
                 const belowLineSection = document.createElement('div');
                 belowLineSection.className = 'expand-below-line-section';
@@ -11935,26 +11973,6 @@ function renderInputListView(words) {
                     conjSection.appendChild(conjText);
                     
                     belowLineSection.appendChild(conjSection);
-                }
-
-                // 連語（〖連〗）（あれば）: 活用の下に表示
-                if (rengoList && rengoList.length > 0) {
-                    rengoList.forEach((rt) => {
-                        const rengoSection = document.createElement('div');
-                        rengoSection.className = 'expand-rengo-section';
-
-                        const rengoBadge = document.createElement('span');
-                        rengoBadge.className = 'expand-rengo-badge';
-                        rengoBadge.textContent = '連';
-                        rengoSection.appendChild(rengoBadge);
-
-                        const rengoText = document.createElement('span');
-                        rengoText.className = 'expand-rengo-text';
-                        setRengoContent(rengoText, rt);
-                        rengoSection.appendChild(rengoText);
-
-                        belowLineSection.appendChild(rengoSection);
-                    });
                 }
                 
                 // 例文（あれば）
@@ -12152,7 +12170,7 @@ function renderInputListView(words) {
             meaningWrapper.appendChild(meaningPos);
             const meaningText = document.createElement('span');
             // 単語カードモード（フリップ）では《活用》は表示しない
-            setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
+            setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true, showPosBadges: false });
             meaningWrapper.appendChild(meaningText);
             meaningEl.appendChild(meaningWrapper);
             back.appendChild(meaningEl);
