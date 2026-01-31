@@ -10692,7 +10692,73 @@ function extractConjugationFromText(rawText) {
     const marker = '《活用》';
     const idx = text.indexOf(marker);
     if (idx === -1) return '';
-    return text.substring(idx + marker.length).trim();
+    let rest = text.substring(idx + marker.length).trim();
+    // 例: "am - am - am 〖連〗be able to～" のように後ろにタグが続く場合はそこで打ち切る
+    const stopIdx = rest.search(/[〖〈【]/);
+    if (stopIdx !== -1) rest = rest.substring(0, stopIdx).trim();
+    return rest;
+}
+
+// 〖連〗（連語）部分を抽出する（複数あれば配列で返す）
+function extractRengoFromText(rawText) {
+    if (!rawText) return [];
+    const text = String(rawText);
+    const results = [];
+    const re = /〖連〗\s*([\s\S]*?)(?=\s*(?:〖|〈|【|$))/g;
+    let m;
+    while ((m = re.exec(text)) !== null) {
+        const t = String(m[1] || '').trim();
+        if (t) results.push(t);
+    }
+    return results;
+}
+
+function isJapaneseChar(ch) {
+    const code = ch.codePointAt(0);
+    // Hiragana, Katakana, Kanji, punctuation/symbols commonly used in Japanese text
+    return (
+        (code >= 0x3040 && code <= 0x30FF) || // ひらがな・カタカナ
+        (code >= 0x3400 && code <= 0x9FFF) || // CJK
+        (code >= 0x3000 && code <= 0x303F) || // CJK punctuation
+        code === 0xFF5E || // ～
+        code === 0x30FC    // ー
+    );
+}
+
+function setRengoContent(targetEl, rawText) {
+    if (!targetEl) return;
+    targetEl.textContent = '';
+    const s = String(rawText || '');
+    if (!s) return;
+
+    let buf = '';
+    let bufIsJa = null;
+
+    const flush = () => {
+        if (!buf) return;
+        const span = document.createElement('span');
+        span.className = bufIsJa ? 'rengo-ja' : 'rengo-en';
+        span.textContent = buf;
+        targetEl.appendChild(span);
+        buf = '';
+    };
+
+    for (const ch of s) {
+        const isJa = isJapaneseChar(ch);
+        if (bufIsJa === null) {
+            bufIsJa = isJa;
+            buf = ch;
+            continue;
+        }
+        if (isJa === bufIsJa) {
+            buf += ch;
+        } else {
+            flush();
+            bufIsJa = isJa;
+            buf = ch;
+        }
+    }
+    flush();
 }
 
 function renderMeaningWithPosSegments(targetEl, rawText, options = {}) {
@@ -11323,11 +11389,12 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
         rightCol.appendChild(meaningText);
         
-        // 活用・例文セクション（線の下）
+        // 活用・連語・例文セクション（線の下）
         const conjugationText = extractConjugationFromText(word.meaning || '');
+        const rengoList = extractRengoFromText(word.meaning || '');
         const hasExample = word.example && (word.example.english || word.example.japanese);
         
-        if (conjugationText || hasExample) {
+        if (conjugationText || (rengoList && rengoList.length > 0) || hasExample) {
             // 線の下のコンテナ
             const belowLineSection = document.createElement('div');
             belowLineSection.className = 'expand-below-line-section';
@@ -11348,6 +11415,26 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
                 conjSection.appendChild(conjText);
                 
                 belowLineSection.appendChild(conjSection);
+            }
+
+            // 連語（〖連〗）（あれば）: 活用の下に表示
+            if (rengoList && rengoList.length > 0) {
+                rengoList.forEach((rt) => {
+                    const rengoSection = document.createElement('div');
+                    rengoSection.className = 'expand-rengo-section';
+
+                    const rengoBadge = document.createElement('span');
+                    rengoBadge.className = 'expand-rengo-badge';
+                    rengoBadge.textContent = '連';
+                    rengoSection.appendChild(rengoBadge);
+
+                    const rengoText = document.createElement('span');
+                    rengoText.className = 'expand-rengo-text';
+                    setRengoContent(rengoText, rt);
+                    rengoSection.appendChild(rengoText);
+
+                    belowLineSection.appendChild(rengoSection);
+                });
             }
             
             // 例文（あれば）
@@ -11822,11 +11909,12 @@ function renderInputListView(words) {
             setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true });
             rightCol.appendChild(meaningText);
             
-            // 活用・例文セクション（線の下）
+            // 活用・連語・例文セクション（線の下）
             const conjugationText = extractConjugationFromText(word.meaning || '');
+            const rengoList = extractRengoFromText(word.meaning || '');
             const hasExample = word.example && (word.example.english || word.example.japanese);
             
-            if (conjugationText || hasExample) {
+            if (conjugationText || (rengoList && rengoList.length > 0) || hasExample) {
                 // 線の下のコンテナ
                 const belowLineSection = document.createElement('div');
                 belowLineSection.className = 'expand-below-line-section';
@@ -11847,6 +11935,26 @@ function renderInputListView(words) {
                     conjSection.appendChild(conjText);
                     
                     belowLineSection.appendChild(conjSection);
+                }
+
+                // 連語（〖連〗）（あれば）: 活用の下に表示
+                if (rengoList && rengoList.length > 0) {
+                    rengoList.forEach((rt) => {
+                        const rengoSection = document.createElement('div');
+                        rengoSection.className = 'expand-rengo-section';
+
+                        const rengoBadge = document.createElement('span');
+                        rengoBadge.className = 'expand-rengo-badge';
+                        rengoBadge.textContent = '連';
+                        rengoSection.appendChild(rengoBadge);
+
+                        const rengoText = document.createElement('span');
+                        rengoText.className = 'expand-rengo-text';
+                        setRengoContent(rengoText, rt);
+                        rengoSection.appendChild(rengoText);
+
+                        belowLineSection.appendChild(rengoSection);
+                    });
                 }
                 
                 // 例文（あれば）

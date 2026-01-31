@@ -7597,6 +7597,8 @@ body.choice-question-mode-active .word-card-container {
 
 /* コンパクト時に非表示にする要素 */
 .input-list-scroll.compact-mode .input-list-expand-kana,
+.input-list-scroll.compact-mode .input-list-expand-accent,
+.input-list-scroll.compact-mode .expand-below-line-section,
 .input-list-scroll.compact-mode .expand-pronunciation-btn,
 .input-list-scroll.compact-mode .expand-pos-badge,
 .input-list-scroll.compact-mode .expand-example-section,
@@ -8348,6 +8350,44 @@ body.choice-question-mode-active .word-card-container {
     background: #f3f4f6;
     padding: 2px 6px;
     border-radius: 3px;
+}
+
+/* 連語（〖連〗）セクション */
+.expand-rengo-section {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+}
+
+.expand-rengo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 4px;
+    background: #10b981;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 400;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.expand-rengo-text {
+    color: #111827;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.3;
+}
+
+.expand-rengo-text .rengo-en {
+    font-weight: 700;
+    color: #111827;
+}
+
+.expand-rengo-text .rengo-ja {
+    font-weight: 400;
+    color: #6b7280;
 }
 
 /* 右上のでた度表示（非表示） */
