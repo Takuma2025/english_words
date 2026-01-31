@@ -6773,8 +6773,8 @@ body.choice-question-mode-active .word-card-container {
     position: relative;
     z-index: 100;
     gap: 10px;
-    margin-bottom: 12px;
-    width: 100%;
+    margin-bottom: 4px;
+    width: calc(100% - 16px);
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
@@ -6839,13 +6839,13 @@ body.choice-question-mode-active .word-card-container {
     display: none;
 }
 
-/* すべての単語モードでコンパクト表示の場合のみ小さいフォント */
+/* すべての単語モードのコンパクト表示も、他のコンパクト表示と同じ見た目に揃える */
 .input-list-scroll.all-words-mode.compact-mode .input-list-item-expand {
-    padding: 8px 12px;
+    padding: 0;
 }
 
 .input-list-scroll.all-words-mode.compact-mode .input-list-expand-word {
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .input-list-scroll.all-words-mode.compact-mode .input-list-expand-meaning {
@@ -7515,7 +7515,7 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     flex-direction: row;
     min-height: 40px;
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #0055ca;
     border-left: none;
     border-right: none;
     border-bottom: none;
@@ -7526,11 +7526,11 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:first-child {
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #0055ca;
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:last-child {
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid #0055ca;
 }
 
 /* コンパクト時も2カラム維持 */
@@ -7623,7 +7623,7 @@ body.choice-question-mode-active .word-card-container {
 .flip-mode .input-list-inner {
     box-shadow: none;
     border-radius: 0;
-    border: 1.5px solid #e5e5e5;
+    border: 1.5px solid #0055ca;
 }
 
 .flip-mode .input-list-front,
@@ -8066,16 +8066,16 @@ body.choice-question-mode-active .word-card-container {
     flex-direction: row;
     background: #ffffff;
     border: none;
-    border-top: 1.5px solid #e5e5e5;
+    border-top: 1.5px solid #0055ca;
     min-height: 90px;
 }
 
 .input-list-item-expand:first-child {
-    border-top: 1.5px solid #e5e5e5;
+    border-top: 1.5px solid #0055ca;
 }
 
 .input-list-item-expand:last-child {
-    border-bottom: 1.5px solid #e5e5e5;
+    border-bottom: 1.5px solid #0055ca;
 }
 
 .input-list-item-expand.marker-correct {
@@ -8105,7 +8105,7 @@ body.choice-question-mode-active .word-card-container {
     padding: 10px 12px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 0;
 }
 
 /* 左カラム上部：番号とチェックボックスの連結ボックス */
@@ -8134,7 +8134,7 @@ body.choice-question-mode-active .word-card-container {
     justify-content: center;
     height: 100%;
     line-height: 1;
-    background: #d1d5db;
+    background: #ffffff;
     color: #4b5563;
 }
 
@@ -8257,11 +8257,20 @@ body.choice-question-mode-active .word-card-container {
     font-weight: 600;
     color: #ff9933;
     line-height: 1.4;
+    /* 線（下セクションのボーダー）までの領域で縦中央 */
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+    column-gap: 6px;
+    row-gap: 2px;
 }
 
 /* 線の下のセクション（活用・例文） */
 .expand-below-line-section {
-    margin-top: 4px;
+    margin-top: 0;
     padding-top: 5px;
     border-top: 1px solid #e5e7eb;
     display: flex;
@@ -8280,7 +8289,7 @@ body.choice-question-mode-active .word-card-container {
 /* 例バッジと英語例文を横並び */
 .expand-example-row {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 4px;
 }
 
@@ -8295,18 +8304,18 @@ body.choice-question-mode-active .word-card-container {
     font-weight: 400;
     border-radius: 2px;
     flex-shrink: 0;
-    margin-top: 2px;
+    margin-top: 0;
 }
 
 .expand-example-en {
-    color: #1f2937;
+    color: #6b7280;
     font-size: 11px;
     font-weight: 400;
     line-height: 1.4;
 }
 
 .expand-example-en strong {
-    color: #1f2937;
+    color: #6b7280;
     font-weight: 700;
 }
 
@@ -8382,7 +8391,7 @@ body.choice-question-mode-active .word-card-container {
 
 .expand-rengo-text .rengo-en {
     font-weight: 700;
-    color: #111827;
+    color: #6b7280;
 }
 
 .expand-rengo-text .rengo-ja {
@@ -9538,14 +9547,14 @@ body.choice-question-mode-active .word-card-container {
     background: #ffffff;
     border-radius: 20px;
     box-shadow: none;
-    border: 1.5px solid #e5e5e5;
+    border: 1.5px solid #0055ca;
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease;
 }
 
 /* アウトプットモードのときもグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-stack {
-    border: 1.5px solid #e5e5e5;
+    border: 1.5px solid #0055ca;
 }
 
 .card-stack-1 {
@@ -9754,13 +9763,13 @@ body.learning-mode .bottom-nav {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1.5px solid #e5e5e5;
+    border: 1.5px solid #0055ca;
     transition: border-color 0.3s ease;
 }
 
 /* アウトプットモードのときもグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
-    border: 1.5px solid #e5e5e5;
+    border: 1.5px solid #0055ca;
 }
 
 /* カードの赤・青囲みは削除 - 単語番号下のマーカーのみ使用 */
@@ -9776,14 +9785,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1.5px solid #e5e5e5;
+    border: 1.5px solid #0055ca;
     transform: rotateY(180deg);
     transition: border-color 0.3s ease;
 }
 
 /* アウトプットモードのときもグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
-    border: 1.5px solid #e5e5e5;
+    border: 1.5px solid #0055ca;
 }
 
 /* 裏面の英単語表示（小さく上部に） */

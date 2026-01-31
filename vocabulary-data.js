@@ -643,7 +643,7 @@ const level1ArticleWords = [
 // レベル1 代名詞
 const level1PronounWords = [
   { id: 20101, word: "I", meaning: "【代】私は(主格）　《活用》am - am - am 〖連〗be able to～ ～することができる", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 1441, example: { english: "<strong>I</strong> like baseball very much.", japanese: "(<strong>私は</strong>)野球が大好きです。" } },
-  { id: 20102, word: "my", meaning: "私の（所有格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 324, example: { english: "<strong>my</strong> book", japanese: "(<strong>私の</strong>)本" } },
+  { id: 20102, word: "my", meaning: "【名】私の（所有格）　《活用》my - mine - mine 〖連〗accoring to～ ～によると", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 324, example: { english: "<strong>my</strong> book", japanese: "(<strong>私の</strong>)本" } },
   { id: 20103, word: "me", meaning: "私を/に（目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 178, example: { english: "Please help <strong>me</strong>.", japanese: "(<strong>私を</strong>)助けてください。" } },
   { id: 20104, word: "mine", meaning: "私のもの（所有代名詞）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 6, example: { english: "This pen is <strong>mine</strong>.", japanese: "このペンは(<strong>私のもの</strong>)です。" } },
   { id: 20105, word: "you", meaning: "あなた（たち）［は/を/に］（主格・目的格）", partOfSpeech: "代名詞", category: "LEVEL1 代名詞", appearanceCount: 923, example: { english: "I love <strong>you</strong>.", japanese: "私は(<strong>あなたを</strong>)愛しています。" } },
