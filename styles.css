@@ -6628,8 +6628,329 @@ body.choice-question-mode-active .word-card-container {
     height: calc(100vh - var(--header-height, 56px) - env(safe-area-inset-top, 0px));
 }
 
-/* フリップモード内のカードにパディング */
-#inputListContainer.flip-mode > .input-list-item {
+/* フリップモード：デッキ表示（1枚だけ中央表示） */
+#inputListContainer.flip-mode.flip-deck-mode {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 16px 0 12px 0;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode > .flip-deck-stage {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: calc(100% - 70px);
+    padding-bottom: 20px;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-card {
+    position: absolute;
+    width: clamp(300px, 88vw, 520px);
+    height: clamp(380px, 58vh, 560px);
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.05);
+    opacity: 0.9;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-host {
+    position: relative;
+    width: clamp(300px, 88vw, 520px);
+    touch-action: pan-y pinch-zoom;
+}
+
+/* 完了時：カード位置に出る「もう一度」 */
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-replay-card {
+    width: 100%;
+    min-height: clamp(380px, 58vh, 560px);
+    border: 1.5px solid rgba(14, 165, 233, 0.30);
+    background: rgba(224, 242, 254, 0.92); /* 薄い水色 */
+    color: rgba(14, 165, 233, 0.70);
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-replay-card:active {
+    transform: translateY(1px);
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-item {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-inner {
+    min-height: clamp(380px, 58vh, 560px);
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-front,
+#inputListContainer.flip-mode.flip-deck-mode .input-list-back {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* デッキ表示：左上メタ（チェック＆番号）を見やすく */
+#inputListContainer.flip-mode.flip-deck-mode .input-list-meta {
+    top: 14px;
+    left: 14px;
+}
+
+/* チェック→番号の順、角丸なし */
+#inputListContainer.flip-mode.flip-deck-mode .input-list-checkbox {
+    width: 26px;
+    border-radius: 0;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-number {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 0;
+}
+
+/* フリップカードの品詞バッジ */
+.flip-card-pos {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.flip-card-pos-noun {
+    background: #fce7f3;
+    color: #be185d;
+}
+
+.flip-card-pos-verb {
+    background: #bfdbfe;
+    color: #1d4ed8;
+}
+
+.flip-card-pos-adjective {
+    background: #bbf7d0;
+    color: #15803d;
+}
+
+.flip-card-pos-adverb {
+    background: #ddd6fe;
+    color: #6d28d9;
+}
+
+.flip-card-pos-other {
+    background: #e5e7eb;
+    color: #475569;
+}
+
+/* スワイプアウトアニメーション（弧を小さめに） */
+@keyframes swipeOutLeft {
+    0% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-115%) translateY(22px) rotate(-5deg);
+        opacity: 0;
+    }
+}
+
+@keyframes swipeOutRight {
+    0% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(115%) translateY(22px) rotate(5deg);
+        opacity: 0;
+    }
+}
+
+/* 次のカードが浮き上がってくるアニメーション */
+@keyframes cardFloatUp {
+    0% {
+        transform: translateY(30px) scale(0.95);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* スワイプ時：上のカード（飛ぶカード） */
+#inputListContainer.flip-mode.flip-deck-mode .input-list-item.deck-card-above {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+/* 「前へ」用：戻るアニメーション */
+@keyframes deckReturnIn {
+    0% {
+        transform: translateY(-70px) scale(1.07);
+        opacity: 0;
+        filter: drop-shadow(0 18px 36px rgba(15, 23, 42, 0.18));
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+    }
+}
+
+@keyframes deckReturnOut {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(18px) scale(0.98);
+        opacity: 0.15;
+    }
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-item.deck-card-return-in {
+    position: relative;
+    z-index: 2;
+    animation: deckReturnIn 0.62s ease-out forwards;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-item.deck-card-return-out {
+    animation: deckReturnOut 0.45s ease-out forwards;
+    pointer-events: none;
+}
+
+/* スワイプ時：下のカード（次に見えるカード）- 浮き上がりアニメーション */
+@keyframes deckCardRise {
+    0% {
+        transform: translateY(20px) scale(0.96);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-item.deck-card-below {
+    position: relative;
+    z-index: 1;
+    animation: deckCardRise 0.4s ease-out forwards;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-item.swipe-out-left {
+    animation: swipeOutLeft 0.4s ease-out forwards;
+    pointer-events: none;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-item.swipe-out-right {
+    animation: swipeOutRight 0.4s ease-out forwards;
+    pointer-events: none;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-item.card-float-up {
+    animation: cardFloatUp 0.35s ease-out forwards;
+}
+
+/* デッキ表示：英単語と音声ボタンの並びを固定（音声は右） */
+#inputListContainer.flip-mode.flip-deck-mode .input-list-row {
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-word-container {
+    order: 1;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .audio-btn {
+    order: 2;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .input-list-row .audio-btn {
+    margin-left: 0;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav {
+    width: clamp(300px, 88vw, 520px);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-counter {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: 0.03em;
+    user-select: none;
+    min-width: 70px;
+    text-align: center;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav-btn {
+    height: 44px;
+    border: none;
+    border-radius: 10px;
+    background: #0ea5e9;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+    transition: transform 0.08s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 10px rgba(14, 165, 233, 0.22);
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav-btn:disabled {
+    opacity: 0.45;
+    cursor: default;
+    box-shadow: none;
+}
+
+/* フリップモード内のカードにパディング（デッキ表示は除外） */
+#inputListContainer.flip-mode:not(.flip-deck-mode) > .input-list-item {
     width: calc(100% - 40px);
     max-width: 580px;
     margin: 0 auto 12px auto;
@@ -7472,7 +7793,6 @@ body.choice-question-mode-active .word-card-container {
     display: none;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-number,
 .input-list-scroll.compact-mode.flip-mode .input-list-expand-number-box {
     display: none !important;
 }
@@ -7628,13 +7948,14 @@ body.choice-question-mode-active .word-card-container {
 /* フリップカードに影をつける */
 .flip-mode .input-list-inner {
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.10), 0 2px 8px rgba(15, 23, 42, 0.08);
-    border-radius: 0;
+    border-radius: 20px;
     border: none;
+    /* overflow: hiddenは3D変換と相性が悪いので削除 */
 }
 
 .flip-mode .input-list-front,
 .flip-mode .input-list-back {
-    border-radius: 0;
+    border-radius: 20px;
 }
 
 .input-list-item.flipped .input-list-inner {
@@ -7663,8 +7984,9 @@ body.choice-question-mode-active .word-card-container {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: relative;
-    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .input-list-item.marker-correct .input-list-front {
@@ -7875,6 +8197,45 @@ body.choice-question-mode-active .word-card-container {
     background: #ef4444;
 }
 
+/* チェックマーク（単語番号の右） */
+.input-list-checkbox {
+    width: 22px;
+    height: 18px;
+    border: none;
+    border-radius: 0;
+    background: #f3f4f6;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+    z-index: 5;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.input-list-checkbox::after {
+    content: '';
+    width: 5px;
+    height: 9px;
+    border: solid #cbd5e1;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+    margin-top: -2px;
+}
+
+.input-list-checkbox:hover {
+    background: #e5e7eb;
+}
+
+.input-list-checkbox.checked {
+    background: #fbbf24 !important;
+}
+
+.input-list-checkbox.checked::after {
+    border-color: #ffffff;
+}
+
 /* クリック可能な単語番号（すべての単語モード） */
 .input-list-number.clickable-number,
 .input-list-expand-number.clickable-number {
@@ -7932,23 +8293,35 @@ body.choice-question-mode-active .word-card-container {
     text-align: center;
 }
 
-/* 展開モード（単語帳モード）の番号とチェックを連結 */
-/* フリップモード（単語カード）では単語番号とチェックマークを非表示 */
-.flip-mode .input-list-number,
-.flip-mode .input-list-checkbox,
-.flip-mode .input-list-expand-number-box {
-    display: none !important;
-}
+/* フリップモードでは番号とチェックを表示（非表示化しない） */
 
 .flip-mode .input-list-meta {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    display: flex !important;
     align-items: center;
     gap: 0;
-    display: none !important; /* コンテナごと消す */
+    height: 22px;
+    z-index: 120;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* フリップモードでは番号とチェックをくっつける（展開モードと同じ見た目） */
+.flip-mode .input-list-number {
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+}
+
+.flip-mode .input-list-checkbox {
+    height: 100%;
 }
 
 /* 不要なチェックマークのアイコン定義を削除 */
 .flip-mode .input-list-item.flipped .input-list-checkbox {
-    display: none !important;
+    display: inline-flex;
 }
 
 .input-list-appearance {

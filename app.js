@@ -1944,6 +1944,15 @@ let inputListViewMode = 'expand'; // 単語一覧の表示モード: 'flip' (フ
 let reorderAnswerSubmitted = false; // 回答が送信済みかどうか
 let reorderSelectedWords = []; // 選択された単語の配列
 
+// フリップ（単語カード）デッキ表示用の状態
+let inputFlipDeckWords = [];
+let inputFlipDeckIndex = 0;
+let inputFlipDeckContext = null; // { progressCache, categoryCorrectSet, categoryWrongSet, skipProgress }
+let inputFlipDeckEls = null; // { container, stage, host, prevBtn, nextBtn, counter }
+let inputFlipDeckAllFlipped = false; // 全カードフリップ状態
+let inputFlipDeckProgressPos = 0; // 表示用の進捗（1 / total の「1」を決める）
+let inputFlipDeckFinished = false; // すべて飛ばし終わったか（カード位置に「もう一度」を出す）
+
 // 四択問題モード用変数
 let isChoiceQuestionModeActive = false; // 四択問題モードかどうか
 let choiceQuestionData = []; // 四択問題データ
@@ -11550,12 +11559,19 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         const front = document.createElement('div');
         front.className = 'input-list-front';
         
-        const meta = document.createElement('div');
-        meta.className = 'input-list-meta';
+        const metaFront = document.createElement('div');
+        metaFront.className = 'input-list-meta';
         
-        const number = document.createElement('span');
-        number.className = 'input-list-number';
-        number.textContent = String(word.id).padStart(5, '0');
+        const metaBack = document.createElement('div');
+        metaBack.className = 'input-list-meta';
+        
+        const numberFront = document.createElement('span');
+        numberFront.className = 'input-list-number';
+        numberFront.textContent = String(word.id).padStart(5, '0');
+        
+        const numberBack = document.createElement('span');
+        numberBack.className = 'input-list-number';
+        numberBack.textContent = String(word.id).padStart(5, '0');
         
         let isCorrect = false, isWrong = false;
         
@@ -11577,42 +11593,82 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             }
             
             if (isWrong) {
-                number.classList.add('marker-wrong');
+                numberFront.classList.add('marker-wrong');
+                numberBack.classList.add('marker-wrong');
                 item.classList.add('marker-wrong');
             } else if (isCorrect) {
-                number.classList.add('marker-correct');
+                numberFront.classList.add('marker-correct');
+                numberBack.classList.add('marker-correct');
                 item.classList.add('marker-correct');
             }
         }
         
         // 「すべての単語」の場合は単語番号クリックで進捗変更可能
         if (selectedCategory === '大阪府のすべての英単語') {
-            number.classList.add('clickable-number');
-            number.addEventListener('click', (e) => {
+            const syncNumberMarkers = (src, dst) => {
+                dst.classList.toggle('marker-correct', src.classList.contains('marker-correct'));
+                dst.classList.toggle('marker-wrong', src.classList.contains('marker-wrong'));
+            };
+            
+            numberFront.classList.add('clickable-number');
+            numberFront.addEventListener('click', (e) => {
                 e.stopPropagation();
-                cycleWordProgress(word, number, item);
+                cycleWordProgress(word, numberFront, item);
+                syncNumberMarkers(numberFront, numberBack);
+            });
+            
+            numberBack.classList.add('clickable-number');
+            numberBack.addEventListener('click', (e) => {
+                e.stopPropagation();
+                cycleWordProgress(word, numberBack, item);
+                syncNumberMarkers(numberBack, numberFront);
             });
         }
-        meta.appendChild(number);
+        // チェックボックス（単語番号の左）
+        const checkboxFront = document.createElement('div');
+        checkboxFront.className = 'input-list-checkbox';
+        const checkboxBack = document.createElement('div');
+        checkboxBack.className = 'input-list-checkbox';
         
-        // チェックボックス（単語番号の右）
-        const checkbox = document.createElement('div');
-        checkbox.className = 'input-list-checkbox';
-        if (reviewWords.has(word.id)) {
-            checkbox.classList.add('checked');
-        }
-        checkbox.addEventListener('click', (e) => {
+        const setReviewCheckedUI = (isChecked) => {
+            checkboxFront.classList.toggle('checked', isChecked);
+            checkboxBack.classList.toggle('checked', isChecked);
+        };
+        setReviewCheckedUI(reviewWords.has(word.id));
+        
+        const toggleReview = (e) => {
             e.stopPropagation();
             if (reviewWords.has(word.id)) {
                 reviewWords.delete(word.id);
-                checkbox.classList.remove('checked');
             } else {
                 reviewWords.add(word.id);
-                checkbox.classList.add('checked');
             }
             saveReviewWords();
+            setReviewCheckedUI(reviewWords.has(word.id));
+        };
+        
+        checkboxFront.addEventListener('click', toggleReview);
+        checkboxBack.addEventListener('click', toggleReview);
+        
+        // 左上は「チェック → 単語番号 → 品詞」（くっつけて表示）
+        metaFront.appendChild(checkboxFront);
+        metaBack.appendChild(checkboxBack);
+        metaFront.appendChild(numberFront);
+        metaBack.appendChild(numberBack);
+        
+        // 品詞（番号の右に表示：複数なら並べる）
+        const posParts = splitPartOfSpeechLabels(word.partOfSpeech);
+        posParts.forEach((p) => {
+            const posLabelFront = document.createElement('span');
+            posLabelFront.className = `flip-card-pos flip-card-pos-${getPosLabelKind(p)}`;
+            posLabelFront.textContent = toShortPosFromPartOfSpeech(p);
+            metaFront.appendChild(posLabelFront);
+            
+            const posLabelBack = document.createElement('span');
+            posLabelBack.className = `flip-card-pos flip-card-pos-${getPosLabelKind(p)}`;
+            posLabelBack.textContent = toShortPosFromPartOfSpeech(p);
+            metaBack.appendChild(posLabelBack);
         });
-        meta.appendChild(checkbox);
         
         const row = document.createElement('div');
         row.className = 'input-list-row';
@@ -11646,7 +11702,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         });
         row.appendChild(audioBtn);
         
-        front.appendChild(meta);
+        front.appendChild(metaFront);
         front.appendChild(row);
         
         // 裏面
@@ -11668,6 +11724,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true, showPosBadges: false });
         meaningWrapper.appendChild(meaningText);
         meaningEl.appendChild(meaningWrapper);
+        back.appendChild(metaBack);
         back.appendChild(meaningEl);
         
         inner.appendChild(front);
@@ -11711,13 +11768,12 @@ function renderInputListView(words) {
     if (inputListViewMode === 'expand') {
         container.classList.add('expand-mode');
         container.classList.remove('flip-mode');
+        container.classList.remove('flip-deck-mode');
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
-        // フリップモード時はヘッダーをコンテナ内に移動してスクロールに追随させる
-        if (inputListHeader && !container.contains(inputListHeader)) {
-            container.appendChild(inputListHeader);
-        }
+        // デッキ表示ではスクロール追随が不要なので、ヘッダーはコンテナ外のまま
+        container.classList.add('flip-deck-mode');
     }
     
     if (!Array.isArray(words) || words.length === 0) {
@@ -11795,6 +11851,11 @@ function renderInputListView(words) {
             }
         });
     }
+
+    // デッキ描画用に「すべての単語」も progressCache に統一した形で入れておく
+    if (selectedCategory === '大阪府のすべての英単語') {
+        progressCache['__all__'] = { correct: allCorrectIds, wrong: allWrongIds };
+    }
     
     let categoryCorrectSet = correctWords;
     let categoryWrongSet = wrongWords;
@@ -11803,6 +11864,405 @@ function renderInputListView(words) {
         const sets = loadCategoryWordsForProgress(selectedCategory);
         categoryCorrectSet = sets.correctSet;
         categoryWrongSet = sets.wrongSet;
+    }
+
+    // ===== フリップ（単語カード）デッキ表示：1枚だけ描画 =====
+    if (inputListViewMode === 'flip') {
+        // 状態を初期化（フィルター/検索/ランダム適用時は先頭から）
+        inputFlipDeckWords = Array.isArray(words) ? words : [];
+        inputFlipDeckIndex = 0;
+        inputFlipDeckAllFlipped = false; // 全カードフリップ状態をリセット
+        inputFlipDeckProgressPos = 0; // 進捗表示もリセット
+        inputFlipDeckFinished = false; // 完了状態もリセット
+        inputFlipDeckContext = {
+            progressCache,
+            categoryCorrectSet,
+            categoryWrongSet,
+            skipProgress: false
+        };
+
+        // DOM構築（重なり + カード1枚 + ナビ）
+        container.classList.add('flip-deck-mode');
+
+        const stage = document.createElement('div');
+        stage.className = 'flip-deck-stage';
+
+        const stack = document.createElement('div');
+        stack.className = 'flip-deck-stack';
+        // 背面のダミーカード（見た目用：単語数分（最大50）生成）
+        const MAX_STACK = 50;
+        const stackCards = [];
+        const buildStackCards = (total) => {
+            stack.innerHTML = '';
+            stackCards.length = 0;
+            const count = Math.min(Math.max(total - 1, 0), MAX_STACK);
+            for (let i = count; i >= 1; i--) {
+                const card = document.createElement('div');
+                card.className = 'flip-deck-stack-card';
+                // 見た目：少しずつ下げて小さく、薄く
+                const dy = Math.min(i * 2, 40); // 50枚でも伸びすぎない
+                const scale = 1 - Math.min(i * 0.004, 0.18);
+                const opacity = Math.max(0.08, 0.65 - i * 0.018);
+                card.style.transform = `translateY(${dy}px) scale(${scale})`;
+                card.style.opacity = String(opacity);
+                stack.appendChild(card);
+                stackCards.push(card);
+            }
+        };
+
+        const host = document.createElement('div');
+        host.className = 'flip-deck-host';
+
+        stage.appendChild(stack);
+        stage.appendChild(host);
+
+        const nav = document.createElement('div');
+        nav.className = 'flip-deck-nav';
+
+        const prevBtn = document.createElement('button');
+        prevBtn.type = 'button';
+        prevBtn.className = 'flip-deck-nav-btn flip-deck-nav-btn-prev';
+        prevBtn.setAttribute('aria-label', '前のカードへ');
+        prevBtn.innerHTML = '<span class="label">前へ</span>';
+
+        const counter = document.createElement('div');
+        counter.className = 'flip-deck-counter';
+        counter.textContent = '';
+
+        const nextBtn = document.createElement('button');
+        nextBtn.type = 'button';
+        nextBtn.className = 'flip-deck-nav-btn flip-deck-nav-btn-next';
+        nextBtn.setAttribute('aria-label', '次のカードへ');
+        nextBtn.innerHTML = '<span class="label">次へ</span>';
+
+        const replayBtn = document.createElement('button');
+        replayBtn.type = 'button';
+        replayBtn.className = 'flip-deck-nav-btn flip-deck-nav-btn-replay';
+        replayBtn.setAttribute('aria-label', 'もう一度最初から');
+        replayBtn.innerHTML = '<span class="label">もう一度</span>';
+        replayBtn.style.display = 'none';
+
+        nav.appendChild(prevBtn);
+        nav.appendChild(counter);
+        nav.appendChild(nextBtn);
+        nav.appendChild(replayBtn);
+
+        container.appendChild(stage);
+        container.appendChild(nav);
+
+        const stopSpeechIfPlaying = () => {
+            if (currentSpeech) {
+                window.speechSynthesis.cancel();
+                currentSpeech = null;
+                const playingButtons = document.querySelectorAll('.audio-btn.playing');
+                playingButtons.forEach(btn => btn.classList.remove('playing'));
+            }
+        };
+
+        const updateFlipAllBtnLabel = () => {
+            const flipAllBtn = document.getElementById('inputFlipAllBtn');
+            const btnLabel = flipAllBtn ? flipAllBtn.querySelector('.btn-label') : null;
+            if (btnLabel) btnLabel.textContent = inputFlipDeckAllFlipped ? '日本語→英語' : '英語→日本語';
+        };
+
+        const showReplayCard = () => {
+            const total = inputFlipDeckWords.length;
+            host.innerHTML = '';
+            buildStackCards(0);
+
+            const replayCard = document.createElement('button');
+            replayCard.type = 'button';
+            replayCard.className = 'flip-deck-replay-card';
+            replayCard.innerHTML = '<span class="label">もう一度</span>';
+            replayCard.addEventListener('click', (e) => {
+                e.preventDefault();
+                stopSpeechIfPlaying();
+                inputFlipDeckFinished = false;
+                inputFlipDeckIndex = 0;
+                inputFlipDeckProgressPos = 0;
+                shouldAnimateFloatUp = true;
+                renderDeckCard();
+            });
+
+            host.appendChild(replayCard);
+
+            // ナビは無効化（カード位置の「もう一度」を使う）
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            nextBtn.style.display = 'none';
+            replayBtn.style.display = 'none';
+            counter.textContent = `${total} / ${total}`;
+        };
+
+        // host配下でのクリックを先に捕まえて、音声再生を止める（カード側のflip処理より先に実行）
+        host.addEventListener('click', () => {
+            stopSpeechIfPlaying();
+        }, true);
+
+        // カードをタップでめくっても「すべてめくる」ボタンラベルは追随させない
+
+        let shouldAnimateFloatUp = false;
+
+        const renderDeckCard = () => {
+            host.innerHTML = '';
+            const total = inputFlipDeckWords.length;
+            if (total === 0) {
+                counter.textContent = '0 / 0';
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                replayBtn.style.display = 'none';
+                nextBtn.style.display = '';
+                updateFlipAllBtnLabel();
+                buildStackCards(0);
+                return;
+            }
+
+            // 完了状態：カード位置に「もう一度」を表示
+            if (inputFlipDeckFinished) {
+                showReplayCard();
+                return;
+            }
+
+            // 残り枚数に合わせてスタックを再生成（減っていく）
+            const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
+            buildStackCards(remaining + 1); // buildStackCardsは「total-1枚」を作るので、(remaining+1)を渡す
+
+            const word = inputFlipDeckWords[inputFlipDeckIndex];
+            const item = createInputListItem(
+                word,
+                inputFlipDeckContext.progressCache,
+                inputFlipDeckContext.categoryCorrectSet,
+                inputFlipDeckContext.categoryWrongSet,
+                inputFlipDeckContext.skipProgress
+            );
+            // 全カードフリップ状態を反映
+            if (inputFlipDeckAllFlipped) {
+                item.classList.add('flipped');
+            } else {
+                item.classList.remove('flipped');
+            }
+            
+            // スワイプ後なら浮き上がりアニメーション
+            if (shouldAnimateFloatUp) {
+                item.classList.add('card-float-up');
+                shouldAnimateFloatUp = false;
+            }
+
+            host.appendChild(item);
+
+            // 進捗は index に合わせて更新
+            inputFlipDeckProgressPos = inputFlipDeckIndex;
+            counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
+            prevBtn.disabled = inputFlipDeckIndex <= 0;
+            const atEnd = inputFlipDeckIndex >= total - 1;
+            nextBtn.disabled = atEnd;
+            nextBtn.style.display = atEnd ? 'none' : '';
+            // 「もう一度」はカード位置で出すのでナビには出さない
+            replayBtn.style.display = 'none';
+            updateFlipAllBtnLabel();
+            
+            // スタック表示は buildStackCards(remaining+1) が担当
+        };
+
+        const goPrev = () => {
+            stopSpeechIfPlaying();
+            if (inputFlipDeckIndex <= 0) return false;
+            inputFlipDeckIndex -= 1;
+            shouldAnimateFloatUp = true;
+            renderDeckCard();
+            return true;
+        };
+
+        const goNext = () => {
+            stopSpeechIfPlaying();
+            const total = inputFlipDeckWords.length;
+            if (inputFlipDeckIndex >= total - 1) return false;
+            inputFlipDeckIndex += 1;
+            shouldAnimateFloatUp = true;
+            renderDeckCard();
+            return true;
+        };
+
+        prevBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (inputFlipDeckFinished) return;
+            if (inputFlipDeckIndex <= 0) return;
+            stopSpeechIfPlaying();
+
+            const currentItem = host.querySelector('.input-list-item');
+            const total = inputFlipDeckWords.length;
+            const prevIndex = inputFlipDeckIndex - 1;
+
+            if (!currentItem || !total) {
+                goPrev();
+                return;
+            }
+
+            // 前のカードを「戻ってくる」アニメーションで表示
+            const prevWord = inputFlipDeckWords[prevIndex];
+            const prevItem = createInputListItem(
+                prevWord,
+                inputFlipDeckContext.progressCache,
+                inputFlipDeckContext.categoryCorrectSet,
+                inputFlipDeckContext.categoryWrongSet,
+                inputFlipDeckContext.skipProgress
+            );
+            if (inputFlipDeckAllFlipped) prevItem.classList.add('flipped');
+            prevItem.classList.add('deck-card-return-in');
+            host.insertBefore(prevItem, currentItem);
+
+            currentItem.classList.add('deck-card-above');
+            currentItem.classList.add('deck-card-return-out');
+
+            setTimeout(() => {
+                currentItem.remove();
+                prevItem.classList.remove('deck-card-return-in');
+                inputFlipDeckIndex = prevIndex;
+                inputFlipDeckProgressPos = inputFlipDeckIndex;
+
+                // UI更新
+                counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
+                prevBtn.disabled = inputFlipDeckIndex <= 0;
+                const atEnd = inputFlipDeckIndex >= total - 1;
+                nextBtn.disabled = atEnd;
+                nextBtn.style.display = atEnd ? 'none' : '';
+                replayBtn.style.display = 'none';
+                updateFlipAllBtnLabel();
+
+                // スタック更新（残り枚数で減る）
+                const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
+                buildStackCards(remaining + 1);
+            }, 620);
+        });
+
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            goNext();
+        });
+
+        replayBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            stopSpeechIfPlaying();
+            inputFlipDeckFinished = false;
+            inputFlipDeckIndex = 0;
+            inputFlipDeckProgressPos = 0;
+            shouldAnimateFloatUp = true;
+            renderDeckCard();
+        });
+
+        // ===== スワイプで前後移動（めくらなくてもOK） =====
+        let swipeStartX = 0;
+        let swipeStartY = 0;
+        let swipeStartTime = 0;
+        let isSwiping = false;
+
+        const SWIPE_THRESHOLD = 50; // 最低スワイプ距離
+        const SWIPE_TIME_LIMIT = 400; // スワイプ判定の時間制限（ms）
+
+        host.addEventListener('touchstart', (e) => {
+            if (e.touches.length !== 1) return;
+            swipeStartX = e.touches[0].clientX;
+            swipeStartY = e.touches[0].clientY;
+            swipeStartTime = Date.now();
+            isSwiping = true;
+        }, { passive: true });
+
+        host.addEventListener('touchmove', (e) => {
+            // 縦スクロールが主なら無効化
+            if (!isSwiping) return;
+            const diffX = Math.abs(e.touches[0].clientX - swipeStartX);
+            const diffY = Math.abs(e.touches[0].clientY - swipeStartY);
+            if (diffY > diffX * 1.2) {
+                isSwiping = false;
+            }
+        }, { passive: true });
+
+        host.addEventListener('touchend', (e) => {
+            if (!isSwiping) return;
+            isSwiping = false;
+            const endX = e.changedTouches[0].clientX;
+            const diffX = endX - swipeStartX;
+            const elapsed = Date.now() - swipeStartTime;
+
+            if (elapsed > SWIPE_TIME_LIMIT) return;
+            if (Math.abs(diffX) < SWIPE_THRESHOLD) return;
+
+            const currentItem = host.querySelector('.input-list-item');
+            const total = inputFlipDeckWords.length;
+            if (!currentItem || total <= 1) return;
+            // 最後のカードも「飛ばして完了」できるようにする
+
+            const atEnd = inputFlipDeckIndex >= total - 1;
+            let nextItem = null;
+            if (!atEnd) {
+                // 次のカードを下に先に追加（飛ばす前に見せる）
+                const nextWord = inputFlipDeckWords[inputFlipDeckIndex + 1];
+                nextItem = createInputListItem(
+                    nextWord,
+                    inputFlipDeckContext.progressCache,
+                    inputFlipDeckContext.categoryCorrectSet,
+                    inputFlipDeckContext.categoryWrongSet,
+                    inputFlipDeckContext.skipProgress
+                );
+                // 全カードフリップ状態を反映（次のカードにも）
+                if (inputFlipDeckAllFlipped) {
+                    nextItem.classList.add('flipped');
+                }
+                nextItem.classList.add('deck-card-below');
+                host.insertBefore(nextItem, currentItem);
+            }
+
+            // 現在のカードを上に配置して飛ばす
+            const direction = diffX < 0 ? 'left' : 'right';
+            currentItem.classList.add('deck-card-above');
+            currentItem.classList.add(`swipe-out-${direction}`);
+            
+            setTimeout(() => {
+                // 飛んだカードを削除して、下のカードを正式なカードにする
+                currentItem.remove();
+                if (nextItem) nextItem.classList.remove('deck-card-below');
+
+                if (atEnd) {
+                    // すべて飛ばし終わり → カード位置に「もう一度」
+                    inputFlipDeckFinished = true;
+                    showReplayCard();
+                    return;
+                }
+
+                // インデックスを進める（減っていくデッキ）
+                inputFlipDeckIndex += 1;
+                inputFlipDeckProgressPos = inputFlipDeckIndex;
+
+                // UI更新（nextItem をそのまま使う）
+                counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
+                prevBtn.disabled = inputFlipDeckIndex <= 0;
+                const nowAtEnd = inputFlipDeckIndex >= total - 1;
+                nextBtn.disabled = nowAtEnd;
+                nextBtn.style.display = nowAtEnd ? 'none' : '';
+                replayBtn.style.display = 'none';
+                updateFlipAllBtnLabel();
+
+                // スタック更新（残り枚数で減る）
+                const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
+                buildStackCards(remaining + 1);
+            }, 400);
+        }, { passive: true });
+
+        // グローバル参照（他イベントから現カード参照したいとき用）
+        inputFlipDeckEls = { container, stage, host, prevBtn, nextBtn, counter, renderDeckCard, updateFlipAllBtnLabel, goPrev, goNext };
+
+        renderDeckCard();
+
+        // 描画完了後にスクロール位置を一番上にリセット
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+            listView.scrollTop = 0;
+            container.scrollTop = 0;
+            if (elements.mainContent) {
+                elements.mainContent.scrollTop = 0;
+            }
+        }, 0);
+        return;
     }
     
     words.forEach((word) => {
@@ -12059,12 +12519,19 @@ function renderInputListView(words) {
             const front = document.createElement('div');
             front.className = 'input-list-front';
             
-            const meta = document.createElement('div');
-            meta.className = 'input-list-meta';
+            const metaFront = document.createElement('div');
+            metaFront.className = 'input-list-meta';
             
-            const number = document.createElement('span');
-            number.className = 'input-list-number';
-            number.textContent = String(word.id).padStart(5, '0');
+            const metaBack = document.createElement('div');
+            metaBack.className = 'input-list-meta';
+            
+            const numberFront = document.createElement('span');
+            numberFront.className = 'input-list-number';
+            numberFront.textContent = String(word.id).padStart(5, '0');
+            
+            const numberBack = document.createElement('span');
+            numberBack.className = 'input-list-number';
+            numberBack.textContent = String(word.id).padStart(5, '0');
             
             // 進捗を取得
             let isCorrectFlip, isWrongFlip;
@@ -12082,41 +12549,67 @@ function renderInputListView(words) {
             }
             
             if (isWrongFlip) {
-                number.classList.add('marker-wrong');
+                numberFront.classList.add('marker-wrong');
+                numberBack.classList.add('marker-wrong');
                 item.classList.add('marker-wrong');
             } else if (isCorrectFlip) {
-                number.classList.add('marker-correct');
+                numberFront.classList.add('marker-correct');
+                numberBack.classList.add('marker-correct');
                 item.classList.add('marker-correct');
             }
             
             // 「すべての単語」の場合は単語番号クリックで進捗変更可能
             if (selectedCategory === '大阪府のすべての英単語') {
-                number.classList.add('clickable-number');
-                number.addEventListener('click', (e) => {
+                const syncNumberMarkers = (src, dst) => {
+                    dst.classList.toggle('marker-correct', src.classList.contains('marker-correct'));
+                    dst.classList.toggle('marker-wrong', src.classList.contains('marker-wrong'));
+                };
+                
+                numberFront.classList.add('clickable-number');
+                numberFront.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    cycleWordProgress(word, number, item);
+                    cycleWordProgress(word, numberFront, item);
+                    syncNumberMarkers(numberFront, numberBack);
+                });
+                
+                numberBack.classList.add('clickable-number');
+                numberBack.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    cycleWordProgress(word, numberBack, item);
+                    syncNumberMarkers(numberBack, numberFront);
                 });
             }
-            meta.appendChild(number);
+            // チェックボックス（単語番号の左）
+            const checkboxFront = document.createElement('div');
+            checkboxFront.className = 'input-list-checkbox';
+            const checkboxBack = document.createElement('div');
+            checkboxBack.className = 'input-list-checkbox';
             
-            // チェックボックス（単語番号の右）
-            const checkbox = document.createElement('div');
-            checkbox.className = 'input-list-checkbox';
-            if (reviewWords.has(word.id)) {
-                checkbox.classList.add('checked');
-            }
-            checkbox.addEventListener('click', (e) => {
+            const setReviewCheckedUI = (isChecked) => {
+                checkboxFront.classList.toggle('checked', isChecked);
+                checkboxBack.classList.toggle('checked', isChecked);
+            };
+            setReviewCheckedUI(reviewWords.has(word.id));
+            
+            const toggleReview = (e) => {
                 e.stopPropagation();
                 if (reviewWords.has(word.id)) {
                     reviewWords.delete(word.id);
-                    checkbox.classList.remove('checked');
                 } else {
                     reviewWords.add(word.id);
-                    checkbox.classList.add('checked');
                 }
                 saveReviewWords();
-            });
-            meta.appendChild(checkbox);
+                setReviewCheckedUI(reviewWords.has(word.id));
+            };
+            
+            checkboxFront.addEventListener('click', toggleReview);
+            checkboxBack.addEventListener('click', toggleReview);
+            
+            // 左上は「チェック → 単語番号」（くっつけて表示）
+            metaFront.appendChild(checkboxFront);
+            metaBack.appendChild(checkboxBack);
+            metaFront.appendChild(numberFront);
+            metaBack.appendChild(numberBack);
             
             const row = document.createElement('div');
             row.className = 'input-list-row';
@@ -12150,7 +12643,7 @@ function renderInputListView(words) {
             });
             row.appendChild(audioBtn);
             
-            front.appendChild(meta);
+            front.appendChild(metaFront);
             front.appendChild(row);
             
             // 裏面
@@ -12173,6 +12666,7 @@ function renderInputListView(words) {
             setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true, showPosBadges: false });
             meaningWrapper.appendChild(meaningText);
             meaningEl.appendChild(meaningWrapper);
+            back.appendChild(metaBack);
             back.appendChild(meaningEl);
             
             inner.appendChild(front);
@@ -12281,8 +12775,26 @@ function setupInputListModeToggle() {
         flipAllBtn.addEventListener('click', () => {
             const container = document.getElementById('inputListContainer');
             if (!container) return;
-            const items = container.querySelectorAll('.input-list-item');
             const btnLabel = flipAllBtn.querySelector('.btn-label');
+
+            // デッキ表示のときは全カードのフリップ状態を切り替え
+            if (container.classList.contains('flip-deck-mode')) {
+                inputFlipDeckAllFlipped = !inputFlipDeckAllFlipped;
+                const currentItem = container.querySelector('.flip-deck-host .input-list-item');
+                if (currentItem) {
+                    if (inputFlipDeckAllFlipped) {
+                        currentItem.classList.add('flipped');
+                    } else {
+                        currentItem.classList.remove('flipped');
+                    }
+                }
+                if (btnLabel) {
+                    btnLabel.textContent = inputFlipDeckAllFlipped ? '日本語→英語' : '英語→日本語';
+                }
+                return;
+            }
+
+            const items = container.querySelectorAll('.input-list-item');
             
             // 現在の状態を確認（最初のアイテムで判断）
             const firstItem = items[0];
