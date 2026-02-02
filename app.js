@@ -12245,7 +12245,7 @@ function renderInputListView(words) {
                 // スタック更新（残り枚数で減る）
                 const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
                 buildStackCards(remaining + 1);
-            }, 400);
+            }, 650);
         }, { passive: true });
 
         // グローバル参照（他イベントから現カード参照したいとき用）
