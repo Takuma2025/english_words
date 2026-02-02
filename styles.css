@@ -6635,11 +6635,12 @@ body.choice-question-mode-active .word-card-container {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 12px;
-    padding: 16px 0 12px 0;
+    gap: 10px;
+    padding: 8px 0 10px 0;
     /* レスポンシブなカードサイズ（スマホで少し小さめ） */
     --deck-card-w: clamp(280px, 92vw, 520px);
-    --deck-card-h: clamp(320px, 52vh, 520px);
+    /* 縦を少し高く */
+    --deck-card-h: clamp(340px, 58vh, 560px);
     --deck-nav-h: 84px;
 }
 
@@ -6652,7 +6653,7 @@ body.choice-question-mode-active .word-card-container {
     flex: 1 1 auto;
     min-height: 0;
     max-height: calc(100% - var(--deck-nav-h));
-    padding-bottom: 10px;
+    padding-bottom: 8px;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack {
@@ -6670,9 +6671,9 @@ body.choice-question-mode-active .word-card-container {
     height: var(--deck-card-h);
     background: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.05);
+    box-shadow: none;
     opacity: 0.9;
-    border: 1px solid rgba(15, 23, 42, 0.06);
+    border: 0.5px solid #0055ca; /* ヘッダー青 */
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-host {
@@ -6685,11 +6686,11 @@ body.choice-question-mode-active .word-card-container {
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-replay-card {
     width: 100%;
     min-height: var(--deck-card-h);
-    border: 1.5px solid rgba(14, 165, 233, 0.30);
+    border: 0.5px solid #0055ca; /* ヘッダー青 */
     background: rgba(224, 242, 254, 0.92); /* 薄い水色 */
-    color: rgba(14, 165, 233, 0.70);
+    color: rgba(0, 85, 202, 0.75);
     border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.05);
+    box-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -7954,9 +7955,9 @@ body.choice-question-mode-active .word-card-container {
 
 /* フリップカードに影をつける */
 .flip-mode .input-list-inner {
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.10), 0 2px 8px rgba(15, 23, 42, 0.08);
     border-radius: 20px;
-    border: none;
+    box-shadow: none;
+    border: 0.5px solid #0055ca; /* ヘッダー青 */
     /* overflow: hiddenは3D変換と相性が悪いので削除 */
 }
 
