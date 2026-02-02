@@ -7627,9 +7627,9 @@ body.choice-question-mode-active .word-card-container {
 
 /* フリップカードに影をつける */
 .flip-mode .input-list-inner {
-    box-shadow: none;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.10), 0 2px 8px rgba(15, 23, 42, 0.08);
     border-radius: 0;
-    border: 1.5px solid #0055ca;
+    border: none;
 }
 
 .flip-mode .input-list-front,
@@ -7917,10 +7917,10 @@ body.choice-question-mode-active .word-card-container {
 
 /* 単語カードモードの日本語を濃いグレー・中央揃えに */
 .flip-mode .input-list-meaning {
-    color: #374151;
+    color: #0369a1;
     justify-content: center;
     text-align: center;
-    margin-top: 14px;
+    margin-top: 0;
 }
 
 .flip-mode .input-list-back {
