@@ -11991,8 +11991,9 @@ function renderInputListView(words) {
 
             host.appendChild(replayCard);
 
-            // ナビは無効化（カード位置の「もう一度」を使う）
+            // ナビは無効化（カード位置の「もう一度」を使う）。最後なので前へも非表示
             prevBtn.disabled = true;
+            prevBtn.style.display = 'none';
             nextBtn.disabled = true;
             nextBtn.style.display = 'none';
             replayBtn.style.display = 'none';
@@ -12008,6 +12009,7 @@ function renderInputListView(words) {
 
         let shouldAnimateFloatUp = false;
         let prevReturnInProgress = false;
+        let nextFlyInProgress = false;
 
         const renderDeckCard = () => {
             host.innerHTML = '';
@@ -12015,9 +12017,10 @@ function renderInputListView(words) {
             if (total === 0) {
                 counter.textContent = '0 / 0';
                 prevBtn.disabled = true;
+                prevBtn.style.display = 'none';
                 nextBtn.disabled = true;
-                replayBtn.style.display = 'none';
                 nextBtn.style.display = '';
+                replayBtn.style.display = 'none';
                 updateFlipAllBtnLabel();
                 buildStackCards(0);
                 return;
@@ -12059,8 +12062,9 @@ function renderInputListView(words) {
             // 進捗は index に合わせて更新
             inputFlipDeckProgressPos = inputFlipDeckIndex;
             counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
-            prevBtn.disabled = inputFlipDeckIndex <= 0;
             const atEnd = inputFlipDeckIndex >= total - 1;
+            prevBtn.disabled = inputFlipDeckIndex <= 0;
+            prevBtn.style.display = atEnd ? 'none' : ''; // 最後までいったら前へは不要
             nextBtn.disabled = atEnd;
             nextBtn.style.display = atEnd ? 'none' : '';
             // 「もう一度」はカード位置で出すのでナビには出さない
@@ -12079,13 +12083,62 @@ function renderInputListView(words) {
             return true;
         };
 
+        const FLY_NEXT_DURATION = 650;
+
         const goNext = () => {
             stopSpeechIfPlaying();
             const total = inputFlipDeckWords.length;
-            if (inputFlipDeckIndex >= total - 1) return false;
-            inputFlipDeckIndex += 1;
-            shouldAnimateFloatUp = true;
-            renderDeckCard();
+            if (total === 0) return false;
+            if (nextFlyInProgress) return false;
+            const currentItem = host.querySelector('.input-list-item');
+            if (!currentItem) {
+                if (inputFlipDeckIndex >= total - 1) return false;
+                inputFlipDeckIndex += 1;
+                shouldAnimateFloatUp = true;
+                renderDeckCard();
+                return true;
+            }
+            const atEnd = inputFlipDeckIndex >= total - 1;
+            let nextItem = null;
+            if (!atEnd) {
+                const nextWord = inputFlipDeckWords[inputFlipDeckIndex + 1];
+                nextItem = createInputListItem(
+                    nextWord,
+                    inputFlipDeckContext.progressCache,
+                    inputFlipDeckContext.categoryCorrectSet,
+                    inputFlipDeckContext.categoryWrongSet,
+                    inputFlipDeckContext.skipProgress
+                );
+                if (inputFlipDeckAllFlipped) nextItem.classList.add('flipped');
+                nextItem.classList.add('deck-card-below');
+                host.insertBefore(nextItem, currentItem);
+            }
+            currentItem.classList.add('deck-card-above');
+            currentItem.classList.add('swipe-out-right');
+            nextFlyInProgress = true;
+
+            setTimeout(() => {
+                currentItem.remove();
+                if (nextItem) nextItem.classList.remove('deck-card-below');
+                nextFlyInProgress = false;
+                if (atEnd) {
+                    inputFlipDeckFinished = true;
+                    showReplayCard();
+                    return;
+                }
+                inputFlipDeckIndex += 1;
+                inputFlipDeckProgressPos = inputFlipDeckIndex;
+                counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
+                const nowAtEnd = inputFlipDeckIndex >= total - 1;
+                prevBtn.disabled = inputFlipDeckIndex <= 0;
+                prevBtn.style.display = nowAtEnd ? 'none' : '';
+                nextBtn.disabled = nowAtEnd;
+                nextBtn.style.display = nowAtEnd ? 'none' : '';
+                replayBtn.style.display = 'none';
+                updateFlipAllBtnLabel();
+                const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
+                buildStackCards(remaining + 1);
+            }, FLY_NEXT_DURATION);
             return true;
         };
 
@@ -12131,8 +12184,9 @@ function renderInputListView(words) {
 
                 // UI更新
                 counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
-                prevBtn.disabled = inputFlipDeckIndex <= 0;
                 const atEnd = inputFlipDeckIndex >= total - 1;
+                prevBtn.disabled = inputFlipDeckIndex <= 0;
+                prevBtn.style.display = atEnd ? 'none' : '';
                 nextBtn.disabled = atEnd;
                 nextBtn.style.display = atEnd ? 'none' : '';
                 replayBtn.style.display = 'none';
@@ -12146,6 +12200,7 @@ function renderInputListView(words) {
 
         nextBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            if (nextFlyInProgress) return;
             goNext();
         });
 
@@ -12189,6 +12244,7 @@ function renderInputListView(words) {
         host.addEventListener('touchend', (e) => {
             if (!isSwiping) return;
             isSwiping = false;
+            if (nextFlyInProgress) return;
             const endX = e.changedTouches[0].clientX;
             const diffX = endX - swipeStartX;
             const elapsed = Date.now() - swipeStartTime;
@@ -12244,8 +12300,9 @@ function renderInputListView(words) {
 
                 // UI更新（nextItem をそのまま使う）
                 counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
-                prevBtn.disabled = inputFlipDeckIndex <= 0;
                 const nowAtEnd = inputFlipDeckIndex >= total - 1;
+                prevBtn.disabled = inputFlipDeckIndex <= 0;
+                prevBtn.style.display = nowAtEnd ? 'none' : '';
                 nextBtn.disabled = nowAtEnd;
                 nextBtn.style.display = nowAtEnd ? 'none' : '';
                 replayBtn.style.display = 'none';
