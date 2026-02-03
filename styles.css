@@ -6631,24 +6631,26 @@ body.choice-question-mode-active .word-card-container {
 /* フリップモード：デッキ表示（1枚だけ中央表示） */
 #inputListContainer.flip-mode.flip-deck-mode {
     position: relative;
-    z-index: 10010; /* ツールバーより前面で、回転（フリップ）時もカードの上が隠れない */
-    overflow: visible; /* フリップでカードがはみ出てもクリップしない */
+    z-index: 10010;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 10px;
-    padding: 14px 0 10px 0;
-    /* レスポンシブなカードサイズ（スマホで少し小さめ） */
+    gap: 4px;
+    padding: 4px 0 4px 0;
+    min-height: 0; /* 1画面に収めるため縮小可能に */
+    max-height: 100%;
+    /* レスポンシブなカードサイズ */
     --deck-card-w: clamp(280px, 92vw, 520px);
-    /* カードの縦をやや高めに */
-    --deck-card-h: clamp(320px, 58vh, 560px);
-    --deck-nav-h: 84px;
+    /* スマホで1画面に収まる高さ（余白・ナビ分を除く） */
+    --deck-card-h: min(58vh, calc(100vh - 160px));
+    --deck-nav-h: 72px;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode > .flip-deck-stage {
     position: relative;
-    z-index: 10010; /* 回転時もヘッダーより前面に */
+    z-index: 10010;
     width: 100%;
     display: flex;
     align-items: center;
@@ -6656,7 +6658,7 @@ body.choice-question-mode-active .word-card-container {
     flex: 1 1 auto;
     min-height: 0;
     max-height: calc(100% - var(--deck-nav-h));
-    padding-bottom: 8px;
+    padding-bottom: 2px;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack {
@@ -6968,10 +6970,11 @@ body.choice-question-mode-active .word-card-container {
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    margin-top: 18px;
-    padding-top: 4px;
+    margin-top: 6px;
+    padding-top: 2px;
     padding-bottom: env(safe-area-inset-bottom, 0px);
     min-height: var(--deck-nav-h);
+    flex-shrink: 0;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-counter {
