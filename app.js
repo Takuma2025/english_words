@@ -12064,9 +12064,9 @@ function renderInputListView(words) {
             counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
             const atEnd = inputFlipDeckIndex >= total - 1;
             prevBtn.disabled = inputFlipDeckIndex <= 0;
-            prevBtn.style.display = atEnd ? 'none' : ''; // 最後までいったら前へは不要
-            nextBtn.disabled = atEnd;
-            nextBtn.style.display = atEnd ? 'none' : '';
+            prevBtn.style.display = ''; // 最後の1枚でも表示、もう一度のときだけ非表示
+            nextBtn.disabled = false;   // 最後の1枚でも次へで「もう一度」へ進める
+            nextBtn.style.display = '';
             // 「もう一度」はカード位置で出すのでナビには出さない
             replayBtn.style.display = 'none';
             updateFlipAllBtnLabel();
@@ -12131,9 +12131,9 @@ function renderInputListView(words) {
                 counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
                 const nowAtEnd = inputFlipDeckIndex >= total - 1;
                 prevBtn.disabled = inputFlipDeckIndex <= 0;
-                prevBtn.style.display = nowAtEnd ? 'none' : '';
-                nextBtn.disabled = nowAtEnd;
-                nextBtn.style.display = nowAtEnd ? 'none' : '';
+                prevBtn.style.display = '';
+                nextBtn.disabled = false;
+                nextBtn.style.display = '';
                 replayBtn.style.display = 'none';
                 updateFlipAllBtnLabel();
                 const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
@@ -12186,9 +12186,9 @@ function renderInputListView(words) {
                 counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
                 const atEnd = inputFlipDeckIndex >= total - 1;
                 prevBtn.disabled = inputFlipDeckIndex <= 0;
-                prevBtn.style.display = atEnd ? 'none' : '';
-                nextBtn.disabled = atEnd;
-                nextBtn.style.display = atEnd ? 'none' : '';
+                prevBtn.style.display = '';
+                nextBtn.disabled = false;
+                nextBtn.style.display = '';
                 replayBtn.style.display = 'none';
                 updateFlipAllBtnLabel();
 
@@ -12255,12 +12255,19 @@ function renderInputListView(words) {
             const currentItem = host.querySelector('.input-list-item');
             const total = inputFlipDeckWords.length;
             if (!currentItem || total <= 1) return;
-            // 最後のカードも「飛ばして完了」できるようにする
-
             const atEnd = inputFlipDeckIndex >= total - 1;
+            const direction = diffX < 0 ? 'left' : 'right';
+
+            nextFlyInProgress = true;
+
+            // アニメが確実に効くよう、飛ばすカードをラッパーで包んでラッパーにアニメを適用
+            const flyWrapper = document.createElement('div');
+            flyWrapper.className = `deck-swipe-fly-wrapper deck-card-above swipe-out-${direction}`;
+            host.insertBefore(flyWrapper, currentItem);
+            flyWrapper.appendChild(currentItem);
+
             let nextItem = null;
             if (!atEnd) {
-                // 次のカードを下に先に追加（飛ばす前に見せる）
                 const nextWord = inputFlipDeckWords[inputFlipDeckIndex + 1];
                 nextItem = createInputListItem(
                     nextWord,
@@ -12269,22 +12276,16 @@ function renderInputListView(words) {
                     inputFlipDeckContext.categoryWrongSet,
                     inputFlipDeckContext.skipProgress
                 );
-                // 全カードフリップ状態を反映（次のカードにも）
                 if (inputFlipDeckAllFlipped) {
                     nextItem.classList.add('flipped');
                 }
                 nextItem.classList.add('deck-card-below');
-                host.insertBefore(nextItem, currentItem);
+                host.appendChild(nextItem);
             }
 
-            // 現在のカードを上に配置して飛ばす
-            const direction = diffX < 0 ? 'left' : 'right';
-            currentItem.classList.add('deck-card-above');
-            currentItem.classList.add(`swipe-out-${direction}`);
-            
             setTimeout(() => {
-                // 飛んだカードを削除して、下のカードを正式なカードにする
-                currentItem.remove();
+                nextFlyInProgress = false;
+                flyWrapper.remove();
                 if (nextItem) nextItem.classList.remove('deck-card-below');
 
                 if (atEnd) {
@@ -12302,9 +12303,9 @@ function renderInputListView(words) {
                 counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
                 const nowAtEnd = inputFlipDeckIndex >= total - 1;
                 prevBtn.disabled = inputFlipDeckIndex <= 0;
-                prevBtn.style.display = nowAtEnd ? 'none' : '';
-                nextBtn.disabled = nowAtEnd;
-                nextBtn.style.display = nowAtEnd ? 'none' : '';
+                prevBtn.style.display = '';
+                nextBtn.disabled = false;
+                nextBtn.style.display = '';
                 replayBtn.style.display = 'none';
                 updateFlipAllBtnLabel();
 
