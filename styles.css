@@ -6630,7 +6630,9 @@ body.choice-question-mode-active .word-card-container {
 
 /* フリップモード：デッキ表示（1枚だけ中央表示） */
 #inputListContainer.flip-mode.flip-deck-mode {
-    overflow: hidden;
+    position: relative;
+    z-index: 10010; /* ツールバーより前面で、回転（フリップ）時もカードの上が隠れない */
+    overflow: visible; /* フリップでカードがはみ出てもクリップしない */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -6639,13 +6641,14 @@ body.choice-question-mode-active .word-card-container {
     padding: 14px 0 10px 0;
     /* レスポンシブなカードサイズ（スマホで少し小さめ） */
     --deck-card-w: clamp(280px, 92vw, 520px);
-    /* 縦は少し小さめ（ナビ上余白の分だけ縮める） */
-    --deck-card-h: clamp(300px, 50vh, 500px);
+    /* カードの縦をやや高めに */
+    --deck-card-h: clamp(320px, 58vh, 560px);
     --deck-nav-h: 84px;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode > .flip-deck-stage {
     position: relative;
+    z-index: 10010; /* 回転時もヘッダーより前面に */
     width: 100%;
     display: flex;
     align-items: center;
@@ -6671,13 +6674,14 @@ body.choice-question-mode-active .word-card-container {
     height: var(--deck-card-h);
     background: #ffffff;
     border-radius: 20px;
-    box-shadow: none;
+    border: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
     opacity: 0.9;
-    border: 1.5px solid #0055ca; /* ヘッダー青 */
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-host {
     position: relative;
+    z-index: 10010; /* フリップしたカードがツールバーより前面に */
     width: var(--deck-card-w);
     min-height: var(--deck-card-h);
     isolation: isolate;
@@ -6688,11 +6692,11 @@ body.choice-question-mode-active .word-card-container {
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-replay-card {
     width: 100%;
     min-height: var(--deck-card-h);
-    border: 1.5px solid #0055ca; /* ヘッダー青 */
+    border: none;
     background: rgba(224, 242, 254, 0.92); /* 薄い水色 */
     color: rgba(0, 85, 202, 0.75);
     border-radius: 20px;
-    box-shadow: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -6711,6 +6715,12 @@ body.choice-question-mode-active .word-card-container {
     width: 100%;
     max-width: none;
     margin: 0;
+}
+
+/* デッキのメインカード：ボーダーなし・影 */
+#inputListContainer.flip-mode.flip-deck-mode .input-list-inner {
+    border: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .input-list-inner {
