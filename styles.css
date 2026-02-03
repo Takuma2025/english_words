@@ -6637,14 +6637,22 @@ body.choice-question-mode-active .word-card-container {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 4px;
-    padding: 4px 0 14px 0; /* 下の余白をやや多めに */
+    gap: 0;
+    padding: 0 0 14px 0; /* 上余白なし、下の余白をやや多めに */
     min-height: 0;
     max-height: 100%;
     --deck-card-w: clamp(280px, 92vw, 520px);
     /* 縦を少し控えめにして下余白とバランス */
     --deck-card-h: min(52vh, calc(100vh - 180px));
     --deck-nav-h: 72px;
+}
+
+/* フリップカードとツールバー（ランダム・フィルター行）の間の余白をなくす */
+.input-list-view:has(#inputListContainer.flip-mode.flip-deck-mode) .input-list-controls-row {
+    margin-bottom: 0;
+}
+.input-list-view:has(#inputListContainer.flip-mode.flip-deck-mode) .input-list-header {
+    padding-bottom: 0;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode > .flip-deck-stage {
@@ -7068,9 +7076,10 @@ body.choice-question-mode-active .word-card-container {
     display: none;
 }
 
-/* フィルタードロップダウン */
+/* フィルタードロップダウン（カードより前面に表示） */
 .input-filter-dropdown-wrapper {
     position: relative;
+    z-index: 10015;
 }
 
 .input-filter-trigger {
@@ -7127,7 +7136,7 @@ body.choice-question-mode-active .word-card-container {
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 8px 0;
-    z-index: 200;
+    z-index: 10015; /* フリップカード(10010)より前面に表示 */
     opacity: 0;
     visibility: hidden;
     transform: translateY(-8px);
@@ -7644,6 +7653,13 @@ body.choice-question-mode-active .word-card-container {
     .input-list-controls-row {
         gap: 6px;
     }
+    /* フリップモード時：ツールバーとカードの間の余白をなくす（スマホでも適用） */
+    .input-list-view:has(#inputListContainer.flip-mode.flip-deck-mode) .input-list-controls-row {
+        margin-bottom: 0;
+    }
+    .input-list-view:has(#inputListContainer.flip-mode.flip-deck-mode) .input-list-header {
+        padding-bottom: 0;
+    }
     
     .input-shuffle-btn,
     .input-flip-all-btn,
@@ -8007,8 +8023,8 @@ body.choice-question-mode-active .word-card-container {
     width: 100%;
     height: 100%;
     min-height: 100px;
-    /* オーバーシュートしないフリップ */
-    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    /* オーバーシュートしないフリップ（回転を速く） */
+    transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
     border-radius: 0;
     border: none;
