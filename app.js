@@ -11702,8 +11702,13 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         });
         row.appendChild(audioBtn);
         
+        const flipHint = document.createElement('div');
+        flipHint.className = 'input-list-flip-hint';
+        flipHint.textContent = 'タップしてめくる';
+        
         front.appendChild(metaFront);
         front.appendChild(row);
+        front.appendChild(flipHint);
         
         // 裏面
         const back = document.createElement('div');
@@ -12002,6 +12007,7 @@ function renderInputListView(words) {
         // カードをタップでめくっても「すべてめくる」ボタンラベルは追随させない
 
         let shouldAnimateFloatUp = false;
+        let prevReturnInProgress = false;
 
         const renderDeckCard = () => {
             host.innerHTML = '';
@@ -12087,6 +12093,7 @@ function renderInputListView(words) {
             e.preventDefault();
             if (inputFlipDeckFinished) return;
             if (inputFlipDeckIndex <= 0) return;
+            if (prevReturnInProgress) return; // 戻るアニメーション中は連打を無視
             stopSpeechIfPlaying();
 
             const currentItem = host.querySelector('.input-list-item');
@@ -12113,10 +12120,12 @@ function renderInputListView(words) {
 
             currentItem.classList.add('deck-card-above');
             currentItem.classList.add('deck-card-return-out');
+            prevReturnInProgress = true;
 
             setTimeout(() => {
                 currentItem.remove();
                 prevItem.classList.remove('deck-card-return-in');
+                prevReturnInProgress = false;
                 inputFlipDeckIndex = prevIndex;
                 inputFlipDeckProgressPos = inputFlipDeckIndex;
 
