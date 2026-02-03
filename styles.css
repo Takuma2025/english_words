@@ -6639,8 +6639,8 @@ body.choice-question-mode-active .word-card-container {
     padding: 14px 0 10px 0;
     /* レスポンシブなカードサイズ（スマホで少し小さめ） */
     --deck-card-w: clamp(280px, 92vw, 520px);
-    /* 縦は少し小さめ */
-    --deck-card-h: clamp(320px, 55vh, 540px);
+    /* 縦は少し小さめ（ナビ上余白の分だけ縮める） */
+    --deck-card-h: clamp(300px, 50vh, 500px);
     --deck-nav-h: 84px;
 }
 
@@ -6679,6 +6679,8 @@ body.choice-question-mode-active .word-card-container {
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-host {
     position: relative;
     width: var(--deck-card-w);
+    min-height: var(--deck-card-h);
+    isolation: isolate;
     touch-action: pan-y pinch-zoom;
 }
 
@@ -6821,7 +6823,8 @@ body.choice-question-mode-active .word-card-container {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 10;
+    width: 100%;
+    z-index: 100;
 }
 
 /* 「前へ」用：戻るアニメーション */
@@ -6873,7 +6876,10 @@ body.choice-question-mode-active .word-card-container {
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .input-list-item.deck-card-below {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     z-index: 1;
     animation: deckCardRise 0.65s ease-out forwards;
 }
@@ -6917,6 +6923,8 @@ body.choice-question-mode-active .word-card-container {
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     gap: 10px;
+    margin-top: 18px;
+    padding-top: 4px;
     padding-bottom: env(safe-area-inset-bottom, 0px);
     min-height: var(--deck-nav-h);
 }
