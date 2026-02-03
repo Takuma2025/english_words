@@ -6638,13 +6638,12 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: flex-start;
     gap: 4px;
-    padding: 4px 0 4px 0;
-    min-height: 0; /* 1画面に収めるため縮小可能に */
+    padding: 4px 0 14px 0; /* 下の余白をやや多めに */
+    min-height: 0;
     max-height: 100%;
-    /* レスポンシブなカードサイズ */
     --deck-card-w: clamp(280px, 92vw, 520px);
-    /* スマホで1画面に収まる高さ（余白・ナビ分を除く） */
-    --deck-card-h: min(58vh, calc(100vh - 160px));
+    /* 縦を少し控えめにして下余白とバランス */
+    --deck-card-h: min(52vh, calc(100vh - 180px));
     --deck-nav-h: 72px;
 }
 
@@ -6658,7 +6657,7 @@ body.choice-question-mode-active .word-card-container {
     flex: 1 1 auto;
     min-height: 0;
     max-height: calc(100% - var(--deck-nav-h));
-    padding-bottom: 2px;
+    padding-bottom: 4px;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack {
@@ -6694,11 +6693,11 @@ body.choice-question-mode-active .word-card-container {
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-replay-card {
     width: 100%;
     min-height: var(--deck-card-h);
-    border: none;
+    border: 1.5px solid #0055ca; /* ふちあり */
     background: rgba(224, 242, 254, 0.92); /* 薄い水色 */
     color: rgba(0, 85, 202, 0.75);
     border-radius: 20px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+    box-shadow: none; /* 影なし */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -6904,8 +6903,7 @@ body.choice-question-mode-active .word-card-container {
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .input-list-item.deck-card-return-out {
-    z-index: 1; /* 前へ時：今のカードは背面で消える */
-    animation: deckReturnOut 0.45s ease-out forwards;
+    z-index: 1; /* 前へ時：今のカードは背面に（アニメーションなし） */
     pointer-events: none;
 }
 
@@ -6972,7 +6970,7 @@ body.choice-question-mode-active .word-card-container {
     gap: 10px;
     margin-top: 6px;
     padding-top: 2px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); /* 下余白を少し増やす */
     min-height: var(--deck-nav-h);
     flex-shrink: 0;
 }
