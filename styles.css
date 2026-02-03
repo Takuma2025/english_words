@@ -7076,10 +7076,18 @@ body.choice-question-mode-active .word-card-container {
     display: none;
 }
 
-/* フィルタードロップダウン（カードより前面に表示） */
+/* フィルタードロップダウン（通常時はz-index控えめ） */
 .input-filter-dropdown-wrapper {
     position: relative;
+    z-index: 10;
+}
+/* ドロップダウン開いているときだけ前面に */
+.input-filter-dropdown-wrapper:has(.input-filter-dropdown.show) {
     z-index: 10015;
+}
+/* 赤シートONのときはフィルターボタンを背面に */
+.input-list-controls-row:has(.red-sheet-checkbox:checked) .input-filter-dropdown-wrapper {
+    z-index: 1;
 }
 
 .input-filter-trigger {
@@ -7461,8 +7469,8 @@ body.choice-question-mode-active .word-card-container {
     border-color: #fecaca;
 }
 
-.red-sheet-toggle:has(.red-sheet-checkbox:checked) .red-sheet-label {
-    color: #dc2626;
+.red-sheet-toggle:has(.red-sheet-checkbox:checked) .red-sheet-icon {
+    background: #b91c1c;
 }
 
 /* スクロール時に右上に固定（ヘッダーより下） */
@@ -7523,16 +7531,15 @@ body.choice-question-mode-active .word-card-container {
     transform: translateX(16px);
 }
 
+/* 赤い角丸四角で赤シートを表現（文字なし・縦に立てた形） */
 .red-sheet-icon {
-    display: none;
-}
-
-.red-sheet-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: #475569;
-    white-space: nowrap;
+    display: block;
+    width: 10px;
+    height: 24px;
+    border-radius: 3px;
+    background: #dc2626;
     flex-shrink: 0;
+    transition: background 0.2s ease;
 }
 
 /* 赤シートオーバーレイ */
@@ -7681,8 +7688,10 @@ body.choice-question-mode-active .word-card-container {
         height: 12px;
     }
     
-    .red-sheet-label {
-        font-size: 11px;
+    .red-sheet-icon {
+        width: 14px;
+        height: 20px;
+        border-radius: 2px;
     }
     
     .red-sheet-slider {
@@ -8024,7 +8033,7 @@ body.choice-question-mode-active .word-card-container {
     height: 100%;
     min-height: 100px;
     /* オーバーシュートしないフリップ（回転を速く） */
-    transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
     border-radius: 0;
     border: none;
