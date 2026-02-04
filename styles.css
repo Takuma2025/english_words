@@ -7096,7 +7096,9 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     align-items: center;
     gap: 5px;
-    padding: 8px 12px;
+    padding: 6px 10px;
+    height: 34px;
+    box-sizing: border-box;
     background: #ffffff;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
