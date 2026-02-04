@@ -6683,7 +6683,7 @@ body.choice-question-mode-active .word-card-container {
     height: var(--deck-card-h);
     background: #ffffff;
     border-radius: 20px;
-    border: 1.5px solid #e0e0e0; /* うすいグレーのボーダー（影なし） */
+    border: 1.5px solid #0055ca; /* ヘッダー青 */
     box-shadow: none;
     opacity: 0.9;
 }
@@ -6701,7 +6701,7 @@ body.choice-question-mode-active .word-card-container {
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-replay-card {
     width: 100%;
     min-height: var(--deck-card-h);
-    border: 1.5px solid #e0e0e0; /* うすいグレーのボーダー */
+    border: 1.5px solid #0055ca; /* ヘッダー青 */
     background: rgba(224, 242, 254, 0.92); /* 薄い水色 */
     color: rgba(0, 85, 202, 0.75);
     border-radius: 20px;
@@ -6728,7 +6728,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* デッキのメインカード：うすいグレーボーダー（影なし） */
 #inputListContainer.flip-mode.flip-deck-mode .input-list-inner {
-    border: 1.5px solid #e0e0e0;
+    border: 1.5px solid #0055ca;
     box-shadow: none;
 }
 
@@ -8041,7 +8041,7 @@ body.choice-question-mode-active .word-card-container {
 .flip-mode .input-list-inner {
     border-radius: 20px;
     box-shadow: none;
-    border: 1.5px solid #e0e0e0;
+    border: 1.5px solid #0055ca;
 }
 
 .flip-mode .input-list-front,
@@ -10078,14 +10078,14 @@ body.choice-question-mode-active .word-card-container {
     background: #ffffff;
     border-radius: 20px;
     box-shadow: none;
-    border: 1.5px solid #e0e0e0; /* うすいグレーのボーダー */
+    border: 1.5px solid #0055ca; /* ヘッダー青 */
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease;
 }
 
 /* アウトプットモードのときもうすいグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-stack {
-    border: 1.5px solid #e0e0e0;
+    border: 1.5px solid #0055ca;
 }
 
 .card-stack-1 {
@@ -10296,13 +10296,13 @@ body.learning-mode .bottom-nav {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1.5px solid #e0e0e0; /* うすいグレーのボーダー */
+    border: 1.5px solid #0055ca; /* ヘッダー青 */
     transition: border-color 0.3s ease;
 }
 
 /* アウトプットモードのときもうすいグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
-    border: 1.5px solid #e0e0e0;
+    border: 1.5px solid #0055ca;
 }
 
 /* カードの赤・青囲みは削除 - 単語番号下のマーカーのみ使用 */
@@ -10318,14 +10318,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1.5px solid #e0e0e0; /* うすいグレーのボーダー */
+    border: 1.5px solid #0055ca; /* ヘッダー青 */
     transform: rotateY(180deg);
     transition: border-color 0.3s ease;
 }
 
 /* アウトプットモードのときもうすいグレーボーダー */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
-    border: 1.5px solid #e0e0e0;
+    border: 1.5px solid #0055ca;
 }
 
 /* 裏面の英単語表示（小さく上部に） */
