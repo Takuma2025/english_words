@@ -6643,11 +6643,12 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: flex-start;
     gap: 0;
-    padding: 0 0 14px 0; /* 上余白なし、下の余白をやや多めに */
+    padding: 0 0 14px 0;
+    /* 下部固定ナビの高さ分の余白を確保 */
+    padding-bottom: calc(72px + 20px + env(safe-area-inset-bottom, 0px));
     min-height: 0;
     max-height: 100%;
     --deck-card-w: clamp(280px, 92vw, 520px);
-    /* 縦を少し控えめにして下余白とバランス */
     --deck-card-h: min(52vh, calc(100vh - 180px));
     --deck-nav-h: 72px;
 }
@@ -6971,18 +6972,25 @@ body.choice-question-mode-active .word-card-container {
     margin-left: 0;
 }
 
+/* 前へ・次へ・進捗を画面下部に固定 */
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav {
-    position: relative;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: var(--deck-card-w);
+    max-width: calc(100vw - 32px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    margin-top: 6px;
-    padding-top: 2px;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); /* 下余白を少し増やす */
+    margin: 0;
+    padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px)) 0;
     min-height: var(--deck-nav-h);
     flex-shrink: 0;
+    background: #ffffff;
+    z-index: 10020;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-counter {
@@ -10204,6 +10212,12 @@ body.learning-mode .word-card-container {
     /* 表の上下ボーダーが overflow で切れて細く見えないよう余白を確保 */
     padding: 3px 0;
     box-sizing: border-box;
+}
+
+/* 一番上のカード（メインカード）が上にずれないようにスタックと揃える */
+body.learning-mode .word-card-container .word-card {
+    top: 0;
+    left: 0;
 }
 
 /* 学習モード中は下部のタブバーを非表示にして余白をなくす */

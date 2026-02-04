@@ -12010,6 +12010,32 @@ function renderInputListView(words) {
         let shouldAnimateFloatUp = false;
         let prevReturnInProgress = false;
         let nextFlyInProgress = false;
+        let nextFlyTimeoutId = null;
+        let nextFlyCleanup = null;
+        let prevReturnTimeoutId = null;
+        let prevReturnCleanup = null;
+
+        /** 再生中の「次へ」アニメーションを即時完了させ、どんどん次へ進めるようにする。スキップした場合 true */
+        const finishPendingNext = () => {
+            if (!nextFlyInProgress || !nextFlyCleanup) return false;
+            if (nextFlyTimeoutId !== null) clearTimeout(nextFlyTimeoutId);
+            nextFlyTimeoutId = null;
+            nextFlyCleanup();
+            nextFlyCleanup = null;
+            nextFlyInProgress = false;
+            return true;
+        };
+
+        /** 再生中の「前へ」アニメーションを即時完了させる。スキップした場合 true */
+        const finishPendingPrev = () => {
+            if (!prevReturnInProgress || !prevReturnCleanup) return false;
+            if (prevReturnTimeoutId !== null) clearTimeout(prevReturnTimeoutId);
+            prevReturnTimeoutId = null;
+            prevReturnCleanup();
+            prevReturnCleanup = null;
+            prevReturnInProgress = false;
+            return true;
+        };
 
         const renderDeckCard = () => {
             host.innerHTML = '';
@@ -12081,66 +12107,81 @@ function renderInputListView(words) {
 
         const goNext = () => {
             stopSpeechIfPlaying();
+            const hadPending = finishPendingNext(); /* アニメ中なら即時完了。return せずそのまま次へ進む */
             const total = inputFlipDeckWords.length;
             if (total === 0) return false;
-            if (nextFlyInProgress) return false;
-            const currentItem = host.querySelector('.input-list-item');
-            if (!currentItem) {
-                if (inputFlipDeckIndex >= total - 1) return false;
-                inputFlipDeckIndex += 1;
-                shouldAnimateFloatUp = true;
-                renderDeckCard();
+
+            const runNext = () => {
+                const currentItem = host.querySelector('.input-list-item');
+                if (!currentItem) {
+                    if (inputFlipDeckIndex >= total - 1) return false;
+                    inputFlipDeckIndex += 1;
+                    shouldAnimateFloatUp = true;
+                    renderDeckCard();
+                    return true;
+                }
+                const atEnd = inputFlipDeckIndex >= total - 1;
+                let nextItem = null;
+                if (!atEnd) {
+                    const nextWord = inputFlipDeckWords[inputFlipDeckIndex + 1];
+                    nextItem = createInputListItem(
+                        nextWord,
+                        inputFlipDeckContext.progressCache,
+                        inputFlipDeckContext.categoryCorrectSet,
+                        inputFlipDeckContext.categoryWrongSet,
+                        inputFlipDeckContext.skipProgress
+                    );
+                    if (inputFlipDeckAllFlipped) nextItem.classList.add('flipped');
+                    nextItem.classList.add('deck-card-below');
+                    host.insertBefore(nextItem, currentItem);
+                }
+                currentItem.classList.add('deck-card-above');
+                currentItem.classList.add('swipe-out-right');
+                nextFlyInProgress = true;
+
+                nextFlyCleanup = () => {
+                    currentItem.remove();
+                    if (nextItem) nextItem.classList.remove('deck-card-below');
+                    nextFlyInProgress = false;
+                    if (atEnd) {
+                        inputFlipDeckFinished = true;
+                        showReplayCard();
+                        return;
+                    }
+                    inputFlipDeckIndex += 1;
+                    inputFlipDeckProgressPos = inputFlipDeckIndex;
+                    counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
+                    prevBtn.disabled = inputFlipDeckIndex <= 0;
+                    prevBtn.style.display = '';
+                    nextBtn.disabled = false;
+                    nextBtn.style.display = '';
+                    replayBtn.style.display = 'none';
+                    updateFlipAllBtnLabel();
+                    const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
+                    buildStackCards(remaining + 1);
+                };
+                nextFlyTimeoutId = setTimeout(() => {
+                    nextFlyCleanup();
+                    nextFlyCleanup = null;
+                    nextFlyTimeoutId = null;
+                }, FLY_NEXT_DURATION);
+                return true;
+            };
+
+            /* 即時完了した直後は DOM 更新を待ってから次を実行し、連打で確実に進むようにする */
+            if (hadPending) {
+                requestAnimationFrame(runNext);
                 return true;
             }
-            const atEnd = inputFlipDeckIndex >= total - 1;
-            let nextItem = null;
-            if (!atEnd) {
-                const nextWord = inputFlipDeckWords[inputFlipDeckIndex + 1];
-                nextItem = createInputListItem(
-                    nextWord,
-                    inputFlipDeckContext.progressCache,
-                    inputFlipDeckContext.categoryCorrectSet,
-                    inputFlipDeckContext.categoryWrongSet,
-                    inputFlipDeckContext.skipProgress
-                );
-                if (inputFlipDeckAllFlipped) nextItem.classList.add('flipped');
-                nextItem.classList.add('deck-card-below');
-                host.insertBefore(nextItem, currentItem);
-            }
-            currentItem.classList.add('deck-card-above');
-            currentItem.classList.add('swipe-out-right');
-            nextFlyInProgress = true;
-
-            setTimeout(() => {
-                currentItem.remove();
-                if (nextItem) nextItem.classList.remove('deck-card-below');
-                nextFlyInProgress = false;
-                if (atEnd) {
-                    inputFlipDeckFinished = true;
-                    showReplayCard();
-                    return;
-                }
-                inputFlipDeckIndex += 1;
-                inputFlipDeckProgressPos = inputFlipDeckIndex;
-                counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
-                const nowAtEnd = inputFlipDeckIndex >= total - 1;
-                prevBtn.disabled = inputFlipDeckIndex <= 0;
-                prevBtn.style.display = '';
-                nextBtn.disabled = false;
-                nextBtn.style.display = '';
-                replayBtn.style.display = 'none';
-                updateFlipAllBtnLabel();
-                const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
-                buildStackCards(remaining + 1);
-            }, FLY_NEXT_DURATION);
-            return true;
+            return runNext();
         };
 
         prevBtn.addEventListener('click', (e) => {
             e.preventDefault();
             if (inputFlipDeckFinished) return;
             if (inputFlipDeckIndex <= 0) return;
-            if (prevReturnInProgress) return; // 戻るアニメーション中は連打を無視
+            finishPendingPrev();
+            finishPendingNext();
             stopSpeechIfPlaying();
 
             const currentItem = host.querySelector('.input-list-item');
@@ -12169,32 +12210,31 @@ function renderInputListView(words) {
             currentItem.classList.add('deck-card-return-out');
             prevReturnInProgress = true;
 
-            setTimeout(() => {
+            prevReturnCleanup = () => {
                 currentItem.remove();
                 prevItem.classList.remove('deck-card-return-in');
                 prevReturnInProgress = false;
                 inputFlipDeckIndex = prevIndex;
                 inputFlipDeckProgressPos = inputFlipDeckIndex;
-
-                // UI更新
                 counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
-                const atEnd = inputFlipDeckIndex >= total - 1;
                 prevBtn.disabled = inputFlipDeckIndex <= 0;
                 prevBtn.style.display = '';
                 nextBtn.disabled = false;
                 nextBtn.style.display = '';
                 replayBtn.style.display = 'none';
                 updateFlipAllBtnLabel();
-
-                // スタック更新（残り枚数で減る）
                 const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
                 buildStackCards(remaining + 1);
+            };
+            prevReturnTimeoutId = setTimeout(() => {
+                prevReturnCleanup();
+                prevReturnCleanup = null;
+                prevReturnTimeoutId = null;
             }, 620);
         });
 
         nextBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            if (nextFlyInProgress) return;
             goNext();
         });
 
@@ -12238,7 +12278,7 @@ function renderInputListView(words) {
         host.addEventListener('touchend', (e) => {
             if (!isSwiping) return;
             isSwiping = false;
-            if (nextFlyInProgress) return;
+            finishPendingNext(); /* 前のアニメがあれば即時完了してからこのスワイプを処理 */
             const endX = e.changedTouches[0].clientX;
             const diffX = endX - swipeStartX;
             const elapsed = Date.now() - swipeStartTime;
@@ -12277,35 +12317,31 @@ function renderInputListView(words) {
                 host.appendChild(nextItem);
             }
 
-            setTimeout(() => {
+            nextFlyCleanup = () => {
                 nextFlyInProgress = false;
                 flyWrapper.remove();
                 if (nextItem) nextItem.classList.remove('deck-card-below');
-
                 if (atEnd) {
-                    // すべて飛ばし終わり → カード位置に「もう一度」
                     inputFlipDeckFinished = true;
                     showReplayCard();
                     return;
                 }
-
-                // インデックスを進める（減っていくデッキ）
                 inputFlipDeckIndex += 1;
                 inputFlipDeckProgressPos = inputFlipDeckIndex;
-
-                // UI更新（nextItem をそのまま使う）
                 counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
-                const nowAtEnd = inputFlipDeckIndex >= total - 1;
                 prevBtn.disabled = inputFlipDeckIndex <= 0;
                 prevBtn.style.display = '';
                 nextBtn.disabled = false;
                 nextBtn.style.display = '';
                 replayBtn.style.display = 'none';
                 updateFlipAllBtnLabel();
-
-                // スタック更新（残り枚数で減る）
                 const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
                 buildStackCards(remaining + 1);
+            };
+            nextFlyTimeoutId = setTimeout(() => {
+                nextFlyCleanup();
+                nextFlyCleanup = null;
+                nextFlyTimeoutId = null;
             }, 650);
         }, { passive: true });
 
