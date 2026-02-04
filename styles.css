@@ -6649,7 +6649,7 @@ body.choice-question-mode-active .word-card-container {
     min-height: 0;
     max-height: 100%;
     --deck-card-w: clamp(280px, 92vw, 520px);
-    --deck-card-h: min(52vh, calc(100vh - 180px));
+    --deck-card-h: min(58vh, calc(100vh - 160px));
     --deck-nav-h: 72px;
 }
 
