@@ -6643,9 +6643,9 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: flex-start;
     gap: 0;
-    padding: 0 0 14px 0;
-    /* 下部固定ナビの高さ分の余白を確保 */
-    padding-bottom: calc(72px + 20px + env(safe-area-inset-bottom, 0px));
+    padding: 20px 0 0 0;
+    /* 下部はナビ高さ＋セーフエリアのみ（前へ・次への上余白なし） */
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
     min-height: 0;
     max-height: 100%;
     --deck-card-w: clamp(280px, 92vw, 520px);
@@ -6671,7 +6671,7 @@ body.choice-question-mode-active .word-card-container {
     flex: 1 1 auto;
     min-height: 0;
     max-height: calc(100% - var(--deck-nav-h));
-    padding-bottom: 4px;
+    padding-bottom: 0;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack {
@@ -6990,7 +6990,6 @@ body.choice-question-mode-active .word-card-container {
     flex-shrink: 0;
     background: #ffffff;
     z-index: 10020;
-    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-counter {
