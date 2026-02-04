@@ -6371,7 +6371,7 @@ body.choice-question-mode-active .word-card-container {
     position: relative;
 }
 
-/* 設定ボタン（歯車アイコン） */
+/* 設定ボタン（歯車アイコン）メモボタンと同じトーン */
 .input-list-settings-btn {
     display: flex;
     align-items: center;
@@ -6379,31 +6379,30 @@ body.choice-question-mode-active .word-card-container {
     gap: 4px;
     padding: 0 12px;
     height: 40px;
-    background: #64748b;
-    border: 1px solid #64748b;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
     border-radius: 8px;
-    color: #ffffff;
+    color: #64748b;
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease;
+    transition: all 0.15s ease;
     flex-shrink: 0;
     font-size: 13px;
     font-weight: 600;
 }
 
 .input-list-settings-btn:hover {
-    background: #475569;
-    border-color: #475569;
-    color: #ffffff;
+    background: #f8fafc;
+    border-color: #94a3b8;
 }
 
 .input-list-settings-btn:active {
-    background: #475569;
+    background: #f1f5f9;
 }
 
 .input-list-settings-btn.active {
-    background: #1e40af;
-    border-color: #1e40af;
-    color: #ffffff;
+    background: #eff6ff;
+    border-color: #3b82f6;
+    color: #3b82f6;
 }
 
 /* 設定ドロップダウン */
@@ -6518,10 +6517,7 @@ body.choice-question-mode-active .word-card-container {
     justify-content: center;
     gap: 5px;
     padding: 8px 12px;
-    background: #64748b;
-    border: 1px solid #64748b;
     border-radius: 8px;
-    color: #ffffff;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -6536,6 +6532,15 @@ body.choice-question-mode-active .word-card-container {
 .input-shuffle-btn .btn-label,
 .input-flip-all-btn .btn-label {
     display: inline;
+}
+
+/* ランダムボタン：メモボタンと同じトーン */
+.input-shuffle-btn {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
+    height: 34px;
+    box-sizing: border-box;
 }
 
 /* ひっくり返すボタン独自スタイル */
@@ -6558,23 +6563,23 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-shuffle-btn:hover {
-    background: #475569;
-    border-color: #475569;
+    background: #f8fafc;
+    border-color: #94a3b8;
 }
 
 .input-shuffle-btn:active {
-    transform: scale(0.97);
+    background: #f1f5f9;
 }
 
 .input-shuffle-btn.active {
-    background: #1e40af;
-    border-color: #1e40af;
-    color: #ffffff;
+    background: #eff6ff;
+    border-color: #3b82f6;
+    color: #3b82f6;
 }
 
 .input-shuffle-btn.active:hover {
-    background: #1e3a8a;
-    border-color: #1e3a8a;
+    background: #dbeafe;
+    border-color: #3b82f6;
 }
 
 .input-shuffle-btn svg {
@@ -6587,13 +6592,13 @@ body.choice-question-mode-active .word-card-container {
 /* シャッフルアニメーション */
 .input-shuffle-btn.shuffling {
     pointer-events: none;
-    background: #475569;
-    border-color: #475569;
+    background: #f1f5f9;
+    border-color: #94a3b8;
 }
 
 .input-shuffle-btn.shuffling svg {
     animation: shuffle-spin 0.5s ease-in-out;
-    color: #ffffff;
+    color: #64748b;
 }
 
 @keyframes shuffle-spin {
@@ -7092,10 +7097,10 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     gap: 5px;
     padding: 8px 12px;
-    background: #64748b;
-    border: 1px solid #64748b;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
     border-radius: 8px;
-    color: #ffffff;
+    color: #64748b;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -7108,14 +7113,23 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-filter-trigger:hover {
-    background: #475569;
-    border-color: #475569;
+    background: #f8fafc;
+    border-color: #94a3b8;
+}
+
+.input-filter-trigger:active {
+    background: #f1f5f9;
 }
 
 .input-filter-trigger.active {
-    background: #1e40af;
-    border-color: #1e40af;
-    color: #ffffff;
+    background: #eff6ff;
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.input-filter-trigger.active:hover {
+    background: #dbeafe;
+    border-color: #3b82f6;
 }
 
 .filter-active-badge {
