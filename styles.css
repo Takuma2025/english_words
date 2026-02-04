@@ -6633,7 +6633,7 @@ body.choice-question-mode-active .word-card-container {
     height: calc(100vh - var(--header-height, 56px) - env(safe-area-inset-top, 0px));
 }
 
-/* フリップモード：デッキ表示（1枚だけ中央表示）・画面サイズに応じてレスポンシブ */
+/* フリップモード：デッキ表示（1枚だけ中央表示） */
 #inputListContainer.flip-mode.flip-deck-mode {
     position: relative;
     z-index: 10010;
@@ -6643,20 +6643,14 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: flex-start;
     gap: 0;
-    /* 上のツールバーと重ならないよう余白（スマホ〜大画面で調整） */
-    padding-top: clamp(20px, 5vh, 48px);
-    padding-left: 0;
-    padding-right: 0;
-    /* 下部はナビ高さ＋セーフエリアのみ */
-    padding-bottom: calc(var(--deck-nav-h) + env(safe-area-inset-bottom, 0px));
+    padding: 20px 0 0 0;
+    /* 下部はナビ高さ＋セーフエリアのみ（前へ・次への上余白なし） */
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
     min-height: 0;
     max-height: 100%;
-    /* カード幅：小画面で狭く・大画面で最大520px */
     --deck-card-w: clamp(280px, 92vw, 520px);
-    /* カード高さ：画面高さに応じて（上下の余白分を引く） */
-    --deck-card-h: min(56vh, calc(100vh - clamp(100px, 24vh, 200px)));
-    /* ナビ高さ：スマホではやや低く・大画面で72px */
-    --deck-nav-h: clamp(56px, 12vmin, 72px);
+    --deck-card-h: min(52vh, calc(100vh - 180px));
+    --deck-nav-h: 72px;
 }
 
 /* フリップカードとツールバー（ランダム・フィルター行）の間の余白をなくす */
@@ -6978,20 +6972,20 @@ body.choice-question-mode-active .word-card-container {
     margin-left: 0;
 }
 
-/* 前へ・次へ・進捗を画面下部に固定（幅・余白は画面に合わせる） */
+/* 前へ・次へ・進捗を画面下部に固定 */
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav {
     position: fixed;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     width: var(--deck-card-w);
-    max-width: calc(100vw - clamp(16px, 4vw, 32px));
+    max-width: calc(100vw - 32px);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: clamp(6px, 2vw, 12px);
+    gap: 10px;
     margin: 0;
-    padding: clamp(8px, 2.5vw, 12px) 0 calc(clamp(8px, 2.5vw, 12px) + env(safe-area-inset-bottom, 0px)) 0;
+    padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px)) 0;
     min-height: var(--deck-nav-h);
     flex-shrink: 0;
     background: #ffffff;
@@ -7002,7 +6996,7 @@ body.choice-question-mode-active .word-card-container {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    font-size: clamp(12px, 3vw, 14px);
+    font-size: 13px;
     font-weight: 700;
     color: #64748b;
     letter-spacing: 0.03em;
@@ -7013,8 +7007,8 @@ body.choice-question-mode-active .word-card-container {
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav-btn {
-    height: clamp(40px, 10vmin, 48px);
-    min-width: clamp(72px, 22vw, 100px);
+    height: 44px;
+    min-width: 90px;
     border: none;
     border-radius: 10px;
     background: #0ea5e9;

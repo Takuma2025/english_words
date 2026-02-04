@@ -767,7 +767,7 @@ function animateProgressToGoal() {
     
     // 白い★（シアンの光）の数（覚えた語数に比例、最小3個、最大30個）
     const starCount = Math.min(Math.max(3, learnedCount), 30);
-    const staggerDelay = 80;
+    const staggerDelay = 120; // 星の出発間隔（ゆっくり吸い込まれるように）
     let completedCount = 0;
     
     // 進捗バーの現在値を保存（アニメーション前の値）
@@ -903,7 +903,7 @@ function animateProgressToGoal() {
         `;
         document.body.appendChild(star);
         
-        const duration = 1500 + Math.random() * 800; // 1500〜2300ms（ふわっと）
+        const duration = 2400 + Math.random() * 800; // 2.4〜3.2秒（吸い込まれる移動をゆっくりに）
         const startTime = performance.now();
         
         // ランダムな浮遊パラメータ
@@ -996,10 +996,10 @@ function animateProgressToGoal() {
                 `;
                 document.body.appendChild(particle);
                 
-                // アニメーション
+                // アニメーション（飛び散りはゆっくりに）
                 const angle = (Math.random() - 0.5) * Math.PI;
                 const distance = 40 + Math.random() * 60;
-                const duration = 600 + Math.random() * 400;
+                const duration = 1400 + Math.random() * 800; // 1.4〜2.2秒（つっくり）
                 const startTime = performance.now();
                 
                 function animateParticle(currentTime) {
@@ -1027,7 +1027,7 @@ function animateProgressToGoal() {
                     }
                 }
                 requestAnimationFrame(animateParticle);
-            }, i * 50);
+            }, i * 90); // 飛び散りの開始間隔もゆっくりに
         }
         
         // バーとラッパー（グレー部分）の色が少し変わる効果
