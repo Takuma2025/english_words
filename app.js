@@ -12050,12 +12050,6 @@ function renderInputListView(words) {
             } else {
                 item.classList.remove('flipped');
             }
-            
-            // スワイプ後なら浮き上がりアニメーション
-            if (shouldAnimateFloatUp) {
-                item.classList.add('card-float-up');
-                shouldAnimateFloatUp = false;
-            }
 
             host.appendChild(item);
 
