@@ -6633,7 +6633,7 @@ body.choice-question-mode-active .word-card-container {
     height: calc(100vh - var(--header-height, 56px) - env(safe-area-inset-top, 0px));
 }
 
-/* フリップモード：デッキ表示（1枚だけ中央表示）・カードを大きくして下余白を詰める */
+/* フリップモード：デッキ表示（1枚だけ中央表示）・ツールバーと重ならないよう上を確保 */
 #inputListContainer.flip-mode.flip-deck-mode {
     position: relative;
     z-index: 10010;
@@ -6643,16 +6643,18 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: flex-start;
     gap: 0;
-    padding-top: clamp(16px, 4vh, 36px);
+    /* ツールバー（ランダム・フィルター行）との間に必ず余白を取る */
+    padding-top: clamp(20px, 5vh, 40px);
     padding-left: 0;
     padding-right: 0;
     padding-bottom: calc(var(--deck-nav-h) + env(safe-area-inset-bottom, 0px));
     min-height: 0;
     max-height: 100%;
     --deck-card-w: clamp(280px, 92vw, 520px);
-    /* カードを大きくするがツールバーと重ならないよう上側の余白を確保 */
-    --deck-card-h: min(62vh, calc(100vh - clamp(100px, 22vh, 150px)));
+    /* 上（ヘッダー・タブ・ツールバー＋パディング）・下（ナビ＋余白）を引いた高さ＝重ならない */
+    --deck-top-reserve: clamp(140px, 28vh, 200px);
     --deck-nav-h: clamp(56px, 12vmin, 72px);
+    --deck-card-h: min(56vh, calc(100vh - var(--deck-top-reserve) - var(--deck-nav-h) - env(safe-area-inset-bottom, 0px) - 16px));
 }
 
 /* フリップカードとツールバー（ランダム・フィルター行）の間の余白をなくす */
