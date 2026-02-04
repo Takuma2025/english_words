@@ -6868,11 +6868,11 @@ body.choice-question-mode-active .word-card-container {
     z-index: 100;
 }
 #inputListContainer.flip-mode.flip-deck-mode .deck-swipe-fly-wrapper.swipe-out-left {
-    animation: swipeOutLeft 0.65s ease-out forwards;
+    animation: swipeOutLeft 1s ease-out forwards;
     pointer-events: none;
 }
 #inputListContainer.flip-mode.flip-deck-mode .deck-swipe-fly-wrapper.swipe-out-right {
-    animation: swipeOutRight 0.65s ease-out forwards;
+    animation: swipeOutRight 1s ease-out forwards;
     pointer-events: none;
 }
 
@@ -6934,12 +6934,12 @@ body.choice-question-mode-active .word-card-container {
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .input-list-item.swipe-out-left {
-    animation: swipeOutLeft 0.65s ease-out forwards;
+    animation: swipeOutLeft 1s ease-out forwards;
     pointer-events: none;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .input-list-item.swipe-out-right {
-    animation: swipeOutRight 0.65s ease-out forwards;
+    animation: swipeOutRight 1s ease-out forwards;
     pointer-events: none;
 }
 
@@ -10166,6 +10166,8 @@ body.learning-mode .card-area-wrapper {
     overflow-x: hidden;
     max-width: 100%;
     background-color: #ffffff;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 /* カードモード時（展開モード・文モード・整序モード以外）はスクロールを無効化 */

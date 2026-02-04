@@ -7979,7 +7979,7 @@ function setupEventListeners() {
     // 正解・不正解・完璧ボタン（スワイプと同じスライドアウトアニメーション）
     // 途中まで遅く、途中から加速するイージング
     const swipeOutEasing = 'cubic-bezier(0.4, 0, 0.9, 0.4)';
-    const swipeOutDuration = 220; // ミリ秒
+    const swipeOutDuration = 420; // ミリ秒（飛んでいく速度をゆっくりに）
     
     elements.correctBtn.addEventListener('click', () => {
         // カードが裏返されていない場合は何もしない
@@ -10220,8 +10220,8 @@ function setupSwipeDetection(card) {
         const isVertical = Math.abs(dy) > Math.abs(dx);
         const isMistakeMode = selectedCategory === '間違い復習';
 
-        // トランジションを有効化
-        card.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+        // トランジションを有効化（スワイプで飛んでいく速度をゆっくりに）
+        card.style.transition = 'transform 0.42s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.42s cubic-bezier(0.4, 0, 0.2, 1)';
 
         // インプットモードのときはスワイプで次/前に移動（判定なし）
         if (currentLearningMode === 'input') {
