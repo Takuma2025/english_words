@@ -6695,8 +6695,9 @@ body.choice-question-mode-active .word-card-container {
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* メインカードと同じ回転向きにし、1枚目だけ回転がおかしくならないようにする */
 #inputListContainer.flip-mode.flip-deck-mode.deck-flipped .flip-deck-stack-inner {
-    transform: rotateY(180deg);
+    transform: rotateY(-180deg);
 }
 
 /* スタックカード：表と裏の2面を持たせ、まとめてめくったときに裏が見えるように */
@@ -6790,6 +6791,11 @@ body.choice-question-mode-active .word-card-container {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+/* 裏（日本語）の文字色をオレンジに・展開モードの意味と同じ */
+#inputListContainer.flip-mode.flip-deck-mode .input-list-back .input-list-meaning {
+    color: #ff9933;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .input-list-flip-hint {
@@ -8114,9 +8120,9 @@ body.choice-question-mode-active .word-card-container {
     transform: rotateY(180deg);
 }
 
-/* 裏→表も同じ回転向きにする（180→360deg でアニメしてから 0 にリセット） */
-.input-list-item.flipped.flip-unify .input-list-inner {
-    transform: rotateY(360deg);
+/* 単語カード（デッキ）：日本語→英語のときも1枚めくりの回転の向きを英語→日本語と同じにする */
+#inputListContainer.flip-mode.flip-deck-mode.deck-flipped .input-list-item.flipped .input-list-inner {
+    transform: rotateY(-180deg);
 }
 
 /* 裏面でも番号は表示する（表裏で別要素を持っているため） */

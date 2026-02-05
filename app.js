@@ -11736,29 +11736,11 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         inner.appendChild(back);
         item.appendChild(inner);
         
-        // クリックでフリップ（表→裏も裏→表も同じ回転向きでめくる）
+        // クリックでフリップ
         item.addEventListener('click', () => {
-            const inner = item.querySelector('.input-list-inner');
-            if (item.classList.contains('flipped')) {
-                item.classList.add('flip-unify');
-                if (inner) {
-                    const once = (e) => {
-                        if (e.propertyName !== 'transform') return;
-                        inner.removeEventListener('transitionend', once);
-                        inner.style.transition = 'none';
-                        item.classList.remove('flipped', 'flip-unify');
-                        inner.offsetHeight;
-                        inner.style.transition = '';
-                    };
-                    inner.addEventListener('transitionend', once);
-                } else {
-                    item.classList.remove('flipped', 'flip-unify');
-                }
-            } else {
-                item.classList.add('flipped');
-            }
+            item.classList.toggle('flipped');
         });
-
+        
         return item;
     }
 }
@@ -11988,7 +11970,7 @@ function renderInputListView(words) {
         const updateFlipAllBtnLabel = () => {
             const flipAllBtn = document.getElementById('inputFlipAllBtn');
             const btnLabel = flipAllBtn ? flipAllBtn.querySelector('.btn-label') : null;
-            if (btnLabel) btnLabel.textContent = inputFlipDeckAllFlipped ? '日本語→英語' : '英語→日本語';
+            if (btnLabel) btnLabel.textContent = inputFlipDeckAllFlipped ? 'あ→A' : 'A→あ';
         };
 
         const showReplayCard = () => {
@@ -12869,7 +12851,7 @@ function setupInputListModeToggle() {
         if (flipAllBtn) {
             flipAllBtn.classList.remove('hidden');
             const btnLabel = flipAllBtn.querySelector('.btn-label');
-            if (btnLabel) btnLabel.textContent = '英語→日本語';
+            if (btnLabel) btnLabel.textContent = 'A→あ';
         }
         
         // フィルターを適用して再描画（絞り込み状態を保持）
@@ -12913,7 +12895,7 @@ function setupInputListModeToggle() {
                     });
                 }
                 if (btnLabel) {
-                    btnLabel.textContent = inputFlipDeckAllFlipped ? '日本語→英語' : '英語→日本語';
+                    btnLabel.textContent = inputFlipDeckAllFlipped ? 'あ→A' : 'A→あ';
                 }
                 return;
             }
@@ -12935,9 +12917,9 @@ function setupInputListModeToggle() {
             // ボタンのラベルを切り替え
             if (btnLabel) {
                 if (isCurrentlyFlipped) {
-                    btnLabel.textContent = '英語→日本語';
+                    btnLabel.textContent = 'A→あ';
                 } else {
-                    btnLabel.textContent = '日本語→英語';
+                    btnLabel.textContent = 'あ→A';
                 }
             }
         });
