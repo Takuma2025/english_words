@@ -11736,11 +11736,29 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         inner.appendChild(back);
         item.appendChild(inner);
         
-        // クリックでフリップ
+        // クリックでフリップ（表→裏も裏→表も同じ回転向きでめくる）
         item.addEventListener('click', () => {
-            item.classList.toggle('flipped');
+            const inner = item.querySelector('.input-list-inner');
+            if (item.classList.contains('flipped')) {
+                item.classList.add('flip-unify');
+                if (inner) {
+                    const once = (e) => {
+                        if (e.propertyName !== 'transform') return;
+                        inner.removeEventListener('transitionend', once);
+                        inner.style.transition = 'none';
+                        item.classList.remove('flipped', 'flip-unify');
+                        inner.offsetHeight;
+                        inner.style.transition = '';
+                    };
+                    inner.addEventListener('transitionend', once);
+                } else {
+                    item.classList.remove('flipped', 'flip-unify');
+                }
+            } else {
+                item.classList.add('flipped');
+            }
         });
-        
+
         return item;
     }
 }
@@ -11894,11 +11912,14 @@ function renderInputListView(words) {
 
         const stack = document.createElement('div');
         stack.className = 'flip-deck-stack';
+        const stackInner = document.createElement('div');
+        stackInner.className = 'flip-deck-stack-inner';
+        stack.appendChild(stackInner);
         // 背面のダミーカード（見た目用：単語数分（最大50）生成）
         const MAX_STACK = 50;
         const stackCards = [];
         const buildStackCards = (total) => {
-            stack.innerHTML = '';
+            stackInner.innerHTML = '';
             stackCards.length = 0;
             const count = Math.min(Math.max(total - 1, 0), MAX_STACK);
             for (let i = count; i >= 1; i--) {
@@ -11910,7 +11931,7 @@ function renderInputListView(words) {
                 const opacity = Math.max(0.08, 0.65 - i * 0.018);
                 card.style.transform = `translateY(${dy}px) scale(${scale})`;
                 card.style.opacity = String(opacity);
-                stack.appendChild(card);
+                stackInner.appendChild(card);
                 stackCards.push(card);
             }
         };
@@ -12038,6 +12059,7 @@ function renderInputListView(words) {
         };
 
         const renderDeckCard = () => {
+            container.classList.toggle('deck-flipped', inputFlipDeckAllFlipped);
             host.innerHTML = '';
             const total = inputFlipDeckWords.length;
             if (total === 0) {
@@ -12874,16 +12896,21 @@ function setupInputListModeToggle() {
             if (!container) return;
             const btnLabel = flipAllBtn.querySelector('.btn-label');
 
-            // デッキ表示のときは全カードのフリップ状態を切り替え
+            // デッキ表示のときはメインカード＋スタックをまとめてめくる動きで切り替え
             if (container.classList.contains('flip-deck-mode')) {
                 inputFlipDeckAllFlipped = !inputFlipDeckAllFlipped;
+                container.classList.toggle('deck-flipped', inputFlipDeckAllFlipped);
                 const currentItem = container.querySelector('.flip-deck-host .input-list-item');
                 if (currentItem) {
-                    if (inputFlipDeckAllFlipped) {
-                        currentItem.classList.add('flipped');
-                    } else {
-                        currentItem.classList.remove('flipped');
-                    }
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            if (inputFlipDeckAllFlipped) {
+                                currentItem.classList.add('flipped');
+                            } else {
+                                currentItem.classList.remove('flipped');
+                            }
+                        });
+                    });
                 }
                 if (btnLabel) {
                     btnLabel.textContent = inputFlipDeckAllFlipped ? '日本語→英語' : '英語→日本語';

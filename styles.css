@@ -6633,7 +6633,7 @@ body.choice-question-mode-active .word-card-container {
     height: calc(100vh - var(--header-height, 56px) - env(safe-area-inset-top, 0px));
 }
 
-/* フリップモード：デッキ表示（1枚だけ中央表示）・ツールバーと重ならないよう上を確保 */
+/* フリップモード：デッキ表示（1枚だけ中央表示） */
 #inputListContainer.flip-mode.flip-deck-mode {
     position: relative;
     z-index: 10010;
@@ -6643,18 +6643,14 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: flex-start;
     gap: 0;
-    /* ツールバー（ランダム・フィルター行）との間に必ず余白を取る */
-    padding-top: clamp(20px, 5vh, 40px);
-    padding-left: 0;
-    padding-right: 0;
-    padding-bottom: calc(var(--deck-nav-h) + env(safe-area-inset-bottom, 0px));
+    padding: 20px 0 0 0;
+    /* 下部はナビ高さ＋セーフエリアのみ（前へ・次への上余白なし） */
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
     min-height: 0;
     max-height: 100%;
     --deck-card-w: clamp(280px, 92vw, 520px);
-    /* 上（ヘッダー・タブ・ツールバー＋パディング）・下（ナビ＋余白）を引いた高さ＝重ならない */
-    --deck-top-reserve: clamp(140px, 28vh, 200px);
-    --deck-nav-h: clamp(56px, 12vmin, 72px);
-    --deck-card-h: min(56vh, calc(100vh - var(--deck-top-reserve) - var(--deck-nav-h) - env(safe-area-inset-bottom, 0px) - 16px));
+    --deck-card-h: min(52vh, calc(100vh - 180px));
+    --deck-nav-h: 72px;
 }
 
 /* フリップカードとツールバー（ランダム・フィルター行）の間の余白をなくす */
@@ -6685,17 +6681,57 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    perspective: 1200px;
 }
 
+/* スタック全体をまとめてめくるための内側ラッパー */
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#inputListContainer.flip-mode.flip-deck-mode.deck-flipped .flip-deck-stack-inner {
+    transform: rotateY(180deg);
+}
+
+/* スタックカード：表と裏の2面を持たせ、まとめてめくったときに裏が見えるように */
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-card {
     position: absolute;
     width: var(--deck-card-w);
     height: var(--deck-card-h);
-    background: #ffffff;
     border-radius: 20px;
-    border: 1.5px solid #0055ca; /* ヘッダー青 */
     box-shadow: none;
     opacity: 0.9;
+    transform-style: preserve-3d;
+    background: transparent;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1.5px solid #0055ca;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #f0f9ff;
+    border-radius: 20px;
+    border: 1.5px solid #0055ca;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-host {
@@ -7881,57 +7917,56 @@ body.choice-question-mode-active .word-card-container {
 }
 
 /* ========================================
-   フリップモード（単語カード）のコンパクト表示
-   フリップ機能を維持しつつ小さく表示
+   フリップモード（一覧表示）のコンパクト表示のみ。単語カード（デッキ）では適用しない
    ======================================== */
-.input-list-scroll.compact-mode.flip-mode .input-list-item {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-item {
     margin-bottom: 2px;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-inner {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-inner {
     min-height: 50px;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-front,
-.input-list-scroll.compact-mode.flip-mode .input-list-back {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-front,
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-back {
     min-height: 50px;
     padding: 8px 10px;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-word {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-word {
     font-size: 16px;
     color: #374151;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-meaning {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-meaning {
     font-size: 14px;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-example {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-example {
     display: none;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-expand-number-box {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-expand-number-box {
     display: none !important;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-appearance-box {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-appearance-box {
     display: none;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-top-actions {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-top-actions {
     display: none;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-kana {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-kana {
     display: none;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-phonetic {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-phonetic {
     display: none;
 }
 
-.input-list-scroll.compact-mode.flip-mode .input-list-pos {
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-pos {
     display: none;
 }
 
@@ -8015,10 +8050,9 @@ body.choice-question-mode-active .word-card-container {
     height: 100%;
 }
 
-/* コンパクト時の品詞 */
+/* コンパクト時は品詞を非表示 */
 .input-list-scroll.compact-mode .expand-left-pos {
-    font-size: 8px;
-    padding: 0 4px;
+    display: none;
 }
 
 /* コンパクト時の英単語 */
@@ -8078,6 +8112,11 @@ body.choice-question-mode-active .word-card-container {
 
 .input-list-item.flipped .input-list-inner {
     transform: rotateY(180deg);
+}
+
+/* 裏→表も同じ回転向きにする（180→360deg でアニメしてから 0 にリセット） */
+.input-list-item.flipped.flip-unify .input-list-inner {
+    transform: rotateY(360deg);
 }
 
 /* 裏面でも番号は表示する（表裏で別要素を持っているため） */
@@ -8256,12 +8295,9 @@ body.choice-question-mode-active .word-card-container {
     font-size: 12px;
 }
 
-/* コンパクトフリップモードの裏面の品詞の背景を小さく */
-.input-list-scroll.compact-mode.flip-mode .input-list-meaning-pos {
-    height: 20px;
-    min-height: 20px;
-    min-width: 20px;
-    padding: 0 4px;
+/* コンパクトフリップ一覧モードでは裏面の品詞も非表示（単語カードでは適用しない） */
+.input-list-scroll.compact-mode.flip-mode:not(.flip-deck-mode) .input-list-meaning-pos {
+    display: none;
 }
 
 .input-list-back {
