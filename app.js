@@ -7127,6 +7127,7 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
     correctCount = 0;
     wrongCount = 0;
     consecutiveCorrect = 0; // 連続正解数をリセット
+    quizStreakCount = 0; // 連続正解カウントをリセット（新しい学習セッション）
     const total = end - start;
     questionStatus = new Array(total).fill(null); // 各問題の回答状況を初期化
     
@@ -8437,6 +8438,9 @@ function setupEventListeners() {
                 alert('選択された単語がありません。フィルターを調整してください。');
                 return;
             }
+            
+            // 連続正解カウントをリセット（新しい学習セッション）
+            quizStreakCount = 0;
             
             // 進捗アニメーション用：学習開始時の覚えた語彙数とカテゴリを保存
             // 既に学習セッション中の場合は上書きしない（複数メニュー学習時の累計カウント用）
@@ -14385,6 +14389,9 @@ function handleQuizChoiceClick(event) {
     quizAnswered = true;
     quizLastAnswerCorrect = isCorrect;
     
+    // ○/×マークを表示
+    showAnswerMark(isCorrect);
+
     if (isCorrect) {
         btn.classList.add('correct');
         SoundEffects.playCorrect();
@@ -14524,6 +14531,13 @@ function handleQuizPass() {
         overlay.classList.remove('correct', 'wrong', 'mastered');
         overlay.classList.add('active', 'wrong');
     }
+    
+    // ×マークを表示
+    showAnswerMark(false);
+    
+    // 連続正解カウントをリセット
+    quizStreakCount = 0;
+    updateQuizStreakDisplay();
     
     // markAnswerでの重複表示を防ぐフラグ
     quizFeedbackShown = true;
@@ -14755,20 +14769,86 @@ function markMastered() {
     }, 180);
 }
 
-// 正解/不正解フィードバック（画面背景色フラッシュ）を表示
+// 正解/不正解フィードバック — SVGドローアニメーション
 function showAnswerMark(isCorrect) {
-    // オーバーレイを作成
-    const overlay = document.createElement('div');
-    overlay.className = `answer-flash-overlay ${isCorrect ? 'correct' : 'wrong'}`;
-    document.body.appendChild(overlay);
-    
-    // フェードアウト後に削除（600ms後）
+    // 既存のマークがあれば即削除
+    const existing = document.querySelector('.answer-mark-container');
+    if (existing) existing.remove();
+
+    const container = document.createElement('div');
+    container.className = 'answer-mark-container';
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 120 120');
+    svg.setAttribute('class', 'answer-mark-svg');
+
+    if (isCorrect) {
+        // ── ○ (正解) ── 円 + チェックマーク
+        container.classList.add('answer-mark-correct');
+
+        const circle = document.createElementNS(svgNS, 'circle');
+        circle.setAttribute('cx', '60');
+        circle.setAttribute('cy', '60');
+        circle.setAttribute('r', '50');
+        circle.setAttribute('class', 'mark-circle-bg');
+
+        const circleStroke = document.createElementNS(svgNS, 'circle');
+        circleStroke.setAttribute('cx', '60');
+        circleStroke.setAttribute('cy', '60');
+        circleStroke.setAttribute('r', '50');
+        circleStroke.setAttribute('class', 'mark-circle-draw');
+
+        const check = document.createElementNS(svgNS, 'path');
+        check.setAttribute('d', 'M36 62 L52 78 L84 42');
+        check.setAttribute('class', 'mark-check-draw');
+
+        svg.appendChild(circle);
+        svg.appendChild(circleStroke);
+        svg.appendChild(check);
+    } else {
+        // ── × (不正解) ── 円 + Xマーク
+        container.classList.add('answer-mark-wrong');
+
+        const circle = document.createElementNS(svgNS, 'circle');
+        circle.setAttribute('cx', '60');
+        circle.setAttribute('cy', '60');
+        circle.setAttribute('r', '50');
+        circle.setAttribute('class', 'mark-circle-bg');
+
+        const circleStroke = document.createElementNS(svgNS, 'circle');
+        circleStroke.setAttribute('cx', '60');
+        circleStroke.setAttribute('cy', '60');
+        circleStroke.setAttribute('r', '50');
+        circleStroke.setAttribute('class', 'mark-circle-draw');
+
+        const line1 = document.createElementNS(svgNS, 'path');
+        line1.setAttribute('d', 'M40 40 L80 80');
+        line1.setAttribute('class', 'mark-x-draw mark-x-1');
+
+        const line2 = document.createElementNS(svgNS, 'path');
+        line2.setAttribute('d', 'M80 40 L40 80');
+        line2.setAttribute('class', 'mark-x-draw mark-x-2');
+
+        svg.appendChild(circle);
+        svg.appendChild(circleStroke);
+        svg.appendChild(line1);
+        svg.appendChild(line2);
+    }
+
+    container.appendChild(svg);
+    document.body.appendChild(container);
+
+    // ブラウザに初期レイアウトを強制させてからアニメーション開始
+    // eslint-disable-next-line no-unused-expressions
+    container.offsetWidth;
+    container.classList.add('answer-mark-animate');
+
+    // フェードアウト → 削除
     setTimeout(() => {
-        overlay.classList.add('fade-out');
-        setTimeout(() => {
-            overlay.remove();
-        }, 300);
-    }, 600);
+        container.classList.add('answer-mark-exit');
+        setTimeout(() => container.remove(), 400);
+    }, 750);
 }
 
 // キラキラエフェクトを表示
@@ -19405,6 +19485,9 @@ let hwQuizWrongCount = 0;
  */
 async function startHandwritingQuiz(category, words, courseTitle) {
     console.log('[HWQuiz] Starting handwriting quiz with', words.length, 'words');
+    
+    // 連続正解カウントをリセット（新しい学習セッション）
+    quizStreakCount = 0;
     
     // 学習セッション開始
     startStudySession();
