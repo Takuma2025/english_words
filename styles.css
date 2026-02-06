@@ -227,9 +227,9 @@ textarea,
 }
 
 .answer-mark-svg {
-    width: 120px;
-    height: 120px;
-    filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.18));
+    width: 200px;
+    height: 200px;
+    filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.06));
     transform: scale(0.5);
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -252,7 +252,7 @@ textarea,
 /* --- 共通: 円ストローク描画 --- */
 .mark-circle-draw {
     fill: none;
-    stroke-width: 6;
+    stroke-width: 5;
     stroke-linecap: round;
     stroke-dasharray: 314;
     stroke-dashoffset: 314;
@@ -274,7 +274,7 @@ textarea,
 .mark-check-draw {
     fill: none;
     stroke: #2563eb;
-    stroke-width: 7;
+    stroke-width: 6;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-dasharray: 80;
@@ -288,7 +288,7 @@ textarea,
 .mark-x-draw {
     fill: none;
     stroke: #ef4444;
-    stroke-width: 7;
+    stroke-width: 6;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-dasharray: 58;
