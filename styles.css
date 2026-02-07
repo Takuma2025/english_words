@@ -5251,15 +5251,12 @@ body.quiz-test-mode .unit-header-container {
     background: #ffffff;
     justify-content: center;
     margin-bottom: 0;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: 8px;
 }
 
 body.quiz-test-mode .unit-header-container .unit-name,
 body.quiz-test-mode .unit-header-container .input-back-btn,
 body.quiz-test-mode .unit-header-container .hw-back-btn,
-body.quiz-test-mode .unit-header-container .unit-test-btn,
-body.quiz-test-mode .unit-header-container .memo-pad-btn {
+body.quiz-test-mode .unit-header-container .unit-test-btn {
     display: none !important;
 }
 
@@ -5272,7 +5269,7 @@ body.quiz-test-mode .unit-header-container .unit-pause-btn {
     right: 16px;
     top: 50%;
     transform: translateY(-50%);
-    margin-top: 0;
+    margin-top: calc(env(safe-area-inset-top) / 2);
     color: #333333;
 }
 
@@ -6376,13 +6373,13 @@ body.choice-question-mode-active .word-card-container {
 .input-list-header-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 8px;
     margin-bottom: 10px;
 }
 
 /* インラインメモボタン（トグル横） */
-.memo-pad-btn-inline {
+.compact-mode-toggle-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -6400,34 +6397,30 @@ body.choice-question-mode-active .word-card-container {
     white-space: nowrap;
 }
 
-.memo-pad-btn-inline .memo-btn-label {
+.compact-mode-toggle-btn .btn-label {
     font-size: 12px;
     font-weight: 600;
-    color: #3b82f6;
+    color: inherit;
 }
 
-.memo-pad-btn-inline:hover {
+.compact-mode-toggle-btn:hover {
     background: #eff6ff;
     border-color: #93c5fd;
 }
 
-.memo-pad-btn-inline:active {
+.compact-mode-toggle-btn:active {
     background: #dbeafe;
     transform: scale(0.96);
 }
 
-.memo-pad-btn-inline.active {
+.compact-mode-toggle-btn.active {
     background: #2563eb;
     border-color: #2563eb;
     color: #ffffff;
 }
 
-.memo-pad-btn-inline.active .memo-btn-label {
+.compact-mode-toggle-btn.active .btn-label {
     color: #ffffff;
-}
-
-.memo-pad-btn-inline.hidden {
-    display: none;
 }
 
 /* 設定ボタンラッパー */
@@ -7605,7 +7598,7 @@ body.choice-question-mode-active .word-card-container {
 }
 
 /* メモボタンを右寄せ（メモ用紙・英語→日本語・赤シートを右側に配置） */
-.input-list-controls-row .memo-pad-btn-inline {
+.input-list-controls-row .compact-mode-toggle-btn {
     margin-left: auto;
 }
 
@@ -7883,6 +7876,7 @@ body.choice-question-mode-active .word-card-container {
     padding: 3px;
     border-radius: 12px;
     background: #dbeafe;
+    width: 100%;
 }
 
 .input-list-mode-toggle-large .input-list-mode-btn {
@@ -7891,6 +7885,7 @@ body.choice-question-mode-active .word-card-container {
     font-size: 13px;
     gap: 6px;
     border-radius: 9px;
+    flex: 1;
 }
 
 .input-list-mode-toggle-large .input-list-mode-btn .mode-btn-icon {
@@ -12118,8 +12113,6 @@ body.choice-question-mode-active .card-area-wrapper {
     border: none;
     box-shadow: none;
     background: #ffffff;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
 }
 
 body.sentence-mode-active .app-main,
@@ -18985,9 +18978,7 @@ body .sentence-english {
     display: flex;
 }
 
-.iv-study-controls .memo-pad-btn-inline {
-    display: flex;
-}
+/* メモ機能は削除済み */
 
 /* 学習モードのランダム・しぼるボタン */
 .iv-study-buttons-left {

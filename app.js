@@ -3794,7 +3794,6 @@ function init() {
         setupInputListFilter();
         setupRedSheetStickyScroll();
         updateVocabProgressBar();
-        initMemoPad();
         initAdBannerSlider();
         initStudyCalendar();
         
@@ -6154,18 +6153,12 @@ function showInputModeDirectly(category, words, courseTitle) {
     const appMain = document.querySelector('.app-main');
     if (appMain) appMain.scrollTop = 0;
     
-    // コンパクトモードをデフォルト（オフ）にリセット、用例表示はデフォルトでオン
-    const compactModeCheckbox = document.getElementById('settingCompactMode');
-    const showExamplesCheckbox = document.getElementById('settingShowExamples');
+    // コンパクトモードをデフォルト（オフ）にリセット
     const inputListContainer = document.getElementById('inputListContainer');
-    if (compactModeCheckbox) {
-        compactModeCheckbox.checked = false;
+    const compactToggleBtn = document.getElementById('compactModeToggleBtn');
+    if (compactToggleBtn) {
+        compactToggleBtn.classList.remove('active');
     }
-    if (showExamplesCheckbox) {
-        showExamplesCheckbox.checked = true;
-    }
-    // メニュー切り替え時にlocalStorageの設定をクリア（毎回デフォルトでオンにする）
-    localStorage.removeItem('inputListShowExamples');
     if (inputListContainer) {
         inputListContainer.classList.remove('compact-mode');
         inputListContainer.classList.remove('hide-examples');
@@ -6193,17 +6186,13 @@ function showInputModeDirectly(category, words, courseTitle) {
     const isAllWords = category === '大阪府のすべての英単語';
     const freqSection = document.getElementById('filterFrequencySection');
     const wordSearchContainer = document.getElementById('wordSearchContainer');
-    const settingsBtn = document.getElementById('inputListSettingsBtn');
     
     if (isAllWords) {
         if (freqSection) freqSection.classList.remove('hidden');
         if (wordSearchContainer) wordSearchContainer.classList.remove('hidden');
-        // 「すべての単語」でも設定ボタンを表示する
-        if (settingsBtn) settingsBtn.style.display = '';
     } else {
         if (freqSection) freqSection.classList.add('hidden');
         if (wordSearchContainer) wordSearchContainer.classList.add('hidden');
-        if (settingsBtn) settingsBtn.style.display = '';
     }
     
     // コース選択画面を即座に非表示
@@ -6226,18 +6215,6 @@ function showInputModeDirectly(category, words, courseTitle) {
         } else {
             unitTestBtn.classList.remove('hidden');
         }
-    }
-    
-    // ヘッダーのメモボタンは非表示（インラインのメモボタンを使用）
-    const memoPadBtn = document.getElementById('memoPadBtn');
-    if (memoPadBtn) {
-        memoPadBtn.classList.add('hidden');
-    }
-    
-    // インラインメモボタンを表示
-    const memoPadBtnInline = document.getElementById('memoPadBtnInline');
-    if (memoPadBtnInline) {
-        memoPadBtnInline.classList.remove('hidden');
     }
     
     // ヘッダー更新
@@ -6329,19 +6306,15 @@ function showInputModeDirectly(category, words, courseTitle) {
     // 赤シートボタンの表示状態を更新（展開モードでは表示）
     updateRedSheetToggleVisibility();
     
-    // 「すべての単語」モードの場合はデフォルトでコンパクト表示をON（設定で切り替え可能）
+    // 「すべての単語」モードの場合はデフォルトでコンパクト表示をON
     if (category === '大阪府のすべての英単語') {
-        const compactModeCheckbox = document.getElementById('settingCompactMode');
-        const showExamplesCheckbox = document.getElementById('settingShowExamples');
-        // デフォルトでコンパクト表示ON、用例非表示
-        if (compactModeCheckbox) {
-            compactModeCheckbox.checked = true;
+        const compactToggleBtn = document.getElementById('compactModeToggleBtn');
+        const listContainer = document.getElementById('inputListContainer');
+        if (compactToggleBtn) compactToggleBtn.classList.add('active');
+        if (listContainer) {
+            listContainer.classList.add('compact-mode');
+            listContainer.classList.add('hide-examples');
         }
-        if (showExamplesCheckbox) {
-            showExamplesCheckbox.checked = false;
-        }
-        // 設定を適用
-        applyInputListSettings();
     }
 }
 
@@ -7096,23 +7069,6 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
         }
     }
     
-    // メモボタンの表示制御（インプットモードのみ表示、アウトプットモードでは非表示）
-    // ヘッダーのメモボタンは常に非表示（インラインボタンを使用）
-    const memoPadBtn = document.getElementById('memoPadBtn');
-    if (memoPadBtn) {
-        memoPadBtn.classList.add('hidden');
-    }
-    
-    // インラインメモボタン（トグル横）はインプットモードのみ表示
-    const memoPadBtnInline = document.getElementById('memoPadBtnInline');
-    if (memoPadBtnInline) {
-        if (currentLearningMode === 'input') {
-            memoPadBtnInline.classList.remove('hidden');
-        } else {
-            memoPadBtnInline.classList.add('hidden');
-        }
-    }
-    
     const start = Math.max(0, startIndex || 0);
     const end = typeof rangeEnd === 'number' ? Math.min(rangeEnd, currentWords.length) : currentWords.length;
     const rangeStart = typeof rangeStartOverride === 'number' ? rangeStartOverride : 0;
@@ -7607,79 +7563,6 @@ function setupEventListeners() {
         if (ivStudyFilterUnlearned) ivStudyFilterUnlearned.addEventListener('change', handleStudyIndividualFilter);
         if (ivStudyFilterWrong) ivStudyFilterWrong.addEventListener('change', handleStudyIndividualFilter);
         if (ivStudyFilterCorrect) ivStudyFilterCorrect.addEventListener('change', handleStudyIndividualFilter);
-    }
-    
-    // 学習モードのメモボタン
-    const ivMemoPadBtn = document.getElementById('ivMemoPadBtn');
-    if (ivMemoPadBtn) {
-        ivMemoPadBtn.addEventListener('click', () => {
-            const overlay = document.getElementById('ivMemoPadOverlay');
-            const canvas = document.getElementById('ivMemoPadCanvas');
-            if (overlay && canvas) {
-                if (!overlay.classList.contains('hidden') && !overlay.classList.contains('closing')) {
-                    // 開いている場合は閉じる
-                    overlay.classList.add('closing');
-                    overlay.classList.remove('opening');
-                    ivMemoPadBtn.classList.remove('active');
-                    setTimeout(() => {
-                        overlay.classList.add('hidden');
-                        overlay.classList.remove('closing');
-                    }, 300);
-                } else if (overlay.classList.contains('hidden')) {
-                    // 閉じている場合は開く
-                    overlay.classList.remove('hidden');
-                    overlay.classList.remove('closing');
-                    overlay.classList.add('opening');
-                    ivMemoPadBtn.classList.add('active');
-                    memoPadCanvas = canvas;
-                    initMemoPadCanvas();
-                }
-            }
-        });
-    }
-    
-    // 学習モードのメモパッド閉じるボタン
-    const ivMemoPadCloseBtn = document.getElementById('ivMemoPadCloseBtn');
-    if (ivMemoPadCloseBtn) {
-        ivMemoPadCloseBtn.addEventListener('click', () => {
-            const overlay = document.getElementById('ivMemoPadOverlay');
-            const ivMemoPadBtn = document.getElementById('ivMemoPadBtn');
-            if (overlay) {
-                overlay.classList.add('closing');
-                overlay.classList.remove('opening');
-                if (ivMemoPadBtn) ivMemoPadBtn.classList.remove('active');
-                setTimeout(() => {
-                    overlay.classList.add('hidden');
-                    overlay.classList.remove('closing');
-                }, 300);
-            }
-        });
-    }
-    
-    // 学習モードのメモパッドクリアボタン
-    const ivMemoPadClearBtn = document.getElementById('ivMemoPadClearBtn');
-    if (ivMemoPadClearBtn) {
-        ivMemoPadClearBtn.addEventListener('click', () => {
-            const canvas = document.getElementById('ivMemoPadCanvas');
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
-        });
-    }
-    
-    // 学習モードのメモパッド太さボタン
-    const ivMemoPadOverlay = document.getElementById('ivMemoPadOverlay');
-    if (ivMemoPadOverlay) {
-        const thicknessBtns = ivMemoPadOverlay.querySelectorAll('.memo-pad-thickness-btn');
-        thicknessBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                thicknessBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                memoPadLineWidth = parseInt(btn.dataset.width);
-            });
-        });
     }
     
     // 学習モードの赤シート下矢印ボタン
@@ -12857,6 +12740,9 @@ function setupInputListModeToggle() {
             const btnLabel = flipAllBtn.querySelector('.btn-label');
             if (btnLabel) btnLabel.textContent = 'A→あ';
         }
+        // コンパクト表示トグルを非表示（カードモードでは不要）
+        const compactBtn = document.getElementById('compactModeToggleBtn');
+        if (compactBtn) compactBtn.classList.add('hidden');
         
         // フィルターを適用して再描画（絞り込み状態を保持）
         applyInputFilter();
@@ -12870,6 +12756,9 @@ function setupInputListModeToggle() {
         updateRedSheetToggleVisibility();
         // すべてめくるボタンを非表示
         if (flipAllBtn) flipAllBtn.classList.add('hidden');
+        // コンパクト表示トグルを表示
+        const compactBtn = document.getElementById('compactModeToggleBtn');
+        if (compactBtn) compactBtn.classList.remove('hidden');
         
         // 現在の単語リストを再描画（フィルターを適用）
         applyInputFilter();
@@ -12930,79 +12819,30 @@ function setupInputListModeToggle() {
     }
 }
 
-// 設定ボタンのセットアップ
+// コンパクト表示トグルボタンのセットアップ
 function setupInputListSettings() {
-    const settingsBtn = document.getElementById('inputListSettingsBtn');
-    const settingsDropdown = document.getElementById('inputListSettingsDropdown');
-    const showExamplesCheckbox = document.getElementById('settingShowExamples');
-    const compactModeCheckbox = document.getElementById('settingCompactMode');
+    const compactToggleBtn = document.getElementById('compactModeToggleBtn');
     const inputListContainer = document.getElementById('inputListContainer');
     
-    if (!settingsBtn || !settingsDropdown) return;
+    if (!compactToggleBtn) return;
     
-    // 用例トグルは常にON状態から開始（用例の有無で有効/無効が決まる）
-    if (showExamplesCheckbox) {
-        showExamplesCheckbox.checked = true;
-    }
-    
-    // コンパクトモードは常にOFFから開始
-    if (compactModeCheckbox) {
-        compactModeCheckbox.checked = false;
-    }
-    
-    // 初期状態をコンテナに適用
-    applyInputListSettings();
-    
-    // 設定ボタンのクリックでドロップダウン開閉
-    settingsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpen = !settingsDropdown.classList.contains('hidden');
-        if (isOpen) {
-            settingsDropdown.classList.add('hidden');
-            settingsBtn.classList.remove('active');
-        } else {
-            settingsDropdown.classList.remove('hidden');
-            settingsBtn.classList.add('active');
-        }
-    });
-    
-    // ドロップダウン外クリックで閉じる
-    document.addEventListener('click', (e) => {
-        if (!settingsDropdown.contains(e.target) && !settingsBtn.contains(e.target)) {
-            settingsDropdown.classList.add('hidden');
-            settingsBtn.classList.remove('active');
-        }
-    });
-    
-    // 用例表示トグル
-    if (showExamplesCheckbox) {
-        showExamplesCheckbox.addEventListener('change', () => {
-            localStorage.setItem('inputListShowExamples', showExamplesCheckbox.checked);
-            applyInputListSettings();
-        });
-    }
-    
-    // コンパクトモードトグル
-    if (compactModeCheckbox) {
-        compactModeCheckbox.addEventListener('change', () => {
-            localStorage.setItem('inputListCompactMode', compactModeCheckbox.checked);
-            // コンパクトモードを切り替えたら、用例表示を自動でOFFに
-            if (showExamplesCheckbox) {
-                showExamplesCheckbox.checked = false;
-                localStorage.setItem('inputListShowExamples', 'false');
+    compactToggleBtn.addEventListener('click', () => {
+        const isActive = compactToggleBtn.classList.toggle('active');
+        if (inputListContainer) {
+            if (isActive) {
+                inputListContainer.classList.add('compact-mode');
+                inputListContainer.classList.add('hide-examples');
+            } else {
+                inputListContainer.classList.remove('compact-mode');
+                inputListContainer.classList.remove('hide-examples');
             }
-            applyInputListSettings();
-        });
-    }
+        }
+    });
 }
 
 // 設定をコンテナに適用
 function applyInputListSettings() {
     const inputListContainer = document.getElementById('inputListContainer');
-    const showExamplesCheckbox = document.getElementById('settingShowExamples');
-    const compactModeCheckbox = document.getElementById('settingCompactMode');
-    const settingsBtn = document.getElementById('inputListSettingsBtn');
-    
     if (!inputListContainer) return;
     
     const isAllWords = selectedCategory === '大阪府のすべての英単語';
@@ -13012,103 +12852,19 @@ function applyInputListSettings() {
     const wordSearchContainer = document.getElementById('wordSearchContainer');
     
     if (isAllWords) {
-        // 「すべての単語」でも設定ボタンを表示
-        if (settingsBtn) settingsBtn.style.display = '';
         inputListContainer.classList.add('all-words-mode');
-        // 頻度フィルターと検索を表示
         if (freqSection) freqSection.classList.remove('hidden');
         if (wordSearchContainer) wordSearchContainer.classList.remove('hidden');
     } else {
-        // 設定ボタンを表示
-        if (settingsBtn) settingsBtn.style.display = '';
         inputListContainer.classList.remove('all-words-mode');
-        // 頻度フィルターと検索を非表示
         if (freqSection) freqSection.classList.add('hidden');
         if (wordSearchContainer) wordSearchContainer.classList.add('hidden');
     }
-    
-    // コンパクトモードをリセット（チェックボックスの状態に基づいて後で再適用）
-    inputListContainer.classList.remove('compact-mode');
-    inputListContainer.classList.remove('hide-examples');
-    
-    // 用例表示/非表示
-    if (showExamplesCheckbox && !showExamplesCheckbox.checked) {
-        inputListContainer.classList.add('hide-examples');
-    } else {
-        inputListContainer.classList.remove('hide-examples');
-    }
-    
-    // コンパクトモード
-    if (compactModeCheckbox && compactModeCheckbox.checked) {
-        inputListContainer.classList.add('compact-mode');
-    } else {
-        inputListContainer.classList.remove('compact-mode');
-    }
-    
-    // 用例の有無をチェックしてトグルの有効/無効を切り替え
-    updateExamplesToggleAvailability();
 }
 
-// 用例トグルの有効/無効を更新
+// 互換性のため残す（空関数）
 function updateExamplesToggleAvailability() {
-    // DOMの更新が完了するのを待つ
-    setTimeout(() => {
-        const showExamplesCheckbox = document.getElementById('settingShowExamples');
-        const showExamplesItem = showExamplesCheckbox ? showExamplesCheckbox.closest('.settings-dropdown-item') : null;
-        const compactModeCheckbox = document.getElementById('settingCompactMode');
-        const inputListContainer = document.getElementById('inputListContainer');
-        
-        if (!showExamplesCheckbox || !showExamplesItem || !inputListContainer) return;
-        
-        // コンパクトモードがONの場合は無効化
-        if (compactModeCheckbox && compactModeCheckbox.checked) {
-            showExamplesCheckbox.disabled = true;
-            showExamplesItem.classList.add('disabled');
-            return;
-        }
-        
-        // データ全体から用例があるかチェック（ページネーションでも正しく動作するように）
-        const wordsToCheck = currentFilterWords || currentCourseWords || [];
-        
-        // 単語データがまだ読み込まれていない場合は有効化したままにする
-        if (wordsToCheck.length === 0) {
-            showExamplesCheckbox.disabled = false;
-            showExamplesItem.classList.remove('disabled');
-            return;
-        }
-        
-        let hasExamples = false;
-        for (const word of wordsToCheck) {
-            // オブジェクト形式（{english, japanese}）と文字列形式の両方に対応
-            if (word.example) {
-                if (typeof word.example === 'string' && word.example.trim() !== '') {
-                    hasExamples = true;
-                    break;
-                } else if (typeof word.example === 'object' && (word.example.english || word.example.japanese)) {
-                    hasExamples = true;
-                    break;
-                }
-            }
-        }
-        
-        if (hasExamples) {
-            // 用例がある場合：有効化
-            showExamplesCheckbox.disabled = false;
-            showExamplesItem.classList.remove('disabled');
-            // チェック状態に応じてクラスを適用
-            if (showExamplesCheckbox.checked) {
-                inputListContainer.classList.remove('hide-examples');
-            } else {
-                inputListContainer.classList.add('hide-examples');
-            }
-        } else {
-            // 用例がない場合：無効化してオフ
-            showExamplesCheckbox.disabled = true;
-            showExamplesItem.classList.add('disabled');
-            showExamplesCheckbox.checked = false;
-            inputListContainer.classList.add('hide-examples');
-        }
-    }, 50);
+    // 用例設定は削除済み
 }
 
 // インプットモード用フィルターのセットアップ
@@ -16182,11 +15938,9 @@ function initSentenceModeLearning(category) {
     }
     
     // ×ボタン表示、その他非表示
-    const memoPadBtn = document.getElementById('memoPadBtn');
     const unitTestBtn = document.getElementById('unitTestBtn');
     const unitPauseBtn = document.getElementById('unitPauseBtn');
     const inputBackBtn = document.getElementById('inputBackBtn');
-    if (memoPadBtn) memoPadBtn.classList.add('hidden');
     if (unitTestBtn) unitTestBtn.classList.add('hidden');
     if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
     if (inputBackBtn) inputBackBtn.classList.add('hidden');
@@ -18058,12 +17812,10 @@ function initChoiceQuestionLearning(category) {
         testModeProgress.textContent = `1/${choiceQuestionData.length}`;
     }
     
-    // 四択問題モードではメモボタンとテストボタンを非表示、×ボタンのみ表示
-    const memoPadBtn = document.getElementById('memoPadBtn');
+    // 四択問題モードではテストボタンを非表示、×ボタンのみ表示
     const unitTestBtn = document.getElementById('unitTestBtn');
     const unitPauseBtn = document.getElementById('unitPauseBtn');
     const inputBackBtn = document.getElementById('inputBackBtn');
-    if (memoPadBtn) memoPadBtn.classList.add('hidden');
     if (unitTestBtn) unitTestBtn.classList.add('hidden');
     if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
     if (inputBackBtn) inputBackBtn.classList.add('hidden');

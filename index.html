@@ -630,14 +630,6 @@
                         <!-- テストモード用の進捗表示（中央） -->
                         <span class="test-mode-progress hidden" id="testModeProgress">1/18</span>
                         <div class="unit-header-actions">
-                            <button class="memo-pad-btn" id="memoPadBtn" aria-label="メモ">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                    <polyline points="14 2 14 8 20 8"></polyline>
-                                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                                </svg>
-                            </button>
                             <button class="unit-test-btn" id="unitTestBtn">テスト</button>
                             <button class="unit-pause-btn" id="unitPauseBtn" aria-label="ポーズ">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -659,38 +651,6 @@
                         </div>
                     </div>
                     
-                    <!-- メモ用紙オーバーレイ -->
-                    <div class="memo-pad-overlay hidden" id="memoPadOverlay">
-                        <div class="memo-pad-container">
-                            <div class="memo-pad-header">
-                                <div class="memo-pad-thickness-control">
-                                    <span class="memo-pad-thickness-label">ペンの太さ</span>
-                                    <div class="memo-pad-thickness-btns">
-                                        <button class="memo-pad-thickness-btn" data-thickness="1">細</button>
-                                        <button class="memo-pad-thickness-btn active" data-thickness="2">中</button>
-                                        <button class="memo-pad-thickness-btn" data-thickness="4">太</button>
-                                    </div>
-                                </div>
-                                <div class="memo-pad-actions">
-                                    <button class="memo-pad-clear-btn" id="memoPadClearBtn">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M3 6h18"></path>
-                                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
-                                        </svg>
-                                        <span>クリア</span>
-                                    </button>
-                                    <button class="memo-pad-close-btn" id="memoPadCloseBtn">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            <canvas id="memoPadCanvas" class="memo-pad-canvas"></canvas>
-                        </div>
-                    </div>
                     <!-- 進捗バーとNo.をカードの上に配置 -->
                     <div class="card-top-section">
                         <!-- 進捗バー -->
@@ -758,29 +718,6 @@
                                         <svg class="mode-btn-icon" width="22" height="16" viewBox="0 0 26 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="19" height="12" rx="2"></rect><line x1="6" y1="9" x2="25" y2="9"></line><circle cx="4" cy="6" r="3"></circle><path d="M6 6h2"></path></svg>
                                         <span>単語カード</span>
                                     </button>
-                                </div>
-                                <div class="input-list-settings-wrapper">
-                                    <button class="input-list-settings-btn" id="inputListSettingsBtn" aria-label="設定">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                                        </svg>
-                                        <span>表示設定</span>
-                                    </button>
-                                    <!-- 設定ドロップダウン -->
-                                    <div class="input-list-settings-dropdown hidden" id="inputListSettingsDropdown">
-                                        <div class="settings-dropdown-title">表示設定</div>
-                                        <label class="settings-dropdown-item">
-                                            <input type="checkbox" id="settingShowExamples" checked>
-                                            <span class="settings-dropdown-toggle"></span>
-                                            <span class="settings-dropdown-label">用例を表示</span>
-                                        </label>
-                                        <label class="settings-dropdown-item">
-                                            <input type="checkbox" id="settingCompactMode">
-                                            <span class="settings-dropdown-toggle"></span>
-                                            <span class="settings-dropdown-label">コンパクト表示</span>
-                                        </label>
-                                    </div>
                                 </div>
                             </div>
                             <div class="input-list-controls-row">
@@ -870,14 +807,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button class="memo-pad-btn-inline" id="memoPadBtnInline" aria-label="メモ">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                        <polyline points="14 2 14 8 20 8"></polyline>
-                                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <button class="compact-mode-toggle-btn" id="compactModeToggleBtn" aria-label="コンパクト表示">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="4 14 10 14 10 20"></polyline>
+                                        <polyline points="20 10 14 10 14 4"></polyline>
+                                        <line x1="14" y1="10" x2="21" y2="3"></line>
+                                        <line x1="3" y1="21" x2="10" y2="14"></line>
                                     </svg>
-                                    <span class="memo-btn-label">メモ</span>
+                                    <span class="btn-label">コンパクト</span>
                                 </button>
                                 <button class="input-flip-all-btn hidden" id="inputFlipAllBtn" title="カードをめくる">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -2304,15 +2241,6 @@
                         </div>
                     </div>
                 </div>
-                <button class="memo-pad-btn-inline" id="ivMemoPadBtn" aria-label="メモ">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                    </svg>
-                    <span class="memo-btn-label">メモ</span>
-                </button>
                 <label class="red-sheet-toggle" id="ivRedsheetToggle" aria-label="赤シート">
                     <input type="checkbox" class="red-sheet-checkbox" id="ivRedsheetCheckbox">
                     <span class="red-sheet-slider"></span>
@@ -2336,26 +2264,6 @@
                 <path d="M6 9l6 6 6-6"></path>
             </svg>
         </button>
-        <!-- メモ用紙オーバーレイ -->
-        <div class="memo-pad-overlay hidden" id="ivMemoPadOverlay">
-            <div class="memo-pad-container">
-                <div class="memo-pad-header">
-                    <div class="memo-pad-thickness-control">
-                        <span class="memo-pad-thickness-label">ペンの太さ</span>
-                        <div class="memo-pad-thickness-btns">
-                            <button class="memo-pad-thickness-btn" data-width="1">細</button>
-                            <button class="memo-pad-thickness-btn active" data-width="2">中</button>
-                            <button class="memo-pad-thickness-btn" data-width="4">太</button>
-                        </div>
-                    </div>
-                    <div class="memo-pad-actions">
-                        <button class="memo-pad-clear-btn" id="ivMemoPadClearBtn">クリア</button>
-                        <button class="memo-pad-close-btn" id="ivMemoPadCloseBtn">×</button>
-                    </div>
-                </div>
-                <canvas class="memo-pad-canvas" id="ivMemoPadCanvas"></canvas>
-            </div>
-        </div>
     </div>
 
     <!-- 不規則変化の単語画面（テストモード） -->
