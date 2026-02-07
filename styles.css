@@ -10337,6 +10337,7 @@ body.learning-mode .card-area-wrapper:has(.word-card:not(.hidden)) {
     align-items: center;
     padding-top: 0;
     padding-bottom: 0;
+    background: transparent; /* 前へ・次へエリアにコンテナ色をつけない */
 }
 
 body.learning-mode:has(.word-card:not(.hidden)) {
@@ -10348,20 +10349,26 @@ body.learning-mode:has(.word-card:not(.hidden)) .learning-view {
 }
 
 body.learning-mode .word-card-container {
-    /* ツールバー下のスペースの約70%をカードに使用（flexベース） */
-    flex: 7;
+    /* ツールバー下のスペースの約85%をカードに使用（flexベース） */
+    flex: 17;
     min-height: 0;
     max-height: none;
     aspect-ratio: unset;
     padding: 3px 0;
     margin-top: 0;
     box-sizing: border-box;
+    background: #ffffff; /* カードエリアのみ白、下のナビエリアはコンテナ色なし */
 }
 
-/* 一番上のカード（メインカード）が上にずれないようにスタックと揃える */
+/* カード・スタックをコンテナの下に配置 */
 body.learning-mode .word-card-container .word-card {
-    top: 0;
+    top: auto;
+    bottom: 0;
     left: 0;
+}
+
+body.learning-mode .word-card-container .card-stack {
+    bottom: 0;
 }
 
 /* 学習モード中は下部のタブバーを非表示にして余白をなくす */
@@ -11243,7 +11250,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     color: #1d4ed8;
 }
 
-/* カード下のナビエリア：残り約30%の中央に配置 */
+/* カード下のナビエリア：残り約30%の中央に配置（コンテナの背景色なし） */
 body.learning-mode .card-area-wrapper:has(.word-card:not(.hidden)) .action-hint,
 body.learning-mode .card-area-wrapper:has(.word-card:not(.hidden)) .input-mode-nav {
     flex: 3;
@@ -11253,6 +11260,7 @@ body.learning-mode .card-area-wrapper:has(.word-card:not(.hidden)) .input-mode-n
     justify-content: space-between;
     max-width: 600px;
     margin: 0 auto;
+    background: transparent;
 }
 
 body.learning-mode .card-area-wrapper:has(.word-card:not(.hidden)) .input-mode-nav.hidden {
