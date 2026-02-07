@@ -6716,7 +6716,10 @@ body.choice-question-mode-active .word-card-container {
     padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
     min-height: 0;
     max-height: 100%;
-    --deck-card-w: clamp(280px, 92vw, 520px);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    --deck-card-w: clamp(280px, calc(100vw - 32px), 520px);
     --deck-card-h: min(52vh, calc(100vh - 180px));
     --deck-nav-h: 72px;
 }
@@ -6738,6 +6741,7 @@ body.choice-question-mode-active .word-card-container {
     justify-content: center;
     flex: 1 1 auto;
     min-height: 0;
+    max-height: calc(100% - var(--deck-nav-h));
     padding-bottom: 0;
 }
 
@@ -7087,18 +7091,21 @@ body.choice-question-mode-active .word-card-container {
 
 /* 前へ・次へ・進捗を画面下部に固定 */
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav {
-    position: relative;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: var(--deck-card-w);
     max-width: calc(100vw - 32px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    margin: 16px auto 0;
+    margin: 0;
     padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px)) 0;
     min-height: var(--deck-nav-h);
     flex-shrink: 0;
-    background: transparent;
+    background: #f8faff;
     z-index: 10020;
 }
 
