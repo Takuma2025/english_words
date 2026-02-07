@@ -6738,7 +6738,6 @@ body.choice-question-mode-active .word-card-container {
     justify-content: center;
     flex: 1 1 auto;
     min-height: 0;
-    max-height: calc(100% - var(--deck-nav-h));
     padding-bottom: 0;
 }
 
@@ -7088,21 +7087,18 @@ body.choice-question-mode-active .word-card-container {
 
 /* 前へ・次へ・進捗を画面下部に固定 */
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
     width: var(--deck-card-w);
     max-width: calc(100vw - 32px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    margin: 0;
+    margin: 16px auto 0;
     padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px)) 0;
     min-height: var(--deck-nav-h);
     flex-shrink: 0;
-    background: #ffffff;
+    background: transparent;
     z-index: 10020;
 }
 
@@ -10336,8 +10332,9 @@ body.learning-mode .card-area-wrapper:has(.word-card:not(.hidden)) {
     flex-direction: column;
     align-items: center;
     padding-top: 0;
-    padding-bottom: 0;
-    background: transparent; /* 前へ・次へエリアにコンテナ色をつけない */
+    padding-bottom: 120px;
+    position: relative;
+    background-color: #f8faff; /* 下のボタン周りまで背景と同色に */
 }
 
 body.learning-mode:has(.word-card:not(.hidden)) {
@@ -10346,11 +10343,16 @@ body.learning-mode:has(.word-card:not(.hidden)) {
 
 body.learning-mode:has(.word-card:not(.hidden)) .learning-view {
     overflow: hidden;
+    background-color: #f8faff;
+}
+
+body.learning-mode:has(.word-card:not(.hidden)) .app-container {
+    background-color: #f8faff;
 }
 
 body.learning-mode .word-card-container {
-    /* ツールバー下のスペースの約85%をカードに使用（flexベース） */
-    flex: 17;
+    /* ツールバー下のスペースの約70%をカードに使用（flexベース） */
+    flex: 7;
     min-height: 0;
     max-height: none;
     aspect-ratio: unset;
@@ -10360,15 +10362,10 @@ body.learning-mode .word-card-container {
     background: #ffffff; /* カードエリアのみ白、下のナビエリアはコンテナ色なし */
 }
 
-/* カード・スタックをコンテナの下に配置 */
+/* 一番上のカード（メインカード）が上にずれないようにスタックと揃える */
 body.learning-mode .word-card-container .word-card {
-    top: auto;
-    bottom: 0;
+    top: 0;
     left: 0;
-}
-
-body.learning-mode .word-card-container .card-stack {
-    bottom: 0;
 }
 
 /* 学習モード中は下部のタブバーを非表示にして余白をなくす */
