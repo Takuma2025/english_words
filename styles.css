@@ -12118,6 +12118,8 @@ body.choice-question-mode-active .card-area-wrapper {
     border: none;
     box-shadow: none;
     background: #ffffff;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 body.sentence-mode-active .app-main,
