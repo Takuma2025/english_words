@@ -5251,6 +5251,8 @@ body.quiz-test-mode .unit-header-container {
     background: #ffffff;
     justify-content: center;
     margin-bottom: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: 8px;
 }
 
 body.quiz-test-mode .unit-header-container .unit-name,
@@ -5270,7 +5272,7 @@ body.quiz-test-mode .unit-header-container .unit-pause-btn {
     right: 16px;
     top: 50%;
     transform: translateY(-50%);
-    margin-top: calc(env(safe-area-inset-top) / 2);
+    margin-top: 0;
     color: #333333;
 }
 
