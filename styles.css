@@ -6961,8 +6961,8 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .flip-card-pos-conjunction {
-    background: #fef3c7;
-    color: #b45309;
+    background: #d9f99d;
+    color: #65a30d;
 }
 
 .flip-card-pos-preposition {
@@ -8929,10 +8929,10 @@ body.choice-question-mode-active .word-card-container {
     color: #c2410c;
 }
 
-/* 接続詞：イエロー */
+/* 接続詞：黄緑 */
 .expand-left-pos-conjunction {
-    background: #fef3c7;
-    color: #b45309;
+    background: #d9f99d;
+    color: #65a30d;
 }
 
 /* 前置詞：ティール */
@@ -10977,7 +10977,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .part-of-speech.other { background-color: #f3f4f6; color: #6b7280; }
 .part-of-speech.auxiliary { background-color: #fed7aa; color: #c2410c; }
 .part-of-speech.pronoun { background-color: #ffe4e6; color: #e11d48; }
-.part-of-speech.conjunction { background-color: #fef3c7; color: #b45309; }
+.part-of-speech.conjunction { background-color: #d9f99d; color: #65a30d; }
 .part-of-speech.preposition { background-color: #ccfbf1; color: #0d9488; }
 .part-of-speech.article { background-color: #e0e7ff; color: #4f46e5; }
 
