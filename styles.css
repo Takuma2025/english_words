@@ -21417,9 +21417,15 @@ div#inputWordCheckbox,
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
+    gap: 2px;
+    min-width: 26px;
     height: 26px;
+    padding: 0 6px;
     border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.subcat-badge-icon {
     flex-shrink: 0;
 }
 
@@ -21466,7 +21472,7 @@ div#inputWordCheckbox,
     font-weight: 600;
     padding: 2px 8px;
     border-radius: 10px;
-    margin-left: auto;
+    margin-left: 1ch;
     white-space: nowrap;
     letter-spacing: 0.3px;
 }

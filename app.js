@@ -4787,6 +4787,10 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
                 <div class="category-header">
                     <div class="category-name">
                         <div class="subcat-badge" style="background: ${badgeColor}">
+                            <svg class="subcat-badge-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                            </svg>
                             <span class="subcat-badge-num">${i + 1}</span>
                         </div>
                         <div class="subcat-range-block">
