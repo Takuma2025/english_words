@@ -315,7 +315,7 @@ function animateCardShrink(targetCardId, callback) {
         // 最初は拡大状態からスタート
         titleContainer.style.transform = 'scale(1.5)';
         
-        const icon = targetCard.querySelector('.intro-icon, .irregular-verbs-icon, .all-words-icon, .minigame-icon, .category-icon, [class*="-icon"]:not(.category-arrow)');
+        const icon = targetCard.querySelector('.intro-icon, .irregular-verbs-icon, .all-words-icon, .category-icon, [class*="-icon"]:not(.category-arrow)');
         const badge = targetCard.querySelector('.level-badge');
         const categoryName = targetCard.querySelector('.category-name');
         const progress = targetCard.querySelector('.category-progress');
@@ -379,7 +379,7 @@ function animateCardShrink(targetCardId, callback) {
             // 元のカードはそのまま残す（非表示にしない）
             
             // 最下部メニューの場合は一番下まで、それ以外は中央までスクロール
-            if (targetCardId === 'allWordsCardBtn' || targetCardId === 'irregularVerbsCardBtn') {
+            if (targetCardId === 'allWordsCardBtn' || targetCardId === 'irregularVerbsCardBtn' || targetCardId === 'exam1200CardBtn') {
                 appMain.scrollTop = appMain.scrollHeight + 1000;
             } else {
                 currentTargetCard.scrollIntoView({ block: 'center', behavior: 'instant' });
@@ -438,7 +438,7 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     const badge = cardElement.querySelector('.level-badge');
     const categoryName = cardElement.querySelector('.category-name');
     // アイコンを探す（様々なクラス名に対応）
-    const icon = cardElement.querySelector('.intro-icon, .irregular-verbs-icon, .all-words-icon, .minigame-icon, .category-icon, [class*="-icon"]:not(.category-arrow)');
+    const icon = cardElement.querySelector('.intro-icon, .irregular-verbs-icon, .all-words-icon, .category-icon, [class*="-icon"]:not(.category-arrow)');
     const progress = cardElement.querySelector('.category-progress');
     
     // 元の進捗バーの幅を取得（クローン前に）
@@ -708,7 +708,7 @@ function animateProgressToGoal() {
             sourceElement = document.getElementById('level3CardBtn');
         } else if (checkCategory.includes('LEVEL4') || checkCategory.includes('難関')) {
             sourceElement = document.querySelector('[data-category*="LEVEL4"]');
-        } else if (checkCategory.includes('LEVEL5') || checkCategory.includes('最難関')) {
+        } else if (checkCategory.includes('LEVEL5') || checkCategory.includes('難関')) {
             sourceElement = document.querySelector('[data-category*="LEVEL5"]');
         }
         
@@ -2060,7 +2060,7 @@ function getStarRating(count) {
 
 // 単語の進捗保存用カテゴリーを取得（小学生で習った単語、すべての単語の場合はword.categoryを使用）
 function getProgressCategory(word) {
-    if (selectedCategory === 'LEVEL0 入門600語' || selectedCategory === '大阪府のすべての英単語') {
+    if (selectedCategory === 'LEVEL0 入門600語' || selectedCategory === '大阪府のすべての英単語' || selectedCategory === '入試直前これだけ1200語') {
         return word.category;
     }
     return selectedCategory;
@@ -2198,19 +2198,23 @@ function loadData() {
 }
 
 
-// 全単語データを取得（小学生データを含む）
+// 全単語データを取得（LEVEL0〜5 を欠けず含む。IDで重複除去しID順にソート）
 function getAllWordData() {
-    const mainWords = Array.isArray(wordData) ? wordData : [];
-    // vocabulary-data.jsから取得（優先）
     const vocabularyWords = (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function')
         ? getAllVocabulary()
         : [];
-    // 既存のelementaryWordDataとの互換性（後方互換性のため）
+    const mainWords = Array.isArray(wordData) ? wordData : [];
     const elementaryWords = (typeof elementaryWordData !== 'undefined' && Array.isArray(elementaryWordData))
         ? elementaryWordData
         : [];
-    // vocabulary-data.jsのデータを優先し、既存データとマージ
-    return [...mainWords, ...vocabularyWords, ...elementaryWords];
+    // IDをキーに重複除去（vocabulary を優先し、同じ id は1件だけ）
+    const byId = new Map();
+    [...vocabularyWords, ...mainWords, ...elementaryWords].forEach(w => {
+        if (w && w.id != null && !byId.has(w.id)) byId.set(w.id, w);
+    });
+    const merged = Array.from(byId.values());
+    merged.sort((a, b) => (a.id - b.id));
+    return merged;
 }
 
 // IDから単語データを取得
@@ -2228,73 +2232,8 @@ function getWordById(wordId) {
 // 大阪府のすべての英単語で学習を開始
 function startAllWordsLearning() {
     try {
-        let allWords = [];
-        
-        // getVocabularyByCategory を使ってサブカテゴリーから取得（確実な方法）
-        if (typeof getVocabularyByCategory !== 'undefined') {
-            const seenIds = new Set();
-            
-            // カテゴリ別単語のサブカテゴリー
-            const elementarySubcategories = [
-                '家族', '曜日・月・季節', '時間・時間帯', '数字', '色', '体', '文房具', '楽器', '衣類', '単位',
-                '食べ物・飲み物', 'スポーツ', '動物', '教科', '学校（の種類）',
-                '乗り物', '町の施設', '職業', '国や地域', '自然', '天気', '方角・方向'
-            ];
-            
-            // レベル別サブカテゴリー
-            const level1Subcategories = ['冠詞', '代名詞', '名詞', '動詞', '形容詞', '副詞', '前置詞', '疑問詞', '間投詞'];
-            const level2Subcategories = ['名詞', '動詞', '形容詞', '副詞', '前置詞', '助動詞', '接続詞', '数や量を表す詞', '代名詞'];
-            const level3Subcategories = ['名詞', '動詞', '形容詞', '副詞', '前置詞', '接続詞', '再帰代名詞', '関係代名詞'];
-            
-            // カテゴリ別単語を取得
-            elementarySubcategories.forEach(subcat => {
-                const words = getVocabularyByCategory(subcat) || [];
-                words.forEach(word => {
-                    if (word && word.id && !seenIds.has(word.id)) {
-                        seenIds.add(word.id);
-                        allWords.push(word);
-                    }
-                });
-            });
-            
-            // レベル1単語を取得
-            level1Subcategories.forEach(subcat => {
-                const words = getVocabularyByCategory(`LEVEL1 ${subcat}`) || [];
-                words.forEach(word => {
-                    if (word && word.id && !seenIds.has(word.id)) {
-                        seenIds.add(word.id);
-                        allWords.push(word);
-                    }
-                });
-            });
-            
-            // レベル2単語を取得
-            level2Subcategories.forEach(subcat => {
-                const words = getVocabularyByCategory(`LEVEL2 ${subcat}`) || [];
-                words.forEach(word => {
-                    if (word && word.id && !seenIds.has(word.id)) {
-                        seenIds.add(word.id);
-                        allWords.push(word);
-                    }
-                });
-            });
-            
-            // レベル3単語を取得
-            level3Subcategories.forEach(subcat => {
-                const words = getVocabularyByCategory(`LEVEL3 ${subcat}`) || [];
-                words.forEach(word => {
-                    if (word && word.id && !seenIds.has(word.id)) {
-                        seenIds.add(word.id);
-                        allWords.push(word);
-                    }
-                });
-            });
-        }
-        
-        // フォールバック
-        if (allWords.length === 0) {
-            allWords = getAllWordData();
-        }
+        // 全単語は getAllWordData() で取得（LEVEL0〜5 を欠けずに含む）
+        let allWords = getAllWordData();
         
         if (!allWords || allWords.length === 0) {
             showAlert('エラー', '単語データが見つかりません。');
@@ -2448,7 +2387,7 @@ function updateCategoryStars() {
         { displayName: '中級500語', dataName: 'LEVEL2 中級500語' },
         { displayName: '上級500語', dataName: 'LEVEL3 上級500語' },
         { displayName: 'LEVEL4 ハイレベル300語', dataName: 'LEVEL4 ハイレベル300語' },
-        { displayName: 'LEVEL5 最難関突破100語', dataName: 'LEVEL5 最難関突破100語' },
+        { displayName: 'LEVEL5 難関突破100語', dataName: 'LEVEL5 難関突破100語' },
         { displayName: '大阪B問題対策 厳選例文暗記60【和文英訳対策】', dataName: '大阪B問題対策 厳選例文暗記60【和文英訳対策】' },
         { displayName: '条件英作文特訓コース', dataName: '条件英作文特訓コース' },
         { displayName: '大阪C問題対策英単語タイムアタック', dataName: '大阪C問題対策英単語タイムアタック' },
@@ -2768,14 +2707,14 @@ function updateCategoryStars() {
             }
             return; // 例文データの処理が完了したので、以降の単語データ処理をスキップ
         } else if (categoryDataName === 'LEVEL1 初級500語' || categoryDataName === 'LEVEL2 中級500語' || categoryDataName === 'LEVEL3 上級500語' || 
-                   categoryDataName === 'LEVEL4 ハイレベル300語' || categoryDataName === 'LEVEL5 最難関突破100語') {
+                   categoryDataName === 'LEVEL4 ハイレベル300語' || categoryDataName === 'LEVEL5 難関突破100語') {
             // レベル別単語：vocabulary-data.jsから取得（最適化）
             const levelMap = {
                 'LEVEL1 初級500語': 1,
                 'LEVEL2 中級500語': 2,
                 'LEVEL3 上級500語': 3,
                 'LEVEL4 ハイレベル300語': 4,
-                'LEVEL5 最難関突破100語': 5
+                'LEVEL5 難関突破100語': 5
             };
             const level = levelMap[categoryDataName];
             if (level && typeof getVocabularyByLevel !== 'undefined' && typeof getVocabularyByLevel === 'function') {
@@ -3237,7 +3176,7 @@ function updateSubcategoryProgressBars() {
     updateLevelProgressBar('中級500語', 2);
     updateLevelProgressBar('上級500語', 3);
     updateLevelProgressBar('LEVEL4 ハイレベル300語', 4);
-    updateLevelProgressBar('LEVEL5 最難関突破100語', 5);
+    updateLevelProgressBar('LEVEL5 難関突破100語', 5);
 }
 
 // 復習チェックを保存
@@ -3855,7 +3794,7 @@ function formatTitleWithLevelBadge(title) {
         return '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> ' + cleanTitle;
     } else if (title.includes('LEVEL4') || title.includes('難関') || title.includes('レベル４') || title.includes('レベル4')) {
         return '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span> ' + cleanTitle;
-    } else if (title.includes('LEVEL5') || title.includes('最難関') || title.includes('レベル５') || title.includes('レベル5')) {
+    } else if (title.includes('LEVEL5') || title.includes('難関') || title.includes('レベル５') || title.includes('レベル5')) {
         return '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span> ' + cleanTitle;
     } else if (isElementarySubcategory) {
         return '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> ' + cleanTitle;
@@ -3941,8 +3880,8 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> 上級500語';
             } else if (title === 'レベル４ ハイレベル300語') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span> ハイレベル300語';
-            } else if (title === 'レベル５ 最難関突破100語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span> 最難関突破100語';
+            } else if (title === 'レベル５ 難関突破100語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span> 難関突破100語';
             } else {
                 headerTitleText.textContent = title;
             }
@@ -4305,7 +4244,7 @@ function returnToLearningMenu(category) {
     const parent = window.currentSubcategoryParent;
     if (parent === 'レベル１ 初級500語' || parent === 'レベル２ 中級500語' || 
         parent === 'レベル３ 上級500語' || parent === 'レベル４ ハイレベル300語' || 
-        parent === 'レベル５ 最難関突破100語') {
+        parent === 'レベル５ 難関突破100語') {
         showLevelSubcategorySelection(parent, true);
     } else if (parent === '入門600語') {
         showElementaryCategorySelection(true);
@@ -4423,7 +4362,7 @@ function startCategory(category) {
         showAlert('エラー', 'このコースは利用できません。');
         return;
     } else if (category === 'LEVEL1 初級500語' || category === 'LEVEL2 中級500語' || category === 'LEVEL3 上級500語' || 
-               category === 'LEVEL4 ハイレベル300語' || category === 'LEVEL5 最難関突破100語') {
+               category === 'LEVEL4 ハイレベル300語' || category === 'LEVEL5 難関突破100語') {
         // レベル別単語：vocabulary-data.jsから取得（最適化）
         console.log('Loading level vocabulary:', category);
         const levelMap = {
@@ -4431,7 +4370,7 @@ function startCategory(category) {
             'LEVEL2 中級500語': 2,
             'LEVEL3 上級500語': 3,
             'LEVEL4 ハイレベル300語': 4,
-            'LEVEL5 最難関突破100語': 5
+            'LEVEL5 難関突破100語': 5
         };
         const level = levelMap[category];
         if (level && typeof getVocabularyByLevel !== 'undefined' && typeof getVocabularyByLevel === 'function') {
@@ -4835,7 +4774,7 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
                 <div class="category-header">
                     <div class="category-name">
                         <div class="subcat-badge" style="background: ${badgeColor}">
-                            <span class="subcat-badge-num">Group${i + 1}</span>
+                            <span class="subcat-badge-num">${i + 1}</span>
                         </div>
                         <div class="subcat-range-block">
                             <span class="subcat-range-no">No.</span>
@@ -4991,7 +4930,7 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         lastLearningSourceElement = document.getElementById('level3CardBtn');
     } else if (parentCategory === 'レベル４ ハイレベル300語') {
         lastLearningSourceElement = document.getElementById('level4CardBtn');
-    } else if (parentCategory === 'レベル５ 最難関突破100語') {
+    } else if (parentCategory === 'レベル５ 難関突破100語') {
         lastLearningSourceElement = document.getElementById('level5CardBtn');
     }
     
@@ -5049,13 +4988,13 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         badgeClass = 'level-badge-purple';
         description = '差がつくハイレベルな単語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge level-badge-purple">Level<b>4</b></span> ハイレベル300語';
-    } else if (parentCategory === 'レベル５ 最難関突破100語') {
+    } else if (parentCategory === 'レベル５ 難関突破100語') {
         levelNum = 5;
         badgeColor = '#4338ca';
         badgeBgColor = '#e0e7ff';
         badgeClass = 'level-badge-dark';
-        description = '最難関突破レベルの単語を覚えよう';
-        courseTitle.innerHTML = '<span class="level-badge level-badge-dark">Level<b>5</b></span> 最難関突破100語';
+        description = '難関突破レベルの単語を覚えよう';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-dark">Level<b>5</b></span> 難関突破100語';
     } else {
         courseTitle.textContent = parentCategory;
     }
@@ -5154,8 +5093,8 @@ function showCourseSelection(category, categoryWords, slideIn = false, skipSaveR
         displayCategory = '上級500語';
     } else if (category === 'LEVEL4 ハイレベル300語') {
         displayCategory = 'ハイレベル300語';
-    } else if (category === 'LEVEL5 最難関突破100語') {
-        displayCategory = '最難関突破100語';
+    } else if (category === 'LEVEL5 難関突破100語') {
+        displayCategory = '難関突破100語';
     }
     courseTitle.textContent = `${displayCategory} - コースを選んでください`;
     courseList.innerHTML = '';
@@ -5749,14 +5688,8 @@ function updateQuestionCountSection() {
     
     if (questionCountSection) {
         const filteredWords = getFilteredWords();
-        const parentSection = questionCountSection.closest('.filter-section');
-        
         const hasWords = filteredWords.length > 0;
-        if (parentSection) {
-            parentSection.style.display = hasWords ? '' : 'none';
-        } else {
-            questionCountSection.style.display = hasWords ? '' : 'none';
-        }
+        questionCountSection.style.display = hasWords ? '' : 'none';
         
         // 出題数オプションのスライダーを更新
         if (hasWords) {
@@ -5907,16 +5840,15 @@ function showInputModeDirectly(category, words, courseTitle) {
     currentFilterWords = words;
     currentFilterCategory = category;
     
-    // 「すべての単語」モードの場合、頻度フィルターと検索を表示
+    // 「すべての単語」モードの場合、検索を表示（でた度で絞るは非表示のまま）
     const isAllWords = category === '大阪府のすべての英単語';
     const freqSection = document.getElementById('filterFrequencySection');
     const wordSearchContainer = document.getElementById('wordSearchContainer');
     
+    if (freqSection) freqSection.classList.add('hidden');
     if (isAllWords) {
-        if (freqSection) freqSection.classList.remove('hidden');
         if (wordSearchContainer) wordSearchContainer.classList.remove('hidden');
     } else {
-        if (freqSection) freqSection.classList.add('hidden');
         if (wordSearchContainer) wordSearchContainer.classList.add('hidden');
     }
     
@@ -6004,10 +5936,14 @@ function showInputModeDirectly(category, words, courseTitle) {
         inputListHeader.style.display = '';
     }
     
-    // input-list-header-rowを表示（モードトグルボタン等）
+    // input-list-header-rowを表示（モードトグルボタン等）。「すべての単語」のときはトグル行ごと非表示（単語帳のみ）
     const inputListHeaderRow = document.querySelector('.input-list-header-row');
     if (inputListHeaderRow) {
-        inputListHeaderRow.style.display = '';
+        if (category === '大阪府のすべての英単語') {
+            inputListHeaderRow.style.display = 'none';
+        } else {
+            inputListHeaderRow.style.display = '';
+        }
     }
     
     // input-list-controls-rowを表示（シャッフル、フィルターボタン等）
@@ -7033,17 +6969,18 @@ function setupEventListeners() {
         });
     }
     
-    // はじめにカード
-    const introCard = document.getElementById('introCard');
-    if (introCard) {
-        introCard.addEventListener('click', (e) => {
+    // カテゴリー別カード（レベル・グループ一覧へスクロール）
+    const categoryByCardBtn = document.getElementById('categoryByCardBtn');
+    if (categoryByCardBtn) {
+        categoryByCardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            animateCardExpand(introCard, '#ffffff', () => {
-                showAlert('はじめに', 'このアプリの使い方の説明ページは準備中です。');
-            });
+            const section = document.getElementById('courseMasterSection');
+            const list = document.querySelector('.category-list');
+            const target = section || list;
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     }
-    
+
     // レベル１ 初級500語カード
     const level1CardBtn = document.getElementById('level1CardBtn');
     if (level1CardBtn) {
@@ -7088,13 +7025,13 @@ function setupEventListeners() {
         });
     }
     
-    // レベル５ 最難関突破100語カード
+    // レベル５ 難関突破100語カード
     const level5CardBtn = document.getElementById('level5CardBtn');
     if (level5CardBtn) {
         level5CardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             animateCardExpand(level5CardBtn, '#ffffff', () => {
-                showLevelSubcategorySelection('レベル５ 最難関突破100語');
+                showLevelSubcategorySelection('レベル５ 難関突破100語');
             });
         });
     }
@@ -7139,6 +7076,24 @@ function setupEventListeners() {
         console.error('categorySelection element not found!');
     }
     
+    // 入試直前これだけ1200語カード（id 1〜1200）
+    const exam1200CardBtn = document.getElementById('exam1200CardBtn');
+    if (exam1200CardBtn) {
+        exam1200CardBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            animateCardExpand(exam1200CardBtn, '#ffffff', () => {
+                const allWords = getAllWordData();
+                const words1200 = allWords.filter(w => w.id >= 1 && w.id <= 1200);
+                if (!words1200.length) {
+                    console.error('exam1200: no words');
+                    return;
+                }
+                showInputModeDirectly('入試直前これだけ1200語', words1200, '入試直前これだけ1200語');
+            });
+        });
+    }
+
     // 大阪府のすべての英単語カードボタン
     const allWordsCardBtn = document.getElementById('allWordsCardBtn');
     if (allWordsCardBtn) {
@@ -7995,8 +7950,8 @@ function setupEventListeners() {
             
             // 10の倍数のキリの良い数字に調整
             if (currentCount >= maxCount) {
-                // 「すべて」から押した場合は、10の倍数に切り捨て
-                currentCount = Math.floor(maxCount / 10) * 10;
+                // 「すべて」から押した場合は、maxCountより小さい最大の10の倍数に
+                currentCount = Math.floor((maxCount - 1) / 10) * 10;
             } else if (currentCount % 10 === 0) {
                 // 既に10の倍数なら-10
                 currentCount = currentCount - 10;
@@ -8417,7 +8372,7 @@ function setupEventListeners() {
                         window.currentSubcategoryParent === 'レベル２ 中級500語' || 
                         window.currentSubcategoryParent === 'レベル３ 上級500語' ||
                         window.currentSubcategoryParent === 'レベル４ ハイレベル300語' ||
-                        window.currentSubcategoryParent === 'レベル５ 最難関突破100語') {
+                        window.currentSubcategoryParent === 'レベル５ 難関突破100語') {
                         showLevelSubcategorySelection(window.currentSubcategoryParent, true);
                         return;
                     } else if (window.currentSubcategoryParent === '入門600語') {
@@ -8452,7 +8407,7 @@ function setupEventListeners() {
                         targetCardId = 'level3CardBtn';
                     } else if (window.currentSubcategoryParent === 'レベル４ ハイレベル300語') {
                         targetCardId = 'level4CardBtn';
-                    } else if (window.currentSubcategoryParent === 'レベル５ 最難関突破100語') {
+                    } else if (window.currentSubcategoryParent === 'レベル５ 難関突破100語') {
                         targetCardId = 'level5CardBtn';
                     } else if (window.currentSubcategoryParent === '入門600語') {
                         targetCardId = 'elementaryCategoryCardBtn';
@@ -8502,6 +8457,19 @@ function setupEventListeners() {
                         });
                         return;
                     }
+                    // 入試直前これだけ1200語から来た場合は、縮小アニメーションでホームに戻る
+                    if (selectedCategory === '入試直前これだけ1200語') {
+                        animateCardShrink('exam1200CardBtn', () => {
+                            selectedCategory = null;
+                            elements.mainContent.classList.add('hidden');
+                            elements.categorySelection.classList.remove('hidden');
+                            updateHeaderButtons('home');
+                            updateCategoryStars();
+                            updateVocabProgressBar();
+                            showFloatingReviewBtn();
+                        });
+                        return;
+                    }
                     
                     // 不規則変化の単語から来た場合は、不規則変化メニューに戻る
                     if (window.currentSubcategoryParent && window.currentSubcategoryParent === '不規則変化の単語') {
@@ -8517,7 +8485,7 @@ function setupEventListeners() {
                         window.currentSubcategoryParent === 'レベル２ 中級500語' || 
                         window.currentSubcategoryParent === 'レベル３ 上級500語' ||
                         window.currentSubcategoryParent === 'レベル４ ハイレベル300語' ||
-                        window.currentSubcategoryParent === 'レベル５ 最難関突破100語')) {
+                        window.currentSubcategoryParent === 'レベル５ 難関突破100語')) {
                         elements.mainContent.classList.add('hidden');
                         showLevelSubcategorySelection(window.currentSubcategoryParent, true);
                         return;
@@ -8542,7 +8510,7 @@ function setupEventListeners() {
                             return;
                         }
                     } else if (selectedCategory === 'LEVEL1 初級500語' || selectedCategory === 'LEVEL2 中級500語' || selectedCategory === 'LEVEL3 上級500語' || 
-                               selectedCategory === 'LEVEL4 ハイレベル300語' || selectedCategory === 'LEVEL5 最難関突破100語') {
+                               selectedCategory === 'LEVEL4 ハイレベル300語' || selectedCategory === 'LEVEL5 難関突破100語') {
                         // レベル別単語：vocabulary-data.jsから取得
                         if (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function') {
                             const allWords = getAllVocabulary();
@@ -10113,8 +10081,8 @@ function applyMarkers(word) {
     let categoryCorrectSet = correctWords;
     let categoryWrongSet = wrongWords;
     if (selectedCategory) {
-        // 小学生で習った単語の場合は、その単語のカテゴリーから進捗を読み込む
-        const categoryKey = (selectedCategory === 'LEVEL0 入門600語') ? word.category : selectedCategory;
+        // 小学生で習った単語・入試直前1200語の場合は、その単語のカテゴリーから進捗を読み込む
+        const categoryKey = (selectedCategory === 'LEVEL0 入門600語' || selectedCategory === '入試直前これだけ1200語') ? word.category : selectedCategory;
         const categoryData = loadCategoryWordsForProgress(categoryKey);
         categoryCorrectSet = categoryData.correctSet;
         categoryWrongSet = categoryData.wrongSet;
@@ -10708,8 +10676,8 @@ function renderInputListViewPaginated(words) {
             correct: allCorrectIds,
             wrong: allWrongIds
         };
-    } else if (selectedCategory === 'LEVEL0 入門600語') {
-        // 小学生で習った単語の場合は各単語のカテゴリーから読み込む
+    } else if (selectedCategory === 'LEVEL0 入門600語' || selectedCategory === '入試直前これだけ1200語') {
+        // 各単語のカテゴリーから進捗を読み込む
         const modes = ['card', 'input'];
         words.forEach(word => {
             const cat = word.category;
@@ -10750,7 +10718,7 @@ function renderInputListViewPaginated(words) {
     
     paginatedCategoryCorrectSet = correctWords;
     paginatedCategoryWrongSet = wrongWords;
-    if (selectedCategory && selectedCategory !== 'LEVEL0 入門600語' && selectedCategory !== '大阪府のすべての英単語') {
+    if (selectedCategory && selectedCategory !== 'LEVEL0 入門600語' && selectedCategory !== '大阪府のすべての英単語' && selectedCategory !== '入試直前これだけ1200語') {
         const sets = loadCategoryWords(selectedCategory);
         paginatedCategoryCorrectSet = sets.correctSet;
         paginatedCategoryWrongSet = sets.wrongSet;
@@ -10897,7 +10865,7 @@ function renderInputListViewAsync(words) {
     
     let categoryCorrectSet = correctWords;
     let categoryWrongSet = wrongWords;
-    if (selectedCategory && selectedCategory !== 'LEVEL0 入門600語') {
+    if (selectedCategory && selectedCategory !== 'LEVEL0 入門600語' && selectedCategory !== '入試直前これだけ1200語') {
         // 両モードの進捗を合算して読み込む
         const sets = loadCategoryWordsForProgress(selectedCategory);
         categoryCorrectSet = sets.correctSet;
@@ -11525,7 +11493,7 @@ function renderInputListView(words) {
     
     let categoryCorrectSet = correctWords;
     let categoryWrongSet = wrongWords;
-    if (selectedCategory && selectedCategory !== 'LEVEL0 入門600語' && selectedCategory !== '大阪府のすべての英単語') {
+    if (selectedCategory && selectedCategory !== 'LEVEL0 入門600語' && selectedCategory !== '大阪府のすべての英単語' && selectedCategory !== '入試直前これだけ1200語') {
         // 両モードの進捗を合算して読み込む
         const sets = loadCategoryWordsForProgress(selectedCategory);
         categoryCorrectSet = sets.correctSet;
@@ -12626,17 +12594,15 @@ function applyInputListSettings() {
     
     const isAllWords = selectedCategory === '大阪府のすべての英単語';
     
-    // 頻度フィルターと検索コンテナの表示/非表示
+    // でた度で絞るは常に非表示。検索コンテナはすべての単語のときのみ表示
     const freqSection = document.getElementById('filterFrequencySection');
     const wordSearchContainer = document.getElementById('wordSearchContainer');
-    
+    if (freqSection) freqSection.classList.add('hidden');
     if (isAllWords) {
         inputListContainer.classList.add('all-words-mode');
-        if (freqSection) freqSection.classList.remove('hidden');
         if (wordSearchContainer) wordSearchContainer.classList.remove('hidden');
     } else {
         inputListContainer.classList.remove('all-words-mode');
-        if (freqSection) freqSection.classList.add('hidden');
         if (wordSearchContainer) wordSearchContainer.classList.add('hidden');
     }
 }
@@ -13184,6 +13150,14 @@ function resetRedSheet() {
 
 // フィルターを適用して単語リストを再描画
 function applyInputFilter() {
+    // 「すべての単語」のときは常に単語帳表示（単語カードモードにしない）
+    if (selectedCategory === '大阪府のすべての英単語') {
+        inputListViewMode = 'expand';
+        const expandBtn = document.getElementById('inputListModeExpand');
+        const flipBtn = document.getElementById('inputListModeFlip');
+        if (expandBtn) expandBtn.classList.add('active');
+        if (flipBtn) flipBtn.classList.remove('active');
+    }
     const baseWords = currentCourseWords && currentCourseWords.length > 0 ? currentCourseWords : currentWords;
     if (!baseWords || baseWords.length === 0) return;
     
@@ -14206,7 +14180,7 @@ function markMastered() {
     
     // カテゴリごとの進捗を更新
     // 小学生で習った単語、すべての単語の場合は、各単語のカテゴリーを使用
-    const categoryKey = (selectedCategory === 'LEVEL0 入門600語' || selectedCategory === '大阪府のすべての英単語') ? word.category : selectedCategory;
+    const categoryKey = (selectedCategory === 'LEVEL0 入門600語' || selectedCategory === '大阪府のすべての英単語' || selectedCategory === '入試直前これだけ1200語') ? word.category : selectedCategory;
     if (categoryKey) {
         // 現在のモードで正解を保存
         const { correctSet, wrongSet } = loadCategoryWords(categoryKey);
@@ -14564,7 +14538,7 @@ function markAnswer(isCorrect, isTimeout = false) {
         
         // カテゴリごとの進捗を更新
         // 小学生で習った単語、すべての単語の場合は、各単語のカテゴリーを使用
-        const categoryKeyWrong = (selectedCategory === 'LEVEL0 入門600語' || selectedCategory === '大阪府のすべての英単語') ? word.category : selectedCategory;
+        const categoryKeyWrong = (selectedCategory === 'LEVEL0 入門600語' || selectedCategory === '大阪府のすべての英単語' || selectedCategory === '入試直前これだけ1200語') ? word.category : selectedCategory;
         if (categoryKeyWrong) {
             const { correctSet, wrongSet } = loadCategoryWords(categoryKeyWrong);
             wrongSet.add(word.id);
@@ -15225,7 +15199,7 @@ function returnToCourseSelection() {
             return;
         }
     } else if (category === 'LEVEL1 初級500語' || category === 'LEVEL2 中級500語' || category === 'LEVEL3 上級500語' || 
-               category === 'LEVEL4 ハイレベル300語' || category === 'LEVEL5 最難関突破100語') {
+               category === 'LEVEL4 ハイレベル300語' || category === 'LEVEL5 難関突破100語') {
         // レベル別単語：vocabulary-data.jsから取得
         if (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function') {
             const allWords = getAllVocabulary();
@@ -15518,7 +15492,7 @@ function clearLearningHistory() {
             localStorage.removeItem('learningProgress');
             
             // カテゴリーごとの進捗も削除
-            const categories = ['LEVEL0 入門600語', 'LEVEL1 初級500語', 'LEVEL2 中級500語', 'LEVEL3 上級500語', 'LEVEL4 ハイレベル300語', 'LEVEL5 最難関突破100語'];
+            const categories = ['LEVEL0 入門600語', 'LEVEL1 初級500語', 'LEVEL2 中級500語', 'LEVEL3 上級500語', 'LEVEL4 ハイレベル300語', 'LEVEL5 難関突破100語'];
             categories.forEach(category => {
                 localStorage.removeItem(`correctWords-${category}`);
                 localStorage.removeItem(`wrongWords-${category}`);
@@ -21028,7 +21002,7 @@ function exitHWQuiz() {
     // 細分化メニュー画面に戻る
     const parent = window.currentSubcategoryParent;
     if (parent === 'レベル１ 初級500語' || parent === 'レベル２ 中級500語' || parent === 'レベル３ 上級500語' ||
-        parent === 'レベル４ ハイレベル300語' || parent === 'レベル５ 最難関突破100語') {
+        parent === 'レベル４ ハイレベル300語' || parent === 'レベル５ 難関突破100語') {
         showLevelSubcategorySelection(parent, true);
     } else if (parent === '入門600語') {
         showElementaryCategorySelection(true);
@@ -23267,17 +23241,9 @@ function startFloatingReview() {
     showInputModeDirectly('苦手・要復習', wrongWords, '苦手・要復習');
 }
 
-// すべての単語を取得するヘルパー関数
+// すべての単語を取得するヘルパー関数（LEVEL0〜5 を欠けず含む）
 function getAllWordsFromVocabulary() {
-    const allWords = [];
-    if (typeof vocabularyData !== 'undefined') {
-        Object.keys(vocabularyData).forEach(category => {
-            vocabularyData[category].forEach(word => {
-                allWords.push({...word, category: category});
-            });
-        });
-    }
-    return allWords;
+    return getAllWordData();
 }
 
 // ========================
@@ -23571,1798 +23537,4 @@ function getStudyLevel(count) {
     return 4;
 }
 
-// =============================================
-// Alphabet 2048 ミニゲーム
-// =============================================
-const Alphabet2048 = (() => {
-    const SIZE = 4;
-    const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    
-    // ゲーム状態
-    let grid = [];
-    let score = 0;
-    let bestScore = 0;
-    let tileIdCounter = 0;
-    let isGameOver = false;
-    let hasWon = false;
-    let continueAfterWin = false;
-    
-    // Undo/Shuffle
-    let history = [];
-    let undoCount = 3;
-    let shuffleCount = 3;
-    const MAX_UNDO = 3;
-    const MAX_SHUFFLE = 3;
-    
-    // DOM要素
-    let elements = {};
-    
-    // タッチ操作用
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchEndX = 0;
-    let touchEndY = 0;
-    const SWIPE_THRESHOLD = 30;
-    
-    // タイル情報: { id, letter, row, col, mergedThisTurn }
-    function createTile(letter, row, col) {
-        return {
-            id: tileIdCounter++,
-            letter: letter,
-            row: row,
-            col: col,
-            mergedThisTurn: false,
-            isNew: true
-        };
-    }
-    
-    // 文字のインデックス取得 (A=0, B=1, ..., Z=25)
-    function letterIndex(letter) {
-        return LETTERS.indexOf(letter);
-    }
-    
-    // 文字のスコア値 (2^index)
-    function letterValue(letter) {
-        return Math.pow(2, letterIndex(letter));
-    }
-    
-    // 次の文字を取得
-    function nextLetter(letter) {
-        const idx = letterIndex(letter);
-        if (idx >= 25) return null; // Zの次はない
-        return LETTERS[idx + 1];
-    }
-    
-    // 空きセル取得
-    function getEmptyCells() {
-        const empty = [];
-        for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
-                if (!grid[r][c]) {
-                    empty.push({ row: r, col: c });
-                }
-            }
-        }
-        return empty;
-    }
-    
-    // ランダムなタイルをスポーン
-    function spawnTile() {
-        const empty = getEmptyCells();
-        if (empty.length === 0) return null;
-        
-        const pos = empty[Math.floor(Math.random() * empty.length)];
-        const letter = Math.random() < 0.9 ? 'A' : 'B';
-        const tile = createTile(letter, pos.row, pos.col);
-        grid[pos.row][pos.col] = tile;
-        return tile;
-    }
-    
-    // グリッド初期化
-    function initGrid() {
-        grid = [];
-        for (let r = 0; r < SIZE; r++) {
-            grid[r] = [];
-            for (let c = 0; c < SIZE; c++) {
-                grid[r][c] = null;
-            }
-        }
-    }
-    
-    // 行/列を1次元配列として取得（移動方向に応じて）
-    function getLine(index, direction) {
-        const line = [];
-        for (let i = 0; i < SIZE; i++) {
-            switch (direction) {
-                case 'left':
-                    line.push(grid[index][i]);
-                    break;
-                case 'right':
-                    line.push(grid[index][SIZE - 1 - i]);
-                    break;
-                case 'up':
-                    line.push(grid[i][index]);
-                    break;
-                case 'down':
-                    line.push(grid[SIZE - 1 - i][index]);
-                    break;
-            }
-        }
-        return line;
-    }
-    
-    // 行/列を設定（移動方向に応じて）
-    function setLine(index, line, direction) {
-        for (let i = 0; i < SIZE; i++) {
-            let r, c;
-            switch (direction) {
-                case 'left':
-                    r = index; c = i;
-                    break;
-                case 'right':
-                    r = index; c = SIZE - 1 - i;
-                    break;
-                case 'up':
-                    r = i; c = index;
-                    break;
-                case 'down':
-                    r = SIZE - 1 - i; c = index;
-                    break;
-            }
-            grid[r][c] = line[i];
-            if (line[i]) {
-                line[i].row = r;
-                line[i].col = c;
-            }
-        }
-    }
-    
-    // ラインを圧縮（nullを詰める）
-    function compress(line) {
-        return line.filter(t => t !== null);
-    }
-    
-    // ラインをマージ
-    function mergeLine(line) {
-        const compressed = compress(line);
-        const result = [];
-        let scoreGain = 0;
-        let merged = false;
-        
-        for (let i = 0; i < compressed.length; i++) {
-            const tile = compressed[i];
-            const nextTile = compressed[i + 1];
-            
-            if (nextTile && tile.letter === nextTile.letter && !tile.mergedThisTurn && !nextTile.mergedThisTurn) {
-                // 合体
-                const newLetter = nextLetter(tile.letter);
-                if (newLetter) {
-                    tile.letter = newLetter;
-                    tile.mergedThisTurn = true;
-                    tile.justMerged = true;
-                    scoreGain += letterValue(newLetter);
-                    
-                    // Zを作成したらクリア
-                    if (newLetter === 'Z' && !hasWon) {
-                        hasWon = true;
-                    }
-                    
-                    result.push(tile);
-                    i++; // 次のタイルをスキップ
-                    merged = true;
-                } else {
-                    result.push(tile);
-                }
-            } else {
-                result.push(tile);
-            }
-        }
-        
-        // SIZEまでnullで埋める
-        while (result.length < SIZE) {
-            result.push(null);
-        }
-        
-        return { line: result, scoreGain, merged };
-    }
-    
-    // グリッドのスナップショットを取得（移動判定用）
-    function getGridSnapshot() {
-        const snapshot = [];
-        for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
-                const tile = grid[r][c];
-                snapshot.push(tile ? `${tile.id}:${r}:${c}:${tile.letter}` : 'null');
-            }
-        }
-        return snapshot.join(',');
-    }
-    
-    // 状態を保存（undo用）
-    function saveState() {
-        const state = {
-            grid: grid.map(row => row.map(tile => tile ? { ...tile } : null)),
-            score: score,
-            tileIdCounter: tileIdCounter
-        };
-        history.push(state);
-        // 最大1つだけ保存（直前の状態のみ）
-        if (history.length > 1) {
-            history.shift();
-        }
-    }
-    
-    // Undo機能
-    function undo() {
-        if (undoCount <= 0 || history.length === 0 || isGameOver) return;
-        
-        const state = history.pop();
-        grid = state.grid;
-        score = state.score;
-        tileIdCounter = state.tileIdCounter;
-        
-        undoCount--;
-        updateUndoButton();
-        
-        clearTileElements();
-        render();
-        updateScore();
-    }
-    
-    // Shuffle機能
-    function shuffle() {
-        if (shuffleCount <= 0 || isGameOver) return;
-        
-        // 全タイルを集める
-        const tiles = [];
-        for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
-                if (grid[r][c]) {
-                    tiles.push(grid[r][c]);
-                }
-            }
-        }
-        
-        if (tiles.length === 0) return;
-        
-        // グリッドをクリア
-        for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
-                grid[r][c] = null;
-            }
-        }
-        
-        // ランダムに再配置
-        const positions = [];
-        for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
-                positions.push({ r, c });
-            }
-        }
-        
-        // シャッフル
-        for (let i = positions.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [positions[i], positions[j]] = [positions[j], positions[i]];
-        }
-        
-        // タイルを配置
-        tiles.forEach((tile, index) => {
-            const pos = positions[index];
-            tile.row = pos.r;
-            tile.col = pos.c;
-            tile.isNew = false;
-            tile.justMerged = false;
-            grid[pos.r][pos.c] = tile;
-        });
-        
-        shuffleCount--;
-        updateShuffleButton();
-        
-        clearTileElements();
-        render();
-    }
-    
-    // ボタン状態更新
-    function updateUndoButton() {
-        elements.undoBtn.disabled = undoCount <= 0;
-        elements.undoCount.textContent = undoCount;
-    }
-    
-    function updateShuffleButton() {
-        elements.shuffleBtn.disabled = shuffleCount <= 0;
-        elements.shuffleCount.textContent = shuffleCount;
-    }
-    
-    // 移動処理
-    function move(direction) {
-        if (isGameOver) return false;
-        
-        // 移動前の状態を保存
-        saveState();
-        
-        // 移動前のスナップショット
-        const beforeSnapshot = getGridSnapshot();
-        
-        let totalScoreGain = 0;
-        
-        // 全タイルのisNew, justMergedをリセット
-        for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
-                if (grid[r][c]) {
-                    grid[r][c].isNew = false;
-                    grid[r][c].justMerged = false;
-                }
-            }
-        }
-        
-        // 各行/列を処理
-        for (let i = 0; i < SIZE; i++) {
-            const originalLine = getLine(i, direction);
-            const { line: newLine, scoreGain } = mergeLine(originalLine);
-            setLine(i, newLine, direction);
-            totalScoreGain += scoreGain;
-        }
-        
-        // 移動後のスナップショットと比較
-        const afterSnapshot = getGridSnapshot();
-        const moved = (beforeSnapshot !== afterSnapshot);
-        
-        // 移動があった場合のみスポーン
-        if (moved) {
-            score += totalScoreGain;
-            updateScore();
-            
-            // mergedThisTurnをリセット
-            for (let r = 0; r < SIZE; r++) {
-                for (let c = 0; c < SIZE; c++) {
-                    if (grid[r][c]) {
-                        grid[r][c].mergedThisTurn = false;
-                    }
-                }
-            }
-            
-            spawnTile();
-            render();
-            
-            // 勝利チェック
-            if (hasWon && !continueAfterWin) {
-                setTimeout(() => showClear(), 300);
-            }
-            
-            // ゲームオーバーチェック
-            if (!canMove()) {
-                isGameOver = true;
-                setTimeout(() => showGameOver(), 300);
-            }
-        }
-        
-        return moved;
-    }
-    
-    // 移動可能かチェック
-    function canMove() {
-        // 空きセルがあれば移動可能
-        if (getEmptyCells().length > 0) return true;
-        
-        // 隣接する同じ文字があれば移動可能
-        for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
-                const tile = grid[r][c];
-                if (!tile) continue;
-                
-                // 右隣
-                if (c < SIZE - 1 && grid[r][c + 1] && grid[r][c + 1].letter === tile.letter) {
-                    return true;
-                }
-                // 下隣
-                if (r < SIZE - 1 && grid[r + 1][c] && grid[r + 1][c].letter === tile.letter) {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
-    }
-    
-    // タイルDOM要素のマップ
-    let tileElements = {};
-    
-    // 描画
-    function render() {
-        const tilesContainer = elements.tiles;
-        const board = elements.board;
-        const boardRect = board.getBoundingClientRect();
-        const gap = parseFloat(getComputedStyle(board).getPropertyValue('--cell-gap')) || 8;
-        const cellSize = (boardRect.width - gap * 5) / 4;
-        
-        // 現在のグリッドにあるタイルIDを集める
-        const currentTileIds = new Set();
-        for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
-                const tile = grid[r][c];
-                if (tile) currentTileIds.add(tile.id);
-            }
-        }
-        
-        // 古いタイルを削除
-        for (const id in tileElements) {
-            if (!currentTileIds.has(parseInt(id))) {
-                tileElements[id].remove();
-                delete tileElements[id];
-            }
-        }
-        
-        // タイルを更新または作成
-        for (let r = 0; r < SIZE; r++) {
-            for (let c = 0; c < SIZE; c++) {
-                const tile = grid[r][c];
-                if (!tile) continue;
-                
-                let el = tileElements[tile.id];
-                
-                if (!el) {
-                    // 新しいタイルを作成
-                    el = document.createElement('div');
-                    el.className = `alphabet2048-tile alphabet2048-tile-${tile.letter}`;
-                    el.style.width = `${cellSize}px`;
-                    el.style.height = `${cellSize}px`;
-                    el.style.fontSize = `${cellSize * 0.5}px`;
-                    el.textContent = tile.letter;
-                    tilesContainer.appendChild(el);
-                    tileElements[tile.id] = el;
-                    
-                    if (tile.isNew) {
-                        el.classList.add('alphabet2048-tile-new');
-                        // アニメーション後にクラスを削除
-                        setTimeout(() => el.classList.remove('alphabet2048-tile-new'), 180);
-                    }
-                }
-                
-                // 位置を更新（トランジションが効く）
-                el.style.left = `${c * (cellSize + gap)}px`;
-                el.style.top = `${r * (cellSize + gap)}px`;
-                
-                // 文字とクラスを更新（合体時）
-                if (el.textContent !== tile.letter) {
-                    el.textContent = tile.letter;
-                    el.className = `alphabet2048-tile alphabet2048-tile-${tile.letter}`;
-                }
-                
-                // 合体アニメーション
-                if (tile.justMerged) {
-                    el.classList.add('alphabet2048-tile-merge');
-                    setTimeout(() => el.classList.remove('alphabet2048-tile-merge'), 200);
-                }
-            }
-        }
-    }
-    
-    // タイル要素をクリア（ゲームリセット時）
-    function clearTileElements() {
-        for (const id in tileElements) {
-            tileElements[id].remove();
-        }
-        tileElements = {};
-    }
-    
-    // スコア更新
-    function updateScore() {
-        elements.score.textContent = score;
-        
-        if (score > bestScore) {
-            bestScore = score;
-            elements.best.textContent = bestScore;
-            saveBestScore();
-            
-            // NEWバッジ表示
-            elements.bestBadge.classList.remove('hidden');
-            setTimeout(() => {
-                elements.bestBadge.classList.add('hidden');
-            }, 2000);
-        }
-    }
-    
-    // ベストスコア保存/読み込み
-    function saveBestScore() {
-        localStorage.setItem('alphabet2048BestScore', bestScore.toString());
-    }
-    
-    function loadBestScore() {
-        bestScore = parseInt(localStorage.getItem('alphabet2048BestScore') || '0', 10);
-        elements.best.textContent = bestScore;
-    }
-    
-    // クリア表示
-    function showClear() {
-        elements.clearOverlay.classList.remove('hidden');
-    }
-    
-    // ゲームオーバー表示
-    function showGameOver() {
-        elements.finalScore.textContent = score;
-        elements.gameOverOverlay.classList.remove('hidden');
-    }
-    
-    // ゲーム開始
-    function startGame() {
-        // タイル要素をクリア
-        clearTileElements();
-        
-        initGrid();
-        score = 0;
-        isGameOver = false;
-        hasWon = false;
-        continueAfterWin = false;
-        tileIdCounter = 0;
-        
-        // Undo/Shuffleリセット
-        history = [];
-        undoCount = MAX_UNDO;
-        shuffleCount = MAX_SHUFFLE;
-        updateUndoButton();
-        updateShuffleButton();
-        
-        elements.clearOverlay.classList.add('hidden');
-        elements.gameOverOverlay.classList.add('hidden');
-        elements.bestBadge.classList.add('hidden');
-        
-        loadBestScore();
-        
-        // 初期タイル2枚
-        spawnTile();
-        spawnTile();
-        
-        updateScore();
-        render();
-    }
-    
-    // 続ける（クリア後）
-    function continueGame() {
-        continueAfterWin = true;
-        elements.clearOverlay.classList.add('hidden');
-    }
-    
-    // キー入力ハンドラ
-    function handleKeyDown(e) {
-        if (elements.overlay.classList.contains('hidden')) return;
-        
-        let direction = null;
-        switch (e.key) {
-            case 'ArrowLeft': direction = 'left'; break;
-            case 'ArrowRight': direction = 'right'; break;
-            case 'ArrowUp': direction = 'up'; break;
-            case 'ArrowDown': direction = 'down'; break;
-        }
-        
-        if (direction) {
-            e.preventDefault();
-            move(direction);
-        }
-    }
-    
-    // タッチハンドラ
-    function handleTouchStart(e) {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-    }
-    
-    function handleTouchEnd(e) {
-        touchEndX = e.changedTouches[0].clientX;
-        touchEndY = e.changedTouches[0].clientY;
-        
-        const dx = touchEndX - touchStartX;
-        const dy = touchEndY - touchStartY;
-        const absDx = Math.abs(dx);
-        const absDy = Math.abs(dy);
-        
-        if (Math.max(absDx, absDy) < SWIPE_THRESHOLD) return;
-        
-        let direction = null;
-        if (absDx > absDy) {
-            direction = dx > 0 ? 'right' : 'left';
-        } else {
-            direction = dy > 0 ? 'down' : 'up';
-        }
-        
-        if (direction) {
-            move(direction);
-        }
-    }
-    
-    // 初期化
-    function init() {
-        elements = {
-            overlay: document.getElementById('alphabet2048Overlay'),
-            board: document.getElementById('alphabet2048Board'),
-            tiles: document.getElementById('alphabet2048Tiles'),
-            score: document.getElementById('alphabet2048Score'),
-            best: document.getElementById('alphabet2048Best'),
-            bestBadge: document.getElementById('alphabet2048BestBadge'),
-            clearOverlay: document.getElementById('alphabet2048Clear'),
-            gameOverOverlay: document.getElementById('alphabet2048GameOver'),
-            finalScore: document.getElementById('alphabet2048FinalScore'),
-            closeBtn: document.getElementById('alphabet2048CloseBtn'),
-            newBtn: document.getElementById('alphabet2048NewBtn'),
-            confirmDialog: document.getElementById('alphabet2048ConfirmDialog'),
-            confirmStart: document.getElementById('alphabet2048ConfirmStart'),
-            confirmCancel: document.getElementById('alphabet2048ConfirmCancel'),
-            exitDialog: document.getElementById('alphabet2048ExitDialog'),
-            exitContinue: document.getElementById('alphabet2048ExitContinue'),
-            exitQuit: document.getElementById('alphabet2048ExitQuit'),
-            continueBtn: document.getElementById('alphabet2048ContinueBtn'),
-            restartBtn: document.getElementById('alphabet2048RestartBtn'),
-            homeBtn: document.getElementById('alphabet2048HomeBtn'),
-            undoBtn: document.getElementById('alphabet2048UndoBtn'),
-            undoCount: document.getElementById('alphabet2048UndoCount'),
-            shuffleBtn: document.getElementById('alphabet2048ShuffleBtn'),
-            shuffleCount: document.getElementById('alphabet2048ShuffleCount')
-        };
-        
-        // イベントリスナー
-        document.addEventListener('keydown', handleKeyDown);
-        
-        // Undo/Shuffleボタン
-        elements.undoBtn.addEventListener('click', undo);
-        elements.shuffleBtn.addEventListener('click', shuffle);
-        
-        elements.overlay.addEventListener('touchstart', handleTouchStart, { passive: true });
-        elements.overlay.addEventListener('touchend', handleTouchEnd, { passive: true });
-        
-        // ×ボタン → 終了確認ダイアログ表示
-        elements.closeBtn.addEventListener('click', () => {
-            elements.exitDialog.classList.remove('hidden');
-        });
-        
-        // 終了確認: 続ける
-        elements.exitContinue.addEventListener('click', () => {
-            elements.exitDialog.classList.add('hidden');
-        });
-        
-        // 終了確認: 中断する
-        elements.exitQuit.addEventListener('click', () => {
-            elements.exitDialog.classList.add('hidden');
-            elements.overlay.classList.add('hidden');
-            // ミニゲームメニューに戻す（メニューが無ければカード縮小）
-            const minigameMenuOverlay = document.getElementById('minigameMenuOverlay');
-            if (minigameMenuOverlay) {
-                minigameMenuOverlay.classList.remove('hidden');
-                setStatusBarColor('#1d4ed8'); // メニューヘッダーは青
-            } else {
-                const minigameBtn = document.getElementById('minigameCardBtn');
-                if (minigameBtn) {
-                    animateCardShrink('minigameCardBtn');
-                }
-                setStatusBarColor('#1d4ed8'); // ホーム画面は青
-            }
-        });
-        
-        // NEW GAMEアイコン → 確認ダイアログ表示
-        elements.newBtn.addEventListener('click', () => {
-            elements.confirmDialog.classList.remove('hidden');
-        });
-        
-        // 確認ダイアログ: Start New Game
-        elements.confirmStart.addEventListener('click', () => {
-            elements.confirmDialog.classList.add('hidden');
-            startGame();
-        });
-        
-        // 確認ダイアログ: Cancel
-        elements.confirmCancel.addEventListener('click', () => {
-            elements.confirmDialog.classList.add('hidden');
-        });
-        
-        elements.continueBtn.addEventListener('click', continueGame);
-        elements.restartBtn.addEventListener('click', startGame);
-        elements.homeBtn.addEventListener('click', () => {
-            elements.gameOverOverlay.classList.add('hidden');
-            elements.overlay.classList.add('hidden');
-            animateCardShrink('minigameCardBtn');
-            setStatusBarColor('#1d4ed8'); // ホーム画面は青
-        });
-        
-        startGame();
-    }
-    
-    // 公開API
-    return {
-        init,
-        startGame
-    };
-})();
-
-// =============================================
-// A to Z Drop ミニゲーム（Drop Merge スタイル）
-// =============================================
-const AlphabetDrop = (() => {
-    const COLS = 5;
-    const ROWS = 6;
-    const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const STORAGE_KEY_BEST = 'alphabetDropBestScore';
-    const MERGE_DELAY = 450;
-    const GRAVITY_DELAY = 350;
-    const LAND_DELAY = 300;
-    const AUTO_DROP_INTERVAL = 800; // 自動落下の間隔
-
-    let grid = [];
-    let score = 0;
-    let bestScore = 0;
-    let tileIdCounter = 1;
-    let next = 'A';       // 現在落下中のタイル
-    let nextNext = 'A';   // 次に落ちてくるタイル（NEXT表示用）
-    let selectedCol = 2;
-    let hasWon = false;
-    let continueAfterWin = false;
-    let isAnimating = false;
-    let skipDropAnimation = false; // タップ時は落下アニメーションをスキップ
-    let isPaused = false; // ポーズ状態
-    let countdownInterrupted = false; // カウントダウン中断フラグ
-    let isInCountdown = false; // カウントダウン中フラグ
-
-    let elements = null;
-    let initialized = false;
-    const tileElements = new Map();
-
-    function createTile(letter) {
-        return { id: tileIdCounter++, letter };
-    }
-
-    function letterIndex(letter) {
-        return LETTERS.indexOf(letter);
-    }
-
-    function letterValue(letter) {
-        const idx = letterIndex(letter);
-        return idx < 0 ? 0 : (2 ** idx);
-    }
-
-    function nextLetter(letter) {
-        const idx = letterIndex(letter);
-        if (idx < 0) return 'A';
-        return LETTERS[Math.min(idx + 1, LETTERS.length - 1)];
-    }
-
-    // A〜Dを同じ確率で出す
-    function randomSpawnLetter() {
-        const spawnLetters = ['A', 'B', 'C', 'D'];
-        return spawnLetters[Math.floor(Math.random() * spawnLetters.length)];
-    }
-
-    function initGrid() {
-        grid = Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => null));
-    }
-
-    function loadBestScore() {
-        try {
-            const raw = localStorage.getItem(STORAGE_KEY_BEST);
-            const v = raw ? parseInt(raw, 10) : 0;
-            bestScore = Number.isFinite(v) ? v : 0;
-        } catch {
-            bestScore = 0;
-        }
-        if (elements?.best) elements.best.textContent = String(bestScore);
-    }
-
-    function saveBestScore() {
-        try {
-            localStorage.setItem(STORAGE_KEY_BEST, String(bestScore));
-        } catch {}
-    }
-
-    function showBestBadge() {
-        if (!elements?.bestBadge) return;
-        elements.bestBadge.classList.remove('hidden');
-        setTimeout(() => {
-            elements?.bestBadge?.classList.add('hidden');
-        }, 2000);
-    }
-
-    function updateScore(delta) {
-        const prevLevel = getSpeedLevel();
-        score += delta;
-        if (elements?.score) elements.score.textContent = String(score);
-        if (score > bestScore) {
-            bestScore = score;
-            if (elements?.best) elements.best.textContent = String(bestScore);
-            saveBestScore();
-            showBestBadge();
-        }
-        // スピードレベル更新
-        const newLevel = getSpeedLevel();
-        updateSpeedLevel();
-        // レベルアップ時にアニメーション
-        if (newLevel > prevLevel && elements?.speedLevel) {
-            elements.speedLevel.classList.remove('level-up');
-            // 再フローを強制してアニメーションをリセット
-            void elements.speedLevel.offsetWidth;
-            elements.speedLevel.classList.add('level-up');
-            setTimeout(() => {
-                if (elements?.speedLevel) elements.speedLevel.classList.remove('level-up');
-            }, 500);
-        }
-    }
-
-    function updateNextPreview() {
-        if (!elements?.nextTile) return;
-        elements.nextTile.textContent = nextNext;
-        elements.nextTile.className = `alphabetdrop-next-tile alphabet2048-tile-${nextNext} next-change`;
-        // アニメーション終了後にクラスを削除
-        setTimeout(() => {
-            if (elements?.nextTile) {
-                elements.nextTile.classList.remove('next-change');
-            }
-        }, 300);
-    }
-
-    function updateSelectedColUI() {
-        if (elements?.selectedCol) elements.selectedCol.textContent = String(selectedCol + 1);
-        updateColHighlight();
-    }
-
-    function getBoardMetrics() {
-        if (!elements?.board) return { cellSize: 0, gap: 0 };
-        const boardWidth = elements.board.clientWidth;
-        const boardHeight = elements.board.clientHeight;
-        const style = getComputedStyle(elements.board);
-        const gap = parseFloat(style.getPropertyValue('--cell-gap')) || 6;
-        const cellSize = (boardWidth - gap * (COLS + 1)) / COLS;
-        return { cellSize, gap, boardWidth, boardHeight };
-    }
-
-    function updateColHighlight() {
-        if (!elements?.colHighlight || !elements?.board) return;
-        const { cellSize, gap } = getBoardMetrics();
-        const left = selectedCol * (cellSize + gap);
-        elements.colHighlight.style.left = `${left}px`;
-        elements.colHighlight.style.width = `${cellSize}px`;
-    }
-
-    function clearTileElements() {
-        tileElements.forEach((el) => el.remove());
-        tileElements.clear();
-        if (previewElement) {
-            previewElement.remove();
-            previewElement = null;
-        }
-    }
-
-    function getFirstEmptyRow(col) {
-        // gridが初期化されていない場合は-1を返す
-        if (!grid || !grid.length || col < 0 || col >= COLS) return -1;
-        for (let r = ROWS - 1; r >= 0; r--) {
-            if (!grid[r] || !grid[r][col]) return r;
-        }
-        return -1;
-    }
-
-    function canDropAny() {
-        for (let c = 0; c < COLS; c++) {
-            if (getFirstEmptyRow(c) >= 0) return true;
-        }
-        return false;
-    }
-
-    function forEachTile(cb) {
-        for (let r = 0; r < ROWS; r++) {
-            for (let c = 0; c < COLS; c++) {
-                if (grid[r][c]) cb(grid[r][c], r, c);
-            }
-        }
-    }
-
-    // 重力：全列を下に詰める
-    function applyGravity() {
-        let moved = false;
-        for (let c = 0; c < COLS; c++) {
-            const stack = [];
-            for (let r = ROWS - 1; r >= 0; r--) {
-                if (grid[r][c]) stack.push(grid[r][c]);
-            }
-            for (let r = ROWS - 1; r >= 0; r--) {
-                const t = stack[ROWS - 1 - r] || null;
-                if (grid[r][c] !== t) moved = true;
-                grid[r][c] = t;
-            }
-        }
-        return moved;
-    }
-
-    // 隣接する同じ文字のグループを見つける（3つ以上も対応）
-    function findMergeGroup() {
-        const visited = new Set();
-        
-        for (let r = ROWS - 1; r >= 0; r--) {
-            for (let c = 0; c < COLS; c++) {
-                const t = grid[r][c];
-                if (!t) continue;
-                const key = `${r},${c}`;
-                if (visited.has(key)) continue;
-                
-                // BFSで隣接する同じ文字を探す
-                const group = [];
-                const queue = [{ r, c }];
-                const groupVisited = new Set();
-                
-                while (queue.length > 0) {
-                    const { r: cr, c: cc } = queue.shift();
-                    const cellKey = `${cr},${cc}`;
-                    if (groupVisited.has(cellKey)) continue;
-                    groupVisited.add(cellKey);
-                    
-                    const cell = grid[cr][cc];
-                    if (!cell || cell.letter !== t.letter) continue;
-                    
-                    group.push({ r: cr, c: cc });
-                    
-                    // 上下左右を探索
-                    if (cr > 0) queue.push({ r: cr - 1, c: cc });
-                    if (cr < ROWS - 1) queue.push({ r: cr + 1, c: cc });
-                    if (cc > 0) queue.push({ r: cr, c: cc - 1 });
-                    if (cc < COLS - 1) queue.push({ r: cr, c: cc + 1 });
-                }
-                
-                if (group.length >= 2) {
-                    return { letter: t.letter, cells: group };
-                }
-                
-                group.forEach(({ r, c }) => visited.add(`${r},${c}`));
-            }
-        }
-        return null;
-    }
-
-    // グループを合体 - 既存タイルが動いてきた方（最新タイル）に吸い寄せられる
-    async function doMergeGroup() {
-        const group = findMergeGroup();
-        if (!group) return false;
-
-        const { letter, cells } = group;
-        
-        // 一番新しいタイル（ID が大きい = 最後に落ちてきた）を基準にする
-        cells.sort((a, b) => {
-            const tileA = grid[a.r][a.c];
-            const tileB = grid[b.r][b.c];
-            return (tileB?.id || 0) - (tileA?.id || 0); // ID大きい順
-        });
-        
-        const base = cells[0]; // 動いてきたタイル（上）
-        const count = cells.length;
-        const { cellSize, gap } = getBoardMetrics();
-        
-        // 基準セルの位置
-        const baseTop = base.r * (cellSize + gap);
-        const baseLeft = base.c * (cellSize + gap);
-        
-        // 基準セル以外のタイル（既存タイル）を吸い寄せるアニメーション
-        const animPromises = [];
-        cells.forEach(({ r, c }, i) => {
-            if (i > 0) {
-                const tile = grid[r][c];
-                if (tile) {
-                    const el = tileElements.get(tile.id);
-                    if (el) {
-                        // 吸い寄せアニメーション（既存タイルが上に移動）
-                        el.style.transition = 'top 150ms ease-in, left 150ms ease-in, transform 150ms ease-in';
-                        el.style.top = `${baseTop}px`;
-                        el.style.left = `${baseLeft}px`;
-                        el.style.transform = 'scale(0.8)';
-                        el.style.zIndex = '1';
-                        
-                        animPromises.push(new Promise(resolve => setTimeout(resolve, 150)));
-                    }
-                }
-            }
-        });
-        
-        // 基準タイルのDOM要素を取得
-        const baseTile = grid[base.r][base.c];
-        const baseEl = baseTile ? tileElements.get(baseTile.id) : null;
-        
-        // アニメーション完了を待つ
-        if (animPromises.length > 0) {
-            await Promise.all(animPromises);
-        }
-        
-        // 合体回数に応じて文字を進める（2個→1段階、3個→1段階、4個→2段階...）
-        const mergeSteps = Math.floor(Math.log2(count));
-        let newLetter = letter;
-        for (let i = 0; i < mergeSteps; i++) {
-            newLetter = nextLetter(newLetter);
-        }
-        // 最低1段階は進める
-        if (mergeSteps === 0) {
-            newLetter = nextLetter(letter);
-        }
-        
-        // 基準セル以外を削除（DOM要素も削除）
-        cells.forEach(({ r, c }, i) => {
-            if (i > 0) {
-                const tile = grid[r][c];
-                if (tile) {
-                    const el = tileElements.get(tile.id);
-                    if (el) {
-                        el.remove();
-                        tileElements.delete(tile.id);
-                    }
-                }
-                grid[r][c] = null;
-            }
-        });
-        
-        // 基準セルを更新
-        grid[base.r][base.c].letter = newLetter;
-        
-        // 基準タイルにマージアニメーション
-        if (baseEl) {
-            baseEl.textContent = newLetter;
-            baseEl.className = `alphabet2048-tile alphabet2048-tile-${newLetter} alphabet2048-tile-merge`;
-            baseEl.style.transform = '';
-            baseEl.style.zIndex = '';
-            setTimeout(() => {
-                baseEl.classList.remove('alphabet2048-tile-merge');
-            }, 300);
-        }
-        
-        // スコア加算（合体した個数分）
-        updateScore(letterValue(newLetter) * (count - 1));
-
-        if (newLetter === 'Z') {
-            hasWon = true;
-        }
-
-        return true;
-    }
-
-    function showClear() {
-        if (elements?.clearOverlay) elements.clearOverlay.classList.remove('hidden');
-    }
-
-    function hideClear() {
-        if (elements?.clearOverlay) elements.clearOverlay.classList.add('hidden');
-    }
-
-    function showGameOver() {
-        if (elements?.finalScore) elements.finalScore.textContent = String(score);
-        if (elements?.gameOverOverlay) elements.gameOverOverlay.classList.remove('hidden');
-    }
-
-    function hideGameOver() {
-        if (elements?.gameOverOverlay) elements.gameOverOverlay.classList.add('hidden');
-    }
-
-    let previewElement = null;
-    let autoDropTimer = null;
-    let currentDropLetter = null; // 現在落下中のタイルの文字
-    
-    // スコアに応じた落下速度レベル（1-16）
-    function getSpeedLevel() {
-        // 300点ごとにレベルアップ、最大16
-        return Math.min(1 + Math.floor(score / 300), 16);
-    }
-    
-    // スコアに応じた落下速度（ピクセル/秒）
-    function getDropSpeed() {
-        // 基本速度40、レベルごとに15ずつ速くなる（最大250）
-        const baseSpeed = 40;
-        const maxSpeed = 250;
-        const level = getSpeedLevel();
-        return Math.min(baseSpeed + (level - 1) * 15, maxSpeed);
-    }
-    
-    // スピードレベル表示を更新
-    function updateSpeedLevel() {
-        const level = getSpeedLevel();
-        if (elements?.speedLevel) {
-            elements.speedLevel.textContent = `Lv.${level}`;
-            // レベルに応じて色を変える
-            if (level >= 12) {
-                elements.speedLevel.style.color = '#ef4444'; // 赤
-            } else if (level >= 8) {
-                elements.speedLevel.style.color = '#f97316'; // オレンジ
-            } else if (level >= 4) {
-                elements.speedLevel.style.color = '#f59e0b'; // 黄色
-            } else {
-                elements.speedLevel.style.color = '#22c55e'; // 緑
-            }
-        }
-    }
-
-    function startAutoDrop(resumeFromCurrent = false) {
-        stopAutoDrop();
-        if (!elements?.board || !previewElement) return;
-        
-        // 全列が埋まっていたらゲームオーバー
-        if (!canDropAny()) {
-            showGameOver();
-            return;
-        }
-        
-        const { cellSize, gap } = getBoardMetrics();
-        const targetRow = getFirstEmptyRow(selectedCol);
-        const isOverflow = targetRow < 0; // 列が満杯 = 一番上を超えて積もうとしている
-        
-        currentDropLetter = next; // 落下開始時の文字を記憶
-        
-        // 開始位置（再開時は現在位置から、それ以外は盤面の上から）
-        let startTop;
-        if (resumeFromCurrent) {
-            // アニメーション中の実際の位置を取得
-            const currentTop = getCurrentPreviewTop();
-            startTop = (currentTop !== null && !isNaN(currentTop)) ? currentTop : -(cellSize + gap);
-        } else {
-            startTop = -(cellSize + gap);
-        }
-        
-        // 落下先：満杯の場合は6個目のタイルの上（重ならない位置）、通常は空き行まで
-        // タイルの下端が row 0 のタイルの上端に触れる位置 = タイルの top が -cellSize
-        const endTop = isOverflow ? -cellSize : targetRow * (cellSize + gap);
-        const left = selectedCol * (cellSize + gap);
-        
-        // 落下距離に応じた時間を計算（スコアで速度が変わる）
-        const distance = endTop - startTop;
-        if (distance <= 0) {
-            // 既に目標位置にいる場合（満杯の列で既に上にいる）
-            if (isOverflow) {
-                hidePreview();
-                showGameOver();
-            }
-            return;
-        }
-        const dropSpeed = getDropSpeed();
-        const duration = (distance / dropSpeed) * 1000; // ミリ秒
-        
-        previewElement.style.transition = 'none';
-        previewElement.style.left = `${left}px`;
-        previewElement.style.top = `${startTop}px`;
-        
-        // 次フレームでアニメーション開始
-        requestAnimationFrame(() => {
-            previewElement.style.transition = `top ${duration}ms linear`;
-            previewElement.style.top = `${endTop}px`;
-        });
-        
-        // 着地時の処理
-        autoDropTimer = setTimeout(() => {
-            if (isOverflow) {
-                // 一番上の高さを超えて積んだ = ゲームオーバー
-                hidePreview();
-                showGameOver();
-            } else if (!isAnimating) {
-                isAnimating = true;
-                executeDropFromPreview();
-            }
-        }, duration);
-    }
-
-    function stopAutoDrop() {
-        if (autoDropTimer) {
-            clearTimeout(autoDropTimer);
-            autoDropTimer = null;
-        }
-    }
-
-    // 現在位置から即座に落下（プレビューを直接タイルとして使う）
-    async function dropFromCurrentPosition() {
-        stopAutoDrop();
-        if (!previewElement || !elements?.board) return;
-        
-        const { cellSize, gap } = getBoardMetrics();
-        const targetRow = getFirstEmptyRow(selectedCol);
-        const isOverflow = targetRow < 0; // 列が満杯 = 一番上を超えて積もうとしている
-        
-        // 現在のtop位置を取得
-        const currentTop = parseFloat(previewElement.style.top) || 0;
-        // 落下先：満杯の場合は6個目のタイルの上（重ならない位置）、通常は空き行まで
-        const endTop = isOverflow ? -cellSize : targetRow * (cellSize + gap);
-        
-        // 速く落下（固定時間）
-        const duration = 120;
-        
-        previewElement.style.transition = `top ${duration}ms ease-in`;
-        previewElement.style.top = `${endTop}px`;
-        
-        // 落下完了を待つ
-        await sleep(duration);
-        
-        // 一番上の高さを超えて積んだ = ゲームオーバー
-        if (isOverflow) {
-            hidePreview();
-            showGameOver();
-            isAnimating = false;
-            return;
-        }
-        
-        // プレビューを非表示
-        hidePreview();
-        
-        // グリッドにタイルを配置
-        const letterToUse = currentDropLetter || next;
-        const tile = createTile(letterToUse);
-        grid[targetRow][selectedCol] = tile;
-        
-        // 次のタイルを準備（nextNext を next に、新しい nextNext を生成）
-        next = nextNext;
-        nextNext = randomSpawnLetter();
-        currentDropLetter = null;
-        
-        // タップ時は落下アニメーションをスキップ
-        skipDropAnimation = true;
-        render();
-        skipDropAnimation = false;
-        
-        // 着地後に少し待ってから合体処理
-        await sleep(LAND_DELAY);
-        await resolveChain();
-        
-        if (hasWon && !continueAfterWin) {
-            showClear();
-        } else if (!canDropAny()) {
-            showGameOver();
-        } else {
-            updateNextPreview();
-            updatePreview();
-            showPreview();
-            startAutoDrop();
-        }
-        
-        isAnimating = false;
-    }
-
-    function updatePreviewPosition() {
-        if (!previewElement || !elements?.board) return;
-        const { cellSize, gap } = getBoardMetrics();
-        const left = selectedCol * (cellSize + gap);
-        previewElement.style.left = `${left}px`;
-    }
-
-    function updatePreview() {
-        if (!elements?.tiles || !elements?.board) return;
-        const { cellSize, gap } = getBoardMetrics();
-
-        if (!previewElement) {
-            previewElement = document.createElement('div');
-            previewElement.className = `alphabet2048-tile alphabet2048-tile-${next} alphabetdrop-preview`;
-            previewElement.textContent = next;
-            elements.tiles.appendChild(previewElement);
-        }
-
-        previewElement.textContent = next;
-        previewElement.className = `alphabet2048-tile alphabet2048-tile-${next} alphabetdrop-preview`;
-        previewElement.style.transition = 'none';
-        
-        const left = selectedCol * (cellSize + gap);
-        previewElement.style.left = `${left}px`;
-        previewElement.style.top = `${-(cellSize + gap)}px`;
-    }
-
-    function hidePreview() {
-        if (previewElement) {
-            previewElement.style.opacity = '0';
-        }
-    }
-
-    function showPreview() {
-        if (previewElement) {
-            previewElement.style.opacity = '1';
-        }
-    }
-
-    function render() {
-        if (!elements?.tiles || !elements?.board) return;
-        const { cellSize, gap } = getBoardMetrics();
-
-        const aliveIds = new Set();
-
-        forEachTile((tile, r, c) => {
-            aliveIds.add(tile.id);
-            let el = tileElements.get(tile.id);
-            const isNew = !el;
-
-            const top = r * (cellSize + gap);
-            const left = c * (cellSize + gap);
-
-            if (!el) {
-                el = document.createElement('div');
-                el.className = `alphabet2048-tile alphabet2048-tile-${tile.letter}`;
-                el.textContent = tile.letter;
-                el.dataset.tileId = String(tile.id);
-                tileElements.set(tile.id, el);
-                elements.tiles.appendChild(el);
-                
-                el.style.left = `${left}px`;
-                
-                // タップ時は直接配置、自動落下時は上から落下
-                if (skipDropAnimation) {
-                    el.style.top = `${top}px`;
-                } else {
-                    el.style.top = `${-(cellSize + gap * 2)}px`;
-                    requestAnimationFrame(() => {
-                        el.style.top = `${top}px`;
-                    });
-                }
-            } else {
-                el.style.top = `${top}px`;
-                el.style.left = `${left}px`;
-            }
-
-            // 文字・色更新
-            if (el.textContent !== tile.letter) {
-                el.textContent = tile.letter;
-                el.className = `alphabet2048-tile alphabet2048-tile-${tile.letter}`;
-                el.classList.add('alphabet2048-tile-merge');
-                setTimeout(() => el?.classList.remove('alphabet2048-tile-merge'), 450);
-            }
-        });
-
-        // 消えたタイルを削除
-        tileElements.forEach((el, id) => {
-            if (!aliveIds.has(id)) {
-                el.classList.add('alphabet2048-tile-vanish');
-                setTimeout(() => {
-                    el.remove();
-                    tileElements.delete(id);
-                }, 250);
-            }
-        });
-
-        updateSelectedColUI();
-    }
-
-    // 連鎖処理：重力→合体→重力→合体…を繰り返す
-    async function resolveChain() {
-        let changed = true;
-        while (changed) {
-            changed = false;
-            // 重力
-            if (applyGravity()) {
-                render();
-                await sleep(GRAVITY_DELAY);
-            }
-            // 合体（グループ単位で処理）- 吸い寄せアニメーション付き
-            while (await doMergeGroup()) {
-                changed = true;
-                await sleep(MERGE_DELAY);
-                // 合体後に重力
-                if (applyGravity()) {
-                    render();
-                    await sleep(GRAVITY_DELAY);
-                }
-            }
-        }
-    }
-
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    // アニメーション中の実際の位置を取得
-    function getCurrentPreviewTop() {
-        if (!previewElement) return null;
-        // getComputedStyle でアニメーション中の実際の位置を取得
-        const computedStyle = getComputedStyle(previewElement);
-        return parseFloat(computedStyle.top);
-    }
-    
-    function setSelectedCol(col) {
-        if (isAnimating) return;
-        
-        // ラップアラウンドを無効化（範囲外なら何もしない）
-        if (col < 0 || col >= COLS) return;
-        
-        const newCol = col;
-        if (newCol === selectedCol) return;
-        
-        const targetRow = getFirstEmptyRow(newCol);
-        
-        // 移動先の列が埋まっている場合は移動不可
-        if (targetRow < 0) return;
-        
-        // プレビューの現在位置を取得
-        if (previewElement) {
-            const { cellSize, gap } = getBoardMetrics();
-            // アニメーション中の実際の位置を取得
-            const currentTop = getCurrentPreviewTop();
-            
-            // currentTopが無効な値、または盤面の外（上）にいる場合は移動を許可
-            if (currentTop === null || isNaN(currentTop) || currentTop < 0) {
-                selectedCol = newCol;
-                updateSelectedColUI();
-                startAutoDrop(true);
-                return;
-            }
-            
-            // プレビューの下端のY座標（タイルの下端）
-            const previewBottomY = currentTop + cellSize;
-            
-            // 経路上の列をチェック（現在の列と移動先の列の間）
-            const fromCol = selectedCol;
-            const toCol = newCol;
-            const step = fromCol < toCol ? 1 : -1;
-            
-            for (let c = fromCol + step; ; c += step) {
-                const emptyRow = getFirstEmptyRow(c);
-                
-                // この列に積まれているタイルがある場合
-                // emptyRow は最下から見て最初の空き行
-                // emptyRow = ROWS-1 (例:5) なら列は完全に空（障害物なし）
-                // emptyRow < ROWS-1 なら何かタイルがある
-                if (emptyRow >= 0 && emptyRow < ROWS - 1) {
-                    // 積まれているタイルの一番上のY座標（タイルの上端）
-                    // emptyRow+1 の行にタイルがある
-                    const stackTopRow = emptyRow + 1;
-                    const stackTopY = stackTopRow * (cellSize + gap);
-                    
-                    // プレビューの下端がスタックの上端以上なら移動不可
-                    // （同じ高さでも衝突とみなす）
-                    if (previewBottomY >= stackTopY) {
-                        return;
-                    }
-                } else if (emptyRow < 0) {
-                    // この列は完全に埋まっている（row 0 にもタイルがある）
-                    // プレビューが盤面内にいる場合は移動不可
-                    const stackTopY = 0;
-                    if (previewBottomY >= stackTopY) {
-                        return;
-                    }
-                }
-                // emptyRow === ROWS - 1 の場合、列は空なのでスキップ
-                
-                if (c === toCol) break;
-            }
-        }
-        
-        selectedCol = newCol;
-        updateSelectedColUI();
-        // 列変更時は現在の高さを維持して落下を継続
-        startAutoDrop(true);
-    }
-
-    async function executeDropFromPreview() {
-        const row = getFirstEmptyRow(selectedCol);
-        if (row < 0) {
-            // 選択列が満杯（6個積まれている）= 7個目が6個目の上に触れた = ゲームオーバー
-            stopAutoDrop();
-            hidePreview();
-            showGameOver();
-            isAnimating = false;
-            return;
-        }
-
-        stopAutoDrop();
-        hidePreview();
-
-        // 落下中の文字を使う（なければnextを使う）
-        const letterToUse = currentDropLetter || next;
-        const tile = createTile(letterToUse);
-        grid[row][selectedCol] = tile;
-
-        // 次のタイルを準備（nextNext を next に、新しい nextNext を生成）
-        next = nextNext;
-        nextNext = randomSpawnLetter();
-        currentDropLetter = null;
-        
-        // 自動落下時も落下アニメーションをスキップ
-        skipDropAnimation = true;
-        render();
-        skipDropAnimation = false;
-
-        // 着地後に少し待ってから合体処理
-        await sleep(LAND_DELAY);
-        await resolveChain();
-
-        if (hasWon && !continueAfterWin) {
-            showClear();
-        } else if (!canDropAny()) {
-            showGameOver();
-        } else {
-            updateNextPreview();
-            updatePreview();
-            showPreview();
-            startAutoDrop();
-        }
-
-        isAnimating = false;
-    }
-
-    function dropAtSelectedCol() {
-        if (!elements?.overlay || elements.overlay.classList.contains('hidden')) return;
-        if (isAnimating) return;
-        if (elements.confirmDialog && !elements.confirmDialog.classList.contains('hidden')) return;
-        if (elements.exitDialog && !elements.exitDialog.classList.contains('hidden')) return;
-        if (elements.gameOverOverlay && !elements.gameOverOverlay.classList.contains('hidden')) return;
-        if (elements.clearOverlay && !elements.clearOverlay.classList.contains('hidden') && !continueAfterWin) return;
-
-        isAnimating = true;
-        dropFromCurrentPosition();
-    }
-
-    function handleKeyDown(e) {
-        if (!elements?.overlay || elements.overlay.classList.contains('hidden')) return;
-
-        if (e.key === 'ArrowLeft') {
-            e.preventDefault();
-            setSelectedCol(selectedCol - 1);
-        } else if (e.key === 'ArrowRight') {
-            e.preventDefault();
-            setSelectedCol(selectedCol + 1);
-        } else if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            dropAtSelectedCol();
-        }
-    }
-
-    function handleBoardTap(e) {
-        if (!elements?.overlay || elements.overlay.classList.contains('hidden')) return;
-        if (isAnimating) return;
-
-        const rect = elements.board.getBoundingClientRect();
-        let clientX;
-        if (e.type === 'touchend' && e.changedTouches) {
-            clientX = e.changedTouches[0].clientX;
-        } else if (e.touches) {
-            clientX = e.touches[0].clientX;
-        } else {
-            clientX = e.clientX;
-        }
-        const x = clientX - rect.left;
-        const { cellSize, gap } = getBoardMetrics();
-        const col = Math.max(0, Math.min(COLS - 1, Math.floor(x / (cellSize + gap))));
-        setSelectedCol(col);
-        dropAtSelectedCol();
-    }
-
-    async function showCountdown() {
-        if (!elements?.countdownOverlay || !elements?.countdownNumber) return;
-        
-        isInCountdown = true;
-        countdownInterrupted = false;
-        elements.countdownOverlay.classList.remove('hidden');
-        
-        for (let i = 3; i >= 1; i--) {
-            // ポーズ中は待機
-            while (isPaused && !countdownInterrupted) {
-                await sleep(100);
-            }
-            if (countdownInterrupted) {
-                isInCountdown = false;
-                return;
-            }
-            
-            elements.countdownNumber.textContent = i;
-            elements.countdownNumber.style.animation = 'none';
-            // リフローを強制してアニメーションをリセット
-            void elements.countdownNumber.offsetWidth;
-            elements.countdownNumber.style.animation = 'countdownPulse 1s ease-in-out';
-            
-            // 1秒待機（ポーズ対応）
-            for (let j = 0; j < 10; j++) {
-                await sleep(100);
-                while (isPaused && !countdownInterrupted) {
-                    await sleep(100);
-                }
-                if (countdownInterrupted) {
-                    isInCountdown = false;
-                    return;
-                }
-            }
-        }
-        
-        elements.countdownOverlay.classList.add('hidden');
-        isInCountdown = false;
-    }
-    
-    async function startGame() {
-        stopAutoDrop();
-        score = 0;
-        hasWon = false;
-        continueAfterWin = false;
-        isAnimating = false;
-        isPaused = false;
-        countdownInterrupted = false;
-        tileIdCounter = 1;
-        selectedCol = Math.floor(COLS / 2);
-        currentDropLetter = null;
-
-        initGrid();
-        clearTileElements();
-        next = randomSpawnLetter();
-        nextNext = randomSpawnLetter();
-
-        if (elements?.score) elements.score.textContent = '0';
-        if (elements?.bestBadge) elements.bestBadge.classList.add('hidden');
-        hideClear();
-        hideGameOver();
-        if (elements?.confirmDialog) elements.confirmDialog.classList.add('hidden');
-        if (elements?.exitDialog) elements.exitDialog.classList.add('hidden');
-
-        updateNextPreview();
-        updateSpeedLevel();
-        render();
-        
-        // カウントダウン
-        await showCountdown();
-        
-        updatePreview();
-        showPreview();
-        startAutoDrop();
-    }
-
-    function continueGame() {
-        continueAfterWin = true;
-        hideClear();
-    }
-
-    function generateGridBg() {
-        const gridBg = document.getElementById('alphabetDropGridBg');
-        if (!gridBg) return;
-        gridBg.innerHTML = '';
-        for (let i = 0; i < COLS * ROWS; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'alphabetdrop-cell-bg';
-            gridBg.appendChild(cell);
-        }
-    }
-
-    function init() {
-        elements = {
-            overlay: document.getElementById('alphabetDropOverlay'),
-            board: document.getElementById('alphabetDropBoard'),
-            gridBg: document.getElementById('alphabetDropGridBg'),
-            tiles: document.getElementById('alphabetDropTiles'),
-            score: document.getElementById('alphabetDropScore'),
-            best: document.getElementById('alphabetDropBest'),
-            bestBadge: document.getElementById('alphabetDropBestBadge'),
-            nextTile: document.getElementById('alphabetDropNextTile'),
-            speedLevel: document.getElementById('alphabetDropSpeedLevel'),
-            selectedCol: document.getElementById('alphabetDropSelectedCol'),
-            colHighlight: document.getElementById('alphabetDropColHighlight'),
-            clearOverlay: document.getElementById('alphabetDropClear'),
-            gameOverOverlay: document.getElementById('alphabetDropGameOver'),
-            countdownOverlay: document.getElementById('alphabetDropCountdown'),
-            countdownNumber: document.getElementById('alphabetDropCountdownNumber'),
-            finalScore: document.getElementById('alphabetDropFinalScore'),
-            continueBtn: document.getElementById('alphabetDropContinueBtn'),
-            restartBtn: document.getElementById('alphabetDropRestartBtn'),
-            homeBtn: document.getElementById('alphabetDropHomeBtn'),
-            closeBtn: document.getElementById('alphabetDropCloseBtn'),
-            newBtn: document.getElementById('alphabetDropNewBtn'),
-            confirmDialog: document.getElementById('alphabetDropConfirmDialog'),
-            confirmStart: document.getElementById('alphabetDropConfirmStart'),
-            confirmCancel: document.getElementById('alphabetDropConfirmCancel'),
-            exitDialog: document.getElementById('alphabetDropExitDialog'),
-            exitContinue: document.getElementById('alphabetDropExitContinue'),
-            exitQuit: document.getElementById('alphabetDropExitQuit')
-        };
-
-        generateGridBg();
-        loadBestScore();
-
-        if (!initialized) {
-            initialized = true;
-            document.addEventListener('keydown', handleKeyDown);
-            elements.board.addEventListener('touchend', handleBoardTap, { passive: true });
-
-            elements.closeBtn.addEventListener('click', () => {
-                isPaused = true; // ポーズ状態に
-                stopAutoDrop(); // 一時停止
-                // プレビューのアニメーションも停止
-                if (previewElement) {
-                    const currentTop = getComputedStyle(previewElement).top;
-                    previewElement.style.transition = 'none';
-                    previewElement.style.top = currentTop;
-                }
-                elements.exitDialog.classList.remove('hidden');
-            });
-            elements.exitContinue.addEventListener('click', () => {
-                elements.exitDialog.classList.add('hidden');
-                isPaused = false; // ポーズ解除
-                if (!isInCountdown) {
-                    startAutoDrop(true); // 現在位置から再開
-                }
-            });
-            elements.exitQuit.addEventListener('click', () => {
-                isPaused = false;
-                countdownInterrupted = true; // カウントダウンを中断
-                stopAutoDrop();
-                elements.exitDialog.classList.add('hidden');
-                elements.countdownOverlay.classList.add('hidden');
-                elements.overlay.classList.add('hidden');
-                const menu = document.getElementById('minigameMenuOverlay');
-                if (menu) menu.classList.remove('hidden');
-                setStatusBarColor('#1d4ed8'); // メニューヘッダーは青
-            });
-
-            elements.newBtn.addEventListener('click', () => {
-                elements.confirmDialog.classList.remove('hidden');
-            });
-            elements.confirmStart.addEventListener('click', () => {
-                elements.confirmDialog.classList.add('hidden');
-                startGame();
-            });
-            elements.confirmCancel.addEventListener('click', () => {
-                elements.confirmDialog.classList.add('hidden');
-            });
-
-            elements.continueBtn.addEventListener('click', continueGame);
-            elements.restartBtn.addEventListener('click', startGame);
-            elements.homeBtn.addEventListener('click', () => {
-                elements.gameOverOverlay.classList.add('hidden');
-                elements.overlay.classList.add('hidden');
-                animateCardShrink('minigameCardBtn');
-                setStatusBarColor('#1d4ed8'); // ホーム画面は青
-            });
-        }
-
-        startGame();
-    }
-
-    return { init, startGame };
-})();
-
-// ミニゲームボタンのイベントリスナー
-document.addEventListener('DOMContentLoaded', () => {
-    const minigameBtn = document.getElementById('minigameCardBtn');
-    const minigameMenuOverlay = document.getElementById('minigameMenuOverlay');
-    const minigameMenuBackBtn = document.getElementById('minigameMenuBackBtn');
-    const minigameAtoZBtn = document.getElementById('minigameAtoZBtn');
-    const minigameAtoZDropBtn = document.getElementById('minigameAtoZDropBtn');
-    const alphabet2048Overlay = document.getElementById('alphabet2048Overlay');
-    const alphabetDropOverlay = document.getElementById('alphabetDropOverlay');
-    
-    // メニュー表示時にBESTスコアを更新する関数
-    function updateMinigameMenuBestScores() {
-        const atozBestEl = document.getElementById('minigameAtoZBest');
-        const atozDropBestEl = document.getElementById('minigameAtoZDropBest');
-        
-        if (atozBestEl) {
-            const atozBest = parseInt(localStorage.getItem('alphabet2048BestScore') || '0', 10);
-            atozBestEl.textContent = atozBest.toLocaleString();
-        }
-        if (atozDropBestEl) {
-            const atozDropBest = parseInt(localStorage.getItem('alphabetDropBestScore') || '0', 10);
-            atozDropBestEl.textContent = atozDropBest.toLocaleString();
-        }
-    }
-    
-    // ミニゲームボタン → メニュー表示
-    if (minigameBtn && minigameMenuOverlay) {
-        minigameBtn.addEventListener('click', () => {
-            animateCardExpand(minigameBtn, '#f8fafc', () => {
-                updateMinigameMenuBestScores();
-                minigameMenuOverlay.classList.remove('hidden');
-                setStatusBarColor('#1d4ed8'); // メニューヘッダーは青
-            });
-        });
-    }
-    
-    // メニュー戻るボタン
-    if (minigameMenuBackBtn && minigameMenuOverlay) {
-        minigameMenuBackBtn.addEventListener('click', () => {
-            minigameMenuOverlay.classList.add('hidden');
-            animateCardShrink('minigameCardBtn');
-            setStatusBarColor('#1d4ed8'); // ホーム画面は青
-        });
-    }
-    
-    // A to Z ゲーム選択
-    if (minigameAtoZBtn && alphabet2048Overlay && minigameMenuOverlay) {
-        minigameAtoZBtn.addEventListener('click', () => {
-            minigameMenuOverlay.classList.add('hidden');
-            alphabet2048Overlay.classList.remove('hidden');
-            setStatusBarColor('#1e293b'); // ヘッダーの色
-            Alphabet2048.init();
-        });
-    }
-
-    // A to Z Drop ゲーム選択
-    if (minigameAtoZDropBtn && alphabetDropOverlay && minigameMenuOverlay) {
-        minigameAtoZDropBtn.addEventListener('click', () => {
-            minigameMenuOverlay.classList.add('hidden');
-            alphabetDropOverlay.classList.remove('hidden');
-            setStatusBarColor('#1e293b'); // ヘッダーの色
-            AlphabetDrop.init();
-        });
-    }
-});
 
