@@ -7530,7 +7530,7 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-scroll.all-words-mode.compact-mode .input-list-expand-word {
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .input-list-scroll.all-words-mode.compact-mode .input-list-expand-meaning {
@@ -8256,7 +8256,9 @@ body.choice-question-mode-active .word-card-container {
     flex: 1;
     background: #ffffff;
     padding: 6px 8px;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     text-align: left;
 }
 
@@ -8298,7 +8300,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* コンパクト時：2行目に英単語 */
 .input-list-scroll.compact-mode .input-list-expand-word {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
     color: #0369a1;
     margin: 0;
@@ -8307,12 +8309,12 @@ body.choice-question-mode-active .word-card-container {
     display: block;
 }
 
-/* コンパクト時の意味 */
+/* コンパクト時の意味（上下中央） */
 .input-list-scroll.compact-mode .expand-meaning-text {
     font-size: 14px;
     color: #ff9933;
     font-weight: 600;
-    flex: 1;
+    flex: 0 0 auto;
     text-align: left;
 }
 
