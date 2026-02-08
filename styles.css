@@ -5306,6 +5306,8 @@ body.quiz-test-mode .progress-top-row {
     text-align: center;
     font-size: 14px;
     font-weight: 700;
+    font-family: "Barlow Condensed", "Oswald", "DIN Condensed", sans-serif;
+    letter-spacing: 0.5px;
 }
 
 .unit-header-actions {
@@ -6927,6 +6929,11 @@ body.choice-question-mode-active .word-card-container {
     color: #be185d;
 }
 
+.flip-card-pos-pronoun {
+    background: #ffe4e6;
+    color: #e11d48;
+}
+
 .flip-card-pos-verb {
     background: #bfdbfe;
     color: #1d4ed8;
@@ -6945,6 +6952,26 @@ body.choice-question-mode-active .word-card-container {
 .flip-card-pos-other {
     background: #e5e7eb;
     color: #475569;
+}
+
+.flip-card-pos-auxiliary {
+    background: #fed7aa;
+    color: #c2410c;
+}
+
+.flip-card-pos-conjunction {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.flip-card-pos-preposition {
+    background: #ccfbf1;
+    color: #0d9488;
+}
+
+.flip-card-pos-article {
+    background: #e0e7ff;
+    color: #4f46e5;
 }
 
 /* スワイプアウトアニメーション（弧を小さめに） */
@@ -8859,10 +8886,16 @@ body.choice-question-mode-active .word-card-container {
     color: #475569;
 }
 
-/* 名詞・代名詞：薄い赤 */
+/* 名詞：薄いピンク */
 .expand-left-pos-noun {
     background: #fce7f3;
     color: #be185d;
+}
+
+/* 代名詞：薄いローズ */
+.expand-left-pos-pronoun {
+    background: #ffe4e6;
+    color: #e11d48;
 }
 
 /* 動詞：薄い青 */
@@ -8887,6 +8920,30 @@ body.choice-question-mode-active .word-card-container {
 .expand-left-pos-other {
     background: #e5e7eb;
     color: #475569;
+}
+
+/* 助動詞：オレンジ */
+.expand-left-pos-auxiliary {
+    background: #fed7aa;
+    color: #c2410c;
+}
+
+/* 接続詞：イエロー */
+.expand-left-pos-conjunction {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+/* 前置詞：ティール */
+.expand-left-pos-preposition {
+    background: #ccfbf1;
+    color: #0d9488;
+}
+
+/* 冠詞：インディゴ */
+.expand-left-pos-article {
+    background: #e0e7ff;
+    color: #4f46e5;
 }
 
 /* 英単語 */
@@ -10917,6 +10974,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 .part-of-speech.adjective { background-color: #f3f4f6; color: #6b7280; }
 .part-of-speech.adverb { background-color: #f3f4f6; color: #6b7280; }
 .part-of-speech.other { background-color: #f3f4f6; color: #6b7280; }
+.part-of-speech.auxiliary { background-color: #fed7aa; color: #c2410c; }
+.part-of-speech.pronoun { background-color: #ffe4e6; color: #e11d48; }
+.part-of-speech.conjunction { background-color: #fef3c7; color: #b45309; }
+.part-of-speech.preposition { background-color: #ccfbf1; color: #0d9488; }
+.part-of-speech.article { background-color: #e0e7ff; color: #4f46e5; }
 
 .pos-container {
     display: flex;

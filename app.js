@@ -8479,7 +8479,9 @@ function setupEventListeners() {
                     // レベル別の細分化メニューから来た場合は、細分化メニューに戻る
                     if (window.currentSubcategoryParent && (window.currentSubcategoryParent === 'レベル１ 初級500語' || 
                         window.currentSubcategoryParent === 'レベル２ 中級500語' || 
-                        window.currentSubcategoryParent === 'レベル３ 上級500語')) {
+                        window.currentSubcategoryParent === 'レベル３ 上級500語' ||
+                        window.currentSubcategoryParent === 'レベル４ 難関300語' ||
+                        window.currentSubcategoryParent === 'レベル５ 最難関100語')) {
                         elements.mainContent.classList.add('hidden');
                         showLevelSubcategorySelection(window.currentSubcategoryParent, true);
                         return;
@@ -10192,10 +10194,15 @@ function toPosShortFromMeaningTag(tag) {
 
 function getPosClassFromPosShort(posShort) {
     if (!posShort) return 'other';
+    if (posShort.includes('助')) return 'auxiliary';
     if (posShort.includes('動')) return 'verb';
+    if (posShort.includes('代')) return 'pronoun';
     if (posShort.includes('名')) return 'noun';
     if (posShort.includes('形')) return 'adjective';
     if (posShort.includes('副')) return 'adverb';
+    if (posShort.includes('接')) return 'conjunction';
+    if (posShort.includes('前')) return 'preposition';
+    if (posShort.includes('冠')) return 'article';
     return 'other';
 }
 
@@ -10293,11 +10300,16 @@ function extractConjugationFromText(rawText) {
 
 function getPosLabelKind(partOfSpeechText) {
     const t = String(partOfSpeechText || '');
-    // 動詞/形容詞/副詞が含まれる場合はそれを優先。それ以外は名詞/代名詞→その他
+    // 助動詞/動詞/形容詞/副詞が含まれる場合はそれを優先。それ以外は代名詞/名詞→その他
+    if (t.includes('助動詞')) return 'auxiliary';
     if (t.includes('動詞')) return 'verb';
     if (t.includes('形容詞')) return 'adjective';
     if (t.includes('副詞')) return 'adverb';
-    if (t.includes('名詞') || t.includes('代名詞')) return 'noun';
+    if (t.includes('代名詞')) return 'pronoun';
+    if (t.includes('名詞')) return 'noun';
+    if (t.includes('接続詞')) return 'conjunction';
+    if (t.includes('前置詞')) return 'preposition';
+    if (t.includes('冠詞')) return 'article';
     return 'other';
 }
 
@@ -10316,12 +10328,12 @@ function toShortPosFromPartOfSpeech(part) {
     if (!t) return '';
     if (t.includes('代名詞')) return '代';
     if (t.includes('名詞')) return '名';
+    if (t.includes('助動詞')) return '助';
     if (t.includes('動詞')) return '動';
     if (t.includes('形容詞')) return '形';
     if (t.includes('副詞')) return '副';
     if (t.includes('前置詞')) return '前';
     if (t.includes('接続詞')) return '接';
-    if (t.includes('助動詞')) return '助';
     if (t.includes('冠詞')) return '冠';
     if (t.includes('間投詞')) return '間';
     if (t.includes('疑問詞')) return '疑';
@@ -10915,7 +10927,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         // 番号（先に追加）
         const number = document.createElement('span');
         number.className = 'input-list-expand-number';
-        number.textContent = String(word.id).padStart(5, '0');
+        number.textContent = String(word.id).padStart(4, '0');
         if (!skipProgress) {
             if (isWrong) {
                 number.classList.add('marker-wrong');
@@ -11150,11 +11162,11 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         
         const numberFront = document.createElement('span');
         numberFront.className = 'input-list-number';
-        numberFront.textContent = String(word.id).padStart(5, '0');
+        numberFront.textContent = String(word.id).padStart(4, '0');
         
         const numberBack = document.createElement('span');
         numberBack.className = 'input-list-number';
-        numberBack.textContent = String(word.id).padStart(5, '0');
+        numberBack.textContent = String(word.id).padStart(4, '0');
         
         let isCorrect = false, isWrong = false;
         
@@ -11988,7 +12000,7 @@ function renderInputListView(words) {
             // 番号（先に追加）
             const number = document.createElement('span');
             number.className = 'input-list-expand-number';
-            number.textContent = String(word.id).padStart(5, '0');
+            number.textContent = String(word.id).padStart(4, '0');
             if (isWrong) {
                 number.classList.add('marker-wrong');
             } else if (isCorrect) {
@@ -12211,11 +12223,11 @@ function renderInputListView(words) {
             
             const numberFront = document.createElement('span');
             numberFront.className = 'input-list-number';
-            numberFront.textContent = String(word.id).padStart(5, '0');
+            numberFront.textContent = String(word.id).padStart(4, '0');
             
             const numberBack = document.createElement('span');
             numberBack.className = 'input-list-number';
-            numberBack.textContent = String(word.id).padStart(5, '0');
+            numberBack.textContent = String(word.id).padStart(4, '0');
             
             // 進捗を取得
             let isCorrectFlip, isWrongFlip;
@@ -20944,7 +20956,8 @@ function exitHWQuiz() {
     
     // 細分化メニュー画面に戻る
     const parent = window.currentSubcategoryParent;
-    if (parent === 'レベル１ 初級500語' || parent === 'レベル２ 中級500語' || parent === 'レベル３ 上級500語') {
+    if (parent === 'レベル１ 初級500語' || parent === 'レベル２ 中級500語' || parent === 'レベル３ 上級500語' ||
+        parent === 'レベル４ 難関300語' || parent === 'レベル５ 最難関100語') {
         showLevelSubcategorySelection(parent, true);
     } else if (parent === '入門600語') {
         showElementaryCategorySelection(true);
