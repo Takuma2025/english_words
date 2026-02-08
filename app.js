@@ -4707,7 +4707,7 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         // 単語番号の範囲
         const startWordNum = startIdx + 1;
         const endWordNum = endIdx;
-        const rangeLabel = `${formatWordNumber(startWordNum)}-${formatWordNumber(endWordNum)}語`;
+        const rangeLabel = `No.${formatWordNumber(startWordNum)}-${formatWordNumber(endWordNum)}`;
         const subcatKey = `LEVEL${levelNum}_${startWordNum}-${endWordNum}`;
         
         // 進捗を計算
@@ -4790,7 +4790,7 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                             <text x="12" y="13" text-anchor="middle" fill="${badgeColor}" font-size="9" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${i + 1}</text>
                         </svg>
-                        <span class="subcat-range-label">${rangeLabel}</span>
+                        <span class="subcat-range-label" style="color: ${badgeColor}">${rangeLabel}</span>
                     </div>
                 </div>
                 <div class="category-progress">
@@ -5000,8 +5000,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         courseTitle.innerHTML = '<span class="level-badge level-badge-purple">Level<b>4</b></span> 難関300語';
     } else if (parentCategory === 'レベル５ 最難関100語') {
         levelNum = 5;
-        badgeColor = '#1f2937';
-        badgeBgColor = '#e5e7eb';
+        badgeColor = '#4338ca';
+        badgeBgColor = '#e0e7ff';
         badgeClass = 'level-badge-dark';
         description = '最難関レベルの単語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge level-badge-dark">Level<b>5</b></span> 最難関100語';
