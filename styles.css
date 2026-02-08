@@ -7060,6 +7060,7 @@ body.choice-question-mode-active .word-card-container {
     color: #0f766e;
 }
 
+/* 前置詞：薄い青背景でも見えるよう黄緑系 */
 .flip-card-pos-preposition {
     background: #ecfccb;
     color: #65a30d;
@@ -8241,7 +8242,7 @@ body.choice-question-mode-active .word-card-container {
     flex: 0 0 45%;
     max-width: 45%;
     padding: 6px 8px;
-    background: #e0f2fe;
+    background: #f0f9ff;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -8873,7 +8874,7 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    background: #e0f2fe;
+    background: #f0f9ff;
     position: relative;
 }
 
@@ -9030,7 +9031,7 @@ body.choice-question-mode-active .word-card-container {
     color: #0f766e;
 }
 
-/* 前置詞：黄緑 */
+/* 前置詞：黄緑（薄い青背景に溶けないよう） */
 .expand-left-pos-preposition {
     background: #ecfccb;
     color: #65a30d;

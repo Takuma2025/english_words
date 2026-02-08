@@ -1,15 +1,3 @@
-// グローバルエラーハンドラ（クラッシュ防止）
-window.onerror = function(message, source, lineno, colno, error) {
-    console.error('Global error:', { message, source, lineno, colno, error });
-    // エラーをキャッチして、アプリがクラッシュしないようにする
-    return true;
-};
-
-window.addEventListener('unhandledrejection', function(event) {
-    console.error('Unhandled promise rejection:', event.reason);
-    event.preventDefault();
-});
-
 // ステータスバーの色を変更する関数
 function setStatusBarColor(color) {
     let themeColor = document.querySelector('meta[name="theme-color"]');
@@ -12498,164 +12486,93 @@ function setupInputListModeToggle() {
     
     if (!flipBtn || !expandBtn) return;
     
-    // モード切り替え中の連打防止フラグ（グローバルスコープで共有）
-    let modeToggleProcessing = false;
-    let modeToggleTimeoutId = null;
-    
-    const safeResetProcessing = () => {
-        if (modeToggleTimeoutId) {
-            clearTimeout(modeToggleTimeoutId);
-        }
-        modeToggleTimeoutId = setTimeout(() => {
-            modeToggleProcessing = false;
-            modeToggleTimeoutId = null;
-        }, 300);
-    };
-    
     flipBtn.addEventListener('click', () => {
         if (inputListViewMode === 'flip') return;
-        if (modeToggleProcessing) return;
-        modeToggleProcessing = true;
-        
-        try {
-            inputListViewMode = 'flip';
-            flipBtn.classList.add('active');
-            expandBtn.classList.remove('active');
-            updateRedSheetToggleVisibility();
-            // すべてめくるボタンを表示・ラベルをリセット
-            if (flipAllBtn) {
-                flipAllBtn.classList.remove('hidden');
-                const btnLabel = flipAllBtn.querySelector('.btn-label');
-                if (btnLabel) btnLabel.textContent = 'A→あ';
-            }
-            // コンパクト表示トグルを非表示（カードモードでは不要）
-            const compactBtn = document.getElementById('compactModeToggleBtn');
-            if (compactBtn) compactBtn.classList.add('hidden');
-            
-            // フィルターを適用して再描画（絞り込み状態を保持）
-            applyInputFilter();
-        } catch (e) {
-            console.error('flipBtn click error:', e);
+        inputListViewMode = 'flip';
+        flipBtn.classList.add('active');
+        expandBtn.classList.remove('active');
+        updateRedSheetToggleVisibility();
+        // すべてめくるボタンを表示・ラベルをリセット
+        if (flipAllBtn) {
+            flipAllBtn.classList.remove('hidden');
+            const btnLabel = flipAllBtn.querySelector('.btn-label');
+            if (btnLabel) btnLabel.textContent = 'A→あ';
         }
+        // コンパクト表示トグルを非表示（カードモードでは不要）
+        const compactBtn = document.getElementById('compactModeToggleBtn');
+        if (compactBtn) compactBtn.classList.add('hidden');
         
-        // 連打防止解除
-        safeResetProcessing();
+        // フィルターを適用して再描画（絞り込み状態を保持）
+        applyInputFilter();
     });
     
     expandBtn.addEventListener('click', () => {
         if (inputListViewMode === 'expand') return;
-        if (modeToggleProcessing) return;
-        modeToggleProcessing = true;
+        inputListViewMode = 'expand';
+        expandBtn.classList.add('active');
+        flipBtn.classList.remove('active');
+        updateRedSheetToggleVisibility();
+        // すべてめくるボタンを非表示
+        if (flipAllBtn) flipAllBtn.classList.add('hidden');
+        // コンパクト表示トグルを表示
+        const compactBtn = document.getElementById('compactModeToggleBtn');
+        if (compactBtn) compactBtn.classList.remove('hidden');
         
-        try {
-            inputListViewMode = 'expand';
-            expandBtn.classList.add('active');
-            flipBtn.classList.remove('active');
-            updateRedSheetToggleVisibility();
-            // すべてめくるボタンを非表示
-            if (flipAllBtn) flipAllBtn.classList.add('hidden');
-            // コンパクト表示トグルを表示
-            const compactBtn = document.getElementById('compactModeToggleBtn');
-            if (compactBtn) compactBtn.classList.remove('hidden');
-            
-            // 現在の単語リストを再描画（フィルターを適用）
-            applyInputFilter();
-        } catch (e) {
-            console.error('expandBtn click error:', e);
-        }
-        
-        // 連打防止解除
-        safeResetProcessing();
+        // 現在の単語リストを再描画（フィルターを適用）
+        applyInputFilter();
     });
     
-    // すべてめくるボタンのイベント（連打防止付き）
+    // すべてめくるボタンのイベント
     if (flipAllBtn) {
-        let flipAllProcessing = false;
-        let flipAllRafId = null;
-        let flipAllTimeoutId = null;
-        
-        const safeResetFlipProcessing = () => {
-            if (flipAllTimeoutId) {
-                clearTimeout(flipAllTimeoutId);
-            }
-            flipAllTimeoutId = setTimeout(() => {
-                flipAllProcessing = false;
-                flipAllTimeoutId = null;
-            }, 150);
-        };
-        
         flipAllBtn.addEventListener('click', () => {
-            // 連打防止: 処理中は無視
-            if (flipAllProcessing) return;
-            
-            try {
-                const container = document.getElementById('inputListContainer');
-                if (!container) return;
-                const btnLabel = flipAllBtn.querySelector('.btn-label');
+            const container = document.getElementById('inputListContainer');
+            if (!container) return;
+            const btnLabel = flipAllBtn.querySelector('.btn-label');
 
-                // デッキ表示のときはメインカード＋スタックをまとめてめくる動きで切り替え
-                if (container.classList.contains('flip-deck-mode')) {
-                    flipAllProcessing = true;
-                    inputFlipDeckAllFlipped = !inputFlipDeckAllFlipped;
-                    container.classList.toggle('deck-flipped', inputFlipDeckAllFlipped);
-                    const currentItem = container.querySelector('.flip-deck-host .input-list-item');
-                    if (currentItem) {
-                        // 以前の未処理のrAFをキャンセル
-                        if (flipAllRafId !== null) {
-                            cancelAnimationFrame(flipAllRafId);
-                        }
-                        flipAllRafId = requestAnimationFrame(() => {
-                            try {
-                                if (inputFlipDeckAllFlipped) {
-                                    currentItem.classList.add('flipped');
-                                } else {
-                                    currentItem.classList.remove('flipped');
-                                }
-                            } catch (e) {
-                                console.error('flipAllBtn rAF error:', e);
+            // デッキ表示のときはメインカード＋スタックをまとめてめくる動きで切り替え
+            if (container.classList.contains('flip-deck-mode')) {
+                inputFlipDeckAllFlipped = !inputFlipDeckAllFlipped;
+                container.classList.toggle('deck-flipped', inputFlipDeckAllFlipped);
+                const currentItem = container.querySelector('.flip-deck-host .input-list-item');
+                if (currentItem) {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            if (inputFlipDeckAllFlipped) {
+                                currentItem.classList.add('flipped');
+                            } else {
+                                currentItem.classList.remove('flipped');
                             }
-                            flipAllRafId = null;
-                            safeResetFlipProcessing();
                         });
-                    } else {
-                        safeResetFlipProcessing();
-                    }
-                    if (btnLabel) {
-                        btnLabel.textContent = inputFlipDeckAllFlipped ? 'あ→A' : 'A→あ';
-                    }
-                    return;
+                    });
                 }
-
-                // リスト表示モード
-                flipAllProcessing = true;
-                const items = container.querySelectorAll('.input-list-item');
-                
-                // 現在の状態を確認（最初のアイテムで判断）
-                const firstItem = items[0];
-                const isCurrentlyFlipped = firstItem && firstItem.classList.contains('flipped');
-                
-                items.forEach(item => {
-                    if (isCurrentlyFlipped) {
-                        item.classList.remove('flipped');
-                    } else {
-                        item.classList.add('flipped');
-                    }
-                });
-                
-                // ボタンのラベルを切り替え
                 if (btnLabel) {
-                    if (isCurrentlyFlipped) {
-                        btnLabel.textContent = 'A→あ';
-                    } else {
-                        btnLabel.textContent = 'あ→A';
-                    }
+                    btnLabel.textContent = inputFlipDeckAllFlipped ? 'あ→A' : 'A→あ';
                 }
-            } catch (e) {
-                console.error('flipAllBtn click error:', e);
+                return;
             }
+
+            const items = container.querySelectorAll('.input-list-item');
             
-            // 処理完了後に少し遅延を入れて連打を防止
-            safeResetFlipProcessing();
+            // 現在の状態を確認（最初のアイテムで判断）
+            const firstItem = items[0];
+            const isCurrentlyFlipped = firstItem && firstItem.classList.contains('flipped');
+            
+            items.forEach(item => {
+                if (isCurrentlyFlipped) {
+                    item.classList.remove('flipped');
+                } else {
+                    item.classList.add('flipped');
+                }
+            });
+            
+            // ボタンのラベルを切り替え
+            if (btnLabel) {
+                if (isCurrentlyFlipped) {
+                    btnLabel.textContent = 'A→あ';
+                } else {
+                    btnLabel.textContent = 'あ→A';
+                }
+            }
         });
     }
 }
