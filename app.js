@@ -4704,11 +4704,11 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         const words = levelWords.slice(startIdx, endIdx);
         const wordCount = words.length;
         
-        // 単語番号の範囲
-        const startWordNum = startIdx + 1;
-        const endWordNum = endIdx;
-        const rangeLabel = `No.${formatWordNumber(startWordNum)}-${formatWordNumber(endWordNum)}`;
-        const subcatKey = `LEVEL${levelNum}_${startWordNum}-${endWordNum}`;
+        // 単語番号の範囲（実際の単語IDを使用）
+        const firstId = wordCount > 0 ? words[0].id : startIdx + 1;
+        const lastId = wordCount > 0 ? words[wordCount - 1].id : endIdx;
+        const rangeLabel = `No.${formatWordNumber(firstId)}-${formatWordNumber(lastId)}`;
+        const subcatKey = `LEVEL${levelNum}_${firstId}-${lastId}`;
         
         // 進捗を計算
         let correctCount = 0;
@@ -4786,11 +4786,14 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
             <div class="category-info">
                 <div class="category-header">
                     <div class="category-name">
-                        <svg class="file-icon-with-number" width="32" height="32" viewBox="0 0 24 24" fill="${badgeBgColor}" stroke="none" style="margin-right: 8px;">
-                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                            <text x="12" y="13" text-anchor="middle" fill="${badgeColor}" font-size="9" font-weight="bold" stroke="none" style="font-family: Arial, sans-serif; dominant-baseline: central;">${i + 1}</text>
-                        </svg>
-                        <span class="subcat-range-label" style="color: ${badgeColor}">${rangeLabel}</span>
+                        <div class="subcat-badge" style="background: ${badgeColor}">
+                            <span class="subcat-badge-num">${i + 1}</span>
+                        </div>
+                        <div class="subcat-range-block">
+                            <span class="subcat-range-no" style="color: ${badgeColor}">No.</span>
+                            <span class="subcat-range-nums" style="color: ${badgeColor}">${firstId}<span class="subcat-range-sep">-</span>${lastId}</span>
+                        </div>
+                        <span class="subcat-word-count" style="background: ${badgeBgColor}; color: ${badgeColor}">${wordCount}語</span>
                     </div>
                 </div>
                 <div class="category-progress">
@@ -15284,15 +15287,21 @@ function updateProgressNavButtons(total) {
     }
 }
 
-// 進捗バーの表示範囲テキストを更新
+// 進捗バーの表示範囲テキストを更新（単語番号＝IDで表示）
 function updateProgressRangeText(total) {
     const rangeText = document.getElementById('progressRangeText');
     if (!rangeText) return;
     
-    const displayStart = progressBarStartIndex + 1; // 1から始まる番号
-    const displayEnd = Math.min(progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT, total);
-    
-    rangeText.textContent = `No.${displayStart}-${displayEnd}`;
+    if (currentWords && currentWords.length > 0) {
+        const endIdx = Math.min(progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT, total);
+        const startId = currentWords[progressBarStartIndex].id;
+        const endId = currentWords[endIdx - 1].id;
+        rangeText.textContent = `No.${startId}-${endId}`;
+    } else {
+        const displayStart = progressBarStartIndex + 1;
+        const displayEnd = Math.min(progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT, total);
+        rangeText.textContent = `No.${displayStart}-${displayEnd}`;
+    }
 }
 
 // 進捗バーを左にスクロール

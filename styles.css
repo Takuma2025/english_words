@@ -21412,10 +21412,61 @@ div#inputWordCheckbox,
     }
 }
 
-/* サブカテゴリーカードの単語範囲ラベル */
-.subcat-range-label {
-    font-family: "Barlow Condensed", "Oswald", "DIN Condensed", sans-serif;
-    font-weight: 600;
-    font-size: 17px;
+/* サブカテゴリーカードのデザイン */
+.subcat-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.subcat-badge-num {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+}
+
+.subcat-range-block {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    margin-left: 10px;
+}
+
+.subcat-range-no {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.7;
+    line-height: 1;
+}
+
+.subcat-range-nums {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
     letter-spacing: 0.5px;
+    line-height: 1;
+}
+
+.subcat-range-sep {
+    font-weight: 400;
+    opacity: 0.5;
+    margin: 0 1px;
+}
+
+.subcat-word-count {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: auto;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
 }
