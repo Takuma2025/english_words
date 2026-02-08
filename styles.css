@@ -7060,7 +7060,6 @@ body.choice-question-mode-active .word-card-container {
     color: #0f766e;
 }
 
-/* 前置詞：薄い青背景でも見えるよう黄緑系 */
 .flip-card-pos-preposition {
     background: #ecfccb;
     color: #65a30d;
@@ -9031,7 +9030,7 @@ body.choice-question-mode-active .word-card-container {
     color: #0f766e;
 }
 
-/* 前置詞：黄緑（薄い青背景に溶けないよう） */
+/* 前置詞：黄緑 */
 .expand-left-pos-preposition {
     background: #ecfccb;
     color: #65a30d;
