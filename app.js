@@ -4834,14 +4834,14 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
             <div class="category-info">
                 <div class="category-header">
                     <div class="category-name">
-                        <div class="subcat-card-face" style="--badge-color: ${badgeColor}">
-                            <div class="subcat-card-hole"></div>
-                            <div class="subcat-card-range">
-                                <span class="subcat-range-no">No.</span>
-                                <span class="subcat-range-nums">${firstId}<span class="subcat-range-sep">-</span>${lastId}</span>
-                            </div>
-                            <span class="subcat-word-count" style="background: ${badgeBgColor}; color: ${badgeColor}">${wordCount}語</span>
+                        <div class="subcat-badge" style="background: ${badgeColor}">
+                            <span class="subcat-badge-num">${i + 1}</span>
                         </div>
+                        <div class="subcat-range-block">
+                            <span class="subcat-range-no" style="color: ${badgeColor}">No.</span>
+                            <span class="subcat-range-nums" style="color: ${badgeColor}">${firstId}<span class="subcat-range-sep">-</span>${lastId}</span>
+                        </div>
+                        <span class="subcat-word-count" style="background: ${badgeBgColor}; color: ${badgeColor}">${wordCount}語</span>
                     </div>
                 </div>
                 <div class="category-progress">
