@@ -5253,6 +5253,15 @@ body.quiz-test-mode .unit-header-container {
     margin-bottom: 0;
 }
 
+/* テストの4択モード時は画面全体の背景を白に（4択クイズ・四択問題どちらも） */
+body.quiz-test-mode .app-container,
+body.quiz-test-mode .app-main,
+body.quiz-test-mode .learning-view,
+body.quiz-test-mode .card-area-wrapper,
+body.quiz-test-mode .word-card-container {
+    background: #ffffff !important;
+}
+
 body.quiz-test-mode .unit-header-container .unit-name,
 body.quiz-test-mode .unit-header-container .input-back-btn,
 body.quiz-test-mode .unit-header-container .hw-back-btn,
@@ -7600,10 +7609,8 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
 }
 
-/* メモボタンを右寄せ（メモ用紙・英語→日本語・赤シートを右側に配置） */
-.input-list-controls-row .compact-mode-toggle-btn {
-    margin-left: auto;
-}
+/* ツールバーのボタンはすべて左揃え（ランダム・フィルター・コンパクト・赤シート・A→あ） */
+/* （compact-mode-toggle-btn の margin-left: auto は削除済み） */
 
 /* 単語カードモードの時は非表示 */
 .input-list-controls-row .red-sheet-toggle.hidden {
@@ -8987,13 +8994,14 @@ body.choice-question-mode-active .word-card-container {
     gap: 4px;
 }
 
+/* 用例バッジ：「例」の背景は薄い青、文字は展開モードの英単語と同じ青 */
 .expand-example-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 1px 4px;
-    background: #0369a1;
-    color: #ffffff;
+    background: #bae6fd;  /* 薄い青 */
+    color: #0369a1;     /* 展開モード英単語と同じ */
     font-size: 9px;
     font-weight: 400;
     border-radius: 2px;
@@ -9033,12 +9041,13 @@ body.choice-question-mode-active .word-card-container {
     font-size: 10px;
 }
 
+/* 活バッジ：背景 #0369a1、文字白 */
 .expand-conjugation-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 1px 4px;
-    background: #a78bfa;
+    background: #0369a1;
     color: #ffffff;
     font-size: 9px;
     font-weight: 400;
