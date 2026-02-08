@@ -8239,16 +8239,17 @@ body.choice-question-mode-active .word-card-container {
     border-bottom: 1px solid #0055ca;
 }
 
-/* コンパクト時も2カラム維持 */
+/* コンパクト時も2カラム維持（左は品詞→英単語の2行） */
 .input-list-scroll.compact-mode .expand-left-col {
     flex: 0 0 45%;
     max-width: 45%;
     padding: 6px 8px;
     background: #f0f9ff;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
 }
 
 .input-list-scroll.compact-mode .expand-right-col {
@@ -8261,15 +8262,18 @@ body.choice-question-mode-active .word-card-container {
 
 .input-list-scroll.compact-mode .expand-left-top {
     display: flex;
-    align-items: center;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    min-height: 18px;
     height: 18px;
     margin-bottom: 0;
+    gap: 0;
 }
 
 /* コンパクト時の番号 */
 .input-list-scroll.compact-mode .input-list-expand-number {
     font-size: 9px;
-    padding: 0 5px;
+    padding: 0 4px;
     height: 100%;
 }
 
@@ -8283,18 +8287,24 @@ body.choice-question-mode-active .word-card-container {
     height: 100%;
 }
 
-/* コンパクト時は品詞を非表示 */
+/* コンパクト時：1行目に品詞（番号・チェックの右、くっつけて表示） */
 .input-list-scroll.compact-mode .expand-left-pos {
-    display: none;
+    display: inline-flex;
+    font-size: 9px;
+    padding: 0 4px;
+    height: 100%;
+    align-items: center;
 }
 
-/* コンパクト時の英単語 */
+/* コンパクト時：2行目に英単語 */
 .input-list-scroll.compact-mode .input-list-expand-word {
     font-size: 14px;
     font-weight: 700;
     color: #0369a1;
     margin: 0;
+    margin-top: 4px;
     white-space: nowrap;
+    display: block;
 }
 
 /* コンパクト時の意味 */
@@ -10988,6 +10998,11 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 /* 括弧内の語を太字（例: a(an) の an */
 .word-paren-bold {
     font-weight: 700;
+}
+
+/* 意味文など英単語以外の () は太字にしない */
+.meaning-paren-normal {
+    font-weight: 400;
 }
 
 .part-of-speech {

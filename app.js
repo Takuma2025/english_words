@@ -10293,24 +10293,41 @@ function getMeaningPosBadgeText(rawText) {
     return uniq.join('・');
 }
 
+// 意味文などで () を太字にしない：括弧部分を .meaning-paren-normal でラップして追加
+function appendTextWithParenNormal(targetEl, rawText) {
+    if (!targetEl || rawText == null) return;
+    const text = String(rawText);
+    const parts = text.split(/(\([^)]*\))/g);
+    parts.forEach((part) => {
+        if (/^\([^)]*\)$/.test(part)) {
+            const span = document.createElement('span');
+            span.className = 'meaning-paren-normal';
+            span.textContent = part;
+            targetEl.appendChild(span);
+        } else if (part) {
+            targetEl.appendChild(document.createTextNode(part));
+        }
+    });
+}
+
 function appendTextWithConjugationBreak(targetEl, rawText, options = {}) {
     if (!targetEl) return;
     const text = String(rawText || '');
     const marker = '《活用》';
     const idx = text.indexOf(marker);
     if (idx === -1) {
-        targetEl.appendChild(document.createTextNode(text));
+        appendTextWithParenNormal(targetEl, text);
         return;
     }
     
     const before = text.slice(0, idx).trimEnd();
     const hideConjugation = options && options.hideConjugation;
-    if (before) targetEl.appendChild(document.createTextNode(before));
+    if (before) appendTextWithParenNormal(targetEl, before);
     if (hideConjugation) return; // 《活用》以降は表示しない
     
     const after = text.slice(idx).trimStart();
     targetEl.appendChild(document.createElement('br'));
-    targetEl.appendChild(document.createTextNode(after));
+    appendTextWithParenNormal(targetEl, after);
 }
 
 function stripConjugationFromText(rawText) {
@@ -10494,7 +10511,8 @@ function setMeaningContent(meaningElement, text, options = {}) {
             meaningElement.innerHTML = '';
             appendTextWithConjugationBreak(meaningElement, text, options);
         } else {
-            meaningElement.textContent = text;
+            meaningElement.innerHTML = '';
+            appendTextWithParenNormal(meaningElement, text);
         }
         meaningElement.classList.remove('meaning-multiline-root');
         return;
@@ -10523,7 +10541,8 @@ function setMeaningContent(meaningElement, text, options = {}) {
     
     // 行がうまく取れなかった場合はフォールバック
     if (lines.length === 0) {
-        meaningElement.textContent = text;
+        meaningElement.innerHTML = '';
+        appendTextWithParenNormal(meaningElement, text);
         meaningElement.classList.remove('meaning-multiline-root');
         return;
     }
@@ -10548,7 +10567,8 @@ function setMeaningContent(meaningElement, text, options = {}) {
             textSpan.innerHTML = '';
             appendTextWithConjugationBreak(textSpan, lineText, options);
         } else {
-            textSpan.textContent = lineText;
+            textSpan.innerHTML = '';
+            appendTextWithParenNormal(textSpan, lineText);
         }
         
         lineDiv.appendChild(numSpan);
