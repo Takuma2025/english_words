@@ -12471,15 +12471,15 @@ wordEl.className = 'input-list-expand-word';
             inner.appendChild(topActions);
             
             item.addEventListener('click', () => {
-                // 音声再生中は停止してからカードをめくる
+                // 先にフリップを反映して体感の遅れを防ぐ
+                item.classList.toggle('flipped');
+                // 音声再生中なら停止・スタイルリセットは後で（非ブロッキング）
                 if (currentSpeech) {
                     window.speechSynthesis.cancel();
                     currentSpeech = null;
-                    // 再生中のボタンのスタイルをリセット
                     const playingButtons = document.querySelectorAll('.audio-btn.playing');
                     playingButtons.forEach(btn => btn.classList.remove('playing'));
                 }
-                item.classList.toggle('flipped');
             });
             
             item.appendChild(inner);
@@ -13718,14 +13718,6 @@ function displayCurrentWord() {
         if (masteredBtn) {
             masteredBtn.style.display = ''; // 「もうOK！」ボタンを表示
         }
-    }
-    
-    // 日本語モードの場合のみ自動で音声を再生（0.3秒遅延）
-    // インプットモード（眺める用）の場合は自動再生しない
-    if (!isInputModeActive && selectedLearningMode !== 'input' && currentLearningMode !== 'input') {
-        setTimeout(() => {
-            speakWord(word.word, null);
-        }, 300);
     }
     
     // 4択クイズUIを更新

@@ -6973,7 +6973,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* 裏（日本語）の文字色をオレンジに・展開モードの意味と同じ */
 #inputListContainer.flip-mode.flip-deck-mode .input-list-back .input-list-meaning {
-    color: #ff9933;
+    color: #0369a1; /* 英語と同じ青 */
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .input-list-flip-hint {
@@ -8307,6 +8307,9 @@ body.choice-question-mode-active .word-card-container {
     margin-top: 4px;
     white-space: nowrap;
     display: block;
+    /* 長い単語も縮小しない */
+    transform: none !important;
+    transform-origin: unset;
 }
 
 /* コンパクト時の意味（上下中央） */
@@ -8335,8 +8338,8 @@ body.choice-question-mode-active .word-card-container {
     width: 100%;
     height: 100%;
     min-height: 100px;
-    /* オーバーシュートしないフリップ（回転を速く） */
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    /* オーバーシュートしないフリップ（タップからすぐ反応） */
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
     border-radius: 0;
     border: none;
