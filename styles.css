@@ -6870,7 +6870,11 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: center;
     transform-style: preserve-3d;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* GPU アクセラレーション */
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 /* メインカードと同じ回転向きにし、1枚目だけ回転がおかしくならないようにする */
@@ -6888,6 +6892,8 @@ body.choice-question-mode-active .word-card-container {
     opacity: 0.9;
     transform-style: preserve-3d;
     background: transparent;
+    /* GPU アクセラレーション */
+    will-change: transform;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-card::before {
@@ -6920,6 +6926,8 @@ body.choice-question-mode-active .word-card-container {
     min-height: var(--deck-card-h);
     isolation: isolate;
     touch-action: pan-y pinch-zoom;
+    /* パフォーマンス最適化 */
+    contain: layout style;
 }
 
 /* 完了時：カード位置に出る「もう一度」 */
@@ -8146,7 +8154,10 @@ body.choice-question-mode-active .word-card-container {
     padding: 0;
     cursor: pointer;
     margin-bottom: 12px;
-    perspective: 1000px;
+    perspective: 800px;
+    /* パフォーマンス最適化 */
+    contain: layout style;
+    will-change: transform;
 }
 
 /* ========================================
@@ -8324,11 +8335,15 @@ body.choice-question-mode-active .word-card-container {
     height: 100%;
     min-height: 100px;
     /* オーバーシュートしないフリップ（回転を速く） */
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
     border-radius: 0;
     border: none;
     background: #ffffff;
+    /* GPU アクセラレーション */
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 /* フリップカード：うすいグレーのボーダー（影なし） */
@@ -8365,17 +8380,22 @@ body.choice-question-mode-active .word-card-container {
     box-sizing: border-box;
     border-radius: 0;
     background: #ffffff;
+    /* GPU レイヤー昇格 */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 /* iOS Safari等で表面の要素が裏に“反転して透ける”対策 */
 .input-list-front {
     transform: translateZ(1px);
     -webkit-transform: translateZ(1px);
+    will-change: transform;
 }
 
 .input-list-back {
     transform: rotateY(180deg) translateZ(1px);
     -webkit-transform: rotateY(180deg) translateZ(1px);
+    will-change: transform;
 }
 
 .input-list-front {
@@ -10345,13 +10365,15 @@ body.choice-question-mode-active .word-card-container {
     aspect-ratio: 3/3.2;
     max-height: 400px;
     position: relative;
-    perspective: 1200px;
+    perspective: 800px;
     touch-action: none;
     margin-top: 4px;
     user-select: none;
     -webkit-user-select: none;
     z-index: 10000;
     isolation: isolate;
+    /* パフォーマンス最適化 */
+    contain: layout style;
 }
 
 .word-card {
@@ -10360,10 +10382,12 @@ body.choice-question-mode-active .word-card-container {
     position: absolute;
     top: 0;
     left: 0;
-    perspective: 1200px;
+    perspective: 800px;
     user-select: none;
     -webkit-user-select: none;
     z-index: 10000;
+    /* パフォーマンス最適化 */
+    will-change: transform;
 }
 
 /* カードアニメーション - 下からふわっと浮いてくる */
@@ -10627,9 +10651,13 @@ body.learning-mode .bottom-nav {
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     user-select: none;
     -webkit-user-select: none;
+    /* GPU アクセラレーション */
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 .word-card.flipped .card-inner {
@@ -10641,6 +10669,7 @@ body.learning-mode .bottom-nav {
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     background: #ffffff;
     border-radius: 24px;
     box-shadow: none;
@@ -10650,7 +10679,10 @@ body.learning-mode .bottom-nav {
     display: flex;
     flex-direction: column;
     border: 1.5px solid #0055ca; /* ヘッダー青 */
-    transition: border-color 0.3s ease;
+    /* GPU レイヤー昇格 */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
 }
 
 /* アウトプットモードのときもうすいグレーボーダー */
@@ -10665,6 +10697,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     background: #ffffff;
     border-radius: 24px;
     box-shadow: none;
@@ -10672,8 +10705,9 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
     display: flex;
     flex-direction: column;
     border: 1.5px solid #0055ca; /* ヘッダー青 */
-    transform: rotateY(180deg);
-    transition: border-color 0.3s ease;
+    transform: rotateY(180deg) translateZ(0);
+    -webkit-transform: rotateY(180deg) translateZ(0);
+    will-change: transform;
 }
 
 /* アウトプットモードのときもうすいグレーボーダー */
@@ -21577,4 +21611,41 @@ div#inputWordCheckbox,
     margin-left: 1ch;
     white-space: nowrap;
     letter-spacing: 0.3px;
+}
+
+/* ========================================
+   モバイルパフォーマンス最適化
+   ======================================== */
+
+/* アニメーション軽量化（モバイルタッチデバイス向け） */
+@media (hover: none) and (pointer: coarse) {
+    /* フリップカードの高速化 */
+    .input-list-inner {
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .card-inner {
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-inner {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* 不要な効果を削減 */
+    .input-list-front,
+    .input-list-back,
+    .card-face,
+    .card-back {
+        box-shadow: none !important;
+    }
+}
+
+/* reduced motion を尊重 */
+@media (prefers-reduced-motion: reduce) {
+    .input-list-inner,
+    .card-inner,
+    #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-inner {
+        transition: none;
+    }
 }
