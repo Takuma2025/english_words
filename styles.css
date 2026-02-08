@@ -21348,3 +21348,12 @@ div#inputWordCheckbox,
         font-size: 14px;
     }
 }
+
+/* サブカテゴリーカードの単語範囲ラベル */
+.subcat-range-label {
+    font-family: "SF Pro Display", "Segoe UI", "Roboto", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    color: #1f2937;
+}
