@@ -2447,8 +2447,8 @@ function updateCategoryStars() {
         { displayName: '初級500語', dataName: 'LEVEL1 初級500語' },
         { displayName: '中級500語', dataName: 'LEVEL2 中級500語' },
         { displayName: '上級500語', dataName: 'LEVEL3 上級500語' },
-        { displayName: 'LEVEL4 難関300語', dataName: 'LEVEL4 難関300語' },
-        { displayName: 'LEVEL5 最難関100語', dataName: 'LEVEL5 最難関100語' },
+        { displayName: 'LEVEL4 ハイレベル300語', dataName: 'LEVEL4 ハイレベル300語' },
+        { displayName: 'LEVEL5 最難関突破100語', dataName: 'LEVEL5 最難関突破100語' },
         { displayName: '大阪B問題対策 厳選例文暗記60【和文英訳対策】', dataName: '大阪B問題対策 厳選例文暗記60【和文英訳対策】' },
         { displayName: '条件英作文特訓コース', dataName: '条件英作文特訓コース' },
         { displayName: '大阪C問題対策英単語タイムアタック', dataName: '大阪C問題対策英単語タイムアタック' },
@@ -2768,14 +2768,14 @@ function updateCategoryStars() {
             }
             return; // 例文データの処理が完了したので、以降の単語データ処理をスキップ
         } else if (categoryDataName === 'LEVEL1 初級500語' || categoryDataName === 'LEVEL2 中級500語' || categoryDataName === 'LEVEL3 上級500語' || 
-                   categoryDataName === 'LEVEL4 難関300語' || categoryDataName === 'LEVEL5 最難関100語') {
+                   categoryDataName === 'LEVEL4 ハイレベル300語' || categoryDataName === 'LEVEL5 最難関突破100語') {
             // レベル別単語：vocabulary-data.jsから取得（最適化）
             const levelMap = {
                 'LEVEL1 初級500語': 1,
                 'LEVEL2 中級500語': 2,
                 'LEVEL3 上級500語': 3,
-                'LEVEL4 難関300語': 4,
-                'LEVEL5 最難関100語': 5
+                'LEVEL4 ハイレベル300語': 4,
+                'LEVEL5 最難関突破100語': 5
             };
             const level = levelMap[categoryDataName];
             if (level && typeof getVocabularyByLevel !== 'undefined' && typeof getVocabularyByLevel === 'function') {
@@ -3235,8 +3235,8 @@ function updateSubcategoryProgressBars() {
     updateLevelProgressBar('初級500語', 1);
     updateLevelProgressBar('中級500語', 2);
     updateLevelProgressBar('上級500語', 3);
-    updateLevelProgressBar('LEVEL4 難関300語', 4);
-    updateLevelProgressBar('LEVEL5 最難関100語', 5);
+    updateLevelProgressBar('LEVEL4 ハイレベル300語', 4);
+    updateLevelProgressBar('LEVEL5 最難関突破100語', 5);
 }
 
 // 復習チェックを保存
@@ -3932,10 +3932,10 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span> 中級500語';
             } else if (title === 'レベル３ 上級500語') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> 上級500語';
-            } else if (title === 'レベル４ 難関300語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span> 難関300語';
-            } else if (title === 'レベル５ 最難関100語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span> 最難関100語';
+            } else if (title === 'レベル４ ハイレベル300語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span> ハイレベル300語';
+            } else if (title === 'レベル５ 最難関突破100語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span> 最難関突破100語';
             } else {
                 headerTitleText.textContent = title;
             }
@@ -4252,8 +4252,8 @@ function returnToLearningMenu(category) {
     // サブカテゴリー選択画面の親カテゴリーがあればそこに戻る
     const parent = window.currentSubcategoryParent;
     if (parent === 'レベル１ 初級500語' || parent === 'レベル２ 中級500語' || 
-        parent === 'レベル３ 上級500語' || parent === 'レベル４ 難関300語' || 
-        parent === 'レベル５ 最難関100語') {
+        parent === 'レベル３ 上級500語' || parent === 'レベル４ ハイレベル300語' || 
+        parent === 'レベル５ 最難関突破100語') {
         showLevelSubcategorySelection(parent, true);
     } else if (parent === '入門600語') {
         showElementaryCategorySelection(true);
@@ -4371,15 +4371,15 @@ function startCategory(category) {
         showAlert('エラー', 'このコースは利用できません。');
         return;
     } else if (category === 'LEVEL1 初級500語' || category === 'LEVEL2 中級500語' || category === 'LEVEL3 上級500語' || 
-               category === 'LEVEL4 難関300語' || category === 'LEVEL5 最難関100語') {
+               category === 'LEVEL4 ハイレベル300語' || category === 'LEVEL5 最難関突破100語') {
         // レベル別単語：vocabulary-data.jsから取得（最適化）
         console.log('Loading level vocabulary:', category);
         const levelMap = {
             'LEVEL1 初級500語': 1,
             'LEVEL2 中級500語': 2,
             'LEVEL3 上級500語': 3,
-            'LEVEL4 難関300語': 4,
-            'LEVEL5 最難関100語': 5
+            'LEVEL4 ハイレベル300語': 4,
+            'LEVEL5 最難関突破100語': 5
         };
         const level = levelMap[category];
         if (level && typeof getVocabularyByLevel !== 'undefined' && typeof getVocabularyByLevel === 'function') {
@@ -4878,7 +4878,7 @@ function showElementaryCategorySelection(skipAnimation = false) {
     
     // 説明文を設定
     if (courseSelectionDescription) {
-        courseSelectionDescription.textContent = '入門レベルの基本単語を覚えよう';
+        courseSelectionDescription.textContent = '小学生で習った単語を中心に入門レベルの単語を覚えよう';
         courseSelectionDescription.style.display = 'block';
     }
     
@@ -4938,9 +4938,9 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         lastLearningSourceElement = document.getElementById('level2CardBtn');
     } else if (parentCategory === 'レベル３ 上級500語') {
         lastLearningSourceElement = document.getElementById('level3CardBtn');
-    } else if (parentCategory === 'レベル４ 難関300語') {
+    } else if (parentCategory === 'レベル４ ハイレベル300語') {
         lastLearningSourceElement = document.getElementById('level4CardBtn');
-    } else if (parentCategory === 'レベル５ 最難関100語') {
+    } else if (parentCategory === 'レベル５ 最難関突破100語') {
         lastLearningSourceElement = document.getElementById('level5CardBtn');
     }
     
@@ -4975,36 +4975,36 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         badgeColor = '#dc2626';
         badgeBgColor = '#fee2e2';
         badgeClass = 'level-badge-red';
-        description = '初級レベルの重要単語を覚えよう';
+        description = '中1で習った単語を中心に初級レベルの単語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge level-badge-red">Level<b>1</b></span> 初級500語';
     } else if (parentCategory === 'レベル２ 中級500語') {
         levelNum = 2;
         badgeColor = '#ea580c';
         badgeBgColor = '#ffedd5';
         badgeClass = 'level-badge-orange';
-        description = '中級レベルの重要単語を覚えよう';
+        description = '中2で習った単語を中心に中級レベルの単語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge level-badge-orange">Level<b>2</b></span> 中級500語';
     } else if (parentCategory === 'レベル３ 上級500語') {
         levelNum = 3;
         badgeColor = '#2563eb';
         badgeBgColor = '#dbeafe';
         badgeClass = 'level-badge-blue';
-        description = '上級レベルの単語を覚えよう';
+        description = '中3で習った単語を中心に上級レベルの単語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge level-badge-blue">Level<b>3</b></span> 上級500語';
-    } else if (parentCategory === 'レベル４ 難関300語') {
+    } else if (parentCategory === 'レベル４ ハイレベル300語') {
         levelNum = 4;
         badgeColor = '#7c3aed';
         badgeBgColor = '#ede9fe';
         badgeClass = 'level-badge-purple';
-        description = '難関レベルの単語を覚えよう';
-        courseTitle.innerHTML = '<span class="level-badge level-badge-purple">Level<b>4</b></span> 難関300語';
-    } else if (parentCategory === 'レベル５ 最難関100語') {
+        description = '差がつくハイレベルな単語を覚えよう';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-purple">Level<b>4</b></span> ハイレベル300語';
+    } else if (parentCategory === 'レベル５ 最難関突破100語') {
         levelNum = 5;
         badgeColor = '#4338ca';
         badgeBgColor = '#e0e7ff';
         badgeClass = 'level-badge-dark';
-        description = '最難関レベルの単語を覚えよう';
-        courseTitle.innerHTML = '<span class="level-badge level-badge-dark">Level<b>5</b></span> 最難関100語';
+        description = '最難関突破レベルの単語を覚えよう';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-dark">Level<b>5</b></span> 最難関突破100語';
     } else {
         courseTitle.textContent = parentCategory;
     }
@@ -5101,10 +5101,10 @@ function showCourseSelection(category, categoryWords, slideIn = false, skipSaveR
         displayCategory = '中級500語';
     } else if (category === 'LEVEL3 上級500語') {
         displayCategory = '上級500語';
-    } else if (category === 'LEVEL4 難関300語') {
-        displayCategory = '難関300語';
-    } else if (category === 'LEVEL5 最難関100語') {
-        displayCategory = '最難関100語';
+    } else if (category === 'LEVEL4 ハイレベル300語') {
+        displayCategory = 'ハイレベル300語';
+    } else if (category === 'LEVEL5 最難関突破100語') {
+        displayCategory = '最難関突破100語';
     }
     courseTitle.textContent = `${displayCategory} - コースを選んでください`;
     courseList.innerHTML = '';
@@ -7041,24 +7041,24 @@ function setupEventListeners() {
         });
     }
     
-    // レベル４ 難関300語カード
+    // レベル４ ハイレベル300語カード
     const level4CardBtn = document.getElementById('level4CardBtn');
     if (level4CardBtn) {
         level4CardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             animateCardExpand(level4CardBtn, '#ffffff', () => {
-                showLevelSubcategorySelection('レベル４ 難関300語');
+                showLevelSubcategorySelection('レベル４ ハイレベル300語');
             });
         });
     }
     
-    // レベル５ 最難関100語カード
+    // レベル５ 最難関突破100語カード
     const level5CardBtn = document.getElementById('level5CardBtn');
     if (level5CardBtn) {
         level5CardBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             animateCardExpand(level5CardBtn, '#ffffff', () => {
-                showLevelSubcategorySelection('レベル５ 最難関100語');
+                showLevelSubcategorySelection('レベル５ 最難関突破100語');
             });
         });
     }
@@ -8380,8 +8380,8 @@ function setupEventListeners() {
                     if (window.currentSubcategoryParent === 'レベル１ 初級500語' || 
                         window.currentSubcategoryParent === 'レベル２ 中級500語' || 
                         window.currentSubcategoryParent === 'レベル３ 上級500語' ||
-                        window.currentSubcategoryParent === 'レベル４ 難関300語' ||
-                        window.currentSubcategoryParent === 'レベル５ 最難関100語') {
+                        window.currentSubcategoryParent === 'レベル４ ハイレベル300語' ||
+                        window.currentSubcategoryParent === 'レベル５ 最難関突破100語') {
                         showLevelSubcategorySelection(window.currentSubcategoryParent, true);
                         return;
                     } else if (window.currentSubcategoryParent === '入門600語') {
@@ -8414,9 +8414,9 @@ function setupEventListeners() {
                         targetCardId = 'level2CardBtn';
                     } else if (window.currentSubcategoryParent === 'レベル３ 上級500語') {
                         targetCardId = 'level3CardBtn';
-                    } else if (window.currentSubcategoryParent === 'レベル４ 難関300語') {
+                    } else if (window.currentSubcategoryParent === 'レベル４ ハイレベル300語') {
                         targetCardId = 'level4CardBtn';
-                    } else if (window.currentSubcategoryParent === 'レベル５ 最難関100語') {
+                    } else if (window.currentSubcategoryParent === 'レベル５ 最難関突破100語') {
                         targetCardId = 'level5CardBtn';
                     } else if (window.currentSubcategoryParent === '入門600語') {
                         targetCardId = 'elementaryCategoryCardBtn';
@@ -8480,8 +8480,8 @@ function setupEventListeners() {
                     if (window.currentSubcategoryParent && (window.currentSubcategoryParent === 'レベル１ 初級500語' || 
                         window.currentSubcategoryParent === 'レベル２ 中級500語' || 
                         window.currentSubcategoryParent === 'レベル３ 上級500語' ||
-                        window.currentSubcategoryParent === 'レベル４ 難関300語' ||
-                        window.currentSubcategoryParent === 'レベル５ 最難関100語')) {
+                        window.currentSubcategoryParent === 'レベル４ ハイレベル300語' ||
+                        window.currentSubcategoryParent === 'レベル５ 最難関突破100語')) {
                         elements.mainContent.classList.add('hidden');
                         showLevelSubcategorySelection(window.currentSubcategoryParent, true);
                         return;
@@ -8506,7 +8506,7 @@ function setupEventListeners() {
                             return;
                         }
                     } else if (selectedCategory === 'LEVEL1 初級500語' || selectedCategory === 'LEVEL2 中級500語' || selectedCategory === 'LEVEL3 上級500語' || 
-                               selectedCategory === 'LEVEL4 難関300語' || selectedCategory === 'LEVEL5 最難関100語') {
+                               selectedCategory === 'LEVEL4 ハイレベル300語' || selectedCategory === 'LEVEL5 最難関突破100語') {
                         // レベル別単語：vocabulary-data.jsから取得
                         if (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function') {
                             const allWords = getAllVocabulary();
@@ -15155,7 +15155,7 @@ function returnToCourseSelection() {
             return;
         }
     } else if (category === 'LEVEL1 初級500語' || category === 'LEVEL2 中級500語' || category === 'LEVEL3 上級500語' || 
-               category === 'LEVEL4 難関300語' || category === 'LEVEL5 最難関100語') {
+               category === 'LEVEL4 ハイレベル300語' || category === 'LEVEL5 最難関突破100語') {
         // レベル別単語：vocabulary-data.jsから取得
         if (typeof getAllVocabulary !== 'undefined' && typeof getAllVocabulary === 'function') {
             const allWords = getAllVocabulary();
@@ -15442,7 +15442,7 @@ function clearLearningHistory() {
             localStorage.removeItem('learningProgress');
             
             // カテゴリーごとの進捗も削除
-            const categories = ['LEVEL0 入門600語', 'LEVEL1 初級500語', 'LEVEL2 中級500語', 'LEVEL3 上級500語', 'LEVEL4 難関300語', 'LEVEL5 最難関100語'];
+            const categories = ['LEVEL0 入門600語', 'LEVEL1 初級500語', 'LEVEL2 中級500語', 'LEVEL3 上級500語', 'LEVEL4 ハイレベル300語', 'LEVEL5 最難関突破100語'];
             categories.forEach(category => {
                 localStorage.removeItem(`correctWords-${category}`);
                 localStorage.removeItem(`wrongWords-${category}`);
@@ -20957,7 +20957,7 @@ function exitHWQuiz() {
     // 細分化メニュー画面に戻る
     const parent = window.currentSubcategoryParent;
     if (parent === 'レベル１ 初級500語' || parent === 'レベル２ 中級500語' || parent === 'レベル３ 上級500語' ||
-        parent === 'レベル４ 難関300語' || parent === 'レベル５ 最難関100語') {
+        parent === 'レベル４ ハイレベル300語' || parent === 'レベル５ 最難関突破100語') {
         showLevelSubcategorySelection(parent, true);
     } else if (parent === '入門600語') {
         showElementaryCategorySelection(true);

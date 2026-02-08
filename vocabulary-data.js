@@ -12,7 +12,7 @@ const allWords = [
   { id: 6, word: "you", meaning: "あなたは・が（を）、あなたたちは・が（を）", partOfSpeech: "代名詞", category: "LEVEL0 代名詞" },
   { id: 7, word: "and", meaning: "～と・・・、そして～", partOfSpeech: "接続詞", category: "LEVEL0 接続詞" },
   { id: 8, word: "it", meaning: "それは（が）、それを（に）", partOfSpeech: "代名詞", category: "LEVEL0 代名詞" },
-  { id: 9, word: "be", meaning: "～である、（～に）いる、ある、～になる（be動詞の原形）【活用】be(is, am, are) - were - been", partOfSpeech: "動詞", category: "LEVEL0 動詞" },
+  { id: 9, word: "be", meaning: "～である、（～に）いる、ある、～になる（be動詞の原形）《活用》be(is, am, are) - were - been", partOfSpeech: "動詞", category: "LEVEL0 動詞" },
   { id: 10, word: "that", meaning: "あれ（それ）、あの（その）", partOfSpeech: "代名詞・形容詞", category: "LEVEL0 代名詞" },
   { id: 11, word: "about", meaning: "～について；約、だいたい", partOfSpeech: "前置詞・副詞", category: "LEVEL0 前置詞" },
   { id: 12, word: "for", meaning: "～のために；～の間", partOfSpeech: "前置詞", category: "LEVEL0 前置詞" },
