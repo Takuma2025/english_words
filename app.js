@@ -3980,6 +3980,16 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
     }
 }
 
+// 単語表示用：括弧は細字、括弧内（例: an）は太字（例: a (an)）
+function formatWordForDisplay(wordStr) {
+    if (!wordStr || typeof wordStr !== 'string') return null;
+    if (!wordStr.includes(' (')) return null;
+    const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const m = wordStr.match(/^(.+?) \(([^)]*)\)(.*)$/);
+    if (!m) return null;
+    return esc(m[1]) + ' <span class="word-paren-light">(</span><span class="word-paren-bold">' + esc(m[2]) + '</span><span class="word-paren-light">)</span>' + esc(m[3]);
+}
+
 // No.範囲パターンを検出してリッチHTMLに変換するヘルパー（SVG・数字バッジなし）
 function formatUnitNameHTML(unitName) {
     // #番号#No.○-○ または No.○-○ パターン → No.○-○ のみ表示
@@ -11003,7 +11013,12 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         // 英単語（長い単語は横縮小）
         const wordEl = document.createElement('div');
         wordEl.className = 'input-list-expand-word';
-        wordEl.textContent = word.word;
+        const wordFormatted = formatWordForDisplay(word.word);
+        if (wordFormatted) {
+            wordEl.innerHTML = wordFormatted;
+        } else {
+            wordEl.textContent = word.word;
+        }
         // 長い単語は横縮小
         if (word.word.length >= 14) {
             wordEl.style.transform = 'scaleX(0.67)';
@@ -11306,7 +11321,12 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         
         const wordEl = document.createElement('span');
         wordEl.className = 'input-list-word';
-        wordEl.textContent = word.word;
+        const wordFormatted = formatWordForDisplay(word.word);
+        if (wordFormatted) {
+            wordEl.innerHTML = wordFormatted;
+        } else {
+            wordEl.textContent = word.word;
+        }
         wordContainer.appendChild(wordEl);
         
         row.appendChild(wordContainer);
@@ -12065,10 +12085,15 @@ function renderInputListView(words) {
             
             // 英単語（長い単語は横縮小）
             const wordEl = document.createElement('div');
-            wordEl.className = 'input-list-expand-word';
+wordEl.className = 'input-list-expand-word';
+        const wordFormatted = formatWordForDisplay(word.word);
+        if (wordFormatted) {
+            wordEl.innerHTML = wordFormatted;
+        } else {
             wordEl.textContent = word.word;
-            // 長い単語は横縮小
-            if (word.word.length >= 14) {
+        }
+        // 長い単語は横縮小
+        if (word.word.length >= 14) {
                 wordEl.style.transform = 'scaleX(0.67)';
                 wordEl.style.transformOrigin = 'left';
             } else if (word.word.length >= 13) {
@@ -13527,7 +13552,12 @@ function displayCurrentWord() {
         }
     }
     
-    elements.englishWord.textContent = word.word;
+    const wordFormatted = formatWordForDisplay(word.word);
+    if (wordFormatted) {
+        elements.englishWord.innerHTML = wordFormatted;
+    } else {
+        elements.englishWord.textContent = word.word;
+    }
     applyMarkers(word);
     
     // 入試頻出度を表示（カードモード）- アウトプットモードでは非表示

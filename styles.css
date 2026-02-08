@@ -5260,7 +5260,7 @@ body.choice-question-mode-active .learning-view {
     padding-bottom: 14px;
     box-sizing: border-box;
     background: #0055ca;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     font-size: 13px;
     font-weight: 500;
     position: relative;
@@ -8241,7 +8241,7 @@ body.choice-question-mode-active .word-card-container {
     flex: 0 0 45%;
     max-width: 45%;
     padding: 6px 8px;
-    background: #e0f2fe;
+    background: #f0f9ff;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -8865,7 +8865,7 @@ body.choice-question-mode-active .word-card-container {
     background: #ffffff;
 }
 
-/* 左カラム（英単語情報）- 水色背景 */
+/* 左カラム（英単語情報）- ごく薄い水色背景 */
 .expand-left-col {
     flex: 0 0 50%;
     max-width: 50%;
@@ -8873,7 +8873,7 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    background: #e0f2fe;
+    background: #f0f9ff;
     position: relative;
 }
 
@@ -10975,6 +10975,16 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
     background-size: 100% 100%;
     background-position: 0 0;
     transition: background-image 0.15s ease;
+}
+
+/* 単語内の括弧部分を細字で表示（例: a(an) の () */
+.word-paren-light {
+    font-weight: 300;
+}
+
+/* 括弧内の語を太字（例: a(an) の an */
+.word-paren-bold {
+    font-weight: 700;
 }
 
 .part-of-speech {
