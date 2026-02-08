@@ -5961,11 +5961,82 @@ body.quiz-test-mode .progress-top-row {
 }
 
 #progressRangeText {
-    color: #6b7280; /* グレー */
+    color: #6b7280;
     font-weight: 500;
     transition: all 0.3s ease-out;
 }
 
+/* ヘッダー/進捗バー内のNo.範囲表示 */
+.header-range-block {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.header-range-icon {
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+.header-range-no {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.6;
+    line-height: 1;
+}
+
+.header-range-nums {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    line-height: 1;
+}
+
+.header-range-sep {
+    font-weight: 400;
+    opacity: 0.5;
+    margin: 0 1px;
+}
+
+/* ヘッダー白文字版（青背景のunit-name内） */
+.header-range-white {
+    color: #ffffff;
+}
+
+.header-range-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 5px;
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+}
+
+.header-range-badge-num {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+}
+
+.header-range-white .header-range-no {
+    opacity: 0.8;
+}
+
+.header-range-white .header-range-nums {
+    font-size: 18px;
+}
+
+.header-range-white .header-range-sep {
+    opacity: 0.6;
+}
 
 .progress-bar-container {
     height: 6px;
@@ -21417,15 +21488,9 @@ div#inputWordCheckbox,
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 2px;
-    min-width: 26px;
+    width: 26px;
     height: 26px;
-    padding: 0 6px;
     border-radius: 8px;
-    flex-shrink: 0;
-}
-
-.subcat-badge-icon {
     flex-shrink: 0;
 }
 

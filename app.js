@@ -3974,11 +3974,47 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
     }
 }
 
+// No.範囲パターンを検出してリッチHTMLに変換するヘルパー
+function formatUnitNameHTML(unitName) {
+    // #番号#No.○-○ パターン（チャンク番号付き）
+    const matchWithNum = String(unitName).match(/^#(\d+)#No\.(\d+)-(\d+)$/);
+    if (matchWithNum) {
+        return `<span class="header-range-block header-range-white"><span class="header-range-badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg><span class="header-range-badge-num">${matchWithNum[1]}</span></span><span class="header-range-no">No.</span><span class="header-range-nums">${matchWithNum[2]}<span class="header-range-sep">-</span>${matchWithNum[3]}</span></span>`;
+    }
+    // No.○-○ パターン（番号なし）
+    const match = String(unitName).match(/^No\.(\d+)-(\d+)$/);
+    if (match) {
+        return `<span class="header-range-block header-range-white"><span class="header-range-badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span><span class="header-range-no">No.</span><span class="header-range-nums">${match[1]}<span class="header-range-sep">-</span>${match[2]}</span></span>`;
+    }
+    return null;
+}
+
+// 要素にunitNameを設定（No.パターンならリッチHTML）
+function setUnitNameContent(el, unitName) {
+    if (!el) return;
+    const richHTML = formatUnitNameHTML(unitName);
+    if (richHTML) {
+        el.innerHTML = richHTML;
+    } else {
+        const formattedTitle = formatTitleWithLevelBadge(unitName);
+        if (formattedTitle !== unitName) {
+            el.innerHTML = formattedTitle;
+        } else {
+            el.textContent = unitName;
+        }
+    }
+}
+
 // ヘッダーの単元名を更新
 function updateHeaderUnitName(unitName) {
     const headerUnitName = document.getElementById('headerUnitName');
     if (headerUnitName) {
-        headerUnitName.textContent = unitName;
+        const richHTML = formatUnitNameHTML(unitName);
+        if (richHTML) {
+            headerUnitName.innerHTML = richHTML;
+        } else {
+            headerUnitName.textContent = unitName;
+        }
     }
 }
 
@@ -4632,12 +4668,7 @@ function initInputModeLearning(category, words, startIndex = 0) {
     }
     
     if (elements.unitName) {
-        const formattedTitle = formatTitleWithLevelBadge(displayTitle);
-        if (formattedTitle !== displayTitle) {
-            elements.unitName.innerHTML = formattedTitle;
-        } else {
-            elements.unitName.textContent = displayTitle;
-        }
+        setUnitNameContent(elements.unitName, displayTitle);
     }
     
     // ヘッダーの単元名も更新
@@ -4707,7 +4738,8 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         // 単語番号の範囲（実際の単語IDを使用）
         const firstId = wordCount > 0 ? words[0].id : startIdx + 1;
         const lastId = wordCount > 0 ? words[wordCount - 1].id : endIdx;
-        const rangeLabel = `No.${formatWordNumber(firstId)}-${formatWordNumber(lastId)}`;
+        const chunkNum = i + 1;
+        const rangeLabel = `#${chunkNum}#No.${formatWordNumber(firstId)}-${formatWordNumber(lastId)}`;
         const subcatKey = `LEVEL${levelNum}_${firstId}-${lastId}`;
         
         // 進捗を計算
@@ -5902,12 +5934,7 @@ function showInputModeDirectly(category, words, courseTitle) {
     updateHeaderButtons('learning');
     const title = courseTitle || category;
     if (elements.unitName) {
-        const formattedTitle = formatTitleWithLevelBadge(title);
-        if (formattedTitle !== title) {
-            elements.unitName.innerHTML = formattedTitle;
-        } else {
-            elements.unitName.textContent = title;
-        }
+        setUnitNameContent(elements.unitName, title);
     }
     // ヘッダーの単元名も更新
     updateHeaderUnitName(title);
@@ -6447,12 +6474,7 @@ function initTimeAttackLearning(category, words) {
     }
     
     if (elements.unitName) {
-        const formattedTitle = formatTitleWithLevelBadge(displayTitleTA);
-        if (formattedTitle !== displayTitleTA) {
-            elements.unitName.innerHTML = formattedTitle;
-        } else {
-            elements.unitName.textContent = displayTitleTA;
-        }
+        setUnitNameContent(elements.unitName, displayTitleTA);
     }
     
     // ヘッダーの単元名も更新
@@ -6845,12 +6867,7 @@ function initLearning(category, words, startIndex = 0, rangeEnd = undefined, ran
             // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
             displayTitle = currentFilterCourseTitle || category;
         }
-        const formattedTitle = formatTitleWithLevelBadge(displayTitle);
-        if (formattedTitle !== displayTitle) {
-            elements.unitName.innerHTML = formattedTitle;
-        } else {
-        elements.unitName.textContent = displayTitle;
-        }
+        setUnitNameContent(elements.unitName, displayTitle);
     }
     
     // テーマカラーを先に更新（クラス追加の前に）
@@ -15635,12 +15652,7 @@ function initSentenceModeLearning(category) {
             // その他の場合はコース名（細かいタイトル）があればそれを使用、なければカテゴリー名を使用
             displayTitle = currentFilterCourseTitle || category;
         }
-        const formattedTitle = formatTitleWithLevelBadge(displayTitle);
-        if (formattedTitle !== displayTitle) {
-            elements.unitName.innerHTML = formattedTitle;
-        } else {
-        elements.unitName.textContent = displayTitle;
-        }
+        setUnitNameContent(elements.unitName, displayTitle);
     }
     
     // テーマカラーを先に更新（クラス追加の前に）
