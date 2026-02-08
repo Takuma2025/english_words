@@ -3881,6 +3881,12 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
     // ヘッダー全体は常に表示
     if (appHeader) {
         appHeader.classList.remove('hidden');
+        // サブカテゴリー選択時はヘッダー文字を下揃え
+        if (mode === 'course') {
+            appHeader.classList.add('header-align-bottom');
+        } else {
+            appHeader.classList.remove('header-align-bottom');
+        }
     }
     
     // 学習モード用ヘッダー要素の制御
@@ -3924,7 +3930,7 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
     if (headerTitleImage && headerTitleText) {
         if (mode === 'course' && title) {
             // コース選択時：テキストを表示、画像を非表示
-            if (title === 'レベル０ 入門600語') {
+            if (title === 'レベル０ 入門600語' || title === '入門600語') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> 入門600語';
             } else if (title === 'レベル１ 初級500語') {
                 headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span> 初級500語';
@@ -3974,17 +3980,16 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
     }
 }
 
-// No.範囲パターンを検出してリッチHTMLに変換するヘルパー
+// No.範囲パターンを検出してリッチHTMLに変換するヘルパー（SVG・数字バッジなし）
 function formatUnitNameHTML(unitName) {
-    // #番号#No.○-○ パターン（チャンク番号付き）
-    const matchWithNum = String(unitName).match(/^#(\d+)#No\.(\d+)-(\d+)$/);
+    // #番号#No.○-○ または No.○-○ パターン → No.○-○ のみ表示
+    const matchWithNum = String(unitName).match(/^#\d+#No\.(\d+)-(\d+)$/);
     if (matchWithNum) {
-        return `<span class="header-range-block header-range-white"><span class="header-range-badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg><span class="header-range-badge-num">${matchWithNum[1]}</span></span><span class="header-range-no">No.</span><span class="header-range-nums">${matchWithNum[2]}<span class="header-range-sep">-</span>${matchWithNum[3]}</span></span>`;
+        return `<span class="header-range-block header-range-white"><span class="header-range-no">No.</span><span class="header-range-nums">${matchWithNum[1]}<span class="header-range-sep">-</span>${matchWithNum[2]}</span></span>`;
     }
-    // No.○-○ パターン（番号なし）
     const match = String(unitName).match(/^No\.(\d+)-(\d+)$/);
     if (match) {
-        return `<span class="header-range-block header-range-white"><span class="header-range-badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span><span class="header-range-no">No.</span><span class="header-range-nums">${match[1]}<span class="header-range-sep">-</span>${match[2]}</span></span>`;
+        return `<span class="header-range-block header-range-white"><span class="header-range-no">No.</span><span class="header-range-nums">${match[1]}<span class="header-range-sep">-</span>${match[2]}</span></span>`;
     }
     return null;
 }
@@ -4819,10 +4824,6 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
                 <div class="category-header">
                     <div class="category-name">
                         <div class="subcat-badge" style="background: ${badgeColor}">
-                            <svg class="subcat-badge-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                            </svg>
                             <span class="subcat-badge-num">${i + 1}</span>
                         </div>
                         <div class="subcat-range-block">
