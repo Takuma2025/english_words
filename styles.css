@@ -21529,6 +21529,60 @@ div#inputWordCheckbox,
     flex-shrink: 0;
 }
 
+/* 1枚の単語カード：外回り緑枠で穴＋No.範囲を囲む */
+.subcat-card-face {
+    display: inline-flex;
+    align-items: stretch;
+    border: 2px solid var(--badge-color);
+    border-radius: 5px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+/* 左：緑の穴エリア（白い丸が穴） */
+.subcat-card-hole {
+    width: 20px;
+    min-height: 36px;
+    background: var(--badge-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.subcat-card-hole::before {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+}
+
+/* 右：白背景・緑文字（No.51-100） */
+.subcat-card-range {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    padding: 6px 12px 6px 10px;
+    background: #ffffff;
+    color: var(--badge-color);
+}
+
+.subcat-card-range .subcat-range-no,
+.subcat-card-range .subcat-range-nums {
+    color: var(--badge-color);
+}
+
+/* カード内の50語バッジ */
+.subcat-card-face .subcat-word-count {
+    margin-left: 6px;
+    margin-right: 6px;
+    align-self: center;
+    flex-shrink: 0;
+}
+
 .subcat-badge-num {
     font-family: "Barlow Condensed", "Oswald", sans-serif;
     font-size: 15px;

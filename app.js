@@ -3156,16 +3156,17 @@ function updateSubcategoryProgressBars() {
         const allCorrectSet = new Set();
         const allWrongSet = new Set();
         
-        // 50語ずつのサブカテゴリーキーを生成して進捗を計算
+        // 50語ずつのサブカテゴリーキーを生成して進捗を計算（保存時と同じく単語IDでキーを生成）
         const chunkSize = 50;
         const numChunks = Math.ceil(totalWords / chunkSize);
         
         for (let i = 0; i < numChunks; i++) {
             const startIdx = i * chunkSize;
             const endIdx = Math.min(startIdx + chunkSize, totalWords);
-            const startWordNum = startIdx + 1;
-            const endWordNum = endIdx;
-            const subcatKey = `LEVEL${levelNum}_${startWordNum}-${endWordNum}`;
+            const wordsInChunk = levelWords.slice(startIdx, endIdx);
+            const firstId = wordsInChunk.length > 0 ? wordsInChunk[0].id : startIdx + 1;
+            const lastId = wordsInChunk.length > 0 ? wordsInChunk[wordsInChunk.length - 1].id : endIdx;
+            const subcatKey = `LEVEL${levelNum}_${firstId}-${lastId}`;
             
             // 各モードの進捗を合算
             modes.forEach(mode => {
@@ -4833,14 +4834,14 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
             <div class="category-info">
                 <div class="category-header">
                     <div class="category-name">
-                        <div class="subcat-badge" style="background: ${badgeColor}">
-                            <span class="subcat-badge-num">${i + 1}</span>
+                        <div class="subcat-card-face" style="--badge-color: ${badgeColor}">
+                            <div class="subcat-card-hole"></div>
+                            <div class="subcat-card-range">
+                                <span class="subcat-range-no">No.</span>
+                                <span class="subcat-range-nums">${firstId}<span class="subcat-range-sep">-</span>${lastId}</span>
+                            </div>
+                            <span class="subcat-word-count" style="background: ${badgeBgColor}; color: ${badgeColor}">${wordCount}語</span>
                         </div>
-                        <div class="subcat-range-block">
-                            <span class="subcat-range-no" style="color: ${badgeColor}">No.</span>
-                            <span class="subcat-range-nums" style="color: ${badgeColor}">${firstId}<span class="subcat-range-sep">-</span>${lastId}</span>
-                        </div>
-                        <span class="subcat-word-count" style="background: ${badgeBgColor}; color: ${badgeColor}">${wordCount}語</span>
                     </div>
                 </div>
                 <div class="category-progress">
@@ -14748,10 +14749,12 @@ function showCompletion() {
     // 強制リフロー
     completionOverlay.offsetHeight;
     
-    // カテゴリー名を設定
+    // カテゴリー名を設定（#1# などの接頭辞は除き、単語番号のみ表示）
     const completionCourseTitle = document.getElementById('completionCourseTitle');
     if (completionCourseTitle) {
-        completionCourseTitle.textContent = currentFilterCourseTitle || selectedCategory || '';
+        let title = currentFilterCourseTitle || selectedCategory || '';
+        const noPrefix = title.match(/^#\d+#(.+)$/);
+        completionCourseTitle.textContent = noPrefix ? noPrefix[1] : title;
     }
     
     // 統計を設定
@@ -14763,11 +14766,11 @@ function showCompletion() {
     // 今回の学習範囲の総数
     const total = currentWords.length;
     
-    // +◯語覚えた表示
+    // ○/○正解！表示
     const completionGained = document.getElementById('completionGained');
     if (completionGained) {
-        if (correctCount > 0) {
-            completionGained.textContent = `+${correctCount}語 できた！`;
+        if (total > 0) {
+            completionGained.textContent = `${correctCount}/${total}正解！`;
             completionGained.classList.remove('hidden');
         } else {
             completionGained.classList.add('hidden');
@@ -14802,7 +14805,7 @@ function showCompletion() {
     if (completionReviewBtn) {
         if (wrongCount > 0) {
             completionReviewBtn.classList.remove('hidden');
-            completionReviewBtn.innerHTML = `<svg class="completion-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> できなかった単語を復習（${wrongCount}語）`;
+            completionReviewBtn.innerHTML = `<svg class="completion-btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> 間違えた問題を復習（${wrongCount}問）`;
         } else {
             completionReviewBtn.classList.add('hidden');
         }
