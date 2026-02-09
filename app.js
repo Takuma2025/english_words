@@ -11365,6 +11365,10 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         meaningEl.appendChild(meaningWrapper);
         back.appendChild(metaBack);
         back.appendChild(meaningEl);
+        const flipHintBack = document.createElement('div');
+        flipHintBack.className = 'input-list-flip-hint';
+        flipHintBack.textContent = 'タップしてめくる';
+        back.appendChild(flipHintBack);
         
         inner.appendChild(front);
         inner.appendChild(back);
@@ -11761,8 +11765,31 @@ function renderInputListView(words) {
             return true;
         };
 
+        // A→あ/あ→Aモード：CSSフリップではなく表裏の表示順を入れ替える
+        const applyFlipAllMode = (item) => {
+            if (!item) return;
+            const front = item.querySelector('.input-list-front');
+            const back = item.querySelector('.input-list-back');
+            if (!front || !back) return;
+            if (inputFlipDeckAllFlipped) {
+                front.style.order = '2';
+                back.style.order = '1';
+                back.style.transform = 'translateZ(1px)';
+                back.style.position = 'relative';
+                front.style.transform = 'rotateY(180deg) translateZ(1px)';
+                front.style.position = 'absolute';
+            } else {
+                front.style.order = '';
+                back.style.order = '';
+                front.style.transform = '';
+                front.style.position = '';
+                back.style.transform = '';
+                back.style.position = '';
+            }
+        };
+
         const renderDeckCard = () => {
-            container.classList.toggle('deck-flipped', inputFlipDeckAllFlipped);
+            container.classList.remove('deck-flipped');
             host.innerHTML = '';
             const total = inputFlipDeckWords.length;
             if (total === 0) {
@@ -11793,7 +11820,7 @@ function renderInputListView(words) {
 
             // 残り枚数に合わせてスタックを再生成（減っていく）
             const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
-            buildStackCards(remaining + 1); // buildStackCardsは「total-1枚」を作るので、(remaining+1)を渡す
+            buildStackCards(remaining + 1);
 
             const word = inputFlipDeckWords[inputFlipDeckIndex];
             if (!word || !inputFlipDeckContext) {
@@ -11807,12 +11834,9 @@ function renderInputListView(words) {
                 inputFlipDeckContext.categoryWrongSet,
                 inputFlipDeckContext.skipProgress
             );
-            // 全カードフリップ状態を反映
-            if (inputFlipDeckAllFlipped) {
-                item.classList.add('flipped');
-            } else {
-                item.classList.remove('flipped');
-            }
+            // A→あ/あ→Aモードを反映（フリップではなく表裏入れ替え）
+            item.classList.remove('flipped');
+            applyFlipAllMode(item);
 
             host.appendChild(item);
 
@@ -11874,7 +11898,7 @@ function renderInputListView(words) {
                         inputFlipDeckContext.categoryWrongSet,
                         inputFlipDeckContext.skipProgress
                     );
-                    if (inputFlipDeckAllFlipped) nextItem.classList.add('flipped');
+                    applyFlipAllMode(nextItem);
                     nextItem.classList.add('deck-card-below');
                     host.insertBefore(nextItem, currentItem);
                 }
@@ -11953,7 +11977,7 @@ function renderInputListView(words) {
                 inputFlipDeckContext.categoryWrongSet,
                 inputFlipDeckContext.skipProgress
             );
-            if (inputFlipDeckAllFlipped) prevItem.classList.add('flipped');
+            applyFlipAllMode(prevItem);
             prevItem.classList.add('deck-card-return-in');
             host.insertBefore(prevItem, currentItem);
 
@@ -12066,9 +12090,7 @@ function renderInputListView(words) {
                         inputFlipDeckContext.categoryWrongSet,
                         inputFlipDeckContext.skipProgress
                     );
-                    if (inputFlipDeckAllFlipped) {
-                        nextItem.classList.add('flipped');
-                    }
+                    applyFlipAllMode(nextItem);
                     nextItem.classList.add('deck-card-below');
                     host.appendChild(nextItem);
                 }
@@ -12627,25 +12649,23 @@ function setupInputListModeToggle() {
             if (!container) return;
             const btnLabel = flipAllBtn.querySelector('.btn-label');
 
-            // デッキ表示のときはメインカード＋スタックをまとめてめくる動きで切り替え
+            // デッキ表示のときはシャッフルと同じアニメーション（縮小＋白み→切替→フェードイン）
             if (container.classList.contains('flip-deck-mode')) {
-                inputFlipDeckAllFlipped = !inputFlipDeckAllFlipped;
-                container.classList.toggle('deck-flipped', inputFlipDeckAllFlipped);
-                const currentItem = container.querySelector('.flip-deck-host .input-list-item');
-                if (currentItem) {
-                    requestAnimationFrame(() => {
-                        requestAnimationFrame(() => {
-                            if (inputFlipDeckAllFlipped) {
-                                currentItem.classList.add('flipped');
-                            } else {
-                                currentItem.classList.remove('flipped');
-                            }
-                        });
-                    });
-                }
-                if (btnLabel) {
-                    btnLabel.textContent = inputFlipDeckAllFlipped ? 'あ→A' : 'A→あ';
-                }
+                container.classList.add('shuffle-animating');
+                setTimeout(() => {
+                    inputFlipDeckAllFlipped = !inputFlipDeckAllFlipped;
+                    if (inputFlipDeckEls) {
+                        inputFlipDeckEls.renderDeckCard();
+                    }
+                    if (btnLabel) {
+                        btnLabel.textContent = inputFlipDeckAllFlipped ? 'あ→A' : 'A→あ';
+                    }
+                    container.classList.remove('shuffle-animating');
+                    container.classList.add('shuffle-fade-in');
+                    setTimeout(() => {
+                        container.classList.remove('shuffle-fade-in');
+                    }, 300);
+                }, 250);
                 return;
             }
 
