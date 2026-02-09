@@ -6958,7 +6958,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* 裏（日本語）の文字色をオレンジに・展開モードの意味と同じ */
 #inputListContainer.flip-mode.flip-deck-mode .input-list-back .input-list-meaning {
-    color: #0369a1; /* 英語と同じ青 */
+    color: #374151;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .input-list-flip-hint {
@@ -6981,7 +6981,8 @@ body.choice-question-mode-active .word-card-container {
 
 /* チェック→番号の順、角丸なし */
 #inputListContainer.flip-mode.flip-deck-mode .input-list-checkbox {
-    width: 26px;
+    width: 22px;
+    height: 22px;
     border-radius: 0;
 }
 
@@ -8206,10 +8207,7 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     flex-direction: row;
     min-height: 40px;
-    border-top: 1px solid #0055ca;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
+    border: none;
 }
 
 .input-list-scroll.compact-mode {
@@ -8217,34 +8215,45 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:first-child {
-    border-top: 1px solid #0055ca;
+    border: none;
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:last-child {
-    border-bottom: 1px solid #0055ca;
+    border: none;
 }
 
-/* コンパクト時も2カラム維持（左は品詞→英単語の2行） */
+/* コンパクト時も2カラム維持。上線は左右で分けて間を空ける */
 .input-list-scroll.compact-mode .expand-left-col {
     flex: 0 0 45%;
     max-width: 45%;
     padding: 6px 8px;
-    background: #f0f9ff;
+    background: #ffffff;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
     gap: 0;
+    border-top: 1px solid #0055ca;
+}
+
+.input-list-scroll.compact-mode .input-list-item-expand:last-child .expand-left-col {
+    border-bottom: 1px solid #0055ca;
 }
 
 .input-list-scroll.compact-mode .expand-right-col {
     flex: 1;
     background: #ffffff;
     padding: 6px 8px;
+    margin-left: 10px;
+    border-top: 1px solid #0055ca;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: left;
+}
+
+.input-list-scroll.compact-mode .input-list-item-expand:last-child .expand-right-col {
+    border-bottom: 1px solid #0055ca;
 }
 
 .input-list-scroll.compact-mode .expand-left-top {
@@ -8287,7 +8296,7 @@ body.choice-question-mode-active .word-card-container {
 .input-list-scroll.compact-mode .input-list-expand-word {
     font-size: 16px;
     font-weight: 700;
-    color: #0369a1;
+    color: #374151;
     margin: 0;
     margin-top: 4px;
     white-space: nowrap;
@@ -8559,11 +8568,11 @@ body.choice-question-mode-active .word-card-container {
 .input-list-number {
     font-size: 10px;
     font-weight: 500;
-    color: #ffffff;
+    color: #374151;
     position: relative;
     padding: 3px 7px 3px 7px;
     margin-right: 0;
-    background: #9ca3af;
+    background: #ffffff;
     border-radius: 0;
     font-family: 'Oswald', sans-serif;
     letter-spacing: 0.05em;
@@ -8584,16 +8593,18 @@ body.choice-question-mode-active .word-card-container {
     display: none;
 }
 
-/* 進捗に応じた単語番号の背景色 */
+/* 進捗に応じた単語番号の背景色・文字は白 */
 .input-list-number.marker-correct {
     background: #3b82f6;
+    color: #ffffff;
 }
 
 .input-list-number.marker-wrong {
     background: #ef4444;
+    color: #ffffff;
 }
 
-/* チェックマーク（単語番号の右） */
+/* チェックマーク（単語番号の右）押してないとき薄いグレー */
 .input-list-checkbox {
     width: 22px;
     height: 18px;
@@ -8650,10 +8661,10 @@ body.choice-question-mode-active .word-card-container {
     display: none !important;
 }
 
-/* 単語カードモードの英字を大きく・中央揃え */
+/* 単語カードモードの英字を大きく・中央揃え・濃いグレー */
 .flip-mode .input-list-word {
     font-size: 30px;
-    color: #0369a1;
+    color: #374151;
 }
 
 .flip-mode .input-list-front {
@@ -8674,7 +8685,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* 単語カードモードの日本語を濃いグレー・中央揃えに */
 .flip-mode .input-list-meaning {
-    color: #0369a1;
+    color: #374151;
     justify-content: center;
     text-align: center;
     margin-top: 0;
@@ -8718,7 +8729,9 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .flip-mode .input-list-checkbox {
-    height: 100%;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
 }
 
 /* 不要なチェックマークのアイコン定義を削除 */
@@ -8784,7 +8797,7 @@ body.choice-question-mode-active .word-card-container {
     font-weight: 600;
     letter-spacing: 0.03em;
     color: #374151;
-    font-family: var(--font-sans);
+    font-family: "Times New Roman", Times, serif;
     font-weight: bold;
     word-break: break-word;
     overflow-wrap: break-word;
@@ -8841,23 +8854,22 @@ body.choice-question-mode-active .word-card-container {
     line-height: 1.4;
 }
 
-/* 展開モード（2カラムレイアウト：左に英単語、右に意味） */
+/* 展開モード（2カラムレイアウト）上・下線は「—————    —————」のように間を空けて左右に分ける */
 .input-list-item-expand {
     position: relative;
     display: flex;
     flex-direction: row;
     background: #ffffff;
     border: none;
-    border-top: 1.5px solid #0055ca;
     min-height: 90px;
 }
 
 .input-list-item-expand:first-child {
-    border-top: 1.5px solid #0055ca;
+    border: none;
 }
 
 .input-list-item-expand:last-child {
-    border-bottom: 1.5px solid #0055ca;
+    border: none;
 }
 
 .input-list-item-expand.marker-correct {
@@ -8868,7 +8880,7 @@ body.choice-question-mode-active .word-card-container {
     background: #ffffff;
 }
 
-/* 左カラム（英単語情報）- 水色背景 */
+/* 左カラム（英単語情報）- 白背景。上線のみ（境目は空けて「—————    —————」） */
 .expand-left-col {
     flex: 0 0 50%;
     max-width: 50%;
@@ -8876,18 +8888,29 @@ body.choice-question-mode-active .word-card-container {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    background: #f0f9ff;
+    background: #ffffff;
     position: relative;
+    border-top: 1.5px solid #0055ca;
 }
 
-/* 右カラム（意味・例文）- 白背景 */
+.input-list-item-expand:last-child .expand-left-col {
+    border-bottom: 1.5px solid #0055ca;
+}
+
+/* 右カラム（意味・例文）- 左との間にすき間、上線のみ */
 .expand-right-col {
     flex: 1;
     background: #ffffff;
     padding: 10px 12px;
+    margin-left: 12px;
+    border-top: 1.5px solid #0055ca;
     display: flex;
     flex-direction: column;
     gap: 0;
+}
+
+.input-list-item-expand:last-child .expand-right-col {
+    border-bottom: 1.5px solid #0055ca;
 }
 
 /* 左カラム上部：番号とチェックボックスの連結ボックス */
@@ -8934,7 +8957,7 @@ body.choice-question-mode-active .word-card-container {
     color: #ffffff;
 }
 
-/* チェックボックス（番号の右に連結） */
+/* チェックボックス（番号の右に連結）押してないとき薄いグレー */
 .input-list-expand-checkbox {
     width: 22px;
     height: 100%;
@@ -9049,8 +9072,8 @@ body.choice-question-mode-active .word-card-container {
 .input-list-expand-word {
     font-size: 18px;
     font-weight: 700;
-    color: #0369a1;
-    font-family: var(--font-sans);
+    color: #374151;
+    font-family: "Times New Roman", Times, serif;
     letter-spacing: 0.01em;
     line-height: 1.2;
     margin-top: 2px;
@@ -9060,35 +9083,33 @@ body.choice-question-mode-active .word-card-container {
 /* カタカナ読み */
 .input-list-expand-kana {
     font-size: 12px;
-    color: #0369a1;
+    color: #374151;
     font-weight: 400;
     line-height: 1.2;
 }
 
 .input-list-expand-kana b {
     font-weight: 700;
-    color: #0284c7;
+    color: #1f2937;
 }
 
 /* 発音ボタン（アイコンのみ） */
+/* 展開モードの音声ボタン＝単語カードと同じデザイン、通常時は少し薄い青 */
 .expand-pronunciation-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     padding: 0;
-    background: #ffffff;
+    background-color: #dbeafe;
     border: none;
     border-radius: 50%;
     cursor: pointer;
     color: #1d4ed8;
     margin-top: 4px;
-    transition: background 0.15s ease;
-}
-
-.expand-pronunciation-btn:hover {
-    background: #f3f4f6;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
 }
 
 .expand-pronunciation-btn svg {
@@ -9096,10 +9117,24 @@ body.choice-question-mode-active .word-card-container {
     height: 16px;
 }
 
-/* 発音ボタン再生中アニメーション */
+@media (hover: hover) {
+    .expand-pronunciation-btn:hover {
+        background-color: #bfdbfe;
+        color: #1d4ed8;
+        transform: scale(1.08);
+    }
+}
+
+.expand-pronunciation-btn:active {
+    background-color: #93c5fd;
+    color: #1d4ed8;
+    transform: scale(0.95);
+}
+
 .expand-pronunciation-btn.playing {
     background-color: #93c5fd !important;
     color: #1d4ed8 !important;
+    transform: scale(1);
     animation: audio-pulse 0.6s ease-in-out infinite;
 }
 
@@ -9108,7 +9143,7 @@ body.choice-question-mode-active .word-card-container {
     display: none;
 }
 
-/* 右カラム：意味 */
+/* 右カラム：意味（オレンジ） */
 .expand-meaning-text {
     font-size: 18px;
     font-weight: 600;
@@ -10122,7 +10157,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* 音声ボタンのスタイル */
 .audio-btn {
-    background-color: #e5e7eb;
+    background-color: #dbeafe;
     border: none;
     border-radius: 50%;
     width: 32px;
@@ -10131,7 +10166,7 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #6b7280;
+    color: #1d4ed8;
     transition: transform 0.2s ease;
     flex-shrink: 0;
     padding: 0;
@@ -10146,8 +10181,8 @@ body.choice-question-mode-active .word-card-container {
 /* PCのみhover効果 */
 @media (hover: hover) {
     .audio-btn:hover {
-        background-color: #d1d5db;
-        color: #4b5563;
+        background-color: #bfdbfe;
+        color: #1d4ed8;
         transform: scale(1.08);
     }
 }
@@ -10218,11 +10253,11 @@ body.choice-question-mode-active .word-card-container {
     .audio-btn {
         width: 30px;
         height: 30px;
-        background-color: #e5e7eb !important;
+        background-color: #dbeafe !important;
     }
     
     .audio-btn:hover:not(.playing) {
-        background-color: #e5e7eb !important;
+        background-color: #dbeafe !important;
         transform: none !important;
     }
     
@@ -19147,10 +19182,14 @@ body .hw-answer-text,
 body .hw-correct-word,
 body .hw-result-word span,
 body .choice-text,
-body .input-list-word,
-body .input-list-expand-word,
 body .sentence-blank {
     font-family: var(--font-sans);
+    font-weight: bold;
+}
+
+body .input-list-word,
+body .input-list-expand-word {
+    font-family: "Times New Roman", Times, serif;
     font-weight: bold;
 }
 
