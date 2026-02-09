@@ -20671,22 +20671,27 @@ div#inputWordCheckbox,
 }
 
 /* サブカテゴリーカードのデザイン */
-/* バッジ：四角に数字のみ、色はインラインで付与 */
+/* バッジ：Section1, Section2... を表示 */
 .subcat-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
+    min-width: 28px;
     height: 28px;
+    padding: 0 6px;
     border-radius: 6px;
     flex-shrink: 0;
 }
 .subcat-badge-num {
     font-family: "Barlow Condensed", "Oswald", sans-serif;
     font-size: 15px;
-    font-weight: 700;
-    color: #ffffff;
+    font-weight: 400;
     line-height: 1;
+    white-space: nowrap;
+}
+.subcat-badge-num-n {
+    font-size: 1.15em;
+    font-weight: 600;
 }
 
 .subcat-range-block {

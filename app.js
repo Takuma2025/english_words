@@ -4794,7 +4794,7 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
                 <div class="category-header">
                     <div class="category-name">
                         <div class="subcat-badge" style="background: ${badgeBgColor}">
-                            <span class="subcat-badge-num" style="color: ${badgeColor}">${i + 1}</span>
+                            <span class="subcat-badge-num" style="color: ${badgeColor}">Section<span class="subcat-badge-num-n">${i + 1}</span></span>
                         </div>
                         <div class="subcat-range-block">
                             <span class="subcat-range-no">No.</span>
