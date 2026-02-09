@@ -14175,7 +14175,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 #grammarChapterView {
     background: #fff;
     margin-top: -16px;
-    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 #grammarChapterView > .unit-header-container {
     display: none;
@@ -14200,11 +14200,11 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 .grammar-grade-title {
     font-size: 14px;
     font-weight: 700;
-    color: #0055ca;
+    color: #1e5db3;
     margin: 0 0 6px;
     padding: 4px 10px;
-    background: #eef4ff;
-    border-left: 3px solid #0055ca;
+    background: #eaf6ff;
+    border-left: 3px solid #1e5db3;
     border-radius: 0 4px 4px 0;
 }
 
@@ -14227,7 +14227,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     -webkit-tap-highlight-color: transparent;
 }
 .grammar-chapter-item:last-child { border-bottom: none; }
-.grammar-chapter-item:active { background: #f0f6ff; }
+.grammar-chapter-item:active { background: #eaf6ff; }
 
 .grammar-chapter-item .chapter-number {
     display: inline-flex;
@@ -14235,7 +14235,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     justify-content: center;
     width: 28px;
     height: 28px;
-    background: #0055ca;
+    background: #1e5db3;
     color: #fff;
     border-radius: 50%;
     font-size: 13px;
@@ -14259,8 +14259,8 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     margin-left: auto;
 }
 .grammar-chapter-item .chapter-checkbox.completed {
-    background: #0055ca;
-    border-color: #0055ca;
+    background: #1e5db3;
+    border-color: #1e5db3;
 }
 .grammar-chapter-item .chapter-checkbox::after {
     content: '';
@@ -14289,18 +14289,15 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 
 /* --- 章タイトル（教科書の単元タイトル風） --- */
 .grammar-chapter-title {
-    font-size: 19px;
+    font-size: 18px;
     font-weight: 800;
-    color: #0055ca;
-    background: transparent;
+    color: #fff;
+    background: #1e5db3;
     text-align: left;
-    margin: 0;
-    padding: 16px 0 12px 14px;
-    line-height: 1.4;
-    margin-top: 0;
-    margin-bottom: 12px;
-    border-left: 4px solid #0055ca;
-    border-bottom: 2px solid #0055ca;
+    margin: 0 0 14px;
+    padding: 10px 16px;
+    line-height: 1.5;
+    border: none;
     border-radius: 0;
 }
 .grammar-chapter-title::before,
@@ -14339,39 +14336,39 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 .grammar-section-title {
     font-size: 16px;
     font-weight: 800;
-    color: #1a1a1a;
+    color: #1e5db3;
     margin: 0 0 12px;
-    padding: 6px 0 6px 10px;
-    border-left: 4px solid #0055ca;
-    background: #f4f7fb;
+    padding: 0 0 5px;
+    border-bottom: 2px solid #1e5db3;
+    background: transparent;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .grammar-section-number {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 22px;
-    height: 22px;
-    padding: 0 5px;
-    background: #0055ca;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 4px;
+    background: #4fc3f7;
     color: #fff;
-    border-radius: 0;
-    font-size: 12px;
+    border-radius: 50%;
+    font-size: 11px;
     font-weight: 700;
     flex-shrink: 0;
 }
 
 .grammar-section-title-text {
-    color: #1a1a1a;
+    color: #1e5db3;
 }
 
 /* --- POINTボックス --- */
 .grammar-point-box {
-    background: #fffbf5;
-    border: 2px solid #f07000;
+    background: #f5fbff;
+    border: 2px solid #4aa3df;
     border-radius: 0;
     padding: 0;
     margin-bottom: 20px;
@@ -14383,10 +14380,11 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     font-size: 12px;
     font-weight: 800;
     color: #fff;
-    background: #f07000;
+    background: #4aa3df;
     padding: 6px 14px;
     margin: 0;
     letter-spacing: 0.15em;
+    border-bottom: none;
 }
 
 .grammar-point-content {
@@ -14420,18 +14418,18 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 .grammar-point-content table th,
 .grammar-chapter-content table th {
-    background: #e8eef7;
-    color: #1a1a1a;
+    background: #eaf6ff;
+    color: #1e5db3;
     font-weight: 700;
     font-size: 13px;
     padding: 5px 8px;
     text-align: center;
-    border: 1px solid #999;
+    border: 1px solid #9ecdf5;
 }
 .grammar-point-content table td,
 .grammar-chapter-content table td {
     padding: 5px 8px;
-    border: 1px solid #999;
+    border: 1px solid #c8def4;
     text-align: center;
     background: #fff;
     color: #1a1a1a;
@@ -14454,11 +14452,24 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     margin-bottom: 0;
 }
 .grammar-reorder-item.answered { pointer-events: none; }
+.grammar-reorder-item.answered .grammar-reorder-redo-btn { pointer-events: auto; }
 .grammar-reorder-japanese {
     font-size: 15px;
     color: #222;
     margin-bottom: 10px;
     line-height: 1.6;
+    font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* 文法セクション内の日本語はすべて並び替えと同じフォントに統一・太字なし */
+#grammarChapterView .grammar-exercise-item .sentence-japanese,
+#grammarChapterView .grammar-chapter-content,
+#grammarChapterView .grammar-point-content {
+    font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
+}
+.grammar-reorder-japanese {
+    font-weight: 400;
 }
 /* 空欄エリア */
 .grammar-reorder-blanks {
@@ -14497,7 +14508,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     align-items: center;
     justify-content: center;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 400;
     color: #1a1a1a;
     cursor: grab;
     background: #fff;
@@ -14510,13 +14521,11 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     opacity: 0.4;
 }
 .grammar-reorder-blank.correct-blank {
-    border-color: #16a34a;
-    border-width: 2px;
+    border-color: #0055ca;
 }
-.grammar-reorder-blank.correct-blank .grammar-reorder-answer { color: #16a34a; }
+.grammar-reorder-blank.correct-blank .grammar-reorder-answer { color: #0055ca; }
 .grammar-reorder-blank.wrong-blank {
     border-color: #dc2626;
-    border-width: 2px;
 }
 .grammar-reorder-blank.wrong-blank .grammar-reorder-answer { color: #dc2626; }
 .grammar-reorder-punctuation {
@@ -14544,7 +14553,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     background: #fff;
     color: #1a1a1a;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 400;
     border: 1px solid #000;
     border-radius: 0;
     cursor: grab;
@@ -14559,6 +14568,23 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     transform: scale(1.05);
 }
+
+.grammar-reorder-submit-btn {
+    display: inline-block;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    padding: 8px 20px;
+    background: #1e5db3;
+    color: #fff;
+    border: 1px solid #164680;
+    border-radius: 0;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.grammar-reorder-submit-btn:hover { background: #194f96; }
+.grammar-reorder-submit-btn.hidden { display: none; }
 
 .grammar-reorder-result {
     font-size: 14px;
@@ -14587,11 +14613,11 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 .grammar-exercise-title {
     font-size: 14px;
     font-weight: 800;
-    color: #0055ca;
+    color: #1e5db3;
     background: transparent;
     margin: 0 0 10px;
     padding: 0 0 6px;
-    border-bottom: 2px solid #0055ca;
+    border-bottom: 2px solid #1e5db3;
     letter-spacing: 0.04em;
 }
 
@@ -14640,20 +14666,25 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     display: inline-flex;
     align-items: center;
     margin-top: 10px;
-    padding: 7px 14px;
-    background: #0055ca;
+    padding: 6px 14px;
+    background: #4fc3f7;
     color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-weight: 700;
+    border: 1px solid #35b0e9;
+    border-radius: 0;
+    font-weight: 600;
     font-size: 13px;
     cursor: pointer;
-    box-shadow: 0 3px 0 rgba(0, 55, 130, 0.7);
-    transition: transform 0.08s, box-shadow 0.08s;
+    transition: background 0.15s, border-color 0.15s;
+}
+.grammar-exercise-redo-btn:hover {
+    background: #3bb6f0;
+    border-color: #2da2d8;
 }
 .grammar-exercise-redo-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 rgba(0, 55, 130, 0.7);
+    background: #2da2d8;
+}
+.grammar-reorder-redo-btn {
+    margin-top: 8px;
 }
 
 /* --- 固定ボタン --- */

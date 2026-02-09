@@ -18304,7 +18304,7 @@ function displayGrammarSectionExercises(exercises, sectionIndex, exerciseContent
                 // タッチイベント
                 answerBox.addEventListener('touchstart', (e) => handleGrammarTouchStart(e, touchData), { passive: false });
                 answerBox.addEventListener('touchmove', (e) => handleGrammarTouchMove(e, touchData, blanksArea, choicesArea), { passive: false });
-                answerBox.addEventListener('touchend', (e) => handleGrammarTouchEnd(e, touchData, blanksArea, choicesArea, placeWordInBlank, returnWordToChoices, checkAllFilled), { passive: false });
+                answerBox.addEventListener('touchend', (e) => handleGrammarTouchEnd(e, touchData, blanksArea, choicesArea, placeWordInBlank, returnWordToChoices, submitAnswer), { passive: false });
 
                 // クリックで戻す
                 answerBox.addEventListener('click', (e) => {
@@ -18317,8 +18317,6 @@ function displayGrammarSectionExercises(exercises, sectionIndex, exerciseContent
 
                 blankBox.appendChild(answerBox);
                 adjustGrammarBlankSize(blankBox, answerBox);
-
-                checkAllFilled();
             }
 
             // --- 単語を選択肢に戻す ---
@@ -18330,12 +18328,13 @@ function displayGrammarSectionExercises(exercises, sectionIndex, exerciseContent
                 });
             }
 
-            // --- 全空欄チェック ---
-            function checkAllFilled() {
+            // --- 解答判定（解答するボタンで実行） ---
+            function submitAnswer() {
                 const allFilled = blankEls.every(b => b.querySelector('.grammar-reorder-answer'));
                 if (!allFilled) return;
                 answered = true;
                 reorderItem.classList.add('answered');
+                submitBtn.classList.add('hidden');
                 let allCorrect = true;
                 blankEls.forEach((b, i) => {
                     const ans = b.querySelector('.grammar-reorder-answer');
@@ -18411,11 +18410,18 @@ function displayGrammarSectionExercises(exercises, sectionIndex, exerciseContent
                 // タッチイベント
                 wordBtn.addEventListener('touchstart', (e) => handleGrammarTouchStart(e, touchData), { passive: false });
                 wordBtn.addEventListener('touchmove', (e) => handleGrammarTouchMove(e, touchData, blanksArea, choicesArea), { passive: false });
-                wordBtn.addEventListener('touchend', (e) => handleGrammarTouchEnd(e, touchData, blanksArea, choicesArea, placeWordInBlank, returnWordToChoices, checkAllFilled), { passive: false });
+                wordBtn.addEventListener('touchend', (e) => handleGrammarTouchEnd(e, touchData, blanksArea, choicesArea, placeWordInBlank, returnWordToChoices, submitAnswer), { passive: false });
 
                 choicesArea.appendChild(wordBtn);
             });
             reorderItem.appendChild(choicesArea);
+
+            // 解答するボタン
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'grammar-reorder-submit-btn';
+            submitBtn.textContent = '解答する';
+            submitBtn.addEventListener('click', submitAnswer);
+            reorderItem.appendChild(submitBtn);
 
             // 結果表示
             const resultEl = document.createElement('div');
@@ -18427,7 +18433,7 @@ function displayGrammarSectionExercises(exercises, sectionIndex, exerciseContent
 
             // 解きなおす
             const redoBtn = document.createElement('button');
-            redoBtn.className = 'grammar-exercise-redo-btn hidden';
+            redoBtn.className = 'grammar-exercise-redo-btn grammar-reorder-redo-btn hidden';
             redoBtn.textContent = '解きなおす';
             redoBtn.addEventListener('click', () => {
                 answered = false;
@@ -18435,13 +18441,13 @@ function displayGrammarSectionExercises(exercises, sectionIndex, exerciseContent
                 resultEl.textContent = ''; resultEl.className = 'grammar-reorder-result';
                 correctAnswerEl.textContent = '';
                 redoBtn.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
                 blankEls.forEach(b => {
                     b.innerHTML = '';
                     b.classList.remove('correct-blank', 'wrong-blank');
                     b.style.minWidth = '';
                 });
                 choicesArea.querySelectorAll('.grammar-reorder-word').forEach(btn => btn.classList.remove('used'));
-                // 再シャッフル
                 const newShuffled = [...exercise.words].sort(() => Math.random() - 0.5);
                 const wordBtns = choicesArea.querySelectorAll('.grammar-reorder-word');
                 newShuffled.forEach((w, i) => { if (wordBtns[i]) { wordBtns[i].textContent = w; wordBtns[i].dataset.word = w; }});

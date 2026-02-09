@@ -43,8 +43,8 @@ const grammarData = [
                     '<table>',
                     '  <tr><th>主語</th><th>be動詞</th></tr>',
                     '  <tr><td>I</td><td class="table-highlight">am</td></tr>',
-                    '  <tr><td>You / We / They</td><td class="table-highlight">are</td></tr>',
-                    '  <tr><td>He / She / It</td><td class="table-highlight">is</td></tr>',
+                    '  <tr><td>you, 複数形</td><td class="table-highlight">are</td></tr>',
+                    '  <tr><td>he, she, it,</td><td class="table-highlight">is</td></tr>',
                     '</table>',
                     '<p>一般動詞は主語が<span class="grammar-important">三人称単数現在</span>の場合、語尾に -s / -es がつく。</p>'
                 ].join('\n'),
