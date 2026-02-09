@@ -3921,6 +3921,26 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
 }
 
 // 単語表示用：括弧は細字、括弧内（例: an）は太字（例: a (an)）
+// 展開モード: 英単語が親要素からはみ出す場合に横縮小する
+function fitWordToContainer(wordEl) {
+    if (!wordEl || !wordEl.parentElement) return;
+    // リセット
+    wordEl.style.transform = '';
+    wordEl.style.transformOrigin = '';
+    // 描画後に実測するため rAF で遅延
+    requestAnimationFrame(() => {
+        const container = wordEl.parentElement;
+        if (!container) return;
+        const containerWidth = container.clientWidth - parseFloat(getComputedStyle(container).paddingLeft || 0) - parseFloat(getComputedStyle(container).paddingRight || 0);
+        const wordWidth = wordEl.scrollWidth;
+        if (wordWidth > containerWidth && containerWidth > 0) {
+            const scale = Math.max(0.5, containerWidth / wordWidth);
+            wordEl.style.transform = `scaleX(${scale.toFixed(3)})`;
+            wordEl.style.transformOrigin = 'left center';
+        }
+    });
+}
+
 function formatWordForDisplay(wordStr) {
     if (!wordStr || typeof wordStr !== 'string') return null;
     if (!wordStr.includes(' (')) return null;
@@ -11003,7 +11023,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         });
         leftCol.appendChild(leftTop);
         
-        // 英単語（長い単語は横縮小）
+        // 英単語（はみ出す場合は横縮小）
         const wordEl = document.createElement('div');
         wordEl.className = 'input-list-expand-word';
         const wordFormatted = formatWordForDisplay(word.word);
@@ -11012,27 +11032,8 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         } else {
             wordEl.textContent = word.word;
         }
-        // 長い単語は横縮小
-        if (word.word.length >= 14) {
-            wordEl.style.transform = 'scaleX(0.67)';
-            wordEl.style.transformOrigin = 'left';
-        } else if (word.word.length >= 13) {
-            wordEl.style.transform = 'scaleX(0.7)';
-            wordEl.style.transformOrigin = 'left';
-        } else if (word.word.length >= 12) {
-            wordEl.style.transform = 'scaleX(0.75)';
-            wordEl.style.transformOrigin = 'left';
-        } else if (word.word.length >= 11) {
-            wordEl.style.transform = 'scaleX(0.8)';
-            wordEl.style.transformOrigin = 'left';
-        } else if (word.word.length >= 10) {
-            wordEl.style.transform = 'scaleX(0.85)';
-            wordEl.style.transformOrigin = 'left';
-        } else if (word.word.length >= 9) {
-            wordEl.style.transform = 'scaleX(0.95)';
-            wordEl.style.transformOrigin = 'left';
-        }
         leftCol.appendChild(wordEl);
+        fitWordToContainer(wordEl);
         
         // カタカナ読み（あれば）
         if (word.kana) {
@@ -12112,36 +12113,17 @@ function renderInputListView(words) {
             });
             leftCol.appendChild(leftTop);
             
-            // 英単語（長い単語は横縮小）
+            // 英単語（はみ出す場合は横縮小）
             const wordEl = document.createElement('div');
-wordEl.className = 'input-list-expand-word';
-        const wordFormatted = formatWordForDisplay(word.word);
-        if (wordFormatted) {
-            wordEl.innerHTML = wordFormatted;
-        } else {
-            wordEl.textContent = word.word;
-        }
-        // 長い単語は横縮小
-        if (word.word.length >= 14) {
-                wordEl.style.transform = 'scaleX(0.67)';
-                wordEl.style.transformOrigin = 'left';
-            } else if (word.word.length >= 13) {
-                wordEl.style.transform = 'scaleX(0.7)';
-                wordEl.style.transformOrigin = 'left';
-            } else if (word.word.length >= 12) {
-                wordEl.style.transform = 'scaleX(0.75)';
-                wordEl.style.transformOrigin = 'left';
-            } else if (word.word.length >= 11) {
-                wordEl.style.transform = 'scaleX(0.8)';
-                wordEl.style.transformOrigin = 'left';
-            } else if (word.word.length >= 10) {
-                wordEl.style.transform = 'scaleX(0.85)';
-                wordEl.style.transformOrigin = 'left';
-            } else if (word.word.length >= 9) {
-                wordEl.style.transform = 'scaleX(0.95)';
-                wordEl.style.transformOrigin = 'left';
+            wordEl.className = 'input-list-expand-word';
+            const wordFormatted = formatWordForDisplay(word.word);
+            if (wordFormatted) {
+                wordEl.innerHTML = wordFormatted;
+            } else {
+                wordEl.textContent = word.word;
             }
             leftCol.appendChild(wordEl);
+            fitWordToContainer(wordEl);
             
             // カタカナ読み（あれば）
             if (word.kana) {

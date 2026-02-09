@@ -8797,7 +8797,7 @@ body.choice-question-mode-active .word-card-container {
     font-weight: 600;
     letter-spacing: 0.03em;
     color: #374151;
-    font-family: "Times New Roman", Times, serif;
+    font-family: var(--font-sans);
     font-weight: bold;
     word-break: break-word;
     overflow-wrap: break-word;
@@ -9073,7 +9073,7 @@ body.choice-question-mode-active .word-card-container {
     font-size: 18px;
     font-weight: 700;
     color: #374151;
-    font-family: "Times New Roman", Times, serif;
+    font-family: var(--font-sans);
     letter-spacing: 0.01em;
     line-height: 1.2;
     margin-top: 2px;
@@ -19182,14 +19182,10 @@ body .hw-answer-text,
 body .hw-correct-word,
 body .hw-result-word span,
 body .choice-text,
+body .input-list-word,
+body .input-list-expand-word,
 body .sentence-blank {
     font-family: var(--font-sans);
-    font-weight: bold;
-}
-
-body .input-list-word,
-body .input-list-expand-word {
-    font-family: "Times New Roman", Times, serif;
     font-weight: bold;
 }
 
