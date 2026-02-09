@@ -1,16 +1,33 @@
+// ====================================================
 // 英文法中学３年間の総復習 問題データ
-// explanation: HTML形式で解説を記述（<p>タグなど使用可）
-// point: HTML形式でPOINTを記述（<ul><li>など使用可）
-// exercises: 演習問題の配列（厳選例文暗記60と同じ形式）
-//   - id: 問題ID
-//   - japanese: 日本語訳
-//   - english: 英文（空所部分は空白で区切る）
-//   - blanks: 空所の配列 [{index: 0, word: 'longer'}, ...]
-//   - hint: ヒント文
-// sections: セクションの配列（四角１、四角２など）
+// ====================================================
+//
+// --- データ構造 ---
+// chapter: 章番号
+// title: 章タイトル
+// explanation: HTML形式の解説文（<p>タグなど使用可）
+// sections: セクションの配列
 //   - title: セクションタイトル（例：「肯定文」「否定文」）
-//   - point: HTML形式でPOINTを記述
+//   - point: HTML形式のPOINT（配列.join('\n')で複数行推奨）
 //   - exercises: 演習問題の配列
+//
+// --- 穴埋め問題 ---
+//   { id, japanese, english, blanks: [{index, word}], hint }
+//
+// --- 並び替え問題 ---
+//   { id, type: "reorder", japanese, words: [...], answer: "正解文" }
+//
+// --- POINT内で表を使う場合のテンプレート ---
+//   point: [
+//       '<p>説明文</p>',
+//       '<table>',
+//       '  <tr><th>見出し1</th><th>見出し2</th></tr>',
+//       '  <tr><td>データ1</td><td>データ2</td></tr>',
+//       '  <tr><td>データ3</td><td class="table-highlight">強調</td></tr>',
+//       '</table>'
+//   ].join('\n'),
+//
+// ====================================================
 const grammarData = [
     {
         chapter: 1,
@@ -21,7 +38,16 @@ const grammarData = [
         sections: [
             {
                 title: "肯定文",
-                point: "<ul><li>be動詞は<span class=\"grammar-important\">主語によって形が変わる</span>（I am, You are, He/She/It is）。</li><li>一般動詞は主語が<span class=\"grammar-important\">三人称単数現在</span>の場合、動詞の語尾に-sまたは-esがつく。</li></ul>",
+                point: [
+                    '<p>be動詞は<span class="grammar-important">主語によって形が変わる</span>。</p>',
+                    '<table>',
+                    '  <tr><th>主語</th><th>be動詞</th></tr>',
+                    '  <tr><td>I</td><td class="table-highlight">am</td></tr>',
+                    '  <tr><td>You / We / They</td><td class="table-highlight">are</td></tr>',
+                    '  <tr><td>He / She / It</td><td class="table-highlight">is</td></tr>',
+                    '</table>',
+                    '<p>一般動詞は主語が<span class="grammar-important">三人称単数現在</span>の場合、語尾に -s / -es がつく。</p>'
+                ].join('\n'),
                 exercises: [
             {
                 id: 1,
@@ -114,12 +140,40 @@ const grammarData = [
                     { index: 0, word: 'Are' }
                 ],
                 hint: "be動詞の疑問文は、be動詞を文頭に移動します。主語が「you」のときは「Are」を使います。"
+            },
+            {
+                id: 101,
+                type: "reorder",
+                japanese: "彼女はとても親切です。",
+                words: ["very", "is", "kind", "She"],
+                answer: "She is very kind."
+            },
+            {
+                id: 102,
+                type: "reorder",
+                japanese: "私は毎日学校に歩いて行きます。",
+                words: ["to", "walk", "every", "I", "school", "day"],
+                answer: "I walk to school every day."
             }
                 ]
             },
             {
                 title: "否定文",
-                point: "<ul><li>be動詞の否定文は、be動詞の後に「not」を置く。</li><li>一般動詞の否定文は、「do not」または「does not」を動詞の前に置く。</li></ul>",
+                point: [
+                    '<p>be動詞の否定文は、be動詞の後に <span class="grammar-important">not</span> を置く。</p>',
+                    '<table>',
+                    '  <tr><th>主語</th><th>否定形</th><th>短縮形</th></tr>',
+                    '  <tr><td>I</td><td>am not</td><td>I\'m not</td></tr>',
+                    '  <tr><td>You / We / They</td><td>are not</td><td>aren\'t</td></tr>',
+                    '  <tr><td>He / She / It</td><td>is not</td><td>isn\'t</td></tr>',
+                    '</table>',
+                    '<p>一般動詞の否定文は、<span class="grammar-important">do not / does not</span> を動詞の前に置く。</p>',
+                    '<table>',
+                    '  <tr><th>主語</th><th>否定形</th><th>短縮形</th></tr>',
+                    '  <tr><td>I / You / We / They</td><td>do not + 原形</td><td>don\'t</td></tr>',
+                    '  <tr><td>He / She / It</td><td>does not + 原形</td><td>doesn\'t</td></tr>',
+                    '</table>'
+                ].join('\n'),
                 exercises: [
                     {
                         id: 11,
@@ -140,12 +194,32 @@ const grammarData = [
                             { index: 1, word: 'not' }
                         ],
                         hint: "主語が「He」のときは、be動詞は「is」を使います。"
+                    },
+                    {
+                        id: 111,
+                        type: "reorder",
+                        japanese: "彼女はここに住んでいません。",
+                        words: ["live", "She", "not", "here", "does"],
+                        answer: "She does not live here."
                     }
                 ]
             },
             {
                 title: "疑問文",
-                point: "<ul><li>be動詞の疑問文は、be動詞を文頭に移動する。</li><li>一般動詞の疑問文は、文頭に「Do」または「Does」を置く。</li></ul>",
+                point: [
+                    '<p>be動詞の疑問文は、<span class="grammar-important">be動詞を文頭に移動</span>する。</p>',
+                    '<table>',
+                    '  <tr><th>肯定文</th><th>疑問文</th></tr>',
+                    '  <tr><td>You are a student.</td><td class="table-highlight">Are you a student?</td></tr>',
+                    '  <tr><td>He is tall.</td><td class="table-highlight">Is he tall?</td></tr>',
+                    '</table>',
+                    '<p>一般動詞の疑問文は、文頭に <span class="grammar-important">Do / Does</span> を置く。</p>',
+                    '<table>',
+                    '  <tr><th>主語</th><th>疑問文の形</th></tr>',
+                    '  <tr><td>I / You / We / They</td><td class="table-highlight">Do + 主語 + 原形 ...?</td></tr>',
+                    '  <tr><td>He / She / It</td><td class="table-highlight">Does + 主語 + 原形 ...?</td></tr>',
+                    '</table>'
+                ].join('\n'),
                 exercises: [
                     {
                         id: 13,
@@ -164,6 +238,13 @@ const grammarData = [
                             { index: 0, word: 'Does' }
                         ],
                         hint: "主語が「He」「She」「It」や単数形の名詞のときは「Does」を使い、動詞は原形にします。"
+                    },
+                    {
+                        id: 121,
+                        type: "reorder",
+                        japanese: "あなたは英語を話しますか。",
+                        words: ["speak", "you", "Do", "English"],
+                        answer: "Do you speak English?"
                     }
                 ]
             }
