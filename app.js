@@ -11386,6 +11386,75 @@ function renderInputListView(words) {
     
     if (!listView || !container) return;
     
+    // フリップデッキが既に構築済みの場合：DOM再構築をスキップしてデータ更新+カード再描画のみ
+    // （シャッフル・フィルター変更時のパフォーマンス最適化）
+    if (inputListViewMode === 'flip' && inputFlipDeckEls && container.classList.contains('flip-deck-mode')
+        && Array.isArray(words) && words.length > 0) {
+        // シャッフルモードの場合は単語をシャッフル
+        let wordsToUse = Array.isArray(words) ? words : [];
+        if (isInputShuffled && wordsToUse.length > 0) {
+            wordsToUse = [...wordsToUse].sort(() => Math.random() - 0.5);
+        }
+        
+        // 進捗キャッシュを更新
+        let progressCache = {};
+        let categoryCorrectSet = correctWords;
+        let categoryWrongSet = wrongWords;
+        if (selectedCategory === '大阪府のすべての英単語') {
+            const allCorrectIds = new Set();
+            const allWrongIds = new Set();
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('correctWords-') || key.startsWith('wrongWords-'))) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        if (Array.isArray(data)) {
+                            data.forEach(id => {
+                                const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                                if (key.startsWith('correctWords-')) allCorrectIds.add(numId);
+                                else allWrongIds.add(numId);
+                            });
+                        }
+                    } catch (e) {}
+                }
+            }
+            progressCache['__all__'] = { correct: allCorrectIds, wrong: allWrongIds };
+        } else if (selectedCategory !== 'LEVEL0 入門600語' && selectedCategory !== '入試直前これだけ1200語') {
+            const sets = loadCategoryWordsForProgress(selectedCategory);
+            categoryCorrectSet = sets.correctSet;
+            categoryWrongSet = sets.wrongSet;
+        } else {
+            const modes = ['card', 'input'];
+            wordsToUse.forEach(word => {
+                const cat = word.category;
+                if (!progressCache[cat]) {
+                    progressCache[cat] = { correct: new Set(), wrong: new Set() };
+                    modes.forEach(mode => {
+                        const savedCorrect = localStorage.getItem(`correctWords-${cat}_${mode}`);
+                        const savedWrong = localStorage.getItem(`wrongWords-${cat}_${mode}`);
+                        if (savedCorrect) {
+                            try { JSON.parse(savedCorrect).forEach(id => { progressCache[cat].correct.add(typeof id === 'string' ? parseInt(id, 10) : id); }); } catch (e) {}
+                        }
+                        if (savedWrong) {
+                            try { JSON.parse(savedWrong).forEach(id => { const numId = typeof id === 'string' ? parseInt(id, 10) : id; progressCache[cat].wrong.add(numId); progressCache[cat].correct.delete(numId); }); } catch (e) {}
+                        }
+                    });
+                }
+            });
+        }
+        
+        inputFlipDeckWords = wordsToUse;
+        inputFlipDeckIndex = 0;
+        inputFlipDeckAllFlipped = false;
+        inputFlipDeckProgressPos = 0;
+        inputFlipDeckFinished = false;
+        inputFlipDeckContext = { progressCache, categoryCorrectSet, categoryWrongSet, skipProgress: false };
+        container.classList.remove('deck-flipped');
+        inputFlipDeckEls.renderDeckCard();
+        inputFlipDeckEls.updateFlipAllBtnLabel();
+        return;
+    }
+    
     // スクロール位置を一番上にリセット
     window.scrollTo(0, 0);
     container.scrollTop = 0;
@@ -11408,6 +11477,7 @@ function renderInputListView(words) {
         container.classList.add('expand-mode');
         container.classList.remove('flip-mode');
         container.classList.remove('flip-deck-mode');
+        inputFlipDeckEls = null; // デッキDOM参照をクリア
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
@@ -11531,24 +11601,41 @@ function renderInputListView(words) {
         const stackInner = document.createElement('div');
         stackInner.className = 'flip-deck-stack-inner';
         stack.appendChild(stackInner);
-        // 背面のダミーカード（見た目用：単語数分（最大50）生成）
-        const MAX_STACK = 50;
+        // 背面のダミーカード（5枚固定で使い回し、スタイル更新のみ＝DOM操作ゼロ）
+        const MAX_STACK = 5;
         const stackCards = [];
+        const fragment = document.createDocumentFragment();
+        for (let i = MAX_STACK; i >= 1; i--) {
+            const card = document.createElement('div');
+            card.className = 'flip-deck-stack-card';
+            card.style.display = 'none';
+            fragment.appendChild(card);
+            stackCards.push({ el: card, layer: i });
+        }
+        stackInner.appendChild(fragment);
+        let lastStackRemaining = -1;
         const buildStackCards = (total) => {
-            stackInner.innerHTML = '';
-            stackCards.length = 0;
-            const count = Math.min(Math.max(total - 1, 0), MAX_STACK);
-            for (let i = count; i >= 1; i--) {
-                const card = document.createElement('div');
-                card.className = 'flip-deck-stack-card';
-                // 見た目：少しずつ下げて小さく、薄く
-                const dy = Math.min(i * 2, 40); // 50枚でも伸びすぎない
-                const scale = 1 - Math.min(i * 0.004, 0.18);
-                const opacity = Math.max(0.08, 0.65 - i * 0.018);
-                card.style.transform = `translateY(${dy}px) scale(${scale})`;
-                card.style.opacity = String(opacity);
-                stackInner.appendChild(card);
-                stackCards.push(card);
+            const remaining = Math.max(total - 1, 0);
+            if (remaining === lastStackRemaining) return;
+            lastStackRemaining = remaining;
+            const deckTotal = inputFlipDeckWords.length;
+            const ratio = deckTotal <= 1 ? 0 : remaining / (deckTotal - 1);
+            for (let idx = 0; idx < MAX_STACK; idx++) {
+                const { el, layer } = stackCards[idx];
+                if (layer === 1) {
+                    // 手前の白カード：常にメインカードの真後ろ（めくった時だけ見える）
+                    el.style.display = remaining > 0 ? '' : 'none';
+                    el.style.transform = 'translateY(0) scale(1)';
+                } else {
+                    // 青カード：残りに比例してずらす（layer-1 で白カードの分を詰める）
+                    const dy = (layer - 1) * 8 * ratio;
+                    if (dy < 0.3) {
+                        el.style.display = 'none';
+                    } else {
+                        el.style.display = '';
+                        el.style.transform = `translateY(${dy.toFixed(1)}px) scale(${(1 - (layer - 1) * 0.008 * ratio).toFixed(4)})`;
+                    }
+                }
             }
         };
 

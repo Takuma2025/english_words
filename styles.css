@@ -6844,58 +6844,31 @@ body.choice-question-mode-active .word-card-container {
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    perspective: 1200px;
 }
 
-/* スタック全体をまとめてめくるための内側ラッパー */
+/* スタック内側ラッパー */
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-inner {
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    transform-style: preserve-3d;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* メインカードと同じ回転向きにし、1枚目だけ回転がおかしくならないようにする */
-#inputListContainer.flip-mode.flip-deck-mode.deck-flipped .flip-deck-stack-inner {
-    transform: rotateY(-180deg);
-}
-
-/* スタックカード：表と裏の2面を持たせ、まとめてめくったときに裏が見えるように */
+/* スタックカード：単色で「束」を表現 */
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-card {
     position: absolute;
     width: var(--deck-card-w);
     height: var(--deck-card-h);
     border-radius: 20px;
-    box-shadow: none;
-    opacity: 0.9;
-    transform-style: preserve-3d;
-    background: transparent;
+    background: #0055ca;
+    border: 1.5px solid #0055ca;
 }
 
-#inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+/* 一番手前のカード：白（次のカードに見える） */
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-card:last-child {
     background: #ffffff;
-    border-radius: 20px;
     border: 1.5px solid #0055ca;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-}
-
-#inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: #f0f9ff;
-    border-radius: 20px;
-    border: 1.5px solid #0055ca;
-    transform: rotateY(180deg);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-host {
