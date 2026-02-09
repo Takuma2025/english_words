@@ -73,7 +73,7 @@ const allWords = [
   { id: 67, word: "enjoy", meaning: "楽しむ", partOfSpeech: "動詞", category: "LEVEL0 動詞" },
   { id: 68, word: "two", meaning: "２つ（の）", partOfSpeech: "名詞・形容詞", category: "LEVEL0 名詞" },
   { id: 69, word: "day", meaning: "日", partOfSpeech: "名詞", category: "LEVEL0 名詞" },
-  { id: 70, word: "right", meaning: "右（の・に）、正しい（正しく）、権利", partOfSpeech: "名詞・形容詞・副詞", category: "LEVEL0 名詞" },
+  { id: 70, word: "right", meaning: "右（の・に）；正しい（正しく）；権利", partOfSpeech: "名詞・形容詞・副詞", category: "LEVEL0 名詞" },
   { id: 71, word: "interesting", meaning: "おもしろい、興味深い", partOfSpeech: "形容詞", category: "LEVEL0 形容詞" },
   { id: 72, word: "book", meaning: "本、書物", partOfSpeech: "名詞", category: "LEVEL0 名詞" },
   { id: 73, word: "take", meaning: "取る、持っていく、連れて行く；（写真を）撮る；乗る　《活用》take - took - taken", partOfSpeech: "動詞", category: "LEVEL0 動詞" },

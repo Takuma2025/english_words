@@ -7564,6 +7564,7 @@ function setupEventListeners() {
         elements.wordCard.style.opacity = '0';
         
         setTimeout(() => {
+            if (!elements.wordCard) { isCardAnimating = false; return; }
             elements.wordCard.style.transition = 'none';
             elements.wordCard.style.transform = '';
             isCardAnimating = false;
@@ -7572,7 +7573,7 @@ function setupEventListeners() {
     });
     elements.wrongBtn.addEventListener('click', () => {
         // カードが裏返されていない場合は何もしない
-        if (!elements.wordCard.classList.contains('flipped')) return;
+        if (!elements.wordCard || !elements.wordCard.classList.contains('flipped')) return;
         // アニメーション中なら処理しない
         if (isCardAnimating) return;
         
@@ -7583,6 +7584,7 @@ function setupEventListeners() {
         elements.wordCard.style.opacity = '0';
         
         setTimeout(() => {
+            if (!elements.wordCard) { isCardAnimating = false; return; }
             elements.wordCard.style.transition = 'none';
             elements.wordCard.style.transform = '';
             isCardAnimating = false;
@@ -7603,6 +7605,7 @@ function setupEventListeners() {
             elements.wordCard.style.opacity = '0';
             
             setTimeout(() => {
+                if (!elements.wordCard) { isCardAnimating = false; return; }
                 elements.wordCard.style.transition = 'none';
                 elements.wordCard.style.transform = '';
                 isCardAnimating = false;
@@ -9874,6 +9877,7 @@ function setupSwipeDetection(card) {
 
 // カードをタップして答え表示
 function handleCardTap() {
+    if (!elements.wordCard) return;
     if (!isCardRevealed) {
         revealCard();
         return;
@@ -9891,6 +9895,7 @@ function handleCardTap() {
 }
 
 function revealCard() {
+    if (!elements.wordCard) return;
     // タイムアタックモードで時間切れの場合は次へ進む
     if (isTimeAttackMode) {
         const elapsed = (Date.now() - wordStartTime) / 1000;
@@ -11690,11 +11695,23 @@ function renderInputListView(words) {
                 return;
             }
 
+            // インデックスが範囲外の場合は安全に補正
+            if (inputFlipDeckIndex < 0) inputFlipDeckIndex = 0;
+            if (inputFlipDeckIndex >= total) {
+                inputFlipDeckFinished = true;
+                showReplayCard();
+                return;
+            }
+
             // 残り枚数に合わせてスタックを再生成（減っていく）
             const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
             buildStackCards(remaining + 1); // buildStackCardsは「total-1枚」を作るので、(remaining+1)を渡す
 
             const word = inputFlipDeckWords[inputFlipDeckIndex];
+            if (!word || !inputFlipDeckContext) {
+                console.warn('renderDeckCard: word or context is missing', inputFlipDeckIndex);
+                return;
+            }
             const item = createInputListItem(
                 word,
                 inputFlipDeckContext.progressCache,
@@ -11756,6 +11773,12 @@ function renderInputListView(words) {
                 let nextItem = null;
                 if (!atEnd) {
                     const nextWord = inputFlipDeckWords[inputFlipDeckIndex + 1];
+                    if (!nextWord || !inputFlipDeckContext) {
+                        inputFlipDeckIndex += 1;
+                        shouldAnimateFloatUp = true;
+                        renderDeckCard();
+                        return true;
+                    }
                     nextItem = createInputListItem(
                         nextWord,
                         inputFlipDeckContext.progressCache,
@@ -11772,7 +11795,9 @@ function renderInputListView(words) {
                 nextFlyInProgress = true;
 
                 nextFlyCleanup = () => {
-                    currentItem.remove();
+                    try {
+                        if (currentItem && currentItem.parentNode) currentItem.remove();
+                    } catch (e) { /* already removed */ }
                     if (nextItem) nextItem.classList.remove('deck-card-below');
                     nextFlyInProgress = false;
                     if (atEnd) {
@@ -11793,7 +11818,9 @@ function renderInputListView(words) {
                     buildStackCards(remaining + 1);
                 };
                 nextFlyTimeoutId = setTimeout(() => {
-                    nextFlyCleanup();
+                    if (nextFlyCleanup) {
+                        nextFlyCleanup();
+                    }
                     nextFlyCleanup = null;
                     nextFlyTimeoutId = null;
                 }, FLY_NEXT_DURATION);
@@ -11827,6 +11854,10 @@ function renderInputListView(words) {
 
             // 前のカードを「戻ってくる」アニメーションで表示
             const prevWord = inputFlipDeckWords[prevIndex];
+            if (!prevWord || !inputFlipDeckContext) {
+                goPrev();
+                return;
+            }
             const prevItem = createInputListItem(
                 prevWord,
                 inputFlipDeckContext.progressCache,
@@ -11843,7 +11874,9 @@ function renderInputListView(words) {
             prevReturnInProgress = true;
 
             prevReturnCleanup = () => {
-                currentItem.remove();
+                try {
+                    if (currentItem && currentItem.parentNode) currentItem.remove();
+                } catch (e) { /* already removed */ }
                 prevItem.classList.remove('deck-card-return-in');
                 prevReturnInProgress = false;
                 inputFlipDeckIndex = prevIndex;
@@ -11859,7 +11892,9 @@ function renderInputListView(words) {
                 buildStackCards(remaining + 1);
             };
             prevReturnTimeoutId = setTimeout(() => {
-                prevReturnCleanup();
+                if (prevReturnCleanup) {
+                    prevReturnCleanup();
+                }
                 prevReturnCleanup = null;
                 prevReturnTimeoutId = null;
             }, 620);
@@ -11935,23 +11970,27 @@ function renderInputListView(words) {
             let nextItem = null;
             if (!atEnd) {
                 const nextWord = inputFlipDeckWords[inputFlipDeckIndex + 1];
-                nextItem = createInputListItem(
-                    nextWord,
-                    inputFlipDeckContext.progressCache,
-                    inputFlipDeckContext.categoryCorrectSet,
-                    inputFlipDeckContext.categoryWrongSet,
-                    inputFlipDeckContext.skipProgress
-                );
-                if (inputFlipDeckAllFlipped) {
-                    nextItem.classList.add('flipped');
+                if (nextWord && inputFlipDeckContext) {
+                    nextItem = createInputListItem(
+                        nextWord,
+                        inputFlipDeckContext.progressCache,
+                        inputFlipDeckContext.categoryCorrectSet,
+                        inputFlipDeckContext.categoryWrongSet,
+                        inputFlipDeckContext.skipProgress
+                    );
+                    if (inputFlipDeckAllFlipped) {
+                        nextItem.classList.add('flipped');
+                    }
+                    nextItem.classList.add('deck-card-below');
+                    host.appendChild(nextItem);
                 }
-                nextItem.classList.add('deck-card-below');
-                host.appendChild(nextItem);
             }
 
             nextFlyCleanup = () => {
                 nextFlyInProgress = false;
-                flyWrapper.remove();
+                try {
+                    if (flyWrapper && flyWrapper.parentNode) flyWrapper.remove();
+                } catch (e) { /* already removed */ }
                 if (nextItem) nextItem.classList.remove('deck-card-below');
                 if (atEnd) {
                     inputFlipDeckFinished = true;
@@ -11971,7 +12010,9 @@ function renderInputListView(words) {
                 buildStackCards(remaining + 1);
             };
             nextFlyTimeoutId = setTimeout(() => {
-                nextFlyCleanup();
+                if (nextFlyCleanup) {
+                    nextFlyCleanup();
+                }
                 nextFlyCleanup = null;
                 nextFlyTimeoutId = null;
             }, 650);

@@ -14510,6 +14510,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     font-size: 15px;
     font-weight: 400;
     color: #1a1a1a;
+    font-weight: 400;
     cursor: grab;
     background: #fff;
 }
