@@ -20670,70 +20670,74 @@ div#inputWordCheckbox,
     }
 }
 
-/* サブカテゴリーカードのデザイン */
-/* バッジ：Section1, Section2... を表示 */
-.subcat-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 28px;
-    height: 28px;
-    padding: 0 6px;
-    border-radius: 6px;
-    flex-shrink: 0;
-}
-.subcat-badge-num {
-    font-family: "Barlow Condensed", "Oswald", sans-serif;
-    font-size: 15px;
-    font-weight: 400;
-    line-height: 1;
-    white-space: nowrap;
-}
-.subcat-badge-num-n {
-    font-size: 1.15em;
-    font-weight: 600;
-}
+/* ========================================
+   サブカテゴリーカード（Section）デザイン
+   ======================================== */
 
-.subcat-range-block {
+/* 上段：Section / No.範囲 / 語数を1行に */
+.subcat-top-row {
     display: flex;
     align-items: baseline;
-    gap: 2px;
-    margin-left: 10px;
+    gap: 10px;
 }
 
-/* No. と数字はヘッダー青で統一 */
-.subcat-range-no {
+/* Section1, Section2... メインラベル */
+.subcat-section {
     font-family: "Barlow Condensed", "Oswald", sans-serif;
-    font-size: 12px;
+    font-size: 22px;
     font-weight: 500;
-    color: #0055ca;
-    opacity: 0.9;
     line-height: 1;
-}
-
-.subcat-range-nums {
-    font-family: "Barlow Condensed", "Oswald", sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    line-height: 1;
-    color: #0055ca;
-}
-
-.subcat-range-sep {
-    font-weight: 400;
-    color: #0055ca;
-    opacity: 0.6;
-    margin: 0 1px;
-}
-
-.subcat-word-count {
-    font-family: "Barlow Condensed", "Oswald", sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 10px;
-    margin-left: 1ch;
     white-space: nowrap;
+    letter-spacing: 0.5px;
+}
+.subcat-section-n {
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-left: 1px;
+}
+
+/* No.101–150 サブ情報 */
+.subcat-range {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: #64748b;
+    line-height: 1;
     letter-spacing: 0.3px;
+}
+
+/* 下段：プログレスバー + 数字 */
+.subcat-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 14px;
+}
+
+.category-card-with-actions .category-info:has(.subcat-top-row) {
+    padding: 18px 12px;
+}
+
+.subcat-progress-row .category-progress-bar {
+    flex: 1;
+    min-width: 0;
+    height: 22px;
+    border-radius: 0;
+}
+
+.subcat-progress-num {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0055ca;
+    line-height: 1;
+    flex-shrink: 0;
+    min-width: 36px;
+    text-align: right;
+    padding: 0 2px;
+}
+.subcat-progress-slash {
+    font-weight: 400;
+    opacity: 0.5;
+    margin: 0 1px;
 }

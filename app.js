@@ -4791,23 +4791,16 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         
         card.innerHTML = `
             <div class="category-info">
-                <div class="category-header">
-                    <div class="category-name">
-                        <div class="subcat-badge" style="background: ${badgeBgColor}">
-                            <span class="subcat-badge-num" style="color: ${badgeColor}">Section<span class="subcat-badge-num-n">${i + 1}</span></span>
-                        </div>
-                        <div class="subcat-range-block">
-                            <span class="subcat-range-no">No.</span>
-                            <span class="subcat-range-nums">${firstId}<span class="subcat-range-sep">-</span>${lastId}</span>
-                        </div>
-                    </div>
+                <div class="subcat-top-row">
+                    <span class="subcat-section" style="color: ${badgeColor}">Section<span class="subcat-section-n">${i + 1}</span></span>
+                    <span class="subcat-range">No.${firstId}–${lastId}</span>
                 </div>
-                <div class="category-progress">
+                <div class="subcat-progress-row">
                     <div class="${progressBarClass}">
                         <div class="category-progress-correct" style="width: ${correctPercent}%"></div>
                         <div class="category-progress-wrong" style="width: ${wrongPercent}%"></div>
                     </div>
-                    <div class="category-progress-text">${correctCount}/${wordCount}語</div>
+                    <span class="subcat-progress-num">${correctCount}<span class="subcat-progress-slash">/</span>${wordCount}</span>
                 </div>
             </div>
             <div class="course-card-side-actions">
