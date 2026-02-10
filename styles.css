@@ -14938,11 +14938,11 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 
 .completion-header {
     background: #2563eb;
-    padding: 24px 24px;
+    padding: 16px 24px;
 }
 
 .completion-title {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 800;
     color: #ffffff;
     margin: 0;
@@ -14988,7 +14988,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .completion-progress-container {
-    margin-bottom: 24px;
+    margin-bottom: 12px;
 }
 
 .completion-progress-bar {
@@ -15123,7 +15123,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     display: flex;
     justify-content: center;
     gap: 32px;
-    margin-bottom: 28px;
+    margin-bottom: 8px;
 }
 
 .completion-stat {
@@ -15236,8 +15236,8 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     justify-content: center;
 }
 .completion-result-icon-correct {
-    background: #dcfce7;
-    color: #16a34a;
+    background: #dbeafe;
+    color: #2563eb;
 }
 .completion-result-icon-wrong {
     background: #fee2e2;
