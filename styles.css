@@ -6441,7 +6441,7 @@ body.choice-question-mode-active .word-card-container {
     width: 100% !important;
     max-width: none !important;
     margin: 0;
-    background: #f8faff;
+    background: #ffffff;
 }
 
 .input-list-header {
@@ -7562,7 +7562,7 @@ body.choice-question-mode-active .word-card-container {
 .filter-dropdown-icon {
     width: 12px;
     height: 12px;
-    border-radius: 0;
+    border-radius: 50%;
     flex-shrink: 0;
 }
 
@@ -7578,8 +7578,8 @@ body.choice-question-mode-active .word-card-container {
     background: #3b82f6;
 }
 
-.filter-dropdown-bookmark {
-    flex-shrink: 0;
+.filter-dropdown-icon.filter-icon-yellow {
+    background: #fbbf24;
 }
 
 /* 旧フィルターボタン（互換性用） */
@@ -15488,9 +15488,9 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     color: #0055ca;
 }
 .ts-order-rand-icon {
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
     min-height: 28px;
     color: #94a3b8;
     transition: color 0.15s ease;
@@ -16405,7 +16405,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     margin-left: 4px;
     width: 12px;
     height: 12px;
-    border-radius: 0;
+    border-radius: 50%;
     border: none;
     vertical-align: middle;
 }
@@ -20681,14 +20681,31 @@ div#inputWordCheckbox,
     gap: 10px;
 }
 
-/* Section1, Section2... メインラベル */
+/* Section1, Section2... メインラベル（下部分に薄い色のマーカーをかぶせる） */
 .subcat-section {
+    position: relative;
+    display: inline-block;
     font-family: "Barlow Condensed", "Oswald", sans-serif;
     font-size: 22px;
     font-weight: 500;
     line-height: 1;
     white-space: nowrap;
     letter-spacing: 0.5px;
+    padding: 2px 4px 4px;
+    z-index: 1;
+}
+.subcat-section::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    height: 0.45em;
+    background: var(--subcat-marker);
+    opacity: 0.7;
+    border-radius: 2px;
+    z-index: -1;
+    pointer-events: none;
 }
 .subcat-section-n {
     font-size: 1.3em;

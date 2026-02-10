@@ -4792,7 +4792,7 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         card.innerHTML = `
             <div class="category-info">
                 <div class="subcat-top-row">
-                    <span class="subcat-section" style="color: ${badgeColor}">Section<span class="subcat-section-n">${i + 1}</span></span>
+                    <span class="subcat-section" style="color: ${badgeColor}; --subcat-marker: ${badgeBgColor}">Section<span class="subcat-section-n">${i + 1}</span></span>
                     <span class="subcat-range">No.${firstId}–${lastId}</span>
                 </div>
                 <div class="subcat-progress-row">
@@ -7228,19 +7228,21 @@ function setupEventListeners() {
         const ivStudyFilterAll = document.getElementById('ivStudyFilterAll');
         const ivStudyFilterUnlearned = document.getElementById('ivStudyFilterUnlearned');
         const ivStudyFilterWrong = document.getElementById('ivStudyFilterWrong');
+        const ivStudyFilterBookmark = document.getElementById('ivStudyFilterBookmark');
         const ivStudyFilterCorrect = document.getElementById('ivStudyFilterCorrect');
         
         if (ivStudyFilterAll) {
             ivStudyFilterAll.addEventListener('change', () => {
                 ivStudyFilterState.all = ivStudyFilterAll.checked;
                 if (ivStudyFilterAll.checked) {
-                    // すべてがONなら他もON
                     ivStudyFilterState.unlearned = true;
                     ivStudyFilterState.wrong = true;
                     ivStudyFilterState.correct = true;
+                    ivStudyFilterState.bookmark = true;
                     if (ivStudyFilterUnlearned) ivStudyFilterUnlearned.checked = true;
                     if (ivStudyFilterWrong) ivStudyFilterWrong.checked = true;
                     if (ivStudyFilterCorrect) ivStudyFilterCorrect.checked = true;
+                    if (ivStudyFilterBookmark) ivStudyFilterBookmark.checked = true;
                 }
                 refreshIvStudyTable();
             });
@@ -7250,18 +7252,17 @@ function setupEventListeners() {
             ivStudyFilterState.unlearned = ivStudyFilterUnlearned?.checked ?? true;
             ivStudyFilterState.wrong = ivStudyFilterWrong?.checked ?? true;
             ivStudyFilterState.correct = ivStudyFilterCorrect?.checked ?? true;
-            
-            // 全部ONなら「すべて」もON、そうでなければOFF
-            const allOn = ivStudyFilterState.unlearned && ivStudyFilterState.wrong && ivStudyFilterState.correct;
+            ivStudyFilterState.bookmark = ivStudyFilterBookmark?.checked ?? true;
+            const allOn = ivStudyFilterState.unlearned && ivStudyFilterState.wrong && ivStudyFilterState.correct && ivStudyFilterState.bookmark;
             ivStudyFilterState.all = allOn;
             if (ivStudyFilterAll) ivStudyFilterAll.checked = allOn;
-            
             refreshIvStudyTable();
         };
         
         if (ivStudyFilterUnlearned) ivStudyFilterUnlearned.addEventListener('change', handleStudyIndividualFilter);
         if (ivStudyFilterWrong) ivStudyFilterWrong.addEventListener('change', handleStudyIndividualFilter);
         if (ivStudyFilterCorrect) ivStudyFilterCorrect.addEventListener('change', handleStudyIndividualFilter);
+        if (ivStudyFilterBookmark) ivStudyFilterBookmark.addEventListener('change', handleStudyIndividualFilter);
     }
     
     // 学習モードの赤シート下矢印ボタン
@@ -7312,7 +7313,7 @@ function setupEventListeners() {
             if (!ivFilterDropdown.contains(e.target) && e.target !== ivFilterTrigger) {
                 ivFilterDropdown.classList.add('hidden');
                 // 閉じた後、フィルター状態に応じてactiveを更新
-                const allChecked = ivFilterState.all || (ivFilterState.unlearned && ivFilterState.wrong && ivFilterState.correct);
+                const allChecked = ivFilterState.all || (ivFilterState.unlearned && ivFilterState.wrong && ivFilterState.correct && ivFilterState.bookmark);
                 if (allChecked) {
                     ivFilterTrigger.classList.remove('active');
                 }
@@ -7323,19 +7324,21 @@ function setupEventListeners() {
         const ivFilterAll = document.getElementById('ivFilterAll');
         const ivFilterUnlearned = document.getElementById('ivFilterUnlearned');
         const ivFilterWrong = document.getElementById('ivFilterWrong');
+        const ivFilterBookmark = document.getElementById('ivFilterBookmark');
         const ivFilterCorrect = document.getElementById('ivFilterCorrect');
         
         if (ivFilterAll) {
             ivFilterAll.addEventListener('change', () => {
                 ivFilterState.all = ivFilterAll.checked;
                 if (ivFilterAll.checked) {
-                    // すべてがONなら他もON
                     ivFilterState.unlearned = true;
                     ivFilterState.wrong = true;
                     ivFilterState.correct = true;
+                    ivFilterState.bookmark = true;
                     if (ivFilterUnlearned) ivFilterUnlearned.checked = true;
                     if (ivFilterWrong) ivFilterWrong.checked = true;
                     if (ivFilterCorrect) ivFilterCorrect.checked = true;
+                    if (ivFilterBookmark) ivFilterBookmark.checked = true;
                 }
                 refreshIvTable();
             });
@@ -7345,18 +7348,17 @@ function setupEventListeners() {
             ivFilterState.unlearned = ivFilterUnlearned?.checked ?? true;
             ivFilterState.wrong = ivFilterWrong?.checked ?? true;
             ivFilterState.correct = ivFilterCorrect?.checked ?? true;
-            
-            // 全部ONなら「すべて」もON、そうでなければOFF
-            const allOn = ivFilterState.unlearned && ivFilterState.wrong && ivFilterState.correct;
+            ivFilterState.bookmark = ivFilterBookmark?.checked ?? true;
+            const allOn = ivFilterState.unlearned && ivFilterState.wrong && ivFilterState.correct && ivFilterState.bookmark;
             ivFilterState.all = allOn;
             if (ivFilterAll) ivFilterAll.checked = allOn;
-            
             refreshIvTable();
         };
         
         if (ivFilterUnlearned) ivFilterUnlearned.addEventListener('change', handleIndividualFilter);
         if (ivFilterWrong) ivFilterWrong.addEventListener('change', handleIndividualFilter);
         if (ivFilterCorrect) ivFilterCorrect.addEventListener('change', handleIndividualFilter);
+        if (ivFilterBookmark) ivFilterBookmark.addEventListener('change', handleIndividualFilter);
     }
     
     // 不規則変化テストモードのポーズ：テストを続ける
@@ -22699,7 +22701,8 @@ let ivFilterState = {
     all: true,
     unlearned: true,
     wrong: true,
-    correct: true
+    correct: true,
+    bookmark: true
 };
 
 // 不規則変化のランダム状態（テストモード）
@@ -22711,7 +22714,8 @@ let ivStudyFilterState = {
     all: true,
     unlearned: true,
     wrong: true,
-    correct: true
+    correct: true,
+    bookmark: true
 };
 
 // 不規則変化のランダム状態（学習モード）
@@ -22824,7 +22828,7 @@ function updateIvFilterBadge(filteredCount) {
     if (!badge) return;
     
     // すべてにチェックが入っているか確認
-    const allChecked = ivFilterState.all || (ivFilterState.unlearned && ivFilterState.wrong && ivFilterState.correct);
+    const allChecked = ivFilterState.all || (ivFilterState.unlearned && ivFilterState.wrong && ivFilterState.correct && ivFilterState.bookmark);
     
     if (allChecked) {
         badge.classList.add('hidden');
@@ -22926,7 +22930,7 @@ function updateIvStudyFilterBadge(filteredCount) {
     const trigger = document.getElementById('ivStudyFilterTrigger');
     
     // すべてにチェックが入っているか確認
-    const allChecked = ivStudyFilterState.all || (ivStudyFilterState.unlearned && ivStudyFilterState.wrong && ivStudyFilterState.correct);
+    const allChecked = ivStudyFilterState.all || (ivStudyFilterState.unlearned && ivStudyFilterState.wrong && ivStudyFilterState.correct && ivStudyFilterState.bookmark);
     
     if (allChecked) {
         if (badge) badge.classList.add('hidden');
