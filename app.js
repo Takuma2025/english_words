@@ -3606,6 +3606,40 @@ function preventZoom() {
     }
 }
 
+/** 横向き→縦向きに戻したときにビューポートの拡大が戻らない問題を防ぐ */
+function resetViewportOnOrientationChange() {
+    const viewportContent = 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+    const applyViewport = () => {
+        const meta = document.querySelector('meta[name="viewport"]');
+        if (meta) {
+            meta.setAttribute('content', viewportContent);
+        }
+    };
+    const resetZoom = () => {
+        applyViewport();
+        setTimeout(applyViewport, 50);
+        setTimeout(applyViewport, 150);
+    };
+    window.addEventListener('orientationchange', resetZoom);
+    // 一部の端末では orientationchange が発火しないため、画面向きの変化時のみ resize でリセット
+    let lastInnerWidth = window.innerWidth;
+    let lastInnerHeight = window.innerHeight;
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const swapped = (w > h && lastInnerWidth < lastInnerHeight) || (w < h && lastInnerWidth > lastInnerHeight);
+        lastInnerWidth = w;
+        lastInnerHeight = h;
+        if (swapped && resizeTimer === null) {
+            resizeTimer = setTimeout(() => {
+                resetZoom();
+                resizeTimer = null;
+            }, 100);
+        }
+    });
+}
+
 // 初期化
 function init() {
     try {
@@ -3618,6 +3652,7 @@ function init() {
         pendingGoalCelebration = false;
         
         preventZoom();
+        resetViewportOnOrientationChange();
         assignCategories();
         loadData();
         initExamCountdown();
