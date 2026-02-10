@@ -8379,7 +8379,6 @@ function setupEventListeners() {
         completionBackBtn.addEventListener('click', () => {
             hideCompletion();
             setTimeout(() => {
-                // 学習メニューに戻る（カテゴリがあれば）、なければホーム画面へ
                 if (selectedCategory) {
                     returnToLearningMenu(selectedCategory);
                 } else {
@@ -12659,10 +12658,6 @@ function setupInputListModeToggle() {
         flipBtn.classList.add('active');
         expandBtn.classList.remove('active');
         updateRedSheetToggleVisibility();
-        // ランダム状態をリセット
-        isInputShuffled = false;
-        const shuffleBtn = document.getElementById('inputShuffleBtn');
-        if (shuffleBtn) shuffleBtn.classList.remove('active');
         // すべてめくるボタンを表示・ラベルをリセット
         if (flipAllBtn) {
             flipAllBtn.classList.remove('hidden');
@@ -12683,10 +12678,6 @@ function setupInputListModeToggle() {
         expandBtn.classList.add('active');
         flipBtn.classList.remove('active');
         updateRedSheetToggleVisibility();
-        // ランダム状態をリセット
-        isInputShuffled = false;
-        const shuffleBtn = document.getElementById('inputShuffleBtn');
-        if (shuffleBtn) shuffleBtn.classList.remove('active');
         // すべてめくるボタンを非表示
         if (flipAllBtn) flipAllBtn.classList.add('hidden');
         // コンパクト表示トグルを表示
@@ -12704,9 +12695,8 @@ function setupInputListModeToggle() {
             if (!container) return;
             const btnLabel = flipAllBtn.querySelector('.btn-label');
 
-            // デッキ表示のときはフェードアウト→切替→フェードインアニメーション
+            // デッキ表示のときはシャッフルと同じアニメーション（縮小＋白み→切替→フェードイン）
             if (container.classList.contains('flip-deck-mode')) {
-                container.classList.remove('shuffle-fade-in', 'shuffle-stagger');
                 container.classList.add('shuffle-animating');
                 setTimeout(() => {
                     inputFlipDeckAllFlipped = !inputFlipDeckAllFlipped;
@@ -12720,8 +12710,8 @@ function setupInputListModeToggle() {
                     container.classList.add('shuffle-fade-in');
                     setTimeout(() => {
                         container.classList.remove('shuffle-fade-in');
-                    }, 350);
-                }, 200);
+                    }, 300);
+                }, 250);
                 return;
             }
 
@@ -12992,7 +12982,6 @@ function setupInputListFilter() {
             // シャッフルアニメーション開始
             shuffleBtn.classList.add('shuffling');
             if (container) {
-                container.classList.remove('shuffle-fade-in', 'shuffle-stagger');
                 container.classList.add('shuffle-animating');
             }
             
@@ -13007,23 +12996,15 @@ function setupInputListFilter() {
                 // フェードインアニメーション
                 if (container) {
                     container.classList.remove('shuffle-animating');
-                    // デッキモードではコンテナフェードのみ、通常はstagger効果
-                    if (container.classList.contains('flip-deck-mode')) {
-                        container.classList.add('shuffle-fade-in');
-                        setTimeout(() => {
-                            container.classList.remove('shuffle-fade-in');
-                        }, 350);
-                    } else {
-                        container.classList.add('shuffle-fade-in', 'shuffle-stagger');
-                        setTimeout(() => {
-                            container.classList.remove('shuffle-fade-in', 'shuffle-stagger');
-                        }, 500);
-                    }
+                    container.classList.add('shuffle-fade-in');
+                    setTimeout(() => {
+                        container.classList.remove('shuffle-fade-in');
+                    }, 300);
                 }
                 
                 // ボタンのアニメーション終了
                 shuffleBtn.classList.remove('shuffling');
-            }, 250);
+            }, 400);
         });
     }
 }
@@ -13620,18 +13601,6 @@ function updateFilterCount(filtered, total) {
             const filterLabels = activeFilters.map(f => filterNames[f]).join('・');
             titleEl.textContent = `${filterLabels}（${filtered}語）`;
         }
-    }
-
-    // フィルター適用後にstagger効果（シャッフルボタン経由でない場合）
-    const container = document.getElementById('inputListContainer');
-    if (container && !container.classList.contains('shuffle-animating') && !container.classList.contains('shuffle-fade-in')) {
-        container.classList.remove('shuffle-stagger');
-        // reflow
-        void container.offsetWidth;
-        container.classList.add('shuffle-stagger');
-        setTimeout(() => {
-            container.classList.remove('shuffle-stagger');
-        }, 450);
     }
 }
 
@@ -14935,10 +14904,9 @@ function showCompletion() {
         completionProgressBar.offsetHeight;
     }
     
-    // オーバーレイを非表示にして、アニメーションをリセット
+    // オーバーレイを非表示にしてリセット
     completionOverlay.classList.remove('show');
     completionOverlay.classList.add('hidden');
-    // 強制リフロー
     completionOverlay.offsetHeight;
     
     // カテゴリー名を設定（#1# などの接頭辞は除き、単語番号のみ表示）
@@ -14957,17 +14925,6 @@ function showCompletion() {
     
     // 今回の学習範囲の総数
     const total = currentWords.length;
-    
-    // ○/○正解！表示
-    const completionGained = document.getElementById('completionGained');
-    if (completionGained) {
-        if (total > 0) {
-            completionGained.textContent = `${correctCount}/${total}正解！`;
-            completionGained.classList.remove('hidden');
-        } else {
-            completionGained.classList.add('hidden');
-        }
-    }
     
     // コンプリート判定（今回の学習範囲で全問正解したか）
     const confettiContainer = document.getElementById('confettiContainer');
@@ -15003,8 +14960,50 @@ function showCompletion() {
         }
     }
     
+    // 結果一覧を生成
+    const completionResultList = document.getElementById('completionResultList');
+    const completionResultListContainer = document.getElementById('completionResultListContainer');
+    if (completionResultList && completionResultListContainer) {
+        completionResultList.innerHTML = '';
+        if (currentWords.length > 0 && questionStatus.length > 0) {
+            completionResultListContainer.style.display = '';
+            currentWords.forEach((wordObj, idx) => {
+                const status = questionStatus[idx];
+                if (!status) return; // 未回答はスキップ
+                const isCorrect = status === 'correct';
+                const item = document.createElement('div');
+                item.className = 'completion-result-item';
+
+                // 意味テキスト（品詞・活用情報を除く簡略表示）
+                let meaningText = (wordObj.meaning || '').replace(/\([^)]*\)/g, '').replace(/（[^）]*）/g, '').trim();
+                // 長すぎる場合はカット
+                if (meaningText.length > 30) meaningText = meaningText.slice(0, 30) + '…';
+
+                item.innerHTML = `
+                    <span class="completion-result-num">${idx + 1}</span>
+                    <span class="completion-result-icon ${isCorrect ? 'completion-result-icon-correct' : 'completion-result-icon-wrong'}">
+                        ${isCorrect
+                            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+                            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
+                        }
+                    </span>
+                    <div class="completion-result-word-info">
+                        <div class="completion-result-word">${wordObj.word || ''}</div>
+                        <div class="completion-result-meaning">${meaningText}</div>
+                    </div>
+                `;
+                completionResultList.appendChild(item);
+            });
+        } else {
+            completionResultListContainer.style.display = 'none';
+        }
+        // スクロール位置をリセット
+        completionResultList.scrollTop = 0;
+    }
+    
     // オーバーレイを表示
     completionOverlay.classList.remove('hidden');
+    completionOverlay.scrollTop = 0;
     
     // アニメーション開始
     requestAnimationFrame(() => {
@@ -15024,29 +15023,18 @@ function showCompletion() {
             
             // 進捗バーのアニメーション完了後にCOMPLETEを表示
             if (isComplete && completionProgressBar) {
-                // 進捗バーのアニメーションが完了するのを待つ
-                // correctアニメーション: 1秒、wrongアニメーション: 1秒（0.3秒遅延）
-                // COMPLETEの場合はwrongがないので、correctのみで1秒
-                const animationTime = 1000; // correctアニメーションの時間
+                const animationTime = 1000;
                 setTimeout(() => {
-                    // すべてのCOMPLETEクラスを確実に削除（念のため）
                     completionProgressBar.classList.remove('completion-progress-complete', 'completion-progress-complete-card', 'completion-progress-complete-input');
-                    // 強制リフローで確実に反映
                     void completionProgressBar.offsetHeight;
-                    // 少し待ってからモードに応じたクラスを追加（アニメーションを確実に再実行）
                     requestAnimationFrame(() => {
-                        // モードに応じて異なるCOMPLETE表示クラスを追加
-                        // 英語→日本語モード（カードモード）: 青色でシンプル
-                        // 日本語→英語モード（キーボード/手書き入力）: 豪華な金色グラデーション
                         if (selectedQuizDirection === 'jpn-to-eng') {
-                            // 日本語→英語モード（入力モード）: 豪華なCOMPLETE表示
                             completionProgressBar.classList.add('completion-progress-complete-input');
                         } else {
-                            // 英語→日本語モード（カードモード）: 青色のCOMPLETE表示
                             completionProgressBar.classList.add('completion-progress-complete-card');
                         }
                     });
-                }, animationTime + 100); // 少し余裕を持たせる
+                }, animationTime + 100);
             }
         }, 300);
         
@@ -15370,7 +15358,6 @@ function hideCompletion() {
         completionOverlay.classList.remove('show');
         setTimeout(() => {
             completionOverlay.classList.add('hidden');
-            // アニメーション関連のクラスを削除して、次回の表示時に確実に再実行されるようにする
             const completionProgressBar = document.querySelector('.completion-progress-bar');
             if (completionProgressBar) {
                 completionProgressBar.classList.remove('completion-progress-complete', 'completion-progress-complete-card', 'completion-progress-complete-input');
