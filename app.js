@@ -3950,13 +3950,17 @@ function formatWordForDisplay(wordStr) {
     return esc(m[1]) + ' <span class="word-paren-light">(</span><span class="word-paren-bold">' + esc(m[2]) + '</span><span class="word-paren-light">)</span>' + esc(m[3]);
 }
 
-// No.範囲パターンを検出してリッチHTMLに変換するヘルパー（SVG・数字バッジなし）
+// No.範囲パターンを検出してリッチHTMLに変換するヘルパー（Section1 No.852-900 形式でヘッダー表示）
 function formatUnitNameHTML(unitName) {
-    // #番号#No.○-○ または No.○-○ パターン → No.○-○ のみ表示
-    const matchWithNum = String(unitName).match(/^#\d+#No\.(\d+)-(\d+)$/);
+    // #番号#No.○-○ → SectionN No.○-○ 表示
+    const matchWithNum = String(unitName).match(/^#(\d+)#No\.(\d+)-(\d+)$/);
     if (matchWithNum) {
-        return `<span class="header-range-block header-range-white"><span class="header-range-no">No.</span><span class="header-range-nums">${matchWithNum[1]}<span class="header-range-sep">-</span>${matchWithNum[2]}</span></span>`;
+        const sectionNum = matchWithNum[1];
+        const fromNum = matchWithNum[2];
+        const toNum = matchWithNum[3];
+        return `<span class="unit-name-section">Section</span><span class="unit-name-section-n">${sectionNum}</span> <span class="header-range-block header-range-white"><span class="header-range-no">No.</span><span class="header-range-nums">${fromNum}<span class="header-range-sep">-</span>${toNum}</span></span>`;
     }
+    // No.○-○ のみのパターン
     const match = String(unitName).match(/^No\.(\d+)-(\d+)$/);
     if (match) {
         return `<span class="header-range-block header-range-white"><span class="header-range-no">No.</span><span class="header-range-nums">${match[1]}<span class="header-range-sep">-</span>${match[2]}</span></span>`;

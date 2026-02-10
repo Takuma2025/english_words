@@ -6047,6 +6047,34 @@ body.quiz-test-mode .progress-top-row {
     opacity: 0.6;
 }
 
+/* ヘッダー単元名：Sectionは小さめ・No.はサブカードと同じサイズ・No.と数字は同じ色 */
+.unit-name .unit-name-section {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    line-height: 1;
+}
+.unit-name .unit-name-section-n {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: 1px;
+    line-height: 1;
+}
+.unit-name .header-range-block {
+    margin-left: 0.5em;
+}
+.unit-name .header-range-white .header-range-no,
+.unit-name .header-range-white .header-range-nums,
+.unit-name .header-range-white .header-range-sep {
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    opacity: 1;
+    color: inherit;
+}
+
 .progress-bar-container {
     height: 6px;
     background: #e5e7eb;
@@ -6766,11 +6794,10 @@ body.choice-question-mode-active .word-card-container {
     100% { transform: rotate(360deg); }
 }
 
-/* リストのシャッフルアニメーション */
+/* リストのシャッフルアニメーション（opacityのみ＝スマホで位置ずれ防止） */
 #inputListContainer.shuffle-animating {
-    opacity: 0.3;
-    transform: scale(0.98);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
 }
 
 #inputListContainer.shuffle-fade-in {
@@ -6778,8 +6805,8 @@ body.choice-question-mode-active .word-card-container {
 }
 
 @keyframes shuffle-fade-in {
-    0% { opacity: 0.3; transform: scale(0.98); }
-    100% { opacity: 1; transform: scale(1); }
+    0% { opacity: 0.4; }
+    100% { opacity: 1; }
 }
 
 /* フリップモード時のコンテナスタイル */
@@ -7181,7 +7208,7 @@ body.choice-question-mode-active .word-card-container {
     margin-left: 0;
 }
 
-/* 前へ・次へ・進捗を画面下部に固定 */
+/* 前へ・次へ・進捗を画面下部に固定（白コンテナ・ランダム/あ→A時も消えない） */
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav {
     position: fixed;
     bottom: 0;
@@ -7197,8 +7224,14 @@ body.choice-question-mode-active .word-card-container {
     padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px)) 0;
     min-height: var(--deck-nav-h);
     flex-shrink: 0;
-    background: #f8faff;
+    background: #ffffff;
     z-index: 10020;
+}
+
+/* ランダム・あ→A押下時もナビ・進捗は消さない */
+#inputListContainer.shuffle-animating .flip-deck-nav,
+#inputListContainer.shuffle-fade-in .flip-deck-nav {
+    opacity: 1 !important;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-counter {
@@ -7207,7 +7240,7 @@ body.choice-question-mode-active .word-card-container {
     transform: translateX(-50%);
     font-size: 13px;
     font-weight: 700;
-    color: #64748b;
+    color: #334155;
     letter-spacing: 0.03em;
     user-select: none;
     min-width: 70px;
