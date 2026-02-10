@@ -3608,20 +3608,28 @@ function preventZoom() {
 
 /** 横向き→縦向きに戻したときにビューポートの拡大が戻らない問題を防ぐ */
 function resetViewportOnOrientationChange() {
-    const viewportContent = 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
-    const applyViewport = () => {
-        const meta = document.querySelector('meta[name="viewport"]');
-        if (meta) {
-            meta.setAttribute('content', viewportContent);
-        }
+    const meta = document.querySelector('meta[name="viewport"]');
+    if (!meta) return;
+
+    const setViewport = (content) => {
+        meta.setAttribute('content', content);
     };
+
     const resetZoom = () => {
-        applyViewport();
-        setTimeout(applyViewport, 50);
-        setTimeout(applyViewport, 150);
+        const w = window.innerWidth;
+        // 実際のピクセル幅を指定して強制的にレイアウトを再計算させる（カードが大きいままになるのを防ぐ）
+        setViewport(`width=${w}, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover`);
+        requestAnimationFrame(() => {
+            setViewport('width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+        });
+        window.scrollTo(0, 0);
     };
-    window.addEventListener('orientationchange', resetZoom);
-    // 一部の端末では orientationchange が発火しないため、画面向きの変化時のみ resize でリセット
+
+    window.addEventListener('orientationchange', () => {
+        resetZoom();
+        setTimeout(resetZoom, 200);
+    });
+
     let lastInnerWidth = window.innerWidth;
     let lastInnerHeight = window.innerHeight;
     let resizeTimer = null;
@@ -3635,7 +3643,7 @@ function resetViewportOnOrientationChange() {
             resizeTimer = setTimeout(() => {
                 resetZoom();
                 resizeTimer = null;
-            }, 100);
+            }, 150);
         }
     });
 }
@@ -11508,6 +11516,7 @@ function renderInputListView(words) {
     }
     
     container.innerHTML = '';
+    inputFlipDeckEls = null; // DOMクリア時は必ずデッキ参照を破棄（フィルターで0件→復帰時に再構築させる）
     listView.classList.remove('hidden');
     
     // モードに応じてコンテナにクラスを追加
@@ -11515,7 +11524,6 @@ function renderInputListView(words) {
         container.classList.add('expand-mode');
         container.classList.remove('flip-mode');
         container.classList.remove('flip-deck-mode');
-        inputFlipDeckEls = null; // デッキDOM参照をクリア
     } else {
         container.classList.add('flip-mode');
         container.classList.remove('expand-mode');
@@ -11656,23 +11664,28 @@ function renderInputListView(words) {
             const remaining = Math.max(total - 1, 0);
             if (remaining === lastStackRemaining) return;
             lastStackRemaining = remaining;
-            const deckTotal = inputFlipDeckWords.length;
-            const ratio = deckTotal <= 1 ? 0 : remaining / (deckTotal - 1);
+
+            // 残り枚数ぶんだけレイヤーを表示（最大 MAX_STACK）
+            // remaining=1 → layer1(白)のみ, remaining=2 → layer1+2, remaining=3 → layer1+2+3 ...
+            const visibleLayers = Math.min(remaining, MAX_STACK);
+            // 1レイヤーあたりのオフセット（px）: カードが多いほど少し広がる
+            const spacing = Math.min(6, 3 + remaining * 0.08);
+
             for (let idx = 0; idx < MAX_STACK; idx++) {
                 const { el, layer } = stackCards[idx];
-                if (layer === 1) {
-                    // 手前の白カード：常にメインカードの真後ろ（めくった時だけ見える）
-                    el.style.display = remaining > 0 ? '' : 'none';
-                    el.style.transform = 'translateY(0) scale(1)';
-                } else {
-                    // 青カード：残りに比例してずらす（layer-1 で白カードの分を詰める）
-                    const dy = (layer - 1) * 8 * ratio;
-                    if (dy < 0.3) {
-                        el.style.display = 'none';
+                if (layer <= visibleLayers) {
+                    el.style.display = '';
+                    if (layer === 1) {
+                        // 手前の白カード：メインカードの真後ろ
+                        el.style.transform = 'translateY(0) scale(1)';
                     } else {
-                        el.style.display = '';
-                        el.style.transform = `translateY(${dy.toFixed(1)}px) scale(${(1 - (layer - 1) * 0.008 * ratio).toFixed(4)})`;
+                        // 青カード：layer枚目ぶんだけ下にずらす
+                        const dy = (layer - 1) * spacing;
+                        const sc = 1 - (layer - 1) * 0.006;
+                        el.style.transform = `translateY(${dy.toFixed(1)}px) scale(${sc.toFixed(4)})`;
                     }
+                } else {
+                    el.style.display = 'none';
                 }
             }
         };
