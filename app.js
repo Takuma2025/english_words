@@ -12659,6 +12659,10 @@ function setupInputListModeToggle() {
         flipBtn.classList.add('active');
         expandBtn.classList.remove('active');
         updateRedSheetToggleVisibility();
+        // ランダム状態をリセット
+        isInputShuffled = false;
+        const shuffleBtn = document.getElementById('inputShuffleBtn');
+        if (shuffleBtn) shuffleBtn.classList.remove('active');
         // すべてめくるボタンを表示・ラベルをリセット
         if (flipAllBtn) {
             flipAllBtn.classList.remove('hidden');
@@ -12679,6 +12683,10 @@ function setupInputListModeToggle() {
         expandBtn.classList.add('active');
         flipBtn.classList.remove('active');
         updateRedSheetToggleVisibility();
+        // ランダム状態をリセット
+        isInputShuffled = false;
+        const shuffleBtn = document.getElementById('inputShuffleBtn');
+        if (shuffleBtn) shuffleBtn.classList.remove('active');
         // すべてめくるボタンを非表示
         if (flipAllBtn) flipAllBtn.classList.add('hidden');
         // コンパクト表示トグルを表示
@@ -12696,8 +12704,9 @@ function setupInputListModeToggle() {
             if (!container) return;
             const btnLabel = flipAllBtn.querySelector('.btn-label');
 
-            // デッキ表示のときはシャッフルと同じアニメーション（縮小＋白み→切替→フェードイン）
+            // デッキ表示のときはフェードアウト→切替→フェードインアニメーション
             if (container.classList.contains('flip-deck-mode')) {
+                container.classList.remove('shuffle-fade-in', 'shuffle-stagger');
                 container.classList.add('shuffle-animating');
                 setTimeout(() => {
                     inputFlipDeckAllFlipped = !inputFlipDeckAllFlipped;
@@ -12711,8 +12720,8 @@ function setupInputListModeToggle() {
                     container.classList.add('shuffle-fade-in');
                     setTimeout(() => {
                         container.classList.remove('shuffle-fade-in');
-                    }, 300);
-                }, 250);
+                    }, 350);
+                }, 200);
                 return;
             }
 
@@ -12983,6 +12992,7 @@ function setupInputListFilter() {
             // シャッフルアニメーション開始
             shuffleBtn.classList.add('shuffling');
             if (container) {
+                container.classList.remove('shuffle-fade-in', 'shuffle-stagger');
                 container.classList.add('shuffle-animating');
             }
             
@@ -12997,15 +13007,23 @@ function setupInputListFilter() {
                 // フェードインアニメーション
                 if (container) {
                     container.classList.remove('shuffle-animating');
-                    container.classList.add('shuffle-fade-in');
-                    setTimeout(() => {
-                        container.classList.remove('shuffle-fade-in');
-                    }, 300);
+                    // デッキモードではコンテナフェードのみ、通常はstagger効果
+                    if (container.classList.contains('flip-deck-mode')) {
+                        container.classList.add('shuffle-fade-in');
+                        setTimeout(() => {
+                            container.classList.remove('shuffle-fade-in');
+                        }, 350);
+                    } else {
+                        container.classList.add('shuffle-fade-in', 'shuffle-stagger');
+                        setTimeout(() => {
+                            container.classList.remove('shuffle-fade-in', 'shuffle-stagger');
+                        }, 500);
+                    }
                 }
                 
                 // ボタンのアニメーション終了
                 shuffleBtn.classList.remove('shuffling');
-            }, 400);
+            }, 250);
         });
     }
 }
@@ -13602,6 +13620,18 @@ function updateFilterCount(filtered, total) {
             const filterLabels = activeFilters.map(f => filterNames[f]).join('・');
             titleEl.textContent = `${filterLabels}（${filtered}語）`;
         }
+    }
+
+    // フィルター適用後にstagger効果（シャッフルボタン経由でない場合）
+    const container = document.getElementById('inputListContainer');
+    if (container && !container.classList.contains('shuffle-animating') && !container.classList.contains('shuffle-fade-in')) {
+        container.classList.remove('shuffle-stagger');
+        // reflow
+        void container.offsetWidth;
+        container.classList.add('shuffle-stagger');
+        setTimeout(() => {
+            container.classList.remove('shuffle-stagger');
+        }, 450);
     }
 }
 
