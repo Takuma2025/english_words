@@ -552,14 +552,18 @@ body.learning-mode .app-header {
 }
 
 /* 白ヘッダー時はバッジをカラー表示・角丸・Barlow Condensed で統一 */
+/* ヘッダーLevelバッジ：文字だけ・白で統一 */
 .app-header.header-course-selection .header-title-text .level-badge {
-    border-radius: 8px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    border-radius: 0;
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-size: 15px;
     font-weight: 600;
-    padding: 6px 14px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+    color: #ffffff;
 }
 .app-header.header-course-selection .header-title-text .level-badge b,
 .app-header.header-course-selection .header-title-text .level-badge strong {
@@ -569,55 +573,31 @@ body.learning-mode .app-header {
     line-height: 1;
     letter-spacing: -0.01em;
     margin-left: 3px;
+    color: #ffffff;
 }
 
-.app-header.header-course-selection .header-title-text .level-badge.level-badge-green {
-    background: #d1fae5;
-    color: #059669;
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-green,
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-red,
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-orange,
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-blue,
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-purple,
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-dark {
+    background: transparent;
+    color: #ffffff;
 }
 .app-header.header-course-selection .header-title-text .level-badge.level-badge-green b,
-.app-header.header-course-selection .header-title-text .level-badge.level-badge-green strong {
-    color: #059669;
-}
-.app-header.header-course-selection .header-title-text .level-badge.level-badge-red {
-    background: #fee2e2;
-    color: #dc2626;
-}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-green strong,
 .app-header.header-course-selection .header-title-text .level-badge.level-badge-red b,
-.app-header.header-course-selection .header-title-text .level-badge.level-badge-red strong {
-    color: #dc2626;
-}
-.app-header.header-course-selection .header-title-text .level-badge.level-badge-orange {
-    background: #ffedd5;
-    color: #ea580c;
-}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-red strong,
 .app-header.header-course-selection .header-title-text .level-badge.level-badge-orange b,
-.app-header.header-course-selection .header-title-text .level-badge.level-badge-orange strong {
-    color: #ea580c;
-}
-.app-header.header-course-selection .header-title-text .level-badge.level-badge-blue {
-    background: #dbeafe;
-    color: #2563eb;
-}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-orange strong,
 .app-header.header-course-selection .header-title-text .level-badge.level-badge-blue b,
-.app-header.header-course-selection .header-title-text .level-badge.level-badge-blue strong {
-    color: #2563eb;
-}
-.app-header.header-course-selection .header-title-text .level-badge.level-badge-purple {
-    background: #ede9fe;
-    color: #7c3aed;
-}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-blue strong,
 .app-header.header-course-selection .header-title-text .level-badge.level-badge-purple b,
-.app-header.header-course-selection .header-title-text .level-badge.level-badge-purple strong {
-    color: #7c3aed;
-}
-.app-header.header-course-selection .header-title-text .level-badge.level-badge-dark {
-    background: #e0e7ff;
-    color: #4338ca;
-}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-purple strong,
 .app-header.header-course-selection .header-title-text .level-badge.level-badge-dark b,
 .app-header.header-course-selection .header-title-text .level-badge.level-badge-dark strong {
-    color: #4338ca;
+    color: #ffffff;
 }
 
 /* サブカテゴリー選択画面のヘッダー：Level と数字を下（ベースライン）で揃える */
@@ -6874,6 +6854,10 @@ body.choice-question-mode-active .word-card-container {
     color: #0055ca;
 }
 
+.input-shuffle-btn.active svg {
+    color: #0055ca;
+}
+
 .input-shuffle-btn.active:hover {
     background: rgba(255, 255, 255, 0.9);
     border-color: rgba(255, 255, 255, 0.9);
@@ -6884,6 +6868,7 @@ body.choice-question-mode-active .word-card-container {
     width: 14px;
     height: 14px;
     transition: transform 0.3s ease, color 0s ease;
+    color: inherit;
 }
 
 /* シャッフルアニメーション */
@@ -8314,7 +8299,8 @@ body.choice-question-mode-active .word-card-container {
     border-top: 1px solid #0055ca;
 }
 
-.input-list-scroll.compact-mode .input-list-item-expand:first-child .expand-left-col {
+.input-list-scroll.compact-mode .input-list-item-expand:first-child .expand-left-col,
+.input-list-scroll.compact-mode .expand-range-title + .input-list-item-expand .expand-left-col {
     border-top: none;
 }
 
@@ -8334,7 +8320,8 @@ body.choice-question-mode-active .word-card-container {
     text-align: left;
 }
 
-.input-list-scroll.compact-mode .input-list-item-expand:first-child .expand-right-col {
+.input-list-scroll.compact-mode .input-list-item-expand:first-child .expand-right-col,
+.input-list-scroll.compact-mode .expand-range-title + .input-list-item-expand .expand-right-col {
     border-top: none;
 }
 
@@ -8940,6 +8927,21 @@ body.choice-question-mode-active .word-card-container {
     line-height: 1.4;
 }
 
+/* 展開モード：1番上の単語の上に表示する No.○○○○～○○○○ タイトル（水色・角丸） */
+.expand-range-title {
+    width: 100%;
+    padding: 12px 16px;
+    background: #a8d4ff;
+    color: #0055ca;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    border-radius: 12px 12px 0 0;
+}
+
 /* 展開モード（2カラムレイアウト）上・下線は「—————    —————」のように間を空けて左右に分ける */
 .input-list-item-expand {
     position: relative;
@@ -8979,7 +8981,8 @@ body.choice-question-mode-active .word-card-container {
     border-top: 1.5px solid #0055ca;
 }
 
-.input-list-item-expand:first-child .expand-left-col {
+.input-list-item-expand:first-child .expand-left-col,
+.expand-range-title + .input-list-item-expand .expand-left-col {
     border-top: none;
 }
 
@@ -8999,7 +9002,8 @@ body.choice-question-mode-active .word-card-container {
     gap: 0;
 }
 
-.input-list-item-expand:first-child .expand-right-col {
+.input-list-item-expand:first-child .expand-right-col,
+.expand-range-title + .input-list-item-expand .expand-right-col {
     border-top: none;
 }
 

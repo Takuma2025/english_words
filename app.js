@@ -12274,6 +12274,17 @@ function renderInputListView(words) {
         return;
     }
     
+    // 展開モード：1番上の単語の上に水色で No.○○○○～○○○○ のタイトルを表示
+    if (inputListViewMode === 'expand' && words.length > 0) {
+        const firstId = words[0].id;
+        const lastId = words[words.length - 1].id;
+        const pad = (n) => String(n).padStart(4, '0');
+        const rangeTitle = document.createElement('div');
+        rangeTitle.className = 'expand-range-title';
+        rangeTitle.textContent = `No.${pad(firstId)}～${pad(lastId)}`;
+        container.appendChild(rangeTitle);
+    }
+    
     words.forEach((word) => {
         // 展開モードの場合
         if (inputListViewMode === 'expand') {
