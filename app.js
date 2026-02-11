@@ -3864,11 +3864,10 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
     // ヘッダー全体は常に表示
     if (appHeader) {
         appHeader.classList.remove('hidden');
-        // サブカテゴリー選択時はヘッダー文字を下揃え
         if (mode === 'course') {
-            appHeader.classList.add('header-align-bottom');
+            appHeader.classList.add('header-course-selection', 'header-align-bottom');
         } else {
-            appHeader.classList.remove('header-align-bottom');
+            appHeader.classList.remove('header-course-selection', 'header-align-bottom');
         }
     }
     
@@ -3912,19 +3911,19 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
     // タイトル画像とテキストの表示/非表示
     if (headerTitleImage && headerTitleText) {
         if (mode === 'course' && title) {
-            // コース選択時：テキストを表示、画像を非表示
+            // コース選択時：Levelバッジのみ中央に表示
             if (title === 'レベル０ 入門600語' || title === '入門600語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> 入門600語';
-            } else if (title === 'レベル１ 初級500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span> 初級500語';
-            } else if (title === 'レベル２ 中級500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span> 中級500語';
-            } else if (title === 'レベル３ 上級500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> 上級500語';
-            } else if (title === 'レベル４ ハイレベル300語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span> ハイレベル300語';
-            } else if (title === 'レベル５ 難関突破100語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span> 難関突破100語';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span>';
+            } else if (title === 'レベル１ 初級500語' || title === '初級500語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span>';
+            } else if (title === 'レベル２ 中級500語' || title === '中級500語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span>';
+            } else if (title === 'レベル３ 上級500語' || title === '上級500語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span>';
+            } else if (title === 'レベル４ ハイレベル300語' || title === 'ハイレベル300語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span>';
+            } else if (title === 'レベル５ 難関突破100語' || title === '難関突破100語') {
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span>';
             } else {
                 headerTitleText.textContent = title;
             }
@@ -4015,6 +4014,15 @@ function formatUnitNameHTML(unitName) {
 function setUnitNameContent(el, unitName) {
     if (!el) return;
     const richHTML = formatUnitNameHTML(unitName);
+    // 学習画面ヘッダー中央は「Section1」「Section2」のように数字付きで表示
+    if (el.id === 'unitName' && richHTML) {
+        const matchWithNum = String(unitName).match(/^#(\d+)#No\.\d+-\d+$/);
+        const sectionNum = matchWithNum ? matchWithNum[1] : '';
+        el.innerHTML = sectionNum
+            ? `<span class="unit-name-section">Section</span><span class="unit-name-section-n">${sectionNum}</span>`
+            : 'Section';
+        return;
+    }
     if (richHTML) {
         el.innerHTML = richHTML;
     } else {

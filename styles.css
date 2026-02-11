@@ -483,9 +483,13 @@ body.learning-mode .app-header {
 }
 
 .header-back-btn .back-btn-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: #ffffff;
+    display: none;
+}
+
+.header-back-btn svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2.5;
 }
 
 .header-back-btn.hidden {
@@ -529,6 +533,90 @@ body.learning-mode .app-header {
     align-items: center;
     justify-content: center;
     flex: 1;
+}
+
+/* サブカテゴリー選択画面のヘッダー：白背景・Levelバッジ中央 */
+.app-header.header-course-selection {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.app-header.header-course-selection .header-back-btn {
+    color: #1e293b;
+}
+
+/* back-btn-text is hidden globally via display:none */
+
+.app-header.header-course-selection .header-content {
+    justify-content: center;
+}
+
+/* 白ヘッダー時はバッジをカラー表示・角丸・フォント／太さはホームのカテゴリカードと同じ */
+.app-header.header-course-selection .header-title-text .level-badge {
+    border-radius: 8px;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    padding: 6px 14px;
+    letter-spacing: 0.08em;
+}
+.app-header.header-course-selection .header-title-text .level-badge b,
+.app-header.header-course-selection .header-title-text .level-badge strong {
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0;
+    margin-left: 2px;
+}
+
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-green {
+    background: #d1fae5;
+    color: #059669;
+}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-green b,
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-green strong {
+    color: #059669;
+}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-red {
+    background: #fee2e2;
+    color: #dc2626;
+}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-red b,
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-red strong {
+    color: #dc2626;
+}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-orange {
+    background: #ffedd5;
+    color: #ea580c;
+}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-orange b,
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-orange strong {
+    color: #ea580c;
+}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-blue {
+    background: #dbeafe;
+    color: #2563eb;
+}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-blue b,
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-blue strong {
+    color: #2563eb;
+}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-purple {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-purple b,
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-purple strong {
+    color: #7c3aed;
+}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-dark {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-dark b,
+.app-header.header-course-selection .header-title-text .level-badge.level-badge-dark strong {
+    color: #4338ca;
 }
 
 /* サブカテゴリー選択画面のヘッダー：Level と数字を下（ベースライン）で揃える */
@@ -5302,10 +5390,10 @@ body.quiz-test-mode .progress-top-row {
 .unit-name {
     color: #ffffff;
     text-align: center;
-    font-size: 14px;
-    font-weight: 700;
-    font-family: "Barlow Condensed", "Oswald", "DIN Condensed", sans-serif;
-    letter-spacing: 0.5px;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 0.08em;
     display: inline-flex;
     align-items: flex-end;
     align-self: flex-end;
@@ -5472,9 +5560,13 @@ body.quiz-test-mode .progress-top-row {
 }
 
 .input-back-btn .back-btn-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: #ffffff;
+    display: none;
+}
+
+.input-back-btn svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2.5;
 }
 
 .input-back-btn:hover {
@@ -6044,18 +6136,20 @@ body.quiz-test-mode .progress-top-row {
 }
 
 /* ヘッダー単元名：Sectionは小さめ・No.はサブカードと同じサイズ・No.と数字は同じ色 */
+/* Section / Section1 をカテゴリカード・サブカテゴリーカードと統一 */
 .unit-name .unit-name-section {
-    font-family: "Barlow Condensed", "Oswald", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.3px;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 0.08em;
     line-height: 1;
 }
 .unit-name .unit-name-section-n {
-    font-family: "Barlow Condensed", "Oswald", sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    margin-left: 1px;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 0;
+    margin-left: 2px;
     line-height: 1;
 }
 .unit-name .header-range-block {
@@ -8558,7 +8652,7 @@ body.choice-question-mode-active .word-card-container {
     display: none;
 }
 
-/* 進捗に応じた単語番号の背景色・文字は白 */
+/* 進捗に応じた単語番号：濃い青/赤背景・白文字 */
 .input-list-number.marker-correct {
     background: #3b82f6;
     color: #ffffff;
@@ -10809,10 +10903,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 #inputWordNumber.marker-correct {
+    background: #3b82f6 !important;
+    color: #ffffff !important;
     box-shadow: none !important;
 }
 
 #inputWordNumber.marker-wrong {
+    background: #ef4444 !important;
+    color: #ffffff !important;
     box-shadow: none !important;
 }
 
@@ -15236,12 +15334,12 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     justify-content: center;
 }
 .completion-result-icon-correct {
-    background: #dbeafe;
-    color: #2563eb;
+    background: #3b82f6;
+    color: #ffffff;
 }
 .completion-result-icon-wrong {
-    background: #fee2e2;
-    color: #dc2626;
+    background: #ef4444;
+    color: #ffffff;
 }
 .completion-result-icon svg {
     width: 14px;
@@ -17489,9 +17587,13 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .hw-back-btn .back-btn-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: #ffffff;
+    display: none;
+}
+
+.hw-back-btn svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2.5;
 }
 
 .hw-back-btn:hover {
@@ -20734,17 +20836,17 @@ div#inputWordCheckbox,
     flex-shrink: 0;
 }
 
-/* Section1, Section2... メインラベル（下部分に薄い色のマーカーをかぶせる） */
+/* Section1, Section2... メインラベル（ホームのカテゴリカード・ヘッダーバッジとフォント・サイズを統一） */
 .subcat-section {
     position: relative;
     display: inline-flex;
     align-items: baseline;
-    font-family: "Barlow Condensed", "Oswald", sans-serif;
-    font-size: 22px;
-    font-weight: 500;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-size: 16px;
+    font-weight: 300;
     line-height: 1;
     white-space: nowrap;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.08em;
     padding: 2px 4px 4px;
     z-index: 1;
 }
@@ -20762,19 +20864,22 @@ div#inputWordCheckbox,
     pointer-events: none;
 }
 .subcat-section-n {
-    font-size: 1.3em;
-    font-weight: 700;
-    margin-left: 1px;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0;
+    margin-left: 2px;
 }
 
 /* No.101–150 サブ情報 */
 .subcat-range {
-    font-family: "Barlow Condensed", "Oswald", sans-serif;
-    font-size: 17px;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+    font-size: 15px;
     font-weight: 400;
     color: #64748b;
     line-height: 1;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.05em;
 }
 
 /* 下段：プログレスバー + 数字 */
@@ -20797,15 +20902,16 @@ div#inputWordCheckbox,
 }
 
 .subcat-progress-num {
-    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-family: "Oswald", "Arial Narrow", sans-serif;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 400;
     color: #0055ca;
     line-height: 1;
     flex-shrink: 0;
     min-width: 36px;
     text-align: right;
     padding: 0 2px;
+    letter-spacing: 0.02em;
 }
 .subcat-progress-slash {
     font-weight: 400;
