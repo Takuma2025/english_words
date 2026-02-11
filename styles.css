@@ -535,16 +535,16 @@ body.learning-mode .app-header {
 
 /* サブカテゴリー選択画面のヘッダー：白背景・Levelバッジ中央 */
 .app-header.header-course-selection {
-    background: #ffffff;
+    background: #0055ca;
     border-bottom: none;
 }
 
 .app-header.header-course-selection .header-back-btn {
-    color: #1e293b;
+    color: #ffffff;
 }
 
 .app-header.header-course-selection .header-back-btn .back-btn-text {
-    color: #1e293b;
+    color: #ffffff;
 }
 
 .app-header.header-course-selection .header-content {
@@ -5328,7 +5328,7 @@ body.choice-question-mode-active .learning-view {
     padding-top: calc(16px + env(safe-area-inset-top));
     padding-bottom: 14px;
     box-sizing: border-box;
-    background: #ffffff;
+    background: #0055ca;
     margin-bottom: 0;
     font-size: 13px;
     font-weight: 500;
@@ -5391,7 +5391,7 @@ body.quiz-test-mode .progress-top-row {
 
 
 .unit-name {
-    color: #1e293b;
+    color: #ffffff;
     text-align: center;
     font-family: "Oswald", "Arial Narrow", sans-serif;
     font-size: 16px;
@@ -5443,7 +5443,7 @@ body.quiz-test-mode .progress-top-row {
     background: none;
     border: none;
     padding: 4px;
-    color: #1e293b;
+    color: #ffffff;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -5553,7 +5553,7 @@ body.quiz-test-mode .progress-top-row {
     background: none;
     border: none;
     padding: 4px;
-    color: #1e293b;
+    color: #ffffff;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -5565,7 +5565,7 @@ body.quiz-test-mode .progress-top-row {
 .input-back-btn .back-btn-text {
     font-size: 14px;
     font-weight: 500;
-    color: #1e293b;
+    color: #ffffff;
 }
 
 .input-back-btn:hover {
@@ -6096,9 +6096,9 @@ body.quiz-test-mode .progress-top-row {
     margin: 0 1px;
 }
 
-/* ヘッダー文字色（白背景時） */
+/* ヘッダー白文字版（青背景のunit-name内） */
 .header-range-white {
-    color: #1e293b;
+    color: #ffffff;
 }
 
 .header-range-badge {
@@ -6143,6 +6143,7 @@ body.quiz-test-mode .progress-top-row {
     letter-spacing: 0.1em;
     text-transform: uppercase;
     line-height: 1;
+    color: #ffffff;
 }
 .unit-name .unit-name-section-n {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
@@ -6151,32 +6152,23 @@ body.quiz-test-mode .progress-top-row {
     letter-spacing: -0.01em;
     margin-left: 3px;
     line-height: 1;
+    color: #ffffff;
 }
 
-/* 白ヘッダー時：SECTIONの色をLEVELに合わせる */
+/* ヘッダー：SECTIONの文字色は白で統一 */
 .unit-header-container.unit-header-level-0 .unit-name-section,
-.unit-header-container.unit-header-level-0 .unit-name-section-n {
-    color: #059669;
-}
+.unit-header-container.unit-header-level-0 .unit-name-section-n,
 .unit-header-container.unit-header-level-1 .unit-name-section,
-.unit-header-container.unit-header-level-1 .unit-name-section-n {
-    color: #dc2626;
-}
+.unit-header-container.unit-header-level-1 .unit-name-section-n,
 .unit-header-container.unit-header-level-2 .unit-name-section,
-.unit-header-container.unit-header-level-2 .unit-name-section-n {
-    color: #ea580c;
-}
+.unit-header-container.unit-header-level-2 .unit-name-section-n,
 .unit-header-container.unit-header-level-3 .unit-name-section,
-.unit-header-container.unit-header-level-3 .unit-name-section-n {
-    color: #2563eb;
-}
+.unit-header-container.unit-header-level-3 .unit-name-section-n,
 .unit-header-container.unit-header-level-4 .unit-name-section,
-.unit-header-container.unit-header-level-4 .unit-name-section-n {
-    color: #7c3aed;
-}
+.unit-header-container.unit-header-level-4 .unit-name-section-n,
 .unit-header-container.unit-header-level-5 .unit-name-section,
 .unit-header-container.unit-header-level-5 .unit-name-section-n {
-    color: #4338ca;
+    color: #ffffff;
 }
 
 .unit-name .header-range-block {
@@ -7288,7 +7280,7 @@ body.choice-question-mode-active .word-card-container {
     margin-left: 0;
 }
 
-/* 前へ・次へ・進捗を画面下部に固定（白コンテナ・ランダム/あ→A時も消えない） */
+/* 前へ・次へ・進捗を画面下部に固定（背景なし・ランダム/あ→A時も消えない） */
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav {
     position: fixed;
     bottom: 0;
@@ -7304,7 +7296,7 @@ body.choice-question-mode-active .word-card-container {
     padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px)) 0;
     min-height: var(--deck-nav-h);
     flex-shrink: 0;
-    background: #ffffff;
+    background: transparent;
     z-index: 10020;
 }
 
@@ -7320,7 +7312,7 @@ body.choice-question-mode-active .word-card-container {
     transform: translateX(-50%);
     font-size: 13px;
     font-weight: 700;
-    color: #334155;
+    color: #ffffff;
     letter-spacing: 0.03em;
     user-select: none;
     min-width: 70px;
@@ -8322,8 +8314,12 @@ body.choice-question-mode-active .word-card-container {
     border-top: 1px solid #0055ca;
 }
 
+.input-list-scroll.compact-mode .input-list-item-expand:first-child .expand-left-col {
+    border-top: none;
+}
+
 .input-list-scroll.compact-mode .input-list-item-expand:last-child .expand-left-col {
-    border-bottom: 1px solid #0055ca;
+    border-bottom: none;
 }
 
 .input-list-scroll.compact-mode .expand-right-col {
@@ -8338,8 +8334,12 @@ body.choice-question-mode-active .word-card-container {
     text-align: left;
 }
 
+.input-list-scroll.compact-mode .input-list-item-expand:first-child .expand-right-col {
+    border-top: none;
+}
+
 .input-list-scroll.compact-mode .input-list-item-expand:last-child .expand-right-col {
-    border-bottom: 1px solid #0055ca;
+    border-bottom: none;
 }
 
 .input-list-scroll.compact-mode .expand-left-top {
@@ -8979,8 +8979,12 @@ body.choice-question-mode-active .word-card-container {
     border-top: 1.5px solid #0055ca;
 }
 
+.input-list-item-expand:first-child .expand-left-col {
+    border-top: none;
+}
+
 .input-list-item-expand:last-child .expand-left-col {
-    border-bottom: 1.5px solid #0055ca;
+    border-bottom: none;
 }
 
 /* 右カラム（意味・例文）- 左との間にすき間、上線のみ */
@@ -8995,8 +8999,12 @@ body.choice-question-mode-active .word-card-container {
     gap: 0;
 }
 
+.input-list-item-expand:first-child .expand-right-col {
+    border-top: none;
+}
+
 .input-list-item-expand:last-child .expand-right-col {
-    border-bottom: 1.5px solid #0055ca;
+    border-bottom: none;
 }
 
 /* 左カラム上部：番号とチェックボックスの連結ボックス */
