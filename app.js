@@ -1,4 +1,4 @@
-// ステータスバーの色を変更する関数
+// ステータスバーの色を即時変更する関数（パット切り替え用）
 function setStatusBarColor(color) {
     let themeColor = document.querySelector('meta[name="theme-color"]');
     if (!themeColor) {
@@ -6,7 +6,7 @@ function setStatusBarColor(color) {
         themeColor.name = 'theme-color';
         document.head.appendChild(themeColor);
     }
-    themeColor.content = color;
+    themeColor.setAttribute('content', color);
 }
 
 // アプリケーションの状態管理
@@ -3849,6 +3849,12 @@ function formatTitleWithLevelBadge(title) {
 // title: コース選択画面で表示するタイトル（オプション）
 // isTestMode: テストモード（アウトプットモード）かどうか
 function updateHeaderButtons(mode, title = '', isTestMode = false) {
+    if (mode === 'course') {
+        setStatusBarColor('#ffffff');
+    } else {
+        setStatusBarColor('#0055ca');
+    }
+    
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
     const headerBackBtn = document.getElementById('headerBackBtn');
     const homeBtn = document.getElementById('homeBtn');
@@ -3866,12 +3872,8 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
         appHeader.classList.remove('hidden');
         if (mode === 'course') {
             appHeader.classList.add('header-course-selection', 'header-align-bottom');
-            // ステータスバーも白に
-            setStatusBarColor('#ffffff');
         } else {
             appHeader.classList.remove('header-course-selection', 'header-align-bottom');
-            // ステータスバーを青に戻す
-            setStatusBarColor('#0055ca');
         }
     }
     
@@ -4900,6 +4902,8 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
 
 // 入門600語の画面を表示
 function showElementaryCategorySelection(skipAnimation = false) {
+    setStatusBarColor('#ffffff');
+    
     // フローティング要復習ボタンを非表示（サブカテゴリー画面）
     hideFloatingReviewBtn();
     
@@ -4919,7 +4923,6 @@ function showElementaryCategorySelection(skipAnimation = false) {
     
     // 学習モードをリセット
     document.body.classList.remove('learning-mode');
-    updateThemeColor(false);
     
     const courseSelection = document.getElementById('courseSelection');
     const courseList = document.getElementById('courseList');
@@ -5007,6 +5010,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     
     console.log('showLevelSubcategorySelection called with:', parentCategory, 'skipAnimation:', skipAnimation);
     
+    setStatusBarColor('#ffffff');
+    
     // 学習画面から戻る場合、mainContentを非表示にする
     const mainContent = document.getElementById('mainContent');
     if (mainContent) {
@@ -5015,7 +5020,6 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     
     // 学習モードをリセット
     document.body.classList.remove('learning-mode');
-    updateThemeColor(false);
     
     const courseSelection = document.getElementById('courseSelection');
     const courseList = document.getElementById('courseList');
@@ -5126,6 +5130,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
 
 // コース選択画面を表示（100刻み）
 function showCourseSelection(category, categoryWords, slideIn = false, skipSaveReturnInfo = false) {
+    setStatusBarColor('#ffffff');
+    
     // 中断時に戻るためのコース情報を保存（戻り時の呼び出しではスキップ）
     // 配列は参照渡しなのでコピーを保存
     if (!skipSaveReturnInfo) {
