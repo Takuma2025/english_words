@@ -380,28 +380,49 @@ function animateCardShrink(targetCardId, callback) {
     
     document.body.appendChild(overlay);
     
+    // アニメーション中はスクロールを無効化
+    const appMain = document.querySelector('.app-main');
+    if (appMain) {
+        appMain.style.overflow = 'hidden';
+        appMain.style.touchAction = 'none';
+    }
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+    overlay.style.touchAction = 'none';
+    
     // 画面遷移を先に実行（オーバーレイの下で）
     if (callback) callback();
     
     // レイアウトの確定を待ってからスクロール
     setTimeout(() => {
         const currentTargetCard = document.getElementById(targetCardId);
-        const appMain = document.querySelector('.app-main');
+        const appMainEl = document.querySelector('.app-main');
         
-        if (currentTargetCard && appMain) {
-            // 元のカードはそのまま残す（非表示にしない）
-            
+        if (currentTargetCard && appMainEl) {
             // 最下部メニューの場合は一番下まで、それ以外は中央までスクロール
             if (targetCardId === 'allWordsCardBtn' || targetCardId === 'irregularVerbsCardBtn' || targetCardId === 'exam1200CardBtn') {
-                appMain.scrollTop = appMain.scrollHeight + 1000;
+                appMainEl.scrollTop = appMainEl.scrollHeight + 1000;
             } else {
                 currentTargetCard.scrollIntoView({ block: 'center', behavior: 'instant' });
             }
             
-            // スクロール完了後にアニメーション開始
+            // スクロール位置が確定するまで2フレーム待つ
+            requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 const rect = currentTargetCard.getBoundingClientRect();
                 const titleContainer = overlay.querySelector('.expand-title');
+                
+                // カードが画面外（rectが異常）の場合はフェードアウトで終了
+                if (rect.width === 0 || rect.height === 0) {
+                    overlay.style.transition = 'opacity 0.2s ease';
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.remove();
+                        if (appMainEl) { appMainEl.style.overflow = ''; appMainEl.style.touchAction = ''; }
+                        document.body.style.overflow = ''; document.body.style.touchAction = '';
+                    }, 200);
+                    return;
+                }
                 
                 // 元のカードをグレーアウト
                 currentTargetCard.style.filter = 'grayscale(100%)';
@@ -428,14 +449,22 @@ function animateCardShrink(targetCardId, callback) {
                     currentTargetCard.style.filter = '';
                     currentTargetCard.style.opacity = '';
                     currentTargetCard.style.transition = '';
+                    // スクロールを再開
+                    if (appMainEl) { appMainEl.style.overflow = ''; appMainEl.style.touchAction = ''; }
+                    document.body.style.overflow = ''; document.body.style.touchAction = '';
                 }, 600);
+            });
             });
         } else {
             overlay.style.transition = 'opacity 0.2s ease';
             overlay.style.opacity = '0';
-            setTimeout(() => overlay.remove(), 200);
+            setTimeout(() => {
+                overlay.remove();
+                if (appMainEl) { appMainEl.style.overflow = ''; appMainEl.style.touchAction = ''; }
+                document.body.style.overflow = ''; document.body.style.touchAction = '';
+            }, 200);
         }
-    }, 30);
+    }, 50);
 }
 
 // カード拡大アニメーション関数
@@ -3757,7 +3786,8 @@ function init() {
 // ヘッダーボタンの表示/非表示を制御
 // テーマカラーを更新（スプラッシュ以外は常に#0055ca）
 function updateThemeColor(isLearningMode) {
-    const color = '#0055ca';
+    // 学習モード時はヘッダーが白なのでステータスバーも白に
+    const color = isLearningMode ? '#ffffff' : '#0055ca';
     
     // 同期的に即座に更新（requestAnimationFrameを使わない）
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
@@ -3776,9 +3806,9 @@ function updateThemeColor(isLearningMode) {
         parent.insertBefore(newMeta, parent.firstChild);
     }
     
-    // iOS用のステータスバースタイルも更新（常に白テキスト）
+    // iOS用のステータスバースタイルも更新
     if (statusBarStyleMeta) {
-        statusBarStyleMeta.setAttribute('content', 'black-translucent');
+        statusBarStyleMeta.setAttribute('content', isLearningMode ? 'default' : 'black-translucent');
     }
 }
 
@@ -4021,6 +4051,27 @@ function formatUnitNameHTML(unitName) {
         return `<span class="header-range-block header-range-white"><span class="header-range-no">No.</span><span class="header-range-nums">${match[1]}<span class="header-range-sep">-</span>${match[2]}</span></span>`;
     }
     return null;
+}
+
+// 親カテゴリまたはカテゴリ文字列からSECTION色用のレベルクラスを取得
+function getSectionLevelClass(categoryOrParent) {
+    const s = String(categoryOrParent || '');
+    if (/LEVEL0|入門|レベル０|レベル0/i.test(s)) return 'unit-header-level-0';
+    if (/LEVEL1|初級|レベル１|レベル1/i.test(s)) return 'unit-header-level-1';
+    if (/LEVEL2|中級|レベル２|レベル2/i.test(s)) return 'unit-header-level-2';
+    if (/LEVEL3|上級|レベル３|レベル3/i.test(s)) return 'unit-header-level-3';
+    if (/LEVEL4|ハイレベル|レベル４|レベル4/i.test(s)) return 'unit-header-level-4';
+    if (/LEVEL5|難関|レベル５|レベル5/i.test(s)) return 'unit-header-level-5';
+    return null;
+}
+
+// 学習ヘッダーにSECTION用レベルクラスを適用（白ヘッダー時の色用）
+function applySectionLevelToHeader(categoryOrParent) {
+    const container = document.querySelector('.unit-header-container');
+    if (!container) return;
+    const levelClass = getSectionLevelClass(categoryOrParent);
+    container.classList.remove('unit-header-level-0', 'unit-header-level-1', 'unit-header-level-2', 'unit-header-level-3', 'unit-header-level-4', 'unit-header-level-5');
+    if (levelClass) container.classList.add(levelClass);
 }
 
 // 要素にunitNameを設定（No.パターンならリッチHTML）
@@ -4716,6 +4767,12 @@ function initInputModeLearning(category, words, startIndex = 0) {
     
     // ヘッダーの単元名も更新
     updateHeaderUnitName(displayTitle);
+    // SECTIONの色をLEVELに合わせる（白ヘッダー用）
+    if (String(displayTitle).match(/^#\d+#No\.\d+-\d+$/)) {
+        applySectionLevelToHeader(category || window.currentSubcategoryParent);
+    } else {
+        applySectionLevelToHeader(null);
+    }
     
     // テーマカラーを先に更新（クラス追加の前に）
     updateThemeColor(true);
@@ -5962,6 +6019,12 @@ function showInputModeDirectly(category, words, courseTitle) {
     }
     // ヘッダーの単元名も更新
     updateHeaderUnitName(title);
+    // SECTIONの色をLEVELに合わせる（白ヘッダー用）
+    if (String(title).match(/^#\d+#No\.\d+-\d+$/)) {
+        applySectionLevelToHeader(category || window.currentSubcategoryParent);
+    } else {
+        applySectionLevelToHeader(null);
+    }
     
     // テーマカラーを更新
     updateThemeColor(true);

@@ -439,6 +439,8 @@ body.learning-mode .app-header {
     display: none !important;
 }
 
+/* 学習モード時はヘッダーが非表示なのでここでは白ヘッダーは不要 */
+
 .hamburger-menu-btn {
     position: absolute;
     left: 8px;
@@ -5326,7 +5328,7 @@ body.choice-question-mode-active .learning-view {
     padding-top: calc(16px + env(safe-area-inset-top));
     padding-bottom: 14px;
     box-sizing: border-box;
-    background: #0055ca;
+    background: #ffffff;
     margin-bottom: 0;
     font-size: 13px;
     font-weight: 500;
@@ -5389,7 +5391,7 @@ body.quiz-test-mode .progress-top-row {
 
 
 .unit-name {
-    color: #ffffff;
+    color: #1e293b;
     text-align: center;
     font-family: "Oswald", "Arial Narrow", sans-serif;
     font-size: 16px;
@@ -5441,7 +5443,7 @@ body.quiz-test-mode .progress-top-row {
     background: none;
     border: none;
     padding: 4px;
-    color: #ffffff;
+    color: #1e293b;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -5551,7 +5553,7 @@ body.quiz-test-mode .progress-top-row {
     background: none;
     border: none;
     padding: 4px;
-    color: #ffffff;
+    color: #1e293b;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -5563,7 +5565,7 @@ body.quiz-test-mode .progress-top-row {
 .input-back-btn .back-btn-text {
     font-size: 14px;
     font-weight: 500;
-    color: #ffffff;
+    color: #1e293b;
 }
 
 .input-back-btn:hover {
@@ -6094,9 +6096,9 @@ body.quiz-test-mode .progress-top-row {
     margin: 0 1px;
 }
 
-/* ヘッダー白文字版（青背景のunit-name内） */
+/* ヘッダー文字色（白背景時） */
 .header-range-white {
-    color: #ffffff;
+    color: #1e293b;
 }
 
 .header-range-badge {
@@ -6150,6 +6152,33 @@ body.quiz-test-mode .progress-top-row {
     margin-left: 3px;
     line-height: 1;
 }
+
+/* 白ヘッダー時：SECTIONの色をLEVELに合わせる */
+.unit-header-container.unit-header-level-0 .unit-name-section,
+.unit-header-container.unit-header-level-0 .unit-name-section-n {
+    color: #059669;
+}
+.unit-header-container.unit-header-level-1 .unit-name-section,
+.unit-header-container.unit-header-level-1 .unit-name-section-n {
+    color: #dc2626;
+}
+.unit-header-container.unit-header-level-2 .unit-name-section,
+.unit-header-container.unit-header-level-2 .unit-name-section-n {
+    color: #ea580c;
+}
+.unit-header-container.unit-header-level-3 .unit-name-section,
+.unit-header-container.unit-header-level-3 .unit-name-section-n {
+    color: #2563eb;
+}
+.unit-header-container.unit-header-level-4 .unit-name-section,
+.unit-header-container.unit-header-level-4 .unit-name-section-n {
+    color: #7c3aed;
+}
+.unit-header-container.unit-header-level-5 .unit-name-section,
+.unit-header-container.unit-header-level-5 .unit-name-section-n {
+    color: #4338ca;
+}
+
 .unit-name .header-range-block {
     margin-left: 0.5em;
 }
@@ -6557,7 +6586,7 @@ body.choice-question-mode-active .word-card-container {
     width: 100% !important;
     max-width: none !important;
     margin: 0;
-    background: #ffffff;
+    background: #0055ca;
 }
 
 .input-list-header {
@@ -6566,7 +6595,7 @@ body.choice-question-mode-active .word-card-container {
     margin-left: auto;
     margin-right: auto;
     padding: 12px 0 8px;
-    color: #1f2937;
+    color: #ffffff;
     border-bottom: none;
     margin-bottom: 0;
 }
@@ -6595,10 +6624,10 @@ body.choice-question-mode-active .word-card-container {
     padding: 0 12px;
     height: 32px;
     box-sizing: border-box;
-    background: #ffffff;
-    border: 1px solid #bfdbfe;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 20px;
-    color: #3b82f6;
+    color: #ffffff;
     cursor: pointer;
     transition: all 0.15s ease;
     flex-shrink: 0;
@@ -6612,23 +6641,23 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .compact-mode-toggle-btn:hover {
-    background: #eff6ff;
-    border-color: #93c5fd;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .compact-mode-toggle-btn:active {
-    background: #dbeafe;
+    background: rgba(255, 255, 255, 0.3);
     transform: scale(0.96);
 }
 
 .compact-mode-toggle-btn.active {
-    background: #2563eb;
-    border-color: #2563eb;
-    color: #ffffff;
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #0055ca;
 }
 
 .compact-mode-toggle-btn.active .btn-label {
-    color: #ffffff;
+    color: #0055ca;
 }
 
 /* 設定ボタンラッパー */
@@ -6644,10 +6673,10 @@ body.choice-question-mode-active .word-card-container {
     gap: 5px;
     padding: 0 14px;
     height: 38px;
-    background: #ffffff;
-    border: 1px solid #c7d2fe;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
-    color: #6366f1;
+    color: #ffffff;
     cursor: pointer;
     transition: all 0.15s ease;
     flex-shrink: 0;
@@ -6656,19 +6685,19 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-settings-btn:hover {
-    background: #eef2ff;
-    border-color: #a5b4fc;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .input-list-settings-btn:active {
-    background: #e0e7ff;
+    background: rgba(255, 255, 255, 0.3);
     transform: scale(0.97);
 }
 
 .input-list-settings-btn.active {
-    background: #eef2ff;
-    border-color: #6366f1;
-    color: #4f46e5;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #ffffff;
 }
 
 /* 設定ドロップダウン */
@@ -6811,51 +6840,51 @@ body.choice-question-mode-active .word-card-container {
 
 /* ランダムボタン */
 .input-shuffle-btn {
-    background: #ffffff;
-    border: 1px solid #bfdbfe;
-    color: #3b82f6;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
     height: 32px;
     box-sizing: border-box;
 }
 
 /* ひっくり返すボタン */
 .input-flip-all-btn {
-    background: #ffffff;
-    border: 1px solid #bfdbfe;
-    color: #3b82f6;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
     height: 32px;
     box-sizing: border-box;
 }
 
 .input-flip-all-btn:hover {
-    background: #eff6ff;
-    border-color: #93c5fd;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .input-flip-all-btn:active {
-    background: #dbeafe;
+    background: rgba(255, 255, 255, 0.3);
     transform: scale(0.96);
 }
 
 .input-shuffle-btn:hover {
-    background: #eff6ff;
-    border-color: #93c5fd;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .input-shuffle-btn:active {
-    background: #dbeafe;
+    background: rgba(255, 255, 255, 0.3);
     transform: scale(0.96);
 }
 
 .input-shuffle-btn.active {
-    background: #2563eb;
-    border-color: #2563eb;
-    color: #ffffff;
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #0055ca;
 }
 
 .input-shuffle-btn.active:hover {
-    background: #1d4ed8;
-    border-color: #1d4ed8;
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.9);
 }
 
 .input-shuffle-btn svg {
@@ -6868,13 +6897,13 @@ body.choice-question-mode-active .word-card-container {
 /* シャッフルアニメーション */
 .input-shuffle-btn.shuffling {
     pointer-events: none;
-    background: #dbeafe;
-    border-color: #93c5fd;
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .input-shuffle-btn.shuffling svg {
     animation: shuffle-spin 0.5s ease-in-out;
-    color: #3b82f6;
+    color: #ffffff;
 }
 
 @keyframes shuffle-spin {
@@ -6970,20 +6999,20 @@ body.choice-question-mode-active .word-card-container {
     justify-content: center;
 }
 
-/* スタックカード：単色で「束」を表現 */
+/* スタックカード：水色で分厚さを表現 */
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-card {
     position: absolute;
     width: var(--deck-card-w);
     height: var(--deck-card-h);
     border-radius: 20px;
-    background: #0055ca;
-    border: 1.5px solid #0055ca;
+    background: #7fbfff;
+    border: none;
 }
 
-/* 一番手前のカード：白（次のカードに見える） */
+/* 一番手前のカード：少し明るい水色 */
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack-card:last-child {
-    background: #ffffff;
-    border: 1.5px solid #0055ca;
+    background: #a8d4ff;
+    border: none;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-host {
@@ -6999,7 +7028,7 @@ body.choice-question-mode-active .word-card-container {
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-replay-card {
     width: 100%;
     min-height: var(--deck-card-h);
-    border: 1.5px solid #0055ca; /* ヘッダー青 */
+    border: none;
     background: rgba(224, 242, 254, 0.92); /* 薄い水色 */
     color: rgba(0, 85, 202, 0.75);
     border-radius: 20px;
@@ -7026,7 +7055,7 @@ body.choice-question-mode-active .word-card-container {
 
 /* デッキのメインカード：うすいグレーボーダー（影なし） */
 #inputListContainer.flip-mode.flip-deck-mode .input-list-inner {
-    border: 1.5px solid #0055ca;
+    border: none;
     box-shadow: none;
 }
 
@@ -7369,7 +7398,7 @@ body.choice-question-mode-active .word-card-container {
 
 .input-list-hint {
     font-size: 11px;
-    color: #6b7280;
+    color: rgba(255, 255, 255, 0.7);
     font-weight: 400;
 }
 
@@ -7399,10 +7428,10 @@ body.choice-question-mode-active .word-card-container {
     padding: 0 12px;
     height: 32px;
     box-sizing: border-box;
-    background: #ffffff;
-    border: 1px solid #bfdbfe;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 20px;
-    color: #3b82f6;
+    color: #ffffff;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -7415,24 +7444,24 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-filter-trigger:hover {
-    background: #eff6ff;
-    border-color: #93c5fd;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .input-filter-trigger:active {
-    background: #dbeafe;
+    background: rgba(255, 255, 255, 0.3);
     transform: scale(0.96);
 }
 
 .input-filter-trigger.active {
-    background: #2563eb;
-    border-color: #2563eb;
-    color: #ffffff;
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #0055ca;
 }
 
 .input-filter-trigger.active:hover {
-    background: #1d4ed8;
-    border-color: #1d4ed8;
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.9);
 }
 
 .filter-active-badge {
@@ -7756,15 +7785,15 @@ body.choice-question-mode-active .word-card-container {
     padding: 0 10px;
     height: 32px;
     box-sizing: border-box;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 20px;
-    border: 1px solid #bfdbfe;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     transition: all 0.15s ease;
     white-space: nowrap;
 }
 
 .red-sheet-toggle:hover {
-    background: #eff6ff;
+    background: rgba(255, 255, 255, 0.25);
 }
 
 .red-sheet-toggle.visible {
@@ -7804,8 +7833,8 @@ body.choice-question-mode-active .word-card-container {
     padding: 0 10px;
     background: #ffffff;
     border-radius: 20px;
-    border: 1px solid #bfdbfe;
-    box-shadow: 0 2px 12px rgba(37, 99, 235, 0.12);
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
 .red-sheet-toggle.sticky:hover {
@@ -8045,7 +8074,7 @@ body.choice-question-mode-active .word-card-container {
 .input-list-mode-toggle {
     display: flex;
     gap: 2px;
-    background: #e0e7ff;
+    background: rgba(255, 255, 255, 0.15);
     padding: 3px;
     border-radius: 10px;
 }
@@ -8054,7 +8083,7 @@ body.choice-question-mode-active .word-card-container {
 .input-list-mode-toggle-large {
     padding: 3px;
     border-radius: 12px;
-    background: #dbeafe;
+    background: rgba(255, 255, 255, 0.15);
     width: 100%;
 }
 
@@ -8101,7 +8130,7 @@ body.choice-question-mode-active .word-card-container {
     background: transparent;
     border-radius: 8px;
     cursor: pointer;
-    color: #6482b9;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 12px;
     font-weight: 600;
     white-space: nowrap;
@@ -8121,8 +8150,8 @@ body.choice-question-mode-active .word-card-container {
 
 .input-list-mode-btn.active {
     background: #ffffff;
-    color: #2563eb;
-    box-shadow: 0 1px 4px rgba(37, 99, 235, 0.18);
+    color: #0055ca;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .input-list-mode-btn.active .mode-btn-icon {
@@ -8401,7 +8430,7 @@ body.choice-question-mode-active .word-card-container {
 .flip-mode .input-list-inner {
     border-radius: 20px;
     box-shadow: none;
-    border: 1.5px solid #0055ca;
+    border: none;
 }
 
 .flip-mode .input-list-front,
@@ -9146,7 +9175,6 @@ body.choice-question-mode-active .word-card-container {
 .expand-pronunciation-btn.playing {
     background-color: #93c5fd !important;
     color: #1d4ed8 !important;
-    transform: scale(1);
     animation: audio-pulse 0.6s ease-in-out infinite;
 }
 
@@ -10208,8 +10236,6 @@ body.choice-question-mode-active .word-card-container {
 .audio-btn.playing {
     background-color: #93c5fd !important;
     color: #1d4ed8 !important;
-    -webkit-transform: scale(1);
-    transform: scale(1);
     -webkit-animation: audio-pulse 0.6s ease-in-out infinite;
     animation: audio-pulse 0.6s ease-in-out infinite;
 }
@@ -10286,10 +10312,8 @@ body.choice-question-mode-active .word-card-container {
     .audio-btn.playing {
         background-color: #93c5fd !important;
         color: #1d4ed8 !important;
-        -webkit-transform: scale(1);
-        transform: scale(1);
-        -webkit-animation: audio-pulse 0.6s ease-in-out infinite !important;
-        animation: audio-pulse 0.6s ease-in-out infinite !important;
+        -webkit-animation: audio-pulse 0.6s ease-in-out infinite;
+        animation: audio-pulse 0.6s ease-in-out infinite;
     }
     
     .english-word-wrapper .audio-btn {
@@ -10453,14 +10477,14 @@ body.choice-question-mode-active .word-card-container {
     background: #ffffff;
     border-radius: 20px;
     box-shadow: none;
-    border: 1.5px solid #0055ca; /* ヘッダー青 */
+    border: none;
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s ease;
 }
 
-/* アウトプットモードのときもうすいグレーボーダー */
+/* アウトプットモードのときもボーダーなし */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-stack {
-    border: 1.5px solid #0055ca;
+    border: none;
 }
 
 .card-stack-1 {
@@ -10696,13 +10720,13 @@ body.learning-mode .bottom-nav {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1.5px solid #0055ca; /* ヘッダー青 */
+    border: none;
     transition: border-color 0.3s ease;
 }
 
-/* アウトプットモードのときもうすいグレーボーダー */
+/* アウトプットモードのときもボーダーなし */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
-    border: 1.5px solid #0055ca;
+    border: none;
 }
 
 /* カードの赤・青囲みは削除 - 単語番号下のマーカーのみ使用 */
@@ -10718,14 +10742,14 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-face {
     padding: 24px;
     display: flex;
     flex-direction: column;
-    border: 1.5px solid #0055ca; /* ヘッダー青 */
+    border: none;
     transform: rotateY(180deg);
     transition: border-color 0.3s ease;
 }
 
-/* アウトプットモードのときもうすいグレーボーダー */
+/* アウトプットモードのときもボーダーなし */
 body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
-    border: 1.5px solid #0055ca;
+    border: none;
 }
 
 /* 裏面の英単語表示（小さく上部に） */
@@ -18305,7 +18329,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     background: rgba(56, 189, 248, 0.3);
     border-color: rgba(56, 189, 248, 0.5);
     color: #0ea5e9;
-    animation: pulse 1s ease-in-out infinite;
+    animation: audio-pulse 0.6s ease-in-out infinite;
 }
 
 /* 解答エリアラッパー（解答欄と正解表示を含む） */
