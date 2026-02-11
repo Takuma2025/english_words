@@ -3866,8 +3866,12 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
         appHeader.classList.remove('hidden');
         if (mode === 'course') {
             appHeader.classList.add('header-course-selection', 'header-align-bottom');
+            // ステータスバーも白に
+            setStatusBarColor('#ffffff');
         } else {
             appHeader.classList.remove('header-course-selection', 'header-align-bottom');
+            // ステータスバーを青に戻す
+            setStatusBarColor('#0055ca');
         }
     }
     
