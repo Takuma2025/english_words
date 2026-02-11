@@ -538,7 +538,7 @@ body.learning-mode .app-header {
 /* サブカテゴリー選択画面のヘッダー：白背景・Levelバッジ中央 */
 .app-header.header-course-selection {
     background: #ffffff;
-    border-bottom: none;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .app-header.header-course-selection .header-back-btn {

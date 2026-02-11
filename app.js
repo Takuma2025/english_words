@@ -1,12 +1,25 @@
-// ステータスバーの色を即時変更する関数（パット切り替え用）
+// ステータスバーの色を即座に切り替える関数（遅延・フェードなし）
 function setStatusBarColor(color) {
-    let themeColor = document.querySelector('meta[name="theme-color"]');
-    if (!themeColor) {
-        themeColor = document.createElement('meta');
-        themeColor.name = 'theme-color';
-        document.head.appendChild(themeColor);
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+        const parent = themeColorMeta.parentNode;
+        themeColorMeta.remove();
+        const newMeta = document.createElement('meta');
+        newMeta.name = 'theme-color';
+        newMeta.content = color;
+        parent.insertBefore(newMeta, parent.firstChild);
+    } else {
+        const newMeta = document.createElement('meta');
+        newMeta.name = 'theme-color';
+        newMeta.content = color;
+        document.head.insertBefore(newMeta, document.head.firstChild);
     }
-    themeColor.setAttribute('content', color);
+    // iOS: 白背景は default（黒文字）、青背景は black-translucent（白文字）
+    const statusBarStyleMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    if (statusBarStyleMeta) {
+        const isWhite = /^#(fff|ffffff)$/i.test(String(color).replace(/\s/g, ''));
+        statusBarStyleMeta.setAttribute('content', isWhite ? 'default' : 'black-translucent');
+    }
 }
 
 // アプリケーションの状態管理
@@ -3849,12 +3862,6 @@ function formatTitleWithLevelBadge(title) {
 // title: コース選択画面で表示するタイトル（オプション）
 // isTestMode: テストモード（アウトプットモード）かどうか
 function updateHeaderButtons(mode, title = '', isTestMode = false) {
-    if (mode === 'course') {
-        setStatusBarColor('#ffffff');
-    } else {
-        setStatusBarColor('#0055ca');
-    }
-    
     const hamburgerMenuBtn = document.getElementById('hamburgerMenuBtn');
     const headerBackBtn = document.getElementById('headerBackBtn');
     const homeBtn = document.getElementById('homeBtn');
@@ -4902,8 +4909,6 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
 
 // 入門600語の画面を表示
 function showElementaryCategorySelection(skipAnimation = false) {
-    setStatusBarColor('#ffffff');
-    
     // フローティング要復習ボタンを非表示（サブカテゴリー画面）
     hideFloatingReviewBtn();
     
@@ -4923,6 +4928,7 @@ function showElementaryCategorySelection(skipAnimation = false) {
     
     // 学習モードをリセット
     document.body.classList.remove('learning-mode');
+    updateThemeColor(false);
     
     const courseSelection = document.getElementById('courseSelection');
     const courseList = document.getElementById('courseList');
@@ -5010,8 +5016,6 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     
     console.log('showLevelSubcategorySelection called with:', parentCategory, 'skipAnimation:', skipAnimation);
     
-    setStatusBarColor('#ffffff');
-    
     // 学習画面から戻る場合、mainContentを非表示にする
     const mainContent = document.getElementById('mainContent');
     if (mainContent) {
@@ -5020,6 +5024,7 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     
     // 学習モードをリセット
     document.body.classList.remove('learning-mode');
+    updateThemeColor(false);
     
     const courseSelection = document.getElementById('courseSelection');
     const courseList = document.getElementById('courseList');
@@ -5130,8 +5135,6 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
 
 // コース選択画面を表示（100刻み）
 function showCourseSelection(category, categoryWords, slideIn = false, skipSaveReturnInfo = false) {
-    setStatusBarColor('#ffffff');
-    
     // 中断時に戻るためのコース情報を保存（戻り時の呼び出しではスキップ）
     // 配列は参照渡しなのでコピーを保存
     if (!skipSaveReturnInfo) {
@@ -22769,15 +22772,13 @@ function showIrregularVerbsTestView(data, type, title) {
     // 現在のテストデータを保存
     currentIvTestData = { data, type };
     
-    // 画面表示
+    // 画面表示（ヘッダーと同じタイミングでステータスバーも白に）
     view.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    setStatusBarColor('#ffffff');
     
     // キーボードを表示
     showIvKeyboard();
-    
-    // ステータスバーを白に
-    setStatusBarColor('#ffffff');
 }
 
 // 現在のテストデータ
@@ -23141,15 +23142,13 @@ function showIrregularVerbsView() {
         tbody.appendChild(tr);
     });
     
-    // 画面表示
+    // 画面表示（ヘッダーと同じタイミングでステータスバーも白に）
     view.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    setStatusBarColor('#ffffff');
     
     // キーボードを表示
     showIvKeyboard();
-    
-    // ステータスバーを白に
-    setStatusBarColor('#ffffff');
 }
 
 // 不規則変化の単語画面（テストモード）を非表示（サブカテゴリーメニューに戻る）
@@ -23161,13 +23160,10 @@ function hideIrregularVerbsView() {
         // キーボードを隠す
         hideIvKeyboard();
         
-        // ヘッダーを更新
+        // ヘッダーを更新（同じタイミングでステータスバーも青に）
         updateHeaderButtons('course', '不規則変化の単語');
-        
         view.classList.add('hidden');
         document.body.style.overflow = '';
-        
-        // ステータスバーを元に戻す
         setStatusBarColor('#1d4ed8');
         
         if (ivMenuView) {
