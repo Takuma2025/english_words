@@ -1375,6 +1375,12 @@ body.learning-mode .app-header {
     display: none !important;
 }
 
+/* ホームのカテゴリカード進捗バー COMPLETE!! のフォントを他と統一 */
+.course-section .category-progress-bar.category-progress-complete::after,
+.course-section .category-progress-bar.category-progress-complete-input::after {
+    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
+}
+
 .boy-word-image {
     max-width: 200px;
     width: auto;
@@ -4800,7 +4806,7 @@ button.category-card:focus-visible {
 
 /* 英語→日本語モード（カードモード）で全問正解した場合の青色COMPLETE表示 */
 .category-progress-bar.category-progress-complete {
-    background: #2563eb;
+    background: #3b82f6;
 }
 
 .category-progress-bar.category-progress-complete::after {
@@ -8958,16 +8964,19 @@ body.choice-question-mode-active .word-card-container {
     position: relative;
     width: 100%;
     height: 8px;
-    background: rgba(0, 85, 202, 0.25);
+    background: rgba(0, 85, 202, 0.35);
+    border-radius: 4px;
     overflow: hidden;
 }
 
 .expand-range-progress-fill {
     position: absolute;
     top: 0;
+    left: 0;
     height: 100%;
     min-width: 4px;
     background: #ffffff;
+    border-radius: 3px;
     transition: left 0.2s ease, width 0.2s ease;
 }
 
@@ -15053,7 +15062,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 
 /* 英語→日本語モード（カードモード）: 青色グラデーションCOMPLETE表示 */
 .completion-progress-bar.completion-progress-complete-card {
-    background: #2563eb;
+    background: #3b82f6;
 }
 
 .completion-progress-bar.completion-progress-complete-card::after {
@@ -17611,7 +17620,6 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 .hw-input-fixed-bottom .hw-mode-toggle-row .input-list-mode-toggle,
 .handwriting-quiz-view .hw-mode-toggle-row .input-list-mode-toggle {
     background: #e8e8e8;
-    border: 1px solid #ccc;
     padding: 3px;
     border-radius: 8px;
 }
