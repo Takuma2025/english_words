@@ -1932,19 +1932,10 @@ body.learning-mode .app-header {
     transition: width 0.3s ease;
 }
 
-/* 100%達成時の進捗バー */
+/* 100%達成時の進捗バー（青のみ・他と同様のシンプル表示） */
 .school-card-progress-bar.complete {
     background: #0055ca;
     overflow: visible;
-}
-
-@keyframes gradient-flow {
-    0% {
-        background-position: 0% center;
-    }
-    100% {
-        background-position: 200% center;
-    }
 }
 
 /* COMPLETE!!テキスト */
@@ -1969,95 +1960,14 @@ body.learning-mode .app-header {
     font-weight: 700;
     color: #ffffff;
     letter-spacing: 3px;
-    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
     text-transform: uppercase;
 }
 
-/* 流れる星のコンテナ */
-.school-complete-stars {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 5;
-}
-
+/* 流れる星は使わない（青・金のシンプルな進捗バーに統一） */
+.school-complete-stars,
 .school-complete-stars.hidden {
-    display: none;
-}
-
-.school-complete-stars .flowing-star {
-    position: absolute;
-    font-size: 16px;
-    color: #ffffff;
-    text-shadow: 
-        0 0 4px #22d3ee,
-        0 0 8px #22d3ee,
-        0 0 12px #67e8f9,
-        0 0 20px #67e8f9;
-    opacity: 0;
-}
-
-/* 左→右 */
-.school-complete-stars .flowing-star:nth-child(1) { top: 20%; left: 0; animation: star-left-right 6s ease-in-out infinite; }
-/* 右→左 */
-.school-complete-stars .flowing-star:nth-child(2) { top: 60%; right: 0; animation: star-right-left 7s ease-in-out infinite 1s; }
-/* 斜め左上→右下 */
-.school-complete-stars .flowing-star:nth-child(3) { top: 0; left: 10%; animation: star-diagonal-1 6.5s ease-in-out infinite 2s; }
-/* 斜め右上→左下 */
-.school-complete-stars .flowing-star:nth-child(4) { top: 0; right: 20%; animation: star-diagonal-2 7.5s ease-in-out infinite 3s; }
-/* 左→右（下側） */
-.school-complete-stars .flowing-star:nth-child(5) { top: 70%; left: 0; animation: star-left-right 6.2s ease-in-out infinite 1.5s; }
-/* 右→左（上側） */
-.school-complete-stars .flowing-star:nth-child(6) { top: 30%; right: 0; animation: star-right-left 6.8s ease-in-out infinite 2.5s; }
-/* 斜め左下→右上 */
-.school-complete-stars .flowing-star:nth-child(7) { bottom: 0; left: 30%; animation: star-diagonal-3 7.2s ease-in-out infinite 4s; }
-/* 斜め右下→左上 */
-.school-complete-stars .flowing-star:nth-child(8) { bottom: 0; right: 10%; animation: star-diagonal-4 6.4s ease-in-out infinite 5s; }
-
-@keyframes star-left-right {
-    0% { left: -10%; opacity: 0; transform: scale(0.7) rotate(0deg); }
-    15% { opacity: 1; }
-    85% { opacity: 1; }
-    100% { left: 110%; opacity: 0; transform: scale(1.1) rotate(360deg); }
-}
-
-@keyframes star-right-left {
-    0% { right: -10%; opacity: 0; transform: scale(0.8) rotate(0deg); }
-    15% { opacity: 1; }
-    85% { opacity: 1; }
-    100% { right: 110%; opacity: 0; transform: scale(1) rotate(-360deg); }
-}
-
-@keyframes star-diagonal-1 {
-    0% { top: -20%; left: -5%; opacity: 0; transform: scale(0.6) rotate(0deg); }
-    15% { opacity: 1; }
-    85% { opacity: 1; }
-    100% { top: 120%; left: 100%; opacity: 0; transform: scale(1.2) rotate(400deg); }
-}
-
-@keyframes star-diagonal-2 {
-    0% { top: -20%; right: -5%; opacity: 0; transform: scale(0.7) rotate(0deg); }
-    15% { opacity: 1; }
-    85% { opacity: 1; }
-    100% { top: 120%; right: 100%; opacity: 0; transform: scale(1) rotate(-380deg); }
-}
-
-@keyframes star-diagonal-3 {
-    0% { bottom: -20%; left: -5%; opacity: 0; transform: scale(0.8) rotate(0deg); }
-    15% { opacity: 1; }
-    85% { opacity: 1; }
-    100% { bottom: 120%; left: 90%; opacity: 0; transform: scale(1.1) rotate(350deg); }
-}
-
-@keyframes star-diagonal-4 {
-    0% { bottom: -20%; right: -5%; opacity: 0; transform: scale(0.9) rotate(0deg); }
-    15% { opacity: 1; }
-    85% { opacity: 1; }
-    100% { bottom: 120%; right: 90%; opacity: 0; transform: scale(0.8) rotate(-400deg); }
+    display: none !important;
 }
 
 .vocab-progress-bar-label {
@@ -3791,7 +3701,7 @@ body.learning-mode .app-header {
     font-weight: 600;
     color: #ffffff;
     letter-spacing: 2px;
-    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
     text-transform: uppercase;
     z-index: 10;
     pointer-events: none;
@@ -4085,6 +3995,7 @@ button.category-card:focus-visible {
 
 /* アクションボタン付きコースカード */
 .category-card.category-card-with-actions {
+    position: relative;
     flex-direction: row;
     align-items: stretch;
     cursor: default;
@@ -4903,7 +4814,7 @@ button.category-card:focus-visible {
     font-weight: 600;
     color: #ffffff;
     letter-spacing: 3px;
-    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
     text-transform: uppercase;
     z-index: 1;
 }
@@ -4931,7 +4842,7 @@ button.category-card:focus-visible {
     font-weight: 600;
     color: #7c2d12;
     letter-spacing: 3px;
-    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
     text-transform: uppercase;
     z-index: 1;
 }
@@ -15156,7 +15067,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     font-weight: 600;
     color: #ffffff;
     letter-spacing: 3px;
-    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
     text-transform: uppercase;
     opacity: 0;
     transform: scale(0.5);
@@ -15187,7 +15098,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     font-weight: 600;
     color: #7c2d12;
     letter-spacing: 3px;
-    font-family: 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
     text-transform: uppercase;
     opacity: 0;
     transform: scale(0.5);
@@ -20894,6 +20805,56 @@ div#inputWordCheckbox,
     letter-spacing: -0.01em;
     margin-left: 4px;
     color: #0369a1;
+}
+
+/* ===== サブカテゴリ クリアバッジ ===== */
+.subcat-clear-badge {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #ffd600;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow: none;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* ★を丸の中央に合わせる（フォントの字形でずれるため微調整） */
+.subcat-clear-badge-icon {
+    display: block;
+    line-height: 1;
+    text-align: center;
+    transform: translate(0.5px, 1px);
+}
+
+/* 光沢スウィープ */
+.subcat-clear-badge::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -70%;
+    width: 40%;
+    height: 200%;
+    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%);
+    animation: badgeShine 3s ease-in-out 1s infinite;
+    pointer-events: none;
+}
+
+@keyframes badgeShine {
+    0%, 100% { left: -70%; opacity: 0; }
+    10% { opacity: 1; }
+    35% { left: 130%; opacity: 1; }
+    45% { opacity: 0; }
 }
 
 /* No.101–150 サブ情報 — Levelバッジと同系色 */

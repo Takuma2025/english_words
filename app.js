@@ -4939,7 +4939,13 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         card.className = 'category-card category-card-with-actions';
         card.setAttribute('data-level-total', String(totalWords));
         
+        // クリアバッジ（コンプリート時のみ表示）
+        const clearBadgeHTML = (isComplete || isInputModeComplete)
+            ? `<span class="subcat-clear-badge">✔</span>`
+            : '';
+        
         card.innerHTML = `
+            ${clearBadgeHTML}
             <div class="category-info">
                 <div class="subcat-top-row">
                     <span class="subcat-section" style="color: ${badgeColor}; --subcat-marker: ${badgeBgColor}">Section<span class="subcat-section-n">${i + 1}</span></span>
