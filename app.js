@@ -406,48 +406,73 @@ function animateCardShrink(targetCardId, callback) {
         const badge = targetCard.querySelector('.level-badge');
         const categoryName = targetCard.querySelector('.category-name');
         const progress = targetCard.querySelector('.category-progress');
+        const isIconBelowCard = targetCard.classList.contains('bottom-menu-card-icon-below');
         
         // 元の進捗バーの幅を取得
         const progressWidth = progress ? progress.getBoundingClientRect().width : 0;
         
-        if (icon) {
-            const iconClone = icon.cloneNode(true);
-            // クローンしたアイコンのvisibilityを確実にvisibleに
-            iconClone.style.visibility = 'visible';
-            iconClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
-            titleContainer.appendChild(iconClone);
-        }
-        
-        if (badge) {
-            const badgeClone = badge.cloneNode(true);
-            // クローンしたバッジのvisibilityを確実にvisibleに
-            badgeClone.style.visibility = 'visible';
-            badgeClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
-            titleContainer.appendChild(badgeClone);
-        }
-        
-        if (categoryName) {
-            const titleText = document.createElement('div');
-            titleText.className = 'title-text';
-            const textOnly = categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').replace(/^レベル[０-９0-9]+\s*/g, '').trim();
-            titleText.textContent = textOnly;
-            titleContainer.appendChild(titleText);
+        if (isIconBelowCard) {
+            // カテゴリー別・単語一覧：文字が上・アイコンが下
+            if (categoryName) {
+                const titleText = document.createElement('div');
+                titleText.className = 'title-text';
+                const textOnly = categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').replace(/^レベル[０-９0-9]+\s*/g, '').trim();
+                titleText.textContent = textOnly;
+                titleContainer.appendChild(titleText);
+            }
+            if (icon) {
+                const iconClone = icon.cloneNode(true);
+                iconClone.style.visibility = 'visible';
+                iconClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
+                titleContainer.appendChild(iconClone);
+            }
+        } else {
+            // 通常カード：アイコン→バッジ→テキスト
+            if (icon) {
+                const iconClone = icon.cloneNode(true);
+                iconClone.style.visibility = 'visible';
+                iconClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
+                titleContainer.appendChild(iconClone);
+            }
+            
+            if (badge) {
+                const badgeClone = badge.cloneNode(true);
+                badgeClone.style.visibility = 'visible';
+                badgeClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
+                titleContainer.appendChild(badgeClone);
+            }
+            
+            if (categoryName) {
+                const titleText = document.createElement('div');
+                titleText.className = 'title-text';
+                const textOnly = categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').replace(/^レベル[０-９0-9]+\s*/g, '').trim();
+                titleText.textContent = textOnly;
+                titleContainer.appendChild(titleText);
+            }
         }
         
         if (progress) {
             const progressClone = progress.cloneNode(true);
-            // クローンした進捗バーのvisibilityを確実にvisibleに
             progressClone.style.visibility = 'visible';
             progressClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
-            // 進捗テキスト（0/0語など）は非表示にする
             const progressText = progressClone.querySelector('.category-progress-text');
             if (progressText) progressText.style.display = 'none';
-            // 進捗バーの幅を元のカードに合わせる（取得できない場合は拡大時の幅を使用）
             const width = progressWidth > 0 ? progressWidth : (lastExpandProgressWidth > 0 ? lastExpandProgressWidth : 130);
             progressClone.style.width = width + 'px';
             progressClone.style.minWidth = width + 'px';
             progressClone.style.maxWidth = width + 'px';
             titleContainer.appendChild(progressClone);
+        }
+        // 熟語・入試直前カード：カード全体をクローンして面に表示
+        const isIdiomsCard = targetCard.classList.contains('idioms-card');
+        const isExamCard = targetCard.classList.contains('exam1200-card');
+        if (isIdiomsCard || isExamCard) {
+            Array.from(targetCard.children).forEach(child => {
+                const clone = child.cloneNode(true);
+                clone.style.visibility = 'visible';
+                clone.querySelectorAll('*').forEach(el => { el.style.visibility = 'visible'; });
+                titleContainer.appendChild(clone);
+            });
         }
         overlay.appendChild(titleContainer);
     }
@@ -510,7 +535,7 @@ function animateCardShrink(targetCardId, callback) {
                 overlay.style.height = rect.height + 'px';
                 overlay.style.opacity = '1';
                 overlay.style.transform = 'perspective(1000px) rotateY(-360deg)';
-                
+
                 // バッジと文字も縮小
                 if (titleContainer) {
                     titleContainer.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -581,29 +606,41 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     overlay.style.opacity = '1';
     overlay.style.transition = 'none';
     
-    // アイコン、バッジ、タイトルをオーバーレイに追加
+    // アイコン、バッジ、タイトルをオーバーレイに追加（カードによって順序を変更）
     const titleContainer = document.createElement('div');
     titleContainer.className = 'expand-title';
+    const isIconBelowCard = cardElement.classList.contains('bottom-menu-card-icon-below');
     
-    if (iconClone) {
-        // クローンしたアイコンのvisibilityを確実にvisibleに
-        iconClone.style.visibility = 'visible';
-        iconClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
-        titleContainer.appendChild(iconClone);
-    }
-    
-    if (badgeClone) {
-        // クローンしたバッジのvisibilityを確実にvisibleに
-        badgeClone.style.visibility = 'visible';
-        badgeClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
-        titleContainer.appendChild(badgeClone);
-    }
-    
-    if (categoryText) {
-        const titleText = document.createElement('div');
-        titleText.className = 'title-text';
-        titleText.textContent = categoryText;
-        titleContainer.appendChild(titleText);
+    if (isIconBelowCard) {
+        // カテゴリー別・単語一覧：文字が上・アイコンが下のカード → オーバーレイも「文字→アイコン」の順
+        if (categoryText) {
+            const titleText = document.createElement('div');
+            titleText.className = 'title-text';
+            titleText.textContent = categoryText;
+            titleContainer.appendChild(titleText);
+        }
+        if (iconClone) {
+            iconClone.style.visibility = 'visible';
+            iconClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
+            titleContainer.appendChild(iconClone);
+        }
+    } else {
+        if (iconClone) {
+            iconClone.style.visibility = 'visible';
+            iconClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
+            titleContainer.appendChild(iconClone);
+        }
+        if (badgeClone) {
+            badgeClone.style.visibility = 'visible';
+            badgeClone.querySelectorAll('*').forEach(el => el.style.visibility = 'visible');
+            titleContainer.appendChild(badgeClone);
+        }
+        if (categoryText) {
+            const titleText = document.createElement('div');
+            titleText.className = 'title-text';
+            titleText.textContent = categoryText;
+            titleContainer.appendChild(titleText);
+        }
     }
     
     if (progressClone && progressWidth > 0) {
@@ -618,6 +655,19 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
         progressClone.style.minWidth = progressWidth + 'px';
         progressClone.style.maxWidth = progressWidth + 'px';
         titleContainer.appendChild(progressClone);
+    }
+
+    // 熟語カード・入試直前カード：カード全体をクローンして面に表示
+    const isIdiomsCard = cardElement.classList.contains('idioms-card');
+    const isExamCard = cardElement.classList.contains('exam1200-card');
+    if (isIdiomsCard || isExamCard) {
+        // カード内の全子要素をクローン（grid-wrap + count + meta）
+        Array.from(cardElement.children).forEach(child => {
+            const clone = child.cloneNode(true);
+            clone.style.visibility = 'visible';
+            clone.querySelectorAll('*').forEach(el => { el.style.visibility = 'visible'; });
+            titleContainer.appendChild(clone);
+        });
     }
     
     overlay.appendChild(titleContainer);
@@ -10809,7 +10859,7 @@ let paginatedCategoryWrongSet = new Set();
 let paginatedSkipProgress = false; // 進捗マーカーをスキップするかどうか
 
 // インプットモード（眺める用）の一覧をページネーションで描画（大量データ用）
-function renderInputListViewPaginated(words) {
+function renderInputListViewPaginated(words, rangeWordsForHeader) {
     const listView = document.getElementById('inputListView');
     const container = document.getElementById('inputListContainer');
     
@@ -10952,10 +11002,11 @@ function renderInputListViewPaginated(words) {
         paginatedCategoryWrongSet = sets.wrongSet;
     }
     
-    // 展開モード時：上に水色ヘッダー（単語番号＋1-2500進捗バー）、下に水色フッター用のプレースホルダーを追加
-    if (inputListViewMode === 'expand' && words.length > 0) {
+    // 展開モード時：上に水色ヘッダー（単語番号＋1-2500進捗バー）、下に水色フッター用のプレースホルダーを追加（検索で絞ったときは範囲を変えず元の単語番号範囲を表示）
+    const rangeSource = (rangeWordsForHeader && rangeWordsForHeader.length > 0) ? rangeWordsForHeader : words;
+    if (inputListViewMode === 'expand' && words.length > 0 && rangeSource.length > 0) {
         const pad = (n) => String(n).padStart(4, '0');
-        const ids = words.map((w) => w.id);
+        const ids = rangeSource.map((w) => w.id);
         const firstId = Math.min(...ids);
         const lastId = Math.max(...ids);
         const headerWrap = document.createElement('div');
@@ -11616,7 +11667,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
 }
 
 // インプットモード（眺める用）の一覧を描画
-function renderInputListView(words) {
+function renderInputListView(words, rangeWordsForHeader) {
     const listView = document.getElementById('inputListView');
     const container = document.getElementById('inputListContainer');
     
@@ -12382,9 +12433,10 @@ function renderInputListView(words) {
         return;
     }
     
-    // 展開モード：1番上の単語の上に水色で No.○○○○～○○○○ を表示（表示中の範囲＝idの最小～最大。ランダムで順序だけ変わっても同じ範囲を表示）
-    if (inputListViewMode === 'expand' && words.length > 0) {
-        const ids = words.map((w) => w.id);
+    // 展開モード：1番上の単語の上に水色で No.○○○○～○○○○ を表示（検索で絞ったときは範囲を変えず元の単語番号範囲を表示）
+    const rangeSource = (rangeWordsForHeader && rangeWordsForHeader.length > 0) ? rangeWordsForHeader : words;
+    if (inputListViewMode === 'expand' && words.length > 0 && rangeSource.length > 0) {
+        const ids = rangeSource.map((w) => w.id);
         const firstId = Math.min(...ids);
         const lastId = Math.max(...ids);
         const pad = (n) => String(n).padStart(4, '0');
@@ -13776,11 +13828,16 @@ function applyInputFilter() {
         }
     }
     
+    // 検索で絞っているときは単語番号範囲を変えず元の範囲を表示するため、ヘッダー用に baseWords を渡す
+    const searchInputForRange = document.getElementById('wordSearchInput');
+    const useBaseRange = searchInputForRange && searchInputForRange.value.trim() !== '' && baseWords.length > 0;
+    const rangeWordsForHeader = useBaseRange ? baseWords : null;
+
     // フィルター結果を表示（0件でもrenderInputListViewを呼び出してツールバーを維持）
     if (filteredWords.length > 500) {
-        renderInputListViewPaginated(filteredWords);
+        renderInputListViewPaginated(filteredWords, rangeWordsForHeader);
     } else {
-        renderInputListView(filteredWords);
+        renderInputListView(filteredWords, rangeWordsForHeader);
     }
     
     // 設定（コンパクトモード・用例表示）を適用
