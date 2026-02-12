@@ -4064,6 +4064,18 @@ function getSectionLevelClass(categoryOrParent) {
     return null;
 }
 
+// 親カテゴリ文字列からレベル番号（0〜5）を取得。該当なしは null
+function getLevelNumberFromCategory(categoryOrParent) {
+    const s = String(categoryOrParent || '');
+    if (/LEVEL0|入門|レベル０|レベル0/i.test(s)) return 0;
+    if (/LEVEL1|初級|レベル１|レベル1/i.test(s)) return 1;
+    if (/LEVEL2|中級|レベル２|レベル2/i.test(s)) return 2;
+    if (/LEVEL3|上級|レベル３|レベル3/i.test(s)) return 3;
+    if (/LEVEL4|ハイレベル|レベル４|レベル4/i.test(s)) return 4;
+    if (/LEVEL5|難関|レベル５|レベル5/i.test(s)) return 5;
+    return null;
+}
+
 // 学習ヘッダーにSECTION用レベルクラスを適用（白ヘッダー時の色用）
 function applySectionLevelToHeader(categoryOrParent) {
     const container = document.querySelector('.unit-header-container');
@@ -4073,29 +4085,42 @@ function applySectionLevelToHeader(categoryOrParent) {
     if (levelClass) container.classList.add(levelClass);
 }
 
-// 要素にunitNameを設定（No.パターンならリッチHTML）
+// 要素にunitNameを設定（No.パターンならリッチHTML）。学習画面の全 .unit-name を更新（スマホ含む）
 function setUnitNameContent(el, unitName) {
-    if (!el) return;
     const richHTML = formatUnitNameHTML(unitName);
-    // 学習画面ヘッダー中央は「Section1」「Section2」のように数字付きで表示
-    if (el.id === 'unitName' && richHTML) {
+    let contentHTML = null;
+    let contentText = null;
+    // 学習画面ヘッダー中央は「Level1＞Section1」形式で表示
+    if (richHTML && String(unitName).match(/^#\d+#No\.\d+-\d+$|^No\.\d+-\d+$/)) {
         const matchWithNum = String(unitName).match(/^#(\d+)#No\.\d+-\d+$/);
         const sectionNum = matchWithNum ? matchWithNum[1] : '';
-        el.innerHTML = sectionNum
-            ? `<span class="unit-name-section">Section</span><span class="unit-name-section-n">${sectionNum}</span>`
-            : 'Section';
-        return;
-    }
-    if (richHTML) {
-        el.innerHTML = richHTML;
+        const levelNum = getLevelNumberFromCategory(window.currentSubcategoryParent || '');
+        if (sectionNum && levelNum !== null) {
+            contentHTML = `<span class="unit-name-level">Level</span><span class="unit-name-level-n">${levelNum}</span><span class="unit-name-sep">＞</span><span class="unit-name-section">Section</span><span class="unit-name-section-n">${sectionNum}</span>`;
+        } else if (sectionNum) {
+            contentHTML = `<span class="unit-name-section">Section</span><span class="unit-name-section-n">${sectionNum}</span>`;
+        } else {
+            contentHTML = 'Section';
+        }
+    } else if (richHTML) {
+        contentHTML = richHTML;
     } else {
         const formattedTitle = formatTitleWithLevelBadge(unitName);
         if (formattedTitle !== unitName) {
-            el.innerHTML = formattedTitle;
+            contentHTML = formattedTitle;
         } else {
-            el.textContent = unitName;
+            contentText = unitName;
         }
     }
+    // 学習画面（mainContent）内の全 .unit-name を更新（PC・スマホどちらのヘッダーも反映）
+    const mainContent = document.getElementById('mainContent');
+    const targets = mainContent ? mainContent.querySelectorAll('.unit-name') : (el ? [el] : []);
+    const toUpdate = (targets.length > 0 ? targets : (el ? [el] : []));
+    toUpdate.forEach(function(target) {
+        if (!target) return;
+        if (contentHTML !== null) target.innerHTML = contentHTML;
+        else if (contentText !== null) target.textContent = contentText;
+    });
 }
 
 // ヘッダーの単元名を更新
@@ -10867,6 +10892,21 @@ function renderInputListViewPaginated(words) {
         paginatedCategoryWrongSet = sets.wrongSet;
     }
     
+    // 展開モード時：上に水色ヘッダー（単語番号）、下に水色フッター用のプレースホルダーを追加
+    if (inputListViewMode === 'expand' && words.length > 0) {
+        const pad = (n) => String(n).padStart(4, '0');
+        const ids = words.map((w) => w.id);
+        const firstId = Math.min(...ids);
+        const lastId = Math.max(...ids);
+        const headerWrap = document.createElement('div');
+        headerWrap.className = 'expand-range-header';
+        const rangeTitle = document.createElement('div');
+        rangeTitle.className = 'expand-range-title';
+        rangeTitle.innerHTML = `<span class="expand-range-no">単語番号</span>${pad(firstId)}-${pad(lastId)}`;
+        headerWrap.appendChild(rangeTitle);
+        container.appendChild(headerWrap);
+    }
+    
     // 最初のページを描画
     loadMoreWords();
 }
@@ -10913,7 +10953,12 @@ function loadMoreWords() {
         });
         container.appendChild(loadMoreBtn);
     } else {
-        // 全部読み込み完了
+        // 全部読み込み完了：展開モード時は水色フッターを追加してから完了メッセージ
+        if (inputListViewMode === 'expand') {
+            const footerWrap = document.createElement('div');
+            footerWrap.className = 'expand-range-footer';
+            container.appendChild(footerWrap);
+        }
         const completeMsg = document.createElement('div');
         completeMsg.className = 'load-complete-msg';
         completeMsg.textContent = `全${paginatedWordsData.length}語を表示しました`;
@@ -12725,6 +12770,13 @@ function renderInputListView(words) {
             container.appendChild(item);
         }
     });
+    
+    // 展開モード：一番下に水色のフッター（下角丸・単語番号なし）
+    if (inputListViewMode === 'expand' && words.length > 0) {
+        const footerWrap = document.createElement('div');
+        footerWrap.className = 'expand-range-footer';
+        container.appendChild(footerWrap);
+    }
     
     // 描画完了後にスクロール位置を一番上にリセット
     setTimeout(() => {
