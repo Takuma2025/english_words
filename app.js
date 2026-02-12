@@ -12824,6 +12824,10 @@ function setupInputListModeToggle() {
         inputListViewMode = 'flip';
         flipBtn.classList.add('active');
         expandBtn.classList.remove('active');
+        // 単語帳→単語カードに切り替えたときはランダム状態を引き継がない
+        isInputShuffled = false;
+        const shuffleBtn = document.getElementById('inputShuffleBtn');
+        if (shuffleBtn) shuffleBtn.classList.remove('active');
         updateRedSheetToggleVisibility();
         // すべてめくるボタンを表示・ラベルをリセット
         if (flipAllBtn) {
@@ -12844,6 +12848,10 @@ function setupInputListModeToggle() {
         inputListViewMode = 'expand';
         expandBtn.classList.add('active');
         flipBtn.classList.remove('active');
+        // 単語カード→単語帳に切り替えたときもランダム状態を引き継がない
+        isInputShuffled = false;
+        const shuffleBtn = document.getElementById('inputShuffleBtn');
+        if (shuffleBtn) shuffleBtn.classList.remove('active');
         updateRedSheetToggleVisibility();
         // すべてめくるボタンを非表示
         if (flipAllBtn) flipAllBtn.classList.add('hidden');
