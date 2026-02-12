@@ -4941,7 +4941,7 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         
         // クリアバッジ（コンプリート時のみ表示）
         const clearBadgeHTML = (isComplete || isInputModeComplete)
-            ? `<span class="subcat-clear-badge">✔</span>`
+            ? `<span class="subcat-clear-badge"><span class="subcat-clear-badge-icon">★</span></span>`
             : '';
         
         card.innerHTML = `

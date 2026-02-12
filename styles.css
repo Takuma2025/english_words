@@ -17607,6 +17607,34 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     margin-top: 4px;
 }
 
+/* 白背景でトグルが見えるように（タイピング/手書き） */
+.hw-input-fixed-bottom .hw-mode-toggle-row .input-list-mode-toggle,
+.handwriting-quiz-view .hw-mode-toggle-row .input-list-mode-toggle {
+    background: #e8e8e8;
+    border: 1px solid #ccc;
+    padding: 3px;
+    border-radius: 8px;
+}
+.hw-input-fixed-bottom .hw-mode-toggle-row .input-list-mode-btn,
+.handwriting-quiz-view .hw-mode-toggle-row .input-list-mode-btn {
+    color: #444;
+    background: transparent;
+}
+.hw-input-fixed-bottom .hw-mode-toggle-row .input-list-mode-btn .mode-btn-icon,
+.handwriting-quiz-view .hw-mode-toggle-row .input-list-mode-btn .mode-btn-icon {
+    opacity: 0.85;
+}
+.hw-input-fixed-bottom .hw-mode-toggle-row .input-list-mode-btn.active,
+.handwriting-quiz-view .hw-mode-toggle-row .input-list-mode-btn.active {
+    background: #ffffff;
+    color: #0055ca;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+.hw-input-fixed-bottom .hw-mode-toggle-row .input-list-mode-btn.active .mode-btn-icon,
+.handwriting-quiz-view .hw-mode-toggle-row .input-list-mode-btn.active .mode-btn-icon {
+    opacity: 1;
+}
+
 /* チェックボックスを完全に非表示 */
 .hw-mode-toggle-row #hwQuizCheckbox,
 .hw-mode-toggle-row .hw-quiz-checkbox,
