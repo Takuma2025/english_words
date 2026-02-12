@@ -1644,75 +1644,64 @@
         <div class="filter-sheet-content">
             <!-- モード -->
             <div class="ts-label">モード</div>
-            <div class="ts-toggle-row">
+            <div class="ts-toggle-row ts-toggle-simple">
                 <label class="ts-toggle-option">
                     <input type="radio" name="learningMode" id="modeEngToJpn" value="eng-to-jpn" checked>
-                    <span class="ts-toggle-text"><span class="ts-mode-visual ts-mode-4choice"><span>1</span><span>2</span><span>3</span><span>4</span></span>4択<span class="ts-toggle-sub">英語→日本語</span></span>
+                    <span class="ts-toggle-text-simple">4択（A→あ）</span>
                 </label>
                 <label class="ts-toggle-option">
                     <input type="radio" name="learningMode" id="modeJpnToEng" value="jpn-to-eng">
-                    <span class="ts-toggle-text"><span class="ts-mode-visual ts-mode-typing">abc<span class="ts-typing-cursor"></span></span>タイピング<span class="ts-toggle-sub">日本語→英語</span></span>
+                    <span class="ts-toggle-text-simple">タイピング（あ→A）</span>
                 </label>
             </div>
 
             <!-- 出題順 -->
             <div class="ts-label">出題順</div>
-            <div class="ts-toggle-row">
+            <div class="ts-toggle-row ts-toggle-simple">
                 <label class="ts-toggle-option">
                     <input type="radio" name="wordOrder" id="orderSequential" value="sequential" checked>
-                    <span class="ts-toggle-text"><span class="ts-mode-visual ts-order-seq">1→2→3</span>番号順</span>
+                    <span class="ts-toggle-text-simple">番号順</span>
                 </label>
                 <label class="ts-toggle-option">
                     <input type="radio" name="wordOrder" id="orderRandom" value="random">
-                    <span class="ts-toggle-text"><svg class="ts-mode-visual ts-order-rand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>ランダム</span>
+                    <span class="ts-toggle-text-simple">ランダム</span>
                 </label>
             </div>
 
             <!-- 出題範囲 -->
             <div class="ts-label">単語を絞る</div>
-            <div class="ts-filter-chips">
-                <label class="ts-chip ts-chip-all ts-chip-full">
-                    <input type="checkbox" id="filterAll" checked>
-                    <span class="ts-chip-check"></span>
-                    <span class="ts-chip-label">すべて</span>
-                </label>
-                <label class="ts-chip ts-chip-half">
+            <label class="ts-filter-simple-item ts-filter-simple-all">
+                <input type="checkbox" id="filterAll" checked>
+                <span class="ts-filter-simple-text">すべて</span>
+            </label>
+            <div class="ts-filter-simple ts-filter-simple-row">
+                <label class="ts-filter-simple-item">
                     <input type="checkbox" id="filterUnlearned" checked>
-                    <span class="ts-chip-check"></span>
-                    <span class="ts-chip-label">未学習</span>
-                    <span class="ts-chip-dot ts-chip-dot-gray"></span>
+                    <span class="ts-filter-simple-text"><span class="ts-filter-dot ts-filter-dot-gray"></span>未学習</span>
                 </label>
-                <label class="ts-chip ts-chip-half">
+                <label class="ts-filter-simple-item">
                     <input type="checkbox" id="filterWrong" checked>
-                    <span class="ts-chip-check"></span>
-                    <span class="ts-chip-label">できなかった</span>
-                    <span class="ts-chip-dot ts-chip-dot-red"></span>
+                    <span class="ts-filter-simple-text"><span class="ts-filter-dot ts-filter-dot-red"></span>できなかった</span>
                 </label>
-                <label class="ts-chip ts-chip-half">
+                <label class="ts-filter-simple-item">
                     <input type="checkbox" id="filterBookmark" checked>
-                    <span class="ts-chip-check"></span>
-                    <span class="ts-chip-label">チェック</span>
-                    <span class="ts-chip-dot ts-chip-dot-yellow"></span>
+                    <span class="ts-filter-simple-text"><span class="ts-filter-dot ts-filter-dot-yellow"></span>チェック</span>
                 </label>
-                <label class="ts-chip ts-chip-half">
+                <label class="ts-filter-simple-item">
                     <input type="checkbox" id="filterCorrect" checked>
-                    <span class="ts-chip-check"></span>
-                    <span class="ts-chip-label">できた</span>
-                    <span class="ts-chip-dot ts-chip-dot-blue"></span>
+                    <span class="ts-filter-simple-text"><span class="ts-filter-dot ts-filter-dot-blue"></span>できた</span>
                 </label>
             </div>
-            <div class="ts-count-info" id="filterInfo">
+            <div class="ts-count-info-simple" id="filterInfo">
                 <span id="filteredWordCount">0語</span>が選択されています
             </div>
 
             <!-- 出題数 -->
             <div class="ts-label">出題数</div>
-            <div class="question-count-control" id="questionCountSection">
-                <div class="question-count-buttons">
-                    <button class="question-count-btn question-count-minus" id="questionCountMinus">−</button>
-                    <span class="question-count-value" id="questionCountValue">すべて</span>
-                    <button class="question-count-btn question-count-plus" id="questionCountPlus">+</button>
-                </div>
+            <div class="question-count-simple" id="questionCountSection">
+                <button class="question-count-simple-btn" id="questionCountMinus">−</button>
+                <span class="question-count-simple-value" id="questionCountValue">すべて</span>
+                <button class="question-count-simple-btn" id="questionCountPlus">＋</button>
             </div>
         </div>
         <div class="filter-actions">
