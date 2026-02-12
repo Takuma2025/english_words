@@ -559,23 +559,23 @@ body.learning-mode .app-header {
     padding: 0;
     border-radius: 0;
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.04em;
     line-height: 1;
     color: #ffffff;
 }
 .app-header.header-course-selection .header-title-text .level-badge {
-    min-height: 28px;
+    min-height: 24px;
 }
 .app-header.header-course-selection .header-title-text .level-badge b,
 .app-header.header-course-selection .header-title-text .level-badge strong {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.01em;
-    margin-left: 3px;
+    margin-left: 2px;
     color: #ffffff;
 }
 
@@ -1354,16 +1354,16 @@ body.learning-mode .app-header {
 
 .course-section .category-card .category-name .level-badge {
     display: block !important;
-    margin: 0 auto 8px auto !important;
-    font-size: 18px;
-    padding: 6px 16px;
+    margin: 0 auto 6px auto !important;
+    font-size: 15px;
+    padding: 5px 12px;
     transform: none;
     width: fit-content;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
 .course-section .category-card .category-name .level-badge b {
-    font-size: 32px;
+    font-size: 24px;
 }
 
 .course-section .category-card .category-meta {
@@ -1718,19 +1718,17 @@ body.learning-mode .app-header {
     color: #ffffff;
 }
 
-/* 公立（青） */
+/* 公立・私立・国立：すべて青系 */
 .school-card-icon-public {
     background: #0055ca;
 }
 
-/* 私立（シアン） */
 .school-card-icon-private {
-    background: #0891b2;
+    background: #0284c7;
 }
 
-/* 国立（紫） */
 .school-card-icon-national {
-    background: #7c3aed;
+    background: #1e40af;
 }
 
 .school-card-img {
@@ -3102,11 +3100,11 @@ body.learning-mode .app-header {
 }
 
 .school-filter-tab-icon-private {
-    background: #0891b2;
+    background: #0284c7;
 }
 
 .school-filter-tab-icon-national {
-    background: #7c3aed;
+    background: #1e40af;
 }
 
 .school-filter-tab.active .school-filter-tab-icon {
@@ -3280,12 +3278,12 @@ body.learning-mode .app-header {
 }
 
 .school-type-badge-private {
-    background: #0891b2;
+    background: #0284c7;
     color: #ffffff;
 }
 
 .school-type-badge-national {
-    background: #7c3aed;
+    background: #1e40af;
     color: #ffffff;
 }
 
@@ -4635,20 +4633,20 @@ button.category-card:focus-visible {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 10px 4px 10px;
-    border-radius: 8px;
+    padding: 3px 8px;
+    border-radius: 6px;
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 11px;
     letter-spacing: 0.04em;
     line-height: 1;
     color: #0369a1;
-    margin-right: 8px;
+    margin-right: 6px;
     background: #e0f2fe;
     border: none;
     box-shadow: none;
     transform: translateY(-2px);
-    min-height: 22px;
+    min-height: 18px;
     box-sizing: border-box;
 }
 
@@ -4669,10 +4667,10 @@ button.category-card:focus-visible {
 .level-badge strong {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-weight: 700;
-    font-size: 22px;
+    font-size: 18px;
     line-height: 1;
     letter-spacing: -0.01em;
-    margin-left: 3px;
+    margin-left: 2px;
 }
 
 /* 各レベル共通カラー（薄い青で統一） */
@@ -4708,11 +4706,11 @@ button.category-card:focus-visible {
     color: #ffffff;
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 11px;
     letter-spacing: 0.04em;
-    padding: 2px 8px;
+    padding: 2px 6px;
     border-radius: 0;
-    min-height: 20px;
+    min-height: 18px;
 }
 
 /* 入試対策フィルタ用セレクトボックス */
@@ -21026,26 +21024,26 @@ div#inputWordCheckbox,
     display: inline-flex;
     align-items: center;
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     line-height: 1;
     white-space: nowrap;
     letter-spacing: 0.04em;
-    padding: 6px 12px;
-    border-radius: 8px;
-    background: #e0f2fe;
-    color: #0369a1;
-    min-height: 28px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: var(--subcat-bg, #e0f2fe);
+    color: var(--subcat-color, #0369a1);
+    min-height: 24px;
     box-sizing: border-box;
 }
 .subcat-section-n {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.01em;
-    margin-left: 4px;
-    color: #0369a1;
+    margin-left: 3px;
+    color: inherit;
 }
 
 /* 単語番号：文字のみ */

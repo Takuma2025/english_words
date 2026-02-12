@@ -82,143 +82,225 @@ const SoundEffects = {
         }
     },
     
-    // タップ音（軽いクリック音）
+    // タップ音（軽くて心地よいポップ音）
     playTap() {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
         this.resume();
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        oscillator.frequency.value = 800;
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.1 * this.volume, this.audioContext.currentTime);
-        gainNode.gain.exponentialDecayTo = 0.01;
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.05);
-        oscillator.start(this.audioContext.currentTime);
-        oscillator.stop(this.audioContext.currentTime + 0.05);
+        const now = this.audioContext.currentTime;
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+        osc.frequency.setValueAtTime(1200, now);
+        osc.frequency.exponentialRampToValueAtTime(800, now + 0.04);
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.12 * this.volume, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+        osc.start(now);
+        osc.stop(now + 0.06);
     },
     
-    // 正解音（明るい音）
+    // 正解音（明るく軽快な2音チャイム）
     playCorrect() {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
         this.resume();
-        const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
-        notes.forEach((freq, i) => {
-            const oscillator = this.audioContext.createOscillator();
-            const gainNode = this.audioContext.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(this.audioContext.destination);
-            oscillator.frequency.value = freq;
-            oscillator.type = 'sine';
-            const startTime = this.audioContext.currentTime + i * 0.08;
-            gainNode.gain.setValueAtTime(0.15 * this.volume, startTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.15);
-            oscillator.start(startTime);
-            oscillator.stop(startTime + 0.15);
+        const now = this.audioContext.currentTime;
+        // 基音：ピンポン♪（E5 → G5）
+        [[659.25, 0], [783.99, 0.09]].forEach(([freq, delay]) => {
+            const osc = this.audioContext.createOscillator();
+            const gain = this.audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(this.audioContext.destination);
+            osc.frequency.value = freq;
+            osc.type = 'triangle';
+            gain.gain.setValueAtTime(0.18 * this.volume, now + delay);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.2);
+            osc.start(now + delay);
+            osc.stop(now + delay + 0.2);
         });
+        // オクターブ上のきらめき
+        const shimmer = this.audioContext.createOscillator();
+        const sGain = this.audioContext.createGain();
+        shimmer.connect(sGain);
+        sGain.connect(this.audioContext.destination);
+        shimmer.frequency.value = 1567.98; // G6
+        shimmer.type = 'sine';
+        sGain.gain.setValueAtTime(0.06 * this.volume, now + 0.09);
+        sGain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        shimmer.start(now + 0.09);
+        shimmer.stop(now + 0.25);
     },
     
-    // 不正解音（低めの音）
+    // 不正解音（短いブザー風、不快すぎない）
     playWrong() {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
         this.resume();
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        oscillator.frequency.value = 200;
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.15 * this.volume, this.audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
-        oscillator.start(this.audioContext.currentTime);
-        oscillator.stop(this.audioContext.currentTime + 0.3);
+        const now = this.audioContext.currentTime;
+        // 低音のブッ
+        const osc1 = this.audioContext.createOscillator();
+        const gain1 = this.audioContext.createGain();
+        osc1.connect(gain1);
+        gain1.connect(this.audioContext.destination);
+        osc1.frequency.value = 180;
+        osc1.type = 'square';
+        gain1.gain.setValueAtTime(0.10 * this.volume, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc1.start(now);
+        osc1.stop(now + 0.18);
+        // 不協和音のアクセント
+        const osc2 = this.audioContext.createOscillator();
+        const gain2 = this.audioContext.createGain();
+        osc2.connect(gain2);
+        gain2.connect(this.audioContext.destination);
+        osc2.frequency.value = 233; // 半音ずれ
+        osc2.type = 'sine';
+        gain2.gain.setValueAtTime(0.06 * this.volume, now);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc2.start(now);
+        osc2.stop(now + 0.15);
     },
     
-    // 完了音（お祝い音）
+    // 完了音（華やかなファンファーレ風アルペジオ）
     playComplete() {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
         this.resume();
+        const now = this.audioContext.currentTime;
         const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
         notes.forEach((freq, i) => {
-            const oscillator = this.audioContext.createOscillator();
-            const gainNode = this.audioContext.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(this.audioContext.destination);
-            oscillator.frequency.value = freq;
-            oscillator.type = 'sine';
-            const startTime = this.audioContext.currentTime + i * 0.12;
-            gainNode.gain.setValueAtTime(0.12 * this.volume, startTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.4);
-            oscillator.start(startTime);
-            oscillator.stop(startTime + 0.4);
+            // メイン音（triangle：柔らかい倍音）
+            const osc = this.audioContext.createOscillator();
+            const gain = this.audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(this.audioContext.destination);
+            osc.frequency.value = freq;
+            osc.type = 'triangle';
+            const t = now + i * 0.1;
+            gain.gain.setValueAtTime(0.16 * this.volume, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+            osc.start(t);
+            osc.stop(t + 0.5);
+            // オクターブ上のきらめき
+            const shimmer = this.audioContext.createOscillator();
+            const sGain = this.audioContext.createGain();
+            shimmer.connect(sGain);
+            sGain.connect(this.audioContext.destination);
+            shimmer.frequency.value = freq * 2;
+            shimmer.type = 'sine';
+            sGain.gain.setValueAtTime(0.04 * this.volume, t);
+            sGain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+            shimmer.start(t);
+            shimmer.stop(t + 0.35);
         });
     },
     
-    // カードめくり音
+    // カードめくり音（軽いスワイプ感）
     playFlip() {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
         this.resume();
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        oscillator.frequency.setValueAtTime(400, this.audioContext.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(600, this.audioContext.currentTime + 0.08);
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.08 * this.volume, this.audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.08);
-        oscillator.start(this.audioContext.currentTime);
-        oscillator.stop(this.audioContext.currentTime + 0.08);
+        const now = this.audioContext.currentTime;
+        // ノイズバーストで「シュッ」
+        const bufferSize = Math.floor(this.audioContext.sampleRate * 0.06);
+        const noiseBuffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+        const noise = this.audioContext.createBufferSource();
+        noise.buffer = noiseBuffer;
+        const bp = this.audioContext.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.setValueAtTime(2000, now);
+        bp.frequency.exponentialRampToValueAtTime(4000, now + 0.04);
+        bp.Q.value = 0.8;
+        const nGain = this.audioContext.createGain();
+        nGain.gain.setValueAtTime(0.15 * this.volume, now);
+        nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+        noise.connect(bp);
+        bp.connect(nGain);
+        nGain.connect(this.audioContext.destination);
+        noise.start(now);
+        noise.stop(now + 0.06);
+        // 高い「チン」で着地感
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+        osc.frequency.value = 1400;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.05 * this.volume, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+        osc.start(now + 0.02);
+        osc.stop(now + 0.07);
     },
     
-    // ボタン押下音（カチッ）
+    // ボタン押下音（小気味よいクリック）
     playClick() {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
         this.resume();
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        oscillator.frequency.value = 1000;
-        oscillator.type = 'square';
-        gainNode.gain.setValueAtTime(0.05 * this.volume, this.audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.03);
-        oscillator.start(this.audioContext.currentTime);
-        oscillator.stop(this.audioContext.currentTime + 0.03);
+        const now = this.audioContext.currentTime;
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+        osc.frequency.setValueAtTime(1500, now);
+        osc.frequency.exponentialRampToValueAtTime(1000, now + 0.025);
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.08 * this.volume, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+        osc.start(now);
+        osc.stop(now + 0.035);
     },
     
-    // 閉じる音（×ボタンなど）
+    // 閉じる音（優しく下がるトーン）
     playClose() {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
         this.resume();
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        oscillator.frequency.setValueAtTime(600, this.audioContext.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(300, this.audioContext.currentTime + 0.1);
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.1 * this.volume, this.audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
-        oscillator.start(this.audioContext.currentTime);
-        oscillator.stop(this.audioContext.currentTime + 0.1);
+        const now = this.audioContext.currentTime;
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+        osc.frequency.setValueAtTime(700, now);
+        osc.frequency.exponentialRampToValueAtTime(350, now + 0.12);
+        osc.type = 'triangle';
+        gain.gain.setValueAtTime(0.10 * this.volume, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
     },
     
-    // メニュー選択音（軽いクリック）
+    // メニュー選択音（柔らかいポン）
     playMenuSelect() {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
         this.resume();
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        oscillator.frequency.value = 600;
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.08 * this.volume, this.audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.06);
-        oscillator.start(this.audioContext.currentTime);
-        oscillator.stop(this.audioContext.currentTime + 0.06);
+        const now = this.audioContext.currentTime;
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.exponentialRampToValueAtTime(660, now + 0.06);
+        osc.type = 'triangle';
+        gain.gain.setValueAtTime(0.10 * this.volume, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        osc.start(now);
+        osc.stop(now + 0.08);
+    },
+    
+    // ラジオボタン/トグル切替音（軽いスイッチ音）
+    playToggle() {
+        if (!this.enabled || !this.audioContext || this.volume === 0) return;
+        this.resume();
+        const now = this.audioContext.currentTime;
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+        osc.frequency.setValueAtTime(1000, now);
+        osc.frequency.exponentialRampToValueAtTime(1200, now + 0.04);
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.08 * this.volume, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+        osc.start(now);
+        osc.stop(now + 0.05);
     },
     
     // 紙のページめくり音（本のページをめくるパラッという音）
@@ -226,79 +308,64 @@ const SoundEffects = {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
         this.resume();
         const now = this.audioContext.currentTime;
-        const duration = 0.12; // 少し長めにして「パラッ」と鳴らす
-
-        // 1st ノイズバースト（高め：紙が擦れる音）
+        const duration = 0.12;
+        // 高域ノイズ（紙の擦れ）
         const bufferSizeHi = Math.floor(this.audioContext.sampleRate * duration);
         const noiseBufferHi = this.audioContext.createBuffer(1, bufferSizeHi, this.audioContext.sampleRate);
         const outputHi = noiseBufferHi.getChannelData(0);
-        for (let i = 0; i < bufferSizeHi; i++) {
-            outputHi[i] = Math.random() * 2 - 1;
-        }
+        for (let i = 0; i < bufferSizeHi; i++) outputHi[i] = Math.random() * 2 - 1;
         const noiseSourceHi = this.audioContext.createBufferSource();
         noiseSourceHi.buffer = noiseBufferHi;
-
         const bandpassHi = this.audioContext.createBiquadFilter();
         bandpassHi.type = 'bandpass';
         bandpassHi.frequency.value = 3200;
         bandpassHi.Q.value = 1.1;
-
         const gainHi = this.audioContext.createGain();
-        gainHi.gain.setValueAtTime(0.22 * this.volume, now);
-        gainHi.gain.exponentialRampToValueAtTime(0.01, now + duration);
-
+        gainHi.gain.setValueAtTime(0.20 * this.volume, now);
+        gainHi.gain.exponentialRampToValueAtTime(0.001, now + duration);
         noiseSourceHi.connect(bandpassHi);
         bandpassHi.connect(gainHi);
         gainHi.connect(this.audioContext.destination);
-
-        // 2nd ノイズバースト（中低域：ページの動きの「ボワッ」）
+        // 中低域ノイズ（ページの動き）
         const bufferSizeLo = Math.floor(this.audioContext.sampleRate * (duration * 0.8));
         const noiseBufferLo = this.audioContext.createBuffer(1, bufferSizeLo, this.audioContext.sampleRate);
         const outputLo = noiseBufferLo.getChannelData(0);
-        for (let i = 0; i < bufferSizeLo; i++) {
-            outputLo[i] = Math.random() * 2 - 1;
-        }
+        for (let i = 0; i < bufferSizeLo; i++) outputLo[i] = Math.random() * 2 - 1;
         const noiseSourceLo = this.audioContext.createBufferSource();
         noiseSourceLo.buffer = noiseBufferLo;
-
         const bandpassLo = this.audioContext.createBiquadFilter();
         bandpassLo.type = 'bandpass';
         bandpassLo.frequency.value = 900;
         bandpassLo.Q.value = 0.7;
-
         const gainLo = this.audioContext.createGain();
-        gainLo.gain.setValueAtTime(0.12 * this.volume, now + 0.01); // 少し遅らせて重ねる
-        gainLo.gain.exponentialRampToValueAtTime(0.008, now + duration);
-
+        gainLo.gain.setValueAtTime(0.10 * this.volume, now + 0.01);
+        gainLo.gain.exponentialRampToValueAtTime(0.001, now + duration);
         noiseSourceLo.connect(bandpassLo);
         bandpassLo.connect(gainLo);
         gainLo.connect(this.audioContext.destination);
-
         noiseSourceHi.start(now);
         noiseSourceHi.stop(now + duration);
-
         noiseSourceLo.start(now + 0.01);
         noiseSourceLo.stop(now + duration);
     },
     
-    // 決定音（上昇する成功音）
+    // 決定音（上昇する2音チャイム）
     playConfirm() {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
         this.resume();
         const now = this.audioContext.currentTime;
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        oscillator.frequency.setValueAtTime(523.25, now); // C5
-        oscillator.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
-        oscillator.frequency.exponentialRampToValueAtTime(783.99, now + 0.3); // G5
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.12 * this.volume, now);
-        gainNode.gain.setValueAtTime(0.12 * this.volume, now + 0.25);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-        oscillator.start(now);
-        oscillator.stop(now + 0.3);
+        [[523.25, 0], [783.99, 0.12]].forEach(([freq, delay]) => {
+            const osc = this.audioContext.createOscillator();
+            const gain = this.audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(this.audioContext.destination);
+            osc.frequency.value = freq;
+            osc.type = 'triangle';
+            gain.gain.setValueAtTime(0.14 * this.volume, now + delay);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.25);
+            osc.start(now + delay);
+            osc.stop(now + delay + 0.25);
+        });
     }
 };
 
@@ -1696,7 +1763,7 @@ function initSchoolSelector() {
     if (confirmBtn) {
         confirmBtn.addEventListener('click', () => {
             if (tempSelectedSchool !== undefined) {
-                SoundEffects.playTap();
+                SoundEffects.playConfirm();
                 if (tempSelectedSchool === null) {
                     // 未定を選択した場合
                     localStorage.removeItem(SCHOOL_STORAGE_KEY);
@@ -7615,7 +7682,7 @@ function setupEventListeners() {
     const xShareBtn = document.getElementById('xShareBtn');
     const instagramShareBtn = document.getElementById('instagramShareBtn');
     
-    const shareText = '大阪府公立高校入試特化型英単語アプリ「大阪府英単語コンプリート」で英単語を学習しよう！';
+    const shareText = '兵庫県公立高校入試特化型英単語アプリ「兵庫県英単語コンプリート」で英単語を学習しよう！';
     const shareUrl = window.location.href;
     
     if (lineShareBtn) {
@@ -7987,7 +8054,7 @@ function setupEventListeners() {
                 selectedQuizDirection = 'eng-to-jpn';
                 isHandwritingMode = false;
                 console.log('[Filter] Quiz direction: 英語→日本語');
-                SoundEffects.playCorrect(); // 選択時に効果音
+                SoundEffects.playToggle(); // 選択時に効果音
             }
         });
     }
@@ -7998,7 +8065,7 @@ function setupEventListeners() {
                 selectedQuizDirection = 'jpn-to-eng';
                 isHandwritingMode = true;
                 console.log('[Filter] Quiz direction: 日本語→英語 (手書きモード)');
-                SoundEffects.playCorrect(); // 選択時に効果音
+                SoundEffects.playToggle(); // 選択時に効果音
                 
                 // モデルを事前ロード
                 if (window.handwritingRecognition && !window.handwritingRecognition.isModelLoaded) {
@@ -8016,7 +8083,7 @@ function setupEventListeners() {
     if (orderSequential) {
         orderSequential.addEventListener('change', () => {
             if (orderSequential.checked) {
-                SoundEffects.playCorrect(); // 選択時に効果音
+                SoundEffects.playToggle(); // 選択時に効果音
             }
         });
     }
@@ -8024,7 +8091,7 @@ function setupEventListeners() {
     if (orderRandom) {
         orderRandom.addEventListener('change', () => {
             if (orderRandom.checked) {
-                SoundEffects.playCorrect(); // 選択時に効果音
+                SoundEffects.playToggle(); // 選択時に効果音
             }
         });
     }
