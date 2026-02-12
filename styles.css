@@ -4228,15 +4228,116 @@ button.category-card:focus-visible {
     border-radius: 16px;
     padding: 24px;
     max-width: 600px;
-    width: 100%;
+    width: calc(100% - 16px);
     margin: 0 auto;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* 2ステップリスト形式（青ストライプ＋番号＋タイトル・説明＋矢印） */
+.study-mode-container-steps .study-mode-title {
+    margin-bottom: 0;
+    padding-bottom: 12px;
+    text-align: left;
+}
+
+.study-mode-step-list {
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+}
+
+.study-mode-step-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+}
+
+.study-mode-step-item:last-child {
+    border-bottom: none;
+}
+
+.study-mode-step-item:hover {
+    background: #f9fafb;
+}
+
+.study-mode-step-item:active {
+    background: #f3f4f6;
+}
+
+.study-mode-step-number-wrap {
+    flex-shrink: 0;
+    width: 52px;
+    min-width: 52px;
+    min-height: 72px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #0055ca !important;
+    background-color: #0055ca !important;
+    align-self: stretch !important;
+}
+
+.study-mode-step-number {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+}
+
+/* テスト用：オレンジの左ストライプ */
+.study-mode-step-number-orange {
+    background: #f9b916 !important;
+    background-color: #f9b916 !important;
+}
+
+.study-mode-step-content {
+    flex: 1;
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.study-mode-step-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1.3;
+}
+
+.study-mode-step-desc {
+    font-size: 13px;
+    font-weight: 400;
+    color: #4b5563;
+    line-height: 1.4;
+}
+
+.study-mode-step-chevron {
+    flex-shrink: 0;
+    width: 40px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    align-self: stretch !important;
+    font-size: 18px;
+    color: #9ca3af;
+    font-weight: 300;
+    padding: 0;
 }
 
 .study-mode-title {
     font-size: 18px;
     font-weight: 700;
-    text-align: center;
     margin-bottom: 20px;
     color: #1f2937;
 }
@@ -4276,6 +4377,23 @@ button.category-card:focus-visible {
     color: white;
 }
 
+/* リスト形式のときは横並び＋ボタン背景なし */
+.study-mode-container-steps .study-mode-step-item.study-mode-choice-btn {
+    flex-direction: row !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: #ffffff !important;
+    color: inherit !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+}
+.study-mode-container-steps .study-mode-step-item.study-mode-choice-btn:hover {
+    background: #f9fafb !important;
+}
+.study-mode-container-steps .study-mode-step-item.study-mode-choice-btn:active {
+    background: #f3f4f6 !important;
+}
+
 .study-mode-choice-btn {
     flex-direction: column;
 }
@@ -4292,6 +4410,10 @@ button.category-card:focus-visible {
     font-weight: 500;
     text-align: center;
     opacity: 0.9;
+}
+
+.study-mode-container-steps .study-mode-cancel-btn {
+    margin-top: 16px;
 }
 
 .study-mode-cancel-btn {
@@ -6167,9 +6289,12 @@ body.quiz-test-mode .progress-top-row {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-size: 12px;
     font-weight: 600;
-    margin: 0 4px;
+    margin: 0 2px;
     opacity: 0.9;
     color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
     line-height: 1;
     vertical-align: middle;
 }
@@ -9128,7 +9253,7 @@ body.choice-question-mode-active .word-card-container {
     left: 0;
     height: 100%;
     min-width: 4px;
-    background: #ffffff;
+    background: #0055ca;
     border-radius: 0;
     transition: left 0.2s ease, width 0.2s ease;
 }

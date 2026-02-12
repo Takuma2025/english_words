@@ -4178,7 +4178,7 @@ function setUnitNameContent(el, unitName) {
         const sectionNum = matchWithNum ? matchWithNum[1] : '';
         const levelNum = getLevelNumberFromCategory(window.currentSubcategoryParent || '');
         if (sectionNum && levelNum !== null) {
-            contentHTML = `<span class="unit-name-level">レベル</span><span class="unit-name-level-n">${levelNum}</span><span class="unit-name-sep">＞</span><span class="unit-name-section">セクション</span><span class="unit-name-section-n">${sectionNum}</span>`;
+            contentHTML = `<span class="unit-name-level">レベル</span><span class="unit-name-level-n">${levelNum}</span><span class="unit-name-sep"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span><span class="unit-name-section">セクション</span><span class="unit-name-section-n">${sectionNum}</span>`;
         } else if (sectionNum) {
             contentHTML = `<span class="unit-name-section">セクション</span><span class="unit-name-section-n">${sectionNum}</span>`;
         } else {
@@ -6486,20 +6486,28 @@ function showStudyModeOverlay(onInput, onOutput, options = {}) {
     overlay.className = 'study-mode-overlay';
     console.log('Overlay element created');
     
-    const testButtonHtml = hideTest ? '' : `
-                <button type="button" class="study-mode-choice-btn study-mode-output-btn">
-                    <span class="study-mode-choice-main">テスト</span>
-                    <span class="study-mode-choice-sub">覚えたかどうか<br>確認する</span>
+    const step2Html = hideTest ? '' : `
+                <button type="button" class="study-mode-step-item study-mode-choice-btn study-mode-output-btn">
+                    <div class="study-mode-step-number-wrap study-mode-step-number-orange"><span class="study-mode-step-number">2</span></div>
+                    <span class="study-mode-step-content">
+                        <span class="study-mode-step-title">テスト</span>
+                        <span class="study-mode-step-desc">単語を覚えたかどうかテストで確認する</span>
+                    </span>
+                    <span class="study-mode-step-chevron" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
                 </button>`;
     
     overlay.innerHTML = `
-        <div class="study-mode-container" style="width: calc(100% - 16px); max-width: 600px; margin: 0 auto;">
+        <div class="study-mode-container study-mode-container-steps">
             <div class="study-mode-title">学習方法を選択</div>
-            <div class="study-mode-buttons${hideTest ? ' single-button' : ''}">
-                <button type="button" class="study-mode-choice-btn study-mode-input-btn">
-                    <span class="study-mode-choice-main">学習</span>
-                    <span class="study-mode-choice-sub">単語一覧を見て<br>学習する</span>
-                </button>${testButtonHtml}
+            <div class="study-mode-step-list">
+                <button type="button" class="study-mode-step-item study-mode-choice-btn study-mode-input-btn">
+                    <div class="study-mode-step-number-wrap"><span class="study-mode-step-number">1</span></div>
+                    <span class="study-mode-step-content">
+                        <span class="study-mode-step-title">学習</span>
+                        <span class="study-mode-step-desc">まずは単語一覧で学習する</span>
+                    </span>
+                    <span class="study-mode-step-chevron" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                </button>${step2Html}
             </div>
             <button type="button" class="study-mode-cancel-btn">キャンセル</button>
         </div>
@@ -7811,6 +7819,7 @@ function setupEventListeners() {
         // アニメーション中なら処理しない
         if (isCardAnimating) return;
         
+        SoundEffects.playFlip();
         // スワイプと同じように右にスライドアウト
         isCardAnimating = true;
         elements.wordCard.style.transition = `transform ${swipeOutDuration}ms ${swipeOutEasing}, opacity ${swipeOutDuration}ms ${swipeOutEasing}`;
@@ -7831,6 +7840,7 @@ function setupEventListeners() {
         // アニメーション中なら処理しない
         if (isCardAnimating) return;
         
+        SoundEffects.playFlip();
         // スワイプと同じように左にスライドアウト
         isCardAnimating = true;
         elements.wordCard.style.transition = `transform ${swipeOutDuration}ms ${swipeOutEasing}, opacity ${swipeOutDuration}ms ${swipeOutEasing}`;
@@ -7852,6 +7862,7 @@ function setupEventListeners() {
             // アニメーション中なら処理しない
             if (isCardAnimating) return;
             
+            SoundEffects.playFlip();
             // 上にスライドアウト（完璧）
             isCardAnimating = true;
             elements.wordCard.style.transition = `transform ${swipeOutDuration}ms ${swipeOutEasing}, opacity ${swipeOutDuration}ms ${swipeOutEasing}`;
@@ -10068,6 +10079,7 @@ function setupSwipeDetection(card) {
         // インプットモードのときはスワイプで次/前に移動（判定なし）
         if (currentLearningMode === 'input') {
             if (isHorizontal && Math.abs(dx) > threshold) {
+                SoundEffects.playFlip();
                 // スワイプ判定前にカードのスタイルを即座にリセット
                 card.style.transition = 'none';
                 card.style.transform = '';
@@ -10090,6 +10102,7 @@ function setupSwipeDetection(card) {
         }
 
         if (isHorizontal && Math.abs(dx) > threshold) {
+            SoundEffects.playFlip();
             // スワイプ判定前にカードを即座に非表示
             card.style.transition = 'none';
             card.style.transform = '';
@@ -10103,6 +10116,7 @@ function setupSwipeDetection(card) {
                 markAnswer(true); // 右スワイプ = 覚えた
             }
         } else if (isMistakeMode && isVertical && dy < -threshold) {
+            SoundEffects.playFlip();
             // スワイプ判定前にカードを即座に非表示
             card.style.transition = 'none';
             card.style.transform = '';
@@ -14216,6 +14230,11 @@ function updateQuizModeUI(word) {
     
     // 4択の選択肢を準備
     prepareQuizChoices(word);
+
+    // 4択モードでは単語の発音を自動再生
+    setTimeout(() => {
+        speakWord(word.word);
+    }, 400);
 }
 
 // 4択の選択肢を準備
@@ -22300,16 +22319,24 @@ function showIvModeSelection(category) {
     overlay.id = 'ivModeOverlay';
     overlay.className = 'study-mode-overlay';
     overlay.innerHTML = `
-        <div class="study-mode-container" style="width: calc(100% - 16px); max-width: 600px; margin: 0 auto;">
+        <div class="study-mode-container study-mode-container-steps">
             <div class="study-mode-title">学習方法を選択</div>
-            <div class="study-mode-buttons">
-                <button type="button" class="study-mode-choice-btn study-mode-input-btn iv-mode-study-btn">
-                    <span class="study-mode-choice-main">学習</span>
-                    <span class="study-mode-choice-sub">単語一覧を見て<br>学習する</span>
+            <div class="study-mode-step-list">
+                <button type="button" class="study-mode-step-item study-mode-choice-btn study-mode-input-btn iv-mode-study-btn">
+                    <div class="study-mode-step-number-wrap"><span class="study-mode-step-number">1</span></div>
+                    <span class="study-mode-step-content">
+                        <span class="study-mode-step-title">学習</span>
+                        <span class="study-mode-step-desc">まずは単語一覧で学習する</span>
+                    </span>
+                    <span class="study-mode-step-chevron" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
                 </button>
-                <button type="button" class="study-mode-choice-btn study-mode-output-btn iv-mode-test-btn">
-                    <span class="study-mode-choice-main">テスト</span>
-                    <span class="study-mode-choice-sub">覚えたかどうか<br>確認する</span>
+                <button type="button" class="study-mode-step-item study-mode-choice-btn study-mode-output-btn iv-mode-test-btn">
+                    <div class="study-mode-step-number-wrap study-mode-step-number-orange"><span class="study-mode-step-number">2</span></div>
+                    <span class="study-mode-step-content">
+                        <span class="study-mode-step-title">テスト</span>
+                        <span class="study-mode-step-desc">単語を覚えたかどうかテストで確認する</span>
+                    </span>
+                    <span class="study-mode-step-chevron" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
                 </button>
             </div>
             <button type="button" class="study-mode-cancel-btn">キャンセル</button>
