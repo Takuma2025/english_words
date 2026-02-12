@@ -1516,23 +1516,6 @@
         </div>
     </div>
 
-    <!-- ホーム画面追加オーバレイ -->
-    <div id="installOverlay" class="install-overlay hidden">
-        <div class="install-container">
-            <div class="install-warning-icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                    <line x1="12" y1="9" x2="12" y2="13"></line>
-                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                </svg>
-            </div>
-            <h3 class="install-title">ホーム画面に追加してご利用ください</h3>
-            <p class="install-message" id="installMessage">このアプリをホーム画面に追加すると、より快適に学習できます。</p>
-            <div class="install-instructions" id="installInstructions"></div>
-            <button class="install-close-btn" id="installCloseBtn">閉じる</button>
-        </div>
-    </div>
-
     <!-- 学習完了画面 -->
     <div class="completion-overlay hidden" id="completionOverlay">
         <div class="confetti-container" id="confettiContainer"></div>
@@ -1540,7 +1523,6 @@
             <div class="completion-header">
                 <div class="completion-title">学習結果</div>
             </div>
-            <div class="completion-gained hidden" id="completionGained">0/0正解！</div>
             <div class="completion-course-title" id="completionCourseTitle">カテゴリー名</div>
             <div class="completion-progress-container">
                 <div class="completion-progress-bar">
@@ -1557,6 +1539,14 @@
                 <div class="completion-stat completion-stat-wrong">
                     <div class="completion-stat-label">不正解</div>
                     <div class="completion-stat-value" id="completionWrongCount">0</div>
+                </div>
+            </div>
+            <div class="completion-result-list-container" id="completionResultListContainer">
+                <div class="completion-result-list-header">
+                    <span class="completion-result-list-title">結果一覧</span>
+                </div>
+                <div class="completion-result-list" id="completionResultList">
+                    <!-- 動的に生成 -->
                 </div>
             </div>
             <div class="completion-actions">

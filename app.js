@@ -2428,8 +2428,8 @@ function updateCategoryStars() {
         { displayName: '初級500語', dataName: 'LEVEL1 初級500語' },
         { displayName: '中級500語', dataName: 'LEVEL2 中級500語' },
         { displayName: '上級500語', dataName: 'LEVEL3 上級500語' },
-        { displayName: 'LEVEL4 ハイレベル300語', dataName: 'LEVEL4 ハイレベル300語' },
-        { displayName: 'LEVEL5 難関突破100語', dataName: 'LEVEL5 難関突破100語' },
+        { displayName: 'Level4 ハイレベル300語', dataName: 'LEVEL4 ハイレベル300語' },
+        { displayName: 'Level5 難関突破100語', dataName: 'LEVEL5 難関突破100語' },
         { displayName: '大阪B問題対策 厳選例文暗記60【和文英訳対策】', dataName: '大阪B問題対策 厳選例文暗記60【和文英訳対策】' },
         { displayName: '条件英作文特訓コース', dataName: '条件英作文特訓コース' },
         { displayName: '大阪C問題対策英単語タイムアタック', dataName: '大阪C問題対策英単語タイムアタック' },
@@ -3757,9 +3757,6 @@ function init() {
         showCategorySelection();
     }
     
-    // ホーム画面に追加されていない場合のみオーバレイを表示
-    checkAndShowInstallPrompt();
-    
     // 入試対策フィルタのイベントリスナーを追加
     const examTypeFilter = document.getElementById('examTypeFilter');
     if (examTypeFilter) {
@@ -4034,20 +4031,23 @@ function formatWordForDisplay(wordStr) {
     return esc(m[1]) + ' <span class="word-paren-light">(</span><span class="word-paren-bold">' + esc(m[2]) + '</span><span class="word-paren-light">)</span>' + esc(m[3]);
 }
 
-// No.範囲パターンを検出してリッチHTMLに変換するヘルパー（Section1 No.852-900 形式でヘッダー表示）
+// 単語番号範囲パターンを検出してリッチHTMLに変換するヘルパー（Section1 単語番号0101-0150 形式でヘッダー表示）
 function formatUnitNameHTML(unitName) {
-    // #番号#No.○-○ → SectionN No.○-○ 表示
+    const pad4 = (n) => String(n).padStart(4, '0');
+    // #番号#No.○-○ → SectionN 単語番号0101-0150 表示
     const matchWithNum = String(unitName).match(/^#(\d+)#No\.(\d+)-(\d+)$/);
     if (matchWithNum) {
         const sectionNum = matchWithNum[1];
-        const fromNum = matchWithNum[2];
-        const toNum = matchWithNum[3];
-        return `<span class="unit-name-section">Section</span><span class="unit-name-section-n">${sectionNum}</span> <span class="header-range-block header-range-white"><span class="header-range-no">No.</span><span class="header-range-nums">${fromNum}<span class="header-range-sep">-</span>${toNum}</span></span>`;
+        const fromNum = pad4(matchWithNum[2]);
+        const toNum = pad4(matchWithNum[3]);
+        return `<span class="unit-name-section">Section</span><span class="unit-name-section-n">${sectionNum}</span> <span class="header-range-block header-range-white"><span class="header-range-no">単語番号</span><span class="header-range-nums">${fromNum}<span class="header-range-sep">-</span>${toNum}</span></span>`;
     }
-    // No.○-○ のみのパターン
+    // No.○-○ のみのパターン → 単語番号0101-0150
     const match = String(unitName).match(/^No\.(\d+)-(\d+)$/);
     if (match) {
-        return `<span class="header-range-block header-range-white"><span class="header-range-no">No.</span><span class="header-range-nums">${match[1]}<span class="header-range-sep">-</span>${match[2]}</span></span>`;
+        const fromNum = pad4(match[1]);
+        const toNum = pad4(match[2]);
+        return `<span class="header-range-block header-range-white"><span class="header-range-no">単語番号</span><span class="header-range-nums">${fromNum}<span class="header-range-sep">-</span>${toNum}</span></span>`;
     }
     return null;
 }
@@ -4912,12 +4912,13 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         
         const card = document.createElement('div');
         card.className = 'category-card category-card-with-actions';
+        card.setAttribute('data-level-total', String(totalWords));
         
         card.innerHTML = `
             <div class="category-info">
                 <div class="subcat-top-row">
                     <span class="subcat-section" style="color: ${badgeColor}; --subcat-marker: ${badgeBgColor}">Section<span class="subcat-section-n">${i + 1}</span></span>
-                    <span class="subcat-range-card"><span class="subcat-range-no">No.</span><span class="subcat-range-nums">${firstId}<span class="subcat-range-sep">–</span>${lastId}</span></span>
+                    <span class="subcat-range-card"><span class="subcat-range-no">単語番号</span><span class="subcat-range-nums">${String(firstId).padStart(4, '0')}<span class="subcat-range-sep">-</span>${String(lastId).padStart(4, '0')}</span></span>
                 </div>
                 <div class="subcat-progress-row">
                     <div class="${progressBarClass}">
@@ -4941,7 +4942,8 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         if (inputBtn) {
             inputBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                showInputModeDirectly(subcatKey, words, rangeLabel);
+                const total = parseInt(card.getAttribute('data-level-total') || '0', 10);
+                showInputModeDirectly(subcatKey, words, rangeLabel, total > 0 ? total : undefined);
             });
         }
         
@@ -5019,8 +5021,8 @@ function showElementaryCategorySelection(skipAnimation = false) {
     // IDでソート
     level0Words.sort((a, b) => a.id - b.id);
     
-    // 50語ずつのカードを生成
-    generate50WordSubcategoryCards(level0Words, 0, '入門600語', courseList, '#10b981', '#d1fae5');
+    // 50語ずつのカードを生成（Section色はLevelバッジと統一）
+    generate50WordSubcategoryCards(level0Words, 0, '入門600語', courseList, '#0369a1', '#bae6fd');
     
     // 一番下に大阪の画像を追加
     const osakaFooterImg = document.createElement('div');
@@ -5096,38 +5098,31 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     let badgeClass = '';
     let description = '';
     
+    /* Sectionラベルの色はLevelバッジと統一（薄い青） */
+    badgeColor = '#0369a1';
+    badgeBgColor = '#bae6fd';
     if (parentCategory === 'レベル１ 初級500語') {
         levelNum = 1;
-        badgeColor = '#dc2626';
-        badgeBgColor = '#fee2e2';
         badgeClass = 'level-badge-red';
         description = '中1で習った単語を中心に初級レベルの単語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge level-badge-red">Level<b>1</b></span> 初級500語';
     } else if (parentCategory === 'レベル２ 中級500語') {
         levelNum = 2;
-        badgeColor = '#ea580c';
-        badgeBgColor = '#ffedd5';
         badgeClass = 'level-badge-orange';
         description = '中2で習った単語を中心に中級レベルの単語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge level-badge-orange">Level<b>2</b></span> 中級500語';
     } else if (parentCategory === 'レベル３ 上級500語') {
         levelNum = 3;
-        badgeColor = '#2563eb';
-        badgeBgColor = '#dbeafe';
         badgeClass = 'level-badge-blue';
         description = '中3で習った単語を中心に上級レベルの単語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge level-badge-blue">Level<b>3</b></span> 上級500語';
     } else if (parentCategory === 'レベル４ ハイレベル300語') {
         levelNum = 4;
-        badgeColor = '#7c3aed';
-        badgeBgColor = '#ede9fe';
         badgeClass = 'level-badge-purple';
         description = '差がつくハイレベルな単語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge level-badge-purple">Level<b>4</b></span> ハイレベル300語';
     } else if (parentCategory === 'レベル５ 難関突破100語') {
         levelNum = 5;
-        badgeColor = '#4338ca';
-        badgeBgColor = '#e0e7ff';
         badgeClass = 'level-badge-dark';
         description = '難関突破レベルの単語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge level-badge-dark">Level<b>5</b></span> 難関突破100語';
@@ -5935,7 +5930,9 @@ function getFilteredWords() {
 }
 
 // インプットモードで直接単語一覧を表示
-function showInputModeDirectly(category, words, courseTitle) {
+function showInputModeDirectly(category, words, courseTitle, totalWordsForProgress) {
+    // 進捗バー用：セクション表示時はレベル総数、それ以外は0（renderInputListViewでwords.lengthを使う）
+    window.inputListViewTotalWords = totalWordsForProgress !== undefined ? totalWordsForProgress : 0;
     // 学習セッション開始
     startStudySession();
     
@@ -8814,15 +8811,13 @@ function setupEventListeners() {
             target.classList.contains('school-modal-close') ||
             target.classList.contains('school-confirm-btn') ||
             target.classList.contains('sidebar-close-btn') ||
-            target.classList.contains('install-close-btn') ||
             target.classList.contains('close-btn') ||
-            target.id === 'filterCloseBtn' || 
+            target.id === 'filterCloseBtn' ||
             target.id === 'filterBackBtn' ||
             target.id === 'closeSchoolSettings' ||
             target.id === 'sidebarCloseBtn' ||
-            target.id === 'installCloseBtn' ||
-            target.closest('.filter-close-btn, .school-modal-close, .school-confirm-btn, .sidebar-close-btn, .install-close-btn, .close-btn') ||
-            target.closest('#filterCloseBtn, #filterBackBtn, #closeSchoolSettings, #sidebarCloseBtn, #installCloseBtn');
+            target.closest('.filter-close-btn, .school-modal-close, .school-confirm-btn, .sidebar-close-btn, .close-btn') ||
+            target.closest('#filterCloseBtn, #filterBackBtn, #closeSchoolSettings, #sidebarCloseBtn');
         
         if (isCloseButton) {
             return;
@@ -12274,15 +12269,19 @@ function renderInputListView(words) {
         return;
     }
     
-    // 展開モード：1番上の単語の上に水色で No.○○○○～○○○○ のタイトルを表示
+    // 展開モード：1番上の単語の上に水色で No.○○○○～○○○○ を表示（表示中の範囲＝idの最小～最大。ランダムで順序だけ変わっても同じ範囲を表示）
     if (inputListViewMode === 'expand' && words.length > 0) {
-        const firstId = words[0].id;
-        const lastId = words[words.length - 1].id;
+        const ids = words.map((w) => w.id);
+        const firstId = Math.min(...ids);
+        const lastId = Math.max(...ids);
         const pad = (n) => String(n).padStart(4, '0');
+        const headerWrap = document.createElement('div');
+        headerWrap.className = 'expand-range-header';
         const rangeTitle = document.createElement('div');
         rangeTitle.className = 'expand-range-title';
-        rangeTitle.textContent = `No.${pad(firstId)}～${pad(lastId)}`;
-        container.appendChild(rangeTitle);
+        rangeTitle.innerHTML = `<span class="expand-range-no">単語番号</span>${pad(firstId)}-${pad(lastId)}`;
+        headerWrap.appendChild(rangeTitle);
+        container.appendChild(headerWrap);
     }
     
     words.forEach((word) => {
@@ -15620,15 +15619,16 @@ function updateProgressRangeText(total) {
     const rangeText = document.getElementById('progressRangeText');
     if (!rangeText) return;
     
+    const pad4 = (n) => String(n).padStart(4, '0');
     if (currentWords && currentWords.length > 0) {
         const endIdx = Math.min(progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT, total);
         const startId = currentWords[progressBarStartIndex].id;
         const endId = currentWords[endIdx - 1].id;
-        rangeText.textContent = `No.${startId}-${endId}`;
+        rangeText.textContent = `単語番号${pad4(startId)}-${pad4(endId)}`;
     } else {
         const displayStart = progressBarStartIndex + 1;
         const displayEnd = Math.min(progressBarStartIndex + PROGRESS_BAR_DISPLAY_COUNT, total);
-        rangeText.textContent = `No.${displayStart}-${displayEnd}`;
+        rangeText.textContent = `単語番号${pad4(displayStart)}-${pad4(displayEnd)}`;
     }
 }
 
@@ -15812,93 +15812,6 @@ function clearLearningHistory() {
 
 // シャッフル
 
-// ホーム画面追加オーバレイを表示（インストールされていない場合のみ毎回表示）
-function checkAndShowInstallPrompt() {
-    // PWAとして既にインストールされているかチェック
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        return; // インストール済みの場合は表示しない
-    }
-    
-    // 少し遅延して表示（ページ読み込み後）
-    setTimeout(() => {
-        showInstallOverlay();
-    }, 1000);
-}
-
-function showInstallOverlay() {
-    const overlay = document.getElementById('installOverlay');
-    const message = document.getElementById('installMessage');
-    const instructions = document.getElementById('installInstructions');
-    const closeBtn = document.getElementById('installCloseBtn');
-    
-    if (!overlay || !message || !instructions || !closeBtn) return;
-    
-    // iOSかAndroidかを判定
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isAndroid = /Android/.test(navigator.userAgent);
-    
-    if (isIOS) {
-        // iOS用の説明
-        message.textContent = 'このアプリをホーム画面に追加すると、より快適に学習できます。';
-        const shareImgPath = new URL('share.png', window.location.href).href;
-        instructions.innerHTML = `
-            <ol>
-                <li>画面下部の共有ボタン <img src="${shareImgPath}" alt="共有" style="width: 20px; height: 20px; vertical-align: middle; display: inline-block; margin: 0 4px;"> をタップ</li>
-                <li>「ホーム画面に追加」を選択</li>
-                <li>「追加」をタップ</li>
-            </ol>
-        `;
-    } else if (isAndroid) {
-        // Android用の説明
-        message.textContent = 'このアプリをホーム画面に追加すると、より快適に学習できます。';
-        instructions.innerHTML = `
-            <ol>
-                <li>ブラウザのメニュー <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg> を開く</li>
-                <li>「ホーム画面に追加」または「アプリをインストール」を選択</li>
-                <li>確認画面で「追加」をタップ</li>
-            </ol>
-        `;
-    } else {
-        // その他のデバイス
-        message.textContent = 'このアプリをホーム画面に追加すると、より快適に学習できます。';
-        instructions.innerHTML = `
-            <ol>
-                <li>ブラウザのメニューから「ホーム画面に追加」を選択</li>
-                <li>確認画面で「追加」をクリック</li>
-            </ol>
-        `;
-    }
-    
-    // 閉じるボタンのイベント
-    closeBtn.onclick = () => {
-        closeInstallOverlay();
-    };
-    
-    // オーバレイの背景クリックで閉じる
-    overlay.onclick = (e) => {
-        if (e.target === overlay) {
-            closeInstallOverlay();
-        }
-    };
-    
-    // 表示
-    overlay.classList.remove('hidden');
-    setTimeout(() => {
-        overlay.classList.add('active');
-    }, 10);
-}
-
-function closeInstallOverlay() {
-    SoundEffects.playClose();
-    const overlay = document.getElementById('installOverlay');
-    if (!overlay) return;
-    
-    overlay.classList.remove('active');
-    setTimeout(() => {
-        overlay.classList.add('hidden');
-    }, 300);
-}
-
 // 厳選例文暗記モードで学習を初期化
 function initSentenceModeLearning(category) {
     // 学習セッション開始
@@ -16066,7 +15979,7 @@ function initSentenceProgressBar() {
     if (rangeEl && sentenceData.length > 0) {
         const firstId = sentenceData[0].id || 1;
         const lastId = sentenceData[Math.min(19, sentenceData.length - 1)].id || Math.min(20, sentenceData.length);
-        rangeEl.textContent = `No.${firstId}-${lastId}`;
+        rangeEl.textContent = `単語番号${String(firstId).padStart(4, '0')}-${String(lastId).padStart(4, '0')}`;
     }
     
     // 進捗テキストを更新
@@ -16969,7 +16882,7 @@ function initReorderProgressBar() {
     if (rangeEl && reorderData.length > 0) {
         const firstId = reorderData[0].id || 1;
         const lastId = reorderData[Math.min(19, reorderData.length - 1)].id || Math.min(20, reorderData.length);
-        rangeEl.textContent = `No.${firstId}-${lastId}`;
+        rangeEl.textContent = `単語番号${String(firstId).padStart(4, '0')}-${String(lastId).padStart(4, '0')}`;
     }
     
     // 進捗テキストを更新
@@ -17910,7 +17823,7 @@ function initChoiceProgressBar() {
     if (rangeEl && choiceQuestionData.length > 0) {
         const firstId = choiceQuestionData[0].id || 1;
         const lastId = choiceQuestionData[Math.min(19, choiceQuestionData.length - 1)].id || Math.min(20, choiceQuestionData.length);
-        rangeEl.textContent = `No.${firstId}-${lastId}`;
+        rangeEl.textContent = `単語番号${String(firstId).padStart(4, '0')}-${String(lastId).padStart(4, '0')}`;
     }
     
     // 進捗テキストを更新
@@ -19838,7 +19751,7 @@ function initHWQuizProgressSegments() {
     if (rangeEl && hwQuizWords.length > 0) {
         const firstWord = hwQuizWords[0];
         const lastWord = hwQuizWords[hwQuizWords.length - 1];
-        rangeEl.textContent = `No.${firstWord.id}-${lastWord.id}`;
+        rangeEl.textContent = `単語番号${String(firstWord.id).padStart(4, '0')}-${String(lastWord.id).padStart(4, '0')}`;
     }
     
     // 進捗バーを初期化

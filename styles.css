@@ -562,7 +562,6 @@ body.learning-mode .app-header {
     font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.1em;
-    text-transform: uppercase;
     color: #ffffff;
 }
 .app-header.header-course-selection .header-title-text .level-badge b,
@@ -1352,14 +1351,15 @@ body.learning-mode .app-header {
 .course-section .category-card .category-name .level-badge {
     display: block !important;
     margin: 0 auto 8px auto !important;
-    font-size: 16px;
-    padding: 6px 14px;
+    font-size: 18px;
+    padding: 6px 16px;
     transform: none;
     width: fit-content;
+    border-radius: 8px;
 }
 
 .course-section .category-card .category-name .level-badge b {
-    font-size: 28px;
+    font-size: 32px;
 }
 
 .course-section .category-card .category-meta {
@@ -4115,13 +4115,9 @@ button.category-card:focus-visible {
     padding: 10px 16px;
 }
 
-/* 右側の縦並びボタン */
+/* 右側の縦並びボタン（非表示） */
 .course-card-side-actions {
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    width: 70px;
-    background: #0055ca;
+    display: none;
 }
 
 .course-side-btn {
@@ -4604,16 +4600,15 @@ button.category-card:focus-visible {
     font-weight: 600;
     font-size: 13px;
     letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #2563eb;
+    color: #0369a1;
     margin-right: 8px;
-    background: #dbeafe;
+    background: #e0f2fe;
     border: none;
     box-shadow: none;
     transform: translateY(-2px);
 }
 
-/* 数字部分 */
+/* 数字部分（もとのフォント） */
 .level-badge b, 
 .level-badge strong {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
@@ -4625,53 +4620,23 @@ button.category-card:focus-visible {
     display: inline-block;
 }
 
-/* 各レベルごとに異なる色を設定（カード用） */
-.level-badge.level-badge-green {
-    color: #10b981;
-    background: #d1fae5;
-    border: none;
-}
-
-.level-badge.level-badge-red {
-    color: #dc2626;
-    background: #fee2e2;
-    border: none;
-}
-
-.level-badge.level-badge-orange {
-    color: #ea580c;
-    background: #ffedd5;
-    border: none;
-}
-
-.level-badge.level-badge-blue {
-    color: #2563eb;
-    background: #dbeafe;
-    border: none;
-}
-
-.level-badge.level-badge-purple {
-    color: #7c3aed;
-    background: #ede9fe;
-    border: none;
-}
-
+/* 各レベル共通カラー（薄い青で統一） */
+.level-badge.level-badge-green,
+.level-badge.level-badge-red,
+.level-badge.level-badge-orange,
+.level-badge.level-badge-blue,
+.level-badge.level-badge-purple,
 .level-badge.level-badge-dark {
-    color: #4338ca;
-    background: #e0e7ff;
+    color: #0369a1;
+    background: #e0f2fe;
     border: none;
 }
 
 /* カテゴリーカード内の個別調整（Level 4, 5） */
-.category-card[data-category*="LEVEL4"] .level-badge {
-    color: #7c3aed;
-    background: #ede9fe;
-    border: none;
-}
-
+.category-card[data-category*="LEVEL4"] .level-badge,
 .category-card[data-category*="LEVEL5"] .level-badge {
-    color: #4338ca;
-    background: #e0e7ff;
+    color: #0369a1;
+    background: #e0f2fe;
     border: none;
 }
 
@@ -4690,7 +4655,6 @@ button.category-card:focus-visible {
     font-weight: 600;
     font-size: 13px;
     letter-spacing: 0.1em;
-    text-transform: uppercase;
     padding: 2px 8px;
     border-radius: 0;
 }
@@ -6056,9 +6020,9 @@ body.quiz-test-mode .progress-top-row {
 
 .header-range-no {
     font-family: "Barlow Condensed", "Oswald", sans-serif;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
-    opacity: 0.6;
+    opacity: 0.5;
     line-height: 1;
 }
 
@@ -6103,7 +6067,7 @@ body.quiz-test-mode .progress-top-row {
 }
 
 .header-range-white .header-range-no {
-    opacity: 0.8;
+    opacity: 0.65;
 }
 
 .header-range-white .header-range-nums {
@@ -6121,7 +6085,6 @@ body.quiz-test-mode .progress-top-row {
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.1em;
-    text-transform: uppercase;
     line-height: 1;
     color: #ffffff;
 }
@@ -6135,7 +6098,7 @@ body.quiz-test-mode .progress-top-row {
     color: #ffffff;
 }
 
-/* ヘッダー：SECTIONの文字色は白で統一 */
+/* ヘッダー：Sectionの文字色は白で統一 */
 .unit-header-container.unit-header-level-0 .unit-name-section,
 .unit-header-container.unit-header-level-0 .unit-name-section-n,
 .unit-header-container.unit-header-level-1 .unit-name-section,
@@ -6154,7 +6117,13 @@ body.quiz-test-mode .progress-top-row {
 .unit-name .header-range-block {
     margin-left: 0.5em;
 }
-.unit-name .header-range-white .header-range-no,
+/* 単語番号ラベルは小さく・地味に */
+.unit-name .header-range-white .header-range-no {
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.7;
+    letter-spacing: 0.02em;
+}
 .unit-name .header-range-white .header-range-nums,
 .unit-name .header-range-white .header-range-sep {
     font-size: 17px;
@@ -6612,13 +6581,17 @@ body.choice-question-mode-active .word-card-container {
     color: inherit;
 }
 
-.compact-mode-toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
+@media (hover: hover) {
+    .compact-mode-toggle-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
 }
 
 .compact-mode-toggle-btn:active {
-    background: rgba(255, 255, 255, 0.3);
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #0055ca;
     transform: scale(0.96);
 }
 
@@ -6630,6 +6603,21 @@ body.choice-question-mode-active .word-card-container {
 
 .compact-mode-toggle-btn.active .btn-label {
     color: #0055ca;
+}
+
+@media (hover: hover) {
+    .compact-mode-toggle-btn.active:hover {
+        background: #e8f0fe;
+        border-color: #e8f0fe;
+        color: #0055ca;
+    }
+}
+
+.compact-mode-toggle-btn.active:active {
+    background: #d4e4fc;
+    border-color: #d4e4fc;
+    color: #003d99;
+    transform: scale(0.96);
 }
 
 /* 設定ボタンラッパー */
@@ -6828,23 +6816,31 @@ body.choice-question-mode-active .word-card-container {
     box-sizing: border-box;
 }
 
-.input-flip-all-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
+@media (hover: hover) {
+    .input-flip-all-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
 }
 
 .input-flip-all-btn:active {
-    background: rgba(255, 255, 255, 0.3);
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #0055ca;
     transform: scale(0.96);
 }
 
-.input-shuffle-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
+@media (hover: hover) {
+    .input-shuffle-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
 }
 
 .input-shuffle-btn:active {
-    background: rgba(255, 255, 255, 0.3);
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #0055ca;
     transform: scale(0.96);
 }
 
@@ -6858,9 +6854,19 @@ body.choice-question-mode-active .word-card-container {
     color: #0055ca;
 }
 
-.input-shuffle-btn.active:hover {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(255, 255, 255, 0.9);
+@media (hover: hover) {
+    .input-shuffle-btn.active:hover {
+        background: #e8f0fe;
+        border-color: #e8f0fe;
+        color: #0055ca;
+    }
+}
+
+.input-shuffle-btn.active:active {
+    background: #d4e4fc;
+    border-color: #d4e4fc;
+    color: #003d99;
+    transform: scale(0.96);
 }
 
 .input-shuffle-btn svg {
@@ -7420,13 +7426,17 @@ body.choice-question-mode-active .word-card-container {
     display: inline;
 }
 
-.input-filter-trigger:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
+@media (hover: hover) {
+    .input-filter-trigger:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
 }
 
 .input-filter-trigger:active {
-    background: rgba(255, 255, 255, 0.3);
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #0055ca;
     transform: scale(0.96);
 }
 
@@ -7436,9 +7446,19 @@ body.choice-question-mode-active .word-card-container {
     color: #0055ca;
 }
 
-.input-filter-trigger.active:hover {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(255, 255, 255, 0.9);
+@media (hover: hover) {
+    .input-filter-trigger.active:hover {
+        background: #e8f0fe;
+        border-color: #e8f0fe;
+        color: #0055ca;
+    }
+}
+
+.input-filter-trigger.active:active {
+    background: #d4e4fc;
+    border-color: #d4e4fc;
+    color: #003d99;
+    transform: scale(0.96);
 }
 
 .filter-active-badge {
@@ -7769,8 +7789,10 @@ body.choice-question-mode-active .word-card-container {
     white-space: nowrap;
 }
 
-.red-sheet-toggle:hover {
-    background: rgba(255, 255, 255, 0.25);
+@media (hover: hover) {
+    .red-sheet-toggle:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
 }
 
 .red-sheet-toggle.visible {
@@ -7814,8 +7836,10 @@ body.choice-question-mode-active .word-card-container {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
-.red-sheet-toggle.sticky:hover {
-    background: #eff6ff;
+@media (hover: hover) {
+    .red-sheet-toggle.sticky:hover {
+        background: #eff6ff;
+    }
 }
 
 .red-sheet-toggle.sticky:has(.red-sheet-checkbox:checked) {
@@ -8300,7 +8324,7 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:first-child .expand-left-col,
-.input-list-scroll.compact-mode .expand-range-title + .input-list-item-expand .expand-left-col {
+.input-list-scroll.compact-mode .expand-range-header + .input-list-item-expand .expand-left-col {
     border-top: none;
 }
 
@@ -8321,7 +8345,7 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-scroll.compact-mode .input-list-item-expand:first-child .expand-right-col,
-.input-list-scroll.compact-mode .expand-range-title + .input-list-item-expand .expand-right-col {
+.input-list-scroll.compact-mode .expand-range-header + .input-list-item-expand .expand-right-col {
     border-top: none;
 }
 
@@ -8927,19 +8951,59 @@ body.choice-question-mode-active .word-card-container {
     line-height: 1.4;
 }
 
-/* 展開モード：1番上の単語の上に表示する No.○○○○～○○○○ タイトル（水色・角丸） */
-.expand-range-title {
+/* 展開モード：No.タイトル＋進捗バーのラッパー */
+.expand-range-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     width: 100%;
     padding: 12px 16px;
     background: #a8d4ff;
-    color: #0055ca;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    border-radius: 12px 12px 0 0;
+}
+
+/* 展開モード：1番上の単語の上に表示する No.○○○○～○○○○ タイトル（Levelバッジと同系色） */
+.expand-range-title {
+    flex-shrink: 0;
+    color: #0369a1;
     font-size: 15px;
     font-weight: 700;
     letter-spacing: 0.04em;
     font-family: "Barlow Condensed", "Oswald", sans-serif;
-    box-sizing: border-box;
-    flex-shrink: 0;
-    border-radius: 12px 12px 0 0;
+}
+/* 展開モード：「単語番号」は小さく・地味に */
+.expand-range-title .expand-range-no {
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.7;
+    margin-right: 2px;
+}
+
+/* 進捗バー（右側）：全範囲がバー、今の50語部分だけ白で塗る */
+.expand-range-progress-wrap {
+    min-width: 80px;
+    flex: 1;
+    max-width: 200px;
+}
+
+.expand-range-progress-bar {
+    position: relative;
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 85, 202, 0.25);
+    overflow: hidden;
+}
+
+.expand-range-progress-fill {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    min-width: 4px;
+    background: #ffffff;
+    transition: left 0.2s ease, width 0.2s ease;
 }
 
 /* 展開モード（2カラムレイアウト）上・下線は「—————    —————」のように間を空けて左右に分ける */
@@ -8982,7 +9046,7 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-item-expand:first-child .expand-left-col,
-.expand-range-title + .input-list-item-expand .expand-left-col {
+.expand-range-header + .input-list-item-expand .expand-left-col {
     border-top: none;
 }
 
@@ -9003,7 +9067,7 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .input-list-item-expand:first-child .expand-right-col,
-.expand-range-title + .input-list-item-expand .expand-right-col {
+.expand-range-header + .input-list-item-expand .expand-right-col {
     border-top: none;
 }
 
@@ -10797,12 +10861,12 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
     top: 12px;
     left: 12px;
     font-size: 14px;
-    font-weight: 500;
-    color: #64748b;
+    font-weight: 600;
+    color: #0369a1;
     padding: 4px 8px;
-    background: rgba(255, 255, 255, 0.9);
+    background: #e0f2fe;
     border-radius: 6px;
-    font-family: 'Oswald', sans-serif;
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
     letter-spacing: 0.05em;
     z-index: 10;
 }
@@ -12266,117 +12330,6 @@ body.learning-mode .card-area-wrapper:has(.word-card:not(.hidden)) .input-mode-n
     100% {
         transform: scale(1);
     }
-}
-
-/* ホーム画面追加オーバレイ */
-.install-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 3000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-}
-
-.install-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.install-container {
-    background: #ffffff;
-    width: 90%;
-    max-width: 400px;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
-    transform: scale(0.9);
-    transition: transform 0.3s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.install-overlay.active .install-container {
-    transform: scale(1);
-}
-
-.install-warning-icon {
-    width: 64px;
-    height: 64px;
-    background: #fef3c7;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
-}
-
-.install-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 12px;
-}
-
-.install-message {
-    font-size: 14px;
-    color: #6b7280;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.install-instructions {
-    width: 100%;
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.install-instructions ol {
-    margin: 0;
-    padding-left: 20px;
-    color: #374151;
-    font-size: 14px;
-    line-height: 1.8;
-}
-
-.install-instructions li {
-    margin-bottom: 8px;
-}
-
-.install-instructions li:last-child {
-    margin-bottom: 0;
-}
-
-.install-close-btn {
-    width: 100%;
-    padding: 14px;
-    background: #0055ca;
-    color: #ffffff;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 0 #0044a0, inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.install-close-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #0044a0, inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* 厳選例文暗記モード */
@@ -16772,8 +16725,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     .nav-btn:hover,
     .close-btn:hover,
     .modal-close:hover,
-    .settings-btn:hover,
-    .install-btn:hover {
+    .settings-btn:hover {
         background-color: inherit;
         transform: none;
         box-shadow: inherit;
@@ -20463,13 +20415,14 @@ body.learning-mode .floating-review-btn {
     display: block;
     transform: none;
     margin: 0 auto 2px auto;
-    font-size: 16px;
-    padding: 4px 12px;
+    font-size: 18px;
+    padding: 4px 14px;
     width: fit-content;
+    border-radius: 8px;
 }
 
 .card-expand-overlay .expand-title .level-badge b {
-    font-size: 28px;
+    font-size: 32px;
 }
 
 .card-expand-overlay .expand-title .title-text {
@@ -20866,74 +20819,62 @@ div#inputWordCheckbox,
     flex-shrink: 0;
 }
 
-/* Section1, Section2... メインラベル */
+/* Section1, Section2... メインラベル（Levelバッジと同系色） */
 .subcat-section {
-    position: relative;
     display: inline-flex;
     align-items: baseline;
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 600;
     line-height: 1;
     white-space: nowrap;
     letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 2px 4px 4px;
-    z-index: 1;
-}
-.subcat-section::after {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    left: 2px;
-    right: 2px;
-    height: 0.4em;
-    background: var(--subcat-marker);
-    opacity: 0.6;
-    border-radius: 2px;
-    z-index: -1;
-    pointer-events: none;
+    padding: 2px 4px;
+    color: #0369a1;
 }
 .subcat-section-n {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 28px;
+    font-size: 34px;
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.01em;
-    margin-left: 3px;
+    margin-left: 4px;
+    color: #0369a1;
 }
 
-/* No.101–150 サブ情報 — カード風 */
+/* No.101–150 サブ情報 — Levelバッジと同系色 */
 .subcat-range-card {
     display: inline-flex;
     align-items: center;
-    background: #f1f5f9;
-    border: 1px solid #94a3b8;
+    background: #e0f2fe;
+    border: none;
     border-radius: 6px;
-    padding: 2px 8px;
+    padding: 4px 10px;
     gap: 2px;
     line-height: 1;
 }
 
 .subcat-range-no {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    color: #64748b;
-    letter-spacing: 0.03em;
+    font-size: 11px;
+    font-weight: 500;
+    color: #0369a1;
+    opacity: 0.7;
+    letter-spacing: 0.02em;
     margin-right: 1px;
 }
 
 .subcat-range-nums {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 600;
-    color: #64748b;
+    color: #0369a1;
     letter-spacing: 0.02em;
 }
 
 .subcat-range-sep {
-    opacity: 0.5;
+    color: #0369a1;
+    opacity: 0.6;
     margin: 0 1px;
 }
 
