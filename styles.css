@@ -7882,19 +7882,21 @@ body.choice-question-mode-active .word-card-container {
 }
 
 .filter-active-badge {
-    background: #fbbf24;
-    color: #1e293b;
+    background: #0055ca;
+    color: #ffffff;
     font-size: 10px;
     font-weight: 700;
     padding: 1px 6px;
     border-radius: 10px;
     margin-left: 2px;
     line-height: 1.4;
+    border: none;
 }
 
 .input-filter-trigger.active .filter-active-badge {
-    background: rgba(255, 255, 255, 0.3);
+    background: #0055ca;
     color: #ffffff;
+    border: none;
 }
 
 .filter-active-badge.hidden {
@@ -16089,6 +16091,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     transition: border-color 0.15s ease, color 0.15s ease;
     text-align: center;
     line-height: 1.3;
+    box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -16114,6 +16117,31 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 
 .ts-toggle-simple .ts-toggle-option {
     flex: 1;
+    min-width: 0;
+}
+
+/* 出題順のみ：番号順・ランダムの高さ・大きさ揃え */
+.ts-toggle-row.ts-toggle-simple:has(#orderSequential) .ts-toggle-text-simple {
+    min-height: 44px;
+    height: 44px;
+    padding: 0 14px;
+}
+.ts-toggle-row.ts-toggle-simple:has(#orderSequential) .ts-toggle-text-simple .ts-opt-icon {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.ts-toggle-row.ts-toggle-simple:has(#orderSequential) .ts-toggle-text-simple .ts-opt-icon.ts-opt-text {
+    font-size: 12px;
+    line-height: 1;
+}
+.ts-toggle-row.ts-toggle-simple:has(#orderSequential) .ts-toggle-text-simple .ts-opt-icon svg {
+    width: 24px;
+    height: 24px;
 }
 .ts-toggle-option {
     flex: 1;
