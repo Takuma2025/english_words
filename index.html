@@ -1642,66 +1642,79 @@
             </button>
         </div>
         <div class="filter-sheet-content">
-            <!-- モード -->
-            <div class="ts-label">モード</div>
-            <div class="ts-toggle-row ts-toggle-simple">
-                <label class="ts-toggle-option">
-                    <input type="radio" name="learningMode" id="modeEngToJpn" value="eng-to-jpn" checked>
-                    <span class="ts-toggle-text-simple">4択（A→あ）</span>
-                </label>
-                <label class="ts-toggle-option">
-                    <input type="radio" name="learningMode" id="modeJpnToEng" value="jpn-to-eng">
-                    <span class="ts-toggle-text-simple">タイピング（あ→A）</span>
-                </label>
+            <!-- 出題形式：文字の右に4択・タイピングボタン -->
+            <div class="ts-label-row">
+                <span class="ts-label-inline">出題形式</span>
+                <div class="ts-toggle-row ts-toggle-simple">
+                    <label class="ts-toggle-option">
+                        <input type="radio" name="learningMode" id="modeEngToJpn" value="eng-to-jpn" checked>
+                        <span class="ts-toggle-text-simple"><svg class="ts-opt-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>4択<br>（A→あ）</span>
+                    </label>
+                    <label class="ts-toggle-option">
+                        <input type="radio" name="learningMode" id="modeJpnToEng" value="jpn-to-eng">
+                        <span class="ts-toggle-text-simple"><svg class="ts-opt-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="18" y2="10"/><line x1="6" y1="14" x2="18" y2="14"/></svg>タイピング<br>（あ→A）</span>
+                    </label>
+                </div>
+            </div>
+            <!-- 出題順：文字の右に番号順・ランダムボタン -->
+            <div class="ts-label-row">
+                <span class="ts-label-inline">出題順</span>
+                <div class="ts-toggle-row ts-toggle-simple">
+                    <label class="ts-toggle-option">
+                        <input type="radio" name="wordOrder" id="orderSequential" value="sequential" checked>
+                        <span class="ts-toggle-text-simple"><svg class="ts-opt-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><text x="3" y="8" font-size="8" font-weight="700" fill="currentColor" stroke="none" font-family="sans-serif">1</text><text x="3" y="14" font-size="8" font-weight="700" fill="currentColor" stroke="none" font-family="sans-serif">2</text><text x="3" y="20" font-size="8" font-weight="700" fill="currentColor" stroke="none" font-family="sans-serif">3</text></svg>番号順</span>
+                    </label>
+                    <label class="ts-toggle-option">
+                        <input type="radio" name="wordOrder" id="orderRandom" value="random">
+                        <span class="ts-toggle-text-simple"><svg class="ts-opt-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>ランダム</span>
+                    </label>
+                </div>
             </div>
 
-            <!-- 出題順 -->
-            <div class="ts-label">出題順</div>
-            <div class="ts-toggle-row ts-toggle-simple">
-                <label class="ts-toggle-option">
-                    <input type="radio" name="wordOrder" id="orderSequential" value="sequential" checked>
-                    <span class="ts-toggle-text-simple">番号順</span>
+            <!-- 単語を絞る：文字の右にボタン -->
+            <div class="ts-label-row">
+                <span class="ts-label-inline">単語を絞る</span>
+                <div class="ts-filter-row">
+                <label class="ts-filter-item">
+                    <input type="checkbox" id="filterAll" checked>
+                    <span class="ts-filter-label">すべての単語</span>
+                    <span class="ts-filter-count" id="filterCountAll">0語</span>
                 </label>
-                <label class="ts-toggle-option">
-                    <input type="radio" name="wordOrder" id="orderRandom" value="random">
-                    <span class="ts-toggle-text-simple">ランダム</span>
-                </label>
-            </div>
-
-            <!-- 出題範囲 -->
-            <div class="ts-label">単語を絞る</div>
-            <label class="ts-filter-simple-item ts-filter-simple-all">
-                <input type="checkbox" id="filterAll" checked>
-                <span class="ts-filter-simple-text">すべて</span>
-            </label>
-            <div class="ts-filter-simple ts-filter-simple-row">
-                <label class="ts-filter-simple-item">
+                <label class="ts-filter-item">
                     <input type="checkbox" id="filterUnlearned" checked>
-                    <span class="ts-filter-simple-text"><span class="ts-filter-dot ts-filter-dot-gray"></span>未学習</span>
+                    <span class="ts-filter-label"><span class="ts-filter-dot ts-filter-dot-gray"></span>未学習</span>
+                    <span class="ts-filter-count" id="filterCountUnlearned">0語</span>
                 </label>
-                <label class="ts-filter-simple-item">
+                <label class="ts-filter-item">
                     <input type="checkbox" id="filterWrong" checked>
-                    <span class="ts-filter-simple-text"><span class="ts-filter-dot ts-filter-dot-red"></span>できなかった</span>
+                    <span class="ts-filter-label"><span class="ts-filter-dot ts-filter-dot-red"></span>できなかった</span>
+                    <span class="ts-filter-count" id="filterCountWrong">0語</span>
                 </label>
-                <label class="ts-filter-simple-item">
+                <label class="ts-filter-item">
                     <input type="checkbox" id="filterBookmark" checked>
-                    <span class="ts-filter-simple-text"><span class="ts-filter-dot ts-filter-dot-yellow"></span>チェック</span>
+                    <span class="ts-filter-label"><span class="ts-filter-dot ts-filter-dot-yellow"></span>チェック</span>
+                    <span class="ts-filter-count" id="filterCountBookmark">0語</span>
                 </label>
-                <label class="ts-filter-simple-item">
+                <label class="ts-filter-item">
                     <input type="checkbox" id="filterCorrect" checked>
-                    <span class="ts-filter-simple-text"><span class="ts-filter-dot ts-filter-dot-blue"></span>できた</span>
+                    <span class="ts-filter-label"><span class="ts-filter-dot ts-filter-dot-blue"></span>できた</span>
+                    <span class="ts-filter-count" id="filterCountCorrect">0語</span>
                 </label>
+                </div>
+                <div class="ts-count-info-simple" id="filterInfo">
+                    <span id="filteredWordCount">0語</span>選択されています
+                </div>
             </div>
-            <div class="ts-count-info-simple" id="filterInfo">
-                <span id="filteredWordCount">0語</span>が選択されています
-            </div>
-
             <!-- 出題数 -->
-            <div class="ts-label">出題数</div>
-            <div class="question-count-simple" id="questionCountSection">
-                <button class="question-count-simple-btn" id="questionCountMinus">−</button>
-                <span class="question-count-simple-value" id="questionCountValue">すべて</span>
-                <button class="question-count-simple-btn" id="questionCountPlus">＋</button>
+            <div class="ts-bottom-row">
+                <div class="ts-label-row ts-question-count-row">
+                    <span class="ts-label-inline">出題数</span>
+                    <div class="question-count-simple" id="questionCountSection">
+                        <button class="question-count-simple-btn" id="questionCountMinus">−</button>
+                        <span class="question-count-simple-value" id="questionCountValue">すべて</span>
+                        <button class="question-count-simple-btn" id="questionCountPlus">＋</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="filter-actions">

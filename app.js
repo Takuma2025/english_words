@@ -5879,6 +5879,19 @@ function showWordFilterView(category, categoryWords, courseTitle) {
         filterAll.checked = enabledFilters.length === 0 ? false : allEnabledChecked;
     }
     
+    // 各フィルターの語数を表示
+    const totalWords = categoryWords.length;
+    const filterCountAll = document.getElementById('filterCountAll');
+    const filterCountUnlearned = document.getElementById('filterCountUnlearned');
+    const filterCountWrong = document.getElementById('filterCountWrong');
+    const filterCountBookmark = document.getElementById('filterCountBookmark');
+    const filterCountCorrect = document.getElementById('filterCountCorrect');
+    if (filterCountAll) filterCountAll.textContent = `${totalWords}語`;
+    if (filterCountUnlearned) filterCountUnlearned.textContent = `${unlearnedCount}語`;
+    if (filterCountWrong) filterCountWrong.textContent = `${wrongCount}語`;
+    if (filterCountBookmark) filterCountBookmark.textContent = `${bookmarkCount}語`;
+    if (filterCountCorrect) filterCountCorrect.textContent = `${correctCount}語`;
+    
     // フィルター情報を更新
     updateFilterInfo();
     
@@ -5925,19 +5938,14 @@ function showWordFilterView(category, categoryWords, courseTitle) {
     updateQuestionCountSection();
 }
 
-// 出題数選択セクションを更新
+// 出題数選択セクションを更新（何も選択されていなくても＋－は常に表示）
 function updateQuestionCountSection() {
     const questionCountSection = document.getElementById('questionCountSection');
     
     if (questionCountSection) {
         const filteredWords = getFilteredWords();
-        const hasWords = filteredWords.length > 0;
-        questionCountSection.style.display = hasWords ? '' : 'none';
-        
-        // 出題数オプションのスライダーを更新
-        if (hasWords) {
-            updateQuestionCountOptions(filteredWords.length);
-        }
+        questionCountSection.style.display = '';
+        updateQuestionCountOptions(filteredWords.length);
     }
 }
 
@@ -5948,6 +5956,14 @@ function updateQuestionCountOptions(wordCount) {
     const questionCountPlus = document.getElementById('questionCountPlus');
     
     if (!questionCountValue) return;
+    
+    if (wordCount === 0) {
+        questionCountValue.textContent = '0問';
+        questionCountValue.dataset.count = '0';
+        if (questionCountMinus) questionCountMinus.disabled = true;
+        if (questionCountPlus) questionCountPlus.disabled = true;
+        return;
+    }
     
     // 初期表示は「すべて」
     questionCountValue.textContent = 'すべて';
