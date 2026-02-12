@@ -20580,14 +20580,14 @@ body.learning-mode .floating-review-btn {
     display: block;
     transform: none;
     margin: 0 auto 2px auto;
-    font-size: 18px;
-    padding: 4px 14px;
+    font-size: 15px;
+    padding: 5px 12px;
     width: fit-content;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
 .card-expand-overlay .expand-title .level-badge b {
-    font-size: 32px;
+    font-size: 24px;
 }
 
 .card-expand-overlay .expand-title .title-text {
@@ -20981,7 +20981,7 @@ div#inputWordCheckbox,
 .subcat-last-study {
     position: absolute;
     top: 12px;
-    right: -6px;
+    right: -12px;
     display: flex;
     align-items: baseline;
     gap: 4px;
