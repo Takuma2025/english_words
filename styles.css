@@ -3856,18 +3856,18 @@ body.learning-mode .app-header {
     flex-direction: column;
     align-items: stretch;
     justify-content: center;
-    gap: 4px;
-    padding: 6px;
+    gap: 2px;
+    padding: 4px;
 }
 
 .exam1200-grid-wrap {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr auto 1fr;
-    column-gap: 4px;
+    column-gap: 2px;
     row-gap: 0;
-    width: 50%;
-    max-width: 82px;
+    width: 42%;
+    max-width: 62px;
     aspect-ratio: 1;
     flex-shrink: 0;
     margin: 0 auto;
@@ -3877,7 +3877,7 @@ body.learning-mode .app-header {
 }
 
 .exam1200-cell {
-    min-height: 20px;
+    min-height: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3899,16 +3899,17 @@ body.learning-mode .app-header {
 
 .exam1200-exam-label {
     grid-column: 1 / -1;
-    background: #fecaca;
-    color: #dc2626;
-    font-size: min(8px, 1.5vw);
+    background: #374151;
+    color: #ffffff;
+    font-size: min(6px, 1.2vw);
     line-height: 1.2;
     font-weight: 600;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3px 4px;
-    min-height: 16px;
+    padding: 2px 3px;
+    min-height: 12px;
     max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
@@ -3916,30 +3917,31 @@ body.learning-mode .app-header {
 }
 
 .exam1200-char {
-    font-family: "Oswald", "Barlow Condensed", "Hiragino Sans", "Meiryo", sans-serif;
-    font-size: 88cqh;
+    font-family: "Oswald", "Barlow Condensed", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
+    font-size: 85cqh;
     font-weight: 700;
     color: #ffffff;
     letter-spacing: 0;
     line-height: 1;
     padding: 0;
     margin: 0;
+    transform: translateY(-4%);
 }
 
 .exam1200-count {
-    font-family: "Oswald", "Barlow Condensed", "Hiragino Sans", "Meiryo", sans-serif;
-    font-size: 14px;
+    font-family: "Oswald", "Barlow Condensed", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
+    font-size: 11px;
     font-weight: 700;
     color: #dc2626;
     line-height: 1;
     text-align: center;
-    margin-top: 1px;
-    padding-top: 3px;
-    border-top: 1px solid #fecaca;
+    margin-top: 0;
+    padding-top: 2px;
+    border-top: 1px solid #e5e7eb;
 }
 
 .exam1200-meta {
-    font-size: 11px;
+    font-size: 9px;
     line-height: 1.4;
     color: #374151;
     text-align: center;
@@ -3948,36 +3950,36 @@ body.learning-mode .app-header {
 /* 入試直前カード：スマホ用 */
 @media (max-width: 600px) {
     .exam1200-card {
-        padding: 5px 4px;
-        gap: 4px;
+        padding: 3px 3px;
+        gap: 2px;
     }
     .exam1200-grid-wrap {
-        width: 58%;
-        max-width: 98px;
+        width: 48%;
+        max-width: 72px;
     }
     .exam1200-exam-label {
-        font-size: 7px;
-        padding: 3px 4px;
-        min-height: 16px;
+        font-size: 5px;
+        padding: 2px 2px;
+        min-height: 10px;
     }
     .exam1200-count {
-        font-size: 13px;
+        font-size: 10px;
     }
     .exam1200-meta {
-        font-size: 11px;
+        font-size: 9px;
         line-height: 1.4;
     }
 }
 
 @media (max-width: 380px) {
     .exam1200-grid-wrap {
-        width: 62%;
-        max-width: 85px;
+        width: 52%;
+        max-width: 62px;
     }
     .exam1200-exam-label {
-        font-size: 6px;
-        padding: 2px 3px;
-        min-height: 14px;
+        font-size: 5px;
+        padding: 1px 2px;
+        min-height: 10px;
     }
 }
 
@@ -4924,7 +4926,9 @@ button.category-card:focus-visible {
 
 /* 英語→日本語モード（カードモード）で全問正解した場合の青色COMPLETE表示 */
 .category-progress-bar.category-progress-complete {
-    background: #3b82f6;
+    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 15%, #60a5fa 30%, #3b82f6 45%, #2563eb 60%, #3b82f6 75%, #60a5fa 90%, #2563eb 100%);
+    background-size: 200% 100%;
+    animation: categoryBlueShimmer 2s linear infinite;
 }
 
 .category-progress-bar.category-progress-complete::after {
@@ -4977,6 +4981,15 @@ button.category-card:focus-visible {
 }
 
 @keyframes categoryGoldShimmer {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+@keyframes categoryBlueShimmer {
     0% {
         background-position: 100% 0;
     }
@@ -15180,7 +15193,9 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 
 /* 英語→日本語モード（カードモード）: 青色グラデーションCOMPLETE表示 */
 .completion-progress-bar.completion-progress-complete-card {
-    background: #3b82f6;
+    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 15%, #60a5fa 30%, #3b82f6 45%, #2563eb 60%, #3b82f6 75%, #60a5fa 90%, #2563eb 100%);
+    background-size: 200% 100%;
+    animation: blueShimmer 2s linear infinite;
 }
 
 .completion-progress-bar.completion-progress-complete-card::after {
@@ -15239,6 +15254,15 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 @keyframes goldShimmer {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+@keyframes blueShimmer {
     0% {
         background-position: 100% 0;
     }
