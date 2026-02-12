@@ -561,8 +561,12 @@ body.learning-mode .app-header {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-size: 15px;
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.04em;
+    line-height: 1;
     color: #ffffff;
+}
+.app-header.header-course-selection .header-title-text .level-badge {
+    min-height: 28px;
 }
 .app-header.header-course-selection .header-title-text .level-badge b,
 .app-header.header-course-selection .header-title-text .level-badge strong {
@@ -599,15 +603,15 @@ body.learning-mode .app-header {
     color: #ffffff;
 }
 
-/* サブカテゴリー選択画面のヘッダー：Level と数字を下（ベースライン）で揃える */
+/* サブカテゴリー選択画面のヘッダー：レベルと数字を中央で揃える */
 .app-header.header-align-bottom .header-title-text {
     display: inline-flex;
-    align-items: flex-end;
+    align-items: center;
     line-height: 1;
 }
 
 .app-header.header-align-bottom .header-title-text .level-badge {
-    align-items: flex-end;
+    align-items: center;
 }
 
 .app-header.header-align-bottom .header-title-text .level-badge b,
@@ -634,7 +638,7 @@ body.learning-mode .app-header {
 
 
 .header-title-image {
-    height: 24px;
+    height: 36px;
     width: auto;
     max-width: calc(100vw - 120px);
     object-fit: contain;
@@ -4629,24 +4633,39 @@ button.category-card:focus-visible {
 
 .level-badge {
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: center;
     padding: 4px 10px 4px 10px;
     border-radius: 8px;
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-weight: 600;
     font-size: 13px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.04em;
+    line-height: 1;
     color: #0369a1;
     margin-right: 8px;
     background: #e0f2fe;
     border: none;
     box-shadow: none;
     transform: translateY(-2px);
+    min-height: 22px;
+    box-sizing: border-box;
 }
 
-/* 数字部分（もとのフォント） */
-.level-badge b, 
+/* レベルラベル（ホームのカテゴリカード）：少し上に */
+.category-card .level-badge-label {
+    display: inline-block;
+    transform: translateY(-2px);
+}
+
+/* ヘッダーのレベルラベル：少し下に */
+.app-header .level-badge-label {
+    display: inline-block;
+    transform: translateY(2px);
+}
+
+/* 数字部分：コンテナの高さで中央揃え */
+.level-badge b,
 .level-badge strong {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-weight: 700;
@@ -4654,7 +4673,6 @@ button.category-card:focus-visible {
     line-height: 1;
     letter-spacing: -0.01em;
     margin-left: 3px;
-    display: inline-block;
 }
 
 /* 各レベル共通カラー（薄い青で統一） */
@@ -4691,9 +4709,10 @@ button.category-card:focus-visible {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-weight: 600;
     font-size: 13px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.04em;
     padding: 2px 8px;
     border-radius: 0;
+    min-height: 20px;
 }
 
 /* 入試対策フィルタ用セレクトボックス */
@@ -5390,9 +5409,9 @@ body.quiz-test-mode .progress-top-row {
     font-weight: 300;
     letter-spacing: 0.08em;
     display: inline-flex;
-    align-items: flex-end;
+    align-items: center;
     align-self: flex-end;
-    line-height: 1;
+    line-height: 26px;
     margin-top: auto;
 }
 
@@ -6131,9 +6150,10 @@ body.quiz-test-mode .progress-top-row {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.04em;
     line-height: 1;
     color: #ffffff;
+    vertical-align: middle;
 }
 .unit-name .unit-name-level-n {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
@@ -6143,6 +6163,7 @@ body.quiz-test-mode .progress-top-row {
     margin-left: 2px;
     line-height: 1;
     color: #ffffff;
+    vertical-align: middle;
 }
 .unit-name .unit-name-sep {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
@@ -6152,15 +6173,17 @@ body.quiz-test-mode .progress-top-row {
     opacity: 0.9;
     color: #ffffff;
     line-height: 1;
+    vertical-align: middle;
 }
 .unit-name .unit-name-section {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-size: 14px;
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.04em;
     line-height: 1;
     margin-left: 2px;
     color: #ffffff;
+    vertical-align: middle;
 }
 .unit-name .unit-name-section-n {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
@@ -6170,6 +6193,7 @@ body.quiz-test-mode .progress-top-row {
     margin-left: 3px;
     line-height: 1;
     color: #ffffff;
+    vertical-align: middle;
 }
 
 /* ヘッダー：Level・Sectionの文字色は白で統一 */
@@ -9094,9 +9118,9 @@ body.choice-question-mode-active .word-card-container {
 .expand-range-progress-bar {
     position: relative;
     width: 100%;
-    height: 8px;
+    height: 14px;
     background: rgba(0, 85, 202, 0.35);
-    border-radius: 4px;
+    border-radius: 0;
     overflow: hidden;
 }
 
@@ -20952,6 +20976,41 @@ div#inputWordCheckbox,
     display: flex;
     align-items: baseline;
     gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* 最終学習日ラベル（カード右上に固定・左端揃え） */
+.subcat-last-study {
+    position: absolute;
+    top: 12px;
+    right: -6px;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    white-space: nowrap;
+    line-height: 1;
+    width: 110px;
+}
+.subcat-last-study-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #9ca3af;
+    letter-spacing: 0.02em;
+}
+.subcat-last-study-sep {
+    font-size: 10px;
+    font-weight: 400;
+    color: #d1d5db;
+}
+.subcat-last-study-date {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    letter-spacing: 0.01em;
+}
+.subcat-last-study-none {
+    color: #d1d5db;
 }
 
 /* Section横の単語カードアイコン */
@@ -20962,22 +21021,26 @@ div#inputWordCheckbox,
     flex-shrink: 0;
 }
 
-/* Section1, Section2... メインラベル（Levelバッジと同系色） */
+/* セクション1, セクション2... バッジ風 */
 .subcat-section {
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 20px;
+    font-size: 14px;
     font-weight: 600;
     line-height: 1;
     white-space: nowrap;
-    letter-spacing: 0.1em;
-    padding: 2px 4px;
+    letter-spacing: 0.04em;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #e0f2fe;
     color: #0369a1;
+    min-height: 28px;
+    box-sizing: border-box;
 }
 .subcat-section-n {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 34px;
+    font-size: 28px;
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.01em;
@@ -20985,81 +21048,28 @@ div#inputWordCheckbox,
     color: #0369a1;
 }
 
-/* ===== サブカテゴリ クリアバッジ ===== */
-.subcat-clear-badge {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: #ffd600;
-    color: #fff;
-    font-size: 24px;
-    font-weight: 800;
-    line-height: 1;
-    box-shadow: none;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-/* ★を丸の中央に合わせる（フォントの字形でずれるため微調整） */
-.subcat-clear-badge-icon {
-    display: block;
-    line-height: 1;
-    text-align: center;
-    transform: translate(0.5px, 1px);
-}
-
-/* 光沢スウィープ */
-.subcat-clear-badge::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -70%;
-    width: 40%;
-    height: 200%;
-    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%);
-    animation: badgeShine 3s ease-in-out 1s infinite;
-    pointer-events: none;
-}
-
-@keyframes badgeShine {
-    0%, 100% { left: -70%; opacity: 0; }
-    10% { opacity: 1; }
-    35% { left: 130%; opacity: 1; }
-    45% { opacity: 0; }
-}
-
-/* No.101–150 サブ情報 — Levelバッジと同系色 */
+/* 単語番号：文字のみ */
 .subcat-range-card {
     display: inline-flex;
-    align-items: center;
-    background: #e0f2fe;
-    border: none;
-    border-radius: 6px;
-    padding: 4px 10px;
+    align-items: baseline;
+    align-self: center;
     gap: 2px;
     line-height: 1;
 }
 
 .subcat-range-no {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 500;
     color: #0369a1;
-    opacity: 0.7;
+    opacity: 0.85;
     letter-spacing: 0.02em;
-    margin-right: 1px;
+    margin-right: 2px;
 }
 
 .subcat-range-nums {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
     color: #0369a1;
     letter-spacing: 0.02em;

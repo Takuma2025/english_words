@@ -15,10 +15,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="app.png" type="image/png">
-    <link rel="apple-touch-icon" href="app.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="app.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="app.png">
+    <link rel="icon" href="app.hyogo.png" type="image/png">
+    <link rel="apple-touch-icon" href="app.hyogo.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="app.hyogo.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="app.hyogo.png">
     <!-- TensorFlow.js for EMNIST handwriting recognition -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
 </head>
@@ -26,7 +26,7 @@
     <!-- スプラッシュ画面 -->
     <div id="splashScreen" class="splash-screen">
         <div class="splash-images-container">
-            <img src="title.png" alt="タイトル" class="splash-image splash-logo">
+            <img src="title.hyogo.png" alt="タイトル" class="splash-image splash-logo">
         </div>
     </div>
     
@@ -47,7 +47,7 @@
                 <span class="back-btn-text">戻る</span>
             </button>
             <div class="header-content">
-                <img src="title.png" alt="大阪府英単語コンプリート" class="header-title-image" id="headerTitleImage">
+                <img src="title.hyogo.png" alt="大阪府英単語コンプリート" class="header-title-image" id="headerTitleImage">
                 <span class="header-title-text hidden" id="headerTitleText">大阪府英単語コンプリート</span>
             </div>
         </header>
@@ -297,7 +297,7 @@
                         <button class="category-card" id="elementaryCategoryCardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-green">Level<b>0</b></span> 入門600語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-green">レベル<b>0</b></span> 入門600語</div>
                                 </div>
                                 <div class="category-meta">入門レベルの基本単語を覚えよう</div>
                                 <div class="category-progress">
@@ -315,7 +315,7 @@
                         <button class="category-card" id="level1CardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-red">Level<b>1</b></span> 初級500語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-red">レベル<b>1</b></span> 初級500語</div>
                                 </div>
                                 <div class="category-meta">初級レベルの重要単語を覚えよう</div>
                                 <div class="category-progress">
@@ -333,7 +333,7 @@
                         <button class="category-card" id="level2CardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-orange">Level<b>2</b></span> 中級500語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-orange">レベル<b>2</b></span> 中級500語</div>
                                 </div>
                                 <div class="category-meta">中級レベルの重要単語を覚えよう</div>
                                 <div class="category-progress">
@@ -351,7 +351,7 @@
                         <button class="category-card" id="level3CardBtn">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-blue">Level<b>3</b></span> 上級500語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-blue">レベル<b>3</b></span> 上級500語</div>
                                 </div>
                                 <div class="category-meta">上級レベルの単語を覚えよう</div>
                                 <div class="category-progress">
@@ -369,7 +369,7 @@
                         <button class="category-card" id="level4CardBtn" data-category="LEVEL4 ハイレベル300語">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-purple">Level<b>4</b></span> ハイレベル300語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-purple">レベル<b>4</b></span> ハイレベル300語</div>
                                 </div>
                                 <div class="category-meta">難関レベルの単語を覚えよう</div>
                                 <div class="category-progress">
@@ -387,7 +387,7 @@
                         <button class="category-card" id="level5CardBtn" data-category="LEVEL5 難関突破100語">
                             <div class="category-info">
                                 <div class="category-header">
-                                    <div class="category-name"><span class="level-badge level-badge-dark">Level<b>5</b></span> 難関突破100語</div>
+                                    <div class="category-name"><span class="level-badge level-badge-dark">レベル<b>5</b></span> 難関突破100語</div>
                                 </div>
                                 <div class="category-meta">難関レベルの単語を覚えよう</div>
                                 <div class="category-progress">
@@ -576,7 +576,7 @@
                     </div>
                 </div>
                 <div class="osaka-footer-container">
-                    <img src="osaka.png" alt="大阪府" class="osaka-footer-img">
+                    <img src="hyogo.png" alt="大阪府" class="osaka-footer-img">
                 </div>
             </div>
 
@@ -588,7 +588,7 @@
                     <!-- 動的に生成 -->
                 </div>
                 <div class="course-selection-image" id="courseSelectionImage" style="display: none;">
-                    <img src="osaka.png" alt="大阪" class="course-image">
+                    <img src="hyogo.png" alt="大阪" class="course-image">
                 </div>
             </div>
 
@@ -2068,7 +2068,7 @@
                 </div>
             </div>
             <div class="osaka-footer-container">
-                <img src="osaka.png" alt="大阪府" class="osaka-footer-img">
+                <img src="hyogo.png" alt="大阪府" class="osaka-footer-img">
             </div>
         </div>
     </div>
@@ -2363,7 +2363,7 @@
     <script src="reorder-questions.js"></script>
     <script src="choice-questions-data.js"></script>
     <script src="grammar-data.js"></script>
-    <script src="school-data.js"></script>
+    <script src="hyogo_highschools-data.js"></script>
     <script src="handwriting-recognition.js"></script>
     <script src="handwriting-ui.js"></script>
     <script src="app.js"></script>

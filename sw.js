@@ -19,7 +19,7 @@ const PRECACHE_FILES = [
     './sentence-data.js',
     './reorder-questions.js',
     './grammar-data.js',
-    './school-data.js',
+    './hyogo_highschools-data.js',
     // EMNISTモデルファイル（重要）
     './emnist_final/model.json',
     './emnist_final/group1-shard1of1.bin'

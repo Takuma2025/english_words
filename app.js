@@ -355,7 +355,7 @@ function animateCardShrink(targetCardId, callback) {
         if (categoryName) {
             const titleText = document.createElement('div');
             titleText.className = 'title-text';
-            const textOnly = categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').trim();
+            const textOnly = categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').replace(/レベル[０-９0-9]+\s*/g, '').trim();
             titleText.textContent = textOnly;
             titleContainer.appendChild(titleText);
         }
@@ -493,7 +493,7 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     const badgeClone = badge ? badge.cloneNode(true) : null;
     const iconClone = icon ? icon.cloneNode(true) : null;
     const progressClone = progress ? progress.cloneNode(true) : null;
-    const categoryText = categoryName ? categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').trim() : '';
+    const categoryText = categoryName ? categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').replace(/レベル[０-９0-9]+\s*/g, '').trim() : '';
     
     // 元のカードはそのまま残す（非表示にしない）
     
@@ -593,8 +593,8 @@ let wrongCount = 0;
 let consecutiveCorrect = 0; // 連続正解数
 let selectedCategory = null;
 let reviewWords = new Set(); // 復習用チェック（★）
-// 志望校データは school-data.js で管理
-const SCHOOL_STORAGE_KEY = 'preferredSchoolOsaka';
+// 志望校データは hyogo_highschools-data.js で管理
+const SCHOOL_STORAGE_KEY = 'preferredSchoolHyogo';
 let tempSelectedSchool = undefined; // 一時的に選択した学校（undefined=未選択、null=未定、オブジェクト=学校選択）
 
 // 志望校決定ボタンの活性/非活性を切り替える
@@ -632,8 +632,8 @@ function getAppearanceStars(count) {
 
 function filterSchools(query) {
     const q = normalizeSchoolText(query);
-    if (!q) return osakaSchools.slice(0, 8);
-    return osakaSchools.filter((s) => {
+    if (!q) return hyogoHighschools.slice(0, 8);
+    return hyogoHighschools.filter((s) => {
         const haystack = normalizeSchoolText(`${s.name} ${s.type} ${s.course}`);
         return haystack.includes(q);
     }).slice(0, 12);
@@ -1342,7 +1342,7 @@ function updateVocabSelectedSchool(school) {
         const iconSet = document.querySelector('.school-card-icon-set');
         if (iconSet) {
             iconSet.classList.remove('school-card-icon-public', 'school-card-icon-private', 'school-card-icon-national');
-            if (school.type === '公立') {
+            if (school.type === '公立' || school.type === '県立' || school.type === '市立') {
                 iconSet.classList.add('school-card-icon-public');
             } else if (school.type === '私立') {
                 iconSet.classList.add('school-card-icon-private');
@@ -1424,11 +1424,15 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
     setSchoolConfirmEnabled(false);
     
     // フィルタリング
-    let filteredSchools = osakaSchools;
+    let filteredSchools = hyogoHighschools;
     
-    // タイプでフィルタリング
+    // タイプでフィルタリング（兵庫は県立・市立を「公立」として扱う）
     if (typeFilter !== 'all') {
-        filteredSchools = filteredSchools.filter(school => school.type === typeFilter);
+        if (typeFilter === '公立') {
+            filteredSchools = filteredSchools.filter(school => school.type === '県立' || school.type === '市立');
+        } else {
+            filteredSchools = filteredSchools.filter(school => school.type === typeFilter);
+        }
     }
     
     // 検索クエリでフィルタリング
@@ -1458,10 +1462,10 @@ function renderSchoolList(typeFilter = 'all', searchQuery = '') {
         const nameContainer = document.createElement('div');
         nameContainer.className = 'school-list-name-container';
         
-        // 学校種別バッジ
+        // 学校種別バッジ（県立・市立は公立と同じスタイル）
         const typeBadge = document.createElement('span');
         typeBadge.className = 'school-type-badge';
-        if (school.type === '公立') {
+        if (school.type === '公立' || school.type === '県立' || school.type === '市立') {
             typeBadge.classList.add('school-type-badge-public');
         } else if (school.type === '私立') {
             typeBadge.classList.add('school-type-badge-private');
@@ -2088,6 +2092,10 @@ function saveCategoryWords(category, correctSet, wrongSet) {
     const mode = selectedLearningMode || 'card';
     localStorage.setItem(`correctWords-${category}_${mode}`, JSON.stringify([...correctSet]));
     localStorage.setItem(`wrongWords-${category}_${mode}`, JSON.stringify([...wrongSet]));
+    // 最終学習日を保存
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`;
+    localStorage.setItem(`lastStudyDate-${category}`, dateStr);
 }
 
 // でた度（appearanceCount）をランク値（1-5）に変換（フィルタ用）
@@ -3867,19 +3875,19 @@ function formatTitleWithLevelBadge(title) {
     const isElementarySubcategory = elementarySubcategories.some(sub => title.includes(sub));
     
     if (title.includes('LEVEL0') || title.includes('入門') || title.includes('レベル０') || title.includes('レベル0')) {
-        return '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-green"><span class="level-badge-label">レベル</span><b>0</b></span> ' + cleanTitle;
     } else if (title.includes('LEVEL1') || title.includes('初級') || title.includes('レベル１') || title.includes('レベル1')) {
-        return '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-red"><span class="level-badge-label">レベル</span><b>1</b></span> ' + cleanTitle;
     } else if (title.includes('LEVEL2') || title.includes('中級') || title.includes('レベル２') || title.includes('レベル2')) {
-        return '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-orange"><span class="level-badge-label">レベル</span><b>2</b></span> ' + cleanTitle;
     } else if (title.includes('LEVEL3') || title.includes('上級') || title.includes('レベル３') || title.includes('レベル3')) {
-        return '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-blue"><span class="level-badge-label">レベル</span><b>3</b></span> ' + cleanTitle;
     } else if (title.includes('LEVEL4') || title.includes('難関') || title.includes('レベル４') || title.includes('レベル4')) {
-        return '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-purple"><span class="level-badge-label">レベル</span><b>4</b></span> ' + cleanTitle;
     } else if (title.includes('LEVEL5') || title.includes('難関') || title.includes('レベル５') || title.includes('レベル5')) {
-        return '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-dark"><span class="level-badge-label">レベル</span><b>5</b></span> ' + cleanTitle;
     } else if (isElementarySubcategory) {
-        return '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span> ' + cleanTitle;
+        return '<span class="level-badge level-badge-header level-badge-green"><span class="level-badge-label">レベル</span><b>0</b></span> ' + cleanTitle;
     }
     return title;
 }
@@ -3952,17 +3960,17 @@ function updateHeaderButtons(mode, title = '', isTestMode = false) {
         if (mode === 'course' && title) {
             // コース選択時：Levelバッジのみ中央に表示
             if (title === 'レベル０ 入門600語' || title === '入門600語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green">Level<b>0</b></span>';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-green"><span class="level-badge-label">レベル</span><b>0</b></span>';
             } else if (title === 'レベル１ 初級500語' || title === '初級500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red">Level<b>1</b></span>';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-red"><span class="level-badge-label">レベル</span><b>1</b></span>';
             } else if (title === 'レベル２ 中級500語' || title === '中級500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange">Level<b>2</b></span>';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-orange"><span class="level-badge-label">レベル</span><b>2</b></span>';
             } else if (title === 'レベル３ 上級500語' || title === '上級500語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue">Level<b>3</b></span>';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-blue"><span class="level-badge-label">レベル</span><b>3</b></span>';
             } else if (title === 'レベル４ ハイレベル300語' || title === 'ハイレベル300語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-purple">Level<b>4</b></span>';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-purple"><span class="level-badge-label">レベル</span><b>4</b></span>';
             } else if (title === 'レベル５ 難関突破100語' || title === '難関突破100語') {
-                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-dark">Level<b>5</b></span>';
+                headerTitleText.innerHTML = '<span class="level-badge level-badge-header level-badge-dark"><span class="level-badge-label">レベル</span><b>5</b></span>';
             } else {
                 headerTitleText.textContent = title;
             }
@@ -4040,7 +4048,7 @@ function formatUnitNameHTML(unitName) {
         const sectionNum = matchWithNum[1];
         const fromNum = pad4(matchWithNum[2]);
         const toNum = pad4(matchWithNum[3]);
-        return `<span class="unit-name-section">Section</span><span class="unit-name-section-n">${sectionNum}</span> <span class="header-range-block header-range-white"><span class="header-range-no">単語番号</span><span class="header-range-nums">${fromNum}<span class="header-range-sep">-</span>${toNum}</span></span>`;
+        return `<span class="unit-name-section">セクション</span><span class="unit-name-section-n">${sectionNum}</span> <span class="header-range-block header-range-white"><span class="header-range-no">単語番号</span><span class="header-range-nums">${fromNum}<span class="header-range-sep">-</span>${toNum}</span></span>`;
     }
     // No.○-○ のみのパターン → 単語番号0101-0150
     const match = String(unitName).match(/^No\.(\d+)-(\d+)$/);
@@ -4096,11 +4104,11 @@ function setUnitNameContent(el, unitName) {
         const sectionNum = matchWithNum ? matchWithNum[1] : '';
         const levelNum = getLevelNumberFromCategory(window.currentSubcategoryParent || '');
         if (sectionNum && levelNum !== null) {
-            contentHTML = `<span class="unit-name-level">Level</span><span class="unit-name-level-n">${levelNum}</span><span class="unit-name-sep">＞</span><span class="unit-name-section">Section</span><span class="unit-name-section-n">${sectionNum}</span>`;
+            contentHTML = `<span class="unit-name-level">レベル</span><span class="unit-name-level-n">${levelNum}</span><span class="unit-name-sep">＞</span><span class="unit-name-section">セクション</span><span class="unit-name-section-n">${sectionNum}</span>`;
         } else if (sectionNum) {
-            contentHTML = `<span class="unit-name-section">Section</span><span class="unit-name-section-n">${sectionNum}</span>`;
+            contentHTML = `<span class="unit-name-section">セクション</span><span class="unit-name-section-n">${sectionNum}</span>`;
         } else {
-            contentHTML = 'Section';
+            contentHTML = 'セクション';
         }
     } else if (richHTML) {
         contentHTML = richHTML;
@@ -4939,16 +4947,15 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         card.className = 'category-card category-card-with-actions';
         card.setAttribute('data-level-total', String(totalWords));
         
-        // クリアバッジ（コンプリート時のみ表示）
-        const clearBadgeHTML = (isComplete || isInputModeComplete)
-            ? `<span class="subcat-clear-badge"><span class="subcat-clear-badge-icon">★</span></span>`
-            : '';
+        // 最終学習日を取得
+        const lastStudyDate = localStorage.getItem(`lastStudyDate-${subcatKey}`);
+        const lastStudyHTML = `<span class="subcat-last-study"><span class="subcat-last-study-label">学習日</span><span class="subcat-last-study-sep">|</span>${lastStudyDate ? `<span class="subcat-last-study-date">${lastStudyDate}</span>` : '<span class="subcat-last-study-date subcat-last-study-none">--</span>'}</span>`;
         
         card.innerHTML = `
-            ${clearBadgeHTML}
+            ${lastStudyHTML}
             <div class="category-info">
                 <div class="subcat-top-row">
-                    <span class="subcat-section" style="color: ${badgeColor}; --subcat-marker: ${badgeBgColor}">Section<span class="subcat-section-n">${i + 1}</span></span>
+                    <span class="subcat-section" style="color: ${badgeColor}; --subcat-marker: ${badgeBgColor}">セクション<span class="subcat-section-n">${i + 1}</span></span>
                     <span class="subcat-range-card"><span class="subcat-range-no">単語番号</span><span class="subcat-range-nums">${String(firstId).padStart(4, '0')}<span class="subcat-range-sep">-</span>${String(lastId).padStart(4, '0')}</span></span>
                 </div>
                 <div class="subcat-progress-row">
@@ -5058,7 +5065,7 @@ function showElementaryCategorySelection(skipAnimation = false) {
     // 一番下に大阪の画像を追加
     const osakaFooterImg = document.createElement('div');
     osakaFooterImg.className = 'osaka-footer-container';
-    osakaFooterImg.innerHTML = `<img src="osaka.png" alt="大阪" class="osaka-footer-img">`;
+    osakaFooterImg.innerHTML = `<img src="hyogo.png" alt="大阪" class="osaka-footer-img">`;
     courseList.appendChild(osakaFooterImg);
     
     // ヘッダーの戻るボタンを表示
@@ -5136,27 +5143,27 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         levelNum = 1;
         badgeClass = 'level-badge-red';
         description = '中1で習った単語を中心に初級レベルの単語を覚えよう';
-        courseTitle.innerHTML = '<span class="level-badge level-badge-red">Level<b>1</b></span> 初級500語';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-red">レベル<b>1</b></span> 初級500語';
     } else if (parentCategory === 'レベル２ 中級500語') {
         levelNum = 2;
         badgeClass = 'level-badge-orange';
         description = '中2で習った単語を中心に中級レベルの単語を覚えよう';
-        courseTitle.innerHTML = '<span class="level-badge level-badge-orange">Level<b>2</b></span> 中級500語';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-orange">レベル<b>2</b></span> 中級500語';
     } else if (parentCategory === 'レベル３ 上級500語') {
         levelNum = 3;
         badgeClass = 'level-badge-blue';
         description = '中3で習った単語を中心に上級レベルの単語を覚えよう';
-        courseTitle.innerHTML = '<span class="level-badge level-badge-blue">Level<b>3</b></span> 上級500語';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-blue">レベル<b>3</b></span> 上級500語';
     } else if (parentCategory === 'レベル４ ハイレベル300語') {
         levelNum = 4;
         badgeClass = 'level-badge-purple';
         description = '差がつくハイレベルな単語を覚えよう';
-        courseTitle.innerHTML = '<span class="level-badge level-badge-purple">Level<b>4</b></span> ハイレベル300語';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-purple">レベル<b>4</b></span> ハイレベル300語';
     } else if (parentCategory === 'レベル５ 難関突破100語') {
         levelNum = 5;
         badgeClass = 'level-badge-dark';
         description = '難関突破レベルの単語を覚えよう';
-        courseTitle.innerHTML = '<span class="level-badge level-badge-dark">Level<b>5</b></span> 難関突破100語';
+        courseTitle.innerHTML = '<span class="level-badge level-badge-dark">レベル<b>5</b></span> 難関突破100語';
     } else {
         courseTitle.textContent = parentCategory;
     }
@@ -5194,7 +5201,7 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     // 一番下に大阪の画像を追加
     const osakaFooterImg = document.createElement('div');
     osakaFooterImg.className = 'osaka-footer-container';
-    osakaFooterImg.innerHTML = `<img src="osaka.png" alt="大阪" class="osaka-footer-img">`;
+    osakaFooterImg.innerHTML = `<img src="hyogo.png" alt="大阪" class="osaka-footer-img">`;
     courseList.appendChild(osakaFooterImg);
     
     // ヘッダーの戻るボタンを表示
@@ -11331,7 +11338,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             appearanceBox.className = 'input-list-expand-appearance-box';
             
             const osakaImg = document.createElement('img');
-            osakaImg.src = 'osaka.png';
+            osakaImg.src = 'hyogo.png';
             osakaImg.alt = '大阪府';
             osakaImg.className = 'appearance-osaka-icon';
             appearanceBox.appendChild(osakaImg);
@@ -12556,7 +12563,7 @@ function renderInputListView(words) {
                 appearanceBox.className = 'input-list-expand-appearance-box';
                 
                 const osakaImg = document.createElement('img');
-                osakaImg.src = 'osaka.png';
+                osakaImg.src = 'hyogo.png';
                 osakaImg.alt = '大阪府';
                 osakaImg.className = 'appearance-osaka-icon';
                 appearanceBox.appendChild(osakaImg);
@@ -12754,7 +12761,7 @@ function renderInputListView(words) {
                 appearanceBox.className = 'input-list-appearance-box';
                 
                 const osakaImg = document.createElement('img');
-                osakaImg.src = 'osaka.png';
+                osakaImg.src = 'hyogo.png';
                 osakaImg.alt = '大阪府';
                 osakaImg.className = 'appearance-osaka-icon';
                 appearanceBox.appendChild(osakaImg);
