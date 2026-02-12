@@ -118,26 +118,72 @@ const SoundEffects = {
         this._createTone(550, 'sine', 0.04, now, 0.05, 2000);
     },
     
-    // 正解音（マリンバ風の温かい2音チャイム）
+    // 正解音（キラッと弾ける爽快チャイム）
     playCorrect() {
         if (!this.enabled || !this.audioContext || this.volume === 0) return;
         this.resume();
         const now = this.audioContext.currentTime;
         const ctx = this.audioContext;
         const v = this.volume;
-        // 1音目: G5 (柔らかいベル)
-        const makeNote = (freq, time, vol) => {
-            // 基音
-            this._createTone(freq, 'sine', vol * 0.7, time, 0.35, 4000);
-            // 2倍音（暖かみ）
-            this._createTone(freq * 2, 'sine', vol * 0.15, time, 0.2, 3000);
-            // 3倍音（きらめき）
-            this._createTone(freq * 3, 'sine', vol * 0.06, time, 0.12);
-            // サブオクターブ（厚み）
-            this._createTone(freq * 0.5, 'sine', vol * 0.08, time, 0.15, 1500);
-        };
-        makeNote(783.99, now, 0.14);       // G5
-        makeNote(1046.50, now + 0.11, 0.16); // C6
+
+        // パーカッシブなアタック（コッ！というクリック感）
+        const atkBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.012), ctx.sampleRate);
+        const atkData = atkBuf.getChannelData(0);
+        for (let i = 0; i < atkData.length; i++) atkData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / atkData.length, 3);
+        const atkSrc = ctx.createBufferSource();
+        atkSrc.buffer = atkBuf;
+        const atkHp = ctx.createBiquadFilter();
+        atkHp.type = 'highpass'; atkHp.frequency.value = 4000;
+        const atkG = ctx.createGain();
+        atkG.gain.setValueAtTime(0.18 * v, now);
+        atkG.gain.exponentialRampToValueAtTime(0.0001, now + 0.012);
+        atkSrc.connect(atkHp); atkHp.connect(atkG); atkG.connect(ctx.destination);
+        atkSrc.start(now); atkSrc.stop(now + 0.012);
+
+        // メインベル音（E6 - 明るく抜ける音）
+        const bellFreq = 1318.51; // E6
+        // 基音（芯）
+        const o1 = ctx.createOscillator(); const g1 = ctx.createGain();
+        const lp1 = ctx.createBiquadFilter(); lp1.type = 'lowpass'; lp1.frequency.value = 6000; lp1.Q.value = 1.5;
+        o1.frequency.value = bellFreq; o1.type = 'sine';
+        g1.gain.setValueAtTime(0.20 * v, now);
+        g1.gain.setValueAtTime(0.20 * v, now + 0.03);
+        g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+        o1.connect(lp1); lp1.connect(g1); g1.connect(ctx.destination);
+        o1.start(now); o1.stop(now + 0.28);
+
+        // 5度上（B6 - 輝き）
+        const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
+        o2.frequency.value = bellFreq * 1.5; o2.type = 'sine';
+        g2.gain.setValueAtTime(0.07 * v, now);
+        g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+        o2.connect(g2); g2.connect(ctx.destination);
+        o2.start(now); o2.stop(now + 0.18);
+
+        // オクターブ下（E5 - 温かみ・厚み）
+        const o3 = ctx.createOscillator(); const g3 = ctx.createGain();
+        const lp3 = ctx.createBiquadFilter(); lp3.type = 'lowpass'; lp3.frequency.value = 2500;
+        o3.frequency.value = bellFreq * 0.5; o3.type = 'sine';
+        g3.gain.setValueAtTime(0.10 * v, now);
+        g3.gain.exponentialRampToValueAtTime(0.0001, now + 0.20);
+        o3.connect(lp3); lp3.connect(g3); g3.connect(ctx.destination);
+        o3.start(now); o3.stop(now + 0.20);
+
+        // 高域シマー（E7 - スパークル）
+        const o4 = ctx.createOscillator(); const g4 = ctx.createGain();
+        o4.frequency.value = bellFreq * 2; o4.type = 'sine';
+        g4.gain.setValueAtTime(0.04 * v, now + 0.01);
+        g4.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+        o4.connect(g4); g4.connect(ctx.destination);
+        o4.start(now + 0.01); o4.stop(now + 0.12);
+
+        // わずかにデチューンしたユニゾン（コーラス効果で広がり）
+        const o5 = ctx.createOscillator(); const g5 = ctx.createGain();
+        o5.frequency.value = bellFreq * 1.003; o5.type = 'sine';
+        g5.gain.setValueAtTime(0.06 * v, now);
+        g5.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+        o5.connect(g5); g5.connect(ctx.destination);
+        o5.start(now); o5.stop(now + 0.22);
     },
     
     // 不正解音（柔らかいが明確なエラートーン）
@@ -383,7 +429,7 @@ function animateCardShrink(targetCardId, callback) {
         if (categoryName) {
             const titleText = document.createElement('div');
             titleText.className = 'title-text';
-            const textOnly = categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').replace(/レベル[０-９0-9]+\s*/g, '').trim();
+            const textOnly = categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').replace(/^レベル[０-９0-9]+\s*/g, '').trim();
             titleText.textContent = textOnly;
             titleContainer.appendChild(titleText);
         }
@@ -521,7 +567,7 @@ function animateCardExpand(cardElement, backgroundColor, callback) {
     const badgeClone = badge ? badge.cloneNode(true) : null;
     const iconClone = icon ? icon.cloneNode(true) : null;
     const progressClone = progress ? progress.cloneNode(true) : null;
-    const categoryText = categoryName ? categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').replace(/レベル[０-９0-9]+\s*/g, '').trim() : '';
+    const categoryText = categoryName ? categoryName.textContent.replace(/RANK\d/g, '').replace(/Level\d/g, '').replace(/^レベル[０-９0-9]+\s*/g, '').trim() : '';
     
     // 元のカードはそのまま残す（非表示にしない）
     
@@ -3890,7 +3936,7 @@ function updateFeedbackOverlayPosition() {
 function formatTitleWithLevelBadge(title) {
     if (!title) return title;
     // タイトルからレベル表記を削除する共通処理
-    const cleanTitle = title.replace(/レベル[０-９0-9１-９]+\s*/g, '').replace(/LEVEL[0-9]+\s*/g, '');
+    const cleanTitle = title.replace(/^レベル[０-９0-9１-９]+\s*/g, '').replace(/^LEVEL[0-9]+\s*/g, '');
     
     // 入門600語のサブカテゴリ一覧（指定順）
     const elementarySubcategories = [
