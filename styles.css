@@ -6078,14 +6078,40 @@ body.quiz-test-mode .progress-top-row {
     opacity: 0.6;
 }
 
-/* ヘッダー単元名：Sectionは小さめ・No.はサブカードと同じサイズ・No.と数字は同じ色 */
-/* Section / Section1 — Barlow Condensed で統一 */
+/* ヘッダー単元名：Level1＞Section1 形式（ヘッダーは Barlow Condensed で統一） */
+.unit-name .unit-name-level {
+    font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    color: #ffffff;
+}
+.unit-name .unit-name-level-n {
+    font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-left: 2px;
+    line-height: 1;
+    color: #ffffff;
+}
+.unit-name .unit-name-sep {
+    font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 4px;
+    opacity: 0.9;
+    color: #ffffff;
+    line-height: 1;
+}
 .unit-name .unit-name-section {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.1em;
     line-height: 1;
+    margin-left: 2px;
     color: #ffffff;
 }
 .unit-name .unit-name-section-n {
@@ -6098,17 +6124,35 @@ body.quiz-test-mode .progress-top-row {
     color: #ffffff;
 }
 
-/* ヘッダー：Sectionの文字色は白で統一 */
+/* ヘッダー：Level・Sectionの文字色は白で統一 */
+.unit-header-container.unit-header-level-0 .unit-name-level,
+.unit-header-container.unit-header-level-0 .unit-name-level-n,
+.unit-header-container.unit-header-level-0 .unit-name-sep,
 .unit-header-container.unit-header-level-0 .unit-name-section,
 .unit-header-container.unit-header-level-0 .unit-name-section-n,
+.unit-header-container.unit-header-level-1 .unit-name-level,
+.unit-header-container.unit-header-level-1 .unit-name-level-n,
+.unit-header-container.unit-header-level-1 .unit-name-sep,
 .unit-header-container.unit-header-level-1 .unit-name-section,
 .unit-header-container.unit-header-level-1 .unit-name-section-n,
+.unit-header-container.unit-header-level-2 .unit-name-level,
+.unit-header-container.unit-header-level-2 .unit-name-level-n,
+.unit-header-container.unit-header-level-2 .unit-name-sep,
 .unit-header-container.unit-header-level-2 .unit-name-section,
 .unit-header-container.unit-header-level-2 .unit-name-section-n,
+.unit-header-container.unit-header-level-3 .unit-name-level,
+.unit-header-container.unit-header-level-3 .unit-name-level-n,
+.unit-header-container.unit-header-level-3 .unit-name-sep,
 .unit-header-container.unit-header-level-3 .unit-name-section,
 .unit-header-container.unit-header-level-3 .unit-name-section-n,
+.unit-header-container.unit-header-level-4 .unit-name-level,
+.unit-header-container.unit-header-level-4 .unit-name-level-n,
+.unit-header-container.unit-header-level-4 .unit-name-sep,
 .unit-header-container.unit-header-level-4 .unit-name-section,
 .unit-header-container.unit-header-level-4 .unit-name-section-n,
+.unit-header-container.unit-header-level-5 .unit-name-level,
+.unit-header-container.unit-header-level-5 .unit-name-level-n,
+.unit-header-container.unit-header-level-5 .unit-name-sep,
 .unit-header-container.unit-header-level-5 .unit-name-section,
 .unit-header-container.unit-header-level-5 .unit-name-section-n {
     color: #ffffff;
@@ -8963,6 +9007,16 @@ body.choice-question-mode-active .word-card-container {
     box-sizing: border-box;
     flex-shrink: 0;
     border-radius: 12px 12px 0 0;
+}
+
+/* 展開モード：一番下の水色バー（単語番号なし・下角丸） */
+.expand-range-footer {
+    width: 100%;
+    min-height: 16px;
+    background: #a8d4ff;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    border-radius: 0 0 12px 12px;
 }
 
 /* 展開モード：1番上の単語の上に表示する No.○○○○～○○○○ タイトル（Levelバッジと同系色） */
