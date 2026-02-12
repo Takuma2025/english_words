@@ -3056,111 +3056,20 @@ function updateCategoryStars() {
         }
     });
     
-    // 不規則変化の単語の進捗バーを更新
-    updateIrregularVerbsProgressBar();
+    // 不規則変化の単語の進捗バー（実装削除済・更新しない）
     
     // 細分化メニューの進捗バーを更新
     updateSubcategoryProgressBars();
     
 }
 
-// 不規則変化の単語の進捗バーを更新
+// 英熟語カードの語数表示を更新
 function updateIrregularVerbsProgressBar() {
-    // 不規則変化のカテゴリー一覧とデータの対応
-    const irregularCategoriesData = [
-        { key: 'verbs-beginner', data: typeof irregularVerbsBeginner !== 'undefined' ? irregularVerbsBeginner : [] },
-        { key: 'verbs-intermediate', data: typeof irregularVerbsIntermediate !== 'undefined' ? irregularVerbsIntermediate : [] },
-        { key: 'verbs-advanced', data: typeof irregularVerbsAdvanced !== 'undefined' ? irregularVerbsAdvanced : [] },
-        { key: 'comparatives', data: typeof irregularComparatives !== 'undefined' ? irregularComparatives : [] },
-        { key: 'plurals', data: typeof irregularPlurals !== 'undefined' ? irregularPlurals : [] }
-    ];
-    
-    // 全体の集計用
-    let totalWordsAll = 0;
-    let correctCountAll = 0;
-    let wrongCountAll = 0;
-    
-    // 各サブカテゴリーの進捗を計算・更新
-    irregularCategoriesData.forEach(({ key, data }) => {
-        const categoryTotal = data.length;
-        totalWordsAll += categoryTotal;
-        
-        let correctCount = 0;
-        let wrongCount = 0;
-        
-        const savedCorrect = localStorage.getItem(`ivCorrect-${key}`);
-        const savedWrong = localStorage.getItem(`ivWrong-${key}`);
-        
-        if (savedCorrect) {
-            try {
-                const correctSet = new Set(JSON.parse(savedCorrect));
-                correctCount = correctSet.size;
-            } catch (e) {}
-        }
-        if (savedWrong) {
-            try {
-                const wrongSet = new Set(JSON.parse(savedWrong));
-                wrongCount = wrongSet.size;
-            } catch (e) {}
-        }
-        
-        correctCountAll += correctCount;
-        wrongCountAll += wrongCount;
-        
-        // サブカテゴリーの進捗バーを更新
-        const completedCount = correctCount + wrongCount;
-        const correctPercent = categoryTotal === 0 ? 0 : (correctCount / categoryTotal) * 100;
-        const wrongPercent = categoryTotal === 0 ? 0 : (wrongCount / categoryTotal) * 100;
-        const isComplete = categoryTotal > 0 && wrongCount === 0 && correctCount === categoryTotal;
-        
-        const correctBar = document.getElementById(`progress-correct-${key}`);
-        const wrongBar = document.getElementById(`progress-wrong-${key}`);
-        const text = document.getElementById(`progress-text-${key}`);
-        const barContainer = correctBar ? correctBar.parentElement : null;
-        
-        if (correctBar) {
-            correctBar.style.width = `${correctPercent}%`;
-        }
-        if (wrongBar) {
-            wrongBar.style.width = `${wrongPercent}%`;
-        }
-        if (barContainer) {
-            barContainer.classList.remove('category-progress-complete', 'category-progress-complete-input');
-            if (isComplete) {
-                barContainer.classList.add('category-progress-complete');
-            }
-        }
-        if (text) {
-            text.textContent = `${completedCount}/${categoryTotal}語`;
-        }
-    });
-    
-    // ホーム画面の全体進捗バーを更新
-    const completedCountAll = correctCountAll + wrongCountAll;
-    const correctPercentAll = totalWordsAll === 0 ? 0 : (correctCountAll / totalWordsAll) * 100;
-    const wrongPercentAll = totalWordsAll === 0 ? 0 : (wrongCountAll / totalWordsAll) * 100;
-    const isCompleteAll = totalWordsAll > 0 && wrongCountAll === 0 && correctCountAll === totalWordsAll;
-    
-    const correctBarAll = document.getElementById('progress-correct-irregular-verbs');
-    const wrongBarAll = document.getElementById('progress-wrong-irregular-verbs');
-    const textAll = document.getElementById('progress-text-irregular-verbs');
-    const barContainerAll = correctBarAll ? correctBarAll.parentElement : null;
-    
-    if (correctBarAll) {
-        correctBarAll.style.width = `${correctPercentAll}%`;
-    }
-    if (wrongBarAll) {
-        wrongBarAll.style.width = `${wrongPercentAll}%`;
-    }
-    if (barContainerAll) {
-        barContainerAll.classList.remove('category-progress-complete', 'category-progress-complete-input');
-        if (isCompleteAll) {
-            barContainerAll.classList.add('category-progress-complete');
-        }
-    }
-    if (textAll) {
-        textAll.textContent = `${completedCountAll}/${totalWordsAll}語`;
-    }
+    const total = (typeof getVocabularyByIdioms !== 'undefined' && typeof getVocabularyByIdioms === 'function')
+        ? getVocabularyByIdioms().length
+        : 0;
+    const textEl = document.getElementById('progress-text-irregular-verbs');
+    if (textEl) textEl.textContent = `${total}語`;
 }
 
 // 不規則変化の進捗を保存
@@ -4104,6 +4013,22 @@ function fitWordToContainer(wordEl) {
     });
 }
 
+/** 活用／変化表示：はみ出し度合いを計算して scale で縮小（最小70%） */
+function fitConjugationScale(sectionEl) {
+    if (!sectionEl) return;
+    const wrap = sectionEl.querySelector('.expand-conjugation-text-wrap');
+    const textEl = sectionEl.querySelector('.expand-conjugation-text');
+    if (!wrap || !textEl) return;
+    textEl.style.transform = '';
+    const availableWidth = wrap.clientWidth;
+    const contentWidth = textEl.scrollWidth;
+    if (contentWidth <= 0 || availableWidth <= 0) return;
+    if (contentWidth > availableWidth) {
+        const scale = Math.max(0.7, Math.min(1, availableWidth / contentWidth));
+        textEl.style.transform = `scaleX(${scale.toFixed(3)})`;
+    }
+}
+
 function formatWordForDisplay(wordStr) {
     if (!wordStr || typeof wordStr !== 'string') return null;
     if (!wordStr.includes(' (')) return null;
@@ -4946,7 +4871,7 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         const lastId = wordCount > 0 ? words[wordCount - 1].id : endIdx;
         const chunkNum = i + 1;
         const rangeLabel = `#${chunkNum}#No.${formatWordNumber(firstId)}-${formatWordNumber(lastId)}`;
-        const subcatKey = `LEVEL${levelNum}_${firstId}-${lastId}`;
+        const subcatKey = (parentCategory === '英熟語') ? `IDIOMS_${firstId}-${lastId}` : `LEVEL${levelNum}_${firstId}-${lastId}`;
         
         // 進捗を計算
         let correctCount = 0;
@@ -5182,6 +5107,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         lastLearningSourceElement = document.getElementById('level4CardBtn');
     } else if (parentCategory === 'レベル５ 難関突破100語') {
         lastLearningSourceElement = document.getElementById('level5CardBtn');
+    } else if (parentCategory === '英熟語') {
+        lastLearningSourceElement = document.getElementById('irregularVerbsCardBtn');
     }
     
     console.log('showLevelSubcategorySelection called with:', parentCategory, 'skipAnimation:', skipAnimation);
@@ -5238,6 +5165,13 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         badgeClass = 'level-badge-dark';
         description = '難関突破レベルの単語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge level-badge-dark">レベル<b>5</b></span> 難関突破100語';
+    } else if (parentCategory === '英熟語') {
+        levelNum = 'IDIOMS';
+        badgeClass = 'idioms-badge';
+        badgeColor = '#0d9488';
+        badgeBgColor = '#ccfbf1';
+        description = '重要な英熟語を覚えよう';
+        courseTitle.innerHTML = '<span class="level-badge idioms-badge">英熟語</span>';
     } else {
         courseTitle.textContent = parentCategory;
     }
@@ -5258,18 +5192,22 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
         }
     }
     
-    // 該当レベルの単語を取得
+    // 該当レベルの単語を取得（英熟語の場合は getVocabularyByIdioms）
     let levelWords = [];
-    if (typeof getVocabularyByLevel !== 'undefined' && typeof getVocabularyByLevel === 'function') {
+    if (parentCategory === '英熟語') {
+        if (typeof getVocabularyByIdioms !== 'undefined' && typeof getVocabularyByIdioms === 'function') {
+            levelWords = getVocabularyByIdioms();
+        }
+    } else if (typeof getVocabularyByLevel !== 'undefined' && typeof getVocabularyByLevel === 'function') {
         levelWords = getVocabularyByLevel(levelNum);
     } else if (typeof getAllVocabulary !== 'undefined') {
         const allWords = getAllVocabulary();
         levelWords = allWords.filter(word => word.category && word.category.startsWith(`LEVEL${levelNum} `));
     }
     // IDでソート
-    levelWords.sort((a, b) => a.id - b.id);
+    levelWords.sort((a, b) => (a.id || 0) - (b.id || 0));
     
-    // 50語ずつのカードを生成
+    // 50語ずつのカードを生成（英熟語のときは subcatKey を IDIOMS_ にするため parentCategory で判定）
     generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, courseList, badgeColor, badgeBgColor);
     
     // 一番下に大阪の画像を追加
@@ -7381,14 +7319,14 @@ function setupEventListeners() {
         });
     }
     
-    // 不規則変化の単語カードボタン → サブカテゴリーメニューを表示
+    // 英熟語カード → Level0～5と同じ流れでサブカテゴリ（セクション）選択を表示
     const irregularVerbsCardBtn = document.getElementById('irregularVerbsCardBtn');
     if (irregularVerbsCardBtn) {
         irregularVerbsCardBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             animateCardExpand(irregularVerbsCardBtn, '#ffffff', () => {
-                showIvMenuView();
+                showLevelSubcategorySelection('英熟語');
             });
         });
     }
@@ -8693,6 +8631,8 @@ function setupEventListeners() {
                         targetCardId = 'level5CardBtn';
                     } else if (window.currentSubcategoryParent === '入門600語') {
                         targetCardId = 'elementaryCategoryCardBtn';
+                    } else if (window.currentSubcategoryParent === '英熟語') {
+                        targetCardId = 'irregularVerbsCardBtn';
                     }
                     
                     if (targetCardId) {
@@ -8753,12 +8693,10 @@ function setupEventListeners() {
                         return;
                     }
                     
-                    // 不規則変化の単語から来た場合は、不規則変化メニューに戻る
-                    if (window.currentSubcategoryParent && window.currentSubcategoryParent === '不規則変化の単語') {
+                    // 英熟語から戻る場合は英熟語サブカテゴリ選択に戻る（Level0～5と同じ流れ）
+                    if (window.currentSubcategoryParent && window.currentSubcategoryParent === '英熟語') {
                         elements.mainContent.classList.add('hidden');
-                        const ivMenuView = document.getElementById('ivMenuView');
-                        if (ivMenuView) ivMenuView.classList.remove('hidden');
-                        updateHeaderButtons('course', '不規則変化の単語');
+                        showLevelSubcategorySelection('英熟語');
                         return;
                     }
                     
@@ -10566,8 +10504,9 @@ function appendTextWithParenNormal(targetEl, rawText) {
 function appendTextWithConjugationBreak(targetEl, rawText, options = {}) {
     if (!targetEl) return;
     const text = String(rawText || '');
-    const marker = '《活用》';
-    const idx = text.indexOf(marker);
+    const idxConj = text.indexOf('《活用》');
+    const idxChange = text.indexOf('《変化》');
+    const idx = idxConj === -1 ? idxChange : (idxChange === -1 ? idxConj : Math.min(idxConj, idxChange));
     if (idx === -1) {
         appendTextWithParenNormal(targetEl, text);
         return;
@@ -10576,7 +10515,7 @@ function appendTextWithConjugationBreak(targetEl, rawText, options = {}) {
     const before = text.slice(0, idx).trimEnd();
     const hideConjugation = options && options.hideConjugation;
     if (before) appendTextWithParenNormal(targetEl, before);
-    if (hideConjugation) return; // 《活用》以降は表示しない
+    if (hideConjugation) return; // 《活用》／《変化》以降は表示しない
     
     const after = text.slice(idx).trimStart();
     targetEl.appendChild(document.createElement('br'));
@@ -10586,22 +10525,26 @@ function appendTextWithConjugationBreak(targetEl, rawText, options = {}) {
 function stripConjugationFromText(rawText) {
     if (!rawText) return '';
     const text = String(rawText);
-    // 「《活用》」以降を丸ごと削除（表記ゆれやスペースがあっても確実に消す）
-    return text.replace(/\s*《活用》[\s\S]*$/g, '').trimEnd();
+    // 「《活用》」または「《変化》」以降を丸ごと削除
+    return text.replace(/\s*《(活用|変化)》[\s\S]*$/g, '').trimEnd();
 }
 
-// 《活用》部分を抽出する（例: "am - was - been"）
+// 《活用》または《変化》部分を抽出する。戻り値: { text, isChange }（isChange は《変化》のとき true）
 function extractConjugationFromText(rawText) {
-    if (!rawText) return '';
+    if (!rawText) return { text: '', isChange: false };
     const text = String(rawText);
-    const marker = '《活用》';
-    const idx = text.indexOf(marker);
-    if (idx === -1) return '';
+    const changeMarker = '《変化》';
+    const conjMarker = '《活用》';
+    const changeIdx = text.indexOf(changeMarker);
+    const conjIdx = text.indexOf(conjMarker);
+    const isChange = changeIdx !== -1 && (conjIdx === -1 || changeIdx < conjIdx);
+    const marker = isChange ? changeMarker : conjMarker;
+    const idx = isChange ? changeIdx : conjIdx;
+    if (idx === -1) return { text: '', isChange: false };
     let rest = text.substring(idx + marker.length).trim();
-    // 例: "am - am - am 〖連〗be able to～" のように後ろにタグが続く場合はそこで打ち切る
-    const stopIdx = rest.search(/[〖〈【]/);
+    const stopIdx = rest.search(/[〖〈《【]/);
     if (stopIdx !== -1) rest = rest.substring(0, stopIdx).trim();
-    return rest;
+    return { text: rest, isChange };
 }
 
 function getPosLabelKind(partOfSpeechText) {
@@ -10760,7 +10703,7 @@ function setMeaningContent(meaningElement, text, options = {}) {
     if (!text.includes('①')) {
         if (meaningHasPosTags(text)) {
             renderMeaningWithPosSegments(meaningElement, text, options);
-        } else if (String(text).includes('《活用》')) {
+        } else if (String(text).includes('《活用》') || String(text).includes('《変化》')) {
             meaningElement.innerHTML = '';
             appendTextWithConjugationBreak(meaningElement, text, options);
         } else {
@@ -10816,7 +10759,7 @@ function setMeaningContent(meaningElement, text, options = {}) {
         textSpan.className = 'meaning-text';
         if (meaningHasPosTags(lineText)) {
             renderMeaningWithPosSegments(textSpan, lineText, options);
-        } else if (String(lineText).includes('《活用》')) {
+        } else if (String(lineText).includes('《活用》') || String(lineText).includes('《変化》')) {
             textSpan.innerHTML = '';
             appendTextWithConjugationBreak(textSpan, lineText, options);
         } else {
@@ -11324,6 +11267,26 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         leftCol.appendChild(wordEl);
         fitWordToContainer(wordEl);
         
+        // 活用／変化（英単語の直下に表示。はみ出すときは scale で縮小）
+        const conjugationForLeft = extractConjugationFromText(word.meaning || '');
+        if (conjugationForLeft.text) {
+            const conjSectionLeft = document.createElement('div');
+            conjSectionLeft.className = 'expand-conjugation-section expand-conjugation-below-word';
+            const conjBadgeLeft = document.createElement('span');
+            conjBadgeLeft.className = 'expand-conjugation-badge' + (conjugationForLeft.isChange ? ' expand-conjugation-badge-change' : '');
+            conjBadgeLeft.textContent = conjugationForLeft.isChange ? '変' : '活';
+            conjSectionLeft.appendChild(conjBadgeLeft);
+            const conjTextWrapLeft = document.createElement('div');
+            conjTextWrapLeft.className = 'expand-conjugation-text-wrap';
+            const conjTextLeft = document.createElement('span');
+            conjTextLeft.className = 'expand-conjugation-text';
+            conjTextLeft.textContent = conjugationForLeft.text;
+            conjTextWrapLeft.appendChild(conjTextLeft);
+            conjSectionLeft.appendChild(conjTextWrapLeft);
+            leftCol.appendChild(conjSectionLeft);
+            requestAnimationFrame(() => fitConjugationScale(conjSectionLeft));
+        }
+        
         // カタカナ読み（あれば）
         if (word.kana) {
             const kanaEl = document.createElement('div');
@@ -11366,32 +11329,12 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true, showPosBadges: false });
         rightCol.appendChild(meaningText);
         
-        // 活用・例文セクション（線の下）
-        const conjugationText = extractConjugationFromText(word.meaning || '');
+        // 例文セクション（線の下。活用は英単語の下に表示済み）
         const hasExample = word.example && (word.example.english || word.example.japanese);
         
-        if (conjugationText || hasExample) {
-            // 線の下のコンテナ
+        if (hasExample) {
             const belowLineSection = document.createElement('div');
             belowLineSection.className = 'expand-below-line-section';
-            
-            // 活用（あれば）
-            if (conjugationText) {
-                const conjSection = document.createElement('div');
-                conjSection.className = 'expand-conjugation-section';
-                
-                const conjBadge = document.createElement('span');
-                conjBadge.className = 'expand-conjugation-badge';
-                conjBadge.textContent = '活';
-                conjSection.appendChild(conjBadge);
-                
-                const conjText = document.createElement('span');
-                conjText.className = 'expand-conjugation-text';
-                conjText.textContent = conjugationText;
-                conjSection.appendChild(conjText);
-                
-                belowLineSection.appendChild(conjSection);
-            }
             
             // 例文（あれば）
             if (hasExample) {
@@ -12551,6 +12494,26 @@ function renderInputListView(words) {
             leftCol.appendChild(wordEl);
             fitWordToContainer(wordEl);
             
+            // 活用／変化（英単語の直下に表示。はみ出すときは scale で縮小）
+            const conjugationForLeft2 = extractConjugationFromText(word.meaning || '');
+            if (conjugationForLeft2.text) {
+                const conjSectionLeft2 = document.createElement('div');
+                conjSectionLeft2.className = 'expand-conjugation-section expand-conjugation-below-word';
+                const conjBadgeLeft2 = document.createElement('span');
+                conjBadgeLeft2.className = 'expand-conjugation-badge' + (conjugationForLeft2.isChange ? ' expand-conjugation-badge-change' : '');
+                conjBadgeLeft2.textContent = conjugationForLeft2.isChange ? '変' : '活';
+                conjSectionLeft2.appendChild(conjBadgeLeft2);
+                const conjTextWrapLeft2 = document.createElement('div');
+                conjTextWrapLeft2.className = 'expand-conjugation-text-wrap';
+                const conjTextLeft2 = document.createElement('span');
+                conjTextLeft2.className = 'expand-conjugation-text';
+                conjTextLeft2.textContent = conjugationForLeft2.text;
+                conjTextWrapLeft2.appendChild(conjTextLeft2);
+                conjSectionLeft2.appendChild(conjTextWrapLeft2);
+                leftCol.appendChild(conjSectionLeft2);
+                requestAnimationFrame(() => fitConjugationScale(conjSectionLeft2));
+            }
+            
             // カタカナ読み（あれば）
             if (word.kana) {
                 const kanaEl = document.createElement('div');
@@ -12591,35 +12554,15 @@ function renderInputListView(words) {
             setMeaningContent(meaningText, word.meaning || '', { hideConjugation: true, showPosBadges: false });
             rightCol.appendChild(meaningText);
             
-            // 活用・例文セクション（線の下）
-            const conjugationText = extractConjugationFromText(word.meaning || '');
-            const hasExample = word.example && (word.example.english || word.example.japanese);
+            // 例文セクション（線の下。活用は英単語の下に表示済み）
+            const hasExample2 = word.example && (word.example.english || word.example.japanese);
             
-            if (conjugationText || hasExample) {
-                // 線の下のコンテナ
+            if (hasExample2) {
                 const belowLineSection = document.createElement('div');
                 belowLineSection.className = 'expand-below-line-section';
                 
-                // 活用（あれば）
-                if (conjugationText) {
-                    const conjSection = document.createElement('div');
-                    conjSection.className = 'expand-conjugation-section';
-                    
-                    const conjBadge = document.createElement('span');
-                    conjBadge.className = 'expand-conjugation-badge';
-                    conjBadge.textContent = '活';
-                    conjSection.appendChild(conjBadge);
-                    
-                    const conjText = document.createElement('span');
-                    conjText.className = 'expand-conjugation-text';
-                    conjText.textContent = conjugationText;
-                    conjSection.appendChild(conjText);
-                    
-                    belowLineSection.appendChild(conjSection);
-                }
-                
                 // 例文（あれば）
-                if (hasExample) {
+                if (hasExample2) {
                     const exampleSection = document.createElement('div');
                     exampleSection.className = 'expand-example-section';
                     

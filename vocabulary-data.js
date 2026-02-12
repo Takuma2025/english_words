@@ -31,7 +31,7 @@ const allWords = [
   { id: 25, word: "he", meaning: "彼は、彼が", partOfSpeech: "代名詞", category: "LEVEL0 代名詞" },
   { id: 26, word: "from", meaning: "～から、～出身で", partOfSpeech: "前置詞", category: "LEVEL0 前置詞" },
   { id: 27, word: "think", meaning: "（～と）考える、（～だと）思う　《活用》think - thought - thought", partOfSpeech: "動詞", category: "LEVEL0 動詞" },
-  { id: 28, word: "many", meaning: "多く（の）、たくさん（の）　《活用》many - more - most", partOfSpeech: "名詞・代名詞・形容詞", category: "LEVEL0 名詞" },
+  { id: 28, word: "many", meaning: "多く（の）、たくさん（の）　《変化》many - more - most", partOfSpeech: "名詞・代名詞・形容詞", category: "LEVEL0 名詞" },
   { id: 29, word: "want", meaning: "～がほしい", partOfSpeech: "動詞", category: "LEVEL0 動詞" },
   { id: 30, word: "when", meaning: "いつ；～するとき", partOfSpeech: "接続詞・副詞", category: "LEVEL0 接続詞" },
   { id: 31, word: "what", meaning: "何、何の、どんな", partOfSpeech: "代名詞・形容詞", category: "LEVEL0 代名詞" },
@@ -41,7 +41,7 @@ const allWords = [
   { id: 35, word: "see", meaning: "見る、見える；会う；わかる　《活用》see - saw - seen", partOfSpeech: "動詞", category: "LEVEL0 動詞" },
   { id: 36, word: "how", meaning: "どうやって（どのように）、どのくらい～、どう（調子や具合）", partOfSpeech: "副詞", category: "LEVEL0 副詞" },
   { id: 37, word: "me", meaning: "私を、私に", partOfSpeech: "代名詞", category: "LEVEL0 代名詞" },
-  { id: 38, word: "good", meaning: "よい、上手な　《活用》good - better - best", partOfSpeech: "形容詞", category: "LEVEL0 形容詞" },
+  { id: 38, word: "good", meaning: "よい、上手な　《変化》good - better - best", partOfSpeech: "形容詞", category: "LEVEL0 形容詞" },
   { id: 39, word: "by", meaning: "～によって；～までに；～のそばに", partOfSpeech: "前置詞", category: "LEVEL0 前置詞" },
   { id: 40, word: "our", meaning: "私たちの、われわれの", partOfSpeech: "代名詞", category: "LEVEL0 代名詞" },
   { id: 41, word: "very", meaning: "とても", partOfSpeech: "副詞", category: "LEVEL0 副詞" },
@@ -118,7 +118,7 @@ const allWords = [
   { id: 112, word: "watch", meaning: "見る；腕時計", partOfSpeech: "動詞・名詞", category: "LEVEL0 動詞" },
   { id: 113, word: "train", meaning: "電車", partOfSpeech: "名詞", category: "LEVEL0 名詞" },
   { id: 114, word: "buy", meaning: "買う　《活用》buy - bought - bought", partOfSpeech: "動詞", category: "LEVEL0 動詞" },
-  { id: 115, word: "much", meaning: "たくさん（の）、多量（の）　《活用》much - more - most", partOfSpeech: "形容詞・副詞・名詞・代名詞", category: "LEVEL0 形容詞" },
+  { id: 115, word: "much", meaning: "たくさん（の）、多量（の）　《変化》much - more - most", partOfSpeech: "形容詞・副詞・名詞・代名詞", category: "LEVEL0 形容詞" },
   { id: 116, word: "friend", meaning: "友人、友達", partOfSpeech: "名詞", category: "LEVEL0 名詞" },
   { id: 117, word: "best", meaning: "最もよい（く）　【活用】good (well) - better - best", partOfSpeech: "形容詞・副詞", category: "LEVEL0 形容詞" },
   { id: 118, word: "nice", meaning: "すてきな、すばらしい", partOfSpeech: "形容詞", category: "LEVEL0 形容詞" },
@@ -770,7 +770,7 @@ const allWords = [
   { id: 764, word: "camera", meaning: "カメラ", partOfSpeech: "名詞", category: "LEVEL1 名詞" },
   { id: 765, word: "ring", meaning: "鳴る、響く；指輪　《活用》ring - rang - rung", partOfSpeech: "動詞・名詞", category: "LEVEL1 動詞" },
   { id: 766, word: "relax", meaning: "くつろぐ", partOfSpeech: "動詞", category: "LEVEL1 動詞" },
-  { id: 767, word: "little", meaning: "小さい、幼い；少し、ほとんどない　《活用》little - less - least", partOfSpeech: "形容詞・副詞", category: "LEVEL1 形容詞" },
+  { id: 767, word: "little", meaning: "小さい、幼い；少し、ほとんどない　《変化》little - less - least", partOfSpeech: "形容詞・副詞", category: "LEVEL1 形容詞" },
   { id: 768, word: "century", meaning: "世紀、１００年", partOfSpeech: "名詞", category: "LEVEL1 名詞" },
   { id: 769, word: "colorful", meaning: "カラフルな、色とりどりの", partOfSpeech: "形容詞", category: "LEVEL1 形容詞" },
   { id: 770, word: "Asia", meaning: "アジア", partOfSpeech: "名詞", category: "LEVEL1 名詞" },
@@ -782,7 +782,7 @@ const allWords = [
   { id: 776, word: "letter", meaning: "文字；手紙", partOfSpeech: "名詞", category: "LEVEL1 名詞" },
   { id: 777, word: "side", meaning: "横、わき、側面", partOfSpeech: "名詞", category: "LEVEL1 名詞" },
   { id: 778, word: "baby", meaning: "赤ちゃん", partOfSpeech: "名詞", category: "LEVEL1 名詞" },
-  { id: 779, word: "bad", meaning: "悪い　《活用》bad - worse - worst", partOfSpeech: "形容詞", category: "LEVEL1 形容詞" },
+  { id: 779, word: "bad", meaning: "悪い　《変化》bad - worse - worst", partOfSpeech: "形容詞", category: "LEVEL1 形容詞" },
   { id: 780, word: "video", meaning: "ビデオ", partOfSpeech: "名詞", category: "LEVEL1 名詞" },
   { id: 781, word: "uncle", meaning: "おじ（父母の兄弟）", partOfSpeech: "名詞", category: "LEVEL1 名詞" },
   { id: 782, word: "open", meaning: "開ける、開く；開いている", partOfSpeech: "動詞・形容詞", category: "LEVEL1 動詞" },
@@ -1165,7 +1165,7 @@ const allWords = [
   { id: 1159, word: "type", meaning: "種類、タイプ", partOfSpeech: "名詞", category: "LEVEL2 名詞" },
   { id: 1160, word: "must", meaning: "しなければならない、～にちがいない", partOfSpeech: "助動詞", category: "LEVEL2 助動詞" },
   { id: 1161, word: "young", meaning: "若い、幼い", partOfSpeech: "形容詞", category: "LEVEL2 形容詞" },
-  { id: 1162, word: "better", meaning: "よりよい（く）より上手い（く）　《活用》well (good) - better - best", partOfSpeech: "形容詞・副詞", category: "LEVEL2 形容詞" },
+  { id: 1162, word: "better", meaning: "よりよい（く）より上手い（く）　《変化》well (good) - better - best", partOfSpeech: "形容詞・副詞", category: "LEVEL2 形容詞" },
   { id: 1163, word: "collect", meaning: "集める、収集する", partOfSpeech: "動詞", category: "LEVEL2 動詞" },
   { id: 1164, word: "among", meaning: "～の間に（で、の）、～の中のひとりで", partOfSpeech: "前置詞", category: "LEVEL2 前置詞" },
   { id: 1165, word: "technology", meaning: "科学技術", partOfSpeech: "名詞", category: "LEVEL2 名詞" },
@@ -1673,7 +1673,7 @@ const allWords = [
   { id: 1667, word: "since", meaning: "～から（ずっと）、～以来（ずっと）", partOfSpeech: "前置詞・接続詞", category: "LEVEL3 前置詞" },
   { id: 1668, word: "possible", meaning: "可能な、実行できる", partOfSpeech: "形容詞", category: "LEVEL3 形容詞" },
   { id: 1669, word: "interview", meaning: "インタビュー（する）、面接（する）", partOfSpeech: "動詞・名詞", category: "LEVEL3 動詞" },
-  { id: 1670, word: "less", meaning: "もっと少ない（く）　《活用》little - less - least", partOfSpeech: "形容詞・副詞", category: "LEVEL3 形容詞" },
+  { id: 1670, word: "less", meaning: "もっと少ない（く）　《変化》little - less - least", partOfSpeech: "形容詞・副詞", category: "LEVEL3 形容詞" },
   { id: 1671, word: "respect", meaning: "尊敬（する）、尊重（する）", partOfSpeech: "動詞・名詞", category: "LEVEL3 動詞" },
   { id: 1672, word: "junior", meaning: "下位の、年下の", partOfSpeech: "形容詞", category: "LEVEL3 形容詞" },
   { id: 1673, word: "clear", meaning: "片付ける；晴れた；はっきりした", partOfSpeech: "動詞・形容詞", category: "LEVEL3 動詞" },
@@ -2064,7 +2064,7 @@ const allWords = [
   { id: 2058, word: "unbelievable", meaning: "信じられない、驚くべき", partOfSpeech: "形容詞", category: "LEVEL3 形容詞" },
   { id: 2059, word: "washing machine", meaning: "洗たく機", partOfSpeech: "名詞", category: "LEVEL3 名詞" },
   { id: 2060, word: "Washington, D.C.", meaning: "ワシントンD.C.（アメリカの首都）", partOfSpeech: "名詞", category: "LEVEL3 名詞" },
-  { id: 2061, word: "least", meaning: "最も少ない、最小（の）　《活用》little - less - least", partOfSpeech: "代名詞・形容詞・副詞", category: "LEVEL3 代名詞" },
+  { id: 2061, word: "least", meaning: "最も少ない、最小（の）　《変化》little - less - least", partOfSpeech: "代名詞・形容詞・副詞", category: "LEVEL3 代名詞" },
   { id: 2062, word: "gun", meaning: "銃、鉄砲", partOfSpeech: "名詞", category: "LEVEL3 名詞" },
   { id: 2063, word: "tag", meaning: "札", partOfSpeech: "名詞", category: "LEVEL3 名詞" },
   { id: 2064, word: "cost", meaning: "（費用などが）かかる　《活用》cost - cost - cost", partOfSpeech: "動詞", category: "LEVEL3 動詞" },
@@ -2584,4 +2584,23 @@ function getVocabularyByCategory(categoryName) {
 function getVocabularyByLevel(level) {
   const prefix = "LEVEL" + level + " ";
   return allWords.filter(w => w.category.startsWith(prefix));
+}
+
+/**
+ * 英熟語データ（語彙と同じ形式: id, word, meaning, category 等）
+ * category は "英熟語" で統一（セクションは50語ずつで自動分割）
+ */
+const idiomWords = [
+  // サンプル（必要に応じて追加。0件でもセクション一覧は表示され、準備中として使える）
+  // { id: 30001, word: "look after", meaning: "～の世話をする", partOfSpeech: "句動詞", category: "英熟語" },
+];
+
+/**
+ * 英熟語を取得（ID昇順）
+ */
+function getVocabularyByIdioms() {
+  if (typeof idiomWords !== 'undefined' && Array.isArray(idiomWords)) {
+    return idiomWords.slice().sort((a, b) => (a.id || 0) - (b.id || 0));
+  }
+  return [];
 }

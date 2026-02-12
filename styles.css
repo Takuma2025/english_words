@@ -1379,10 +1379,12 @@ body.learning-mode .app-header {
     display: none !important;
 }
 
-/* ホームのカテゴリカード進捗バー COMPLETE!! のフォントを他と統一 */
+/* ホームのカテゴリカード進捗バー COMPLETE（細長くしない） */
 .course-section .category-progress-bar.category-progress-complete::after,
 .course-section .category-progress-bar.category-progress-complete-input::after {
-    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Oswald', 'Arial Black', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.05em;
 }
 
 .boy-word-image {
@@ -1946,7 +1948,7 @@ body.learning-mode .app-header {
     overflow: visible;
 }
 
-/* COMPLETE!!テキスト */
+/* COMPLETEテキスト */
 .school-complete-text {
     position: absolute;
     top: 50%;
@@ -1967,8 +1969,8 @@ body.learning-mode .app-header {
     font-size: 14px;
     font-weight: 700;
     color: #ffffff;
-    letter-spacing: 3px;
-    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    letter-spacing: 0.05em;
+    font-family: 'Oswald', 'Arial Black', sans-serif;
     text-transform: uppercase;
 }
 
@@ -3699,17 +3701,17 @@ body.learning-mode .app-header {
 }
 
 .accordion-progress-bar.accordion-progress-complete::after {
-    content: "COMPLETE!!";
+    content: "COMPLETE !!";
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 10px;
-    font-weight: 600;
+    font-weight: 700;
     color: #ffffff;
-    letter-spacing: 2px;
-    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    letter-spacing: 0.05em;
+    font-family: 'Oswald', 'Arial Black', sans-serif;
     text-transform: uppercase;
     z-index: 10;
     pointer-events: none;
@@ -3824,6 +3826,149 @@ body.learning-mode .app-header {
     margin: 0;
 }
 
+.idioms-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f766e;
+    background: #ccfbf1;
+    border-radius: 6px;
+    font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
+}
+
+/* 英熟語カード：入試直前と同じテイスト（2×2漢字マス＋帯） */
+.idioms-card {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 2px;
+    padding: 4px;
+}
+
+.idioms-grid-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto 1fr;
+    column-gap: 2px;
+    row-gap: 0;
+    width: 42%;
+    max-width: 62px;
+    aspect-ratio: 1;
+    flex-shrink: 0;
+    margin: 0 auto;
+    position: relative;
+    border-radius: 0;
+    overflow: visible;
+}
+
+.idioms-cell {
+    min-height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 0;
+    container-type: size;
+}
+.idioms-cell .idioms-char {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+.idioms-cell-1,
+.idioms-cell-2,
+.idioms-cell-3,
+.idioms-cell-4 { background: #0d9488; }
+
+.idioms-exam-label {
+    grid-column: 1 / -1;
+    background: #065f46;
+    color: #ffffff;
+    font-size: min(9px, 2.2vw);
+    line-height: 1.15;
+    font-weight: 600;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 4px;
+    min-height: 16px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.idioms-char {
+    font-family: "Oswald", "Barlow Condensed", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
+    font-size: 85cqh;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+    transform: translateY(-4%);
+}
+
+.idioms-count {
+    font-family: "Oswald", "Barlow Condensed", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #0d9488;
+    line-height: 1;
+    text-align: center;
+    margin-top: 0;
+    padding-top: 2px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.idioms-meta {
+    font-size: 9px;
+    line-height: 1.4;
+    color: #374151;
+    text-align: center;
+}
+
+/* 英熟語カード：スマホ用 */
+@media (max-width: 600px) {
+    .idioms-card {
+        padding: 3px 3px;
+        gap: 2px;
+    }
+    .idioms-grid-wrap {
+        width: 48%;
+        max-width: 72px;
+    }
+    .idioms-exam-label {
+        font-size: 8px;
+        padding: 2px 3px;
+        min-height: 14px;
+    }
+    .idioms-count {
+        font-size: 10px;
+    }
+    .idioms-meta {
+        font-size: 9px;
+        line-height: 1.4;
+    }
+}
+
+@media (max-width: 380px) {
+    .idioms-grid-wrap {
+        width: 52%;
+        max-width: 62px;
+    }
+    .idioms-exam-label {
+        font-size: 7px;
+        padding: 1px 2px;
+        min-height: 12px;
+    }
+}
+
 #allWordsCardBtn {
     align-items: center;
     justify-content: center;
@@ -3901,17 +4046,17 @@ body.learning-mode .app-header {
 
 .exam1200-exam-label {
     grid-column: 1 / -1;
-    background: #374151;
+    background: #7f1d1d;
     color: #ffffff;
-    font-size: min(12px, 2.8vw);
-    line-height: 1.2;
+    font-size: min(9px, 2.2vw);
+    line-height: 1.15;
     font-weight: 600;
     font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 6px;
-    min-height: 20px;
+    padding: 2px 4px;
+    min-height: 16px;
     max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
@@ -3960,9 +4105,9 @@ body.learning-mode .app-header {
         max-width: 72px;
     }
     .exam1200-exam-label {
-        font-size: 10px;
-        padding: 3px 4px;
-        min-height: 18px;
+        font-size: 8px;
+        padding: 2px 3px;
+        min-height: 14px;
     }
     .exam1200-count {
         font-size: 10px;
@@ -3979,9 +4124,9 @@ body.learning-mode .app-header {
         max-width: 62px;
     }
     .exam1200-exam-label {
-        font-size: 9px;
-        padding: 2px 3px;
-        min-height: 16px;
+        font-size: 7px;
+        padding: 1px 2px;
+        min-height: 12px;
     }
 }
 
@@ -4317,7 +4462,7 @@ button.category-card:focus-visible {
 .study-mode-step-title {
     font-size: 16px;
     font-weight: 700;
-    color: #1f2937;
+    color: #475569;
     line-height: 1.3;
 }
 
@@ -5080,17 +5225,17 @@ button.category-card:focus-visible {
 }
 
 .category-progress-bar.category-progress-complete::after {
-    content: "COMPLETE!!";
+    content: "COMPLETE !!";
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     color: #ffffff;
-    letter-spacing: 3px;
-    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    letter-spacing: 0.05em;
+    font-family: 'Oswald', 'Arial Black', sans-serif;
     text-transform: uppercase;
     z-index: 1;
 }
@@ -5108,17 +5253,17 @@ button.category-card:focus-visible {
 }
 
 .category-progress-bar.category-progress-complete-input::after {
-    content: "COMPLETE!!";
+    content: "COMPLETE !!";
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     color: #7c2d12;
-    letter-spacing: 3px;
-    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    letter-spacing: 0.05em;
+    font-family: 'Oswald', 'Arial Black', sans-serif;
     text-transform: uppercase;
     z-index: 1;
 }
@@ -9622,14 +9767,36 @@ body.choice-question-mode-active .word-card-container {
     border-radius: 2px;
     flex-shrink: 0;
 }
+.expand-conjugation-badge-change {
+    background: #7c3aed;
+}
 
 .expand-conjugation-text {
-    color: #6b7280;
+    color: #374151;
     font-size: 10px;
     line-height: 1.3;
     background: #f3f4f6;
     padding: 2px 6px;
     border-radius: 3px;
+}
+
+/* 英単語の直下に表示する活用：はみ出るときは scale で縮小（はみ出る度合いを計算、最小70%） */
+.expand-conjugation-below-word {
+    margin-top: 6px;
+    min-width: 0;
+    overflow: hidden;
+    width: 100%;
+}
+.expand-conjugation-below-word .expand-conjugation-text-wrap {
+    min-width: 0;
+    overflow: hidden;
+    flex: 1;
+}
+.expand-conjugation-below-word .expand-conjugation-text {
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 10px;
+    transform-origin: left center;
 }
 
 /* 連語（〖連〗）セクション */
@@ -15355,17 +15522,17 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .completion-progress-bar.completion-progress-complete-card::after {
-    content: "COMPLETE!!";
+    content: "COMPLETE !!";
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     color: #ffffff;
-    letter-spacing: 3px;
-    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    letter-spacing: 0.05em;
+    font-family: 'Oswald', 'Arial Black', sans-serif;
     text-transform: uppercase;
     opacity: 0;
     transform: scale(0.5);
@@ -15386,17 +15553,17 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .completion-progress-bar.completion-progress-complete-input::after {
-    content: "COMPLETE!!";
+    content: "COMPLETE !!";
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     color: #7c2d12;
-    letter-spacing: 3px;
-    font-family: 'Barlow Condensed', 'Oswald', 'Segoe UI', system-ui, sans-serif;
+    letter-spacing: 0.05em;
+    font-family: 'Oswald', 'Arial Black', sans-serif;
     text-transform: uppercase;
     opacity: 0;
     transform: scale(0.5);
@@ -15870,18 +16037,18 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 .ts-toggle-simple .ts-toggle-text-simple {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 8px;
     padding: 10px 12px;
     font-size: 13px;
     font-weight: 600;
-    color: #374151;
+    color: #9ca3af;
     background: #ffffff;
     border: 4px solid #e5e7eb;
     border-radius: 8px;
     cursor: pointer;
     transition: border-color 0.15s ease, color 0.15s ease;
-    text-align: left;
+    text-align: center;
     line-height: 1.3;
     -webkit-tap-highlight-color: transparent;
 }
@@ -15891,6 +16058,10 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     flex-shrink: 0;
     color: #64748b;
     transition: color 0.15s ease;
+}
+.ts-opt-icon.ts-opt-text {
+    white-space: nowrap;
+    font-size: 0.85em;
 }
 .ts-toggle-option:has(input:checked) .ts-opt-icon {
     color: #374151;
@@ -21440,7 +21611,7 @@ div#inputWordCheckbox,
 
 .subcat-range-no {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 500;
     color: #0369a1;
     opacity: 0.85;
@@ -21450,7 +21621,7 @@ div#inputWordCheckbox,
 
 .subcat-range-nums {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 20px;
+    font-size: 17px;
     font-weight: 600;
     color: #0369a1;
     letter-spacing: 0.02em;
