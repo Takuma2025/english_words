@@ -4608,7 +4608,7 @@ function startCategory(category) {
     }
     lastLearningCategory = category;
     // モード用のボディクラスをいったんリセット
-    document.body.classList.remove('sentence-mode-active', 'reorder-mode-active', 'choice-question-mode-active');
+    document.body.classList.remove('sentence-mode-active', 'reorder-mode-active', 'choice-question-mode-active', 'hyogo-seijo-mode-active');
     isChoiceQuestionModeActive = false;
     
     // LEVEL0 入門600語の場合は、elementaryWordDataを使用
@@ -4683,6 +4683,15 @@ function startCategory(category) {
     } else if (category === '大阪C問題対策 英作写経ドリル') {
         // 大阪C問題対策 英作写経ドリル：専用データが必要（現在は空）
         showAlert('準備中', '大阪C問題対策 英作写経ドリルのデータを準備中です。');
+        return;
+    } else if (category === '兵庫県公立入試 整序英作（予想問題）') {
+        // 兵庫県公立入試 整序英作文モード
+        console.log('兵庫県整序英作モードを開始します');
+        if (typeof hyogoSeijoQuestions === 'undefined' || !hyogoSeijoQuestions || hyogoSeijoQuestions.length === 0) {
+            showAlert('エラー', '整序英作の問題データが見つかりません。');
+            return;
+        }
+        initHyogoSeijoLearning();
         return;
     } else if (category === '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】' || 
                (category && category.includes('整序英作文100本ノック'))) {
@@ -5040,8 +5049,10 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
             ${lastStudyHTML}
             <div class="category-info">
                 <div class="subcat-top-row">
-                    <span class="subcat-section" style="color: ${badgeColor}; --subcat-marker: ${badgeBgColor}">セクション<span class="subcat-section-n">${i + 1}</span></span>
-                    <span class="subcat-range-card"><span class="subcat-range-no">単語番号</span><span class="subcat-range-nums">${String(firstId).padStart(4, '0')}<span class="subcat-range-sep">-</span>${String(lastId).padStart(4, '0')}</span></span>
+                    <span class="subcat-section" style="--subcat-marker: ${badgeBgColor}; --subcat-color: ${badgeColor}">セクション<span class="subcat-section-n">${i + 1}</span></span>
+                    <div class="subcat-range-line">
+                        <span class="subcat-range-no">No.</span><span class="subcat-range-num">${String(firstId).padStart(4, '0')}</span><span class="subcat-range-sep">→</span><span class="subcat-range-num">${String(lastId).padStart(4, '0')}</span>
+                    </div>
                 </div>
                 <div class="subcat-progress-row">
                     <div class="${progressBarClass}">
@@ -5145,7 +5156,7 @@ function showElementaryCategorySelection(skipAnimation = false) {
     level0Words.sort((a, b) => a.id - b.id);
     
     // 50語ずつのカードを生成（Section色はLevelバッジと統一）
-    generate50WordSubcategoryCards(level0Words, 0, '入門600語', courseList, '#0369a1', '#bae6fd');
+    generate50WordSubcategoryCards(level0Words, 0, '入門600語', courseList, '#0369a1', '#e0f2fe');
     
     // 一番下に大阪の画像を追加
     const osakaFooterImg = document.createElement('div');
@@ -5223,9 +5234,9 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     let badgeClass = '';
     let description = '';
     
-    /* Sectionラベルの色はLevelバッジと統一（薄い青） */
+    /* セクションバッジの色はホームのレベルバッジと統一（#e0f2fe / #0369a1） */
     badgeColor = '#0369a1';
-    badgeBgColor = '#bae6fd';
+    badgeBgColor = '#e0f2fe';
     if (parentCategory === 'レベル１ 初級500語') {
         levelNum = 1;
         badgeClass = 'level-badge-red';
@@ -5254,8 +5265,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     } else if (parentCategory === '英熟語') {
         levelNum = 'IDIOMS';
         badgeClass = 'idioms-badge';
-        badgeColor = '#047857';
-        badgeBgColor = '#d1fae5';
+        badgeColor = '#0369a1';
+        badgeBgColor = '#e0f2fe';
         description = '重要な英熟語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge idioms-badge">英熟語</span>';
     } else {
@@ -24376,6 +24387,654 @@ function getStudyLevel(count) {
     if (count < 30) return 2;
     if (count < 50) return 3;
     return 4;
+}
+
+/* ============================================
+   兵庫県公立入試 整序英作（予想問題）モード
+   ============================================ */
+
+let hsCurrentIndex = 0;
+let hsCorrectCount = 0;
+let hsWrongCount = 0;
+let hsAnswered = false;
+let hsData = [];
+
+function initHyogoSeijoLearning() {
+    hsData = [...hyogoSeijoQuestions];
+    hsCurrentIndex = 0;
+    hsCorrectCount = 0;
+    hsWrongCount = 0;
+    hsAnswered = false;
+
+    // 画面遷移（他テストモードと同じ手順）
+    elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) courseSelection.classList.add('hidden');
+    elements.mainContent.classList.remove('hidden');
+    
+    // テーマカラー・ヘッダー・ボディクラス
+    updateThemeColor(true);
+    document.body.classList.add('learning-mode');
+    document.body.classList.add('hyogo-seijo-mode-active');
+    updateHeaderButtons('learning', '', true);
+    
+    // ヘッダー設定：タイトル非表示、進捗をヘッダー中央に表示
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress) {
+        testModeProgress.classList.remove('hidden');
+        testModeProgress.textContent = `0/${hsData.length}`;
+    }
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    const unitPauseBtn = document.getElementById('unitPauseBtn');
+    const unitTestBtn = document.getElementById('unitTestBtn');
+    if (inputBackBtn) inputBackBtn.classList.add('hidden');
+    if (unitPauseBtn) unitPauseBtn.classList.remove('hidden');
+    if (unitTestBtn) unitTestBtn.classList.add('hidden');
+    
+    const hsMode = document.getElementById('hyogoSeijoMode');
+    
+    // 他のモードや学習UI要素を非表示にする（card-area-wrapperは隠さない）
+    const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
+    const inputMode = document.getElementById('inputMode');
+    const inputListView = document.getElementById('inputListView');
+    const sentenceMode = document.getElementById('sentenceMode');
+    const reorderMode = document.getElementById('reorderMode');
+    const cardHint = document.getElementById('cardHint');
+    const choiceMode = document.getElementById('choiceQuestionMode');
+    const progressStepButtons = document.querySelector('.progress-step-buttons');
+    const grammarSection = document.querySelector('.grammar-section-view');
+    
+    if (wordCard) wordCard.classList.add('hidden');
+    if (wordCardContainer) wordCardContainer.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (inputListView) inputListView.classList.add('hidden');
+    if (sentenceMode) sentenceMode.classList.add('hidden');
+    if (reorderMode) reorderMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.add('hidden');
+    if (cardHint) cardHint.classList.add('hidden');
+    if (progressStepButtons) progressStepButtons.classList.add('hidden');
+    if (grammarSection) grammarSection.classList.add('hidden');
+    
+    // 既存の進捗ヘッダーを非表示
+    const existingProgressHeaders = document.querySelectorAll('.progress-header:not(.hyogo-seijo-progress-header)');
+    existingProgressHeaders.forEach(el => el.classList.add('hidden'));
+    
+    if (hsMode) hsMode.classList.remove('hidden');
+
+    // ボタンイベント
+    const submitBtn = document.getElementById('hsSeijoSubmitBtn');
+    const resetBtn = document.getElementById('hsSeijoResetBtn');
+
+    // 古いリスナーを除去（クローンで置換）
+    if (submitBtn) {
+        const newSubmit = submitBtn.cloneNode(true);
+        submitBtn.parentNode.replaceChild(newSubmit, submitBtn);
+        newSubmit.addEventListener('click', handleHsSeijoSubmit);
+    }
+    if (resetBtn) {
+        const newReset = resetBtn.cloneNode(true);
+        resetBtn.parentNode.replaceChild(newReset, resetBtn);
+        newReset.addEventListener('click', handleHsSeijoReset);
+    }
+
+    displayHsSeijoQuestion();
+}
+
+function displayHsSeijoQuestion() {
+    if (hsCurrentIndex >= hsData.length) {
+        showHsSeijoResults();
+        return;
+    }
+
+    hsAnswered = false;
+    const question = hsData[hsCurrentIndex];
+    
+    // 進捗更新
+    updateHsSeijoProgress();
+
+    // 問題文を構築
+    const passageArea = document.getElementById('hsSeijoPassage');
+    passageArea.innerHTML = '';
+
+    // 指示文
+    const instructionDiv = document.createElement('div');
+    instructionDiv.className = 'hs-instruction';
+    instructionDiv.textContent = question.instruction;
+    passageArea.appendChild(instructionDiv);
+
+    // 本文
+    const textDiv = document.createElement('div');
+    textDiv.className = 'hs-passage-text-area';
+    
+    question.passage.forEach(line => {
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'hs-passage-line';
+        
+        if (line.style === 'title') {
+            lineDiv.className = 'hs-passage-title';
+            lineDiv.textContent = line.text;
+        } else if (line.blankId) {
+            // この行に空所がある
+            const beforeText = document.createTextNode(line.text);
+            lineDiv.appendChild(beforeText);
+            
+            const blankLabel = line.blankId === 'a' ? '〔あ〕' : '〔い〕';
+            const blankSpan = document.createElement('span');
+            blankSpan.className = 'hs-passage-blank';
+            blankSpan.textContent = blankLabel;
+            blankSpan.dataset.blankId = line.blankId;
+            lineDiv.appendChild(blankSpan);
+            
+            if (line.after) {
+                const afterText = document.createTextNode(line.after);
+                lineDiv.appendChild(afterText);
+            }
+        } else {
+            lineDiv.textContent = line.text;
+        }
+        
+        textDiv.appendChild(lineDiv);
+    });
+    
+    passageArea.appendChild(textDiv);
+
+    // 空所〔あ〕セクション
+    buildHsBlankSection('a', question.blanks.a);
+    // 空所〔い〕セクション
+    buildHsBlankSection('b', question.blanks.b);
+
+    // 正解表示を非表示に
+    const correctDiv = document.getElementById('hsSeijoCorrectAnswer');
+    correctDiv.classList.add('hidden');
+    correctDiv.innerHTML = '';
+
+    // ボタンテキストリセット
+    const submitBtn = document.getElementById('hsSeijoSubmitBtn');
+    if (submitBtn) submitBtn.textContent = '解答';
+}
+
+// タッチドラッグ用の状態管理
+let hsTouchData = {
+    draggingElement: null,
+    ghostElement: null,
+    blankKey: null,
+    fromBlankIndex: null,
+    startX: 0,
+    startY: 0
+};
+
+function buildHsBlankSection(blankKey, blankData) {
+    const slotsContainer = document.getElementById(blankKey === 'a' ? 'hsSeijoSlotsA' : 'hsSeijoSlotsB');
+    const choicesContainer = document.getElementById(blankKey === 'a' ? 'hsSeijoChoicesA' : 'hsSeijoChoicesB');
+    const labelDiv = slotsContainer.parentElement.querySelector('.hs-blank-label');
+    
+    labelDiv.textContent = blankData.label === 'あ' ? '〔あ〕' : '〔い〕';
+    
+    // 空欄ボックスを生成（reorder方式）
+    slotsContainer.innerHTML = '';
+    for (let i = 0; i < blankData.slotCount; i++) {
+        const blankBox = document.createElement('div');
+        blankBox.className = 'hs-answer-slot';
+        blankBox.dataset.slotIndex = i;
+        blankBox.dataset.blankKey = blankKey;
+        
+        // ドラッグ＆ドロップイベント
+        blankBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            blankBox.classList.add('drag-over');
+        });
+        blankBox.addEventListener('dragleave', () => {
+            blankBox.classList.remove('drag-over');
+        });
+        blankBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            blankBox.classList.remove('drag-over');
+            if (hsAnswered) return;
+            const word = e.dataTransfer.getData('text/plain');
+            const fromBlank = e.dataTransfer.getData('hs-from-blank');
+            const fromKey = e.dataTransfer.getData('hs-blank-key');
+            if (fromBlank !== '' && fromKey === blankKey) {
+                // 空欄内の並べ替え
+                hsRemoveWordFromSlot(parseInt(fromBlank), blankKey);
+            }
+            hsPlaceWordInBlank(word, blankBox, blankKey);
+        });
+        
+        slotsContainer.appendChild(blankBox);
+    }
+
+    // 語群チップを生成（シャッフル）
+    choicesContainer.innerHTML = '';
+    const shuffledWords = [...blankData.words].sort(() => Math.random() - 0.5);
+    
+    shuffledWords.forEach(word => {
+        const chip = document.createElement('div');
+        chip.className = 'hs-word-chip';
+        chip.textContent = word;
+        chip.dataset.word = word;
+        chip.dataset.blankKey = blankKey;
+        chip.draggable = true;
+        
+        // マウスドラッグ
+        chip.addEventListener('dragstart', (e) => {
+            if (hsAnswered) return;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', word);
+            e.dataTransfer.setData('hs-blank-key', blankKey);
+            e.dataTransfer.setData('hs-from-blank', '');
+            chip.classList.add('dragging');
+        });
+        chip.addEventListener('dragend', () => {
+            chip.classList.remove('dragging');
+        });
+        
+        // タップで配置
+        chip.addEventListener('click', () => {
+            if (hsAnswered || chip.classList.contains('used')) return;
+            const slotsEl = document.getElementById(blankKey === 'a' ? 'hsSeijoSlotsA' : 'hsSeijoSlotsB');
+            const emptySlot = slotsEl.querySelector('.hs-answer-slot:not(.filled)');
+            if (emptySlot) {
+                hsPlaceWordInBlank(word, emptySlot, blankKey);
+            }
+        });
+        
+        // タッチドラッグ
+        chip.addEventListener('touchstart', (e) => hsHandleTouchStart(e, chip, blankKey, null), { passive: false });
+        chip.addEventListener('touchmove', hsHandleTouchMove, { passive: false });
+        chip.addEventListener('touchend', hsHandleTouchEnd, { passive: false });
+        
+        choicesContainer.appendChild(chip);
+    });
+    
+    // 語群エリアへのドロップ（空欄から戻す用）
+    choicesContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    });
+    choicesContainer.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (hsAnswered) return;
+        const word = e.dataTransfer.getData('text/plain');
+        const fromBlank = e.dataTransfer.getData('hs-from-blank');
+        const fromKey = e.dataTransfer.getData('hs-blank-key');
+        if (fromBlank !== '' && fromKey === blankKey) {
+            hsRemoveWordFromSlot(parseInt(fromBlank), blankKey);
+        }
+    });
+}
+
+function hsPlaceWordInBlank(word, blankBox, blankKey) {
+    // 既に語が入っていたら先に戻す
+    if (blankBox.dataset.filledWord) {
+        hsRemoveWordFromSlot(parseInt(blankBox.dataset.slotIndex), blankKey);
+    }
+    
+    blankBox.dataset.filledWord = word;
+    blankBox.classList.add('filled');
+    blankBox.textContent = word;
+    blankBox.draggable = true;
+    
+    // 空欄内の語のドラッグ設定
+    blankBox.addEventListener('dragstart', function onDragStart(e) {
+        if (hsAnswered) return;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', word);
+        e.dataTransfer.setData('hs-from-blank', blankBox.dataset.slotIndex);
+        e.dataTransfer.setData('hs-blank-key', blankKey);
+        blankBox.classList.add('dragging');
+    });
+    blankBox.addEventListener('dragend', function onDragEnd() {
+        blankBox.classList.remove('dragging');
+    });
+    
+    // 空欄タップで戻す
+    const clickHandler = () => {
+        if (hsAnswered) return;
+        hsRemoveWordFromSlot(parseInt(blankBox.dataset.slotIndex), blankKey);
+    };
+    blankBox._hsClickHandler = clickHandler;
+    blankBox.addEventListener('click', clickHandler);
+    
+    // タッチドラッグ
+    blankBox.addEventListener('touchstart', (e) => hsHandleTouchStart(e, blankBox, blankKey, blankBox.dataset.slotIndex), { passive: false });
+    blankBox.addEventListener('touchmove', hsHandleTouchMove, { passive: false });
+    blankBox.addEventListener('touchend', hsHandleTouchEnd, { passive: false });
+    
+    // 語群の対応チップをusedに
+    const choicesContainer = document.getElementById(blankKey === 'a' ? 'hsSeijoChoicesA' : 'hsSeijoChoicesB');
+    const chips = choicesContainer.querySelectorAll('.hs-word-chip');
+    for (const chip of chips) {
+        if (chip.dataset.word === word && !chip.classList.contains('used')) {
+            chip.classList.add('used');
+            break;
+        }
+    }
+    
+    updatePassageBlankDisplay(blankKey);
+}
+
+function hsRemoveWordFromSlot(slotIndex, blankKey) {
+    const slotsContainer = document.getElementById(blankKey === 'a' ? 'hsSeijoSlotsA' : 'hsSeijoSlotsB');
+    const slot = slotsContainer.querySelector(`.hs-answer-slot[data-slot-index="${slotIndex}"]`);
+    if (!slot || !slot.dataset.filledWord) return;
+    
+    const word = slot.dataset.filledWord;
+    
+    // スロットをリセット
+    delete slot.dataset.filledWord;
+    slot.classList.remove('filled');
+    slot.textContent = '';
+    slot.draggable = false;
+    if (slot._hsClickHandler) {
+        slot.removeEventListener('click', slot._hsClickHandler);
+        delete slot._hsClickHandler;
+    }
+    
+    // 語群のチップを戻す
+    const choicesContainer = document.getElementById(blankKey === 'a' ? 'hsSeijoChoicesA' : 'hsSeijoChoicesB');
+    const chips = choicesContainer.querySelectorAll('.hs-word-chip');
+    for (const chip of chips) {
+        if (chip.dataset.word === word && chip.classList.contains('used')) {
+            chip.classList.remove('used');
+            break;
+        }
+    }
+    
+    updatePassageBlankDisplay(blankKey);
+}
+
+// タッチドラッグ処理
+function hsHandleTouchStart(e, element, blankKey, fromSlotIndex) {
+    if (hsAnswered) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    hsTouchData.startX = touch.clientX;
+    hsTouchData.startY = touch.clientY;
+    hsTouchData.draggingElement = element;
+    hsTouchData.blankKey = blankKey;
+    hsTouchData.fromBlankIndex = fromSlotIndex;
+    
+    // ゴースト要素を作成
+    const ghost = document.createElement('div');
+    ghost.className = 'hs-word-chip hs-touch-ghost';
+    ghost.textContent = element.dataset.word || element.dataset.filledWord || element.textContent;
+    ghost.style.position = 'fixed';
+    ghost.style.left = (touch.clientX - 30) + 'px';
+    ghost.style.top = (touch.clientY - 20) + 'px';
+    ghost.style.zIndex = '99999';
+    ghost.style.pointerEvents = 'none';
+    ghost.style.opacity = '0.85';
+    ghost.style.transform = 'scale(1.1)';
+    ghost.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    document.body.appendChild(ghost);
+    hsTouchData.ghostElement = ghost;
+    
+    element.classList.add('dragging');
+}
+
+function hsHandleTouchMove(e) {
+    if (!hsTouchData.draggingElement) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    if (hsTouchData.ghostElement) {
+        hsTouchData.ghostElement.style.left = (touch.clientX - 30) + 'px';
+        hsTouchData.ghostElement.style.top = (touch.clientY - 20) + 'px';
+    }
+}
+
+function hsHandleTouchEnd(e) {
+    if (!hsTouchData.draggingElement) return;
+    e.preventDefault();
+    
+    const element = hsTouchData.draggingElement;
+    const blankKey = hsTouchData.blankKey;
+    const fromSlotIndex = hsTouchData.fromBlankIndex;
+    element.classList.remove('dragging');
+    
+    // ゴースト削除
+    if (hsTouchData.ghostElement) {
+        hsTouchData.ghostElement.remove();
+        hsTouchData.ghostElement = null;
+    }
+    
+    const touch = e.changedTouches[0];
+    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    if (dropTarget) {
+        const slotTarget = dropTarget.closest('.hs-answer-slot');
+        const choicesTarget = dropTarget.closest('.hs-word-choices');
+        
+        if (slotTarget && slotTarget.dataset.blankKey === blankKey) {
+            // 空欄にドロップ
+            const word = element.dataset.word || element.dataset.filledWord;
+            if (fromSlotIndex !== null) {
+                hsRemoveWordFromSlot(parseInt(fromSlotIndex), blankKey);
+            }
+            hsPlaceWordInBlank(word, slotTarget, blankKey);
+        } else if (choicesTarget && fromSlotIndex !== null) {
+            // 語群エリアに戻す
+            hsRemoveWordFromSlot(parseInt(fromSlotIndex), blankKey);
+        }
+    }
+    
+    // リセット
+    hsTouchData.draggingElement = null;
+    hsTouchData.blankKey = null;
+    hsTouchData.fromBlankIndex = null;
+}
+
+function updatePassageBlankDisplay(blankKey) {
+    const slotsContainer = document.getElementById(blankKey === 'a' ? 'hsSeijoSlotsA' : 'hsSeijoSlotsB');
+    const slots = slotsContainer.querySelectorAll('.hs-answer-slot');
+    
+    const words = [];
+    slots.forEach(slot => {
+        if (slot.dataset.filledWord) {
+            words.push(slot.dataset.filledWord);
+        }
+    });
+    
+    const blankSpans = document.querySelectorAll(`.hs-passage-blank[data-blank-id="${blankKey}"]`);
+    blankSpans.forEach(span => {
+        if (words.length > 0) {
+            span.textContent = words.join(' ');
+            span.style.color = '#374151';
+            span.style.background = '#f3f4f6';
+            span.style.borderStyle = 'solid';
+        } else {
+            span.textContent = blankKey === 'a' ? '〔あ〕' : '〔い〕';
+            span.style.color = '';
+            span.style.background = '';
+            span.style.borderStyle = '';
+        }
+    });
+}
+
+function handleHsSeijoSubmit() {
+    if (hsAnswered) {
+        // 次の問題へ
+        hsCurrentIndex++;
+        displayHsSeijoQuestion();
+        return;
+    }
+    
+    const question = hsData[hsCurrentIndex];
+    
+    // 〔あ〕と〔い〕の回答をチェック
+    const resultA = checkHsBlankAnswer('a', question.blanks.a);
+    const resultB = checkHsBlankAnswer('b', question.blanks.b);
+    
+    // 全スロットが埋まっているかチェック
+    if (!resultA.allFilled || !resultB.allFilled) {
+        showAlert('未完成', '全てのスロットに語を入れてください。');
+        return;
+    }
+    
+    const isCorrect = resultA.correct && resultB.correct;
+    
+    if (isCorrect) {
+        hsCorrectCount++;
+    } else {
+        hsWrongCount++;
+    }
+    
+    hsAnswered = true;
+    
+    // スロットの色分け
+    markHsSlots('a', question.blanks.a);
+    markHsSlots('b', question.blanks.b);
+    
+    // 正解表示
+    const correctDiv = document.getElementById('hsSeijoCorrectAnswer');
+    correctDiv.classList.remove('hidden');
+    
+    const resultIcon = isCorrect ? '⭕' : '❌';
+    const resultLabel = isCorrect ? '正解！' : '不正解';
+    const resultClass = isCorrect ? 'correct' : 'wrong';
+    
+    correctDiv.innerHTML = `
+        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+            <span class="hs-result-mark ${resultClass}">${isCorrect ? '○' : '×'}</span>
+            <span style="font-weight: 700; font-size: 16px; color: ${isCorrect ? '#16a34a' : '#dc2626'};">${resultLabel}</span>
+        </div>
+        <div class="hs-correct-answer-title">正解</div>
+        <div class="hs-correct-answer-text">
+            〔あ〕 ${question.blanks.a.correctOrder.join(' ')}<br>
+            〔い〕 ${question.blanks.b.correctOrder.join(' ')}
+        </div>
+    `;
+    
+    // ボタンテキスト更新
+    const submitBtn = document.getElementById('hsSeijoSubmitBtn');
+    if (submitBtn) {
+        if (hsCurrentIndex < hsData.length - 1) {
+            submitBtn.textContent = '次の問題へ';
+        } else {
+            submitBtn.textContent = '結果を見る';
+        }
+    }
+    
+    updateHsSeijoProgress();
+}
+
+function checkHsBlankAnswer(blankKey, blankData) {
+    const slotsContainer = document.getElementById(blankKey === 'a' ? 'hsSeijoSlotsA' : 'hsSeijoSlotsB');
+    const slots = slotsContainer.querySelectorAll('.hs-answer-slot');
+    
+    const userWords = [];
+    let allFilled = true;
+    
+    slots.forEach(slot => {
+        if (slot.dataset.filledWord) {
+            userWords.push(slot.dataset.filledWord.toLowerCase());
+        } else {
+            allFilled = false;
+        }
+    });
+    
+    if (!allFilled) return { correct: false, allFilled: false };
+    
+    const correctWords = blankData.correctOrder.map(w => w.toLowerCase());
+    const correct = userWords.length === correctWords.length && 
+                    userWords.every((w, i) => w === correctWords[i]);
+    
+    return { correct, allFilled: true };
+}
+
+function markHsSlots(blankKey, blankData) {
+    const slotsContainer = document.getElementById(blankKey === 'a' ? 'hsSeijoSlotsA' : 'hsSeijoSlotsB');
+    const slots = slotsContainer.querySelectorAll('.hs-answer-slot');
+    const correctWords = blankData.correctOrder.map(w => w.toLowerCase());
+    
+    slots.forEach((slot, i) => {
+        const word = (slot.dataset.filledWord || '').toLowerCase();
+        if (word === correctWords[i]) {
+            slot.classList.add('correct-slot');
+        } else {
+            slot.classList.add('wrong-slot');
+        }
+    });
+}
+
+function handleHsSeijoReset() {
+    if (hsAnswered) return;
+    
+    // パス（不正解扱い）
+    const question = hsData[hsCurrentIndex];
+    hsWrongCount++;
+    hsAnswered = true;
+    
+    // 正解表示
+    const correctDiv = document.getElementById('hsSeijoCorrectAnswer');
+    correctDiv.classList.remove('hidden');
+    correctDiv.innerHTML = `
+        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+            <span class="hs-result-mark wrong">×</span>
+            <span style="font-weight: 700; font-size: 16px; color: #dc2626;">パス</span>
+        </div>
+        <div class="hs-correct-answer-title">正解</div>
+        <div class="hs-correct-answer-text">
+            〔あ〕 ${question.blanks.a.correctOrder.join(' ')}<br>
+            〔い〕 ${question.blanks.b.correctOrder.join(' ')}
+        </div>
+    `;
+    
+    const submitBtn = document.getElementById('hsSeijoSubmitBtn');
+    if (submitBtn) {
+        if (hsCurrentIndex < hsData.length - 1) {
+            submitBtn.textContent = '次の問題へ';
+        } else {
+            submitBtn.textContent = '結果を見る';
+        }
+    }
+    
+    updateHsSeijoProgress();
+}
+
+function updateHsSeijoProgress() {
+    const total = hsData.length;
+    const answered = hsCorrectCount + hsWrongCount;
+    
+    // ヘッダー中央の進捗テキスト更新
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (testModeProgress) testModeProgress.textContent = `${answered}/${total}`;
+    
+    // 進捗バー内のテキスト・バー更新
+    const progressText = document.getElementById('hyogoSeijoProgressText');
+    const progressFill = document.getElementById('hyogoSeijoProgressBarFill');
+    const correctEl = document.getElementById('hyogoSeijoCorrectCount');
+    const wrongEl = document.getElementById('hyogoSeijoWrongCount');
+    
+    if (progressText) progressText.textContent = `${answered}/${total}`;
+    if (progressFill) progressFill.style.width = total > 0 ? `${(answered / total) * 100}%` : '0%';
+    if (correctEl) correctEl.textContent = hsCorrectCount;
+    if (wrongEl) wrongEl.textContent = hsWrongCount;
+}
+
+function showHsSeijoResults() {
+    const total = hsData.length;
+    const hsMode = document.getElementById('hyogoSeijoMode');
+    
+    hsMode.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; padding: 32px 16px; text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 16px;">${hsCorrectCount === total ? '🎉' : '📝'}</div>
+            <div style="font-size: 22px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">結果発表</div>
+            <div style="font-size: 16px; color: #475569; margin-bottom: 24px;">${total}問中 ${hsCorrectCount}問正解</div>
+            <div style="display: flex; gap: 24px; margin-bottom: 32px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 32px; font-weight: 700; color: #16a34a;">${hsCorrectCount}</div>
+                    <div style="font-size: 13px; color: #64748b;">正解</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 32px; font-weight: 700; color: #dc2626;">${hsWrongCount}</div>
+                    <div style="font-size: 13px; color: #64748b;">不正解</div>
+                </div>
+            </div>
+            <button onclick="location.reload()" style="padding: 12px 32px; background: #2563eb; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer;">ホームに戻る</button>
+        </div>
+    `;
 }
 
 

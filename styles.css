@@ -1325,8 +1325,8 @@ body.learning-mode .app-header {
 /* 英熟語マスタコース：レベル1-4・熟語一覧 */
 #courseIdiomsSection .idioms-level-card .category-name .idioms-badge {
     margin: 0 auto 6px auto;
-    color: #047857;
-    background: #d1fae5;
+    color: #0369a1;
+    background: #e0f2fe;
 }
 #courseIdiomsSection .idioms-level-card .category-progress-text {
     display: none !important;
@@ -3465,7 +3465,7 @@ body.learning-mode .app-header {
 }
 
 .course-tab-line-main {
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 800;
 }
 
@@ -3483,7 +3483,7 @@ body.learning-mode .app-header {
 }
 
 .course-tab[data-target="courseIdiomsSection"].active {
-    background: #059669;
+    background: #0284c7;
     color: #ffffff;
 }
 
@@ -3864,8 +3864,8 @@ body.learning-mode .app-header {
     padding: 2px 8px;
     font-size: 13px;
     font-weight: 700;
-    color: #047857;
-    background: #d1fae5;
+    color: #0369a1;
+    background: #e0f2fe;
     border-radius: 6px;
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
 }
@@ -4976,9 +4976,9 @@ button.category-card:focus-visible {
     font-size: 11px;
     letter-spacing: 0.04em;
     line-height: 1;
-    color: #0369a1;
+    color: #2563eb;
     margin-right: 6px;
-    background: #e0f2fe;
+    background: #dbeafe;
     border: none;
     box-shadow: none;
     transform: translateY(-2px);
@@ -5009,23 +5009,23 @@ button.category-card:focus-visible {
     margin-left: 2px;
 }
 
-/* 各レベル共通カラー（薄い青で統一） */
+/* 各レベル共通カラー（青で統一） */
 .level-badge.level-badge-green,
 .level-badge.level-badge-red,
 .level-badge.level-badge-orange,
 .level-badge.level-badge-blue,
 .level-badge.level-badge-purple,
 .level-badge.level-badge-dark {
-    color: #0369a1;
-    background: #e0f2fe;
+    color: #2563eb;
+    background: #dbeafe;
     border: none;
 }
 
 /* カテゴリーカード内の個別調整（Level 4, 5） */
 .category-card[data-category*="LEVEL4"] .level-badge,
 .category-card[data-category*="LEVEL5"] .level-badge {
-    color: #0369a1;
-    background: #e0f2fe;
+    color: #2563eb;
+    background: #dbeafe;
     border: none;
 }
 
@@ -5656,9 +5656,10 @@ button.category-card:focus-visible {
     min-height: 0;
 }
 
-/* 厳選例文暗記・四択問題モードの背景を白に */
+/* 厳選例文暗記・四択問題・兵庫整序英作モードの背景を白に */
 body.sentence-mode-active .learning-view,
-body.choice-question-mode-active .learning-view {
+body.choice-question-mode-active .learning-view,
+body.hyogo-seijo-mode-active .learning-view {
     background: #ffffff;
 }
 
@@ -6674,22 +6675,27 @@ body.quiz-test-mode .progress-top-row {
 }
 
 /* 例文・整序モードではカードUIを隠す */
-/* 例文モード・整序英作文モード・四択問題モードではカード関連要素を完全に非表示 */
+/* 例文モード・整序英作文モード・四択問題モード・兵庫整序英作モードではカード関連要素を完全に非表示 */
 body.sentence-mode-active #wordCard,
 body.reorder-mode-active #wordCard,
 body.choice-question-mode-active #wordCard,
+body.hyogo-seijo-mode-active #wordCard,
 body.sentence-mode-active #cardHint,
 body.reorder-mode-active #cardHint,
 body.choice-question-mode-active #cardHint,
+body.hyogo-seijo-mode-active #cardHint,
 body.sentence-mode-active .word-card,
 body.reorder-mode-active .word-card,
 body.choice-question-mode-active .word-card,
+body.hyogo-seijo-mode-active .word-card,
 body.sentence-mode-active #wordCardContainer,
 body.reorder-mode-active #wordCardContainer,
 body.choice-question-mode-active #wordCardContainer,
+body.hyogo-seijo-mode-active #wordCardContainer,
 body.sentence-mode-active .word-card-container,
 body.reorder-mode-active .word-card-container,
-body.choice-question-mode-active .word-card-container {
+body.choice-question-mode-active .word-card-container,
+body.hyogo-seijo-mode-active .word-card-container {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
@@ -12866,22 +12872,25 @@ body.quiz-test-mode.choice-question-mode-active .hw-progress-bottom-row {
     display: none !important;
 }
 
-/* 厳選例文暗記・四択問題モードのグレー線を削除 */
+/* 厳選例文暗記・四択問題・兵庫整序英作モードのグレー線を削除 */
 body.sentence-mode-active .card-area-wrapper,
-body.choice-question-mode-active .card-area-wrapper {
+body.choice-question-mode-active .card-area-wrapper,
+body.hyogo-seijo-mode-active .card-area-wrapper {
     border: none;
     box-shadow: none;
     background: #ffffff;
 }
 
 body.sentence-mode-active .app-main,
-body.choice-question-mode-active .app-main {
+body.choice-question-mode-active .app-main,
+body.hyogo-seijo-mode-active .app-main {
     background: #ffffff;
 }
 
 /* ヘッダー下のmargin（グレー線）を削除 */
 body.sentence-mode-active .unit-header-container,
-body.choice-question-mode-active .unit-header-container {
+body.choice-question-mode-active .unit-header-container,
+body.hyogo-seijo-mode-active .unit-header-container {
     margin-bottom: 0;
     border-bottom: none;
     box-shadow: none;
@@ -12889,7 +12898,8 @@ body.choice-question-mode-active .unit-header-container {
 
 /* 進捗バーのセグメント背景色を設定 */
 body.sentence-mode-active .progress-bar-container,
-body.choice-question-mode-active .progress-bar-container {
+body.choice-question-mode-active .progress-bar-container,
+body.hyogo-seijo-mode-active .progress-bar-container {
     background: transparent;
     margin-bottom: 8px;
     margin-left: 0;
@@ -12900,8 +12910,10 @@ body.choice-question-mode-active .progress-bar-container {
 /* 進捗バーのテキスト行を非表示（ヘッダーに表示するため） */
 body.sentence-mode-active .sentence-progress-header .progress-top-row,
 body.choice-question-mode-active .choice-progress-header .progress-top-row,
+body.hyogo-seijo-mode-active .hyogo-seijo-progress-header .progress-top-row,
 body.sentence-mode-active .sentence-progress-header .hw-progress-bottom-row,
-body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row {
+body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row,
+body.hyogo-seijo-mode-active .hyogo-seijo-progress-header .hw-progress-bottom-row {
     display: none;
 }
 
@@ -19765,7 +19777,8 @@ body.choice-question-mode-active .choice-question-mode {
 }
 
 /* 四択問題モードの進捗バー */
-.choice-progress-header {
+.choice-progress-header,
+.hyogo-seijo-progress-header {
     background: transparent;
     padding: 0 16px;
     margin-bottom: 12px;
@@ -21295,8 +21308,8 @@ body.learning-mode .floating-review-btn {
 }
 
 .card-expand-overlay .expand-title .level-badge.idioms-badge {
-    color: #047857;
-    background: #d1fae5;
+    color: #0369a1;
+    background: #e0f2fe;
 }
 
 .card-expand-overlay .expand-title .level-badge b {
@@ -21682,15 +21695,20 @@ div#inputWordCheckbox,
    サブカテゴリーカード（Section）デザイン
    ======================================== */
 
-/* 上段：Section / No.範囲 / 語数を1行に */
-.subcat-top-row {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    flex-wrap: wrap;
+/* カード情報エリアのパディング */
+.category-card-with-actions .category-info:has(.subcat-top-row) {
+    padding: 14px 14px 16px;
 }
 
-/* 最終学習日ラベル（カード右上に固定・左端揃え） */
+/* 上段：縦レイアウト（セクションバッジ → 番号） */
+.subcat-top-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+/* 最終学習日ラベル（カード右上に固定） */
 .subcat-last-study {
     position: absolute;
     top: 12px;
@@ -21732,64 +21750,67 @@ div#inputWordCheckbox,
     flex-shrink: 0;
 }
 
-/* セクション1, セクション2... バッジ風 */
+/* セクションバッジ：小さくコンパクトに */
 .subcat-section {
     display: inline-flex;
     align-items: center;
-    font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
+    gap: 1px;
+    font-size: 9.5px;
+    font-weight: 700;
     line-height: 1;
     white-space: nowrap;
     letter-spacing: 0.04em;
-    padding: 5px 10px;
-    border-radius: 6px;
-    background: var(--subcat-bg, #e0f2fe);
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: var(--subcat-marker, #e0f2fe);
     color: var(--subcat-color, #0369a1);
-    min-height: 24px;
     box-sizing: border-box;
 }
 .subcat-section-n {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 22px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 800;
     line-height: 1;
-    letter-spacing: -0.01em;
-    margin-left: 3px;
+    letter-spacing: 0;
+    margin-left: 2px;
     color: inherit;
 }
 
-/* 単語番号：文字のみ */
-.subcat-range-card {
-    display: inline-flex;
+/* 単語番号行：大きく目立たせる */
+.subcat-range-line {
+    display: flex;
     align-items: baseline;
-    align-self: center;
-    gap: 2px;
+    gap: 0;
     line-height: 1;
+    padding-left: 1px;
 }
 
 .subcat-range-no {
-    font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 10px;
-    font-weight: 500;
-    color: #0369a1;
-    opacity: 0.85;
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
     letter-spacing: 0.02em;
-    margin-right: 2px;
+    margin-right: 3px;
+    align-self: baseline;
 }
 
-.subcat-range-nums {
-    font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 17px;
+.subcat-range-num {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 27px;
     font-weight: 600;
     color: #0369a1;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.08em;
+    line-height: 1;
 }
 
 .subcat-range-sep {
-    color: #0369a1;
-    opacity: 0.6;
-    margin: 0 1px;
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #38bdf8;
+    margin: 0 5px;
+    line-height: 1;
 }
 
 /* 下段：プログレスバー + 数字 */
@@ -21797,11 +21818,7 @@ div#inputWordCheckbox,
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-top: 14px;
-}
-
-.category-card-with-actions .category-info:has(.subcat-top-row) {
-    padding: 18px 12px;
+    margin-top: 10px;
 }
 
 .subcat-progress-row .category-progress-bar {
@@ -21831,4 +21848,341 @@ div#inputWordCheckbox,
     font-weight: 400;
     opacity: 0.5;
     margin: 0 1px;
+}
+
+/* ============================================
+   兵庫県整序英作モード (Hyogo Seijo)
+   ============================================ */
+
+.hyogo-seijo-mode {
+    padding: 0 16px 120px 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 兵庫整序英作モード時のスクロールとレイアウト */
+body.hyogo-seijo-mode-active .card-area-wrapper {
+    overflow-y: auto !important;
+    display: block !important;
+    padding-top: 0;
+}
+
+body.hyogo-seijo-mode-active .app-main {
+    overflow-y: auto !important;
+}
+
+body.hyogo-seijo-mode-active .learning-view {
+    overflow-y: auto !important;
+}
+
+/* 兵庫整序英作モード：ヘッダーをquiz-test-modeと同じ白スタイルに */
+body.hyogo-seijo-mode-active .unit-header-container {
+    background: #ffffff;
+    justify-content: center;
+    margin-bottom: 0;
+    border-bottom: none;
+    box-shadow: none;
+}
+
+body.hyogo-seijo-mode-active .unit-header-container .unit-name,
+body.hyogo-seijo-mode-active .unit-header-container .input-back-btn,
+body.hyogo-seijo-mode-active .unit-header-container .unit-test-btn {
+    display: none !important;
+}
+
+body.hyogo-seijo-mode-active .unit-header-container .test-mode-progress {
+    display: block !important;
+    color: #333333;
+}
+
+body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-top: calc(env(safe-area-inset-top) / 2);
+    color: #333333;
+}
+
+/* 兵庫バッジ */
+.exam-badge-hyogo {
+    color: #1d4ed8 !important;
+    background: #dbeafe !important;
+}
+
+/* 問題文指示（プリント風・装飾なし） */
+.hs-instruction {
+    font-size: 14px;
+    color: #1f2937;
+    line-height: 1.9;
+    margin-bottom: 14px;
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+/* 本文エリア（コンテナ） */
+.hs-passage-area {
+    margin-bottom: 18px;
+}
+
+/* 英文本文（プリント風：細い黒枠、角なし） */
+.hs-passage-text-area {
+    background: #ffffff;
+    border: 1px solid #9ca3af;
+    border-radius: 0;
+    padding: 18px 16px;
+    line-height: 2.2;
+    font-size: 15.5px;
+    color: #1f2937;
+    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "UD Digi Kyokasho N-R", "UDデジタル教科書体", "BIZ UDPGothic", "BIZ UDゴシック", "Yu Gothic", "游ゴシック", sans-serif;
+}
+
+/* 空所マーク・語群はデフォルトフォント */
+.hs-passage-blank {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.hs-answer-slot,
+.hs-word-chip {
+    font-family: "Times New Roman", Times, serif;
+}
+
+.hs-passage-title {
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.hs-passage-line {
+    margin-bottom: 4px;
+}
+
+/* 本文中の空所マーク（プリント風：細い黒枠の四角） */
+.hs-passage-blank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    height: 28px;
+    background: #ffffff;
+    border: 1px solid #6b7280;
+    border-radius: 0;
+    font-weight: 700;
+    font-size: 13px;
+    color: #374151;
+    vertical-align: middle;
+    margin: 0 3px;
+    padding: 0 10px;
+    font-family: inherit;
+}
+
+/* 空所セクション（語群エリア） */
+.hs-blank-section {
+    background: #ffffff;
+    border: none;
+    border-radius: 0;
+    padding: 10px 0;
+    margin-bottom: 8px;
+}
+
+/* 〔あ〕〔い〕ラベル（プリント風：細枠四角） */
+.hs-blank-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #374151;
+    background: #ffffff;
+    border: 1px solid #6b7280;
+    border-radius: 0;
+    padding: 2px 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+/* 解答スロット（タップではめる場所） */
+.hs-answer-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+    min-height: 40px;
+    padding: 6px 0;
+    background: none;
+    border-radius: 0;
+    border: none;
+}
+
+.hs-answer-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 56px;
+    height: 36px;
+    background: #ffffff;
+    border: 1px solid #9ca3af;
+    border-radius: 0;
+    font-size: 15px;
+    color: #9ca3af;
+    padding: 0 10px;
+    transition: all 0.15s;
+    position: relative;
+}
+
+.hs-answer-slot.filled {
+    border: 1.5px solid #374151;
+    background: #ffffff;
+    color: #1f2937;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.hs-answer-slot.correct-slot {
+    border-color: #22c55e;
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.hs-answer-slot.wrong-slot {
+    border-color: #ef4444;
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* ドラッグオーバー時のハイライト */
+.hs-answer-slot.drag-over {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.hs-answer-slot.dragging {
+    opacity: 0.4;
+}
+
+/* タッチゴースト要素 */
+.hs-touch-ghost {
+    position: fixed;
+    z-index: 99999;
+    pointer-events: none;
+    background: #ffffff;
+    border: 1.5px solid #374151;
+    padding: 6px 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* 語群（選択肢の語） */
+.hs-word-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 0;
+    border: 1px solid #9ca3af;
+    border-radius: 0;
+}
+
+.hs-word-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background: #ffffff;
+    border: none;
+    border-right: 1px solid #d1d5db;
+    border-radius: 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1f2937;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background 0.12s;
+    -webkit-tap-highlight-color: transparent;
+    flex: 1;
+    min-width: 0;
+}
+
+.hs-word-chip:last-child {
+    border-right: none;
+}
+
+.hs-word-chip:active {
+    background: #f3f4f6;
+}
+
+.hs-word-chip.used {
+    opacity: 0.3;
+    background: #f9fafb;
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.hs-word-chip.dragging {
+    opacity: 0.5;
+}
+
+/* 正解表示 */
+.hs-correct-answer {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin-top: 12px;
+    margin-bottom: 16px;
+}
+
+.hs-correct-answer-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: #15803d;
+    margin-bottom: 6px;
+}
+
+.hs-correct-answer-text {
+    font-size: 15px;
+    color: #166534;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+/* 結果マーク */
+.hs-result-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+.hs-result-mark.correct {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.hs-result-mark.wrong {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* レスポンシブ */
+@media (max-width: 400px) {
+    .hs-word-chip {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+    .hs-answer-slot {
+        min-width: 48px;
+        height: 34px;
+        font-size: 14px;
+    }
 }
