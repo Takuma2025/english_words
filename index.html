@@ -288,8 +288,9 @@
                 </div>
 
                 <div class="course-tabs" id="courseTabs">
-                    <button class="course-tab active" data-target="courseMasterSection">英単語マスターコース</button>
-                    <button class="course-tab" data-target="courseScoreSection">入試得点力アップコース</button>
+                    <button class="course-tab active" data-target="courseMasterSection"><span class="course-tab-line course-tab-line-main">英単語</span><span class="course-tab-line">コンプリートコース</span></button>
+                    <button class="course-tab" data-target="courseIdiomsSection"><span class="course-tab-line course-tab-line-main">英熟語</span><span class="course-tab-line">マスターコース</span></button>
+                    <button class="course-tab" data-target="courseScoreSection"><span class="course-tab-line course-tab-line-main">入試得点力</span><span class="course-tab-line">アップコース</span></button>
                 </div>
                 <div class="category-list">
                     <div class="course-section" id="courseMasterSection">
@@ -427,33 +428,101 @@
                                 </svg>
                             </div>
                         </button>
-                        <!-- 最後の段: 熟語・連語 & 入試直前 -->
-                        <div class="bottom-menu-row">
-                            <button class="category-card bottom-menu-card idioms-card" id="irregularVerbsCardBtn">
-                                <div class="idioms-grid-wrap">
-                                    <div class="idioms-cell idioms-cell-1"><span class="idioms-char">熟</span></div>
-                                    <div class="idioms-cell idioms-cell-2"><span class="idioms-char">語</span></div>
-                                    <div class="idioms-exam-label">重要英熟語マスター</div>
-                                    <div class="idioms-cell idioms-cell-3"><span class="idioms-char">連</span></div>
-                                    <div class="idioms-cell idioms-cell-4"><span class="idioms-char">語</span></div>
+                    </div>
+                    <div class="course-section hidden" id="courseIdiomsSection">
+                        <button class="category-card idioms-level-card" id="idiomsLevel1CardBtn" data-idioms-level="1">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="level-badge idioms-badge">レベル<b>1</b></span> 1-50語</div>
                                 </div>
-                                <div class="idioms-count" id="progress-text-irregular-verbs">0語</div>
-                                <div class="idioms-meta">高校入試に出る<br>重要な英熟語を覚えよう</div>
-                            </button>
-                            <button class="category-card bottom-menu-card exam1200-card" id="exam1200CardBtn">
-                                <div class="exam1200-grid-wrap">
-                                    <div class="exam1200-cell exam1200-cell-1"><span class="exam1200-char">入</span></div>
-                                    <div class="exam1200-cell exam1200-cell-2"><span class="exam1200-char">試</span></div>
-                                    <div class="exam1200-exam-label">兵庫県高校入試対策</div>
-                                    <div class="exam1200-cell exam1200-cell-3"><span class="exam1200-char">直</span></div>
-                                    <div class="exam1200-cell exam1200-cell-4"><span class="exam1200-char">前</span></div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-idioms-L1" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-idioms-L1" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-idioms-L1">0/0語</div>
                                 </div>
-                                <div class="exam1200-count">1290語</div>
-                                <div class="exam1200-meta">兵庫県公立高校入試過去15年間<br>で出題された英単語</div>
-                            </button>
-                        </div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
+                        <button class="category-card idioms-level-card" id="idiomsLevel2CardBtn" data-idioms-level="2">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="level-badge idioms-badge">レベル<b>2</b></span> 51-100語</div>
+                                </div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-idioms-L2" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-idioms-L2" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-idioms-L2">0/0語</div>
+                                </div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
+                        <button class="category-card idioms-level-card" id="idiomsLevel3CardBtn" data-idioms-level="3">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="level-badge idioms-badge">レベル<b>3</b></span> 101-150語</div>
+                                </div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-idioms-L3" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-idioms-L3" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-idioms-L3">0/0語</div>
+                                </div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
+                        <button class="category-card idioms-level-card" id="idiomsLevel4CardBtn" data-idioms-level="4">
+                            <div class="category-info">
+                                <div class="category-header">
+                                    <div class="category-name"><span class="level-badge idioms-badge">レベル<b>4</b></span> 151-200語</div>
+                                </div>
+                                <div class="category-progress">
+                                    <div class="category-progress-bar">
+                                        <div class="category-progress-correct" id="progress-correct-idioms-L4" style="width: 0%"></div>
+                                        <div class="category-progress-wrong" id="progress-wrong-idioms-L4" style="width: 0%"></div>
+                                    </div>
+                                    <div class="category-progress-text" id="progress-text-idioms-L4">0/0語</div>
+                                </div>
+                            </div>
+                            <div class="category-arrow">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </button>
+                        <button class="category-card bottom-menu-card bottom-menu-card-icon-below" id="idiomsListCardBtn">
+                            <div class="category-info">
+                                <div class="category-name">熟語一覧</div>
+                                <div class="category-meta">すべての英熟語を一覧する</div>
+                            </div>
+                            <div class="all-words-icon icon-below-gray idioms-list-icon">
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+                            </div>
+                        </button>
                     </div>
                     <div class="course-section hidden" id="courseScoreSection">
+                        <button class="category-card bottom-menu-card exam1200-card" id="exam1200CardBtn">
+                            <div class="exam1200-grid-wrap">
+                                <div class="exam1200-cell exam1200-cell-1"><span class="exam1200-char">入</span></div>
+                                <div class="exam1200-cell exam1200-cell-2"><span class="exam1200-char">試</span></div>
+                                <div class="exam1200-exam-label">兵庫県高校入試対策</div>
+                                <div class="exam1200-cell exam1200-cell-3"><span class="exam1200-char">直</span></div>
+                                <div class="exam1200-cell exam1200-cell-4"><span class="exam1200-char">前</span></div>
+                            </div>
+                            <div class="exam1200-count">1290語</div>
+                            <div class="exam1200-meta">兵庫県公立高校入試過去15年間<br>で出題された英単語</div>
+                        </button>
                         <button class="category-card" data-category="英文法中学３年間の総復習" data-exam-type="all">
                             <div class="category-info">
                                 <div class="category-header">

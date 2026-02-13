@@ -1322,6 +1322,19 @@ body.learning-mode .app-header {
     border-right: none;
 }
 
+/* 英熟語マスタコース：レベル1-4・熟語一覧 */
+#courseIdiomsSection .idioms-level-card .category-name .idioms-badge {
+    margin: 0 auto 6px auto;
+    color: #047857;
+    background: #d1fae5;
+}
+#courseIdiomsSection .idioms-level-card .category-progress-text {
+    display: none !important;
+}
+#courseIdiomsSection .idioms-list-icon {
+    color: #9ca3af;
+}
+
 .course-section .category-card .category-info {
     display: flex !important;
     flex-direction: column !important;
@@ -3431,13 +3444,29 @@ body.learning-mode .app-header {
     background: transparent;
     border: none;
     border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 12px;
+    padding: 8px 6px;
+    font-size: 11px;
     font-weight: 700;
     color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
+    white-space: normal;
+    line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+
+.course-tab-line {
+    display: block;
+}
+
+.course-tab-line-main {
+    font-size: 14px;
+    font-weight: 800;
 }
 
 .course-tab::after {
@@ -3445,12 +3474,16 @@ body.learning-mode .app-header {
 }
 
 .course-tab.active {
-    background: #2563eb;
     color: #ffffff;
 }
 
 .course-tab[data-target="courseMasterSection"].active {
     background: #2563eb;
+    color: #ffffff;
+}
+
+.course-tab[data-target="courseIdiomsSection"].active {
+    background: #059669;
     color: #ffffff;
 }
 
@@ -3831,8 +3864,8 @@ body.learning-mode .app-header {
     padding: 2px 8px;
     font-size: 13px;
     font-weight: 700;
-    color: #0f766e;
-    background: #ccfbf1;
+    color: #047857;
+    background: #d1fae5;
     border-radius: 6px;
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
 }
@@ -3881,7 +3914,7 @@ body.learning-mode .app-header {
 .idioms-cell-1,
 .idioms-cell-2,
 .idioms-cell-3,
-.idioms-cell-4 { background: #0d9488; }
+.idioms-cell-4 { background: #0055ca; }
 
 .idioms-exam-label {
     grid-column: 1 / -1;
@@ -3918,7 +3951,7 @@ body.learning-mode .app-header {
     font-family: "Oswald", "Barlow Condensed", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
     font-size: 11px;
     font-weight: 700;
-    color: #0d9488;
+    color: #0055ca;
     line-height: 1;
     text-align: center;
     margin-top: 0;
@@ -21261,6 +21294,11 @@ body.learning-mode .floating-review-btn {
     border-radius: 6px;
 }
 
+.card-expand-overlay .expand-title .level-badge.idioms-badge {
+    color: #047857;
+    background: #d1fae5;
+}
+
 .card-expand-overlay .expand-title .level-badge b {
     font-size: 24px;
 }
@@ -21784,6 +21822,10 @@ div#inputWordCheckbox,
     text-align: right;
     padding: 0 2px;
     letter-spacing: 0.02em;
+}
+.idioms-subcat-card .subcat-progress-num,
+.idioms-subcat-card .subcat-progress-slash {
+    display: none;
 }
 .subcat-progress-slash {
     font-weight: 400;

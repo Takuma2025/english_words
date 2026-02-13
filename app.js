@@ -3113,13 +3113,49 @@ function updateCategoryStars() {
     
 }
 
-// 英熟語カードの語数表示を更新
+// 英熟語レベル1～4の進捗表示を更新
+function updateIdiomsLevelProgressBars() {
+    if (typeof getVocabularyByIdioms === 'undefined' || typeof getVocabularyByIdioms !== 'function') return;
+    const all = getVocabularyByIdioms();
+    const SIZE = 50;
+    for (let level = 1; level <= 4; level++) {
+        const start = (level - 1) * SIZE;
+        const words = all.slice(start, start + SIZE);
+        if (words.length === 0) {
+            const textEl = document.getElementById(`progress-text-idioms-L${level}`);
+            if (textEl) textEl.textContent = '0/0語';
+            continue;
+        }
+        const firstId = words[0].id;
+        const lastId = words[words.length - 1].id;
+        const subcatKey = `IDIOMS_${firstId}-${lastId}`;
+        const allCorrectSet = new Set();
+        const allWrongSet = new Set();
+        ['card', 'input'].forEach(mode => {
+            try {
+                const savedCorrect = localStorage.getItem(`correctWords-${subcatKey}_${mode}`);
+                const savedWrong = localStorage.getItem(`wrongWords-${subcatKey}_${mode}`);
+                if (savedCorrect) JSON.parse(savedCorrect).forEach(id => allCorrectSet.add(typeof id === 'string' ? parseInt(id, 10) : id));
+                if (savedWrong) JSON.parse(savedWrong).forEach(id => { allWrongSet.add(typeof id === 'string' ? parseInt(id, 10) : id); allCorrectSet.delete(typeof id === 'string' ? parseInt(id, 10) : id); });
+            } catch (e) {}
+        });
+        let correct = 0, wrong = 0;
+        words.forEach(w => {
+            if (allWrongSet.has(w.id)) wrong++;
+            else if (allCorrectSet.has(w.id)) correct++;
+        });
+        const total = words.length;
+        const textEl = document.getElementById(`progress-text-idioms-L${level}`);
+        if (textEl) textEl.textContent = `${correct + wrong}/${total}語`;
+        const correctEl = document.getElementById(`progress-correct-idioms-L${level}`);
+        const wrongEl = document.getElementById(`progress-wrong-idioms-L${level}`);
+        if (correctEl) correctEl.style.width = total > 0 ? (correct / total * 100) + '%' : '0%';
+        if (wrongEl) wrongEl.style.width = total > 0 ? (wrong / total * 100) + '%' : '0%';
+    }
+}
+
 function updateIrregularVerbsProgressBar() {
-    const total = (typeof getVocabularyByIdioms !== 'undefined' && typeof getVocabularyByIdioms === 'function')
-        ? getVocabularyByIdioms().length
-        : 0;
-    const textEl = document.getElementById('progress-text-irregular-verbs');
-    if (textEl) textEl.textContent = `${total}語`;
+    updateIdiomsLevelProgressBars();
 }
 
 // 不規則変化の進捗を保存
@@ -4993,7 +5029,7 @@ function generate50WordSubcategoryCards(levelWords, levelNum, parentCategory, co
         }
         
         const card = document.createElement('div');
-        card.className = 'category-card category-card-with-actions';
+        card.className = 'category-card category-card-with-actions' + (parentCategory === '英熟語' ? ' idioms-subcat-card' : '');
         card.setAttribute('data-level-total', String(totalWords));
         
         // 最終学習日を取得
@@ -5218,8 +5254,8 @@ function showLevelSubcategorySelection(parentCategory, skipAnimation = false) {
     } else if (parentCategory === '英熟語') {
         levelNum = 'IDIOMS';
         badgeClass = 'idioms-badge';
-        badgeColor = '#0d9488';
-        badgeBgColor = '#ccfbf1';
+        badgeColor = '#047857';
+        badgeBgColor = '#d1fae5';
         description = '重要な英熟語を覚えよう';
         courseTitle.innerHTML = '<span class="level-badge idioms-badge">英熟語</span>';
     } else {
@@ -7369,14 +7405,33 @@ function setupEventListeners() {
         });
     }
     
-    // 英熟語カード → Level0～5と同じ流れでサブカテゴリ（セクション）選択を表示
-    const irregularVerbsCardBtn = document.getElementById('irregularVerbsCardBtn');
-    if (irregularVerbsCardBtn) {
-        irregularVerbsCardBtn.addEventListener('click', (e) => {
+    // 英熟語マスターコース：レベル1～4カード → 回転拡大後にセクション一覧を表示
+    [1, 2, 3, 4].forEach(level => {
+        const btn = document.getElementById(`idiomsLevel${level}CardBtn`);
+        if (!btn) return;
+        btn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            animateCardExpand(irregularVerbsCardBtn, '#ffffff', () => {
+            if (typeof getVocabularyByIdioms === 'undefined' || typeof getVocabularyByIdioms !== 'function') return;
+            window.lastIdiomsSourceCardId = `idiomsLevel${level}CardBtn`;
+            animateCardExpand(btn, '#ffffff', () => {
                 showLevelSubcategorySelection('英熟語');
+            });
+        });
+    });
+
+    // 英熟語マスタコース：熟語一覧
+    const idiomsListCardBtn = document.getElementById('idiomsListCardBtn');
+    if (idiomsListCardBtn) {
+        idiomsListCardBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof getVocabularyByIdioms === 'undefined' || typeof getVocabularyByIdioms !== 'function') return;
+            const words = getVocabularyByIdioms();
+            if (words.length === 0) return;
+            window.lastIdiomsSourceCardId = 'idiomsListCardBtn';
+            animateCardExpand(idiomsListCardBtn, '#ffffff', () => {
+                showInputModeDirectly('英熟語', words, '熟語一覧', words.length);
             });
         });
     }
@@ -7662,13 +7717,11 @@ function setupEventListeners() {
                     section.classList.add('hidden');
                 }
             });
-            // 初期状態のボーダー色を設定
             if (courseTabsContainer) {
-                if (targetId === 'courseScoreSection') {
-                    courseTabsContainer.classList.add('score-active');
-                } else {
-                    courseTabsContainer.classList.remove('score-active');
-                }
+                courseTabsContainer.classList.toggle('score-active', targetId === 'courseScoreSection');
+            }
+            if (targetId === 'courseIdiomsSection' && typeof updateIdiomsLevelProgressBars === 'function') {
+                updateIdiomsLevelProgressBars();
             }
         }
         
@@ -7684,13 +7737,11 @@ function setupEventListeners() {
                         section.classList.add('hidden');
                     }
                 });
-                // ボーダー色を切り替え
                 if (courseTabsContainer) {
-                    if (targetId === 'courseScoreSection') {
-                        courseTabsContainer.classList.add('score-active');
-                    } else {
-                        courseTabsContainer.classList.remove('score-active');
-                    }
+                    courseTabsContainer.classList.toggle('score-active', targetId === 'courseScoreSection');
+                }
+                if (targetId === 'courseIdiomsSection' && typeof updateIdiomsLevelProgressBars === 'function') {
+                    updateIdiomsLevelProgressBars();
                 }
             });
         });
@@ -8682,7 +8733,7 @@ function setupEventListeners() {
                     } else if (window.currentSubcategoryParent === '入門600語') {
                         targetCardId = 'elementaryCategoryCardBtn';
                     } else if (window.currentSubcategoryParent === '英熟語') {
-                        targetCardId = 'irregularVerbsCardBtn';
+                        targetCardId = window.lastIdiomsSourceCardId || 'idiomsListCardBtn';
                     }
                     
                     if (targetCardId) {
@@ -8690,12 +8741,26 @@ function setupEventListeners() {
                         const hasStarAnimation = !!lastLearningCategory;
                         
                         window.currentSubcategoryParent = null;
+                        // 英熟語から戻る場合は英熟語タブを表示してから縮小
+                        if (targetCardId.startsWith('idiomsLevel') || targetCardId === 'idiomsListCardBtn') {
+                            const tab = document.querySelector('.course-tab[data-target="courseIdiomsSection"]');
+                            const idiomsSection = document.getElementById('courseIdiomsSection');
+                            if (tab && idiomsSection) {
+                                document.querySelectorAll('.course-tab').forEach(t => t.classList.remove('active'));
+                                tab.classList.add('active');
+                                document.querySelectorAll('.course-section').forEach(s => s.classList.add('hidden'));
+                                idiomsSection.classList.remove('hidden');
+                            }
+                        }
                         animateCardShrink(targetCardId, () => {
                             courseSelection.classList.add('hidden');
                             categorySelection.classList.remove('hidden');
                             updateHeaderButtons('home');
                             updateCategoryStars();
                             updateVocabProgressBar();
+                            if (targetCardId.startsWith('idiomsLevel') || targetCardId === 'idiomsListCardBtn') {
+                                updateIdiomsLevelProgressBars();
+                            }
                             showFloatingReviewBtn();
                         });
                         
@@ -8743,10 +8808,33 @@ function setupEventListeners() {
                         return;
                     }
                     
-                    // 英熟語から戻る場合は英熟語サブカテゴリ選択に戻る（Level0～5と同じ流れ）
-                    if (window.currentSubcategoryParent && window.currentSubcategoryParent === '英熟語') {
+                    // 英熟語：セクションからリストに来た場合はセクション一覧に戻る
+                    if (typeof selectedCategory === 'string' && selectedCategory.startsWith('IDIOMS_')) {
                         elements.mainContent.classList.add('hidden');
                         showLevelSubcategorySelection('英熟語');
+                        return;
+                    }
+                    // 英熟語：熟語一覧から戻る → コース選択の英熟語タブに縮小
+                    if (selectedCategory === '英熟語') {
+                        const idiomsCardId = window.lastIdiomsSourceCardId || 'idiomsListCardBtn';
+                        const tab = document.querySelector('.course-tab[data-target="courseIdiomsSection"]');
+                        const idiomsSection = document.getElementById('courseIdiomsSection');
+                        if (tab && idiomsSection) {
+                            document.querySelectorAll('.course-tab').forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            document.querySelectorAll('.course-section').forEach(s => s.classList.add('hidden'));
+                            idiomsSection.classList.remove('hidden');
+                        }
+                        animateCardShrink(idiomsCardId, () => {
+                            selectedCategory = null;
+                            elements.mainContent.classList.add('hidden');
+                            elements.categorySelection.classList.remove('hidden');
+                            updateHeaderButtons('home');
+                            updateCategoryStars();
+                            updateVocabProgressBar();
+                            updateIdiomsLevelProgressBars();
+                            showFloatingReviewBtn();
+                        });
                         return;
                     }
                     
