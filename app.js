@@ -11230,14 +11230,6 @@ function renderInputListViewPaginated(words, rangeWordsForHeader) {
         rangeTitle.className = 'expand-range-title';
         rangeTitle.innerHTML = `<span class="expand-range-no">単語番号</span>${pad(firstId)}-${pad(lastId)}`;
         headerWrap.appendChild(rangeTitle);
-        // 1-2500の進捗バー（現在の範囲を白で表示）
-        const EXPAND_BAR_TOTAL = 2500;
-        const leftPercent = Math.max(0, ((firstId - 1) / EXPAND_BAR_TOTAL) * 100);
-        const widthPercent = Math.min(100 - leftPercent, ((lastId - firstId + 1) / EXPAND_BAR_TOTAL) * 100);
-        const progressWrap = document.createElement('div');
-        progressWrap.className = 'expand-range-progress-wrap';
-        progressWrap.innerHTML = `<div class="expand-range-progress-bar"><div class="expand-range-progress-fill" style="left:${leftPercent}%;width:${widthPercent}%"></div></div>`;
-        headerWrap.appendChild(progressWrap);
         container.appendChild(headerWrap);
     }
     
@@ -12661,14 +12653,6 @@ function renderInputListView(words, rangeWordsForHeader) {
         rangeTitle.className = 'expand-range-title';
         rangeTitle.innerHTML = `<span class="expand-range-no">単語番号</span>${pad(firstId)}-${pad(lastId)}`;
         headerWrap.appendChild(rangeTitle);
-        // 1-2500の進捗バー（現在の範囲を白で表示）
-        const EXPAND_BAR_TOTAL = 2500;
-        const leftPercent = Math.max(0, ((firstId - 1) / EXPAND_BAR_TOTAL) * 100);
-        const widthPercent = Math.min(100 - leftPercent, ((lastId - firstId + 1) / EXPAND_BAR_TOTAL) * 100);
-        const progressWrap = document.createElement('div');
-        progressWrap.className = 'expand-range-progress-wrap';
-        progressWrap.innerHTML = `<div class="expand-range-progress-bar"><div class="expand-range-progress-fill" style="left:${leftPercent}%;width:${widthPercent}%"></div></div>`;
-        headerWrap.appendChild(progressWrap);
         container.appendChild(headerWrap);
     }
     

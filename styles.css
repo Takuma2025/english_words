@@ -9466,32 +9466,6 @@ body.hyogo-seijo-mode-active .word-card-container {
 }
 
 /* 進捗バー（右側）：全範囲がバー、今の50語部分だけ白で塗る */
-.expand-range-progress-wrap {
-    min-width: 80px;
-    flex: 1;
-    max-width: 200px;
-}
-
-.expand-range-progress-bar {
-    position: relative;
-    width: 100%;
-    height: 14px;
-    background: rgba(0, 85, 202, 0.35);
-    border-radius: 0;
-    overflow: hidden;
-}
-
-.expand-range-progress-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    min-width: 4px;
-    background: #0055ca;
-    border-radius: 0;
-    transition: left 0.2s ease, width 0.2s ease;
-}
-
 /* 展開モード（2カラムレイアウト）上・下線は「—————    —————」のように間を空けて左右に分ける */
 .input-list-item-expand {
     position: relative;
@@ -21786,30 +21760,30 @@ div#inputWordCheckbox,
 }
 
 .subcat-range-no {
-    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-family: "Oswald", "Barlow Condensed", sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: #64748b;
-    letter-spacing: 0.02em;
+    color: #475569;
+    letter-spacing: 0.03em;
     margin-right: 3px;
     align-self: baseline;
 }
 
 .subcat-range-num {
-    font-family: "Barlow Condensed", "Oswald", sans-serif;
-    font-size: 27px;
+    font-family: "Oswald", "Barlow Condensed", sans-serif;
+    font-size: 24px;
     font-weight: 600;
     color: #0369a1;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     line-height: 1;
 }
 
 .subcat-range-sep {
-    font-family: "Barlow Condensed", "Oswald", sans-serif;
-    font-size: 18px;
-    font-weight: 400;
+    font-family: "Oswald", "Barlow Condensed", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
     color: #38bdf8;
-    margin: 0 5px;
+    margin: 0 4px;
     line-height: 1;
 }
 
