@@ -523,7 +523,7 @@
                             <div class="exam1200-count">1290語</div>
                             <div class="exam1200-meta">兵庫県公立高校入試過去15年間<br>で出題された英単語</div>
                         </button>
-                        <button class="category-card" data-category="英文法中学３年間の総復習" data-exam-type="all">
+                        <button class="category-card" id="grammarScoreCardBtn" data-category="英文法中学３年間の総復習" data-exam-type="all">
                             <div class="category-info">
                                 <div class="category-header">
                                     <div class="category-name"><span style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: #fef2f2; border-radius: 50%; margin-right: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M12 20v-8"/><path d="M12 12c-3.5 0-6-2.5-6-6 3.5 0 6 2.5 6 6z"/><path d="M12 12c3.5 0 6-2.5 6-6-3.5 0-6 2.5-6 6z"/></svg></span>中学３年間の英文法</div>
@@ -541,7 +541,7 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
-                        <button class="category-card" data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】" data-exam-type="b">
+                        <button class="category-card" id="bProblemScoreCardBtn" data-category="大阪B問題対策 厳選例文暗記60【和文英訳対策】" data-exam-type="b">
                             <div class="category-info">
                                 <div class="category-header">
                                     <div class="category-name"><span class="exam-badge"><b>B</b>問題対策</span>厳選例文暗記60</div>
@@ -559,7 +559,7 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
-                        <button class="category-card" data-category="大阪C問題対策英単語タイムアタック" data-exam-type="c">
+                        <button class="category-card" id="cTimeAttackScoreCardBtn" data-category="大阪C問題対策英単語タイムアタック" data-exam-type="c">
                             <div class="category-info">
                                 <div class="category-header">
                                     <div class="category-name"><span class="exam-badge"><b>C</b>問題対策</span>英単語即答2秒タイムアタック</div>
@@ -577,7 +577,7 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
-                        <button class="category-card" data-category="大阪C問題対策 英作写経ドリル" data-exam-type="c">
+                        <button class="category-card" id="cCopyScoreCardBtn" data-category="大阪C問題対策 英作写経ドリル" data-exam-type="c">
                             <div class="category-info">
                                 <div class="category-header">
                                     <div class="category-name"><span class="exam-badge"><b>C</b>問題対策</span>英作写経ドリル</div>
@@ -598,7 +598,7 @@
                         <button class="category-card category-card-seijo" id="hyogoSeijoCardBtn" data-category="兵庫県公立入試 整序英作（予想問題）" data-exam-type="hyogo-seijo">
                             <div class="category-info">
                                 <div class="category-header exam-menu-header">
-                                    <div class="category-name"><span class="exam-badge exam-badge-hyogo"><b>兵庫</b>県入試</span>整序英作（予想問題）</div>
+                                    <div class="category-name category-name-stacked"><span class="exam-badge exam-badge-hyogo"><b>兵庫</b>県入試</span><span class="category-name-sub">整序英作</span><span class="exam-predict-label">🎯 予想問題</span></div>
                                 </div>
                                 <div class="category-meta">文中の空所に4語を正しく並べて英文を完成させる実戦形式の対策です。</div>
                                 <div class="category-progress">
@@ -613,7 +613,7 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
-                        <button class="category-card category-card-seijo" data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】" data-exam-type="c">
+                        <button class="category-card category-card-seijo" id="cSeijo100ScoreCardBtn" data-category="大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】" data-exam-type="c">
                             <div class="category-info">
                                 <div class="category-header exam-menu-header">
                                     <div class="category-name"><span class="exam-badge"><b>C</b>問題対策</span>整序英作文100本ノック</div>
@@ -631,7 +631,7 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </button>
-                        <button class="category-card category-card-choice" data-category="C問題対策 大問1整序英作文【四択問題】" data-exam-type="c">
+                        <button class="category-card category-card-choice" id="cChoiceScoreCardBtn" data-category="C問題対策 大問1整序英作文【四択問題】" data-exam-type="c">
                             <div class="category-info">
                                 <div class="category-header exam-menu-header">
                                     <div class="category-name"><span class="exam-badge"><b>C</b>問題対策</span>大問1整序英作文【四択問題】</div>
@@ -1318,15 +1318,15 @@
                         </div>
                         <!-- 問題文エリア -->
                         <div class="hs-passage-area" id="hsSeijoPassage"></div>
-                        <!-- 空所〔あ〕 -->
+                        <!-- 空所 あ -->
                         <div class="hs-blank-section" id="hsSeijoBlankA">
-                            <div class="hs-blank-label">〔あ〕</div>
+                            <div class="hs-blank-label">あ</div>
                             <div class="hs-answer-slots" id="hsSeijoSlotsA"></div>
                             <div class="hs-word-choices" id="hsSeijoChoicesA"></div>
                         </div>
-                        <!-- 空所〔い〕 -->
+                        <!-- 空所 い -->
                         <div class="hs-blank-section" id="hsSeijoBlankB">
-                            <div class="hs-blank-label">〔い〕</div>
+                            <div class="hs-blank-label">い</div>
                             <div class="hs-answer-slots" id="hsSeijoSlotsB"></div>
                             <div class="hs-word-choices" id="hsSeijoChoicesB"></div>
                         </div>
