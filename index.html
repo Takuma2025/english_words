@@ -12,7 +12,7 @@
     <title>兵庫県公立高校入試特化型英単語アプリ 兵庫県英単語コンプリート</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=optional" rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=20260214m">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="app.hyogo.png" type="image/png">
@@ -1332,6 +1332,10 @@
                         </div>
                         <!-- 正解表示 -->
                         <div class="hs-correct-answer hidden" id="hsSeijoCorrectAnswer"></div>
+                        <!-- 解答の仕方（1問目のみ表示） -->
+                        <div class="hs-how-to-answer hidden" id="hsHowToAnswer">
+                            語群の語を<strong>タップ</strong>または<strong>ドラッグ</strong>して空所にはめ、正しい順に並べてください。並べ終えたら「解答」を押します。
+                        </div>
                         <!-- ボタン -->
                         <div class="keyboard-actions">
                             <button class="keyboard-action-btn" id="hsSeijoResetBtn">パス</button>

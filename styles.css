@@ -6749,7 +6749,7 @@ body.hyogo-seijo-mode-active .word-card-container {
         font-size: clamp(18px, 5vw, 26px);
         line-height: 1.2;
         font-weight: 700;
-        font-family: "UD Digi Kyokasho", "UDデジタル教科書体", "Yu Kyokasho", "游教科書体", "Kokoro", "こころ", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+        font-family: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
     }
     .input-container {
         min-height: 120px;
@@ -6821,7 +6821,7 @@ body.hyogo-seijo-mode-active .word-card-container {
         font-size: clamp(16px, 4.5vw, 24px);
         line-height: 1.2;
         font-weight: 700;
-        font-family: "UD Digi Kyokasho", "UDデジタル教科書体", "Yu Kyokasho", "游教科書体", "Kokoro", "こころ", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
+        font-family: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
     }
     .input-container {
         min-height: 100px;
@@ -19758,6 +19758,12 @@ body.choice-question-mode-active .choice-question-mode {
     margin-bottom: 12px;
 }
 
+/* 兵庫県整序英作：ヘッダー上のステータスバーを白に */
+body.hyogo-seijo-mode-active .hyogo-seijo-progress-header,
+body.hyogo-seijo-mode-active .card-top-section {
+    background: #ffffff;
+}
+
 /* 問題コンテナ */
 .choice-question-container {
     background: #ffffff;
@@ -21944,25 +21950,45 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 }
 
 /* 本文エリア（コンテナ） */
+/* 解答の仕方（整序英作） */
+.hs-how-to-answer {
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.5;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    background: #f8fafc;
+    border-left: 3px solid #94a3b8;
+    border-radius: 0 4px 4px 0;
+}
+
+.hs-how-to-answer strong {
+    color: #334155;
+    font-weight: 600;
+}
+
 .hs-passage-area {
     margin-bottom: 18px;
 }
 
-/* 英文本文（試験用紙風：細い黒枠、UD教科書体） */
+/* 英文本文（試験用紙風：細い黒枠・丸ゴシック系） */
 .hs-passage-text-area {
     background: #ffffff;
     border: 1.5px solid #374151;
     border-radius: 0;
     padding: 20px 18px;
     line-height: 2.3;
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: 500;
     color: #111827;
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Times New Roman", "Noto Serif", serif !important;
+    font-family: "M PLUS Rounded 1c", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", "Meiryo", "Times New Roman", "Noto Serif", serif !important;
 }
 
 /* 空所マーク（あ・い表示）*/
+/* あ・いのみ UDデジタル教科書体を優先（入っていれば使用） */
 .hs-passage-blank {
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "BIZ UDPGothic", sans-serif;
+    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", sans-serif;
+    font-weight: 800;
 }
 
 .hs-answer-slot,
@@ -21992,13 +22018,13 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     background: #ffffff;
     border: 3px double #111827;
     border-radius: 0;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 14px;
     color: #111827;
     vertical-align: middle;
     margin: 0 4px;
     padding: 0 12px;
-    font-family: inherit;
+    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", sans-serif;
 }
 
 /* 空所セクション（語群エリア）─ ラベルと語群を横並びに */
@@ -22015,7 +22041,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 14px;
     color: #111827;
     border: 3px double #111827;
@@ -22024,7 +22050,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     min-width: 24px;
     vertical-align: middle;
     line-height: 1.2;
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "BIZ UDPGothic", sans-serif;
+    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", sans-serif;
 }
 
 /* あ・い ラベル（試験用紙風：二重線枠） */
@@ -22032,18 +22058,18 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 15px;
     color: #111827;
     background: #ffffff;
     border: 3px double #111827;
     border-radius: 0;
-    padding: 3px 14px;
+    padding: 2px 34px;
     margin-right: 10px;
     margin-bottom: 10px;
-    min-width: 36px;
-    min-height: 30px;
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "BIZ UDPGothic", sans-serif;
+    min-width: 52px;
+    min-height: 28px;
+    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", sans-serif;
 }
 
 /* スロットと語群の間隔調整 */
@@ -22068,14 +22094,14 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 56px;
-    height: 38px;
+    min-width: 80px;
+    height: 44px;
     background: #ffffff;
     border: 1.5px solid #9ca3af;
     border-radius: 0;
-    font-size: 16px;
+    font-size: 17px;
     color: #9ca3af;
-    padding: 0 10px;
+    padding: 0 14px;
     transition: all 0.15s;
     position: relative;
 }
@@ -22089,9 +22115,9 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 }
 
 .hs-answer-slot.correct-slot {
-    border-color: #6b7280;
-    background: #f3f4f6;
-    color: #111827;
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #1d4ed8;
 }
 
 .hs-answer-slot.wrong-slot {
@@ -22117,15 +22143,15 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     pointer-events: none;
     background: #ffffff;
     border: 1.5px solid #374151;
-    padding: 6px 14px;
-    font-size: 16px;
+    padding: 10px 18px;
+    font-size: 18px;
     font-weight: 600;
     color: #111827;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     font-family: "Times New Roman", "Noto Serif", serif;
 }
 
-/* 語群（選択肢の語）─ 試験用紙風テーブル */
+/* 語群（選択肢の語）─ 語群全体を囲むボーダーのみ */
 .hs-word-choices {
     display: flex;
     flex-wrap: wrap;
@@ -22139,12 +22165,11 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 8px 14px;
+    padding: 10px 18px;
     background: #ffffff;
     border: none;
-    border-right: 1px solid #374151;
     border-radius: 0;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
     color: #111827;
     cursor: pointer;
@@ -22155,10 +22180,6 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     flex: 1;
     min-width: 0;
     font-family: "Times New Roman", "Noto Serif", serif;
-}
-
-.hs-word-chip:last-child {
-    border-right: none;
 }
 
 .hs-word-chip:active {
@@ -22178,8 +22199,8 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 
 /* 正解表示 */
 .hs-correct-answer {
-    background: #f9fafb;
-    border: 1px solid #d1d5db;
+    background: #ecfeff;
+    border: 2.5px solid #22d3ee;
     border-radius: 4px;
     padding: 14px 16px;
     margin-top: 12px;
@@ -22189,13 +22210,13 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 .hs-correct-answer-title {
     font-weight: 700;
     font-size: 13px;
-    color: #374151;
+    color: #0891b2;
     margin-bottom: 6px;
 }
 
 .hs-correct-answer-text {
     font-size: 15px;
-    color: #111827;
+    color: #155e75;
     line-height: 1.6;
     font-weight: 500;
     font-family: "Times New Roman", "Noto Serif", serif;
@@ -22205,19 +22226,19 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 .hs-explanation-section {
     margin-top: 14px;
     padding-top: 12px;
-    border-top: 1px solid #e5e7eb;
+    border-top: 2px solid #67e8f9;
 }
 
 .hs-explanation-title {
     font-weight: 700;
     font-size: 13px;
-    color: #374151;
+    color: #0891b2;
     margin-bottom: 6px;
 }
 
 .hs-explanation-text {
     font-size: 14px;
-    color: #374151;
+    color: #155e75;
     line-height: 1.7;
 }
 
@@ -22225,19 +22246,19 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 .hs-translation-section {
     margin-top: 14px;
     padding-top: 12px;
-    border-top: 1px solid #e5e7eb;
+    border-top: 2px solid #67e8f9;
 }
 
 .hs-translation-title {
     font-weight: 700;
     font-size: 13px;
-    color: #374151;
+    color: #0891b2;
     margin-bottom: 6px;
 }
 
 .hs-translation-text {
     font-size: 14px;
-    color: #374151;
+    color: #155e75;
     line-height: 1.7;
 }
 
@@ -22266,12 +22287,12 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 /* レスポンシブ */
 @media (max-width: 400px) {
     .hs-word-chip {
-        padding: 6px 10px;
-        font-size: 14px;
+        padding: 8px 14px;
+        font-size: 16px;
     }
     .hs-answer-slot {
-        min-width: 48px;
-        height: 34px;
-        font-size: 14px;
+        min-width: 64px;
+        height: 40px;
+        font-size: 15px;
     }
 }

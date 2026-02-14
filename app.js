@@ -24679,6 +24679,16 @@ function displayHsSeijoQuestion() {
     // 進捗更新
     updateHsSeijoProgress();
 
+    // 解答の仕方：1問目だけ表示
+    const howToEl = document.getElementById('hsHowToAnswer');
+    if (howToEl) {
+        if (hsCurrentIndex === 0) {
+            howToEl.classList.remove('hidden');
+        } else {
+            howToEl.classList.add('hidden');
+        }
+    }
+
     // 問題文を構築
     const passageArea = document.getElementById('hsSeijoPassage');
     passageArea.innerHTML = '';
@@ -24825,7 +24835,10 @@ function buildHsBlankSection(blankKey, blankData) {
 
     // 語群チップを生成（シャッフル）
     choicesContainer.innerHTML = '';
-    const shuffledWords = [...blankData.words].sort(() => Math.random() - 0.5);
+    const correctSet = new Set(blankData.correctOrder.map(w => w.toLowerCase()));
+    const distractors = blankData.words.filter(w => !correctSet.has(w.toLowerCase()));
+    const fiveWords = distractors.length > 0 ? [...blankData.correctOrder, distractors[0]] : [...blankData.correctOrder];
+    const shuffledWords = [...fiveWords].sort(() => Math.random() - 0.5);
     
     shuffledWords.forEach(word => {
         const chip = document.createElement('div');
@@ -25082,6 +25095,9 @@ function updatePassageBlankDisplay(blankKey) {
 }
 
 function handleHsSeijoSubmit() {
+    const howToEl = document.getElementById('hsHowToAnswer');
+    if (howToEl) howToEl.classList.add('hidden');
+
     if (hsAnswered) {
         // 次の問題へ
         hsCurrentIndex++;
@@ -25193,7 +25209,7 @@ function buildHsCorrectHTML(question) {
     if (question.translation) {
         html += `
             <div class="hs-translation-section">
-                <div class="hs-translation-title">本文の和訳</div>
+                <div class="hs-translation-title">本文和訳</div>
                 <div class="hs-translation-text">${question.translation.replace(/\n/g, '<br>')}</div>
             </div>
         `;
@@ -25219,6 +25235,9 @@ function markHsSlots(blankKey, blankData) {
 
 function handleHsSeijoReset() {
     if (hsAnswered) return;
+
+    const howToEl = document.getElementById('hsHowToAnswer');
+    if (howToEl) howToEl.classList.add('hidden');
     
     // パス（不正解扱い）
     const question = hsData[hsCurrentIndex];
