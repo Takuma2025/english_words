@@ -21941,8 +21941,8 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 .category-name-stacked .category-name-sub {
     display: block;
     font-size: 14px;
-    font-weight: 700;
-    color: #1f2937;
+    font-weight: 500;
+    color: #4b5563;
 }
 
 /* 予想問題ラベル（3行目） */
@@ -21983,7 +21983,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     line-height: 2.3;
     font-size: 16px;
     color: #111827;
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Times New Roman", "Noto Serif", serif;
+    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Times New Roman", "Noto Serif", serif !important;
 }
 
 /* 空所マーク（あ・い表示）*/
@@ -22115,9 +22115,9 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 }
 
 .hs-answer-slot.correct-slot {
-    border-color: #2563eb;
-    background: #eff6ff;
-    color: #1d4ed8;
+    border-color: #6b7280;
+    background: #f3f4f6;
+    color: #111827;
 }
 
 .hs-answer-slot.wrong-slot {
@@ -22204,8 +22204,8 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 
 /* 正解表示 */
 .hs-correct-answer {
-    background: #eff6ff;
-    border: 1px solid #93c5fd;
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
     border-radius: 4px;
     padding: 14px 16px;
     margin-top: 12px;
@@ -22215,19 +22215,79 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 .hs-correct-answer-title {
     font-weight: 700;
     font-size: 13px;
-    color: #1d4ed8;
+    color: #374151;
     margin-bottom: 6px;
 }
 
 .hs-correct-answer-text {
     font-size: 15px;
-    color: #1e40af;
+    color: #111827;
     line-height: 1.6;
     font-weight: 500;
     font-family: "Times New Roman", "Noto Serif", serif;
 }
 
+/* 解説セクション */
+.hs-explanation-section {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.hs-explanation-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: #374151;
+    margin-bottom: 6px;
+}
+
+.hs-explanation-text {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.7;
+}
+
+/* 本文の和訳セクション */
+.hs-translation-section {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.hs-translation-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: #374151;
+    margin-bottom: 6px;
+}
+
+.hs-translation-text {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.7;
+}
+
 /* 結果マークは showAnswerMark 共通SVGを使用 */
+
+/* 整序英作 サブカテゴリカード */
+.hs-subcat-card {
+    text-align: left;
+}
+
+.hs-subcat-badge {
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+}
+
+.hs-subcat-count {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 4px;
+}
 
 /* レスポンシブ */
 @media (max-width: 400px) {

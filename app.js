@@ -4516,6 +4516,8 @@ function returnToLearningMenu(category) {
         showLevelSubcategorySelection(parent, true);
     } else if (parent === '入門600語') {
         showElementaryCategorySelection(true);
+    } else if (parent === '兵庫県公立入試 整序英作（予想問題）' || category === '兵庫県公立入試 整序英作（予想問題）') {
+        showHyogoSeijoSubcategorySelection();
     } else if (returnToCourseInfo && returnToCourseInfo.category && returnToCourseInfo.words) {
         // 保存されたコース情報があればそのコース選択画面に戻る
         // skipSaveReturnInfo = true で、戻り情報を上書きしない
@@ -4729,13 +4731,13 @@ function startCategory(category) {
         showAlert('準備中', '大阪C問題対策 英作写経ドリルのデータを準備中です。');
         return;
     } else if (category === '兵庫県公立入試 整序英作（予想問題）') {
-        // 兵庫県公立入試 整序英作文モード
-        console.log('兵庫県整序英作モードを開始します');
+        // 兵庫県公立入試 整序英作文モード → サブカテゴリ選択画面へ
+        console.log('兵庫県整序英作 サブカテゴリ選択画面を表示します');
         if (typeof hyogoSeijoQuestions === 'undefined' || !hyogoSeijoQuestions || hyogoSeijoQuestions.length === 0) {
             showAlert('エラー', '整序英作の問題データが見つかりません。');
             return;
         }
-        initHyogoSeijoLearning();
+        showHyogoSeijoSubcategorySelection();
         return;
     } else if (category === '大阪C問題対策 英文法100本ノック【整序英作文(記号選択)対策】' || 
                (category && category.includes('整序英作文100本ノック'))) {
@@ -8789,6 +8791,8 @@ function setupEventListeners() {
                         targetCardId = 'elementaryCategoryCardBtn';
                     } else if (window.currentSubcategoryParent === '英熟語') {
                         targetCardId = window.lastIdiomsSourceCardId || 'idiomsListCardBtn';
+                    } else if (window.currentSubcategoryParent === '兵庫県公立入試 整序英作（予想問題）') {
+                        targetCardId = 'hyogoSeijoCardBtn';
                     }
                     
                     if (targetCardId) {
@@ -8796,6 +8800,19 @@ function setupEventListeners() {
                         const hasStarAnimation = !!lastLearningCategory;
                         
                         window.currentSubcategoryParent = null;
+                        // 兵庫県整序英作から戻る場合は入試得点力タブを表示してから縮小
+                        if (targetCardId === 'hyogoSeijoCardBtn') {
+                            const scoreTab = document.querySelector('.course-tab[data-target="courseScoreSection"]');
+                            const scoreSection = document.getElementById('courseScoreSection');
+                            const courseTabsContainer = document.getElementById('courseTabs');
+                            if (scoreTab && scoreSection) {
+                                document.querySelectorAll('.course-tab').forEach(t => t.classList.remove('active'));
+                                scoreTab.classList.add('active');
+                                document.querySelectorAll('.course-section').forEach(s => s.classList.add('hidden'));
+                                scoreSection.classList.remove('hidden');
+                                if (courseTabsContainer) courseTabsContainer.classList.add('score-active');
+                            }
+                        }
                         // 英熟語から戻る場合は英熟語タブを表示してから縮小
                         if (targetCardId.startsWith('idiomsLevel') || targetCardId === 'idiomsListCardBtn') {
                             const tab = document.querySelector('.course-tab[data-target="courseIdiomsSection"]');
@@ -8908,6 +8925,19 @@ function setupEventListeners() {
                     if (window.currentSubcategoryParent && window.currentSubcategoryParent === '入門600語') {
                         elements.mainContent.classList.add('hidden');
                         showElementaryCategorySelection(true);
+                        return;
+                    }
+                    
+                    // 兵庫県整序英作：学習画面からサブカテゴリ選択画面に戻る
+                    if (selectedCategory === '兵庫県公立入試 整序英作（予想問題）') {
+                        document.body.classList.remove('hyogo-seijo-mode-active');
+                        const hyogoSeijoMode = document.getElementById('hyogoSeijoMode');
+                        if (hyogoSeijoMode) hyogoSeijoMode.classList.add('hidden');
+                        if (elements.feedbackOverlay) {
+                            elements.feedbackOverlay.classList.remove('active', 'correct', 'wrong');
+                        }
+                        elements.mainContent.classList.add('hidden');
+                        showHyogoSeijoSubcategorySelection();
                         return;
                     }
                     
@@ -24486,13 +24516,94 @@ let hsAnswered = false;
 let hsData = [];
 let hsQuestionStatus = [];
 
-function initHyogoSeijoLearning() {
-    hsData = [...hyogoSeijoQuestions];
+// 兵庫県整序英作 サブカテゴリ選択画面
+let hsSelectedLevel = null; // 現在選択中のサブカテゴリレベル
+
+function showHyogoSeijoSubcategorySelection() {
+    // スクロール位置をリセット
+    window.scrollTo(0, 0);
+    const appMain = document.querySelector('.app-main');
+    if (appMain) appMain.scrollTop = 0;
+
+    const courseSelection = document.getElementById('courseSelection');
+    const courseList = document.getElementById('courseList');
+    const courseTitle = document.getElementById('courseSelectionTitle');
+    const courseSelectionImage = document.getElementById('courseSelectionImage');
+    const courseSelectionDescription = document.getElementById('courseSelectionDescription');
+
+    // タイトル
+    courseTitle.innerHTML = '<span class="exam-badge exam-badge-hyogo"><b>兵庫</b>県入試</span> 整序英作 予想問題';
+
+    // 説明文
+    if (courseSelectionDescription) {
+        courseSelectionDescription.textContent = '難易度を選んで練習しよう';
+        courseSelectionDescription.style.display = 'block';
+    }
+
+    // 画像非表示
+    if (courseSelectionImage) courseSelectionImage.style.display = 'none';
+
+    // カードリストをクリア
+    courseList.innerHTML = '';
+
+    const levels = [
+        { key: 'basic', label: '基本編', description: '基本的な文法事項を使った整序問題', color: '#3b82f6', bgColor: '#eff6ff' },
+        { key: 'standard', label: '標準編', description: '入試標準レベルの整序問題', color: '#f59e0b', bgColor: '#fffbeb' },
+        { key: 'advanced', label: '発展編', description: '差がつくハイレベルな整序問題', color: '#ef4444', bgColor: '#fef2f2' }
+    ];
+
+    levels.forEach(lv => {
+        const questions = hyogoSeijoQuestions.filter(q => q.level === lv.key);
+        const card = document.createElement('button');
+        card.className = 'category-card hs-subcat-card';
+        card.setAttribute('data-hs-level', lv.key);
+
+        card.innerHTML = `
+            <div class="category-info">
+                <div class="category-header">
+                    <div class="category-name">
+                        <span class="hs-subcat-badge" style="background: ${lv.bgColor}; color: ${lv.color};">${lv.label}</span>
+                    </div>
+                </div>
+                <div class="category-meta">${lv.description}</div>
+                <div class="hs-subcat-count">${questions.length}問</div>
+            </div>
+        `;
+
+        card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            animateCardExpand(card, '#ffffff', () => {
+                initHyogoSeijoLearning(lv.key);
+            });
+        });
+
+        courseList.appendChild(card);
+    });
+
+    // 画面表示
+    elements.categorySelection.classList.add('hidden');
+    courseSelection.classList.remove('hidden');
+
+    // selectedCategoryを設定（戻るボタンのため）
+    selectedCategory = '兵庫県公立入試 整序英作（予想問題）';
+    window.currentSubcategoryParent = '兵庫県公立入試 整序英作（予想問題）';
+    
+    // ヘッダー更新
+    updateHeaderButtons('course', '整序英作 予想問題');
+}
+
+function initHyogoSeijoLearning(level) {
+    hsSelectedLevel = level || null;
+    if (level) {
+        hsData = hyogoSeijoQuestions.filter(q => q.level === level);
+    } else {
+        hsData = [...hyogoSeijoQuestions];
+    }
     hsCurrentIndex = 0;
     hsCorrectCount = 0;
     hsWrongCount = 0;
     hsAnswered = false;
-    hsQuestionStatus = new Array(hyogoSeijoQuestions.length).fill(null);
+    hsQuestionStatus = new Array(hsData.length).fill(null);
 
     // 画面遷移（他テストモードと同じ手順）
     elements.categorySelection.classList.add('hidden');
@@ -25038,13 +25149,7 @@ function handleHsSeijoSubmit() {
     const correctDiv = document.getElementById('hsSeijoCorrectAnswer');
     correctDiv.classList.remove('hidden');
     
-    correctDiv.innerHTML = `
-        <div class="hs-correct-answer-title">正解</div>
-        <div class="hs-correct-answer-text">
-            あ　${question.blanks.a.correctOrder.join(' ')}<br>
-            い　${question.blanks.b.correctOrder.join(' ')}
-        </div>
-    `;
+    correctDiv.innerHTML = buildHsCorrectHTML(question);
     
     // ボタンテキスト更新
     const submitBtn = document.getElementById('hsSeijoSubmitBtn');
@@ -25081,6 +25186,36 @@ function checkHsBlankAnswer(blankKey, blankData) {
                     userWords.every((w, i) => w === correctWords[i]);
     
     return { correct, allFilled: true };
+}
+
+function buildHsCorrectHTML(question) {
+    let html = `
+        <div class="hs-correct-answer-title">解答</div>
+        <div class="hs-correct-answer-text">
+            あ　${question.blanks.a.correctOrder.join(' ')}<br>
+            い　${question.blanks.b.correctOrder.join(' ')}
+        </div>
+    `;
+    
+    if (question.explanation) {
+        html += `
+            <div class="hs-explanation-section">
+                <div class="hs-explanation-title">解説</div>
+                <div class="hs-explanation-text">${question.explanation.replace(/\n/g, '<br>')}</div>
+            </div>
+        `;
+    }
+    
+    if (question.translation) {
+        html += `
+            <div class="hs-translation-section">
+                <div class="hs-translation-title">本文の和訳</div>
+                <div class="hs-translation-text">${question.translation.replace(/\n/g, '<br>')}</div>
+            </div>
+        `;
+    }
+    
+    return html;
 }
 
 function markHsSlots(blankKey, blankData) {
@@ -25121,13 +25256,7 @@ function handleHsSeijoReset() {
     // 正解表示
     const correctDiv = document.getElementById('hsSeijoCorrectAnswer');
     correctDiv.classList.remove('hidden');
-    correctDiv.innerHTML = `
-        <div class="hs-correct-answer-title">正解</div>
-        <div class="hs-correct-answer-text">
-            あ　${question.blanks.a.correctOrder.join(' ')}<br>
-            い　${question.blanks.b.correctOrder.join(' ')}
-        </div>
-    `;
+    correctDiv.innerHTML = buildHsCorrectHTML(question);
     
     const submitBtn = document.getElementById('hsSeijoSubmitBtn');
     if (submitBtn) {
@@ -25188,7 +25317,9 @@ function showHsSeijoResults() {
     // カテゴリー名
     const completionCourseTitle = document.getElementById('completionCourseTitle');
     if (completionCourseTitle) {
-        completionCourseTitle.textContent = '兵庫県公立入試 整序英作（予想問題）';
+        const levelNames = { basic: '基本編', standard: '標準編', advanced: '発展編' };
+        const levelLabel = hsSelectedLevel ? (levelNames[hsSelectedLevel] || '') : '';
+        completionCourseTitle.textContent = `整序英作 予想問題${levelLabel ? ' ' + levelLabel : ''}`;
     }
     
     // 統計
