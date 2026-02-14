@@ -6749,7 +6749,7 @@ body.hyogo-seijo-mode-active .word-card-container {
         font-size: clamp(18px, 5vw, 26px);
         line-height: 1.2;
         font-weight: 700;
-        font-family: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
+        font-family: "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", "MS PGothic", sans-serif;
     }
     .input-container {
         min-height: 120px;
@@ -6821,7 +6821,7 @@ body.hyogo-seijo-mode-active .word-card-container {
         font-size: clamp(16px, 4.5vw, 24px);
         line-height: 1.2;
         font-weight: 700;
-        font-family: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
+        font-family: "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", "MS PGothic", sans-serif;
     }
     .input-container {
         min-height: 100px;
@@ -21981,13 +21981,13 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     font-size: 18px;
     font-weight: 500;
     color: #111827;
-    font-family: "M PLUS Rounded 1c", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", "Meiryo", "Times New Roman", "Noto Serif", serif !important;
+    font-family: "Hiragino Maru Gothic ProN", "Meiryo", "BIZ UDPGothic", "Yu Gothic UI", "Times New Roman", "Noto Serif", serif !important;
 }
 
 /* 空所マーク（あ・い表示）*/
 /* あ・いのみ UDデジタル教科書体を優先（入っていれば使用） */
 .hs-passage-blank {
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", sans-serif;
+    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
     font-weight: 800;
 }
 
@@ -22024,7 +22024,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     vertical-align: middle;
     margin: 0 4px;
     padding: 0 12px;
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", sans-serif;
+    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
 }
 
 /* 空所セクション（語群エリア）─ ラベルと語群を横並びに */
@@ -22050,7 +22050,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     min-width: 24px;
     vertical-align: middle;
     line-height: 1.2;
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", sans-serif;
+    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
 }
 
 /* あ・い ラベル（試験用紙風：二重線枠） */
@@ -22069,7 +22069,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     margin-bottom: 10px;
     min-width: 52px;
     min-height: 28px;
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Meiryo", sans-serif;
+    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
 }
 
 /* スロットと語群の間隔調整 */
