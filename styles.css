@@ -8335,9 +8335,9 @@ body.hyogo-seijo-mode-active .word-card-container {
 /* 赤い角丸四角で赤シートを表現（文字なし・縦に立てた形） */
 .red-sheet-icon {
     display: block;
-    width: 16px;
-    height: 26px;
-    border-radius: 4px;
+    width: 14px;
+    height: 22px;
+    border-radius: 2px;
     background: #dc2626;
     flex-shrink: 0;
     transition: background 0.2s ease;
@@ -22023,8 +22023,42 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 
 /* 兵庫バッジ（赤系） */
 .exam-badge-hyogo {
+    display: inline-flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    line-height: 1.2;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+.exam-badge-hyogo-line1 {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px 9px 2px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    background: #dc2626;
+    color: #ffffff !important;
+}
+.exam-badge-hyogo-line1::before {
+    content: '';
+    display: block;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    background: url('hyogo.png') no-repeat center;
+    background-size: contain;
+}
+.exam-badge-hyogo-line2 {
+    display: block;
+    padding: 2px 9px 3px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    background: #fef2f2;
     color: #dc2626 !important;
-    background: #fef2f2 !important;
 }
 
 /* 兵庫県整序：1行目バッジ、2行目整序英作、3行目予想問題（メニュー内で左右中央揃え） */
@@ -22051,7 +22085,11 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 .category-name-stacked .exam-badge {
     display: inline-block;
     margin-right: 0;
+    margin-bottom: 6px;
     transform: none;
+}
+.category-name-stacked .exam-badge.exam-badge-hyogo {
+    display: inline-flex !important;
 }
 
 .category-name-stacked .category-name-sub {
