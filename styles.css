@@ -5750,6 +5750,14 @@ body.quiz-test-mode .progress-top-row {
     margin-top: auto;
 }
 
+/* 日本語タイトル時はゴシック体・普通のスタイルに */
+.unit-header-container.unit-header-jp .unit-name {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
 .unit-header-actions {
     position: absolute;
     right: 8px;
@@ -5922,37 +5930,6 @@ body.quiz-test-mode .progress-top-row {
     display: none;
 }
 
-/* 文法ページ用の戻るボタン（くの字） */
-.grammar-back-btn {
-    background: none;
-    border: none;
-    padding: 4px;
-    margin: 0 4px 0 0;
-    color: #ffffff;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-top: calc(env(safe-area-inset-top) / 2);
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    user-select: none;
-    -webkit-user-select: none;
-    z-index: 2;
-}
-
-.grammar-back-btn:hover {
-    color: rgba(255, 255, 255, 0.85);
-}
-
-.grammar-back-btn:active {
-    transform: translateY(-50%) !important;
-    top: 50% !important;
-}
 
 .card-top-section {
     display: flex;
@@ -8470,7 +8447,7 @@ body.hyogo-seijo-mode-active .word-card-container {
         box-shadow: 0 2px 10px rgba(37, 99, 235, 0.1);
     }
     
-    .red-sheet-toggle.sticky:has(.red-sheet-checkbox:checked) {
+    .red-sheet-toggle.sticky.active {
         background: #fef2f2;
         border-color: #fecaca;
     }
@@ -8489,44 +8466,21 @@ body.hyogo-seijo-mode-active .word-card-container {
     
     .input-shuffle-btn,
     .input-flip-all-btn,
-    .input-filter-trigger {
+    .input-filter-trigger,
+    .compact-mode-toggle-btn,
+    .input-list-controls-row .red-sheet-toggle {
         padding: 0 10px;
         font-size: 11px;
         gap: 4px;
         height: 30px;
     }
     
-    .input-list-controls-row .red-sheet-toggle {
-        padding: 0 8px;
-        gap: 5px;
-        height: 30px;
-    }
-    
     .input-shuffle-btn svg,
     .input-flip-all-btn svg,
-    .input-filter-trigger svg {
+    .input-filter-trigger svg,
+    .compact-mode-toggle-btn svg {
         width: 12px;
         height: 12px;
-    }
-    
-    .red-sheet-icon {
-        width: 14px;
-        height: 20px;
-        border-radius: 2px;
-    }
-    
-    .red-sheet-slider {
-        width: 32px;
-        height: 18px;
-    }
-    
-    .red-sheet-slider::before {
-        width: 14px;
-        height: 14px;
-    }
-    
-    .red-sheet-checkbox:checked + .red-sheet-slider::before {
-        transform: translateX(14px);
     }
     
     /* 赤シート下へボタン：スマホでも右下・安全領域を考慮 */
@@ -21925,7 +21879,14 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     color: #4b5563;
 }
 
-/* 予想問題ラベル（3行目） */
+.category-name-stacked .category-name-sub2 {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    color: #9ca3af;
+}
+
+/* 予想問題ラベル（4行目） */
 .category-name-stacked .exam-predict-label {
     display: inline-block;
     font-size: 11px;
@@ -22199,26 +22160,26 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 
 /* 正解表示 */
 .hs-correct-answer {
-    background: #ecfeff;
-    border: 2.5px solid #22d3ee;
-    border-radius: 4px;
-    padding: 14px 16px;
+    background: #eff6ff;
+    border: 2.5px solid #93c5fd;
+    border-radius: 6px;
+    padding: 16px 18px;
     margin-top: 12px;
     margin-bottom: 16px;
 }
 
 .hs-correct-answer-title {
     font-weight: 700;
-    font-size: 13px;
-    color: #0891b2;
-    margin-bottom: 6px;
+    font-size: 14px;
+    color: #1d4ed8;
+    margin-bottom: 8px;
 }
 
 .hs-correct-answer-text {
-    font-size: 15px;
-    color: #155e75;
-    line-height: 1.6;
-    font-weight: 500;
+    font-size: 19px;
+    color: #1e40af;
+    line-height: 1.65;
+    font-weight: 600;
     font-family: "Times New Roman", "Noto Serif", serif;
 }
 
@@ -22226,19 +22187,19 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 .hs-explanation-section {
     margin-top: 14px;
     padding-top: 12px;
-    border-top: 2px solid #67e8f9;
+    border-top: 2px solid #93c5fd;
 }
 
 .hs-explanation-title {
     font-weight: 700;
-    font-size: 13px;
-    color: #0891b2;
+    font-size: 14px;
+    color: #1d4ed8;
     margin-bottom: 6px;
 }
 
 .hs-explanation-text {
-    font-size: 14px;
-    color: #155e75;
+    font-size: 15px;
+    color: #1e40af;
     line-height: 1.7;
 }
 
@@ -22246,19 +22207,19 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
 .hs-translation-section {
     margin-top: 14px;
     padding-top: 12px;
-    border-top: 2px solid #67e8f9;
+    border-top: 2px solid #93c5fd;
 }
 
 .hs-translation-title {
     font-weight: 700;
-    font-size: 13px;
-    color: #0891b2;
+    font-size: 14px;
+    color: #1d4ed8;
     margin-bottom: 6px;
 }
 
 .hs-translation-text {
-    font-size: 14px;
-    color: #155e75;
+    font-size: 15px;
+    color: #1e40af;
     line-height: 1.7;
 }
 
