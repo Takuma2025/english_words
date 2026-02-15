@@ -2110,6 +2110,7 @@ let wordTimerInterval = null; // 単語あたりのタイマーのインター�
 let wordResponseStartTime = 0;
 const TIME_PER_WORD = 2; // 1単語あたりの時間（秒）
 let isSentenceModeActive = false; // 厳選例文暗記モードかどうか
+let isSentenceListLearning = false; // 厳選例文の学習一覧表示中か（テスト前の赤シート風）
 let sentenceData = []; // 例文データ
 let currentSentenceIndex = 0; // 現在の例文のインデックス
 let sentenceBlanks = []; // 空所のデータ [{index: 0, word: 'longer', userInput: ''}, ...]
@@ -4689,8 +4690,8 @@ function startCategory(category) {
             return;
         }
     } else if (category === '大阪B問題対策 厳選例文暗記60【和文英訳対策】') {
-        // 大阪B問題対策：厳選例文暗記モードで開始
-        initSentenceModeLearning(category);
+        // 大阪B問題対策：まず学習一覧（赤シート風）、ヘッダー「テスト」でテスト開始
+        showSentenceListLearning(category);
         return;
     } else if (category === '条件英作文特訓コース') {
         // 条件英作文特訓コース：整序英作文モードで開始
@@ -8006,6 +8007,14 @@ function setupEventListeners() {
     const unitTestBtn = document.getElementById('unitTestBtn');
     if (unitTestBtn) {
         unitTestBtn.addEventListener('click', () => {
+            // 厳選例文暗記の学習一覧からテストに移行
+            if (isSentenceListLearning) {
+                isSentenceListLearning = false;
+                const sentenceListView = document.getElementById('sentenceListView');
+                if (sentenceListView) sentenceListView.classList.add('hidden');
+                initSentenceModeLearning(selectedCategory);
+                return;
+            }
             // 現在のカテゴリと単語を使用してテストモードに切り替え
             if (currentFilterCategory && currentFilterWords && currentFilterWords.length > 0) {
                 showWordFilterView(currentFilterCategory, currentFilterWords, currentFilterCourseTitle || currentFilterCategory);
@@ -8019,6 +8028,13 @@ function setupEventListeners() {
     const headerTestBtn = document.getElementById('headerTestBtn');
     if (headerTestBtn) {
         headerTestBtn.addEventListener('click', () => {
+            if (isSentenceListLearning) {
+                isSentenceListLearning = false;
+                const sentenceListView = document.getElementById('sentenceListView');
+                if (sentenceListView) sentenceListView.classList.add('hidden');
+                initSentenceModeLearning(selectedCategory);
+                return;
+            }
             if (currentFilterCategory && currentFilterWords && currentFilterWords.length > 0) {
                 showWordFilterView(currentFilterCategory, currentFilterWords, currentFilterCourseTitle || currentFilterCategory);
             } else if (selectedCategory && currentCourseWords && currentCourseWords.length > 0) {
@@ -8713,6 +8729,29 @@ function setupEventListeners() {
     
     // 戻る処理を共通関数化
     function handleBackButton() {
+            // 厳選例文の学習一覧から戻る（背景を白にしない）
+            if (isSentenceListLearning) {
+                isSentenceListLearning = false;
+                endStudySession();
+                document.body.classList.remove('learning-mode', 'quiz-test-mode', 'sentence-mode-active');
+                updateThemeColorForTest(false);
+                updateThemeColor(false);
+                const sentenceListView = document.getElementById('sentenceListView');
+                if (sentenceListView) sentenceListView.classList.add('hidden');
+                elements.mainContent.classList.add('hidden');
+                elements.categorySelection.classList.remove('hidden');
+                const scoreTab = document.querySelector('.course-tab[data-target="courseScoreSection"]');
+                const scoreSection = document.getElementById('courseScoreSection');
+                if (scoreTab && scoreSection) {
+                    document.querySelectorAll('.course-tab').forEach(t => t.classList.remove('active'));
+                    scoreTab.classList.add('active');
+                    document.querySelectorAll('.course-section').forEach(s => s.classList.add('hidden'));
+                    scoreSection.classList.remove('hidden');
+                }
+                updateHeaderButtons('home');
+                return;
+            }
+
             // 学習セッション終了（時間を記録）
             endStudySession();
             
@@ -16153,8 +16192,153 @@ function clearLearningHistory() {
 
 // シャッフル
 
+// 厳選例文暗記：学習一覧を表示（赤シート風・タップで英文表示）。ヘッダー「テスト」でテスト開始
+function showSentenceListLearning(category) {
+    startStudySession();
+    selectedCategory = category;
+    isSentenceListLearning = true;
+    isSentenceModeActive = false;
+    isInputModeActive = false;
+    isReorderModeActive = false;
+    isChoiceQuestionModeActive = false;
+
+    elements.categorySelection.classList.add('hidden');
+    const courseSelection = document.getElementById('courseSelection');
+    if (courseSelection) courseSelection.classList.add('hidden');
+    elements.mainContent.classList.remove('hidden');
+
+    // モードクラスをリセット
+    document.body.classList.remove('sentence-mode-active', 'reorder-mode-active', 'choice-question-mode-active', 'hyogo-seijo-mode-active', 'hyogo-dokkai-mode-active', 'quiz-test-mode');
+    document.body.classList.add('learning-mode');
+    updateThemeColor(true);
+    updateHeaderButtons('learning', '厳選例文暗記60', false);
+
+    // unit-header-container内のボタンを制御：戻る＋テスト表示、×ボタン非表示
+    const inputBackBtn = document.getElementById('inputBackBtn');
+    const unitPauseBtn = document.getElementById('unitPauseBtn');
+    const unitTestBtn = document.getElementById('unitTestBtn');
+    const testModeProgress = document.getElementById('testModeProgress');
+    if (inputBackBtn) inputBackBtn.classList.remove('hidden');
+    if (unitTestBtn) unitTestBtn.classList.remove('hidden');
+    if (unitPauseBtn) unitPauseBtn.classList.add('hidden');
+    if (testModeProgress) testModeProgress.classList.add('hidden');
+
+    // 単元名を設定
+    if (elements.unitName) {
+        elements.unitName.classList.remove('hidden');
+        setUnitNameContent(elements.unitName, '厳選例文暗記60');
+    }
+
+    const sentenceListView = document.getElementById('sentenceListView');
+    const sentenceListScroll = document.getElementById('sentenceListScroll');
+    const wordCard = document.getElementById('wordCard');
+    const wordCardContainer = document.getElementById('wordCardContainer');
+    const inputMode = document.getElementById('inputMode');
+    const inputListView = document.getElementById('inputListView');
+    const sentenceMode = document.getElementById('sentenceMode');
+    const reorderMode = document.getElementById('reorderMode');
+    const choiceMode = document.getElementById('choiceQuestionMode');
+    const hyogoSeijoMode = document.getElementById('hyogoSeijoMode');
+    const hyogoDokkaiMode = document.getElementById('hyogoDokkaiMode');
+    const cardHint = document.getElementById('cardHint');
+    const cardTopSection = document.getElementById('cardTopSection');
+    const progressStepButtons = document.querySelector('.progress-step-buttons');
+    if (wordCard) wordCard.classList.add('hidden');
+    if (wordCardContainer) wordCardContainer.classList.add('hidden');
+    if (inputMode) inputMode.classList.add('hidden');
+    if (inputListView) inputListView.classList.add('hidden');
+    if (sentenceMode) sentenceMode.classList.add('hidden');
+    if (reorderMode) reorderMode.classList.add('hidden');
+    if (choiceMode) choiceMode.classList.add('hidden');
+    if (hyogoSeijoMode) hyogoSeijoMode.classList.add('hidden');
+    if (hyogoDokkaiMode) hyogoDokkaiMode.classList.add('hidden');
+    if (cardHint) cardHint.classList.add('hidden');
+    if (cardTopSection) cardTopSection.classList.add('hidden');
+    if (progressStepButtons) progressStepButtons.classList.add('hidden');
+    if (sentenceListView) sentenceListView.classList.remove('hidden');
+
+    if (!sentenceListScroll || typeof sentenceMemorizationData === 'undefined') {
+        if (sentenceListView) sentenceListView.classList.add('hidden');
+        isSentenceListLearning = false;
+        showAlert('エラー', '例文データが見つかりません。');
+        return;
+    }
+
+    sentenceListScroll.innerHTML = '';
+    sentenceMemorizationData.forEach((s, i) => {
+        const item = document.createElement('div');
+        item.className = 'sentence-list-item';
+        item.setAttribute('data-index', i);
+
+        // 上段：番号 + 文法タグ
+        const topRow = document.createElement('div');
+        topRow.className = 'sentence-list-item-top';
+        const num = document.createElement('span');
+        num.className = 'sentence-list-item-num';
+        num.textContent = i + 1;
+        topRow.appendChild(num);
+        if (s.grammar) {
+            const tag = document.createElement('span');
+            tag.className = 'sentence-list-item-tag';
+            tag.textContent = s.grammar;
+            topRow.appendChild(tag);
+        }
+        // タップ指示アイコン
+        const tapIcon = document.createElement('span');
+        tapIcon.className = 'sentence-list-item-tap';
+        tapIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+        topRow.appendChild(tapIcon);
+        item.appendChild(topRow);
+
+        // 日本語
+        const jp = document.createElement('div');
+        jp.className = 'sentence-list-item-jp';
+        jp.textContent = s.japanese;
+        item.appendChild(jp);
+
+        // 解答エリア（英文 + 解説）
+        const answerArea = document.createElement('div');
+        answerArea.className = 'sentence-list-item-answer hidden';
+
+        const en = document.createElement('div');
+        en.className = 'sentence-list-item-en';
+        en.textContent = s.english;
+        answerArea.appendChild(en);
+
+        if (s.explanation) {
+            const expl = document.createElement('div');
+            expl.className = 'sentence-list-item-explanation';
+            const explLabel = document.createElement('div');
+            explLabel.className = 'explanation-label';
+            explLabel.textContent = '解説';
+            const explText = document.createElement('div');
+            explText.className = 'explanation-text';
+            explText.textContent = s.explanation;
+            expl.appendChild(explLabel);
+            expl.appendChild(explText);
+            answerArea.appendChild(expl);
+        }
+        item.appendChild(answerArea);
+
+        item.addEventListener('click', () => {
+            const isOpening = answerArea.classList.contains('hidden');
+            answerArea.classList.toggle('hidden');
+            item.classList.toggle('opened', isOpening);
+            tapIcon.innerHTML = isOpening
+                ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>'
+                : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+        });
+        sentenceListScroll.appendChild(item);
+    });
+    window.scrollTo(0, 0);
+}
+
 // 厳選例文暗記モードで学習を初期化
 function initSentenceModeLearning(category) {
+    const sentenceListView = document.getElementById('sentenceListView');
+    if (sentenceListView) sentenceListView.classList.add('hidden');
+    isSentenceListLearning = false;
+
     // 学習セッション開始
     startStudySession();
     

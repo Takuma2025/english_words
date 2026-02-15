@@ -4104,10 +4104,11 @@ body.learning-mode .app-header {
 .exam1200-cell-3,
 .exam1200-cell-4 { background: #dc2626; }
 
+/* 中央帯：兵庫県バッジと同じ色（赤文字・薄い赤背景） */
 .exam1200-exam-label {
     grid-column: 1 / -1;
-    background: #111827;
-    color: #ffffff;
+    background: #fef2f2;
+    color: #dc2626;
     font-size: min(8px, 1.9vw);
     line-height: 1.1;
     font-weight: 600;
@@ -12766,6 +12767,169 @@ body.learning-mode .card-area-wrapper:has(.word-card:not(.hidden)) .input-mode-n
     100% {
         transform: scale(1);
     }
+}
+
+/* 厳選例文暗記：学習用一覧（赤シート風） */
+/* ===== 厳選例文暗記：学習一覧 ===== */
+.sentence-list-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 0 24px;
+    background: #f0f4f8;
+}
+
+/* 厳選例文学習一覧表示時：card-area-wrapperの上パディングを消してステータスバーまで青に */
+body.learning-mode .card-area-wrapper:has(.sentence-list-view:not(.hidden)) {
+    padding-top: 0;
+    background-color: #f0f4f8;
+}
+
+/* 厳選例文暗記60のヘッダータイトル：ゴシック体 */
+body.learning-mode .card-area-wrapper:has(.sentence-list-view:not(.hidden)) .unit-header-container .unit-name {
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.sentence-list-header {
+    flex-shrink: 0;
+    padding: 14px 16px 10px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+}
+.sentence-list-hint {
+    font-size: 12.5px;
+    color: #64748b;
+    margin: 0;
+    text-align: center;
+}
+.sentence-list-scroll {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 8px 12px 16px;
+}
+
+/* --- カードアイテム --- */
+.sentence-list-item {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    margin-bottom: 8px;
+    -webkit-tap-highlight-color: transparent;
+}
+.sentence-list-item:active {
+    transform: scale(0.985);
+}
+.sentence-list-item.opened {
+    box-shadow: 0 2px 8px rgba(0, 85, 202, 0.12);
+}
+
+/* 上段：番号バッジ + 文法タグ + 矢印 */
+.sentence-list-item-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.sentence-list-item-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #0055ca;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Oswald', sans-serif;
+    flex-shrink: 0;
+    line-height: 1;
+}
+.sentence-list-item-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+.sentence-list-item-tap {
+    margin-left: auto;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    transition: transform 0.25s ease, color 0.2s;
+    flex-shrink: 0;
+}
+.sentence-list-item.opened .sentence-list-item-tap {
+    color: #0055ca;
+}
+
+/* 日本語 */
+.sentence-list-item-jp {
+    font-size: 15px;
+    line-height: 1.65;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+/* --- 解答エリア（英文 + 解説） --- */
+.sentence-list-item-answer {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+    animation: slAnswerFadeIn 0.25s ease;
+}
+.sentence-list-item-answer.hidden {
+    display: none;
+}
+@keyframes slAnswerFadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 英文（赤シート対応オレンジ） */
+.sentence-list-item-en {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #dc2626;
+    font-family: "Times New Roman", "Noto Serif", Times, serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+/* 解説 */
+.sentence-list-item-explanation {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+.sentence-list-item-explanation .explanation-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 4px;
+    letter-spacing: 0.04em;
+}
+.sentence-list-item-explanation .explanation-text {
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: #475569;
 }
 
 /* 厳選例文暗記モード */
