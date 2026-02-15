@@ -8334,9 +8334,9 @@ body.hyogo-seijo-mode-active .word-card-container {
 /* 赤い角丸四角で赤シートを表現（文字なし・縦に立てた形） */
 .red-sheet-icon {
     display: block;
-    width: 10px;
-    height: 24px;
-    border-radius: 3px;
+    width: 16px;
+    height: 26px;
+    border-radius: 4px;
     background: #dc2626;
     flex-shrink: 0;
     transition: background 0.2s ease;
@@ -12835,13 +12835,11 @@ body.hyogo-seijo-mode-active .progress-bar-container {
     width: 100%;
 }
 
-/* 進捗バーのテキスト行を非表示（ヘッダーに表示するため） */
+/* 進捗バーのテキスト行を非表示（ヘッダーに表示するため）※整序英作は進捗バー表示のため除外 */
 body.sentence-mode-active .sentence-progress-header .progress-top-row,
 body.choice-question-mode-active .choice-progress-header .progress-top-row,
-body.hyogo-seijo-mode-active .hyogo-seijo-progress-header .progress-top-row,
 body.sentence-mode-active .sentence-progress-header .hw-progress-bottom-row,
-body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row,
-body.hyogo-seijo-mode-active .hyogo-seijo-progress-header .hw-progress-bottom-row {
+body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row {
     display: none;
 }
 
@@ -19712,6 +19710,11 @@ body.choice-question-mode-active .choice-question-mode {
     margin-bottom: 12px;
 }
 
+/* 整序英作：進捗バー上の「進捗 0/0」行は非表示 */
+body.hyogo-seijo-mode-active .hyogo-seijo-progress-header .progress-top-row {
+    display: none;
+}
+
 /* 兵庫県整序英作：ヘッダー上のステータスバーを白に */
 body.hyogo-seijo-mode-active .hyogo-seijo-progress-header,
 body.hyogo-seijo-mode-active .card-top-section {
@@ -21860,16 +21863,31 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     background: #fef2f2 !important;
 }
 
-/* 兵庫県整序：1行目バッジ、2行目整序英作、3行目予想問題 */
+/* 兵庫県整序：1行目バッジ、2行目整序英作、3行目予想問題（メニュー内で左右中央揃え） */
 .category-name-stacked {
     display: flex !important;
     flex-direction: column !important;
-    align-items: flex-start !important;
+    align-items: center !important;
     gap: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 兵庫県カード：ヘッダー内を左右中央に配置 */
+.category-card-seijo .category-header.exam-menu-header,
+.course-section .category-card-seijo .category-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
 }
 
 .category-name-stacked .exam-badge {
     display: inline-block;
+    margin-right: 0;
+    transform: none;
 }
 
 .category-name-stacked .category-name-sub {
@@ -22255,5 +22273,323 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
         min-width: 64px;
         height: 40px;
         font-size: 15px;
+    }
+}
+
+/* ============================================
+   兵庫県 英文読解モード (Hyogo Dokkai)
+   ============================================ */
+
+.hyogo-dokkai-mode {
+    padding: 0 16px 120px 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+body.hyogo-dokkai-mode-active .card-area-wrapper {
+    overflow-y: auto !important;
+    display: block !important;
+    padding-top: 0;
+}
+
+body.hyogo-dokkai-mode-active .app-main,
+body.hyogo-dokkai-mode-active .learning-view {
+    overflow-y: auto !important;
+}
+
+body.hyogo-dokkai-mode-active .unit-header-container {
+    background: #ffffff;
+    justify-content: center;
+    margin-bottom: 0;
+    border-bottom: none;
+    box-shadow: none;
+}
+
+body.hyogo-dokkai-mode-active .unit-header-container .unit-name,
+body.hyogo-dokkai-mode-active .unit-header-container .input-back-btn,
+body.hyogo-dokkai-mode-active .unit-header-container .unit-test-btn {
+    display: none !important;
+}
+
+body.hyogo-dokkai-mode-active .unit-header-container .test-mode-progress {
+    display: block !important;
+    color: #333333;
+}
+
+.hyogo-dokkai-progress-header {
+    background: transparent;
+    padding: 0 16px;
+    margin-bottom: 10px;
+}
+
+/* 英文読解モード：進捗バー・正解/不正解を常に表示 */
+body.hyogo-dokkai-mode-active .hyogo-dokkai-progress-header,
+body.hyogo-dokkai-mode-active .hyogo-dokkai-progress-header .progress-bar-wrapper,
+body.hyogo-dokkai-mode-active .hyogo-dokkai-progress-header .hw-progress-bottom-row {
+    display: flex !important;
+}
+body.hyogo-dokkai-mode-active .hyogo-dokkai-progress-header {
+    flex-direction: column;
+}
+
+body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-top: calc(env(safe-area-inset-top) / 2);
+    color: #333333;
+}
+
+.hd-instruction {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #111827;
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border-left: 3px solid #94a3b8;
+}
+
+.hd-conversation {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.hd-line {
+    display: grid;
+    grid-template-columns: 60px 60px 1fr;
+    gap: 10px;
+    align-items: start;
+}
+
+/* Ms. Tanaka（先生）: アイコンのすぐ右に吹き出し */
+.hd-line-teacher {
+    grid-template-columns: 60px 1fr;
+    gap: 8px;
+}
+.hd-line-teacher .hd-avatar-wrap {
+    grid-column: 1;
+}
+.hd-line-teacher .hd-bubble {
+    grid-column: 2;
+}
+
+/* Emma, Haru, Kota（生徒）は左から2列目で少し右に */
+.hd-line-student .hd-avatar-wrap {
+    grid-column: 2;
+}
+.hd-line-student .hd-bubble {
+    grid-column: 3;
+}
+
+.hd-avatar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.hd-avatar {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    background: #e5e7eb;
+}
+
+.hd-speaker {
+    font-size: 12px;
+    line-height: 1.2;
+    color: #374151;
+    text-align: center;
+    font-weight: 600;
+}
+
+.hd-bubble {
+    border: 2px solid #4b5563;
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 12px 14px;
+    font-size: 17px;
+    line-height: 1.85;
+    color: #1f2937;
+    font-family: "Times New Roman", "Noto Serif", serif;
+}
+
+.hd-bubble.teacher {
+    background: #f9fafb;
+}
+
+.hd-note {
+    font-size: 14px;
+    color: #4b5563;
+    margin: 6px 0 14px;
+}
+
+.hd-questions {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.hd-question-section {
+    padding: 12px 0;
+    background: transparent;
+}
+
+.hd-question-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.hd-question-item {
+    margin-bottom: 12px;
+}
+
+.hd-question-item:last-child {
+    margin-bottom: 0;
+}
+
+.hd-question-prompt {
+    font-size: 14px;
+    color: #111827;
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+.hd-choice-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+}
+
+.hd-choice-btn {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1f2937;
+    font-family: "Times New Roman", "Noto Serif", Times, serif;
+    cursor: pointer;
+}
+
+/* ア・イ・ウ・エ・オはゴシック体 */
+.hd-choice-btn .hd-choice-label {
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    font-weight: 700;
+}
+
+/* 選んだときだけ囲み（グレーのボーダー） */
+.hd-choice-btn.selected {
+    background: #e5e7eb;
+    border: 1px solid #374151;
+}
+
+/* 正解は青のボーダー */
+.hd-choice-btn.correct {
+    background: #dbeafe;
+    border: 1px solid #2563eb;
+}
+
+/* 不正解は赤のボーダー */
+.hd-choice-btn.wrong {
+    background: #fee2e2;
+    border: 1px solid #dc2626;
+}
+
+.hd-choice-btn.disabled {
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+.hyogo-dokkai-mode .hd-problem-title {
+    margin: 12px 0 10px 0;
+    padding: 0 2px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #111827;
+    font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Times New Roman", Times, serif;
+    white-space: pre-wrap;
+}
+
+.hyogo-dokkai-mode .hd-problem-no {
+    font-weight: 800;
+    margin-right: 6px;
+}
+
+.hd-email-box {
+    padding: 10px 0;
+    background: #f8fafc;
+    margin-bottom: 10px;
+}
+
+.hd-email-meta {
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.hd-email-body {
+    margin-top: 8px;
+    white-space: pre-line;
+    font-size: 13px;
+    color: #111827;
+    line-height: 1.6;
+}
+
+.hd-result {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #eff6ff;
+    border: 1px solid #93c5fd;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #1e3a8a;
+}
+
+.hyogo-dokkai-mode .keyboard-actions {
+    background: #ffffff;
+    margin-top: 24px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+
+.hyogo-dokkai-mode .keyboard-action-btn:not(.keyboard-action-btn-primary) {
+    background: #e5e7eb;
+    color: #374151;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 480px) {
+    .hd-line {
+        grid-template-columns: 50px 50px 1fr;
+        gap: 8px;
+    }
+    .hd-line-teacher {
+        grid-template-columns: 50px 1fr;
+    }
+
+    .hd-avatar {
+        width: 50px;
+        height: 50px;
+    }
+
+    .hd-speaker {
+        font-size: 11px;
+    }
+
+    .hd-bubble {
+        font-size: 16px;
+        padding: 10px 12px;
+        line-height: 1.75;
     }
 }
