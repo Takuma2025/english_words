@@ -4153,6 +4153,7 @@ body.learning-mode .app-header {
     line-height: 1.4;
     color: #374151;
     text-align: center;
+    margin-top: 6px;
 }
 
 /* 入試直前カード：スマホ用 */
@@ -22038,11 +22039,11 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     grid-column: 1;
     grid-row: 1 / 3;
     width: 28px;
-    height: 100%;
+    align-self: stretch;
     object-fit: contain;
     background: #dc2626;
     display: block;
-    padding: 3px 5px;
+    padding: 0 5px;
     box-sizing: border-box;
 }
 .exam-badge-hyogo-line1 {

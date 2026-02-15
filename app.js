@@ -8729,26 +8729,30 @@ function setupEventListeners() {
     
     // 戻る処理を共通関数化
     function handleBackButton() {
-            // 厳選例文の学習一覧から戻る（背景を白にしない）
+            // 厳選例文の学習一覧から戻る（既存の共通アニメーション関数を使用）
             if (isSentenceListLearning) {
                 isSentenceListLearning = false;
                 endStudySession();
-                document.body.classList.remove('learning-mode', 'quiz-test-mode', 'sentence-mode-active');
-                updateThemeColorForTest(false);
-                updateThemeColor(false);
-                const sentenceListView = document.getElementById('sentenceListView');
-                if (sentenceListView) sentenceListView.classList.add('hidden');
-                elements.mainContent.classList.add('hidden');
-                elements.categorySelection.classList.remove('hidden');
-                const scoreTab = document.querySelector('.course-tab[data-target="courseScoreSection"]');
-                const scoreSection = document.getElementById('courseScoreSection');
-                if (scoreTab && scoreSection) {
-                    document.querySelectorAll('.course-tab').forEach(t => t.classList.remove('active'));
-                    scoreTab.classList.add('active');
-                    document.querySelectorAll('.course-section').forEach(s => s.classList.add('hidden'));
-                    scoreSection.classList.remove('hidden');
-                }
-                updateHeaderButtons('home');
+
+                animateCardShrink('bProblemScoreCardBtn', function() {
+                    document.body.classList.remove('learning-mode', 'quiz-test-mode', 'sentence-mode-active');
+                    updateThemeColorForTest(false);
+                    updateThemeColor(false);
+                    const sentenceListView = document.getElementById('sentenceListView');
+                    if (sentenceListView) sentenceListView.classList.add('hidden');
+                    elements.mainContent.classList.add('hidden');
+                    elements.categorySelection.classList.remove('hidden');
+                    const scoreTab = document.querySelector('.course-tab[data-target="courseScoreSection"]');
+                    const scoreSection = document.getElementById('courseScoreSection');
+                    if (scoreTab && scoreSection) {
+                        document.querySelectorAll('.course-tab').forEach(t => t.classList.remove('active'));
+                        scoreTab.classList.add('active');
+                        document.querySelectorAll('.course-section').forEach(s => s.classList.add('hidden'));
+                        scoreSection.classList.remove('hidden');
+                    }
+                    updateHeaderButtons('home');
+                });
+
                 return;
             }
 
