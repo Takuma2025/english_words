@@ -21916,7 +21916,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     letter-spacing: 0.5px;
 }
 
-/* 問題文指示（試験用紙風・明朝体） */
+/* 問題文指示・ゴシック体 */
 .hs-instruction {
     font-size: 15px;
     color: #111827;
@@ -21925,7 +21925,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     padding: 0;
     background: none;
     border: none;
-    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", "HG明朝E", "MS 明朝", serif;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
 }
 
 /* 本文エリア（コンテナ） */
@@ -21950,7 +21950,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     margin-bottom: 18px;
 }
 
-/* 英文本文（試験用紙風：細い黒枠・丸ゴシック系） */
+/* 英文本文（試験用紙風：細い黒枠・ゴシック体） */
 .hs-passage-text-area {
     background: #ffffff;
     border: 1.5px solid #374151;
@@ -21960,13 +21960,12 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     font-size: 18px;
     font-weight: 500;
     color: #111827;
-    font-family: "Hiragino Maru Gothic ProN", "Meiryo", "BIZ UDPGothic", "Yu Gothic UI", "Times New Roman", "Noto Serif", serif !important;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
 }
 
-/* 空所マーク（あ・い表示）*/
-/* あ・いのみ UDデジタル教科書体を優先（入っていれば使用） */
+/* 空所マーク（あ・い表示）・ゴシック体 */
 .hs-passage-blank {
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
     font-weight: 800;
 }
 
@@ -21981,13 +21980,14 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     text-align: center;
     margin-bottom: 10px;
     color: #111827;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
 }
 
 .hs-passage-line {
     margin-bottom: 4px;
 }
 
-/* 本文中の空所マーク（試験用紙風：二重線枠） */
+/* 本文中の空所マーク（試験用紙風：二重線枠）・ゴシック体 */
 .hs-passage-blank {
     display: inline-flex;
     align-items: center;
@@ -22003,7 +22003,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     vertical-align: middle;
     margin: 0 4px;
     padding: 0 12px;
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
 }
 
 /* 空所セクション（語群エリア）─ ラベルと語群を横並びに */
@@ -22015,7 +22015,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     margin-bottom: 8px;
 }
 
-/* 指示文中の あ・い 四角囲み */
+/* 指示文中の あ・い 四角囲み・ゴシック体 */
 .hs-instruction-blank {
     display: inline-flex;
     align-items: center;
@@ -22029,10 +22029,10 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     min-width: 24px;
     vertical-align: middle;
     line-height: 1.2;
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
 }
 
-/* あ・い ラベル（試験用紙風：二重線枠） */
+/* あ・い ラベル（試験用紙風：二重線枠）・ゴシック体 */
 .hs-blank-label {
     display: inline-flex;
     align-items: center;
@@ -22048,7 +22048,7 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     margin-bottom: 10px;
     min-width: 52px;
     min-height: 28px;
-    font-family: "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", sans-serif;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
 }
 
 /* スロットと語群の間隔調整 */
@@ -22494,16 +22494,24 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
     border: 1px solid #374151;
 }
 
-/* 正解は青のボーダー */
+/* 正解は青のボーダー・文字も青 */
 .hd-choice-btn.correct {
     background: #dbeafe;
     border: 1px solid #2563eb;
+    color: #1d4ed8;
+}
+.hd-choice-btn.correct .hd-choice-label {
+    color: #1d4ed8;
 }
 
-/* 不正解は赤のボーダー */
+/* 不正解は赤のボーダー・文字も赤 */
 .hd-choice-btn.wrong {
     background: #fee2e2;
     border: 1px solid #dc2626;
+    color: #b91c1c;
+}
+.hd-choice-btn.wrong .hd-choice-label {
+    color: #b91c1c;
 }
 
 .hd-choice-btn.disabled {
