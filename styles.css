@@ -22477,6 +22477,28 @@ body.hyogo-seijo-mode-active .unit-header-container .unit-pause-btn {
     margin-top: 4px;
 }
 
+/* 英文読解 サブカテゴリカード */
+.hd-subcat-card {
+    text-align: left;
+}
+
+.hd-subcat-badge {
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.hd-subcat-count {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
 /* レスポンシブ */
 @media (max-width: 400px) {
     .hs-word-chip {
@@ -22563,6 +22585,7 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
     padding: 10px 12px;
     background: #f8fafc;
     border-left: 3px solid #94a3b8;
+    font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Times New Roman", Times, serif;
 }
 
 .hd-conversation {
@@ -22619,6 +22642,7 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
     color: #374151;
     text-align: center;
     font-weight: 600;
+    font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Times New Roman", Times, serif;
 }
 
 .hd-bubble {
@@ -22640,6 +22664,7 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
     font-size: 14px;
     color: #4b5563;
     margin: 6px 0 14px;
+    font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Times New Roman", Times, serif;
 }
 
 .hd-questions {
@@ -22659,6 +22684,12 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
     color: #111827;
     margin-bottom: 10px;
     line-height: 1.6;
+    font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Times New Roman", Times, serif;
+}
+
+.hd-question-num {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 700;
 }
 
 .hd-question-item {
@@ -22674,6 +22705,7 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
     color: #111827;
     margin-bottom: 8px;
     line-height: 1.6;
+    font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Times New Roman", Times, serif;
 }
 
 .hd-choice-grid {
@@ -22685,8 +22717,8 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
 .hd-choice-btn {
     width: 100%;
     text-align: left;
-    border: none;
-    background: #f8fafc;
+    border: 2px solid transparent;
+    background: #ffffff;
     border-radius: 8px;
     padding: 8px 10px;
     font-size: 14px;
@@ -22702,26 +22734,26 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
     font-weight: 700;
 }
 
-/* 選んだときだけ囲み（グレーのボーダー） */
+/* 選んだときはボーダーのみ（中は色なし） */
 .hd-choice-btn.selected {
-    background: #e5e7eb;
-    border: 1px solid #374151;
+    background: #ffffff;
+    border: 2px solid #374151;
 }
 
-/* 正解は青のボーダー・文字も青 */
+/* 正解：青ボーダー・薄い青の背景・字も青 */
 .hd-choice-btn.correct {
     background: #dbeafe;
-    border: 1px solid #2563eb;
+    border: 2px solid #2563eb;
     color: #1d4ed8;
 }
 .hd-choice-btn.correct .hd-choice-label {
     color: #1d4ed8;
 }
 
-/* 不正解は赤のボーダー・文字も赤 */
+/* 不正解：赤ボーダー・薄い赤の背景・字も赤 */
 .hd-choice-btn.wrong {
     background: #fee2e2;
-    border: 1px solid #dc2626;
+    border: 2px solid #dc2626;
     color: #b91c1c;
 }
 .hd-choice-btn.wrong .hd-choice-label {
@@ -22746,6 +22778,7 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
 .hyogo-dokkai-mode .hd-problem-no {
     font-weight: 800;
     margin-right: 6px;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
 }
 
 .hd-email-box {
@@ -22758,6 +22791,7 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
     font-size: 13px;
     color: #374151;
     line-height: 1.5;
+    font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Times New Roman", Times, serif;
 }
 
 .hd-email-body {
@@ -22766,6 +22800,7 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
     font-size: 13px;
     color: #111827;
     line-height: 1.6;
+    font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Times New Roman", Times, serif;
 }
 
 .hd-result {
@@ -22777,6 +22812,7 @@ body.hyogo-dokkai-mode-active .unit-header-container .unit-pause-btn {
     font-size: 14px;
     line-height: 1.7;
     color: #1e3a8a;
+    font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Times New Roman", Times, serif;
 }
 
 .hyogo-dokkai-mode .keyboard-actions {

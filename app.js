@@ -506,7 +506,7 @@ function animateCardShrink(targetCardId, callback) {
         
         if (currentTargetCard && appMainEl) {
             // 最下部メニューの場合は一番下まで、それ以外は中央までスクロール
-            if (targetCardId === 'allWordsCardBtn' || targetCardId === 'irregularVerbsCardBtn' || targetCardId === 'exam1200CardBtn') {
+            if (targetCardId === 'allWordsCardBtn' || targetCardId === 'irregularVerbsCardBtn') {
                 appMainEl.scrollTop = appMainEl.scrollHeight + 1000;
             } else {
                 currentTargetCard.scrollIntoView({ block: 'center', behavior: 'instant' });
@@ -4504,6 +4504,9 @@ function returnToLearningMenu(category) {
     } else if (parent === '兵庫県公立入試 整序英作（予想問題）' || category === '兵庫県公立入試 整序英作（予想問題）') {
         updateThemeColorForTest(false);
         showHyogoSeijoSubcategorySelection();
+    } else if (parent === '兵庫県公立入試 英文読解（予想問題）' || category === '兵庫県公立入試 英文読解（予想問題）') {
+        updateThemeColorForTest(false);
+        showHyogoDokkaiSubcategorySelection();
     } else if (returnToCourseInfo && returnToCourseInfo.category && returnToCourseInfo.words) {
         // 保存されたコース情報があればそのコース選択画面に戻る
         // skipSaveReturnInfo = true で、戻り情報を上書きしない
@@ -4721,7 +4724,7 @@ function startCategory(category) {
             showAlert('エラー', '英文読解の問題データが見つかりません。');
             return;
         }
-        initHyogoDokkaiLearning(category);
+        showHyogoDokkaiSubcategorySelection();
         return;
     } else if (category === '兵庫県公立入試 整序英作（予想問題）') {
         // 兵庫県公立入試 整序英作（予想問題） → サブカテゴリ選択画面へ
@@ -8820,6 +8823,8 @@ function setupEventListeners() {
                         targetCardId = window.lastIdiomsSourceCardId || 'idiomsListCardBtn';
                     } else if (window.currentSubcategoryParent === '兵庫県公立入試 整序英作（予想問題）') {
                         targetCardId = 'hyogoSeijoCardBtn';
+                    } else if (window.currentSubcategoryParent === '兵庫県公立入試 英文読解（予想問題）') {
+                        targetCardId = 'hyogoDokkaiCardBtn';
                     }
                     
                     if (targetCardId) {
@@ -8827,8 +8832,8 @@ function setupEventListeners() {
                         const hasStarAnimation = !!lastLearningCategory;
                         
                         window.currentSubcategoryParent = null;
-                        // 兵庫県整序英作から戻る場合は入試得点力タブを表示してから縮小
-                        if (targetCardId === 'hyogoSeijoCardBtn') {
+                        // 兵庫県整序英作・英文読解から戻る場合は入試得点力タブを表示してから縮小
+                        if (targetCardId === 'hyogoSeijoCardBtn' || targetCardId === 'hyogoDokkaiCardBtn') {
                             const scoreTab = document.querySelector('.course-tab[data-target="courseScoreSection"]');
                             const scoreSection = document.getElementById('courseScoreSection');
                             const courseTabsContainer = document.getElementById('courseTabs');
@@ -8893,12 +8898,22 @@ function setupEventListeners() {
                         });
                         return;
                     }
-                    // 入試直前これだけ1200語から来た場合は、縮小アニメーションでホームに戻る
+                    // 入試直前これだけ1200語から来た場合は、入試得点力アップタブに切り替えて縮小アニメーションでホームに戻る
                     if (selectedCategory === '入試直前これだけ1200語') {
+                        const scoreTab = document.querySelector('.course-tab[data-target="courseScoreSection"]');
+                        const scoreSection = document.getElementById('courseScoreSection');
+                        const courseTabsContainer = document.getElementById('courseTabs');
+                        if (scoreTab && scoreSection) {
+                            document.querySelectorAll('.course-tab').forEach(t => t.classList.remove('active'));
+                            scoreTab.classList.add('active');
+                            document.querySelectorAll('.course-section').forEach(s => s.classList.add('hidden'));
+                            scoreSection.classList.remove('hidden');
+                            if (courseTabsContainer) courseTabsContainer.classList.add('score-active');
+                        }
+                        elements.categorySelection.classList.remove('hidden');
                         animateCardShrink('exam1200CardBtn', () => {
                             selectedCategory = null;
                             elements.mainContent.classList.add('hidden');
-                            elements.categorySelection.classList.remove('hidden');
                             updateHeaderButtons('home');
                             updateCategoryStars();
                             updateVocabProgressBar();
@@ -8966,6 +8981,19 @@ function setupEventListeners() {
                         }
                         elements.mainContent.classList.add('hidden');
                         showHyogoSeijoSubcategorySelection();
+                        return;
+                    }
+                    // 兵庫県英文読解：学習画面からサブカテゴリ選択画面に戻る
+                    if (selectedCategory === '兵庫県公立入試 英文読解（予想問題）') {
+                        document.body.classList.remove('hyogo-dokkai-mode-active');
+                        updateThemeColorForTest(false);
+                        const hyogoDokkaiMode = document.getElementById('hyogoDokkaiMode');
+                        if (hyogoDokkaiMode) hyogoDokkaiMode.classList.add('hidden');
+                        if (elements.feedbackOverlay) {
+                            elements.feedbackOverlay.classList.remove('active', 'correct', 'wrong');
+                        }
+                        elements.mainContent.classList.add('hidden');
+                        showHyogoDokkaiSubcategorySelection();
                         return;
                     }
                     
@@ -21512,6 +21540,65 @@ function getStudyLevel(count) {
    兵庫県公立入試 英文読解（予想問題） モード
    ============================================ */
 
+// 英文読解 サブカテゴリ選択画面（問題ごとにカード）
+function showHyogoDokkaiSubcategorySelection() {
+    window.scrollTo(0, 0);
+    const appMain = document.querySelector('.app-main');
+    if (appMain) appMain.scrollTop = 0;
+
+    const courseSelection = document.getElementById('courseSelection');
+    const courseList = document.getElementById('courseList');
+    const courseTitle = document.getElementById('courseSelectionTitle');
+    const courseSelectionImage = document.getElementById('courseSelectionImage');
+    const courseSelectionDescription = document.getElementById('courseSelectionDescription');
+
+    courseTitle.innerHTML = '<span class="exam-badge">入試頻出</span> 英文読解（予想問題）';
+    if (courseSelectionDescription) {
+        courseSelectionDescription.textContent = '問題を選んで練習しよう';
+        courseSelectionDescription.style.display = 'block';
+    }
+    if (courseSelectionImage) courseSelectionImage.style.display = 'none';
+
+    courseList.innerHTML = '';
+
+    hyogoDokkaiQuestions.forEach((q, index) => {
+        const sectionCount = q.sections ? q.sections.length : 0;
+        const card = document.createElement('button');
+        card.className = 'category-card hd-subcat-card';
+        card.setAttribute('data-hd-index', String(index));
+
+        const problemLabel = q.problemNo ? `問題${q.problemNo}` : `問題${index + 1}`;
+        const title = q.title || problemLabel;
+
+        card.innerHTML = `
+            <div class="category-info">
+                <div class="category-header">
+                    <div class="category-name">
+                        <span class="hd-subcat-badge">${problemLabel}</span>
+                    </div>
+                </div>
+                <div class="category-meta">${hdEscapeHtml(title)}</div>
+                <div class="hd-subcat-count">${sectionCount}問</div>
+            </div>
+        `;
+
+        card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            initHyogoDokkaiLearning('兵庫県公立入試 英文読解（予想問題）', index);
+        });
+
+        courseList.appendChild(card);
+    });
+
+    elements.categorySelection.classList.add('hidden');
+    courseSelection.classList.remove('hidden');
+
+    selectedCategory = '兵庫県公立入試 英文読解（予想問題）';
+    window.currentSubcategoryParent = '兵庫県公立入試 英文読解（予想問題）';
+
+    updateHeaderButtons('course', '英文読解');
+}
+
 function hdEscapeHtml(text) {
     return String(text)
         .replace(/&/g, '&amp;')
@@ -21521,11 +21608,15 @@ function hdEscapeHtml(text) {
         .replace(/'/g, '&#39;');
 }
 
-function initHyogoDokkaiLearning(category) {
+function initHyogoDokkaiLearning(category, problemIndex) {
     startStudySession();
 
     selectedCategory = category;
-    hyogoDokkaiData = hyogoDokkaiQuestions;
+    if (typeof problemIndex === 'number' && problemIndex >= 0 && problemIndex < hyogoDokkaiQuestions.length) {
+        hyogoDokkaiData = [hyogoDokkaiQuestions[problemIndex]];
+    } else {
+        hyogoDokkaiData = hyogoDokkaiQuestions;
+    }
     hyogoDokkaiCurrentIndex = 0;
     hyogoDokkaiCurrentSectionIndex = 0;
     hyogoDokkaiCurrentQuestionSectionResults = [];
@@ -21638,7 +21729,17 @@ function renderHyogoDokkaiSections(question, sectionIndex) {
 
     const titleEl = document.createElement('h3');
     titleEl.className = 'hd-question-title';
-    titleEl.textContent = section.title;
+    const titleStr = section.title || '';
+    const numMatch = titleStr.match(/^(\d+)([\s.、]?)(.*)$/);
+    if (numMatch) {
+        const numSpan = document.createElement('span');
+        numSpan.className = 'hd-question-num';
+        numSpan.textContent = numMatch[1] + (numMatch[2] || '');
+        titleEl.appendChild(numSpan);
+        if (numMatch[3]) titleEl.appendChild(document.createTextNode(numMatch[3]));
+    } else {
+        titleEl.textContent = titleStr;
+    }
     sectionEl.appendChild(titleEl);
 
     if (section.email) {
