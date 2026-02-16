@@ -1,5 +1,5 @@
 :root {
-    --font-sans: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-sans: "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", -apple-system, BlinkMacSystemFont, "Yu Gothic", Meiryo, sans-serif;
     --bg: #0055ca;
     --panel: #0044a0;
     --border: #003380;
@@ -118,7 +118,7 @@ textarea,
     color: #0055ca;
     margin: 0;
     letter-spacing: 0.01em;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    font-family: "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", -apple-system, BlinkMacSystemFont, "Yu Gothic", Meiryo, sans-serif;
 }
 
 .splash-images-container {
@@ -7362,22 +7362,20 @@ body.hyogo-seijo-mode-active .word-card-container {
 #inputListContainer.flip-mode.flip-deck-mode {
     position: relative;
     z-index: 10010;
-    overflow: visible;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 0;
-    padding: 28px 0 0 0;
-    /* ツールバーから離しつつ、下部はナビ高さ＋セーフエリア */
-    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    gap: 12px;
+    padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px)) 0;
     min-height: 0;
     max-height: 100%;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
     --deck-card-w: clamp(280px, calc(100vw - 32px), 520px);
-    --deck-card-h: min(52vh, calc(100vh - 180px));
+    --deck-card-h: min(58vh, calc(100vh - 200px));
     --deck-nav-h: 72px;
 }
 
@@ -7386,20 +7384,57 @@ body.hyogo-seijo-mode-active .word-card-container {
     margin-bottom: 0;
 }
 .input-list-view:has(#inputListContainer.flip-mode.flip-deck-mode) .input-list-header {
-    padding-bottom: 24px;
+    padding-bottom: 12px;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode > .flip-deck-stage {
     position: relative;
-    z-index: 10010;
+    z-index: 10015;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex: 1 1 auto;
     min-height: 0;
-    max-height: calc(100% - var(--deck-nav-h));
-    padding-bottom: 0;
+    max-height: 100%;
+    overflow: visible;
+}
+
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-bottom-bar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: var(--deck-card-w);
+    max-width: calc(100vw - 32px);
+    margin: 0 auto;
+    padding: 4px 0 0 0;
+    flex-shrink: 0;
+    z-index: 10010;
+}
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-reset-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-reset-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-reset-btn:active {
+    transform: scale(0.95);
+}
+.flip-deck-reset-icon {
+    font-size: 24px;
+    line-height: 1;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack {
@@ -7450,8 +7485,8 @@ body.hyogo-seijo-mode-active .word-card-container {
     width: 100%;
     min-height: var(--deck-card-h);
     border: none;
-    background: rgba(224, 242, 254, 0.92); /* 薄い水色 */
-    color: rgba(0, 85, 202, 0.75);
+    background: #ffffff;
+    color: #374151;
     border-radius: 20px;
     box-shadow: none;
     display: flex;
@@ -7461,11 +7496,10 @@ body.hyogo-seijo-mode-active .word-card-container {
     font-size: 15px;
     font-weight: 800;
     letter-spacing: 0.06em;
-    cursor: pointer;
 }
 
-#inputListContainer.flip-mode.flip-deck-mode .flip-deck-replay-card:active {
-    transform: translateY(1px);
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-replay-card-summary {
+    cursor: default;
 }
 
 #inputListContainer.flip-mode.flip-deck-mode .input-list-item {
@@ -7798,16 +7832,49 @@ body.hyogo-seijo-mode-active .word-card-container {
 }
 
 /* カード上部：おぼえた / おぼえていない カウンター */
-.flip-deck-sort-counter-bar {
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-progress-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: var(--deck-card-w);
+    max-width: calc(100vw - 32px);
+    margin: 0 auto;
+    flex-shrink: 0;
+    z-index: 10005;
+}
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-sort-counter-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: var(--deck-card-w);
-    max-width: calc(100vw - 32px);
-    margin: 0 auto 8px;
+    width: 100%;
     padding: 0 2px;
     box-sizing: border-box;
-    z-index: 10010;
+}
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-progress-bar-track {
+    width: 100%;
+    height: 6px;
+    margin-top: 6px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 3px;
+    overflow: hidden;
+}
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    max-width: 100%;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 3px;
+    transition: width 0.25s ease;
+}
+.flip-deck-progress-counter {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.03em;
+    user-select: none;
+    text-align: center;
+    min-width: 60px;
+    opacity: 0.85;
 }
 .flip-deck-sort-counter {
     display: flex;
@@ -7849,7 +7916,7 @@ body.hyogo-seijo-mode-active .word-card-container {
     pointer-events: none;
     opacity: 0;
     z-index: 150;
-    transition: opacity 0.08s ease;
+    transition: opacity 0.45s ease;
 }
 
 /* ドラッグ中のインジケーター（カード中央に大きく表示） */
@@ -7858,16 +7925,17 @@ body.hyogo-seijo-mode-active .word-card-container {
     inset: 0;
     border-radius: 20px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    padding-top: 55%;
     gap: 8px;
     font-size: 22px;
     font-weight: 800;
     pointer-events: none;
     opacity: 0;
     z-index: 200;
+    transition: opacity 0.45s ease;
     letter-spacing: 0.08em;
-    transition: opacity 0.08s ease;
 }
 .flip-deck-indicator-icon {
     font-size: 28px;
@@ -7895,9 +7963,38 @@ body.hyogo-seijo-mode-active .word-card-container {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     width: 100%;
     max-width: 220px;
+}
+.flip-deck-replay-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 260px;
+    margin-top: 8px;
+}
+.flip-deck-replay-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 10px;
+    font-family: Meiryo, "メイリオ", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.flip-deck-replay-btn-forgot {
+    background: #f97316;
+    color: #ffffff;
+}
+.flip-deck-replay-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
 }
 .flip-deck-result-row {
     display: flex;
@@ -7934,7 +8031,7 @@ body.hyogo-seijo-mode-active .word-card-container {
 .flip-deck-replay-label {
     font-size: 14px;
     font-weight: 700;
-    color: rgba(0, 85, 202, 0.6);
+    color: #6b7280;
     letter-spacing: 0.06em;
     margin-top: 4px;
 }
@@ -8624,7 +8721,7 @@ body.hyogo-seijo-mode-active .word-card-container {
         margin-bottom: 0;
     }
     .input-list-view:has(#inputListContainer.flip-mode.flip-deck-mode) .input-list-header {
-        padding-bottom: 24px;
+        padding-bottom: 12px;
     }
     
     .input-shuffle-btn,
@@ -17190,7 +17287,7 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    font-family: "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", -apple-system, BlinkMacSystemFont, "Yu Gothic", Meiryo, sans-serif;
     letter-spacing: 0.02em;
 }
 

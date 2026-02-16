@@ -11841,13 +11841,8 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         });
         row.appendChild(audioBtn);
         
-        const flipHint = document.createElement('div');
-        flipHint.className = 'input-list-flip-hint';
-        flipHint.textContent = 'タップしてめくる';
-        
         front.appendChild(metaFront);
         front.appendChild(row);
-        front.appendChild(flipHint);
         
         // 裏面
         const back = document.createElement('div');
@@ -11870,10 +11865,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
         meaningEl.appendChild(meaningWrapper);
         back.appendChild(metaBack);
         back.appendChild(meaningEl);
-        const flipHintBack = document.createElement('div');
-        flipHintBack.className = 'input-list-flip-hint';
-        flipHintBack.textContent = 'タップしてめくる';
-        back.appendChild(flipHintBack);
+        
         
         inner.appendChild(front);
         inner.appendChild(back);
@@ -12193,11 +12185,42 @@ function renderInputListView(words, rangeWordsForHeader) {
         // おぼえた / おぼえていない カウンター（カードの上に表示）
         const sortCounterBar = document.createElement('div');
         sortCounterBar.className = 'flip-deck-sort-counter-bar';
-        sortCounterBar.innerHTML = `<span class="flip-deck-sort-counter flip-deck-sort-counter-forgot"><span class="flip-deck-sort-counter-num" id="flipSortForgotCount">0</span></span><span class="flip-deck-sort-counter flip-deck-sort-counter-known"><span class="flip-deck-sort-counter-num" id="flipSortKnownCount">0</span></span>`;
+        sortCounterBar.innerHTML = `<span class="flip-deck-sort-counter flip-deck-sort-counter-forgot"><span class="flip-deck-sort-counter-num" id="flipSortForgotCount">0</span></span><span class="flip-deck-progress-counter" id="flipProgressCounter"></span><span class="flip-deck-sort-counter flip-deck-sort-counter-known"><span class="flip-deck-sort-counter-num" id="flipSortKnownCount">0</span></span>`;
 
-        container.appendChild(sortCounterBar);
+        const progressHeader = document.createElement('div');
+        progressHeader.className = 'flip-deck-progress-header';
+        const progressBarTrack = document.createElement('div');
+        progressBarTrack.className = 'flip-deck-progress-bar-track';
+        const progressBarFill = document.createElement('div');
+        progressBarFill.className = 'flip-deck-progress-bar-fill';
+        progressBarFill.id = 'flipProgressBarFill';
+        progressBarTrack.appendChild(progressBarFill);
+        progressHeader.appendChild(sortCounterBar);
+        progressHeader.appendChild(progressBarTrack);
+
+        const bottomBar = document.createElement('div');
+        bottomBar.className = 'flip-deck-bottom-bar';
+        const resetBtn = document.createElement('button');
+        resetBtn.type = 'button';
+        resetBtn.className = 'flip-deck-reset-btn';
+        resetBtn.setAttribute('aria-label', 'もう一度最初から');
+        resetBtn.innerHTML = '<span class="flip-deck-reset-icon" aria-hidden="true">&#8635;</span>';
+        resetBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            stopSpeechIfPlaying();
+            inputFlipDeckFinished = false;
+            inputFlipDeckIndex = 0;
+            inputFlipDeckProgressPos = 0;
+            inputFlipDeckRemembered = [];
+            inputFlipDeckNotRemembered = [];
+            shouldAnimateFloatUp = true;
+            renderDeckCard();
+        });
+        bottomBar.appendChild(resetBtn);
+
+        container.appendChild(progressHeader);
         container.appendChild(stage);
-        container.appendChild(nav);
+        container.appendChild(bottomBar);
 
         const stopSpeechIfPlaying = () => {
             if (currentSpeech) {
@@ -12215,27 +12238,39 @@ function renderInputListView(words, rangeWordsForHeader) {
         };
 
         const showReplayCard = () => {
+            updateSortCounters();
             const total = inputFlipDeckWords.length;
             const knownCount = inputFlipDeckRemembered.length;
             const forgotCount = inputFlipDeckNotRemembered.length;
             host.innerHTML = '';
             buildStackCards(0);
 
-            const replayCard = document.createElement('button');
-            replayCard.type = 'button';
+            const replayCard = document.createElement('div');
             replayCard.className = 'flip-deck-replay-card flip-deck-replay-card-summary';
-            replayCard.innerHTML = `<div class="flip-deck-result-summary"><div class="flip-deck-result-row flip-deck-result-known"><span class="flip-deck-result-label">おぼえた</span><span class="flip-deck-result-count">${knownCount}<span class="flip-deck-result-unit">語</span></span></div><div class="flip-deck-result-row flip-deck-result-forgot"><span class="flip-deck-result-label">おぼえていない</span><span class="flip-deck-result-count">${forgotCount}<span class="flip-deck-result-unit">語</span></span></div></div><span class="flip-deck-replay-label">もう一度</span>`;
-            replayCard.addEventListener('click', (e) => {
-                e.preventDefault();
-                stopSpeechIfPlaying();
-                inputFlipDeckFinished = false;
-                inputFlipDeckIndex = 0;
-                inputFlipDeckProgressPos = 0;
-                inputFlipDeckRemembered = [];
-                inputFlipDeckNotRemembered = [];
-                shouldAnimateFloatUp = true;
-                renderDeckCard();
-            });
+            replayCard.innerHTML = `
+                <div class="flip-deck-result-summary">
+                    <div class="flip-deck-result-row flip-deck-result-known"><span class="flip-deck-result-label">おぼえた</span><span class="flip-deck-result-count">${knownCount}<span class="flip-deck-result-unit">語</span></span></div>
+                    <div class="flip-deck-result-row flip-deck-result-forgot"><span class="flip-deck-result-label">おぼえていない</span><span class="flip-deck-result-count">${forgotCount}<span class="flip-deck-result-unit">語</span></span></div>
+                </div>
+                <div class="flip-deck-replay-actions">
+                    <button type="button" class="flip-deck-replay-btn flip-deck-replay-btn-forgot" ${forgotCount === 0 ? 'disabled' : ''}>おぼえてないだけもう1度</button>
+                </div>
+            `;
+            const replayBtnEl = replayCard.querySelector('.flip-deck-replay-btn-forgot');
+            if (replayBtnEl && !replayBtnEl.disabled) {
+                replayBtnEl.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    stopSpeechIfPlaying();
+                    inputFlipDeckFinished = false;
+                    inputFlipDeckWords = inputFlipDeckNotRemembered.slice();
+                    inputFlipDeckIndex = 0;
+                    inputFlipDeckProgressPos = 0;
+                    inputFlipDeckRemembered = [];
+                    inputFlipDeckNotRemembered = [];
+                    shouldAnimateFloatUp = true;
+                    renderDeckCard();
+                });
+            }
 
             host.appendChild(replayCard);
 
@@ -12312,6 +12347,12 @@ function renderInputListView(words, rangeWordsForHeader) {
             const forgotEl = document.getElementById('flipSortForgotCount');
             if (knownEl) knownEl.textContent = String(inputFlipDeckRemembered.length);
             if (forgotEl) forgotEl.textContent = String(inputFlipDeckNotRemembered.length);
+            const progressEl = document.getElementById('flipProgressCounter');
+            const progressFillEl = document.getElementById('flipProgressBarFill');
+            const total = inputFlipDeckWords.length;
+            const completed = inputFlipDeckIndex;
+            if (progressEl) progressEl.textContent = `${completed} / ${total}`;
+            if (progressFillEl) progressFillEl.style.width = total ? `${(completed / total) * 100}%` : '0%';
         };
 
         const renderDeckCard = () => {
@@ -12440,6 +12481,8 @@ function renderInputListView(words, rangeWordsForHeader) {
                     if (nextItem) nextItem.classList.remove('deck-card-below');
                     nextFlyInProgress = false;
                     if (atEnd) {
+                        inputFlipDeckIndex += 1;
+                        inputFlipDeckProgressPos = inputFlipDeckIndex;
                         inputFlipDeckFinished = true;
                         showReplayCard();
                         return;
@@ -12515,15 +12558,24 @@ function renderInputListView(words, rangeWordsForHeader) {
 
         const ensureDragIndicators = (item) => {
             if (!item || item.querySelector('.flip-deck-indicator')) return;
+            const front = item.querySelector('.input-list-front');
+            const back = item.querySelector('.input-list-back');
+            if (front && !front.querySelector('.flip-deck-drag-overlay')) {
+                const ov = document.createElement('div');
+                ov.className = 'flip-deck-drag-overlay';
+                front.appendChild(ov);
+            }
+            if (back && !back.querySelector('.flip-deck-drag-overlay')) {
+                const ov = document.createElement('div');
+                ov.className = 'flip-deck-drag-overlay';
+                back.appendChild(ov);
+            }
             const knownInd = document.createElement('div');
             knownInd.className = 'flip-deck-indicator flip-deck-indicator-known';
             knownInd.textContent = 'おぼえた';
             const forgotInd = document.createElement('div');
             forgotInd.className = 'flip-deck-indicator flip-deck-indicator-forgot';
             forgotInd.textContent = 'おぼえていない';
-            const overlay = document.createElement('div');
-            overlay.className = 'flip-deck-drag-overlay';
-            item.appendChild(overlay);
             item.appendChild(knownInd);
             item.appendChild(forgotInd);
         };
@@ -12532,13 +12584,11 @@ function renderInputListView(words, rangeWordsForHeader) {
             if (!item) return;
             const knownInd = item.querySelector('.flip-deck-indicator-known');
             const forgotInd = item.querySelector('.flip-deck-indicator-forgot');
-            const overlay = item.querySelector('.flip-deck-drag-overlay');
-            const inner = item.querySelector('.input-list-inner');
+            const overlays = item.querySelectorAll('.flip-deck-drag-overlay');
             if (!knownInd || !forgotInd) return;
             const progress = Math.min(Math.abs(dx) / DRAG_THRESHOLD, 1);
-            const contentFade = Math.max(1 - progress * 1.5, 0);
-            if (inner) inner.style.opacity = String(contentFade);
-            if (overlay) overlay.style.opacity = String(Math.min(progress * 1.5, 1));
+            const overlayOpacity = String(Math.min(progress * 0.7, 1));
+            overlays.forEach(ov => { ov.style.opacity = overlayOpacity; });
             if (dx > 10) {
                 knownInd.style.opacity = String(progress);
                 forgotInd.style.opacity = '0';
@@ -12548,17 +12598,14 @@ function renderInputListView(words, rangeWordsForHeader) {
             } else {
                 knownInd.style.opacity = '0';
                 forgotInd.style.opacity = '0';
-                if (overlay) overlay.style.opacity = '0';
+                overlays.forEach(ov => { ov.style.opacity = '0'; });
             }
         };
 
         const hideDragIndicators = (item) => {
             if (!item) return;
             item.querySelectorAll('.flip-deck-indicator').forEach(ind => { ind.style.opacity = '0'; });
-            const overlay = item.querySelector('.flip-deck-drag-overlay');
-            if (overlay) overlay.style.opacity = '0';
-            const inner = item.querySelector('.input-list-inner');
-            if (inner) inner.style.opacity = '1';
+            item.querySelectorAll('.flip-deck-drag-overlay').forEach(ov => { ov.style.opacity = '0'; });
         };
 
         host.addEventListener('touchstart', (e) => {
@@ -12651,6 +12698,8 @@ function renderInputListView(words, rangeWordsForHeader) {
                     try { if (item.parentNode) item.remove(); } catch(e2) {}
                     if (nextItem) nextItem.classList.remove('deck-card-below');
                     if (atEnd) {
+                        inputFlipDeckIndex += 1;
+                        inputFlipDeckProgressPos = inputFlipDeckIndex;
                         inputFlipDeckFinished = true;
                         showReplayCard();
                         return;
