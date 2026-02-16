@@ -11949,6 +11949,8 @@ function renderInputListView(words, rangeWordsForHeader) {
         inputFlipDeckAllFlipped = false;
         inputFlipDeckProgressPos = 0;
         inputFlipDeckFinished = false;
+        inputFlipDeckRemembered = [];
+        inputFlipDeckNotRemembered = [];
         inputFlipDeckContext = { progressCache, categoryCorrectSet, categoryWrongSet, skipProgress: false };
         container.classList.remove('deck-flipped');
         inputFlipDeckEls.renderDeckCard();
@@ -11972,6 +11974,10 @@ function renderInputListView(words, rangeWordsForHeader) {
     
     container.innerHTML = '';
     inputFlipDeckEls = null; // DOMクリア時は必ずデッキ参照を破棄（フィルターで0件→復帰時に再構築させる）
+    inputFlipDeckRemembered = [];
+    inputFlipDeckNotRemembered = [];
+    inputFlipDeckIndex = 0;
+    inputFlipDeckFinished = false;
     listView.classList.remove('hidden');
     
     // モードに応じてコンテナにクラスを追加
@@ -13286,6 +13292,11 @@ function setupInputListModeToggle() {
                 container.classList.add('shuffle-animating');
                 setTimeout(() => {
                     inputFlipDeckAllFlipped = !inputFlipDeckAllFlipped;
+                    inputFlipDeckRemembered = [];
+                    inputFlipDeckNotRemembered = [];
+                    inputFlipDeckIndex = 0;
+                    inputFlipDeckProgressPos = 0;
+                    inputFlipDeckFinished = false;
                     if (inputFlipDeckEls) {
                         inputFlipDeckEls.renderDeckCard();
                     }
