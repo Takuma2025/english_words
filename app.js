@@ -6259,16 +6259,27 @@ function showInputModeDirectly(category, words, courseTitle, totalWordsForProgre
         }
     }
     
-    // ヘッダー更新（常に「単語一覧」表示）
+    // ヘッダー更新（courseTitle を使って「レベルN > セクションM」形式で表示）
     updateHeaderButtons('learning');
     if (elements.unitName) {
-        setUnitNameContent(elements.unitName, '単語一覧');
+        setUnitNameContent(elements.unitName, courseTitle);
     }
-    updateHeaderUnitName('単語一覧');
-    applySectionLevelToHeader(null);
-    // 「単語一覧」は日本語なのでゴシック体クラスを付与
+    updateHeaderUnitName(courseTitle);
+    // セクション形式ならレベル色を適用、それ以外はクリア
+    if (String(courseTitle).match(/^#\d+#No\.\d+-\d+$/)) {
+        applySectionLevelToHeader(category || window.currentSubcategoryParent);
+    } else {
+        applySectionLevelToHeader(null);
+    }
+    // 日本語タイトルの場合はゴシック体クラスを付与、セクション形式の場合は外す
     const unitHeaderContainer = document.querySelector('#mainContent .unit-header-container');
-    if (unitHeaderContainer) unitHeaderContainer.classList.add('unit-header-jp');
+    if (unitHeaderContainer) {
+        if (String(courseTitle).match(/^#\d+#No\.\d+-\d+$/) || !/^[\x00-\x7F]+$/.test(courseTitle)) {
+            unitHeaderContainer.classList.add('unit-header-jp');
+        } else {
+            unitHeaderContainer.classList.remove('unit-header-jp');
+        }
+    }
     
     // テーマカラーを更新
     updateThemeColor(true);
@@ -12593,7 +12604,7 @@ function renderInputListView(words, rangeWordsForHeader) {
             const overlays = item.querySelectorAll('.flip-deck-drag-overlay');
             if (!knownInd || !forgotInd) return;
             const progress = Math.min(Math.abs(dx) / DRAG_THRESHOLD, 1);
-            const overlayOpacity = String(Math.min(progress * 0.7, 1));
+            const overlayOpacity = String(Math.min(progress * 1.1, 1));
             overlays.forEach(ov => { ov.style.opacity = overlayOpacity; });
             if (dx > 10) {
                 knownInd.style.opacity = String(progress);
