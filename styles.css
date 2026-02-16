@@ -7472,6 +7472,7 @@ body.hyogo-seijo-mode-active .word-card-container {
     width: 100%;
     max-width: none;
     margin: 0;
+    position: relative;
 }
 
 /* デッキのメインカード：うすいグレーボーダー（影なし） */
@@ -7776,6 +7777,166 @@ body.hyogo-seijo-mode-active .word-card-container {
 
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav-btn:focus {
     outline: none;
+}
+
+/* おぼえたボタン（緑） */
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav-btn-known {
+    background: #22c55e;
+    min-width: 100px;
+}
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav-btn-known:active {
+    background: #16a34a;
+}
+
+/* おぼえていないボタン（オレンジ） */
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav-btn-forgot {
+    background: #f97316;
+    min-width: 100px;
+}
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-nav-btn-forgot:active {
+    background: #ea580c;
+}
+
+/* カード上部：おぼえた / おぼえていない カウンター */
+.flip-deck-sort-counter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: var(--deck-card-w);
+    max-width: calc(100vw - 32px);
+    margin: 0 auto 8px;
+    padding: 0 2px;
+    box-sizing: border-box;
+    z-index: 10010;
+}
+.flip-deck-sort-counter {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    min-width: 28px;
+}
+.flip-deck-sort-counter-forgot {
+    background: #f97316;
+    color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+.flip-deck-sort-counter-known {
+    background: #22c55e;
+    color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 8px;
+    flex-direction: row-reverse;
+}
+.flip-deck-sort-counter-num {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+    color: #ffffff;
+}
+
+/* ドラッグ中の白オーバーレイ（カード内容を隠す） */
+.flip-deck-drag-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: #ffffff;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 150;
+    transition: opacity 0.08s ease;
+}
+
+/* ドラッグ中のインジケーター（カード中央に大きく表示） */
+.flip-deck-indicator {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 22px;
+    font-weight: 800;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 200;
+    letter-spacing: 0.08em;
+    transition: opacity 0.08s ease;
+}
+.flip-deck-indicator-icon {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+}
+.flip-deck-indicator-known {
+    background: rgba(34, 197, 94, 0.18);
+    color: #16a34a;
+    border: 4px solid #22c55e;
+}
+.flip-deck-indicator-forgot {
+    background: rgba(249, 115, 22, 0.18);
+    color: #ea580c;
+    border: 4px solid #f97316;
+}
+
+/* 完了サマリーカード */
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-replay-card-summary {
+    flex-direction: column;
+    gap: 0;
+    padding: 28px 24px;
+}
+.flip-deck-result-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 220px;
+}
+.flip-deck-result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+.flip-deck-result-known {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+}
+.flip-deck-result-forgot {
+    background: rgba(249, 115, 22, 0.1);
+    color: #ea580c;
+}
+.flip-deck-result-label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+.flip-deck-result-count {
+    font-family: "Barlow Condensed", "Oswald", sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+}
+.flip-deck-result-unit {
+    font-size: 13px;
+    font-weight: 600;
+    margin-left: 2px;
+}
+.flip-deck-replay-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(0, 85, 202, 0.6);
+    letter-spacing: 0.06em;
+    margin-top: 4px;
 }
 
 /* フリップモード内のカードにパディング（デッキ表示は除外） */
@@ -21852,33 +22013,33 @@ div#inputWordCheckbox,
     flex-shrink: 0;
 }
 
-/* セクションバッジ：小さくコンパクトに */
+/* セクションバッジ：大きく目立たせる */
 .subcat-section {
     display: inline-flex;
     align-items: center;
-    gap: 1px;
-    font-size: 9.5px;
+    gap: 2px;
+    font-size: 13px;
     font-weight: 700;
     line-height: 1;
     white-space: nowrap;
     letter-spacing: 0.04em;
-    padding: 3px 8px;
-    border-radius: 5px;
+    padding: 5px 11px;
+    border-radius: 6px;
     background: var(--subcat-marker, #e0f2fe);
     color: var(--subcat-color, #0369a1);
     box-sizing: border-box;
 }
 .subcat-section-n {
     font-family: "Barlow Condensed", "Oswald", "Arial Narrow", sans-serif;
-    font-size: 14px;
+    font-size: 22px;
     font-weight: 800;
     line-height: 1;
     letter-spacing: 0;
-    margin-left: 2px;
+    margin-left: 3px;
     color: inherit;
 }
 
-/* 単語番号行：大きく目立たせる */
+/* 単語番号行：小さく控えめに */
 .subcat-range-line {
     display: flex;
     align-items: baseline;
@@ -21889,29 +22050,29 @@ div#inputWordCheckbox,
 
 .subcat-range-no {
     font-family: "Oswald", "Barlow Condensed", sans-serif;
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 600;
-    color: #475569;
+    color: #64748b;
     letter-spacing: 0.03em;
-    margin-right: 3px;
+    margin-right: 2px;
     align-self: baseline;
 }
 
 .subcat-range-num {
     font-family: "Oswald", "Barlow Condensed", sans-serif;
-    font-size: 24px;
+    font-size: 14px;
     font-weight: 600;
     color: #0369a1;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     line-height: 1;
 }
 
 .subcat-range-sep {
     font-family: "Oswald", "Barlow Condensed", sans-serif;
-    font-size: 16px;
+    font-size: 11px;
     font-weight: 500;
     color: #38bdf8;
-    margin: 0 4px;
+    margin: 0 3px;
     line-height: 1;
 }
 

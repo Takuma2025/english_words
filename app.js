@@ -2134,6 +2134,8 @@ let inputFlipDeckEls = null; // { container, stage, host, prevBtn, nextBtn, coun
 let inputFlipDeckAllFlipped = false; // 全カードフリップ状態
 let inputFlipDeckProgressPos = 0; // 表示用の進捗（1 / total の「1」を決める）
 let inputFlipDeckFinished = false; // すべて飛ばし終わったか（カード位置に「もう一度」を出す）
+let inputFlipDeckRemembered = []; // おぼえた単語
+let inputFlipDeckNotRemembered = []; // おぼえていない単語
 
 // 四択問題モード用変数
 let isChoiceQuestionModeActive = false; // 四択問題モードかどうか
@@ -12162,9 +12164,9 @@ function renderInputListView(words, rangeWordsForHeader) {
 
         const prevBtn = document.createElement('button');
         prevBtn.type = 'button';
-        prevBtn.className = 'flip-deck-nav-btn flip-deck-nav-btn-prev';
-        prevBtn.setAttribute('aria-label', '前のカードへ');
-        prevBtn.innerHTML = '<span class="label">前へ</span>';
+        prevBtn.className = 'flip-deck-nav-btn flip-deck-nav-btn-forgot';
+        prevBtn.setAttribute('aria-label', 'おぼえていない');
+        prevBtn.innerHTML = '<span class="label">おぼえていない</span>';
 
         const counter = document.createElement('div');
         counter.className = 'flip-deck-counter';
@@ -12172,9 +12174,9 @@ function renderInputListView(words, rangeWordsForHeader) {
 
         const nextBtn = document.createElement('button');
         nextBtn.type = 'button';
-        nextBtn.className = 'flip-deck-nav-btn flip-deck-nav-btn-next';
-        nextBtn.setAttribute('aria-label', '次のカードへ');
-        nextBtn.innerHTML = '<span class="label">次へ</span>';
+        nextBtn.className = 'flip-deck-nav-btn flip-deck-nav-btn-known';
+        nextBtn.setAttribute('aria-label', 'おぼえた');
+        nextBtn.innerHTML = '<span class="label">おぼえた</span>';
 
         const replayBtn = document.createElement('button');
         replayBtn.type = 'button';
@@ -12188,6 +12190,12 @@ function renderInputListView(words, rangeWordsForHeader) {
         nav.appendChild(nextBtn);
         nav.appendChild(replayBtn);
 
+        // おぼえた / おぼえていない カウンター（カードの上に表示）
+        const sortCounterBar = document.createElement('div');
+        sortCounterBar.className = 'flip-deck-sort-counter-bar';
+        sortCounterBar.innerHTML = `<span class="flip-deck-sort-counter flip-deck-sort-counter-forgot"><span class="flip-deck-sort-counter-num" id="flipSortForgotCount">0</span></span><span class="flip-deck-sort-counter flip-deck-sort-counter-known"><span class="flip-deck-sort-counter-num" id="flipSortKnownCount">0</span></span>`;
+
+        container.appendChild(sortCounterBar);
         container.appendChild(stage);
         container.appendChild(nav);
 
@@ -12208,26 +12216,29 @@ function renderInputListView(words, rangeWordsForHeader) {
 
         const showReplayCard = () => {
             const total = inputFlipDeckWords.length;
+            const knownCount = inputFlipDeckRemembered.length;
+            const forgotCount = inputFlipDeckNotRemembered.length;
             host.innerHTML = '';
             buildStackCards(0);
 
             const replayCard = document.createElement('button');
             replayCard.type = 'button';
-            replayCard.className = 'flip-deck-replay-card';
-            replayCard.innerHTML = '<span class="label">もう一度</span>';
+            replayCard.className = 'flip-deck-replay-card flip-deck-replay-card-summary';
+            replayCard.innerHTML = `<div class="flip-deck-result-summary"><div class="flip-deck-result-row flip-deck-result-known"><span class="flip-deck-result-label">おぼえた</span><span class="flip-deck-result-count">${knownCount}<span class="flip-deck-result-unit">語</span></span></div><div class="flip-deck-result-row flip-deck-result-forgot"><span class="flip-deck-result-label">おぼえていない</span><span class="flip-deck-result-count">${forgotCount}<span class="flip-deck-result-unit">語</span></span></div></div><span class="flip-deck-replay-label">もう一度</span>`;
             replayCard.addEventListener('click', (e) => {
                 e.preventDefault();
                 stopSpeechIfPlaying();
                 inputFlipDeckFinished = false;
                 inputFlipDeckIndex = 0;
                 inputFlipDeckProgressPos = 0;
+                inputFlipDeckRemembered = [];
+                inputFlipDeckNotRemembered = [];
                 shouldAnimateFloatUp = true;
                 renderDeckCard();
             });
 
             host.appendChild(replayCard);
 
-            // ナビは無効化（カード位置の「もう一度」を使う）。最後なので前へも非表示
             prevBtn.disabled = true;
             prevBtn.style.display = 'none';
             nextBtn.disabled = true;
@@ -12296,9 +12307,17 @@ function renderInputListView(words, rangeWordsForHeader) {
             }
         };
 
+        const updateSortCounters = () => {
+            const knownEl = document.getElementById('flipSortKnownCount');
+            const forgotEl = document.getElementById('flipSortForgotCount');
+            if (knownEl) knownEl.textContent = String(inputFlipDeckRemembered.length);
+            if (forgotEl) forgotEl.textContent = String(inputFlipDeckNotRemembered.length);
+        };
+
         const renderDeckCard = () => {
             container.classList.remove('deck-flipped');
             host.innerHTML = '';
+            updateSortCounters();
             const total = inputFlipDeckWords.length;
             if (total === 0) {
                 counter.textContent = '0 / 0';
@@ -12352,8 +12371,8 @@ function renderInputListView(words, rangeWordsForHeader) {
             inputFlipDeckProgressPos = inputFlipDeckIndex;
             counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
             const atEnd = inputFlipDeckIndex >= total - 1;
-            prevBtn.disabled = inputFlipDeckIndex <= 0;
-            prevBtn.style.display = ''; // 最後の1枚でも表示、もう一度のときだけ非表示
+            prevBtn.disabled = false;
+            prevBtn.style.display = '';
             nextBtn.disabled = false;   // 最後の1枚でも次へで「もう一度」へ進める
             nextBtn.style.display = '';
             // 「もう一度」はカード位置で出すのでナビには出さない
@@ -12374,7 +12393,7 @@ function renderInputListView(words, rangeWordsForHeader) {
 
         const FLY_NEXT_DURATION = 650;
 
-        const goNext = () => {
+        const goNext = (flyDirection) => {
             stopSpeechIfPlaying();
             const hadPending = finishPendingNext(); /* アニメ中なら即時完了。return せずそのまま次へ進む */
             const total = inputFlipDeckWords.length;
@@ -12411,7 +12430,7 @@ function renderInputListView(words, rangeWordsForHeader) {
                     host.insertBefore(nextItem, currentItem);
                 }
                 currentItem.classList.add('deck-card-above');
-                currentItem.classList.add('swipe-out-right');
+                currentItem.classList.add(flyDirection === 'left' ? 'swipe-out-left' : 'swipe-out-right');
                 nextFlyInProgress = true;
 
                 nextFlyCleanup = () => {
@@ -12428,12 +12447,13 @@ function renderInputListView(words, rangeWordsForHeader) {
                     inputFlipDeckIndex += 1;
                     inputFlipDeckProgressPos = inputFlipDeckIndex;
                     counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
-                    prevBtn.disabled = inputFlipDeckIndex <= 0;
+                    prevBtn.disabled = false;
                     prevBtn.style.display = '';
                     nextBtn.disabled = false;
                     nextBtn.style.display = '';
                     replayBtn.style.display = 'none';
                     updateFlipAllBtnLabel();
+                    updateSortCounters();
                     const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
                     buildStackCards(remaining + 1);
                 };
@@ -12455,74 +12475,22 @@ function renderInputListView(words, rangeWordsForHeader) {
             return runNext();
         };
 
+        // おぼえていないボタン（左に飛ばして次へ）
         prevBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            if (inputFlipDeckFinished) return;
-            if (inputFlipDeckIndex <= 0) return;
-            finishPendingPrev();
-            finishPendingNext();
-            stopSpeechIfPlaying();
-
-            const currentItem = host.querySelector('.input-list-item');
-            const total = inputFlipDeckWords.length;
-            const prevIndex = inputFlipDeckIndex - 1;
-
-            if (!currentItem || !total) {
-                goPrev();
-                return;
-            }
-
-            // 前のカードを「戻ってくる」アニメーションで表示
-            const prevWord = inputFlipDeckWords[prevIndex];
-            if (!prevWord || !inputFlipDeckContext) {
-                goPrev();
-                return;
-            }
-            const prevItem = createInputListItem(
-                prevWord,
-                inputFlipDeckContext.progressCache,
-                inputFlipDeckContext.categoryCorrectSet,
-                inputFlipDeckContext.categoryWrongSet,
-                inputFlipDeckContext.skipProgress
-            );
-            applyFlipAllMode(prevItem);
-            prevItem.classList.add('deck-card-return-in');
-            host.insertBefore(prevItem, currentItem);
-
-            currentItem.classList.add('deck-card-above');
-            currentItem.classList.add('deck-card-return-out');
-            prevReturnInProgress = true;
-
-            prevReturnCleanup = () => {
-                try {
-                    if (currentItem && currentItem.parentNode) currentItem.remove();
-                } catch (e) { /* already removed */ }
-                prevItem.classList.remove('deck-card-return-in');
-                prevReturnInProgress = false;
-                inputFlipDeckIndex = prevIndex;
-                inputFlipDeckProgressPos = inputFlipDeckIndex;
-                counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
-                prevBtn.disabled = inputFlipDeckIndex <= 0;
-                prevBtn.style.display = '';
-                nextBtn.disabled = false;
-                nextBtn.style.display = '';
-                replayBtn.style.display = 'none';
-                updateFlipAllBtnLabel();
-                const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
-                buildStackCards(remaining + 1);
-            };
-            prevReturnTimeoutId = setTimeout(() => {
-                if (prevReturnCleanup) {
-                    prevReturnCleanup();
-                }
-                prevReturnCleanup = null;
-                prevReturnTimeoutId = null;
-            }, 620);
+            if (inputFlipDeckFinished || nextFlyInProgress) return;
+            const word = inputFlipDeckWords[inputFlipDeckIndex];
+            if (word) inputFlipDeckNotRemembered.push(word);
+            goNext('left');
         });
 
+        // おぼえたボタン（右に飛ばして次へ）
         nextBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            goNext();
+            if (inputFlipDeckFinished || nextFlyInProgress) return;
+            const word = inputFlipDeckWords[inputFlipDeckIndex];
+            if (word) inputFlipDeckRemembered.push(word);
+            goNext('right');
         });
 
         replayBtn.addEventListener('click', (e) => {
@@ -12531,109 +12499,185 @@ function renderInputListView(words, rangeWordsForHeader) {
             inputFlipDeckFinished = false;
             inputFlipDeckIndex = 0;
             inputFlipDeckProgressPos = 0;
+            inputFlipDeckRemembered = [];
+            inputFlipDeckNotRemembered = [];
             shouldAnimateFloatUp = true;
             renderDeckCard();
         });
 
-        // ===== スワイプで前後移動（めくらなくてもOK） =====
-        let swipeStartX = 0;
-        let swipeStartY = 0;
-        let swipeStartTime = 0;
-        let isSwiping = false;
+        // ===== ドラッグで仕分け（指の動きに追従） =====
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let isDragging = false;
+        let dragLocked = false;
+        let dragItem = null;
+        const DRAG_THRESHOLD = 80;
 
-        const SWIPE_THRESHOLD = 50; // 最低スワイプ距離
-        const SWIPE_TIME_LIMIT = 400; // スワイプ判定の時間制限（ms）
+        const ensureDragIndicators = (item) => {
+            if (!item || item.querySelector('.flip-deck-indicator')) return;
+            const knownInd = document.createElement('div');
+            knownInd.className = 'flip-deck-indicator flip-deck-indicator-known';
+            knownInd.textContent = 'おぼえた';
+            const forgotInd = document.createElement('div');
+            forgotInd.className = 'flip-deck-indicator flip-deck-indicator-forgot';
+            forgotInd.textContent = 'おぼえていない';
+            const overlay = document.createElement('div');
+            overlay.className = 'flip-deck-drag-overlay';
+            item.appendChild(overlay);
+            item.appendChild(knownInd);
+            item.appendChild(forgotInd);
+        };
+
+        const updateDragIndicator = (item, dx) => {
+            if (!item) return;
+            const knownInd = item.querySelector('.flip-deck-indicator-known');
+            const forgotInd = item.querySelector('.flip-deck-indicator-forgot');
+            const overlay = item.querySelector('.flip-deck-drag-overlay');
+            const inner = item.querySelector('.input-list-inner');
+            if (!knownInd || !forgotInd) return;
+            const progress = Math.min(Math.abs(dx) / DRAG_THRESHOLD, 1);
+            const contentFade = Math.max(1 - progress * 1.5, 0);
+            if (inner) inner.style.opacity = String(contentFade);
+            if (overlay) overlay.style.opacity = String(Math.min(progress * 1.5, 1));
+            if (dx > 10) {
+                knownInd.style.opacity = String(progress);
+                forgotInd.style.opacity = '0';
+            } else if (dx < -10) {
+                knownInd.style.opacity = '0';
+                forgotInd.style.opacity = String(progress);
+            } else {
+                knownInd.style.opacity = '0';
+                forgotInd.style.opacity = '0';
+                if (overlay) overlay.style.opacity = '0';
+            }
+        };
+
+        const hideDragIndicators = (item) => {
+            if (!item) return;
+            item.querySelectorAll('.flip-deck-indicator').forEach(ind => { ind.style.opacity = '0'; });
+            const overlay = item.querySelector('.flip-deck-drag-overlay');
+            if (overlay) overlay.style.opacity = '0';
+            const inner = item.querySelector('.input-list-inner');
+            if (inner) inner.style.opacity = '1';
+        };
 
         host.addEventListener('touchstart', (e) => {
             if (e.touches.length !== 1) return;
-            swipeStartX = e.touches[0].clientX;
-            swipeStartY = e.touches[0].clientY;
-            swipeStartTime = Date.now();
-            isSwiping = true;
+            if (inputFlipDeckFinished || nextFlyInProgress || prevReturnInProgress) return;
+            const item = host.querySelector('.input-list-item');
+            if (!item) return;
+            dragStartX = e.touches[0].clientX;
+            dragStartY = e.touches[0].clientY;
+            isDragging = false;
+            dragLocked = false;
+            dragItem = item;
+            dragItem.style.transition = 'none';
+            ensureDragIndicators(dragItem);
         }, { passive: true });
 
         host.addEventListener('touchmove', (e) => {
-            // 縦スクロールが主なら無効化
-            if (!isSwiping) return;
-            const diffX = Math.abs(e.touches[0].clientX - swipeStartX);
-            const diffY = Math.abs(e.touches[0].clientY - swipeStartY);
-            if (diffY > diffX * 1.2) {
-                isSwiping = false;
-            }
-        }, { passive: true });
-
-        host.addEventListener('touchend', (e) => {
-            if (!isSwiping) return;
-            isSwiping = false;
-            finishPendingNext(); /* 前のアニメがあれば即時完了してからこのスワイプを処理 */
-            const endX = e.changedTouches[0].clientX;
-            const diffX = endX - swipeStartX;
-            const elapsed = Date.now() - swipeStartTime;
-
-            if (elapsed > SWIPE_TIME_LIMIT) return;
-            if (Math.abs(diffX) < SWIPE_THRESHOLD) return;
-
-            const currentItem = host.querySelector('.input-list-item');
-            const total = inputFlipDeckWords.length;
-            if (!currentItem || total <= 1) return;
-            const atEnd = inputFlipDeckIndex >= total - 1;
-            const direction = diffX < 0 ? 'left' : 'right';
-
-            nextFlyInProgress = true;
-
-            // アニメが確実に効くよう、飛ばすカードをラッパーで包んでラッパーにアニメを適用
-            const flyWrapper = document.createElement('div');
-            flyWrapper.className = `deck-swipe-fly-wrapper deck-card-above swipe-out-${direction}`;
-            host.insertBefore(flyWrapper, currentItem);
-            flyWrapper.appendChild(currentItem);
-
-            let nextItem = null;
-            if (!atEnd) {
-                const nextWord = inputFlipDeckWords[inputFlipDeckIndex + 1];
-                if (nextWord && inputFlipDeckContext) {
-                    nextItem = createInputListItem(
-                        nextWord,
-                        inputFlipDeckContext.progressCache,
-                        inputFlipDeckContext.categoryCorrectSet,
-                        inputFlipDeckContext.categoryWrongSet,
-                        inputFlipDeckContext.skipProgress
-                    );
-                    applyFlipAllMode(nextItem);
-                    nextItem.classList.add('deck-card-below');
-                    host.appendChild(nextItem);
-                }
-            }
-
-            nextFlyCleanup = () => {
-                nextFlyInProgress = false;
-                try {
-                    if (flyWrapper && flyWrapper.parentNode) flyWrapper.remove();
-                } catch (e) { /* already removed */ }
-                if (nextItem) nextItem.classList.remove('deck-card-below');
-                if (atEnd) {
-                    inputFlipDeckFinished = true;
-                    showReplayCard();
+            if (!dragItem) return;
+            const tx = e.touches[0].clientX;
+            const ty = e.touches[0].clientY;
+            const dx = tx - dragStartX;
+            const dy = ty - dragStartY;
+            if (!dragLocked) {
+                if (Math.abs(dy) > Math.abs(dx) * 1.5 && Math.abs(dy) > 10) {
+                    dragItem.style.transition = '';
+                    dragItem.style.transform = '';
+                    hideDragIndicators(dragItem);
+                    dragItem = null;
                     return;
                 }
-                inputFlipDeckIndex += 1;
-                inputFlipDeckProgressPos = inputFlipDeckIndex;
-                counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
-                prevBtn.disabled = inputFlipDeckIndex <= 0;
-                prevBtn.style.display = '';
-                nextBtn.disabled = false;
-                nextBtn.style.display = '';
-                replayBtn.style.display = 'none';
-                updateFlipAllBtnLabel();
-                const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
-                buildStackCards(remaining + 1);
-            };
-            nextFlyTimeoutId = setTimeout(() => {
-                if (nextFlyCleanup) {
-                    nextFlyCleanup();
+                if (Math.abs(dx) > 10) {
+                    dragLocked = true;
+                    isDragging = true;
+                } else {
+                    return;
                 }
-                nextFlyCleanup = null;
-                nextFlyTimeoutId = null;
-            }, 650);
+            }
+            e.preventDefault();
+            const rotate = dx * 0.06;
+            dragItem.style.transform = `translateX(${dx}px) rotate(${rotate}deg)`;
+            updateDragIndicator(dragItem, dx);
+        }, { passive: false });
+
+        host.addEventListener('touchend', (e) => {
+            if (!dragItem) { isDragging = false; return; }
+            const item = dragItem;
+            dragItem = null;
+            if (!isDragging) {
+                item.style.transition = '';
+                item.style.transform = '';
+                hideDragIndicators(item);
+                isDragging = false;
+                return;
+            }
+            isDragging = false;
+            const endX = e.changedTouches[0].clientX;
+            const dx = endX - dragStartX;
+            hideDragIndicators(item);
+            if (Math.abs(dx) >= DRAG_THRESHOLD) {
+                const direction = dx > 0 ? 'right' : 'left';
+                const remembered = dx > 0;
+                const word = inputFlipDeckWords[inputFlipDeckIndex];
+                if (word) {
+                    if (remembered) inputFlipDeckRemembered.push(word);
+                    else inputFlipDeckNotRemembered.push(word);
+                }
+                stopSpeechIfPlaying();
+                finishPendingNext();
+                const total = inputFlipDeckWords.length;
+                const atEnd = inputFlipDeckIndex >= total - 1;
+                let nextItem = null;
+                if (!atEnd) {
+                    const nextWord = inputFlipDeckWords[inputFlipDeckIndex + 1];
+                    if (nextWord && inputFlipDeckContext) {
+                        nextItem = createInputListItem(nextWord, inputFlipDeckContext.progressCache, inputFlipDeckContext.categoryCorrectSet, inputFlipDeckContext.categoryWrongSet, inputFlipDeckContext.skipProgress);
+                        applyFlipAllMode(nextItem);
+                        nextItem.classList.add('deck-card-below');
+                        host.insertBefore(nextItem, item);
+                    }
+                }
+                item.classList.add('deck-card-above');
+                const flyX = direction === 'right' ? window.innerWidth : -window.innerWidth;
+                const flyRotate = direction === 'right' ? 15 : -15;
+                item.style.transition = 'transform 0.45s ease-out, opacity 0.45s ease-out';
+                item.style.transform = `translateX(${flyX}px) rotate(${flyRotate}deg)`;
+                item.style.opacity = '0';
+                nextFlyInProgress = true;
+                nextFlyCleanup = () => {
+                    nextFlyInProgress = false;
+                    try { if (item.parentNode) item.remove(); } catch(e2) {}
+                    if (nextItem) nextItem.classList.remove('deck-card-below');
+                    if (atEnd) {
+                        inputFlipDeckFinished = true;
+                        showReplayCard();
+                        return;
+                    }
+                    inputFlipDeckIndex += 1;
+                    inputFlipDeckProgressPos = inputFlipDeckIndex;
+                    counter.textContent = `${inputFlipDeckIndex + 1} / ${total}`;
+                    prevBtn.disabled = false;
+                    prevBtn.style.display = '';
+                    nextBtn.disabled = false;
+                    nextBtn.style.display = '';
+                    replayBtn.style.display = 'none';
+                    updateFlipAllBtnLabel();
+                    updateSortCounters();
+                    const remaining = Math.max(total - inputFlipDeckIndex - 1, 0);
+                    buildStackCards(remaining + 1);
+                };
+                nextFlyTimeoutId = setTimeout(() => {
+                    if (nextFlyCleanup) nextFlyCleanup();
+                    nextFlyCleanup = null;
+                    nextFlyTimeoutId = null;
+                }, 450);
+            } else {
+                item.style.transition = 'transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1)';
+                item.style.transform = '';
+                setTimeout(() => { if (item) item.style.transition = ''; }, 300);
+            }
         }, { passive: true });
 
         // グローバル参照（他イベントから現カード参照したいとき用）
