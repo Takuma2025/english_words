@@ -1,5 +1,5 @@
 :root {
-    --font-sans: "Montserrat", "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-sans: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --bg: #0055ca;
     --panel: #0044a0;
     --border: #003380;
@@ -50,7 +50,6 @@ html, body {
 
 body {
     font-family: var(--font-sans);
-    font-weight: 400;
     color: #1f2937;
     line-height: 1.5;
     touch-action: pan-y;
@@ -4545,7 +4544,7 @@ button.category-card:focus-visible {
     align-self: stretch !important;
     font-size: 18px;
     color: #0055ca;
-    font-weight: 400;
+    font-weight: 300;
     padding: 0;
 }
 
@@ -5744,7 +5743,7 @@ body.quiz-test-mode .progress-top-row {
     text-align: center;
     font-family: "Oswald", "Arial Narrow", sans-serif;
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 300;
     letter-spacing: 0.08em;
     display: inline-flex;
     align-items: center;
@@ -6726,10 +6725,10 @@ body.hyogo-seijo-mode-active .word-card-container {
         height: 26px;
     }
     .input-meaning {
-        font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-        font-weight: 400;
         font-size: clamp(18px, 5vw, 26px);
         line-height: 1.2;
+        font-weight: 700;
+        font-family: "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", "MS PGothic", sans-serif;
     }
     .input-container {
         min-height: 120px;
@@ -6798,10 +6797,10 @@ body.hyogo-seijo-mode-active .word-card-container {
         height: 24px;
     }
     .input-meaning {
-        font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-        font-weight: 400;
         font-size: clamp(16px, 4.5vw, 24px);
         line-height: 1.2;
+        font-weight: 700;
+        font-family: "Hiragino Maru Gothic ProN", "Meiryo", "Yu Gothic UI", "MS PGothic", sans-serif;
     }
     .input-container {
         min-height: 100px;
@@ -9090,8 +9089,8 @@ body.hyogo-seijo-mode-active .word-card-container {
 
 /* コンパクト時：2行目に英単語 */
 .input-list-scroll.compact-mode .input-list-expand-word {
-    font-weight: 400;
     font-size: 16px;
+    font-weight: 700;
     color: #374151;
     margin: 0;
     margin-top: 4px;
@@ -9314,8 +9313,6 @@ body.hyogo-seijo-mode-active .word-card-container {
 }
 
 .input-list-meaning {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -9592,11 +9589,12 @@ body.hyogo-seijo-mode-active .word-card-container {
 }
 
 .input-list-word {
-    font-family: var(--font-sans);
-    font-weight: 400;
     font-size: 26px;
+    font-weight: 600;
     letter-spacing: 0.03em;
     color: #374151;
+    font-family: var(--font-sans);
+    font-weight: bold;
     word-break: break-word;
     overflow-wrap: break-word;
 }
@@ -9614,9 +9612,8 @@ body.hyogo-seijo-mode-active .word-card-container {
 }
 
 .input-list-meaning {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: 20px;
+    font-weight: 700;
     line-height: 1.6;
     word-break: break-word;
     overflow-wrap: break-word;
@@ -9631,10 +9628,11 @@ body.hyogo-seijo-mode-active .word-card-container {
 }
 
 .input-list-example-en {
-    font-family: var(--font-sans);
-    font-weight: 400;
     font-size: 14px;
     color: #1f2937;
+    font-family: var(--font-sans);
+    font-weight: bold;
+    font-weight: 400;
     line-height: 1.5;
     margin-bottom: 2px;
     word-break: break-word;
@@ -9647,8 +9645,6 @@ body.hyogo-seijo-mode-active .word-card-container {
 }
 
 .input-list-example-ja {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: 12px;
     color: #6b7280;
     line-height: 1.4;
@@ -9877,10 +9873,10 @@ body.hyogo-seijo-mode-active .word-card-container {
 
 /* 英単語 */
 .input-list-expand-word {
-    font-family: var(--font-sans);
-    font-weight: 400;
     font-size: 18px;
+    font-weight: 700;
     color: #374151;
+    font-family: var(--font-sans);
     letter-spacing: 0.01em;
     line-height: 1.2;
     margin-top: 2px;
@@ -9951,9 +9947,8 @@ body.hyogo-seijo-mode-active .word-card-container {
 
 /* 右カラム：意味（オレンジ） */
 .expand-meaning-text {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: 18px;
+    font-weight: 600;
     color: #ff9933;
     line-height: 1.4;
     /* 線（下セクションのボーダー）までの領域で縦中央 */
@@ -10020,8 +10015,6 @@ body.hyogo-seijo-mode-active .word-card-container {
 }
 
 .expand-example-ja {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     color: #6b7280;
     font-size: 10px;
     line-height: 1.3;
@@ -10400,11 +10393,11 @@ body.hyogo-seijo-mode-active .word-card-container {
 }
 
 .input-meaning {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: clamp(22px, 6vw, 32px);
+    font-weight: 700;
     color: #1f2937;
     line-height: 1;
+    font-family: "Noto Serif JP", "Shippori Mincho", "しっぽり明朝", "Hina Mincho", "ひな明朝", "Zen Old Mincho", "Sawarabi Mincho", "さわらび明朝", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     letter-spacing: 0.05em;
 }
 
@@ -11546,11 +11539,12 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .card-back {
 /* 裏面の英単語表示（小さく上部に） */
 .english-word-back {
     font-family: var(--font-sans);
-    font-weight: 400;
+    font-weight: bold;
     font-size: 14px;
     color: #6b7280;
     text-align: center;
     margin-bottom: 8px;
+    font-weight: 700;
     letter-spacing: 0.5px;
 }
 
@@ -11828,7 +11822,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 .english-word {
     font-family: var(--font-sans);
-    font-weight: 400;
+    font-weight: bold;
+    font-weight: bold;
     font-size: clamp(32px, 8vw, 48px);
     text-align: center;
     display: inline-flex;
@@ -11846,7 +11841,7 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 単語内の括弧部分を細字で表示（例: a(an) の () */
 .word-paren-light {
-    font-weight: 400;
+    font-weight: 300;
 }
 
 /* 括弧内の語を太字（例: a(an) の an */
@@ -11856,7 +11851,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* 意味文など英単語以外の () は太字にしない */
 .meaning-paren-normal {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
     font-weight: 400;
 }
 
@@ -12121,7 +12115,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 /* カード裏面の英語表示 */
 .english-word-back {
     font-family: var(--font-sans);
-    font-weight: 400;
+    font-weight: bold;
+    font-weight: bold;
     font-size: 20px;
     color: #64748b;
     margin-bottom: 8px;
@@ -12138,9 +12133,8 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .meaning {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: clamp(20px, 5vw, 28px);
+    font-weight: 700;
     color: #374151;
     line-height: 28px;
     word-break: break-word;
@@ -12152,8 +12146,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 
 /* ①②③付きの複数意味用 */
 .meaning-multiline-root {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     display: inline-block;
     text-align: left;
     font-size: 16px;
@@ -12168,14 +12160,10 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .meaning-index {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     flex-shrink: 0;
 }
 
 .meaning-text {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     text-align: left;
 }
 
@@ -12240,8 +12228,6 @@ body.learning-mode:not(:has(#inputMode:not(.hidden))) .word-number {
 }
 
 .example-japanese {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: 15px;
 }
 
@@ -13341,24 +13327,25 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .sentence-japanese {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: clamp(16px, 4vw, 20px);
+    font-weight: 700;
     color: #1f2937;
     line-height: 1.55;
     margin-bottom: 12px; /* 日本語と英文の間隔を詰める */
     text-align: left;
+    font-family: "Noto Serif JP", "Shippori Mincho", "しっぽり明朝", "Hina Mincho", "ひな明朝", "Zen Old Mincho", "Sawarabi Mincho", "さわらび明朝", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     letter-spacing: 0.05em;
 }
 
 .sentence-english {
-    font-family: var(--font-sans);
-    font-weight: 400;
     font-size: clamp(18px, 4.5vw, 24px);
+    font-weight: 400;
     color: #1f2937;
     line-height: 1.7;
     margin-bottom: 18px; /* 日本語との縦間隔を詰める */
     text-align: left;
+    font-family: var(--font-sans);
+    font-weight: bold;
     word-spacing: 0.1em;
 }
 
@@ -13595,14 +13582,14 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 
 
 .reorder-japanese {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: clamp(18px, 4.5vw, 24px);
+    font-weight: 700;
     color: #1f2937;
     line-height: 1.6;
     margin-bottom: 24px;
     padding: 0 16px;
     text-align: left;
+    font-family: "Noto Serif JP", "Shippori Mincho", "しっぽり明朝", "Hina Mincho", "ひな明朝", "Zen Old Mincho", "Sawarabi Mincho", "さわらび明朝", "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "MS PMincho", serif;
     letter-spacing: 0.05em;
 }
 
@@ -15382,19 +15369,18 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 .grammar-reorder-item.answered { pointer-events: none; }
 .grammar-reorder-item.answered .grammar-reorder-redo-btn { pointer-events: auto; }
 .grammar-reorder-japanese {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: 15px;
     color: #222;
     margin-bottom: 10px;
     line-height: 1.6;
+    font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* 文法セクション内の日本語はすべて並び替えと同じフォントに統一・細字 */
+/* 文法セクション内の日本語はすべて並び替えと同じフォントに統一・太字なし */
 #grammarChapterView .grammar-exercise-item .sentence-japanese,
 #grammarChapterView .grammar-chapter-content,
 #grammarChapterView .grammar-point-content {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+    font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 400;
 }
 .grammar-reorder-japanese {
@@ -16247,8 +16233,6 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     text-overflow: ellipsis;
 }
 .completion-result-meaning {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: 11.5px;
     color: #64748b;
     white-space: nowrap;
@@ -19022,9 +19006,8 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .hw-question-simple .hw-question-meaning {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: clamp(18px, 4.5vw, 22px);
+    font-weight: 700;
     color: #1a202c;
     text-align: center;
     line-height: 1.6;
@@ -19065,9 +19048,8 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 
 .hw-question-meaning {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
     font-size: clamp(18px, 4.5vw, 22px);
+    font-weight: 700;
     color: #1a202c;
     text-align: center;
     margin-bottom: 24px;
@@ -20497,6 +20479,8 @@ body.hyogo-seijo-mode-active .card-top-section {
 }
 
 /* 英単語フォントのスタイル */
+body .english-word,
+body .english-word-back,
 body .letter-input,
 body .correct-word,
 body .hw-answer,
@@ -20504,18 +20488,11 @@ body .hw-answer-text,
 body .hw-correct-word,
 body .hw-result-word span,
 body .choice-text,
+body .input-list-word,
+body .input-list-expand-word,
 body .sentence-blank {
     font-family: var(--font-sans);
     font-weight: bold;
-}
-
-/* 見出し語（英単語）は少し太めに */
-body .english-word,
-body .english-word-back,
-body .input-list-word,
-body .input-list-expand-word {
-    font-family: var(--font-sans);
-    font-weight: 400;
 }
 
 /* 用例・例文（単語のみを強調するため基本は通常ウェイト） */
@@ -20524,7 +20501,7 @@ body .input-list-expand-example-en,
 body .input-list-example-en,
 body .sentence-english {
     font-family: var(--font-sans);
-    font-weight: 400;
+    font-weight: normal;
 }
 
 /* キーボードの文字 */
@@ -20954,8 +20931,7 @@ body .sentence-english {
 }
 
 .iv-study-meaning {
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
-    font-weight: 400;
+    font-weight: 600;
     color: #374151;
     font-size: 13px;
 }
