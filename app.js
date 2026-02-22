@@ -11566,7 +11566,7 @@ function createInputListItem(word, progressCache, categoryCorrectSet, categoryWr
             conjSectionLeft.className = 'expand-conjugation-section expand-conjugation-below-word';
             const conjBadgeLeft = document.createElement('span');
             conjBadgeLeft.className = 'expand-conjugation-badge' + (conjugationForLeft.isChange ? ' expand-conjugation-badge-change' : '');
-            conjBadgeLeft.textContent = conjugationForLeft.isChange ? '変' : '活';
+            conjBadgeLeft.textContent = '活';
             conjSectionLeft.appendChild(conjBadgeLeft);
             const conjTextWrapLeft = document.createElement('div');
             conjTextWrapLeft.className = 'expand-conjugation-text-wrap';
@@ -12255,6 +12255,7 @@ function renderInputListView(words, rangeWordsForHeader) {
             const flipAllBtn = document.getElementById('inputFlipAllBtn');
             const btnLabel = flipAllBtn ? flipAllBtn.querySelector('.btn-label') : null;
             if (btnLabel) btnLabel.textContent = inputFlipDeckAllFlipped ? 'あ→A' : 'A→あ';
+            if (flipAllBtn) flipAllBtn.classList.toggle('flip-all-ja-first', inputFlipDeckAllFlipped);
         };
 
         const showReplayCard = () => {
@@ -12364,7 +12365,8 @@ function renderInputListView(words, rangeWordsForHeader) {
         };
 
         const updateSortCounters = () => {
-            const remaining = Math.max(0, inputFlipDeckInitialTotal - inputFlipDeckRemembered.length);
+            const raw = inputFlipDeckInitialTotal - inputFlipDeckRemembered.length;
+            const remaining = Math.max(0, Math.min(inputFlipDeckInitialTotal, raw));
             const remainingEl = document.getElementById('flipRemainingNum');
             if (remainingEl) remainingEl.textContent = String(remaining);
         };
@@ -12900,7 +12902,7 @@ function renderInputListView(words, rangeWordsForHeader) {
                 conjSectionLeft2.className = 'expand-conjugation-section expand-conjugation-below-word';
                 const conjBadgeLeft2 = document.createElement('span');
                 conjBadgeLeft2.className = 'expand-conjugation-badge' + (conjugationForLeft2.isChange ? ' expand-conjugation-badge-change' : '');
-                conjBadgeLeft2.textContent = conjugationForLeft2.isChange ? '変' : '活';
+                conjBadgeLeft2.textContent = '活';
                 conjSectionLeft2.appendChild(conjBadgeLeft2);
                 const conjTextWrapLeft2 = document.createElement('div');
                 conjTextWrapLeft2.className = 'expand-conjugation-text-wrap';
@@ -13285,6 +13287,7 @@ function setupInputListModeToggle() {
         // すべてめくるボタンを表示・ラベルをリセット
         if (flipAllBtn) {
             flipAllBtn.classList.remove('hidden');
+            flipAllBtn.classList.remove('flip-all-ja-first');
             const btnLabel = flipAllBtn.querySelector('.btn-label');
             if (btnLabel) btnLabel.textContent = 'A→あ';
         }
@@ -13336,9 +13339,8 @@ function setupInputListModeToggle() {
                     if (inputFlipDeckEls) {
                         inputFlipDeckEls.renderDeckCard();
                     }
-                    if (btnLabel) {
-                        btnLabel.textContent = inputFlipDeckAllFlipped ? 'あ→A' : 'A→あ';
-                    }
+                    if (btnLabel) btnLabel.textContent = inputFlipDeckAllFlipped ? 'あ→A' : 'A→あ';
+                    flipAllBtn.classList.toggle('flip-all-ja-first', inputFlipDeckAllFlipped);
                     container.classList.remove('shuffle-animating');
                     container.classList.add('shuffle-fade-in');
                     setTimeout(() => {
@@ -13366,8 +13368,10 @@ function setupInputListModeToggle() {
             if (btnLabel) {
                 if (isCurrentlyFlipped) {
                     btnLabel.textContent = 'A→あ';
+                    flipAllBtn.classList.remove('flip-all-ja-first');
                 } else {
                     btnLabel.textContent = 'あ→A';
+                    flipAllBtn.classList.add('flip-all-ja-first');
                 }
             }
         });
