@@ -7841,16 +7841,16 @@ body.hyogo-seijo-mode-active .word-card-container {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 10px;
     width: 100%;
     padding: 6px 0 2px;
     box-sizing: border-box;
 }
-/* のこり〇枚：白字 */
+/* のこり〇枚：白字（リセットボタンは右横に別要素） */
 .flip-deck-remaining {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
     gap: 4px;
     padding: 0;
     font-size: 14px;
@@ -7905,14 +7905,14 @@ body.hyogo-seijo-mode-active .word-card-container {
     line-height: 1;
 }
 .flip-deck-indicator-known {
-    background: #22c55e;
-    color: #ffffff;
-    border: 4px solid #16a34a;
+    background: transparent;
+    color: #059669;
+    border: 3px solid #10b981;
 }
 .flip-deck-indicator-forgot {
-    background: #f97316;
-    color: #ffffff;
-    border: 4px solid #ea580c;
+    background: transparent;
+    color: #ea580c;
+    border: 3px solid #f97316;
 }
 
 /* 完了サマリーカード */
@@ -16359,6 +16359,19 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 .ts-label:first-child {
     margin-top: 0;
 }
+.ts-label-row .ts-toggle-row {
+    width: 100%;
+    min-width: 0;
+}
+.ts-label-row .ts-filter-row {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 0;
+}
+.ts-label-row .question-count-simple {
+    width: 100%;
+    min-width: 0;
+}
 
 /* タイトル上・ボタン下のブロック（出題形式・出題順・単語を絞る・出題数） */
 .ts-label-row {
@@ -16389,19 +16402,6 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
     color: #64748b;
     letter-spacing: 0.04em;
     margin-bottom: 0;
-}
-.ts-label-row .ts-toggle-row {
-    width: 100%;
-    min-width: 0;
-}
-.ts-label-row .ts-filter-row {
-    width: 100%;
-    min-width: 0;
-    margin-bottom: 0;
-}
-.ts-label-row .question-count-simple {
-    width: 100%;
-    min-width: 0;
 }
 
 .ts-bottom-row {
@@ -16946,12 +16946,15 @@ body.choice-question-mode-active .choice-progress-header .hw-progress-bottom-row
 }
 .question-count-simple-value {
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     font-family: 'Oswald', sans-serif;
     font-size: 16px;
     font-weight: 600;
     color: #0055ca;
-    padding: 8px 0;
+    padding: 0 16px;
     white-space: nowrap;
 }
 

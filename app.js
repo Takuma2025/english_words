@@ -12209,17 +12209,11 @@ function renderInputListView(words, rangeWordsForHeader) {
         nav.appendChild(nextBtn);
         nav.appendChild(replayBtn);
 
-        // のこり〇枚をカードの上に表示
+        // のこり〇枚をカードの上に表示（右横にリセットボタン）
         const sortCounterBar = document.createElement('div');
         sortCounterBar.className = 'flip-deck-sort-counter-bar';
         sortCounterBar.innerHTML = '<span class="flip-deck-remaining">のこり<span id="flipRemainingNum">0</span>枚</span>';
 
-        const progressHeader = document.createElement('div');
-        progressHeader.className = 'flip-deck-progress-header';
-        progressHeader.appendChild(sortCounterBar);
-
-        const bottomBar = document.createElement('div');
-        bottomBar.className = 'flip-deck-bottom-bar';
         const resetBtn = document.createElement('button');
         resetBtn.type = 'button';
         resetBtn.className = 'flip-deck-reset-btn';
@@ -12236,11 +12230,14 @@ function renderInputListView(words, rangeWordsForHeader) {
             shouldAnimateFloatUp = true;
             renderDeckCard();
         });
-        bottomBar.appendChild(resetBtn);
+        sortCounterBar.appendChild(resetBtn);
+
+        const progressHeader = document.createElement('div');
+        progressHeader.className = 'flip-deck-progress-header';
+        progressHeader.appendChild(sortCounterBar);
 
         container.appendChild(progressHeader);
         container.appendChild(stage);
-        container.appendChild(bottomBar);
 
         const stopSpeechIfPlaying = () => {
             if (currentSpeech) {
@@ -12576,8 +12573,8 @@ function renderInputListView(words, rangeWordsForHeader) {
         let dragLocked = false;
         let dragItem = null;
         const DRAG_THRESHOLD = 80;
-        /** おぼえた/おぼえていないの表示を始めるドラッグ量（px）。これより前にドラッグしても表示しない */
-        const INDICATOR_START = 65;
+        /** おぼえた/おぼえていないの表示を始めるドラッグ量（px） */
+        const INDICATOR_START = 24;
 
         const ensureDragIndicators = (item) => {
             if (!item || item.querySelector('.flip-deck-indicator')) return;
