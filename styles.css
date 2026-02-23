@@ -1292,6 +1292,27 @@ body.learning-mode .app-header {
     padding: 0;
 }
 
+/* コース説明文（category-list直下・グリッドの外） */
+.course-description {
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    background: #0055ca;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+.course-description-text {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.02em;
+}
+.course-description-text strong {
+    color: #ffffff;
+    font-weight: 700;
+}
+
 .course-section {
     display: grid;
     grid-template-columns: 1fr 1fr;

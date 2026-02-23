@@ -7792,6 +7792,11 @@ function setupEventListeners() {
             courseTabs[0].classList.add('active');
             activeTab = courseTabs[0];
         }
+        const masterDesc = document.getElementById('courseMasterDescription');
+        const syncMasterDescription = (activeId) => {
+            if (masterDesc) masterDesc.classList.toggle('hidden', activeId !== 'courseMasterSection');
+        };
+
         if (activeTab) {
             const activeTargetId = activeTab.getAttribute('data-target');
             courseSections.forEach(section => {
@@ -7801,6 +7806,7 @@ function setupEventListeners() {
                     section.classList.add('hidden');
                 }
             });
+            syncMasterDescription(activeTargetId);
             if (courseTabsContainer) {
                 courseTabsContainer.classList.toggle('score-active', activeTargetId === 'courseScoreSection');
             }
@@ -7808,7 +7814,7 @@ function setupEventListeners() {
                 updateIdiomsLevelProgressBars();
             }
         }
-        
+
         courseTabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 courseTabs.forEach(t => t.classList.remove('active'));
@@ -7821,6 +7827,7 @@ function setupEventListeners() {
                         section.classList.add('hidden');
                     }
                 });
+                syncMasterDescription(targetId);
                 if (courseTabsContainer) {
                     courseTabsContainer.classList.toggle('score-active', targetId === 'courseScoreSection');
                 }
