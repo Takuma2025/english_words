@@ -12214,13 +12214,7 @@ function renderInputListView(words, rangeWordsForHeader) {
         sortCounterBar.className = 'flip-deck-sort-counter-bar';
         sortCounterBar.innerHTML = '<span class="flip-deck-remaining">のこり<span id="flipRemainingNum">0</span>枚</span>';
 
-        const resetBtn = document.createElement('button');
-        resetBtn.type = 'button';
-        resetBtn.className = 'flip-deck-reset-btn';
-        resetBtn.setAttribute('aria-label', 'もう一度最初から');
-        resetBtn.innerHTML = '<span class="flip-deck-reset-icon" aria-hidden="true">&#8635;</span>';
-        resetBtn.addEventListener('click', (e) => {
-            e.preventDefault();
+        const doResetFromStart = () => {
             stopSpeechIfPlaying();
             inputFlipDeckFinished = false;
             inputFlipDeckIndex = 0;
@@ -12229,8 +12223,7 @@ function renderInputListView(words, rangeWordsForHeader) {
             inputFlipDeckNotRemembered = [];
             shouldAnimateFloatUp = true;
             renderDeckCard();
-        });
-        sortCounterBar.appendChild(resetBtn);
+        };
 
         const progressHeader = document.createElement('div');
         progressHeader.className = 'flip-deck-progress-header';
@@ -12258,40 +12251,26 @@ function renderInputListView(words, rangeWordsForHeader) {
         const showReplayCard = () => {
             updateSortCounters();
             const total = inputFlipDeckWords.length;
-            const knownCount = inputFlipDeckRemembered.length;
-            const forgotCount = inputFlipDeckNotRemembered.length;
+            container.classList.add('flip-deck-finished');
             host.innerHTML = '';
             buildStackCards(0);
 
-            const replayCard = document.createElement('div');
-            replayCard.className = 'flip-deck-replay-card flip-deck-replay-card-summary';
-            replayCard.innerHTML = `
-                <div class="flip-deck-result-summary">
-                    <div class="flip-deck-result-row flip-deck-result-known"><span class="flip-deck-result-label">おぼえた</span><span class="flip-deck-result-count">${knownCount}<span class="flip-deck-result-unit">語</span></span></div>
-                    <div class="flip-deck-result-row flip-deck-result-forgot"><span class="flip-deck-result-label">おぼえていない</span><span class="flip-deck-result-count">${forgotCount}<span class="flip-deck-result-unit">語</span></span></div>
-                </div>
-                <div class="flip-deck-replay-actions">
-                    <button type="button" class="flip-deck-replay-btn flip-deck-replay-btn-forgot" ${forgotCount === 0 ? 'disabled' : ''}>おぼえてないだけもう1度</button>
-                </div>
-            `;
-            const replayBtnEl = replayCard.querySelector('.flip-deck-replay-btn-forgot');
-            if (replayBtnEl && !replayBtnEl.disabled) {
-                replayBtnEl.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    stopSpeechIfPlaying();
-                    inputFlipDeckFinished = false;
-                    inputFlipDeckWords = inputFlipDeckNotRemembered.slice();
-                    inputFlipDeckInitialTotal = inputFlipDeckWords.length;
-                    inputFlipDeckIndex = 0;
-                    inputFlipDeckProgressPos = 0;
-                    inputFlipDeckRemembered = [];
-                    inputFlipDeckNotRemembered = [];
-                    shouldAnimateFloatUp = true;
-                    renderDeckCard();
-                });
-            }
-
-            host.appendChild(replayCard);
+            const wrap = document.createElement('div');
+            wrap.className = 'flip-deck-replay-only-reset';
+            const cardDashed = document.createElement('div');
+            cardDashed.className = 'flip-deck-replay-card-dashed';
+            const onlyResetBtn = document.createElement('button');
+            onlyResetBtn.type = 'button';
+            onlyResetBtn.className = 'flip-deck-reset-btn flip-deck-reset-btn-center';
+            onlyResetBtn.setAttribute('aria-label', 'もう一度最初から');
+            onlyResetBtn.innerHTML = '<span class="flip-deck-reset-icon" aria-hidden="true">&#8635;</span>';
+            onlyResetBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                doResetFromStart();
+            });
+            cardDashed.appendChild(onlyResetBtn);
+            wrap.appendChild(cardDashed);
+            host.appendChild(wrap);
 
             prevBtn.disabled = true;
             prevBtn.style.display = 'none';
@@ -12369,7 +12348,7 @@ function renderInputListView(words, rangeWordsForHeader) {
         };
 
         const renderDeckCard = () => {
-            container.classList.remove('deck-flipped');
+            container.classList.remove('deck-flipped', 'flip-deck-finished');
             host.innerHTML = '';
             updateSortCounters();
             const total = inputFlipDeckWords.length;

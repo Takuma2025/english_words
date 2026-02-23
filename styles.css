@@ -7416,6 +7416,35 @@ body.hyogo-seijo-mode-active .word-card-container {
     line-height: 1;
 }
 
+/* 完了時カードエリア：点線ボーダーのカードの上にリセットマーク */
+.flip-deck-replay-only-reset {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+}
+.flip-deck-replay-card-dashed {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.06);
+}
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-reset-btn-center {
+    width: 56px;
+    height: 56px;
+}
+#inputListContainer.flip-mode.flip-deck-mode .flip-deck-reset-btn-center .flip-deck-reset-icon {
+    font-size: 28px;
+}
+
 #inputListContainer.flip-mode.flip-deck-mode .flip-deck-stack {
     position: absolute;
     inset: 0;
